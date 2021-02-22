@@ -1,0 +1,146 @@
+//
+// Created by Nicolas Lantos on 18/10/2017.
+//
+
+#ifndef TEST_TESTS_H
+#define TEST_TESTS_H
+
+int test_FindSeedViaFrontalMethod_025();
+int test_FindSeedViaFrontalMethod_10265813119();
+int test_FindSeedViaFrontalMethod_136111314();
+int test_FindSeedViaFrontalMethod_520810131411();
+int test_FindSeedViaFrontalMethod_145208101311();
+int test_FindSeedViaFrontalMethod_457810();
+int test_FindSeedViaFrontalMethod_205();
+int test_FindSeedViaFrontalMethod_All();
+int test_FindSeedViaFrontalMethod_All_shuffled();
+int test_FindSeedViaFrontalMethod_Case_2();
+int test_FindSeedViaFrontalMethod_Case_3_seed_0();
+int test_FindSeedViaFrontalMethod_Case_3_seed_1();
+int test_FindSeedViaFrontalMethod_Case_3_seed_6();
+int test_FindSeedViaFrontalMethod_Case_3_seed_8();
+int test_FindSeedViaFrontalMethod_Case_4_random();
+int test_FindSeedViaFrontalMethod_Case_5_random();
+int test_FindSeedViaFrontalMethod_Case_6();
+int test_FindSeedViaFrontalMethod_Case_6_seed_6();
+int test_Computation_Of_Neighbourhood();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints_11();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints_118();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints_118_maxCard();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints_1184();
+int test_Computation_Of_Neighbourhood_FineCellsConstraints_13();
+int test_ComputeNumberOfCommonFaces();
+int test_CheckConnectivity_MGridGenDoc_example();
+int test_PartsList();
+int test_PartsList_length_1();
+int test_PartsList_length_2();
+int test_PartsList_length_3();
+int test_RemoveSeparatingVertex_205();
+int test_RemoveSeparatingVertex_136111314();
+int test_RemoveSeparatingVertex_10265813119();
+int test_RemoveSeparatingVertex_All();
+int test_RemoveSeparatingVertex_Case_2();
+int test_RemoveSeparatingVertex_Case_3_seed_0();
+int test_RemoveSeparatingVertex_Case_4_random();
+int test_RemoveSeparatingVertex_Case_5_random();
+int test_RemoveSeparatingVertex_Case_6();
+int test_RemoveSeparatingVertex_Case_7_seed_0();
+int test_RemoveSeparatingVertex_Case_7_seed_1();
+int test_RemoveSeparatingVertex_Case_7_seed_9();
+int test_RemoveSeparatingVertex_Case_8_random();
+int test_RemoveSeparatingVertex_Case_9_random();
+int test_SwapFineCell_Case_1();
+int test_SwapFineCell_Deletion_of_Coarse_Element();
+int test_computeConnectedComponent_9_Squares();
+int test_createCoarseCell_Case_1();
+int test_createCoarseCell_Case_1_isMutable_False();
+int test_createCoarseCell_Case_3();
+int test_createCoarseCell_Delayed_Case_1();
+int test_createCoarseCell_Delayed_Case_1_isMutable_False();
+int test_createCoarseCell_Delayed_Case_3();
+int test_splitNonConnectedCoarseCell_9_Squares_1();
+int test_splitNonConnectedCoarseCell_9_Squares_2();
+int test_splitNonConnectedCoarseCell_9_Squares_3();
+int test_splitNonConnectedCoarseCell_9_Squares_5();
+
+int test_removeDeletedCoarseCells_Case_1();
+int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element();
+int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_2();
+int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_3();
+int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False();
+int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True();
+int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4();
+int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4();
+int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8();
+
+int test_Agglomerate_Isotropic_createCoarseCell_Case_1();
+int test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False();
+int test_Agglomerate_Isotropic_createCoarseCell_Case_3();
+int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1();
+int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1_isMutable_False();
+int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_3();
+
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10();
+int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13();
+
+int test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic();
+int test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic_case_2();
+int test_remove_Too_Small_Cells_v2_12_Squares_9_isotropicCell();
+int test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_0_anisotropic();
+int test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_4();
+int test_splitNonConnectedCoarseCell_9_Squares_Case_3();
+int test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2();
+int test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2_case_2();
+
+int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells();
+int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_2();
+int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_3();
+int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_4();
+int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_5();
+
+int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells();
+int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_2();
+int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_3();
+int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_4();
+int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_5();
+
+
+int test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
+
+int test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells();
+int test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells_Case_2();
+
+int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell();
+int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2();
+
+int test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1();
+
+int test_agglomerate_Isotropic_First_Step_Box_5x5x5();
+int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5();
+int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9();
+
+
+int test_computeAnisotropicLine_1_AnisotropicCell();
+int test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level();
+
+int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle();
+int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_2();
+
+int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends();
+
+int test_agglomerate_Anisotropic_One_Level();
+int test_agglomerate_Anisotropic_One_Level_2();
+int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level();
+
+int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8();
+int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9();
+int test_agglomerateOneLevel_Box_5x5x5_Anisotropic();
+
+
+#endif //TEST_TESTS_H
