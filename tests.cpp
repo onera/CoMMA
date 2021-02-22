@@ -24,8 +24,8 @@ int test_FindSeedViaFrontalMethod_025() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {0, 2, 5};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     assert(5 == sizes[2]);
     unordered_map<long, list<long>> ref_max_dict;
     ref_max_dict[0] = list<long>({2});
@@ -56,8 +56,8 @@ int test_FindSeedViaFrontalMethod_10265813119() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {10, 2, 6, 5, 8, 13, 11, 9};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     assert(9 == sizes[2]);
     unordered_map<long, list<long>> ref_max_dict;
     ref_max_dict[0] = list<long>({2});
@@ -90,8 +90,8 @@ int test_FindSeedViaFrontalMethod_136111314() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {1, 3, 6, 11, 13, 14};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 
 //    unordered_map<long, list<long>> ref_max_dict;
 //    ref_max_dict[0] = list<long>({2});
@@ -126,8 +126,8 @@ int test_FindSeedViaFrontalMethod_520810131411() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {5, 2, 0, 8, 10, 13, 14, 11};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 
 //    unordered_map<long, list<long>> ref_max_dict;
 //    ref_max_dict[0] = list<long>({2});
@@ -163,8 +163,8 @@ int test_FindSeedViaFrontalMethod_145208101311() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {14, 5, 2, 0, 8, 10, 13, 11};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 
 //    unordered_map<long, list<long>> ref_max_dict;
 //    ref_max_dict[0] = list<long>({2});
@@ -199,8 +199,8 @@ int test_FindSeedViaFrontalMethod_457810() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {8, 7, 5, 4, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 
 //    unordered_map<long, list<long>> ref_max_dict;
 //    ref_max_dict[0] = list<long>({2});
@@ -240,8 +240,8 @@ int test_FindSeedViaFrontalMethod_205() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {2, 0, 5};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     assert(5 == sizes[2]);  // 0 est aussi correct
     unordered_map<long, list<long>> ref_max_dict;
     ref_max_dict[0] = list<long>({2});
@@ -271,8 +271,8 @@ int test_FindSeedViaFrontalMethod_All() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     assert(12 == sizes[2]);  // 0 est aussi correct
     unordered_map<long, list<long>> ref_max_dict;
     ref_max_dict[0] = list<long>({2});
@@ -303,8 +303,8 @@ int test_FindSeedViaFrontalMethod_All_shuffled() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 1, 11, 3, 8, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     assert(12 == sizes[2]);  // 0 est aussi correct
     unordered_map<long, list<long>> ref_max_dict;
     ref_max_dict[0] = list<long>({2});
@@ -334,8 +334,8 @@ int test_FindSeedViaFrontalMethod_Case_2() {
     long sizes[3] = {8, 33, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     cout << "newSeed= " << sizes[2] << endl;
     assert(6 == sizes[2]);  // correct answer 1, 3, 6
     unordered_map<long, list<long>> ref_max_dict;
@@ -366,8 +366,8 @@ int test_FindSeedViaFrontalMethod_Case_3_seed_0() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(7 == sizes[2]);  // correct answer 7, 8
     unordered_map<long, list<long>> ref_max_dict;
@@ -400,8 +400,8 @@ int test_FindSeedViaFrontalMethod_Case_3_seed_1() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {1, 2, 3, 4, 5, 6, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(8 == sizes[2]);  // correct answer 7, 8
     unordered_map<long, list<long>> ref_max_dict;
@@ -433,8 +433,8 @@ int test_FindSeedViaFrontalMethod_Case_3_seed_6() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {6, 7, 8, 1, 3, 5, 4, 0, 2};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(8 == sizes[2]);  // correct answer 7, 8
     unordered_map<long, list<long>> ref_max_dict;
@@ -467,8 +467,8 @@ int test_FindSeedViaFrontalMethod_Case_3_seed_8() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {8, 1, 2, 3, 4, 5, 0, 6, 7};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(7 == sizes[2]);  // correct answer 7, 8
     unordered_map<long, list<long>> ref_max_dict;
@@ -500,8 +500,8 @@ int test_FindSeedViaFrontalMethod_Case_4_random() {
     long sizes[3] = {9, 31, 0};
     vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(7 == sizes[2]);  // correct answer 7, 8
     unordered_map<long, list<long>> ref_max_dict;
@@ -533,8 +533,8 @@ int test_FindSeedViaFrontalMethod_Case_5_random() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    cout << "newSeed= " << sizes[2] << endl;
     assert(7 == sizes[2]);
     unordered_map<long, list<long>> ref_max_dict;
@@ -565,8 +565,8 @@ int test_FindSeedViaFrontalMethod_Case_6() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     cout << "newSeed= " << sizes[2] << endl;
     assert(4 == sizes[2]);
     unordered_map<long, list<long>> ref_max_dict;
@@ -598,8 +598,8 @@ int test_FindSeedViaFrontalMethod_Case_6_seed_6() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {6, 0, 1, 2, 3, 4, 5, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     cout << "newSeed= " << sizes[2] << endl;
     assert(4 == sizes[2]);
     unordered_map<long, list<long>> ref_max_dict;
@@ -1049,7 +1049,7 @@ int test_PartsList() {
 
     //queue<unordered_set<long>> partsList(vector<long> seq, int length)
     vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq);
+    list <unordered_set<long>> listOfList = partsList(seq);
     // print listOfList
     for (auto l:listOfList) {
         for (auto i: l) {
@@ -1067,7 +1067,7 @@ int test_PartsList_length_1() {
 
     //queue<unordered_set<long>> partsList(vector<long> seq, int length)
     vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 1);
+    list <unordered_set<long>> listOfList = partsList(seq, 1);
     // print listOfList
     for (auto l:listOfList) {
         for (auto i: l) {
@@ -1085,7 +1085,7 @@ int test_PartsList_length_2() {
 
     //queue<unordered_set<long>> partsList(vector<long> seq, int length)
     vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 2);
+    list <unordered_set<long>> listOfList = partsList(seq, 2);
     // print listOfList
     for (auto l:listOfList) {
         for (auto i: l) {
@@ -1103,7 +1103,7 @@ int test_PartsList_length_3() {
 
     //queue<unordered_set<long>> partsList(vector<long> seq, int length)
     vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 3);
+    list <unordered_set<long>> listOfList = partsList(seq, 3);
     // print listOfList
     for (auto l:listOfList) {
         for (auto i: l) {
@@ -1131,10 +1131,10 @@ int test_RemoveSeparatingVertex_205() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {2, 0, 5};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     long new_seed = 0;
-    unordered_map<long, queue<long> *> dict_SpanningTree;
+    unordered_map < long, queue < long > * > dict_SpanningTree;
     dict_SpanningTree[0] = new queue<long>({2});
     dict_SpanningTree[2] = new queue<long>({5});
     //= {0:[2], 2:[5]}
@@ -1169,8 +1169,8 @@ int test_RemoveSeparatingVertex_136111314() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {1, 3, 6, 11, 13, 14};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    new_seed = 1
 //    dict_SpanningTree = {1: [3], 3: [6], 6: [11], 11: [13, 14]}
 //    setOfFineCells = set([1, 3, 6, 11, 13, 14])
@@ -1217,8 +1217,8 @@ int test_RemoveSeparatingVertex_10265813119() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {10, 2, 6, 5, 8, 13, 11, 9};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    new_seed = 1
 //    dict_SpanningTree = {1: [3], 3: [6], 6: [11], 11: [13, 14]}
 //    setOfFineCells = set([1, 3, 6, 11, 13, 14])
@@ -1264,8 +1264,8 @@ int test_RemoveSeparatingVertex_All() {
     long sizes[3] = {16, 51, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     //    dict_ConnectivityTree = {0: [1], 2: [0, 6], 3: [1], 4: [5], 5: [2], 6: [2, 3], 7: [4, 8], 8: [5], 9: [7, 10], 10: [8, 13], 11: [6, 14], 12: [9], 13: [11]}
 
 
@@ -1323,7 +1323,7 @@ int test_RemoveSeparatingVertex_Case_2() {
     long new_seed = 1;
 //    long new_seed = sizes[2];
 //    cout<<"new_seed "<<new_seed<<endl;
-    unordered_map<long, queue<long> *> dict_SpanningTree;
+    unordered_map < long, queue < long > * > dict_SpanningTree;
     dict_SpanningTree[0] = new queue<long>({5});
     dict_SpanningTree[1] = new queue<long>({0, 2});
     dict_SpanningTree[2] = new queue<long>({3, 4});
@@ -1358,8 +1358,8 @@ int test_RemoveSeparatingVertex_Case_3_seed_0() {
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     long new_seed = 7;
 //    long new_seed = sizes[2];
 //    cout<<"new_seed "<<new_seed<<endl;
@@ -1398,8 +1398,8 @@ int test_RemoveSeparatingVertex_Case_4_random() {
     long sizes[3] = {9, 31, 0};
     vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     long new_seed = 7;
 //    long new_seed = sizes[2];
 //    cout<<"new_seed "<<new_seed<<endl;
@@ -1438,8 +1438,8 @@ int test_RemoveSeparatingVertex_Case_5_random() {
     long sizes[3] = {10, 33, 0};
     vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
     long new_seed = 7;
 //    long new_seed = sizes[2];
 //    cout<<"new_seed "<<new_seed<<endl;
@@ -1474,8 +1474,8 @@ int test_RemoveSeparatingVertex_Case_6() {
     long sizes[3] = {10, 37, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
     cout << "new_seed " << new_seed << endl;
@@ -1508,8 +1508,8 @@ int test_RemoveSeparatingVertex_Case_7_seed_0() {
     long sizes[3] = {12, 40, 0};
     vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
 //    cout << "new_seed " << new_seed << endl;
@@ -1545,8 +1545,8 @@ int test_RemoveSeparatingVertex_Case_7_seed_1() {
     long sizes[3] = {12, 40, 0};
     vector<long> listOfFineCells = {1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
 //    cout << "new_seed " << new_seed << endl;
@@ -1582,8 +1582,8 @@ int test_RemoveSeparatingVertex_Case_7_seed_9() {
     long sizes[3] = {12, 40, 0};
     vector<long> listOfFineCells = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
 //    cout << "new_seed " << new_seed << endl;
@@ -1619,8 +1619,8 @@ int test_RemoveSeparatingVertex_Case_8_random() {
     long sizes[3] = {12, 39, 0};
     vector<long> listOfFineCells = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
 //    cout << "new_seed " << new_seed << endl;
@@ -1655,8 +1655,8 @@ int test_RemoveSeparatingVertex_Case_9_random() {
     long sizes[3] = {12, 35, 0};
     vector<long> listOfFineCells = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
 
-    unordered_map<long, queue<long> *> dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
-                                                                                        row_ptr, col_ind);
+    unordered_map < long, queue < long > * > dict_ConnectivityTree = findSeedViaFrontalMethod(3, sizes, listOfFineCells,
+                                                                                              row_ptr, col_ind);
 //    long new_seed = 7;
     long new_seed = sizes[2];
 //    cout << "new_seed " << new_seed << endl;
@@ -1857,7 +1857,7 @@ int test_computeConnectedComponent_9_Squares() {
                         7, 4, 6, 7, 8, 5, 7, 8};
     unordered_set<long> listInitialCoarseCell({0, 1, 2, 3, 4, 5, 6, 7, 8});
 
-    list<unordered_set<long>> listOfConnectedSet = computeConnectedComponent(listInitialCoarseCell, row_ptr, col_ind);
+    list <unordered_set<long>> listOfConnectedSet = computeConnectedComponent(listInitialCoarseCell, row_ptr, col_ind);
     assert(listOfConnectedSet.size() == 1);
     assert(listOfConnectedSet.front().size() == 9);
     assert(listOfConnectedSet.front().count(0) == 1);
@@ -1871,8 +1871,8 @@ int test_computeConnectedComponent_9_Squares() {
     assert(listOfConnectedSet.front().count(8) == 1);
 //    cout<<"ok"<<endl;
     unordered_set<long> listInitialCoarseCell_2({0, 1, 2, 6, 7, 8});
-    list<unordered_set<long>> listOfConnectedSet_2 = computeConnectedComponent(listInitialCoarseCell_2, row_ptr,
-                                                                               col_ind);
+    list <unordered_set<long>> listOfConnectedSet_2 = computeConnectedComponent(listInitialCoarseCell_2, row_ptr,
+                                                                                col_ind);
 //    cout<<"end computeConnectedComponent"<<endl;
 //    cout<<"listOfConnectedSet_2.size() "<<listOfConnectedSet_2.size()<<endl;
 //    cout<<"\nlistOfConnectedSet_2:"<<endl;
@@ -1901,8 +1901,8 @@ int test_computeConnectedComponent_9_Squares() {
 
 
     unordered_set<long> listInitialCoarseCell_3({0, 2, 4, 6, 8});
-    list<unordered_set<long>> listOfConnectedSet_3 = computeConnectedComponent(listInitialCoarseCell_3, row_ptr,
-                                                                               col_ind);
+    list <unordered_set<long>> listOfConnectedSet_3 = computeConnectedComponent(listInitialCoarseCell_3, row_ptr,
+                                                                                col_ind);
     cout << "end computeConnectedComponent" << endl;
     cout << "listOfConnectedSet_3.size() " << listOfConnectedSet_3.size() << endl;
     assert(listOfConnectedSet_3.size() == 5);
@@ -1916,8 +1916,8 @@ int test_computeConnectedComponent_9_Squares() {
     }
 //    exit(1);
     unordered_set<long> listInitialCoarseCell_4({0, 2, 4, 1, 8});
-    list<unordered_set<long>> listOfConnectedSet_4 = computeConnectedComponent(listInitialCoarseCell_4, row_ptr,
-                                                                               col_ind);
+    list <unordered_set<long>> listOfConnectedSet_4 = computeConnectedComponent(listInitialCoarseCell_4, row_ptr,
+                                                                                col_ind);
     cout << "end computeConnectedComponent" << endl;
     cout << "listOfConnectedSet_4.size() " << listOfConnectedSet_4.size() << endl;
     cout << "listOfConnectedSet_4.front().size() " << listOfConnectedSet_4.front().size() << endl;
@@ -2528,7 +2528,7 @@ int test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1() {
     assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
     assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
 
-    bool ref_isFineCellAgglomerated_tmp[11] = {true, true, true, true, true, true, true, true, false, false, false, };
+    bool ref_isFineCellAgglomerated_tmp[11] = {true, true, true, true, true, true, true, true, false, false, false,};
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[11] = {1, 1, 1, 0, -1, -1, -1, -1, -1, -1, -1};
     for (int i = 0; i < 11; i++) {
         assert(isFineCellAgglomerated_tmp[i] == ref_isFineCellAgglomerated_tmp[i]);
@@ -2575,11 +2575,11 @@ int test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1() {
     }
 
     // Real Creation:
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     delayedCoarseCells.push_back(l1);
     delayedCoarseCells.push_back(l2);
     agglomerate_Isotropic_CreateDelayedCoarseCells(dict_Coarse_Elem,
-                                                    dict_Card_Coarse_Cells,
+                                                   dict_Card_Coarse_Cells,
                                                    delayedCoarseCells, indCoarseElement, fine_Cell_indices_To_Coarse_Cell_Indices);
 
     assert(indCoarseElement == 4);
@@ -2625,7 +2625,7 @@ int test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1() {
 
 //    self.assertEqual({1: 1, 3: 1, 4: 1}, dict_DistributionOfCardinalOfCoarseElements)
     bool ref_isFineCellAgglomerated_tmp_3[11] = {true, true, true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[11] = {1, 1, 1, 0, 2, 2, 2, 2, 3, 3,3};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[11] = {1, 1, 1, 0, 2, 2, 2, 2, 3, 3, 3};
     for (int i = 0; i < 11; i++) {
         assert(isFineCellAgglomerated_tmp[i] == ref_isFineCellAgglomerated_tmp_3[i]);
         assert(fine_Cell_indices_To_Coarse_Cell_Indices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
@@ -3308,7 +3308,7 @@ int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False() {
 
     int iLevel = 1;
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     for (int i = 0; i < 4; i++) {
         listOfSeeds[i] = queue<long>();
     }
@@ -3404,7 +3404,7 @@ int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True() {
 
     int iLevel = 1;
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     for (int i = 0; i < 4; i++) {
         listOfSeeds[i] = queue<long>();
     }
@@ -3504,7 +3504,7 @@ int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_
 
     int iLevel = 1;
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     for (int i = 0; i < 4; i++) {
         listOfSeeds[i] = queue<long>();
     }
@@ -3606,7 +3606,7 @@ int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_n
 
     int iLevel = 1;
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     for (int i = 0; i < 4; i++) {
         listOfSeeds[i] = queue<long>();
     }
@@ -3705,7 +3705,7 @@ int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8()
 
     int iLevel = 1;
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     for (int i = 0; i < 4; i++) {
         listOfSeeds[i] = queue<long>();
     }
@@ -3800,7 +3800,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Case_1() {
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
 
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
@@ -3881,7 +3881,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False() {
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
                                            indCoarseElement, numberOfFineAgglomeratedCells_tmp,
@@ -3950,7 +3950,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Case_3() {
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
 
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
@@ -4027,7 +4027,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1() {
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
                                            indCoarseElement, numberOfFineAgglomeratedCells_tmp,
@@ -4152,7 +4152,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1_isMutable_False()
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
                                            indCoarseElement, numberOfFineAgglomeratedCells_tmp,
@@ -4268,7 +4268,7 @@ int test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_3() {
     long numberOfFineAgglomeratedCells_tmp = 4;
     bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
 
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     agglomerate_Isotropic_createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
                                            dict_DistributionOfCardinalOfCoarseElements,
                                            indCoarseElement, numberOfFineAgglomeratedCells_tmp,
@@ -4366,7 +4366,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0() {
     for (int i = 0; i < numberOfFineCells; i++) {
         isFineCellAgglomerated[i] = false;
     }
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>();
@@ -4412,7 +4412,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2() {
         isFineCellAgglomerated[i] = false;
     }
     isFineCellAgglomerated[0] = true;
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>();
@@ -4465,7 +4465,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1() {
     isFineCellAgglomerated[24] = true;
     isFineCellAgglomerated[26] = true;
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>();
@@ -4504,7 +4504,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2() {
 
     isFineCellAgglomerated[3] = true;
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>({3, 1});
@@ -4539,7 +4539,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4() {
     isFineCellAgglomerated[16] = false;
     isFineCellAgglomerated[22] = false;
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>({3, 1});
@@ -4574,7 +4574,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10() {
     isFineCellAgglomerated[16] = false;
     isFineCellAgglomerated[22] = false;
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>({10});
     listOfSeeds[2] = queue<long>({3, 1});
@@ -4604,7 +4604,7 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13() {
     }
     isFineCellAgglomerated[13] = false;
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>({10});
     listOfSeeds[2] = queue<long>({3, 1});
@@ -6484,11 +6484,11 @@ int test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_
     assert(indCoarseCell == 3);
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 3);
-    cout<<"dict_Coarse_Cells[2]: [";
-    for(auto i :dict_Coarse_Cells[2]){
-        cout<<i<<", ";
+    cout << "dict_Coarse_Cells[2]: [";
+    for (auto i :dict_Coarse_Cells[2]) {
+        cout << i << ", ";
     }
-    cout<<"]"<<endl;
+    cout << "]" << endl;
     assert(dict_Coarse_Cells[0].size() == 4);
     assert(dict_Coarse_Cells[0].count(0) == 1);
     assert(dict_Coarse_Cells[0].count(1) == 1);
@@ -6586,17 +6586,17 @@ int test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices() {
 }
 
 
-int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
+int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell() {
     // MGridGen Test case
     long matrixAdj_CRS_row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
     long matrixAdj_CRS_col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
-                        7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
-                        14};
+                                      7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
+                                      14};
     double matrixAdj_CRS_values[51] = {6.82842712, 2., 2., 2., 4.23606798, 1., 2., 4., 2.23606798, 2.23606798, 1., 4., 2.23606798,
-                         6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,
-                         2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,
-                         3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,
-                         3.16227766, 7.};
+                                       6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,
+                                       2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,
+                                       3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,
+                                       3.16227766, 7.};
 
     int nbCells = 15;
     double volumes[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
@@ -6609,7 +6609,7 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
         isFineCellAgglomerated[i] = true;
     }
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>();
@@ -6648,29 +6648,30 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
                                                                 checks,
                                                                 verbose);
 
-//        cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
+    cout << "\ndict_Coarse_Cells[0]: [";
+    for (auto i:dict_Coarse_Cells[0]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
     assert(indCoarseCell == 2);
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 2);
     assert(dict_Coarse_Cells[0].count(0) == 1);
     assert(dict_Coarse_Cells[0].count(1) == 1);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
     assert(dict_Coarse_Cells[0].count(3) == 1);
     assert(dict_Coarse_Cells[0].count(4) == 1);
     assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(6) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
     assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
     assert(dict_Coarse_Cells[0].count(10) == 1);
-    assert(dict_Coarse_Cells[0].count(11) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
     assert(dict_Coarse_Cells[0].count(13) == 1);
-    assert(dict_Coarse_Cells[0].count(14) == 1);
 
-    assert(dict_Coarse_Cells[1].count(7) == 1);
-    assert(dict_Coarse_Cells[1].count(9) == 1);
-    assert(dict_Coarse_Cells[1].count(12) == 1);
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
 
     assert(!dict_Card_Coarse_Cells.empty());
     assert(dict_Card_Coarse_Cells.size() == 2);
@@ -6683,9 +6684,9 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0,
                                                              0, 0, 0,
-                                                             0, 1, 0,
                                                              1, 0, 0,
-                                                             1, 0, 0};
+                                                             0, 0, 1,
+                                                             0, 0, 1};
     for (int i = 0; i < 15; i++) {
 
         assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
@@ -6709,31 +6710,31 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
                                                                 checks,
                                                                 verbose);
 
-            cout<<"\ndict_Coarse_Cells[0]: [";
-    for(auto i:dict_Coarse_Cells[0]){
-        cout<<i<<", ";
+    cout << "\ndict_Coarse_Cells[2]: [";
+    for (auto i:dict_Coarse_Cells[2]) {
+        cout << i << ", ";
     }
-    cout<<"]"<<endl;
+    cout << "]" << endl;
     assert(indCoarseCell == 3);
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 3);
+    assert(dict_Coarse_Cells[0].count(0) == 1);
+    assert(dict_Coarse_Cells[0].count(1) == 1);
     assert(dict_Coarse_Cells[0].count(2) == 1);
+    assert(dict_Coarse_Cells[0].count(3) == 1);
     assert(dict_Coarse_Cells[0].count(4) == 1);
     assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(6) == 1);
     assert(dict_Coarse_Cells[0].count(8) == 1);
     assert(dict_Coarse_Cells[0].count(10) == 1);
-    assert(dict_Coarse_Cells[0].count(11) == 1);
     assert(dict_Coarse_Cells[0].count(13) == 1);
-    assert(dict_Coarse_Cells[0].count(14) == 1);
 
-    assert(dict_Coarse_Cells[1].count(7) == 1);
-    assert(dict_Coarse_Cells[1].count(9) == 1);
-    assert(dict_Coarse_Cells[1].count(12) == 1);
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
 
-    assert(dict_Coarse_Cells[2].count(0) == 1);
-    assert(dict_Coarse_Cells[2].count(1) == 1);
-    assert(dict_Coarse_Cells[2].count(3) == 1);
+    assert(dict_Coarse_Cells[2].count(7) == 1);
+    assert(dict_Coarse_Cells[2].count(9) == 1);
+    assert(dict_Coarse_Cells[2].count(12) == 1);
 
     assert(!dict_Card_Coarse_Cells.empty());
     assert(dict_Card_Coarse_Cells.size() == 2);
@@ -6745,11 +6746,11 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
     assert(dict_DistributionOfCardinalOfCoarseElements[3] == 2);
     assert(dict_DistributionOfCardinalOfCoarseElements[9] == 1);
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {2, 2, 0,
-                                                             2, 0, 0,
-                                                             0, 1, 0,
-                                                             1, 0, 0,
-                                                             1, 0, 0};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {0, 0, 0,
+                                                               0, 0, 0,
+                                                               1, 2, 0,
+                                                               2, 0, 1,
+                                                               2, 0, 1};
     for (int i = 0; i < 15; i++) {
 
         assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
@@ -6774,11 +6775,29 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
                                                                 checks,
                                                                 verbose);
 
-    cout<<"\ndict_Coarse_Cells[0]: [";
-    for(auto i:dict_Coarse_Cells[0]){
-        cout<<i<<", ";
-    }
-    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[0]: [";
+//    for(auto i:dict_Coarse_Cells[0]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[1]: [";
+//    for(auto i:dict_Coarse_Cells[1]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Coarse_Cells[2]: [";
+//    for(auto i:dict_Coarse_Cells[2]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Coarse_Cells[3]: [";
+//    for(auto i:dict_Coarse_Cells[3]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
     assert(indCoarseCell == 4);
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 4);
@@ -6789,17 +6808,17 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
     assert(dict_Coarse_Cells[0].count(10) == 1);
     assert(dict_Coarse_Cells[0].count(13) == 1);
 
-    assert(dict_Coarse_Cells[1].count(7) == 1);
-    assert(dict_Coarse_Cells[1].count(9) == 1);
-    assert(dict_Coarse_Cells[1].count(12) == 1);
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
 
-    assert(dict_Coarse_Cells[2].count(0) == 1);
-    assert(dict_Coarse_Cells[2].count(1) == 1);
-    assert(dict_Coarse_Cells[2].count(3) == 1);
+    assert(dict_Coarse_Cells[2].count(7) == 1);
+    assert(dict_Coarse_Cells[2].count(9) == 1);
+    assert(dict_Coarse_Cells[2].count(12) == 1);
 
-    assert(dict_Coarse_Cells[3].count(6) == 1);
-    assert(dict_Coarse_Cells[3].count(11) == 1);
-    assert(dict_Coarse_Cells[3].count(14) == 1);
+    assert(dict_Coarse_Cells[3].count(0) == 1);
+    assert(dict_Coarse_Cells[3].count(1) == 1);
+    assert(dict_Coarse_Cells[3].count(3) == 1);
 
     assert(!dict_Card_Coarse_Cells.empty());
     assert(dict_Card_Coarse_Cells.size() == 2);
@@ -6812,20 +6831,20 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell(){
     assert(dict_DistributionOfCardinalOfCoarseElements[3] == 3);
     assert(dict_DistributionOfCardinalOfCoarseElements[6] == 1);
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[15] = {2, 2, 0,
-                                                               2, 0, 0,
-                                                               3, 1, 0,
-                                                               1, 0, 3,
-                                                               1, 0, 3};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[15] = {3, 3, 0,
+                                                               3, 0, 0,
+                                                               1, 2, 0,
+                                                               2, 0, 1,
+                                                               2, 0, 1};
     for (int i = 0; i < 15; i++) {
 
         assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[i]);
     }
-            return 1;
+    return 1;
 
 }
 
-int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2(){
+int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2() {
 
     // MGridGen Test case
     long matrixAdj_CRS_row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
@@ -6849,7 +6868,7 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2(
         isFineCellAgglomerated[i] = true;
     }
 
-    vector<queue<long>> listOfSeeds(4);
+    vector <queue<long>> listOfSeeds(4);
     listOfSeeds[0] = queue<long>();
     listOfSeeds[1] = queue<long>();
     listOfSeeds[2] = queue<long>();
@@ -6888,35 +6907,36 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2(
                                                                 checks,
                                                                 verbose);
 
-//        cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[1]: [";
-//    for(auto i:dict_Coarse_Cells[1]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
+    cout << "\ndict_Coarse_Cells[0]: [";
+    for (auto i:dict_Coarse_Cells[0]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    cout << "\ndict_Coarse_Cells[1]: [";
+    for (auto i:dict_Coarse_Cells[1]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
 
     assert(indCoarseCell == 2);
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 2);
     assert(dict_Coarse_Cells[0].count(0) == 1);
     assert(dict_Coarse_Cells[0].count(1) == 1);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
     assert(dict_Coarse_Cells[0].count(3) == 1);
     assert(dict_Coarse_Cells[0].count(4) == 1);
     assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(6) == 1);
-    assert(dict_Coarse_Cells[0].count(11) == 1);
-    assert(dict_Coarse_Cells[0].count(13) == 1);
-    assert(dict_Coarse_Cells[0].count(14) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
 
-    assert(dict_Coarse_Cells[1].count(7) == 1);
-    assert(dict_Coarse_Cells[1].count(8) == 1);
-    assert(dict_Coarse_Cells[1].count(9) == 1);
+    assert(dict_Coarse_Cells[1].count(6) == 1);
     assert(dict_Coarse_Cells[1].count(10) == 1);
-    assert(dict_Coarse_Cells[1].count(12) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(13) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
 
     assert(!dict_Card_Coarse_Cells.empty());
     assert(dict_Card_Coarse_Cells.size() == 2);
@@ -6927,7 +6947,7 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2(
     assert(dict_DistributionOfCardinalOfCoarseElements[5] == 1);
     assert(dict_DistributionOfCardinalOfCoarseElements[10] == 1);
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1};
 //    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
 //    for(auto i:fineCellIndicesToCoarseCellIndices){
 //        cout<<i<<", ";
@@ -6962,38 +6982,54 @@ int  test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2(
         cout << i << ", ";
     }
     cout << "]" << endl;
-    cout<<"indCoarseCell "<<indCoarseCell<<endl;
-    assert(indCoarseCell == 2);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 2);
-    assert(dict_Coarse_Cells[0].count(0) == 1);
-    assert(dict_Coarse_Cells[0].count(1) == 1);
-    assert(dict_Coarse_Cells[0].count(3) == 1);
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(6) == 1);
-    assert(dict_Coarse_Cells[0].count(11) == 1);
-    assert(dict_Coarse_Cells[0].count(13) == 1);
-    assert(dict_Coarse_Cells[0].count(14) == 1);
+    cout << "\ndict_Coarse_Cells[1]: [";
+    for (auto i:dict_Coarse_Cells[1]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    cout << "\ndict_Coarse_Cells[2]: [";
+    for (auto i:dict_Coarse_Cells[2]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
 
-    assert(dict_Coarse_Cells[1].count(7) == 1);
-    assert(dict_Coarse_Cells[1].count(8) == 1);
-    assert(dict_Coarse_Cells[1].count(9) == 1);
+    cout << "indCoarseCell " << indCoarseCell << endl;
+    assert(indCoarseCell == 3);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 3);
+
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
     assert(dict_Coarse_Cells[1].count(10) == 1);
-    assert(dict_Coarse_Cells[1].count(12) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(13) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(dict_Coarse_Cells[2].count(0) == 1);
+    assert(dict_Coarse_Cells[2].count(1) == 1);
+    assert(dict_Coarse_Cells[2].count(2) == 1);
+    assert(dict_Coarse_Cells[2].count(3) == 1);
+    assert(dict_Coarse_Cells[2].count(5) == 1);
 
     assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 2);
+    assert(dict_Card_Coarse_Cells.size() == 1);
+    assert(dict_Card_Coarse_Cells[5].count(0) == 1);
     assert(dict_Card_Coarse_Cells[5].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[10].count(0) == 1);
+    assert(dict_Card_Coarse_Cells[5].count(2) == 1);
 
     assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 1);
-    assert(dict_DistributionOfCardinalOfCoarseElements[10] == 1);
+    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 3);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {2, 2, 2, 2, 0, 2, 1, 0, 0, 0, 1, 1, 0, 1, 1};
 
     for (int i = 0; i < 15; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
     }
     return 1;
 }
@@ -7004,53 +7040,51 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                    172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                    321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
-            3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
-            9, 12, 13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32, 1, 16, 17, 18, 21, 33, 2, 17, 18, 19,
-            22, 34, 3, 18, 19, 23, 35, 4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26, 38, 7, 19, 22, 23,
-            27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26, 29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24,
-            28, 29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30, 31, 47, 16, 32, 33, 36, 48, 17, 32, 33,
-            34, 37, 49, 18, 33, 34, 35, 38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38, 41, 53, 22, 34,
-            37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40, 41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58,
-            27, 39, 42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42, 45, 46, 47, 62, 31, 43, 46, 47,
-            63, 32, 48, 49, 52, 33, 48, 49, 50, 53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49, 52, 53,
-            54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52, 56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58,
-            59, 62, 43, 55, 58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63, 47, 59, 62, 63};
+                                   3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
+                                   9, 12, 13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32, 1, 16, 17, 18, 21, 33, 2, 17, 18, 19,
+                                   22, 34, 3, 18, 19, 23, 35, 4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26, 38, 7, 19, 22, 23,
+                                   27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26, 29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24,
+                                   28, 29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30, 31, 47, 16, 32, 33, 36, 48, 17, 32, 33,
+                                   34, 37, 49, 18, 33, 34, 35, 38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38, 41, 53, 22, 34,
+                                   37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40, 41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58,
+                                   27, 39, 42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42, 45, 46, 47, 62, 31, 43, 46, 47,
+                                   63, 32, 48, 49, 52, 33, 48, 49, 50, 53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49, 52, 53,
+                                   54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52, 56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58,
+                                   59, 62, 43, 55, 58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63, 47, 59, 62, 63};
 
     double adjMatrix_areaValues[344] = {30., 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 30., 2.5, 25., 2.5, 27.5, 2.5,
-                                         2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5,
-                                         2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5,
-                                         30., 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 30., 25., 25., 5., 2.5, 2.5, 25.,
-                                         25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                                         25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                                         2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
-                                         5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 5., 25., 25., 5.,
-                                         2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5,
-                                         2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                                         25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                                         2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5,
-                                         5., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25.,
-                                         50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                                         50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                                         75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75.};
+                                        2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5,
+                                        2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5,
+                                        30., 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 30., 25., 25., 5., 2.5, 2.5, 25.,
+                                        25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
+                                        25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
+                                        2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
+                                        5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 5., 25., 25., 5.,
+                                        2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5,
+                                        2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
+                                        25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
+                                        2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5,
+                                        5., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25.,
+                                        50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+                                        50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+                                        75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75.};
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     int goalCard = 8;
@@ -7064,18 +7098,18 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
     unordered_set<long> isOnCorner = {0, 3, 12, 15, 48, 51, 60, 63};
 
     int isOnFineBnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3,
-                    2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                    2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                    3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                           3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
-    long sizes[4]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
+    long sizes[4] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
 //    long numberOfFineCells = sizes[0];
 //    long adjMatrix_row_ptr_size = numberOfFineCells + 1;
 //    long adjMatrix_col_ind_size = sizes[1];
@@ -7091,7 +7125,7 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
                                      dict_DistributionOfCardinalOfCoarseElements,
                                      dict_Coarse_Cells,
                                      dict_Card_Coarse_Cells,
-                                     //numberOfFineCells,
+            //numberOfFineCells,
                                      isOnValley,
                                      isOnRidge,
                                      isOnCorner,
@@ -7110,27 +7144,19 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
 //    long adjMatrix_areaValues_size = sizes[1];
 //    long indCoarseCell = sizes[2];
 //    long numberOfFineAgglomeratedCells = sizes[3];
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
-    cout<<"sizes[2] "<<sizes[2]<<endl;
-    assert(sizes[2]==8);//indCoarseCell
-    assert(sizes[3]==64);//indCoarseCell
-//    cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[1]: [";
-//    for(auto i:dict_Coarse_Cells[1]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-    int numCell = 2;
-    cout<<"\ndict_Coarse_Cells["<<numCell<<"]: [";
-    for(auto i:dict_Coarse_Cells[numCell]){
-        cout<<i<<", ";
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
+    cout << "sizes[2] " << sizes[2] << endl;
+    assert(sizes[2] == 8);//indCoarseCell
+    assert(sizes[3] == 64);//indCoarseCell
+    for (int i_cc = 0; i_cc < 8; i_cc++) {
+        cout << "dict_Coarse_Cells[" << i_cc << "]: [";
+        for (auto i:dict_Coarse_Cells[i_cc]) {
+            cout << i << ", ";
+        }
+        cout << "]" << endl;
     }
-    cout<<"]"<<endl;
+
     assert(!dict_Coarse_Cells.empty());
     assert(dict_Coarse_Cells.size() == 8);
 
@@ -7162,14 +7188,14 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
     assert(dict_Coarse_Cells[2].count(55) == 1);
 
 
-    assert(dict_Coarse_Cells[3].count(8) == 1);
-    assert(dict_Coarse_Cells[3].count(9) == 1);
-    assert(dict_Coarse_Cells[3].count(12) == 1);
-    assert(dict_Coarse_Cells[3].count(13) == 1);
-    assert(dict_Coarse_Cells[3].count(24) == 1);
-    assert(dict_Coarse_Cells[3].count(25) == 1);
-    assert(dict_Coarse_Cells[3].count(28) == 1);
-    assert(dict_Coarse_Cells[3].count(29) == 1);
+    assert(dict_Coarse_Cells[5].count(8) == 1);
+    assert(dict_Coarse_Cells[5].count(9) == 1);
+    assert(dict_Coarse_Cells[5].count(12) == 1);
+    assert(dict_Coarse_Cells[5].count(13) == 1);
+    assert(dict_Coarse_Cells[5].count(24) == 1);
+    assert(dict_Coarse_Cells[5].count(25) == 1);
+    assert(dict_Coarse_Cells[5].count(28) == 1);
+    assert(dict_Coarse_Cells[5].count(29) == 1);
 
     assert(dict_Coarse_Cells[4].count(10) == 1);
     assert(dict_Coarse_Cells[4].count(11) == 1);
@@ -7180,14 +7206,14 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
     assert(dict_Coarse_Cells[4].count(30) == 1);
     assert(dict_Coarse_Cells[4].count(31) == 1);
 
-    assert(dict_Coarse_Cells[5].count(32) == 1);
-    assert(dict_Coarse_Cells[5].count(33) == 1);
-    assert(dict_Coarse_Cells[5].count(36) == 1);
-    assert(dict_Coarse_Cells[5].count(37) == 1);
-    assert(dict_Coarse_Cells[5].count(48) == 1);
-    assert(dict_Coarse_Cells[5].count(49) == 1);
-    assert(dict_Coarse_Cells[5].count(52) == 1);
-    assert(dict_Coarse_Cells[5].count(53) == 1);
+    assert(dict_Coarse_Cells[3].count(32) == 1);
+    assert(dict_Coarse_Cells[3].count(33) == 1);
+    assert(dict_Coarse_Cells[3].count(36) == 1);
+    assert(dict_Coarse_Cells[3].count(37) == 1);
+    assert(dict_Coarse_Cells[3].count(48) == 1);
+    assert(dict_Coarse_Cells[3].count(49) == 1);
+    assert(dict_Coarse_Cells[3].count(52) == 1);
+    assert(dict_Coarse_Cells[3].count(53) == 1);
 
     assert(dict_Coarse_Cells[6].count(2) == 1);
     assert(dict_Coarse_Cells[6].count(3) == 1);
@@ -7221,7 +7247,8 @@ int test_agglomerate_Isotropic_First_Step_Box_5x5x5() {
     assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
     assert(dict_DistributionOfCardinalOfCoarseElements[8] == 8);
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 4, 4, 5, 5, 4, 4, 7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 4, 4, 5, 5, 4, 4, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1,
+                                                             0, 0, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
 //    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
 //    for(auto i:fineCellIndicesToCoarseCellIndices){
 //        cout<<i<<", ";
@@ -7240,9 +7267,9 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                                   172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                                   321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
                                    3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
@@ -7276,17 +7303,15 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5() {
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     unordered_set<long> isOnRidge = {1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62};
@@ -7297,17 +7322,17 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5() {
                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
                            3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int minCard = 6;
     int goalCard = 8;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
-    long sizes[4]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
+    long sizes[4] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
 
     bool checks = true;
     bool verbose = true;
@@ -7337,14 +7362,15 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5() {
                                         thresholdCard,
                                         checks,
                                         verbose);
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
-    assert(sizes[2]==8);//indCoarseCell
-    assert(sizes[3]==64);//numberOfFineAgglomeratedCells
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
+    assert(sizes[2] == 8);//indCoarseCell
+    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
 
 
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 4, 4, 5, 5, 4, 4, 7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 4, 4, 5, 5, 4, 4, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1,
+                                                             0, 0, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
 //    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
 //    for(auto i:fineCellIndicesToCoarseCellIndices){
 //        cout<<i<<", ";
@@ -7363,9 +7389,9 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                                   172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                                   321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
                                    3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
@@ -7399,17 +7425,15 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9() {
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     unordered_set<long> isOnRidge = {1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62};
@@ -7420,17 +7444,17 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9() {
                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
                            3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int minCard = 6;
     int goalCard = 9;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
-    long sizes[4]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
+    long sizes[4] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells};
 
     bool checks = false;
     bool verbose = false;
@@ -7459,38 +7483,21 @@ int test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9() {
                                         thresholdCard,
                                         checks,
                                         verbose);
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
 //    cout<<"sizes[2] "<<sizes[2]<<endl;
-    assert(sizes[2]==7);//indCoarseCell
-    assert(sizes[3]==64);//numberOfFineAgglomeratedCells
+    assert(sizes[2] == 7);//indCoarseCell
+    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
 
 
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {6, 6, 6, 6,
-                                                             6, 6, 4, 4,
-                                                             3, 3, 4, 4,
-                                                             3, 3, 3, 4,
-
-                                                             5, 6, 6, 6,
-                                                             5, 6, 4, 4,
-                                                             3, 3, 4, 4,
-                                                             3, 3, 3, 4,
-
-                                                             5, 5, 2, 2,
-                                                             5, 5, 2, 2,
-                                                             1, 1, 0, 0,
-                                                             1, 1, 0, 0,
-
-                                                             5, 5, 2, 2,
-                                                             5, 5, 2, 2,
-                                                             1, 1, 0, 0,
-                                                             1, 1, 0, 0};
-//    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
-//    for(auto i:fineCellIndicesToCoarseCellIndices){
-//        cout<<i<<", ";
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {3, 6, 6, 6, 5, 6, 6, 4, 5, 5, 4, 4, 5, 5, 4, 4, 3, 6, 6, 6, 5, 6, 6, 4, 5, 5, 4, 4, 5, 5, 4, 4, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1,
+                                                             0, 0, 3, 3, 2, 2, 3, 3, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
+//    cout << "\nfineCellIndicesToCoarseCellIndices: [";
+//    for (auto i:fineCellIndicesToCoarseCellIndices) {
+//        cout << i << ", ";
 //    }
-//    cout<<"]"<<endl;
+//    cout << "]" << endl;
 
     for (int i = 0; i < 64; i++) {
 
@@ -7519,8 +7526,8 @@ int test_computeAnisotropicLine_1_AnisotropicCell() {
     long arrayOfFineAnisotropicCompliantCells[2] = {0, 1};
 
     bool verbose = true;
-    long *agglomerationLines_Idx= new long[numberOfFineCells];
-    long *agglomerationLines= new long[numberOfFineCells];
+    long *agglomerationLines_Idx = new long[numberOfFineCells];
+    long *agglomerationLines = new long[numberOfFineCells];
 
 //
     long indCoarseCell = 0;
@@ -7528,8 +7535,8 @@ int test_computeAnisotropicLine_1_AnisotropicCell() {
     long agglomerationLines_Idx_size = numberOfFineCells;
     long agglomerationLines_size = numberOfFineCells;
 
-    long sizes[10]={numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                    arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
+    long sizes[10] = {numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
 
     bool isAgglomerationLines = computeAnisotropicLine(sizes,
                                                        adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
@@ -7537,12 +7544,12 @@ int test_computeAnisotropicLine_1_AnisotropicCell() {
                                                        agglomerationLines_Idx,
                                                        agglomerationLines, verbose);
     assert(!isAgglomerationLines);
-    cout<< "fineAgglomerationLines"<<endl;
+    cout << "fineAgglomerationLines" << endl;
     long numberOfAnisotropicLinesPOne_size = sizes[8];
     agglomerationLines_size = sizes[9];
 
-    assert(numberOfAnisotropicLinesPOne_size==2);
-    assert(agglomerationLines_size==0);
+    assert(numberOfAnisotropicLinesPOne_size == 2);
+    assert(agglomerationLines_size == 0);
     long ref_agglomerationLines_Idx[2] = {0, 0};
 //    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
 //    for(auto i:fineCellIndicesToCoarseCellIndices){
@@ -7601,7 +7608,7 @@ int test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level() {
                                                      53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
     long numberOfAnisotropicLinesPOne_size = numberOfFineAnisotropicCompliantCells;
     long indCoarseCell = 0;
-    long numberOfFineAgglomeratedCells=0;
+    long numberOfFineAgglomeratedCells = 0;
     long arrayOfFineAnisotropicCompliantCells_size = numberOfFineCells;
     long agglomerationLines_Idx_size = numberOfFineCells;
     long agglomerationLines_size = numberOfFineAnisotropicCompliantCells;
@@ -7613,8 +7620,8 @@ int test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level() {
 //    long sizes[5] = {numberOfFineCells, adjMatrix_col_ind_size, numberOfFineAnisotropicCompliantCells,
 //                     numberOfAnisotropicLinesPOne_size, agglomerationLines_size};
 
-    long sizes[10]={numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                    arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
+    long sizes[10] = {numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
 
     bool isAggloLines = computeAnisotropicLine(sizes,
                                                adjMatrix_row_ptr,
@@ -7631,22 +7638,15 @@ int test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level() {
     assert(17 == sizes[8]);
     assert(48 == sizes[9]);
     long ref_agglomerationLines_Idx[17] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48};
-    long ref_agglomerationLines[48] = {15, 31, 47,
-                                       12, 28, 44,
+    long ref_agglomerationLines[48] = {0, 16, 32,
+                                       15, 31, 47,
                                        3, 19, 35,
-                                       0, 16, 32,
-                                       2, 18, 34,
-                                       1, 17, 33,
-                                       11, 27, 43,
-                                       8, 24, 40,
-                                       7, 23, 39,
-                                       4, 20, 36,
-                                       14, 30, 46,
-                                       13, 29, 45,
-                                       6, 22, 38,
-                                       5, 21, 37,
-                                       10, 26, 42,
-                                       9, 25, 41};
+                                       12, 28, 44, 2, 18, 34, 1, 17, 33, 11, 27, 43, 8, 24, 40, 7, 23, 39, 4, 20, 36, 14, 30, 46, 13, 29, 45, 6, 22, 38, 5, 21, 37, 10, 26, 42, 9, 25, 41};
+//    cout << "\nagglomerationLines: [";
+//    for (int i_line = 0; i_line<48; i_line ++){
+//        cout << agglomerationLines[i_line] << ", ";
+//    }
+    cout << "]" << endl;
     for (int i = 0; i < 17; i++) {
         assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
     }
@@ -7672,75 +7672,75 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle() {
 
     long adjMatrix_col_ind_size = 92;
     long adjMatrix_col_ind[92] = {0, 1, 2,  // 0
-                                    0, 1, 3,  // 1
-                                    0, 2, 3, 4,  // 2
-                                    1, 2, 3, 5,
-                                    2, 4, 5, 6,  // 4
-                                    3, 4, 5, 7,
-                                    4, 6, 7, 8,  // 6
-                                    5, 6, 7, 9,
-                                    6, 8, 9, 10,  // 8
-                                    7, 8, 9, 11,
-                                    8, 10, 11, 12,  // 10
-                                    9, 10, 11, 13,
-                                    10, 12, 13, 14,  // 12
-                                    11, 12, 13, 15,
-                                    12, 14, 15, 16,  // 14
-                                    13, 14, 15, 17,
-                                    14, 16, 17, 18,  // 16
-                                    15, 16, 17, 19,
-                                    16, 18, 19, 20,  // 18
-                                    17, 18, 19, 21,
-                                    18, 20, 21, 22,
-                                    19, 20, 21, 23,
-                                    20, 22, 23,
-                                    21, 22, 23};
-    double adjMatrix_areaValues[92]= {32.5,	2.5,	25,
-                                        2.5	,32.5,	25,
-                                        25,		6.75	,2.25,	25,  // 2
-                                        25,		2.25	,6.75,	25,  // 3
-                                        25,		6.075	,2.025,	25,
-                                        25,		2.025	,6.075,	25,
-                                        25,		5.4675	,1.8225,	25, // 6
-                                        25,		1.8225	,5.4675	,25,
-                                        25,		4.92075	,1.64025,	25,
-                                        25,		1.64025	,4.92075,	25,
-                                        25,		4.428675,	1.476225,	25,  // 10
-                                        25,		1.476225,	4.428675,	25,
-                                        25,		4.8715425,	1.6238475,	25,  // 12
-                                        25,		1.6238475	,4.8715425,	25,
-                                        25,		5.35869675,	1.78623225,	25,// 14
-                                        25,		1.78623225,	5.35869675,	25,
-                                        25,		5.894566425	,1.964855475,	25,// 16
-                                        25,		1.964855475	,5.894566425,	25,
-                                        25,		6.4840230675,	2.1613410225,	25, // 18
-                                        25,		2.1613410225,	6.4840230675,	25,
-                                        25,		7.1324253743,	2.3774751248,	25, // 20
-                                        25,		2.3774751248,	7.1324253743,	25,
-                                        25,		32.5,	2.5	,  // 22
-                                        25,		2.5,	32.5,};
+                                  0, 1, 3,  // 1
+                                  0, 2, 3, 4,  // 2
+                                  1, 2, 3, 5,
+                                  2, 4, 5, 6,  // 4
+                                  3, 4, 5, 7,
+                                  4, 6, 7, 8,  // 6
+                                  5, 6, 7, 9,
+                                  6, 8, 9, 10,  // 8
+                                  7, 8, 9, 11,
+                                  8, 10, 11, 12,  // 10
+                                  9, 10, 11, 13,
+                                  10, 12, 13, 14,  // 12
+                                  11, 12, 13, 15,
+                                  12, 14, 15, 16,  // 14
+                                  13, 14, 15, 17,
+                                  14, 16, 17, 18,  // 16
+                                  15, 16, 17, 19,
+                                  16, 18, 19, 20,  // 18
+                                  17, 18, 19, 21,
+                                  18, 20, 21, 22,
+                                  19, 20, 21, 23,
+                                  20, 22, 23,
+                                  21, 22, 23};
+    double adjMatrix_areaValues[92] = {32.5, 2.5, 25,
+                                       2.5, 32.5, 25,
+                                       25, 6.75, 2.25, 25,  // 2
+                                       25, 2.25, 6.75, 25,  // 3
+                                       25, 6.075, 2.025, 25,
+                                       25, 2.025, 6.075, 25,
+                                       25, 5.4675, 1.8225, 25, // 6
+                                       25, 1.8225, 5.4675, 25,
+                                       25, 4.92075, 1.64025, 25,
+                                       25, 1.64025, 4.92075, 25,
+                                       25, 4.428675, 1.476225, 25,  // 10
+                                       25, 1.476225, 4.428675, 25,
+                                       25, 4.8715425, 1.6238475, 25,  // 12
+                                       25, 1.6238475, 4.8715425, 25,
+                                       25, 5.35869675, 1.78623225, 25,// 14
+                                       25, 1.78623225, 5.35869675, 25,
+                                       25, 5.894566425, 1.964855475, 25,// 16
+                                       25, 1.964855475, 5.894566425, 25,
+                                       25, 6.4840230675, 2.1613410225, 25, // 18
+                                       25, 2.1613410225, 6.4840230675, 25,
+                                       25, 7.1324253743, 2.3774751248, 25, // 20
+                                       25, 2.3774751248, 7.1324253743, 25,
+                                       25, 32.5, 2.5,  // 22
+                                       25, 2.5, 32.5,};
     long numberOfFineAnisotropicCompliantCells = 24;
     long arrayOfFineAnisotropicCompliantCells[24] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                                       19, 20, 21, 22, 23};
+                                                     19, 20, 21, 22, 23};
     long numberOfAnisotropicLinesPOne_size = numberOfFineAnisotropicCompliantCells;
     long agglomerationLines_size = numberOfFineAnisotropicCompliantCells;
 
-    long * agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
-    long * agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
+    long *agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
+    long *agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
     bool verbose = false;
 
     long indCoarseCell = 0;
-    long numberOfFineAgglomeratedCells=0;
+    long numberOfFineAgglomeratedCells = 0;
     long arrayOfFineAnisotropicCompliantCells_size = numberOfFineCells;
     long agglomerationLines_Idx_size = numberOfFineCells;
 
 //    long sizes_2[5] = {numberOfFineCells, adjMatrix_col_ind_size_2, numberOfFineAnisotropicCompliantCells_2,
 //                       numberOfAnisotropicLinesPOne_size_2, agglomerationLines_size_2};
-    long sizes[10]={numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                    numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
+    long sizes[10] = {numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
 
 //    cout<<"Before call of computeAnisotropicLine"<<endl;
-    computeAnisotropicLine( sizes,
+    computeAnisotropicLine(sizes,
                            adjMatrix_row_ptr,
                            adjMatrix_col_ind,
                            adjMatrix_areaValues,
@@ -7750,29 +7750,34 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle() {
                            verbose);
 //    cout<<"After call of computeAnisotropicLine"<<endl;
     //agglomerationLines_Idx, agglomerationLines = Util.convertFineAgglomerationLinesToFineAgglomerationLines_arrays(numberOfFineCells, fineAgglomerationLines)
-    assert(numberOfFineAnisotropicCompliantCells==24);
+    assert(numberOfFineAnisotropicCompliantCells == 24);
 //    cout<<"sizes_2[3] "<<sizes_2[3]<< endl;
 //    cout<<"sizes_2[4] "<<sizes_2[4]<< endl;
-    assert(3==sizes[8]);  // number of anisotropic lines
-    assert(24==sizes[9]);  // number of cells in these lines
+    assert(3 == sizes[8]);  // number of anisotropic lines
+    assert(24 == sizes[9]);  // number of cells in these lines
     long ref_agglomerationLines_Idx_size = 3;
     long ref_agglomerationLines_size = 24;
-    long ref_agglomerationLines_Idx[3] ={0, 12, 24};
-    long ref_agglomerationLines[24]={23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0};
-    for (int i=0;i<ref_agglomerationLines_Idx_size; i++)
-    {
+    long ref_agglomerationLines_Idx[3] = {0, 12, 24};
+    long ref_agglomerationLines[24] = {22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0, 23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1};
+    for (int i = 0; i < ref_agglomerationLines_Idx_size; i++) {
 //        cout<<agglomerationLines_Idx_2[i]<<", ";
-        assert(ref_agglomerationLines_Idx[i]==agglomerationLines_Idx[i]);
+        assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
     }
 //    cout<<endl;
-    for (int i=0;i<ref_agglomerationLines_size; i++)
-    {
+
+//    cout << "\nagglomerationLines: [";
+//    for (int i_line = 0; i_line<24; i_line ++){
+//        cout << agglomerationLines[i_line] << ", ";
+//    }
+//    cout<<"]"<<endl;
+
+    for (int i = 0; i < ref_agglomerationLines_size; i++) {
 //        cout<<agglomerationLines_2[i]<<", ";
 //        if ((i+1)%12==0)
 //        {
 //            cout<<endl;
 //        }
-        assert(ref_agglomerationLines[i]==agglomerationLines[i]);
+        assert(ref_agglomerationLines[i] == agglomerationLines[i]);
     }
 //    cout<<endl;
     delete[] agglomerationLines_Idx;
@@ -7787,106 +7792,104 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_2() {
 
     long adjMatrix_col_ind_size = 92;
     long adjMatrix_col_ind[92] = {0, 1, 2,  // 0
-                                    0, 1, 3,  // 1
-                                    0, 2, 3, 4,  // 2
-                                    1, 2, 3, 5,
-                                    2, 4, 5, 6,  // 4
-                                    3, 4, 5, 7,
-                                    4, 6, 7, 8,  // 6
-                                    5, 6, 7, 9,
-                                    6, 8, 9, 10,  // 8
-                                    7, 8, 9, 11,
-                                    8, 10, 11, 12,  // 10
-                                    9, 10, 11, 13,
-                                    10, 12, 13, 14,  // 12
-                                    11, 12, 13, 15,
-                                    12, 14, 15, 16,  // 14
-                                    13, 14, 15, 17,
-                                    14, 16, 17, 18,  // 16
-                                    15, 16, 17, 19,
-                                    16, 18, 19, 20,  // 18
-                                    17, 18, 19, 21,
-                                    18, 20, 21, 22,
-                                    19, 20, 21, 23,
-                                    20, 22, 23,
-                                    21, 22, 23};
-    double adjMatrix_areaValues[92]= {32.5, 2.5, 25,
-                                        2.5, 32.5, 25,
-                                        25, 6.75, 2.25, 25,
-                                        25, 2.25, 6.75, 25,
-                                        25, 6.075, 2.025, 25,
-                                        25, 2.025, 6.075, 25,
-                                        25, 5.4675, 1.8225, 25,
-                                        25, 1.8225, 5.4675, 25,
-                                        25, 6.01425, 2.00475, 25,
-                                        25, 2.00475, 6.01425, 25,
-                                        25, 6.615675, 2.205225, 25,
-                                        25, 2.205225, 6.615675, 25,
-                                        25, 5.9541075, 1.9847025, 25,
-                                        25, 1.9847025, 5.9541075, 25,
-                                        25, 5.35869675, 1.78623225, 25,
-                                        25, 1.78623225, 5.35869675, 25,
-                                        25, 5.894566425, 1.964855475, 25,
-                                        25, 1.964855475, 5.894566425, 25,
-                                        25, 6.4840230675, 2.1613410225, 25,
-                                        25, 2.1613410225, 6.4840230675, 25,
-                                        25, 7.1324253743, 2.3774751248, 25,
-                                        25, 2.3774751248, 7.1324253743, 25,
-                                        25, 32.5, 2.5,
-                                        25, 2.5, 32.5};
+                                  0, 1, 3,  // 1
+                                  0, 2, 3, 4,  // 2
+                                  1, 2, 3, 5,
+                                  2, 4, 5, 6,  // 4
+                                  3, 4, 5, 7,
+                                  4, 6, 7, 8,  // 6
+                                  5, 6, 7, 9,
+                                  6, 8, 9, 10,  // 8
+                                  7, 8, 9, 11,
+                                  8, 10, 11, 12,  // 10
+                                  9, 10, 11, 13,
+                                  10, 12, 13, 14,  // 12
+                                  11, 12, 13, 15,
+                                  12, 14, 15, 16,  // 14
+                                  13, 14, 15, 17,
+                                  14, 16, 17, 18,  // 16
+                                  15, 16, 17, 19,
+                                  16, 18, 19, 20,  // 18
+                                  17, 18, 19, 21,
+                                  18, 20, 21, 22,
+                                  19, 20, 21, 23,
+                                  20, 22, 23,
+                                  21, 22, 23};
+    double adjMatrix_areaValues[92] = {32.5, 2.5, 25,
+                                       2.5, 32.5, 25,
+                                       25, 6.75, 2.25, 25,
+                                       25, 2.25, 6.75, 25,
+                                       25, 6.075, 2.025, 25,
+                                       25, 2.025, 6.075, 25,
+                                       25, 5.4675, 1.8225, 25,
+                                       25, 1.8225, 5.4675, 25,
+                                       25, 6.01425, 2.00475, 25,
+                                       25, 2.00475, 6.01425, 25,
+                                       25, 6.615675, 2.205225, 25,
+                                       25, 2.205225, 6.615675, 25,
+                                       25, 5.9541075, 1.9847025, 25,
+                                       25, 1.9847025, 5.9541075, 25,
+                                       25, 5.35869675, 1.78623225, 25,
+                                       25, 1.78623225, 5.35869675, 25,
+                                       25, 5.894566425, 1.964855475, 25,
+                                       25, 1.964855475, 5.894566425, 25,
+                                       25, 6.4840230675, 2.1613410225, 25,
+                                       25, 2.1613410225, 6.4840230675, 25,
+                                       25, 7.1324253743, 2.3774751248, 25,
+                                       25, 2.3774751248, 7.1324253743, 25,
+                                       25, 32.5, 2.5,
+                                       25, 2.5, 32.5};
     long numberOfFineAnisotropicCompliantCells = 24;
     long arrayOfFineAnisotropicCompliantCells[24] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                                       19, 20, 21, 22, 23};
+                                                     19, 20, 21, 22, 23};
     long numberOfAnisotropicLinesPOne_size = numberOfFineAnisotropicCompliantCells;
     long agglomerationLines_size = numberOfFineAnisotropicCompliantCells;
 
-    long * agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
-    long * agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
+    long *agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
+    long *agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
     bool verbose = false;
 
     long indCoarseCell = 0;
-    long numberOfFineAgglomeratedCells=0;
+    long numberOfFineAgglomeratedCells = 0;
     long arrayOfFineAnisotropicCompliantCells_size = numberOfFineCells;
     long agglomerationLines_Idx_size = numberOfFineCells;
 
-    long sizes[10]={numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                    numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
+    long sizes[10] = {numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
 
 
 //    cout<<"Before call of computeAnisotropicLine"<<endl;
-    computeAnisotropicLine( sizes,
-                            adjMatrix_row_ptr,
-                            adjMatrix_col_ind,
-                            adjMatrix_areaValues,
-                            arrayOfFineAnisotropicCompliantCells,
-                            agglomerationLines_Idx,
-                            agglomerationLines,
-                            verbose);
+    computeAnisotropicLine(sizes,
+                           adjMatrix_row_ptr,
+                           adjMatrix_col_ind,
+                           adjMatrix_areaValues,
+                           arrayOfFineAnisotropicCompliantCells,
+                           agglomerationLines_Idx,
+                           agglomerationLines,
+                           verbose);
 //    cout<<"After call of computeAnisotropicLine"<<endl;
     //agglomerationLines_Idx, agglomerationLines = Util.convertFineAgglomerationLinesToFineAgglomerationLines_arrays(numberOfFineCells, fineAgglomerationLines)
-    assert(numberOfFineAnisotropicCompliantCells==24);
+    assert(numberOfFineAnisotropicCompliantCells == 24);
 //    cout<<"sizes_2[3] "<<sizes_2[3]<< endl;
 //    cout<<"sizes_2[4] "<<sizes_2[4]<< endl;
-    assert(3==sizes[8]);  // number of anisotropic lines
-    assert(24==sizes[9]);  // number of cells in these lines
+    assert(3 == sizes[8]);  // number of anisotropic lines
+    assert(24 == sizes[9]);  // number of cells in these lines
     long ref_agglomerationLines_Idx_size = 3;
     long ref_agglomerationLines_size = 24;
-    long ref_agglomerationLines_Idx[3] ={0, 12, 24};
-    long ref_agglomerationLines[24]={23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0};
-    for (int i=0;i<ref_agglomerationLines_Idx_size; i++)
-    {
+    long ref_agglomerationLines_Idx[3] = {0, 12, 24};
+    long ref_agglomerationLines[24] = {23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0};
+    for (int i = 0; i < ref_agglomerationLines_Idx_size; i++) {
 //        cout<<agglomerationLines_Idx_2[i]<<", ";
-        assert(ref_agglomerationLines_Idx[i]==agglomerationLines_Idx[i]);
+        assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
     }
 //    cout<<endl;
-    for (int i=0;i<ref_agglomerationLines_size; i++)
-    {
+    for (int i = 0; i < ref_agglomerationLines_size; i++) {
 //        cout<<agglomerationLines_2[i]<<", ";
 //        if ((i+1)%12==0)
 //        {
 //            cout<<endl;
 //        }
-        assert(ref_agglomerationLines[i]==agglomerationLines[i]);
+        assert(ref_agglomerationLines[i] == agglomerationLines[i]);
     }
 //    cout<<endl;
     delete[] agglomerationLines_Idx;
@@ -7901,56 +7904,56 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends(
 
     long adjMatrix_col_ind_size = 92;
     long adjMatrix_col_ind[92] = {0, 1, 2,  // 0
-                                    0, 1, 3,  // 1
-                                    0, 2, 3, 4,  // 2
-                                    1, 2, 3, 5,
-                                    2, 4, 5, 6,  // 4
-                                    3, 4, 5, 7,
-                                    4, 6, 7, 8,  // 6
-                                    5, 6, 7, 9,
-                                    6, 8, 9, 10,  // 8
-                                    7, 8, 9, 11,
-                                    8, 10, 11, 12,  // 10
-                                    9, 10, 11, 13,
-                                    10, 12, 13, 14,  // 12
-                                    11, 12, 13, 15,
-                                    12, 14, 15, 16,  // 14
-                                    13, 14, 15, 17,
-                                    14, 16, 17, 18,  // 16
-                                    15, 16, 17, 19,
-                                    16, 18, 19, 20,  // 18
-                                    17, 18, 19, 21,
-                                    18, 20, 21, 22,
-                                    19, 20, 21, 23,
-                                    20, 22, 23,
-                                    21, 22, 23};
+                                  0, 1, 3,  // 1
+                                  0, 2, 3, 4,  // 2
+                                  1, 2, 3, 5,
+                                  2, 4, 5, 6,  // 4
+                                  3, 4, 5, 7,
+                                  4, 6, 7, 8,  // 6
+                                  5, 6, 7, 9,
+                                  6, 8, 9, 10,  // 8
+                                  7, 8, 9, 11,
+                                  8, 10, 11, 12,  // 10
+                                  9, 10, 11, 13,
+                                  10, 12, 13, 14,  // 12
+                                  11, 12, 13, 15,
+                                  12, 14, 15, 16,  // 14
+                                  13, 14, 15, 17,
+                                  14, 16, 17, 18,  // 16
+                                  15, 16, 17, 19,
+                                  16, 18, 19, 20,  // 18
+                                  17, 18, 19, 21,
+                                  18, 20, 21, 22,
+                                  19, 20, 21, 23,
+                                  20, 22, 23,
+                                  21, 22, 23};
     double adjMatrix_areaValues[92] = {100, 25, 25,
-                                         25, 100, 25,
-                                         25, 6.75, 2.25, 25,
-                                         25, 2.25, 6.75, 25,
-                                         25, 6.075, 2.025, 25,
-                                         25, 2.025, 6.075, 25,
-                                         25, 5.4675, 1.8225, 25,
-                                         25, 1.8225, 5.4675, 25,
-                                         25, 6.01425, 2.00475, 25,
-                                         25, 2.00475, 6.01425, 25,
-                                         25, 6.615675, 2.205225, 25,
-                                         25, 2.205225, 6.615675, 25,
-                                         25, 5.9541075, 1.9847025, 25,
-                                         25, 1.9847025, 5.9541075, 25,
-                                         25, 5.35869675, 1.78623225, 25,
-                                         25, 1.78623225, 5.35869675, 25,
-                                         25, 5.894566425, 1.964855475, 25,
-                                         25, 1.964855475, 5.894566425, 25,
-                                         25, 6.4840230675, 2.1613410225, 25,
-                                         25, 2.1613410225, 6.4840230675, 25,
-                                         25, 75, 25, 25,
-                                         25, 25, 75, 25,
-                                         25, 100, 25,
-                                         25, 25, 100,};
+                                       25, 100, 25,
+                                       25, 6.75, 2.25, 25,
+                                       25, 2.25, 6.75, 25,
+                                       25, 6.075, 2.025, 25,
+                                       25, 2.025, 6.075, 25,
+                                       25, 5.4675, 1.8225, 25,
+                                       25, 1.8225, 5.4675, 25,
+                                       25, 6.01425, 2.00475, 25,
+                                       25, 2.00475, 6.01425, 25,
+                                       25, 6.615675, 2.205225, 25,
+                                       25, 2.205225, 6.615675, 25,
+                                       25, 5.9541075, 1.9847025, 25,
+                                       25, 1.9847025, 5.9541075, 25,
+                                       25, 5.35869675, 1.78623225, 25,
+                                       25, 1.78623225, 5.35869675, 25,
+                                       25, 5.894566425, 1.964855475, 25,
+                                       25, 1.964855475, 5.894566425, 25,
+                                       25, 6.4840230675, 2.1613410225, 25,
+                                       25, 2.1613410225, 6.4840230675, 25,
+                                       25, 75, 25, 25,
+                                       25, 25, 75, 25,
+                                       25, 100, 25,
+                                       25, 25, 100,};
     long numberOfFineAnisotropicCompliantCells = 18;
     long arrayOfFineAnisotropicCompliantCells[18] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                                       19};
+                                                     19};
     long numberOfAnisotropicLinesPOne_size = numberOfFineAnisotropicCompliantCells;
     long agglomerationLines_size = numberOfFineAnisotropicCompliantCells;
 
@@ -7960,16 +7963,16 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends(
     bool verbose = 0;
 
     long indCoarseCell = 0;
-    long numberOfFineAgglomeratedCells=0;
+    long numberOfFineAgglomeratedCells = 0;
     long arrayOfFineAnisotropicCompliantCells_size = numberOfFineCells;
     long agglomerationLines_Idx_size = numberOfFineCells;
 
-    long sizes[10]={numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                    numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
+    long sizes[10] = {numberOfFineCells, adjMatrix_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
 
 
 //    cout<<"Before call of computeAnisotropicLine"<<endl;
-    computeAnisotropicLine( sizes,
+    computeAnisotropicLine(sizes,
                            adjMatrix_row_ptr,
                            adjMatrix_col_ind,
                            adjMatrix_areaValues,
@@ -8007,7 +8010,7 @@ int test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends(
 }
 
 
-int test_agglomerate_Anisotropic_One_Level(){
+int test_agglomerate_Anisotropic_One_Level() {
 
     long numberOfFineCells = 10;
     long numberOfFineAgglomeratedCells = 0;
@@ -8016,10 +8019,10 @@ int test_agglomerate_Anisotropic_One_Level(){
     long fineAgglomerationLines_array_Idx_size = 5;
     long fineAgglomerationLines_array_Idx[5] = {0, 3, 4, 6, 10};
     long fineAgglomerationLines_array[10] = {0, 1, 5, 2, 3,
-                                            6, 4, 7, 8, 9};
+                                             6, 4, 7, 8, 9};
 
-    long fineCellToCoarseCell[10]={-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-    bool isFineCellAgglomerated[10]={false, false, false, false, false, false, false, false, false, false};
+    long fineCellToCoarseCell[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    bool isFineCellAgglomerated[10] = {false, false, false, false, false, false, false, false, false, false};
     long AnisotropicCompliantCoarseCells_size = 10;
     long sizes[5] = {fineAgglomerationLines_array_Idx_size, numberOfFineCells, numberOfFineAgglomeratedCells, indCoarseCell, AnisotropicCompliantCoarseCells_size};
 
@@ -8037,42 +8040,37 @@ int test_agglomerate_Anisotropic_One_Level(){
     indCoarseCell = sizes[3];
     AnisotropicCompliantCoarseCells_size = sizes[4];
 
-    assert(numberOfFineAgglomeratedCells==9);
-    assert(indCoarseCell==4);
-    long ref_fineCellToCoarseCell[10]={0, 0, -1, 1, 2, 0, 1, 2, 3, 3};
-    for(int i=0; i<numberOfFineCells;i++)
-    {
+    assert(numberOfFineAgglomeratedCells == 9);
+    assert(indCoarseCell == 4);
+    long ref_fineCellToCoarseCell[10] = {0, 0, -1, 1, 2, 0, 1, 2, 3, 3};
+    for (int i = 0; i < numberOfFineCells; i++) {
 //        cout <<fineCellToCoarseCell[i]<<", ";
         assert(ref_fineCellToCoarseCell[i] == fineCellToCoarseCell[i]);
     }
 //    cout<<endl;
 
-    long ref_AnisotropicCompliantCoarseCells_array[4]={0, 1, 2, 3};
-    for(int i=0; i<AnisotropicCompliantCoarseCells_size;i++)
-    {
+    long ref_AnisotropicCompliantCoarseCells_array[4] = {0, 1, 2, 3};
+    for (int i = 0; i < AnisotropicCompliantCoarseCells_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_AnisotropicCompliantCoarseCells_array[i] == AnisotropicCompliantCoarseCells_array[i]);
     }
 //    cout<<endl;
-    bool ref_isFineCellAgglomerated[10]={true, true, false, true, true, true, true, true, true, true};
-    for(int i=0; i<numberOfFineCells;i++)
-    {
+    bool ref_isFineCellAgglomerated[10] = {true, true, false, true, true, true, true, true, true, true};
+    for (int i = 0; i < numberOfFineCells; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_isFineCellAgglomerated[i] == isFineCellAgglomerated[i]);
     }
 //    cout<<endl;
-    assert(fineAgglomerationLines_array_Idx_size-1==3);
+    assert(fineAgglomerationLines_array_Idx_size - 1 == 3);
 
-    long ref_fineAgglomerationLines_array_Idx[4]={0, 1, 2, 4};
-    for(int i=0; i<fineAgglomerationLines_array_Idx_size;i++)
-    {
+    long ref_fineAgglomerationLines_array_Idx[4] = {0, 1, 2, 4};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_fineAgglomerationLines_array_Idx[i] == fineAgglomerationLines_array_Idx[i]);
     }
 //    cout<<endl;
-    long ref_fineAgglomerationLines_array[4]={0, 1, 2, 3};
-    for(int i=0; i<fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size-1];i++)
-    {
+    long ref_fineAgglomerationLines_array[4] = {0, 1, 2, 3};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_fineAgglomerationLines_array[i] == fineAgglomerationLines_array[i]);
     }
@@ -8122,33 +8120,29 @@ int test_agglomerate_Anisotropic_One_Level_2() {
     }
 //    cout<<endl;
 
-    long ref_AnisotropicCompliantCoarseCells_array[9]={1, 2, 3, 4, 5, 6, 7, 8, 9};
-    for(int i=0; i<AnisotropicCompliantCoarseCells_size;i++)
-    {
+    long ref_AnisotropicCompliantCoarseCells_array[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    for (int i = 0; i < AnisotropicCompliantCoarseCells_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_AnisotropicCompliantCoarseCells_array[i] == AnisotropicCompliantCoarseCells_array[i]);
     }
 //    cout<<endl;
-    bool ref_isFineCellAgglomerated[21]={true, true, false, true, true, true, true, true, true, true,
-                                         true, true, true, true, true, true, true, true, true, true, true};
-    for(int i=0; i<numberOfFineCells;i++)
-    {
+    bool ref_isFineCellAgglomerated[21] = {true, true, false, true, true, true, true, true, true, true,
+                                           true, true, true, true, true, true, true, true, true, true, true};
+    for (int i = 0; i < numberOfFineCells; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_isFineCellAgglomerated[i] == isFineCellAgglomerated[i]);
     }
 //    cout<<endl;
-    assert(fineAgglomerationLines_array_Idx_size-1==5);
+    assert(fineAgglomerationLines_array_Idx_size - 1 == 5);
 
-    long ref_fineAgglomerationLines_array_Idx[6]={0, 3, 4, 5, 7, 9};
-    for(int i=0; i<fineAgglomerationLines_array_Idx_size;i++)
-    {
+    long ref_fineAgglomerationLines_array_Idx[6] = {0, 3, 4, 5, 7, 9};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_fineAgglomerationLines_array_Idx[i] == fineAgglomerationLines_array_Idx[i]);
     }
 //    cout<<endl;
-    long ref_fineAgglomerationLines_array[9]={1, 2, 3, 4, 5, 6, 7, 8, 9};
-    for(int i=0; i<fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size-1];i++)
-    {
+    long ref_fineAgglomerationLines_array[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_fineAgglomerationLines_array[i] == fineAgglomerationLines_array[i]);
     }
@@ -8164,7 +8158,7 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
 
     long fineAgglomerationLines_array_Idx_size = 17;
     long fineAgglomerationLines_array_Idx[17] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36,
-                                                40, 44, 48, 52, 56, 60, 64};
+                                                 40, 44, 48, 52, 56, 60, 64};
     long fineAgglomerationLines_array[64] = {5, 21, 37, 53, 6, 22, 38, 54, 9, 25,
                                              41, 57, 10, 26, 42, 58, 49, 33, 17, 1,
                                              50, 34, 18, 2, 52, 36, 20, 4, 55, 39,
@@ -8176,18 +8170,14 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
     long *fineCellToCoarseCell = new long[64];
     bool *isFineCellAgglomerated = new bool[64];
     long *AnisotropicCompliantCoarseCells_array = new long[64];
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         fineCellToCoarseCell[i] = -1;
         isFineCellAgglomerated[i] = false;
-        AnisotropicCompliantCoarseCells_array[i]=i;
+        AnisotropicCompliantCoarseCells_array[i] = i;
     }
 
     long AnisotropicCompliantCoarseCells_size = 64;
     long sizes[5] = {fineAgglomerationLines_array_Idx_size, numberOfFineCells, numberOfFineAgglomeratedCells, indCoarseCell, AnisotropicCompliantCoarseCells_size};
-
-
-
 
 
     agglomerate_Anisotropic_One_Level_without_list_lines(sizes,
@@ -8201,8 +8191,8 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
     numberOfFineAgglomeratedCells = sizes[2];
     indCoarseCell = sizes[3];
     AnisotropicCompliantCoarseCells_size = sizes[4];
-    cout<<"numberOfFineAgglomeratedCells "<<numberOfFineAgglomeratedCells<<endl;
-    cout<<"indCoarseCell "<<indCoarseCell<<endl;
+    cout << "numberOfFineAgglomeratedCells " << numberOfFineAgglomeratedCells << endl;
+    cout << "indCoarseCell " << indCoarseCell << endl;
     assert(numberOfFineAgglomeratedCells == 64);
     assert(indCoarseCell == 32);
     long ref_fineCellToCoarseCell[64] = {25, 9, 11, 27,
@@ -8228,38 +8218,33 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
         assert(ref_fineCellToCoarseCell[i] == fineCellToCoarseCell[i]);
     }
 
-    long ref_AnisotropicCompliantCoarseCells_array[32]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                                                       17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-    for(int i=0; i<AnisotropicCompliantCoarseCells_size;i++)
-    {
+    long ref_AnisotropicCompliantCoarseCells_array[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                                                          17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+    for (int i = 0; i < AnisotropicCompliantCoarseCells_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_AnisotropicCompliantCoarseCells_array[i] == AnisotropicCompliantCoarseCells_array[i]);
     }
 //    cout<<endl;
-    bool* ref_isFineCellAgglomerated= new bool[64];
-    for(int i=0; i<numberOfFineCells;i++)
-    {
-        ref_isFineCellAgglomerated[i]=true;
+    bool *ref_isFineCellAgglomerated = new bool[64];
+    for (int i = 0; i < numberOfFineCells; i++) {
+        ref_isFineCellAgglomerated[i] = true;
     }
-    for(int i=0; i<numberOfFineCells;i++)
-    {
+    for (int i = 0; i < numberOfFineCells; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_isFineCellAgglomerated[i] == isFineCellAgglomerated[i]);
     }
 //    cout<<endl;
-    assert(fineAgglomerationLines_array_Idx_size-1==16);
+    assert(fineAgglomerationLines_array_Idx_size - 1 == 16);
 
-    long ref_fineAgglomerationLines_array_Idx[17]={0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
-    for(int i=0; i<fineAgglomerationLines_array_Idx_size;i++)
-    {
+    long ref_fineAgglomerationLines_array_Idx[17] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
         assert(ref_fineAgglomerationLines_array_Idx[i] == fineAgglomerationLines_array_Idx[i]);
     }
-    long ref_fineAgglomerationLines_array[32]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                              10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-                                              20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-    for(int i=0; i<fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size-1];i++)
-    {
+    long ref_fineAgglomerationLines_array[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                                 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
         assert(ref_fineAgglomerationLines_array[i] == fineAgglomerationLines_array[i]);
     }
 
@@ -8277,9 +8262,9 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                                   172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                                   321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
                                    3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
@@ -8313,17 +8298,15 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     long array_isOnRidge[24] = {1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62};
@@ -8335,18 +8318,18 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
     long isOnCorner_size = 8;
 
     long isOnFineBnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int minCard = 6;
     int goalCard = 8;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
 
     long checks = 1;
@@ -8354,16 +8337,14 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[64];
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 
-    long *agglomerationLines_Idx= new long[64];
-    long *agglomerationLines= new long[64];
+    long *agglomerationLines_Idx = new long[64];
+    long *agglomerationLines = new long[64];
 
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 //    long numberOfFineCells = sizes[0];
@@ -8380,9 +8361,8 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
     long agglomerationLines_Idx_size = 64;
     long agglomerationLines_size = 64;
 
-    long sizes[10]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
-                    arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
-
+    long sizes[10] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
+                      arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
 
 
     agglomerateOneLevel(sizes,
@@ -8409,32 +8389,32 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
                         maxCard,
                         checks,
                         verbose);
-    cout<<"sizes[0] "<<sizes[0]<<endl;
-    cout<<"sizes[1] "<<sizes[1]<<endl;
-    cout<<"sizes[2] "<<sizes[2]<<endl;
-    cout<<"sizes[3] "<<sizes[3]<<endl;
-    cout<<"sizes[4] "<<sizes[4]<<endl;
-    cout<<"sizes[5] "<<sizes[5]<<endl;
-    cout<<"sizes[6] "<<sizes[6]<<endl;
-    cout<<"sizes[7] "<<sizes[7]<<endl;
-    cout<<"sizes[8] "<<sizes[8]<<endl;
-    cout<<"sizes[9] "<<sizes[9]<<endl;
+    cout << "sizes[0] " << sizes[0] << endl;
+    cout << "sizes[1] " << sizes[1] << endl;
+    cout << "sizes[2] " << sizes[2] << endl;
+    cout << "sizes[3] " << sizes[3] << endl;
+    cout << "sizes[4] " << sizes[4] << endl;
+    cout << "sizes[5] " << sizes[5] << endl;
+    cout << "sizes[6] " << sizes[6] << endl;
+    cout << "sizes[7] " << sizes[7] << endl;
+    cout << "sizes[8] " << sizes[8] << endl;
+    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
-    assert(sizes[2]==8);//indCoarseCell
-    assert(sizes[3]==64);//numberOfFineAgglomeratedCells
-    assert(sizes[4]==24);//isOnValley_size
-    assert(sizes[5]==24);//isOnRidge_size
-    assert(sizes[6]==8);//isOnCorner_size
-    assert(sizes[7]==64);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8]==64);//agglomerationLines_Idx_size
-    assert(sizes[9]==64);//agglomerationLines_size
-
-
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
+    assert(sizes[2] == 8);//indCoarseCell
+    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
+    assert(sizes[4] == 24);//isOnValley_size
+    assert(sizes[5] == 24);//isOnRidge_size
+    assert(sizes[6] == 8);//isOnCorner_size
+    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
+    assert(sizes[8] == 64);//agglomerationLines_Idx_size
+    assert(sizes[9] == 64);//agglomerationLines_size
 
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 7, 7, 6, 6, 7, 7, 6, 6, 3, 3, 4, 4, 3, 3, 4, 4, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0, 5, 5, 2, 2, 5, 5, 2, 2, 1, 1, 0, 0, 1, 1, 0, 0};
+
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 3, 3, 5, 5, 3, 3, 7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 3, 3, 5, 5, 3, 3, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0};
 //    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
 //    for(auto i:fineCellIndicesToCoarseCellIndices){
 //        cout<<i<<", ";
@@ -8454,9 +8434,9 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                                   172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                                   321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
                                    3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
@@ -8490,17 +8470,15 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     long array_isOnRidge[24] = {1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62};
@@ -8512,18 +8490,18 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
     long isOnCorner_size = 8;
 
     long isOnFineBnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int minCard = 6;
     int goalCard = 9;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
 
     long checks = 1;
@@ -8531,16 +8509,14 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[64];
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 
-    long *agglomerationLines_Idx= new long[64];
-    long *agglomerationLines= new long[64];
+    long *agglomerationLines_Idx = new long[64];
+    long *agglomerationLines = new long[64];
 
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 //    long numberOfFineCells = sizes[0];
@@ -8557,9 +8533,8 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
     long agglomerationLines_Idx_size = 64;
     long agglomerationLines_size = 64;
 
-    long sizes[10]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
-                    arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
-
+    long sizes[10] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
+                      arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
 
 
     agglomerateOneLevel(sizes,
@@ -8597,37 +8572,19 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
 //    cout<<"sizes[8] "<<sizes[8]<<endl;
 //    cout<<"sizes[9] "<<sizes[9]<<endl;
 
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
-    assert(sizes[2]==7);//indCoarseCell
-    assert(sizes[3]==64);//numberOfFineAgglomeratedCells
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
+    assert(sizes[2] == 7);//indCoarseCell
+    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
 
-    assert(sizes[4]==24);//isOnValley_size
-    assert(sizes[5]==24);//isOnRidge_size
-    assert(sizes[6]==8);//isOnCorner_size
-    assert(sizes[7]==64);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8]==64);//agglomerationLines_Idx_size
-    assert(sizes[9]==64);//agglomerationLines_size
+    assert(sizes[4] == 24);//isOnValley_size
+    assert(sizes[5] == 24);//isOnRidge_size
+    assert(sizes[6] == 8);//isOnCorner_size
+    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
+    assert(sizes[8] == 64);//agglomerationLines_Idx_size
+    assert(sizes[9] == 64);//agglomerationLines_size
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {6, 6, 6, 6,
-                                                             6, 6, 4, 4,
-                                                             3, 3, 4, 4,
-                                                             3, 3, 3, 4,
-
-                                                             5, 6, 6, 6,
-                                                             5, 6, 4, 4,
-                                                             3, 3, 4, 4,
-                                                             3, 3, 3, 4,
-
-                                                             5, 5, 2, 2,
-                                                             5, 5, 2, 2,
-                                                             1, 1, 0, 0,
-                                                             1, 1, 0, 0,
-
-                                                             5, 5, 2, 2,
-                                                             5, 5, 2, 2,
-                                                             1, 1, 0, 0,
-                                                             1, 1, 0, 0};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {2, 6, 6, 6, 5, 6, 6, 3, 5, 5, 3, 3, 5, 5, 3, 3, 2, 6, 6, 6, 5, 6, 6, 3, 5, 5, 3, 3, 5, 5, 3, 3, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0};
 
 
 
@@ -8650,9 +8607,9 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
     // without CGNS
     long numberOfFineCells = 64;
     long numberOfFineAgglomeratedCells = 0;
-    long adjMatrix_row_ptr[65] = { 0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
-                                   172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
-                                   321, 326, 330, 335, 340, 344};
+    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,
+                                  172, 177, 183, 189, 194, 200, 206, 212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278, 282, 287, 293, 299, 304, 309, 315,
+                                  321, 326, 330, 335, 340, 344};
 
     long adjMatrix_col_ind[344] = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7, 19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10, 22,
                                    3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25, 6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28,
@@ -8686,17 +8643,15 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
 
     double volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                           12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                          12.5, 12.5, 12.5, 12.5, 12.5,12.5, 12.5, 12.5, 125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125};
+                          12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125};
 
     bool isFineCellAgglomerated[64];
-    for (int i=0; i<64; i++)
-    {
-        isFineCellAgglomerated[i]=false;
+    for (int i = 0; i < 64; i++) {
+        isFineCellAgglomerated[i] = false;
     }
     long fineCellIndicesToCoarseCellIndices[64];
-    for (int i=0; i<64; i++)
-    {
-        fineCellIndicesToCoarseCellIndices[i]=-1;
+    for (int i = 0; i < 64; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
     }
 
     long array_isOnRidge[24] = {1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62};
@@ -8708,18 +8663,18 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
     long isOnCorner_size = 8;
 
     long isOnFineBnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
-                           3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-    list<unordered_set<long>> delayedCoarseCells;
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1, 1, 2,
+                            3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+    list <unordered_set<long>> delayedCoarseCells;
     int thresholdCard = 3;
     int minCard = 6;
     int goalCard = 8;
     int maxCard = 10;
 
-    int numberOfInts =4;
+    int numberOfInts = 4;
 
-    long indCoarseCell =0;
+    long indCoarseCell = 0;
 
 
     long checks = 1;
@@ -8727,16 +8682,14 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[64];
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 
-    long *agglomerationLines_Idx= new long[64];
-    long *agglomerationLines= new long[64];
+    long *agglomerationLines_Idx = new long[64];
+    long *agglomerationLines = new long[64];
 
-    for (int i=0; i<64;i++)
-    {
+    for (int i = 0; i < 64; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
 //    long numberOfFineCells = sizes[0];
@@ -8753,9 +8706,8 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
     long agglomerationLines_Idx_size = 64;
     long agglomerationLines_size = 64;
 
-    long sizes[10]={64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
-                    arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
-
+    long sizes[10] = {64, 344, indCoarseCell, numberOfFineAgglomeratedCells, isOnValley_size, isOnRidge_size, isOnCorner_size,
+                      arrayOfFineAnisotropicCompliantCells_size, agglomerationLines_Idx_size, agglomerationLines_size};
 
 
     agglomerateOneLevel(sizes,
@@ -8782,48 +8734,30 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
                         maxCard,
                         checks,
                         verbose);
-    cout<<"sizes[0] "<<sizes[0]<<endl;
-    cout<<"sizes[1] "<<sizes[1]<<endl;
-    cout<<"sizes[2] "<<sizes[2]<<endl;
-    cout<<"sizes[3] "<<sizes[3]<<endl;
-    cout<<"sizes[4] "<<sizes[4]<<endl;
-    cout<<"sizes[5] "<<sizes[5]<<endl;
-    cout<<"sizes[6] "<<sizes[6]<<endl;
-    cout<<"sizes[7] "<<sizes[7]<<endl;
-    cout<<"sizes[8] "<<sizes[8]<<endl;
-    cout<<"sizes[9] "<<sizes[9]<<endl;
+    cout << "sizes[0] " << sizes[0] << endl;
+    cout << "sizes[1] " << sizes[1] << endl;
+    cout << "sizes[2] " << sizes[2] << endl;
+    cout << "sizes[3] " << sizes[3] << endl;
+    cout << "sizes[4] " << sizes[4] << endl;
+    cout << "sizes[5] " << sizes[5] << endl;
+    cout << "sizes[6] " << sizes[6] << endl;
+    cout << "sizes[7] " << sizes[7] << endl;
+    cout << "sizes[8] " << sizes[8] << endl;
+    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0]==64);
-    assert(sizes[1]==344);
-    assert(sizes[2]==18);//indCoarseCell
-    assert(sizes[3]==64);//numberOfFineAgglomeratedCells
+    assert(sizes[0] == 64);
+    assert(sizes[1] == 344);
+    assert(sizes[2] == 18);//indCoarseCell
+    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
 
-    assert(sizes[4]==24);//isOnValley_size
-    assert(sizes[5]==24);//isOnRidge_size
-    assert(sizes[6]==8);//isOnCorner_size
-    assert(sizes[7]==16);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8]==17);//agglomerationLines_Idx_size
-    assert(sizes[9]==16);//agglomerationLines_size
+    assert(sizes[4] == 24);//isOnValley_size
+    assert(sizes[5] == 24);//isOnRidge_size
+    assert(sizes[6] == 8);//isOnCorner_size
+    assert(sizes[7] == 16);//arrayOfFineAnisotropicCompliantCells_size
+    assert(sizes[8] == 17);//agglomerationLines_Idx_size
+    assert(sizes[9] == 16);//agglomerationLines_size
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {3, 5, 4, 2,
-                                                             9, 13, 12, 8,
-                                                             7, 15, 14, 6,
-                                                             1, 11, 10, 0,
-
-                                                             3, 5, 4, 2,
-                                                             9, 13, 12, 8,
-                                                             7, 15, 14, 6,
-                                                             1, 11, 10, 0,
-
-                                                             3, 5, 4, 2,
-                                                             9, 13, 12, 8,
-                                                             7, 15, 14, 6,
-                                                             1, 11, 10, 0,
-
-                                                             17, 17, 17, 17,
-                                                             17, 17, 16, 16,
-                                                             17, 16, 16, 16,
-                                                             17, 16, 16, 16};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 17, 17, 17, 17, 17, 17, 16, 16, 17, 16, 16, 16, 17, 16, 16, 16};
 //            1, 6, 5, 2,
 //                                                             8, 13, 14, 9,
 //                                                             10, 12, 15, 11,
@@ -8859,29 +8793,25 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
 
     long AnisotropicCompliantCoarseCells_size = sizes[7];
 
-    long ref_AnisotropicCompliantCoarseCells_array[16]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    for(int i=0; i<AnisotropicCompliantCoarseCells_size;i++)
-    {
+    long ref_AnisotropicCompliantCoarseCells_array[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    for (int i = 0; i < AnisotropicCompliantCoarseCells_size; i++) {
 //        cout <<arrayOfFineAnisotropicCompliantCells[i]<<", ";
         assert(ref_AnisotropicCompliantCoarseCells_array[i] == arrayOfFineAnisotropicCompliantCells[i]);
     }
 //    cout<<endl;
 
     long fineAgglomerationLines_array_Idx_size = sizes[8];
-    assert(fineAgglomerationLines_array_Idx_size-1==16);
+    assert(fineAgglomerationLines_array_Idx_size - 1 == 16);
 
-    long ref_agglomerationLines_Idx[17]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    for(int i=0; i<fineAgglomerationLines_array_Idx_size;i++)
-    {
+    long ref_agglomerationLines_Idx[17] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
 //        cout <<agglomerationLines_Idx[i]<<", ";
         assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
     }
-    long ref_fineAgglomerationLines_array[16]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    for(int i=0; i<agglomerationLines_Idx[fineAgglomerationLines_array_Idx_size-1];i++)
-    {
+    long ref_fineAgglomerationLines_array[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    for (int i = 0; i < agglomerationLines_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
         assert(ref_fineAgglomerationLines_array[i] == agglomerationLines[i]);
     }
-
 
 
     return 1;

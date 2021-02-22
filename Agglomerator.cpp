@@ -419,6 +419,10 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
         return ;
     }
 
+    if (fineAgglomerationLines_array_Idx_size == 1){
+        return ;
+    }
+
     //new_Lines_index = np.zeros(len(fineAgglomerationLines_array_Idx), dtype=np.int32)
     long* new_Lines_index = new long[fineAgglomerationLines_array_Idx_size];
     for(long iNLI=0; iNLI<fineAgglomerationLines_array_Idx_size; iNLI++)
