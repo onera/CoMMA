@@ -4,14 +4,13 @@
 #include "Agglomerator.h"
 #include "Agglomerator_Isotropic.h"
 #include "tests.h"
+#include "tests_agglomerate.h"
 using namespace std;
 
 
 int main() {
-    cout<<"toto"<<endl;
-    std::cout << "Hello, World!" << std::endl;
-
-
+    cout<<"Beginning of tests"<<endl;
+    /*
 //    unordered_map<long, double> m;
 //    m[0] = 19.3;
 //    m[1] = 0.3;
@@ -47,12 +46,6 @@ int main() {
 //        cout<<*fLIt<<" ";
 //    }
 //    cout<<"front= "<< toto.front()<<endl;
-
-
-
-
-
-//
 
 
     test_FindSeedViaFrontalMethod_025();
@@ -107,11 +100,8 @@ int main() {
 
     test_CheckConnectivity_MGridGenDoc_example();
     test_PartsList();
-//    cout<<"\ntest_PartsList_length_1"<<endl;
     test_PartsList_length_1();
-//    cout<<"\ntest_PartsList_length_2"<<endl;
     test_PartsList_length_2();
-//    cout<<"\ntest_PartsList_length_3"<<endl;
     test_PartsList_length_3();
 //
 //    unordered_set<int> set_1;
@@ -172,26 +162,16 @@ int main() {
     test_removeDeletedCoarseCells_Deletion_of_Coarse_Element();
     test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_2();
     test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_3();
-//    cout<<"\nCall of test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False"<<endl;
     test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False();
-//    cout<<"\nCall of test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True"<<endl;
     test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True();
-//    cout<<"\nCall of test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4"<<endl;
     test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4();
-//    cout<<"\nCall of test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4"<<endl;
     test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4();
     test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Case_1"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Case_1();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Case_3"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Case_3();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1_isMutable_False"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1_isMutable_False();
-//    cout<<"\nCall of test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_3"<<endl;
     test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_3();
     test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0();
     test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2();
@@ -313,6 +293,9 @@ int main() {
     test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8();
     test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9();
     test_agglomerateOneLevel_Box_5x5x5_Anisotropic();
+     */
+    cout<<"\ntest_agglomerateOneLevel_MGridGen"<<endl;
+    test_agglomerateOneLevel_MGridGen();
     cout<<"Tout s'est bien fini!"<<endl;
     return 0;
 }
