@@ -8191,8 +8191,8 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
     numberOfFineAgglomeratedCells = sizes[2];
     indCoarseCell = sizes[3];
     AnisotropicCompliantCoarseCells_size = sizes[4];
-    cout << "numberOfFineAgglomeratedCells " << numberOfFineAgglomeratedCells << endl;
-    cout << "indCoarseCell " << indCoarseCell << endl;
+//    cout << "numberOfFineAgglomeratedCells " << numberOfFineAgglomeratedCells << endl;
+//    cout << "indCoarseCell " << indCoarseCell << endl;
     assert(numberOfFineAgglomeratedCells == 64);
     assert(indCoarseCell == 32);
     long ref_fineCellToCoarseCell[64] = {25, 9, 11, 27,
@@ -8257,3 +8257,159 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
 }
 
 
+
+int test_read_agglomeration_datas_from_file() {
+
+    // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
+    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_10_24.txt";
+    long *fineCellToCoarseCell = new long[64];
+    long sizes[10];
+    long* adjMatrix_row_ptr= NULL;
+    long* adjMatrix_col_ind= NULL;
+    double* adjMatrix_areaValues= NULL;
+    double* volumes= NULL;
+    long* arrayOfFineAnisotropicCompliantCells= NULL;
+    long* isOnFineBnd_l= NULL;
+    long* array_isOnValley= NULL;
+    long* array_isOnRidge= NULL;
+    long* array_isOnCorner= NULL;
+
+    long* isFirstAgglomeration_long = new long[1];
+    long* isAnisotropic_long = new long[1];
+    long* agglomerationLines_Idx = NULL;
+    long* agglomerationLines = NULL;
+
+    long* dimension = new long[1];
+    long* goalCard = new long[1];
+    long* minCard = new long[1];
+    long* maxCard = new long[1];
+
+    read_agglomeration_datas_from_file(filename,
+                                       sizes,
+                                       adjMatrix_row_ptr,
+                                       adjMatrix_col_ind,
+                                       adjMatrix_areaValues,
+                                       volumes,
+
+                                       arrayOfFineAnisotropicCompliantCells,
+
+                                       isOnFineBnd_l,
+                                       array_isOnValley,
+                                       array_isOnRidge,
+                                       array_isOnCorner,
+                                       isFirstAgglomeration_long,
+                                       isAnisotropic_long,
+                                       agglomerationLines_Idx,
+                                       agglomerationLines,
+                                       dimension, goalCard, minCard, maxCard
+                                       );
+
+    long numberOfFineCells = sizes[0];
+    long adjMatrix_row_ptr_size = numberOfFineCells + 1;
+    long adjMatrix_col_ind_size = sizes[1];
+    long adjMatrix_areaValues_size = sizes[1];
+
+    // Rmk: sizes[2] ==indCoarseCell
+    long numberOfFineAgglomeratedCells = sizes[3];
+    long isOnValley_size = sizes[4];
+    long isOnRidge_size = sizes[5];
+    long isOnCorner_size = sizes[6];
+    long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
+    long agglomerationLines_Idx_size = sizes[8];
+    long agglomerationLines_size = sizes[9];
+
+
+    // MGridGen Test case
+    int ref_numberOfFineCells = 10;
+    long ref_adjMatrix_col_ind_size = 24;
+
+    long ref_adjMatrix_row_ptr[11] = {0, 3, 5, 7, 9, 11, 12, 15, 18, 21, 24};
+    long ref_adjMatrix_col_ind[24] = {0, 1, 2, 0, 1,
+                                  0, 2, 3, 4, 3,
+                                  4, 5, 6, 7, 8,
+                                  6, 7, 9, 6, 8, 9, 7,8, 9};
+    double ref_adjMatrix_areaValues[24] = {1., 1., 1., 1., 2., 1., 2., 2., 1., 1., 2., 3., 2., 1., 1., 1., 2.,
+                                       1., 1., 2., 1., 1., 1., 2.};
+
+    double ref_volumes[10] = {1.0, 1.0, 1.0, 1.0, 1.0,
+                          1.0, 1.0, 1.0, 1.0, 1.0};
+    long ref_isOnBnd[10] = {1, 2, 2, 2, 2,
+                        3, 2, 2, 2, 2};
+
+    long ref_agglomerationLines_Idx[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    long ref_agglomerationLines[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    long *ref_arrayOfFineAnisotropicCompliantCells = new long[ref_numberOfFineCells];
+    for (int i = 0; i < ref_numberOfFineCells; i++) {
+        ref_arrayOfFineAnisotropicCompliantCells[i] = i;
+    }
+
+    long ref_isOnRidge_size = 1;
+    long ref_isOnValley_size = 8;
+    long ref_isOnCorner_size = 1;
+
+    long ref_array_isOnRidge[1] = {0};
+    long ref_array_isOnValley[8] = {1, 2, 3, 4, 6, 7, 8, 9};
+    long ref_array_isOnCorner[1] = {5};
+
+    long ref_isFirstAgglomeration = 1;
+    long ref_isAnisotropic = 0;
+    long ref_dimension = 2;
+
+    int ref_thresholdCard = 3;
+    int ref_minCard = 3;
+    int ref_goalCard = 4;
+    int ref_maxCard = 5;
+
+    // Checks
+    assert(ref_numberOfFineCells == numberOfFineCells);
+    assert(ref_adjMatrix_col_ind_size == adjMatrix_col_ind_size);
+
+    assert(ref_isFirstAgglomeration == isFirstAgglomeration_long[0]);
+    assert(ref_isAnisotropic == isAnisotropic_long[0]);
+
+    assert(ref_dimension == dimension[0]);
+    assert(ref_goalCard == goalCard[0]);
+    assert(ref_minCard == minCard[0]);
+    assert(ref_maxCard == maxCard[0]);
+
+    for (int i = 0; i < numberOfFineCells+1; i++) {
+        assert(ref_adjMatrix_row_ptr[i] == adjMatrix_row_ptr[i]);
+    }
+    for (int i = 0; i < ref_adjMatrix_col_ind_size; i++) {
+        assert(ref_adjMatrix_col_ind[i] == adjMatrix_col_ind[i]);
+    }
+
+    for (int i = 0; i < ref_adjMatrix_col_ind_size; i++) {
+        assert(ref_adjMatrix_areaValues[i] == adjMatrix_areaValues[i]);
+    }
+
+    for (int i = 0; i < numberOfFineCells; i++) {
+        assert(ref_volumes[i] == volumes[i]);
+    }
+
+    for (int i = 0; i < numberOfFineCells; i++) {
+        assert(ref_arrayOfFineAnisotropicCompliantCells[i] == arrayOfFineAnisotropicCompliantCells[i]);
+    }
+    for (int i = 0; i < numberOfFineCells; i++) {
+        assert(ref_isOnBnd[i] == isOnFineBnd_l[i]);
+    }
+    for (int i = 0; i < ref_isOnValley_size; i++) {
+        assert(ref_array_isOnValley[i] == array_isOnValley[i]);
+    }
+
+    for (int i = 0; i < ref_isOnRidge_size; i++) {
+        assert(ref_array_isOnRidge[i] == array_isOnRidge[i]);
+    }
+    for (int i = 0; i < ref_isOnCorner_size; i++) {
+        assert(ref_array_isOnCorner[i] == array_isOnCorner[i]);
+    }
+    for (int i = 0; i < numberOfFineCells; i++) {
+        assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
+    }
+    for (int i = 0; i < numberOfFineCells; i++) {
+        assert(ref_agglomerationLines[i] == agglomerationLines[i]);
+    }
+
+    return 1;
+}

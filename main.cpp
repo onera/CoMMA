@@ -10,7 +10,7 @@ using namespace std;
 
 int main() {
     cout<<"Beginning of tests"<<endl;
-    /*
+
 //    unordered_map<long, double> m;
 //    m[0] = 19.3;
 //    m[1] = 0.3;
@@ -293,9 +293,12 @@ int main() {
     test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8();
     test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9();
     test_agglomerateOneLevel_Box_5x5x5_Anisotropic();
-     */
+
     cout<<"\ntest_agglomerateOneLevel_MGridGen"<<endl;
     test_agglomerateOneLevel_MGridGen();
+    test_agglomerateOneLevel_disconnected();
+    test_read_agglomeration_datas_from_file();
+
     cout<<"Tout s'est bien fini!"<<endl;
     return 0;
 }

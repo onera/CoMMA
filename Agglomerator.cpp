@@ -505,7 +505,7 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
         new_Lines_index[i_New_numberOfLines] = iCountCoarseCell;
 
     }  // end: for (int i=0; i<fineAgglomerationLines_array_Idx_size -1; i++){
-    cout<<"End of loop"<<endl;
+//    cout<<"End of loop"<<endl;
 
     // update of arrays fineAgglomerationLines_array_Idx, fineAgglomerationLines_array for the new coarse level!
     for(long i=0; i<i_New_numberOfLines; i++){
@@ -521,7 +521,7 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
     }
 
     fineAgglomerationLines_array_Idx[i_New_numberOfLines] = new_Lines_index[i_New_numberOfLines];
-    cout<<"End of update"<<endl;
+//    cout<<"End of update"<<endl;
 
     fineAgglomerationLines_array_Idx_size = i_New_numberOfLines+1;
     // fineAgglomerationLines_array_Idx.resize((i_New_numberOfLines+1,), refcheck=False)
@@ -534,15 +534,15 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
         set<long>::const_iterator send = setOfAnisotropicCompliantCoarseCells.end ();
         long i=0;
         for(; sit != send; sit++){
-            cout<<"i = "<<i<<endl;
+//            cout<<"i = "<<i<<endl;
             AnisotropicCompliantCoarseCells_array[i] = * sit ;
             ++i;
         }
         AnisotropicCompliantCoarseCells_size = setOfAnisotropicCompliantCoarseCells.size();
 
     }
-    cout<<"numberOfFineAgglomeratedCells "<<numberOfFineAgglomeratedCells<<endl;
-    cout<<"indCoarseCell "<<indCoarseCell<<endl;
+//    cout<<"numberOfFineAgglomeratedCells "<<numberOfFineAgglomeratedCells<<endl;
+//    cout<<"indCoarseCell "<<indCoarseCell<<endl;
 
     //return numberOfFineAgglomeratedCells, indCoarseCell, array_AnisotropicCompliantCoarseCells
     delete[] new_Lines_index;
