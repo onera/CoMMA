@@ -444,7 +444,7 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
     long iCount;
     // Process of every agglomeration lines:
     for (long i=0; i<fineAgglomerationLines_array_Idx_size -1; i++){
-        cout<<"i= "<<i<<endl;
+//        cout<<"i= "<<i<<endl;
         ind = fineAgglomerationLines_array_Idx[i];
         indPOne = fineAgglomerationLines_array_Idx[i + 1];
         lineSize = indPOne-ind;

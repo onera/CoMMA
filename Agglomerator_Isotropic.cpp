@@ -20,6 +20,7 @@
 #include <string>
 
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -180,7 +181,7 @@ void agglomerateOneLevel(long *sizes,
             numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
             agglomerationLines_size = agglomerationLines_size;
 
-            cout << "Call of ALM.computeAnisotropicLine" << endl;
+//            cout << "Call of ALM.computeAnisotropicLine" << endl;
             isAnisotropicLines = computeAnisotropicLine(sizes,
 
                                                         adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
@@ -194,8 +195,8 @@ void agglomerateOneLevel(long *sizes,
 //            agglomerationLines_size = sizes[4];
             numberOfAnisotropicLinesPOne_size = sizes[8];
             agglomerationLines_size = sizes[9];
-            cout << "numberOfAnisotropicLinesPOne_size " << numberOfAnisotropicLinesPOne_size << endl;
-            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
+//            cout << "numberOfAnisotropicLinesPOne_size " << numberOfAnisotropicLinesPOne_size << endl;
+//            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
 //          Pas de resize, c'est pas possible avec un tableau
 //            agglomerationLines_Idx.resize((numberOfAnisotropicLinesPOne_size,), refcheck = False)
 //            agglomerationLines.resize((agglomerationLines_size,), refcheck = False)
@@ -206,20 +207,20 @@ void agglomerateOneLevel(long *sizes,
         }
         if (isAnisotropicLines) {
 
-            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
+//            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
 //            long arrayOfCoarseAnisotropicCompliantCells_size = agglomerationLines_size; //np.shape(arrayOfFineAnisotropicCompliantCells)[0]
 //            arrayOfCoarseAnisotropicCompliantCells = np.zeros((arrayOfCoarseAnisotropicCompliantCells_size,), dtype = int)
             agglomerationLines_Idx_size = sizes[8];
-            cout << "sizes[0]= " << sizes[0] << endl;
-            cout << "sizes[1]= " << sizes[1] << endl;
-            cout << "sizes[2]= " << sizes[2] << endl;
-            cout << "sizes[3]= " << sizes[3] << endl;
-            cout << "sizes[4]= " << sizes[4] << endl;
-            cout << "sizes[5]= " << sizes[5] << endl;
-            cout << "sizes[6]= " << sizes[6] << endl;
-            cout << "sizes[7]= " << sizes[7] << endl;
-            cout << "sizes[8]= " << sizes[8] << endl;
-            cout << "sizes[9]= " << sizes[9] << endl;
+//            cout << "sizes[0]= " << sizes[0] << endl;
+//            cout << "sizes[1]= " << sizes[1] << endl;
+//            cout << "sizes[2]= " << sizes[2] << endl;
+//            cout << "sizes[3]= " << sizes[3] << endl;
+//            cout << "sizes[4]= " << sizes[4] << endl;
+//            cout << "sizes[5]= " << sizes[5] << endl;
+//            cout << "sizes[6]= " << sizes[6] << endl;
+//            cout << "sizes[7]= " << sizes[7] << endl;
+//            cout << "sizes[8]= " << sizes[8] << endl;
+//            cout << "sizes[9]= " << sizes[9] << endl;
 
             long sizes_aniso[5] = {agglomerationLines_Idx_size, numberOfFineCells, numberOfFineAgglomeratedCells, indCoarseCell, -1};
 
@@ -227,7 +228,7 @@ void agglomerateOneLevel(long *sizes,
                                                                  agglomerationLines_Idx,
                                                                  agglomerationLines,
                                                                  fineCellToCoarseCell, isFineCellAgglomerated, arrayOfFineAnisotropicCompliantCells);//arrayOfCoarseAnisotropicCompliantCells);
-            cout << "End of agglomerate_Anisotropic_One_Level_without_list_lines" << endl;
+//            cout << "End of agglomerate_Anisotropic_One_Level_without_list_lines" << endl;
 //            agglomerationLines_Idx_size = sizes_aniso[0];
 //            numberOfFineCells = sizes_aniso[1];
 //            numberOfFineAgglomeratedCells = sizes_aniso[2];
@@ -462,12 +463,12 @@ void agglomerate_Isotropic_One_Level_v_2(long *sizes,
                                                          verbose);
         }
     }
-    cout << "\nAfter Second Step : " << endl;
-    cout << "Distribution of isotropic coarse cells : [";//, dict_DistributionOfCardinalOfCoarseElements
-    for (auto iKV:dict_DistributionOfCardinalOfCoarseElements) {
-        cout << "{" << iKV.first << ":" << iKV.second << "}";
-    }
-    cout << "]" << endl;
+//    cout << "\nAfter Second Step : " << endl;
+//    cout << "Distribution of isotropic coarse cells : [";//, dict_DistributionOfCardinalOfCoarseElements
+//    for (auto iKV:dict_DistributionOfCardinalOfCoarseElements) {
+//        cout << "{" << iKV.first << ":" << iKV.second << "}";
+//    }
+//    cout << "]" << endl;
 
     if (checks) {
 
@@ -481,7 +482,7 @@ void agglomerate_Isotropic_One_Level_v_2(long *sizes,
 //            list_tmp_tmp = dict_Coarse_Cells.keys();
 //            nbCoarseElem = max(list_tmp_tmp)
             indCoarseCell = sizes[2];
-            cout << "indCoarseCell " << indCoarseCell << " nbCoarseElem " << nbCoarseElem << endl;
+//            cout << "indCoarseCell " << indCoarseCell << " nbCoarseElem " << nbCoarseElem << endl;
             assert(indCoarseCell == (nbCoarseElem + 1));
         }
         // Phase de verification!
@@ -1338,7 +1339,7 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
 // TODO gerer si on detruit une cellule!
 // TODO Verifier qu'on ne presuppose pas la connectivity!!!!
 
-    cout << "Swap " << iFineCell << " from " << iOrigineCoarseCell << " to " << iDestinationCoarseCell << endl;
+//    cout << "Swap " << iFineCell << " from " << iOrigineCoarseCell << " to " << iDestinationCoarseCell << endl;
     unordered_set<long> set_removedCoarseCells;
 
     int size = dict_Coarse_Elem[iOrigineCoarseCell].size();
@@ -1804,7 +1805,7 @@ void remove_Too_Small_Cells_v2(int thresholdCard,
                         unordered_set<long> set_union_set_tmp_and_unTreatedCells(set_tmp);
                         for (auto iFC_tmp:unTreatedCells) {
                             set_union_set_tmp_and_unTreatedCells.insert(iFC_tmp);
-                        }
+                        }// to avoid to treat untreatedcells
                         if ((ind_of_fine_neighbor != iFineCell) &&
                             (set_union_set_tmp_and_unTreatedCells.count(ind_of_fine_neighbor) == 0)) {
                             // second term is to check that the neighbour does not belong to current incomplete
@@ -1847,7 +1848,19 @@ void remove_Too_Small_Cells_v2(int thresholdCard,
                                 counter++;
                             }
                         }
-                        if (counter < 2) {
+//                        // we want the last index of iFineCell in temporaryList_CoarseElement
+//                        int ind_last_seen_iFineCell = -1;
+//                        for (int i = 0; i < size_temporaryList_CoarseElement; i++) {
+//                            if (temporaryList_CoarseElement[i] == iFineCell) {
+//                                ind_last_seen_iFineCell = i;
+//                            }
+//                        }
+
+                        // ind_last_seen_iFineCell should not be -1
+                        // if ind_last_seen_iFineCell is the last index, we are in trouble-> untreated cell, otherwise another fc was added to temporaryList_CoarseElement
+                        // may be it will solve the problem.
+                        if (counter < sizeOfOriginalCoarseCell) {
+//                        if ( (counter < 2)) {
                             temporaryList_CoarseElement.push_back(iFineCell);
                             size_temporaryList_CoarseElement++;
 //                            cout<<"temporaryList_CoarseElement.size() "<<temporaryList_CoarseElement.size()<<endl;
@@ -1855,7 +1868,7 @@ void remove_Too_Small_Cells_v2(int thresholdCard,
                         } else {
                             // Problematic case!
                             // the current incompleted cell has no (isotropic) neighbour!
-//                            cout<<"add of "<<iFineCell<< " to unTreatedCells"<<endl;
+//                            cout<<"add of "<<iFineCell<< " to unTreatedCells "<<unTreatedCells.size()<<endl;
                             unTreatedCells.insert(iFineCell);
                         }
                     }
@@ -2155,7 +2168,7 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
             matrixAdj_CRS_row_ptr[seed + 1] - matrixAdj_CRS_row_ptr[seed] + isOnFineBnd[seed] - 1;
 //    cout << "numberOfExternalFacesCurrentCoarseCell " << numberOfExternalFacesCurrentCoarseCell << endl;
     while (size_Current_Coarse_Cell < maxInd) {
-//        cout << "size_Current_Coarse_Cell " << size_Current_Coarse_Cell << endl;
+
         double minAR = numeric_limits<double>::max();
         double minAR_surf = numeric_limits<double>::max();
         double minAR_vol = numeric_limits<double>::max();
@@ -2239,7 +2252,7 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
                 }
             }
         }
-        // print "argminAR", argminAR
+//        print "argminAR", argminAR
         numberOfExternalFacesCurrentCoarseCell +=
                 matrixAdj_CRS_row_ptr[argminAR + 1] - matrixAdj_CRS_row_ptr[argminAR] + isOnFineBnd[argminAR] - 1 -
                 2 * maxFacesInCommon;
@@ -2266,7 +2279,7 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
         isFineCellAgglomerated_tmp[argminAR] = true;
         tmp_set.insert(argminAR);
     }
-    cout << "end Loop while" << endl;
+//    cout << "end Loop while" << endl;
     // assert size_Current_Coarse_Cell == self.__goalCard, \
     //     "Pb: wrong number of fine cells in Current Coarse Cell" + str(set_of_fine_cells_for_Current_Coarse_Cell)
     // print "dict_Coarse_Cells_in_Creation",dict_Coarse_Cells_in_Creation
@@ -2330,9 +2343,9 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
             }
             listOfSeeds[valueIsOnBnd].push(iNewSeed);
         }
-        cout << "END of !dict_Neighbours_Of_Seed.empty()" << endl;
+//        cout << "END of !dict_Neighbours_Of_Seed.empty()" << endl;
     } else {
-        cout << "dict_Neighbours_Of_Seed.empty()" << endl;
+//        cout << "dict_Neighbours_Of_Seed.empty()" << endl;
         // else dict_Neighbours_Of_Seed is empty: on a utilise tous les voisins!
         // On en cherche d'autres!
         bool isEmpty = true;
@@ -3123,7 +3136,7 @@ void agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(int Nbsizes,
             maxSize = iKV.first;
         }
     }
-    cout << "maxSize " << maxSize << endl;
+//    cout << "maxSize " << maxSize << endl;
 //    int maxSize = max(dict_Card_Coarse_Cells.keys());
     if (verbose) {
         cout << "\n\n\n__agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo maxSize= " << maxSize << endl;
@@ -3336,12 +3349,16 @@ void agglomerate_Isotropic_Second_Step_Correction(int numberOfInts, long *sizes,
                                                   int thresholdCard,
                                                   bool checks,
                                                   bool verbose) {
+//    cout << "\nagglomerate_Isotropic_Second_Step_Correction    " << endl;
 
     long indCoarseCell = sizes[2];
     long numberOfFineAgglomeratedCells = sizes[3];
 
     int nbIteration = 4;
     for (int i = 0; i < nbIteration; i++) {
+//        cout << "\n\n\n=======================================================================" << endl;
+//        cout << "ITERATION    " << i << endl;
+
         if (verbose) {
             cout << "\n\n\n=======================================================================" << endl;
             cout << "ITERATION    " << i << endl;
@@ -3366,11 +3383,11 @@ void agglomerate_Isotropic_Second_Step_Correction(int numberOfInts, long *sizes,
                                   dict_DistribOfCardOfCoarseCells);
 
         if (checks) {
-            cout << "\tChecks!" << endl;
-            cout << "\t\t consistancy" << endl;
+//            cout << "\tChecks!" << endl;
+//            cout << "\t\t consistancy" << endl;
             agglomerate_Isotropic_CheckConsistancyDictCoarseCells(dict_CoarseCells,
                                                                   dict_CardCoarseCells, sizes[0], fineCellToCoarseCell);
-            cout << "\t\t connectivity" << endl;
+//            cout << "\t\t connectivity" << endl;
             // Phase de verification!
             for (auto index :dict_CoarseCells) {
 
@@ -3560,10 +3577,7 @@ void agglomerate_Isotropic_Second_Step_Correction(int numberOfInts, long *sizes,
             cout << "]" << endl;
         }
 
-        // TODO Remove this return: useless
-        // dict_Coarse_Elem, dict_Card_Coarse_Cells = \
-        dict_CoarseCells, dict_CardCoarseCells, indCoarseCell = \
-
+//        cout << "remove_Too_Small_Cells_v2" << endl;
         remove_Too_Small_Cells_v2(thresholdCard,
                                   fineCellToCoarseCell,
                                   indCoarseCell,
@@ -3637,15 +3651,15 @@ void agglomerate_Isotropic_CheckConsistancyDictCoarseCells(unordered_map<long, u
             assert(dict_Coarse_Cells[iCC].size() == iSize);
         }
     }
-    cout << "dict_Coarse_Cells [";
-    for (auto iKV:dict_Coarse_Cells) {
-        cout << "\n" << iKV.first << ": {";
-        for (long iFC:iKV.second) {
-            cout << iFC << ", ";
-        }
-        cout << "}";
-    }
-    cout << "]" << endl;
+//    cout << "dict_Coarse_Cells [";
+//    for (auto iKV:dict_Coarse_Cells) {
+//        cout << "\n" << iKV.first << ": {";
+//        for (long iFC:iKV.second) {
+//            cout << iFC << ", ";
+//        }
+//        cout << "}";
+//    }
+//    cout << "]" << endl;
     for (long iF = 0; iF < fineCellIndicesToCoarseCellIndices_size; iF++) {
         long iC = fineCellIndicesToCoarseCellIndices[iF];
         if (dict_Coarse_Cells.count(iC) == 1) {
@@ -3722,21 +3736,21 @@ void store_agglomeration_datas(long *sizes,
     myfile << "adjMatrix_col_ind; ";
     myfile << to_string(adjMatrix_col_ind_size) + "; ";
     for (int i = 0; i < adjMatrix_col_ind_size; i++) {
-        myfile << to_string(adjMatrix_col_ind[i]) << "; ";
+        myfile << adjMatrix_col_ind[i] << "; ";
     }
     myfile << endl;
 
     myfile << "adjMatrix_areaValues; ";
     myfile << to_string(adjMatrix_areaValues_size) + "; ";
     for (int i = 0; i < adjMatrix_areaValues_size; i++) {
-        myfile << to_string(adjMatrix_areaValues[i]) << "; ";
+        myfile<< std::scientific<< adjMatrix_areaValues[i] << "; ";
     }
     myfile << endl;
 
     myfile << "volumes; ";
     myfile << to_string(numberOfFineCells) + "; ";
     for (int i = 0; i < numberOfFineCells; i++) {
-        myfile << to_string(volumes[i]) << "; ";
+        myfile <<std::scientific<< volumes[i] << "; ";
     }
     myfile << endl;
     myfile << "arrayOfFineAnisotropicCompliantCells; ";
@@ -3886,7 +3900,7 @@ void read_agglomeration_datas_from_file(string filename,
 //        }
 //        cout << endl;
 
-        sizes[7] =  read_long_array(my_file, arrayOfFineAnisotropicCompliantCells);
+        sizes[7] = read_long_array(my_file, arrayOfFineAnisotropicCompliantCells);
 
         read_long_array(my_file, isOnFineBnd_l);
 //        for (int i = 0; i < sizes[0]; i++) {
@@ -3902,19 +3916,19 @@ void read_agglomeration_datas_from_file(string filename,
         cout << endl;
         sizes[5] = read_long_array(my_file, array_isOnRidge);
         sizes[6] = read_long_array(my_file, array_isOnCorner);
-        isFirstAgglomeration_long[0]=read_long(my_file);
-        isAnisotropic_long[0]=read_long(my_file);
+        isFirstAgglomeration_long[0] = read_long(my_file);
+        isAnisotropic_long[0] = read_long(my_file);
 
         sizes[8] = read_long_array(my_file, agglomerationLines_Idx);
         sizes[9] = read_long_array(my_file, agglomerationLines);
 
-        dimension[0]=read_long(my_file);
+        dimension[0] = read_long(my_file);
 //        cout<<"dimension[0]"<<dimension[0]<<endl;
-        goalCard[0]=read_long(my_file);
+        goalCard[0] = read_long(my_file);
 //        cout<<"goalCard[0]"<<goalCard[0]<<endl;
-        minCard[0]=read_long(my_file);
+        minCard[0] = read_long(my_file);
 //        cout<<"minCard[0]"<<minCard[0]<<endl;
-        maxCard[0]=read_long(my_file);
+        maxCard[0] = read_long(my_file);
 //        cout<<"maxCard[0]"<<maxCard[0]<<endl;
 
 
@@ -4057,7 +4071,7 @@ long read_long_array(std::fstream &stream,
 }
 
 long read_double_array(std::fstream &stream,
-                     double *&array) {
+                       double *&array) {
 
     string tp;
 

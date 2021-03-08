@@ -6,6 +6,7 @@
 #include "Agglomerator.h"
 #include<assert.h>
 #include<iostream>
+#include<cmath>
 
 
 using namespace std;

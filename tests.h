@@ -138,5 +138,6 @@ int test_agglomerate_Anisotropic_One_Level();
 int test_agglomerate_Anisotropic_One_Level_2();
 int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level();
 int test_read_agglomeration_datas_from_file();
+int test_read_agglomeration_datas_from_file_and_agglomerate();
 
 #endif //TEST_TESTS_H

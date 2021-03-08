@@ -298,6 +298,7 @@ int main() {
     test_agglomerateOneLevel_MGridGen();
     test_agglomerateOneLevel_disconnected();
     test_read_agglomeration_datas_from_file();
+    test_read_agglomeration_datas_from_file_and_agglomerate();
 
     cout<<"Tout s'est bien fini!"<<endl;
     return 0;

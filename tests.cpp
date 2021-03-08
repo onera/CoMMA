@@ -8257,32 +8257,31 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
 }
 
 
-
 int test_read_agglomeration_datas_from_file() {
 
     // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
     string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_10_24.txt";
     long *fineCellToCoarseCell = new long[64];
     long sizes[10];
-    long* adjMatrix_row_ptr= NULL;
-    long* adjMatrix_col_ind= NULL;
-    double* adjMatrix_areaValues= NULL;
-    double* volumes= NULL;
-    long* arrayOfFineAnisotropicCompliantCells= NULL;
-    long* isOnFineBnd_l= NULL;
-    long* array_isOnValley= NULL;
-    long* array_isOnRidge= NULL;
-    long* array_isOnCorner= NULL;
+    long *adjMatrix_row_ptr = NULL;
+    long *adjMatrix_col_ind = NULL;
+    double *adjMatrix_areaValues = NULL;
+    double *volumes = NULL;
+    long *arrayOfFineAnisotropicCompliantCells = NULL;
+    long *isOnFineBnd_l = NULL;
+    long *array_isOnValley = NULL;
+    long *array_isOnRidge = NULL;
+    long *array_isOnCorner = NULL;
 
-    long* isFirstAgglomeration_long = new long[1];
-    long* isAnisotropic_long = new long[1];
-    long* agglomerationLines_Idx = NULL;
-    long* agglomerationLines = NULL;
+    long *isFirstAgglomeration_long = new long[1];
+    long *isAnisotropic_long = new long[1];
+    long *agglomerationLines_Idx = NULL;
+    long *agglomerationLines = NULL;
 
-    long* dimension = new long[1];
-    long* goalCard = new long[1];
-    long* minCard = new long[1];
-    long* maxCard = new long[1];
+    long *dimension = new long[1];
+    long *goalCard = new long[1];
+    long *minCard = new long[1];
+    long *maxCard = new long[1];
 
     read_agglomeration_datas_from_file(filename,
                                        sizes,
@@ -8302,7 +8301,7 @@ int test_read_agglomeration_datas_from_file() {
                                        agglomerationLines_Idx,
                                        agglomerationLines,
                                        dimension, goalCard, minCard, maxCard
-                                       );
+    );
 
     long numberOfFineCells = sizes[0];
     long adjMatrix_row_ptr_size = numberOfFineCells + 1;
@@ -8325,16 +8324,16 @@ int test_read_agglomeration_datas_from_file() {
 
     long ref_adjMatrix_row_ptr[11] = {0, 3, 5, 7, 9, 11, 12, 15, 18, 21, 24};
     long ref_adjMatrix_col_ind[24] = {0, 1, 2, 0, 1,
-                                  0, 2, 3, 4, 3,
-                                  4, 5, 6, 7, 8,
-                                  6, 7, 9, 6, 8, 9, 7,8, 9};
+                                      0, 2, 3, 4, 3,
+                                      4, 5, 6, 7, 8,
+                                      6, 7, 9, 6, 8, 9, 7, 8, 9};
     double ref_adjMatrix_areaValues[24] = {1., 1., 1., 1., 2., 1., 2., 2., 1., 1., 2., 3., 2., 1., 1., 1., 2.,
-                                       1., 1., 2., 1., 1., 1., 2.};
+                                           1., 1., 2., 1., 1., 1., 2.};
 
     double ref_volumes[10] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                          1.0, 1.0, 1.0, 1.0, 1.0};
+                              1.0, 1.0, 1.0, 1.0, 1.0};
     long ref_isOnBnd[10] = {1, 2, 2, 2, 2,
-                        3, 2, 2, 2, 2};
+                            3, 2, 2, 2, 2};
 
     long ref_agglomerationLines_Idx[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     long ref_agglomerationLines[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -8373,7 +8372,7 @@ int test_read_agglomeration_datas_from_file() {
     assert(ref_minCard == minCard[0]);
     assert(ref_maxCard == maxCard[0]);
 
-    for (int i = 0; i < numberOfFineCells+1; i++) {
+    for (int i = 0; i < numberOfFineCells + 1; i++) {
         assert(ref_adjMatrix_row_ptr[i] == adjMatrix_row_ptr[i]);
     }
     for (int i = 0; i < ref_adjMatrix_col_ind_size; i++) {
@@ -8411,5 +8410,216 @@ int test_read_agglomeration_datas_from_file() {
         assert(ref_agglomerationLines[i] == agglomerationLines[i]);
     }
 
+    return 1;
+}
+
+
+int test_read_agglomeration_datas_from_file_and_agglomerate() {
+
+    // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
+    //    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_10_24.txt";
+    string input_folder = "/Users/lantos/CLionProjects/CoMMA/0_Inputs/Agglo_datas/";
+//    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Inputs/Agglo_datas/Datas_Agglomeration_51410_295612.txt";
+    const int nb_domain = 64;
+    std::string a_filenames[nb_domain] = {"Datas_Agglomeration_106103_610148.txt",
+                                          "Datas_Agglomeration_73753_415900.txt",
+                                          "Datas_Agglomeration_77958_448746.txt",
+                                          "Datas_Agglomeration_84877_480698.txt",
+                                          "Datas_Agglomeration_106112_602136.txt",
+                                          "Datas_Agglomeration_73941_409958.txt",
+                                          "Datas_Agglomeration_78133_454500.txt",
+                                          "Datas_Agglomeration_84932_483364.txt",
+                                          "Datas_Agglomeration_51410_295612.txt",
+                                          "Datas_Agglomeration_74680_418108.txt",
+                                          "Datas_Agglomeration_78139_448332.txt",
+                                          "Datas_Agglomeration_85440_481472.txt",
+                                          "Datas_Agglomeration_61784_356906.txt",
+                                          "Datas_Agglomeration_74858_421406.txt",
+                                          "Datas_Agglomeration_78291_442628.txt",
+                                          "Datas_Agglomeration_85463_489092.txt",
+                                          "Datas_Agglomeration_63389_360748.txt",
+                                          "Datas_Agglomeration_75354_428408.txt",
+                                          "Datas_Agglomeration_78309_442878.txt",
+                                          "Datas_Agglomeration_85992_487072.txt",
+                                          "Datas_Agglomeration_70808_399850.txt",
+                                          "Datas_Agglomeration_75589_434930.txt",
+                                          "Datas_Agglomeration_78697_432460.txt",
+                                          "Datas_Agglomeration_86162_492854.txt",
+                                          "Datas_Agglomeration_71626_405406.txt",
+                                          "Datas_Agglomeration_75651_435656.txt",
+                                          "Datas_Agglomeration_80083_447122.txt",
+                                          "Datas_Agglomeration_86320_496618.txt",
+                                          "Datas_Agglomeration_72042_418242.txt",
+                                          "Datas_Agglomeration_75716_425486.txt",
+                                          "Datas_Agglomeration_80952_458358.txt",
+                                          "Datas_Agglomeration_86365_491656.txt",
+                                          "Datas_Agglomeration_72378_411388.txt",
+                                          "Datas_Agglomeration_76606_431576.txt",
+                                          "Datas_Agglomeration_82012_469728.txt",
+                                          "Datas_Agglomeration_86691_493422.txt",
+                                          "Datas_Agglomeration_72853_423128.txt",
+                                          "Datas_Agglomeration_76680_435458.txt",
+                                          "Datas_Agglomeration_82426_475268.txt",
+                                          "Datas_Agglomeration_87388_497946.txt",
+                                          "Datas_Agglomeration_72885_416994.txt",
+                                          "Datas_Agglomeration_77017_433482.txt",
+                                          "Datas_Agglomeration_82677_472674.txt",
+                                          "Datas_Agglomeration_87573_492128.txt",
+                                          "Datas_Agglomeration_73062_410084.txt",
+                                          "Datas_Agglomeration_77119_441708.txt",
+                                          "Datas_Agglomeration_83187_483764.txt",
+                                          "Datas_Agglomeration_88571_506834.txt",
+                                          "Datas_Agglomeration_73217_409458.txt",
+                                          "Datas_Agglomeration_77696_448110.txt",
+                                          "Datas_Agglomeration_84047_472582.txt",
+                                          "Datas_Agglomeration_89687_507460.txt",
+                                          "Datas_Agglomeration_73510_416028.txt",
+                                          "Datas_Agglomeration_77848_446462.txt",
+                                          "Datas_Agglomeration_84304_474282.txt",
+                                          "Datas_Agglomeration_90140_524436.txt",
+                                          "Datas_Agglomeration_73557_417550.txt",
+                                          "Datas_Agglomeration_77884_449022.txt",
+                                          "Datas_Agglomeration_84407_480058.txt",
+                                          "Datas_Agglomeration_92001_533656.txt",
+                                          "Datas_Agglomeration_73636_421836.txt",
+                                          "Datas_Agglomeration_77926_446600.txt",
+                                          "Datas_Agglomeration_84529_478592.txt",
+                                          "Datas_Agglomeration_99365_569388.txt"};
+
+    for (int i = 1; i < 2/*nb_domain*/; i++) {
+
+        std::cout <<"\nDomain "<<i<<" "<< a_filenames[i] << "\n";
+        string filename = input_folder + a_filenames[i];
+        long sizes[10];
+        long *adjMatrix_row_ptr = NULL;
+        long *adjMatrix_col_ind = NULL;
+        double *adjMatrix_areaValues = NULL;
+        double *volumes = NULL;
+        long *arrayOfFineAnisotropicCompliantCells = NULL;
+        long *isOnFineBnd_l = NULL;
+        long *array_isOnValley = NULL;
+        long *array_isOnRidge = NULL;
+        long *array_isOnCorner = NULL;
+
+        long *isFirstAgglomeration_long = new long[1];
+        long *isAnisotropic_long = new long[1];
+        long *agglomerationLines_Idx = NULL;
+        long *agglomerationLines = NULL;
+
+        long *dimension = new long[1];
+        long *goalCard = new long[1];
+        long *minCard = new long[1];
+        long *maxCard = new long[1];
+
+        read_agglomeration_datas_from_file(filename,
+                                           sizes,
+                                           adjMatrix_row_ptr,
+                                           adjMatrix_col_ind,
+                                           adjMatrix_areaValues,
+                                           volumes,
+
+                                           arrayOfFineAnisotropicCompliantCells,
+
+                                           isOnFineBnd_l,
+                                           array_isOnValley,
+                                           array_isOnRidge,
+                                           array_isOnCorner,
+                                           isFirstAgglomeration_long,
+                                           isAnisotropic_long,
+                                           agglomerationLines_Idx,
+                                           agglomerationLines,
+                                           dimension, goalCard, minCard, maxCard
+        );
+
+        long numberOfFineCells = sizes[0];
+        cout << "\tnumberOfFineCells\t" << numberOfFineCells << endl;
+        long adjMatrix_row_ptr_size = numberOfFineCells + 1;
+        long adjMatrix_col_ind_size = sizes[1];
+        long adjMatrix_areaValues_size = sizes[1];
+
+        // Rmk: sizes[2] ==indCoarseCell
+        long numberOfFineAgglomeratedCells = sizes[3];
+        long isOnValley_size = sizes[4];
+        long isOnRidge_size = sizes[5];
+        long isOnCorner_size = sizes[6];
+        long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
+        long agglomerationLines_Idx_size = sizes[8];
+        long agglomerationLines_size = sizes[9];
+
+        bool isFineCellAgglomerated[numberOfFineCells];
+        for (int i = 0; i < numberOfFineCells; i++) {
+            isFineCellAgglomerated[i] = false;
+        }
+        long fineCellIndicesToCoarseCellIndices[numberOfFineCells];
+        for (int i = 0; i < numberOfFineCells; i++) {
+            fineCellIndicesToCoarseCellIndices[i] = -1;
+        }
+
+        long indCoarseCell = 0;
+
+        long checks = 1;
+        long verbose = 0;
+
+        // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
+
+        agglomerateOneLevel(sizes,
+                            adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+
+                            arrayOfFineAnisotropicCompliantCells,
+
+                            isOnFineBnd_l,
+                            array_isOnValley,
+                            array_isOnRidge,
+                            array_isOnCorner,
+
+                            isFirstAgglomeration_long[0],
+                            isAnisotropic_long[0],
+
+                            fineCellIndicesToCoarseCellIndices,
+
+                            agglomerationLines_Idx,
+                            agglomerationLines,
+
+                            dimension[0],
+                            goalCard[0],
+                            minCard[0],
+                            maxCard[0],
+                            checks,
+                            verbose);
+
+//        cout << "\tsizes[0] " << sizes[0] << endl;
+        cout << "\tsizes[1] " << sizes[1];
+        cout << "\tsizes[2] " << sizes[2];
+        cout << "\tsizes[3] " << sizes[3];
+        cout << "\tsizes[4] " << sizes[4];
+        cout << "\tsizes[5] " << sizes[5];
+        cout << "\tsizes[6] " << sizes[6];
+        cout << "\tsizes[7] " << sizes[7];
+        cout << "\tsizes[8] " << sizes[8];
+        cout << "\tsizes[9] " << sizes[9] << endl;
+
+        //    assert(sizes[0] == 64);
+        //    assert(sizes[1] == 344);
+        //    assert(sizes[2] == 8);//indCoarseCell
+        //    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
+        //    assert(sizes[4] == 24);//isOnValley_size
+        //    assert(sizes[5] == 24);//isOnRidge_size
+        //    assert(sizes[6] == 8);//isOnCorner_size
+        //    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
+        //    assert(sizes[8] == 64);//agglomerationLines_Idx_size
+        //    assert(sizes[9] == 64);//agglomerationLines_size
+
+//        cout << "\nfineCellIndicesToCoarseCellIndices: [";
+        for (auto i:fineCellIndicesToCoarseCellIndices) {
+//            cout << i << ", ";
+            assert(i<sizes[2]);
+        }
+//        cout << "]" << endl;
+
+        //    for (int i = 0; i < 64; i++) {
+        //
+        //        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        //    }
+    }
     return 1;
 }
