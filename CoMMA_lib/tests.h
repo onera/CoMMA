@@ -32,10 +32,7 @@ int test_Computation_Of_Neighbourhood_FineCellsConstraints_1184();
 int test_Computation_Of_Neighbourhood_FineCellsConstraints_13();
 int test_ComputeNumberOfCommonFaces();
 int test_CheckConnectivity_MGridGenDoc_example();
-int test_PartsList();
-int test_PartsList_length_1();
-int test_PartsList_length_2();
-int test_PartsList_length_3();
+
 int test_RemoveSeparatingVertex_205();
 int test_RemoveSeparatingVertex_136111314();
 int test_RemoveSeparatingVertex_10265813119();

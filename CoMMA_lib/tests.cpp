@@ -1,7 +1,6 @@
 //
 // Created by Nicolas Lantos on 18/10/2017.
 //
-//#include "gtest/gtest.h"
 #include "Agglomerator_Isotropic.h"
 #include "Agglomerator.h"
 #include<assert.h>
@@ -1039,79 +1038,6 @@ int test_CheckConnectivity_MGridGenDoc_example() {
     unordered_set<long> datas5({14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
     assert(checkConnectivity_w_set(datas5, row_ptr, col_ind));
 
-
-    return 1;
-}
-
-
-int test_PartsList() {
-
-
-    //queue<unordered_set<long>> partsList(vector<long> seq, int length)
-    vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq);
-    // print listOfList
-    for (auto l:listOfList) {
-        for (auto i: l) {
-            cout << i << ", ";
-        }
-        cout << endl;
-    }
-    //assert([['A'], [3], ['A', 3], ['C'], ['A', 'C'], [3, 'C'], ['A', 3, 'C']], l);
-
-    return 1;
-}
-
-int test_PartsList_length_1() {
-
-
-    //queue<unordered_set<long>> partsList(vector<long> seq, int length)
-    vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 1);
-    // print listOfList
-    for (auto l:listOfList) {
-        for (auto i: l) {
-            cout << i << ", ";
-        }
-        cout << endl;
-    }
-    //assert([['A'], [3], ['A', 3], ['C'], ['A', 'C'], [3, 'C'], ['A', 3, 'C']], l);
-
-    return 1;
-}
-
-int test_PartsList_length_2() {
-
-
-    //queue<unordered_set<long>> partsList(vector<long> seq, int length)
-    vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 2);
-    // print listOfList
-    for (auto l:listOfList) {
-        for (auto i: l) {
-            cout << i << ", ";
-        }
-        cout << endl;
-    }
-    //assert([['A'], [3], ['A', 3], ['C'], ['A', 'C'], [3, 'C'], ['A', 3, 'C']], l);
-
-    return 1;
-}
-
-int test_PartsList_length_3() {
-
-
-    //queue<unordered_set<long>> partsList(vector<long> seq, int length)
-    vector<long> seq({0, 3, 1});
-    list<unordered_set<long>> listOfList = partsList(seq, 3);
-    // print listOfList
-    for (auto l:listOfList) {
-        for (auto i: l) {
-            cout << i << ", ";
-        }
-        cout << endl;
-    }
-    //assert([['A'], [3], ['A', 3], ['C'], ['A', 'C'], [3, 'C'], ['A', 3, 'C']], l);
 
     return 1;
 }
@@ -8260,7 +8186,7 @@ int test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level() {
 int test_read_agglomeration_datas_from_file() {
 
     // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
-    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_10_24.txt";
+    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Outputs/Datas_Agglomeration_10_24.txt";
     long *fineCellToCoarseCell = new long[64];
     long sizes[10];
     long *adjMatrix_row_ptr = NULL;
@@ -8417,9 +8343,9 @@ int test_read_agglomeration_datas_from_file() {
 int test_read_agglomeration_datas_from_file_and_agglomerate() {
 
     // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
-    //    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_10_24.txt";
-    string input_folder = "/Users/lantos/CLionProjects/CoMMA/0_Inputs/Agglo_datas/";
-//    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Inputs/Agglo_datas/Datas_Agglomeration_51410_295612.txt";
+    //    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Outputs/Datas_Agglomeration_10_24.txt";
+    string input_folder = "/Users/lantos/CLionProjects/CoMMA_lib/0_Inputs/Agglo_datas/";
+//    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Inputs/Agglo_datas/Datas_Agglomeration_51410_295612.txt";
     const int nb_domain = 64;
     std::string a_filenames[nb_domain] = {"Datas_Agglomeration_106103_610148.txt",
                                           "Datas_Agglomeration_73753_415900.txt",

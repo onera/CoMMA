@@ -3722,7 +3722,7 @@ void store_agglomeration_datas(long *sizes,
 
     bool isFirstAgglomeration = isFirstAgglomeration_long == 1;
     bool isAnisotropic = isAnisotropic_long == 1;
-    string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_";
+    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Outputs/Datas_Agglomeration_";
     ofstream myfile;
     myfile.open(filename + to_string(numberOfFineCells) + "_" + to_string(adjMatrix_col_ind_size) + ".txt");
 

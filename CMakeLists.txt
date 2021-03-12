@@ -1,17 +1,19 @@
-cmake_minimum_required(VERSION 3.8)
-project(CoMMA)
+cmake_minimum_required(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 11)
+project(CoMMA_Project)
 
+set(CMAKE_CXX_STANDARD 14)
 
-#set(gtest_SOURCE_DIR googletest-master/googletest)
-#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+set(SOURCE_FILES
+        main.cpp )
 
+add_executable(CoMMA_run ${SOURCE_FILES})
 
-set(SOURCE_FILES main.cpp Agglomerator.cpp Agglomerator.h Agglomerator_Isotropic.cpp Agglomerator_Isotropic.h tests.cpp tests.h tests_agglomerate.cpp tests_agglomerate.h)
-add_executable(toto ${SOURCE_FILES})
-#add_executable(untitled ${SOURCE_FILES} ${gtest_SOURCE_DIR})
-#target_link_libraries(untitled gtest gtest_main)
+add_subdirectory(CoMMA_lib)
+add_subdirectory(Google_tests)
 
+include_directories(CoMMA_lib)
+
+target_link_libraries(CoMMA_run CoMMA_lib)
 
 
