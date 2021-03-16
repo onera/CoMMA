@@ -5,24 +5,6 @@
 #ifndef TEST_TESTS_H
 #define TEST_TESTS_H
 
-int test_FindSeedViaFrontalMethod_025();
-int test_FindSeedViaFrontalMethod_10265813119();
-int test_FindSeedViaFrontalMethod_136111314();
-int test_FindSeedViaFrontalMethod_520810131411();
-int test_FindSeedViaFrontalMethod_145208101311();
-int test_FindSeedViaFrontalMethod_457810();
-int test_FindSeedViaFrontalMethod_205();
-int test_FindSeedViaFrontalMethod_All();
-int test_FindSeedViaFrontalMethod_All_shuffled();
-int test_FindSeedViaFrontalMethod_Case_2();
-int test_FindSeedViaFrontalMethod_Case_3_seed_0();
-int test_FindSeedViaFrontalMethod_Case_3_seed_1();
-int test_FindSeedViaFrontalMethod_Case_3_seed_6();
-int test_FindSeedViaFrontalMethod_Case_3_seed_8();
-int test_FindSeedViaFrontalMethod_Case_4_random();
-int test_FindSeedViaFrontalMethod_Case_5_random();
-int test_FindSeedViaFrontalMethod_Case_6();
-int test_FindSeedViaFrontalMethod_Case_6_seed_6();
 int test_Computation_Of_Neighbourhood();
 int test_Computation_Of_Neighbourhood_FineCellsConstraints();
 int test_Computation_Of_Neighbourhood_FineCellsConstraints_11();
