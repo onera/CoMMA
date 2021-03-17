@@ -9,6 +9,7 @@ add_executable(Google_Tests_run
         Tests_Utils.cpp
         Tests_Agglomerator_isotropic.cpp
         Tests_CC.cpp
+        Tests_CoarseCellGraph.cpp
         Tests_DualGraph.cpp)
 
 target_link_libraries(Google_Tests_run CoMMA_lib)

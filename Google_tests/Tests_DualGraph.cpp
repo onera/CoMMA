@@ -240,7 +240,6 @@ TEST(DualGraph_TestSuite, RemoveSeparatingVertex_Case_7_seed_0) {
     ASSERT_EQ(ref_s_fc, s_fc);
 }
 
-
 TEST(DualGraph_TestSuite, RemoveSeparatingVertex_Case_7_seed_1) {
     long row_ptr[12] = {0, 3, 8, 12, 15, 19, 22, 27, 31, 34, 37, 40};
     long col_ind[40] = {0, 2, 7, 1, 3, 4, 8, 9, 0, 2, 5, 6, 1, 3, 9, 1, 4, 6, 9, 2, 5, 10, 2, 4, 6,
