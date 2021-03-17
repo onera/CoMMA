@@ -284,7 +284,6 @@ int test_RemoveSeparatingVertex_Case_3_seed_0() {
     return 1;
 }
 
-
 int test_RemoveSeparatingVertex_Case_4_random() {
 
     long row_ptr[9] = {0, 4, 8, 14, 17, 22, 27, 30, 31};
@@ -359,7 +358,6 @@ int test_RemoveSeparatingVertex_Case_5_random() {
 
 }
 
-
 int test_RemoveSeparatingVertex_Case_6() {
 
     long row_ptr[10] = {0, 4, 7, 11, 15, 19, 22, 26, 32, 37};
@@ -392,7 +390,6 @@ int test_RemoveSeparatingVertex_Case_6() {
     assert(setOfFineCells.size() == 7);
     return 1;
 }
-
 
 int test_RemoveSeparatingVertex_Case_7_seed_0() {
 
@@ -430,7 +427,6 @@ int test_RemoveSeparatingVertex_Case_7_seed_0() {
     return 1;
 }
 
-
 int test_RemoveSeparatingVertex_Case_7_seed_1() {
 
     long row_ptr[12] = {0, 3, 8, 12, 15, 19, 22, 27, 31, 34, 37, 40};
@@ -466,7 +462,6 @@ int test_RemoveSeparatingVertex_Case_7_seed_1() {
     assert(setOfFineCells.size() == 10);
     return 1;
 }
-
 
 int test_RemoveSeparatingVertex_Case_7_seed_9() {
 
@@ -539,7 +534,6 @@ int test_RemoveSeparatingVertex_Case_8_random() {
 
     return 1;
 }
-
 
 int test_RemoveSeparatingVertex_Case_9_random() {
 
