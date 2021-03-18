@@ -1339,7 +1339,11 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
 // TODO gerer si on detruit une cellule!
 // TODO Verifier qu'on ne presuppose pas la connectivity!!!!
 
-//    cout << "Swap " << iFineCell << " from " << iOrigineCoarseCell << " to " << iDestinationCoarseCell << endl;
+//    cout << "\nSwap " << iFineCell
+//        << " from " << iOrigineCoarseCell <<" ("<<dict_Coarse_Elem[iOrigineCoarseCell].size()<<") "
+//        << " to " << iDestinationCoarseCell <<" ("<<dict_Coarse_Elem[iDestinationCoarseCell].size()<<") " << endl;
+
+
     unordered_set<long> set_removedCoarseCells;
 
     int size = dict_Coarse_Elem[iOrigineCoarseCell].size();
@@ -1357,8 +1361,11 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
         dict_Card_Coarse_Cells.erase(size);
     }
 
+    // Treatment of iOrigineCoarseCell
+    //////////////////////////////////
     dict_DistributionOfCardinalOfCoarseElements[size] -= 1;
     if (dict_DistributionOfCardinalOfCoarseElements[size] == 0) {
+        // Deletion of iOrigineCoarseCell
         dict_DistributionOfCardinalOfCoarseElements.erase(size);
     }
 
@@ -1381,7 +1388,6 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
         dict_Coarse_Elem.erase(iOrigineCoarseCell);
         set_removedCoarseCells.insert(iOrigineCoarseCell);
     }
-
 
     // 2) We add it to iDestinationCoarseCell
     int sizeDest = dict_Coarse_Elem[iDestinationCoarseCell].size();
@@ -1412,7 +1418,6 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
     } else {
         dict_DistributionOfCardinalOfCoarseElements[tmp_size] = 1;
     }
-
     return set_removedCoarseCells;
 }
 

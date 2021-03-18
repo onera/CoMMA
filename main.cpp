@@ -47,32 +47,6 @@ int main() {
 //    }
 //    cout<<"front= "<< toto.front()<<endl;
 
-
-    test_FindSeedViaFrontalMethod_025();
-    test_FindSeedViaFrontalMethod_10265813119();
-    test_FindSeedViaFrontalMethod_136111314();
-    test_FindSeedViaFrontalMethod_520810131411();
-    test_FindSeedViaFrontalMethod_145208101311();
-    test_FindSeedViaFrontalMethod_457810();
-    test_FindSeedViaFrontalMethod_205();
-    test_FindSeedViaFrontalMethod_All();
-    test_FindSeedViaFrontalMethod_All_shuffled();
-    test_FindSeedViaFrontalMethod_Case_2();
-    test_FindSeedViaFrontalMethod_Case_3_seed_0();
-    test_FindSeedViaFrontalMethod_Case_3_seed_1();
-    test_FindSeedViaFrontalMethod_Case_3_seed_6();
-    test_FindSeedViaFrontalMethod_Case_3_seed_8();
-    test_FindSeedViaFrontalMethod_Case_4_random();
-    test_FindSeedViaFrontalMethod_Case_5_random();
-    test_FindSeedViaFrontalMethod_Case_6();
-    test_FindSeedViaFrontalMethod_Case_6_seed_6();
-    test_Computation_Of_Neighbourhood();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints_11();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints_118();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints_118_maxCard();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints_1184();
-    test_Computation_Of_Neighbourhood_FineCellsConstraints_13();
     test_ComputeNumberOfCommonFaces();
 
 //    unordered_set<int> set_1;
@@ -99,11 +73,7 @@ int main() {
 //    }cout<<endl;
 
     test_CheckConnectivity_MGridGenDoc_example();
-    test_PartsList();
-    test_PartsList_length_1();
-    test_PartsList_length_2();
-    test_PartsList_length_3();
-//
+    //
 //    unordered_set<int> set_1;
 //    set_1.insert(1);
 //    set_1.insert(2);
@@ -114,48 +84,8 @@ int main() {
 //        cout<<j<<", ";
 //    }
 //    cout<<endl;
-//    cout<<"test_RemoveSeparatingVertex_205"<<endl;
-    test_RemoveSeparatingVertex_205();
-//    cout<<"test_RemoveSeparatingVertex_136111314"<<endl;
-    test_RemoveSeparatingVertex_136111314();
-    test_RemoveSeparatingVertex_10265813119();
-//    cout<<"======================================================================="<<endl;
-//    cout<<"test_RemoveSeparatingVertex_All"<<endl;
-    test_RemoveSeparatingVertex_All();
-    test_RemoveSeparatingVertex_Case_2();
-    test_RemoveSeparatingVertex_Case_3_seed_0();
-    test_RemoveSeparatingVertex_Case_4_random();
-    test_RemoveSeparatingVertex_Case_5_random();
-    test_RemoveSeparatingVertex_Case_6();
 
-    test_RemoveSeparatingVertex_Case_7_seed_0();
-    test_RemoveSeparatingVertex_Case_7_seed_1();
-    test_RemoveSeparatingVertex_Case_7_seed_9();
-    test_RemoveSeparatingVertex_Case_8_random();
-    test_RemoveSeparatingVertex_Case_9_random();
-//    cout<<"\nCall of test_SwapFineCell_Case_1"<<endl;
-    test_SwapFineCell_Case_1();
-//    cout<<"\nCall of test_SwapFineCell_Deletion_of_Coarse_Element"<<endl;
-    test_SwapFineCell_Deletion_of_Coarse_Element();
-//    cout<<"\nCall of test_computeConnectedComponent_9_Squares"<<endl;
     test_computeConnectedComponent_9_Squares();
-
-
-    test_createCoarseCell_Case_1();
-    test_createCoarseCell_Case_1_isMutable_False();
-
-    test_createCoarseCell_Case_3();
-    test_createCoarseCell_Delayed_Case_1();
-    test_createCoarseCell_Delayed_Case_1_isMutable_False();
-    test_createCoarseCell_Delayed_Case_3();
-//    cout<<"\nCall of test_splitNonConnectedCoarseCell_9_Squares_1"<<endl;
-
-    test_splitNonConnectedCoarseCell_9_Squares_1();
-    test_splitNonConnectedCoarseCell_9_Squares_2();
-    test_splitNonConnectedCoarseCell_9_Squares_3();
-    cout<<"\nATTENTION TREAT this case!"<<endl;
-    cout<<"\nCall of test_splitNonConnectedCoarseCell_9_Squares_5"<<endl;
-//    test_splitNonConnectedCoarseCell_9_Squares_5();
 
 //    cout<<"\nCall of test_removeDeletedCoarseCells_Case_1"<<endl;
     test_removeDeletedCoarseCells_Case_1();
@@ -201,33 +131,7 @@ int main() {
 //    }
 //
 //    cout << endl;
-    test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic();
-    test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic_case_2();
-    test_remove_Too_Small_Cells_v2_12_Squares_9_isotropicCell();
 
-    test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_0_anisotropic();
-    test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_4();
-    test_splitNonConnectedCoarseCell_9_Squares_Case_3();
-    test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2();
-    test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2_case_2();
-
-    test_makeSmallCellBigger_12_Squares_12_isotropic_Cells();
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-
-    test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_2();
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_3"<<endl;
-    test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_3();
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_4"<<endl;
-    test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_4();
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_5"<<endl;
-    test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_5();
     cout<<"\n\n\n"<<endl;
     cout<<"=================================================================="<<endl;
     cout<<"test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells"<<endl;

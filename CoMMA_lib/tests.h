@@ -5,43 +5,10 @@
 #ifndef TEST_TESTS_H
 #define TEST_TESTS_H
 
-int test_Computation_Of_Neighbourhood();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints_11();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints_118();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints_118_maxCard();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints_1184();
-int test_Computation_Of_Neighbourhood_FineCellsConstraints_13();
 int test_ComputeNumberOfCommonFaces();
 int test_CheckConnectivity_MGridGenDoc_example();
 
-int test_RemoveSeparatingVertex_205();
-int test_RemoveSeparatingVertex_136111314();
-int test_RemoveSeparatingVertex_10265813119();
-int test_RemoveSeparatingVertex_All();
-int test_RemoveSeparatingVertex_Case_2();
-int test_RemoveSeparatingVertex_Case_3_seed_0();
-int test_RemoveSeparatingVertex_Case_4_random();
-int test_RemoveSeparatingVertex_Case_5_random();
-int test_RemoveSeparatingVertex_Case_6();
-int test_RemoveSeparatingVertex_Case_7_seed_0();
-int test_RemoveSeparatingVertex_Case_7_seed_1();
-int test_RemoveSeparatingVertex_Case_7_seed_9();
-int test_RemoveSeparatingVertex_Case_8_random();
-int test_RemoveSeparatingVertex_Case_9_random();
-int test_SwapFineCell_Case_1();
-int test_SwapFineCell_Deletion_of_Coarse_Element();
 int test_computeConnectedComponent_9_Squares();
-int test_createCoarseCell_Case_1();
-int test_createCoarseCell_Case_1_isMutable_False();
-int test_createCoarseCell_Case_3();
-int test_createCoarseCell_Delayed_Case_1();
-int test_createCoarseCell_Delayed_Case_1_isMutable_False();
-int test_createCoarseCell_Delayed_Case_3();
-int test_splitNonConnectedCoarseCell_9_Squares_1();
-int test_splitNonConnectedCoarseCell_9_Squares_2();
-int test_splitNonConnectedCoarseCell_9_Squares_3();
-int test_splitNonConnectedCoarseCell_9_Squares_5();
 
 int test_removeDeletedCoarseCells_Case_1();
 int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element();
@@ -67,21 +34,6 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13();
-
-int test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic();
-int test_remove_Too_Small_Cells_v2_12_Squares_8_isotropicCell_1_anisotropic_case_2();
-int test_remove_Too_Small_Cells_v2_12_Squares_9_isotropicCell();
-int test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_0_anisotropic();
-int test_splitNonConnectedCoarseCell_9_Squares_3_isotropicCell_4();
-int test_splitNonConnectedCoarseCell_9_Squares_Case_3();
-int test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2();
-int test_splitNonConnectedCoarseCell_9_Squares_Too_small_Cell_size_2_case_2();
-
-int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells();
-int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_2();
-int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_3();
-int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_4();
-int test_makeSmallCellBigger_12_Squares_12_isotropic_Cells_case_5();
 
 int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells();
 int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_2();
