@@ -87,13 +87,6 @@ int main() {
 
     test_computeConnectedComponent_9_Squares();
 
-//    cout<<"\nCall of test_removeDeletedCoarseCells_Case_1"<<endl;
-    test_Agglomerate_Isotropic_createCoarseCell_Case_1();
-    test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False();
-    test_Agglomerate_Isotropic_createCoarseCell_Case_3();
-    test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1();
-    test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_1_isMutable_False();
-    test_Agglomerate_Isotropic_createCoarseCell_Delayed_Case_3();
     test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0();
     test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2();
     test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1();
