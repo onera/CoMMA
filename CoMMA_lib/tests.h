@@ -10,16 +10,6 @@ int test_CheckConnectivity_MGridGenDoc_example();
 
 int test_computeConnectedComponent_9_Squares();
 
-int test_removeDeletedCoarseCells_Case_1();
-int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element();
-int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_2();
-int test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_3();
-int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False();
-int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True();
-int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4();
-int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4();
-int test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8();
-
 int test_Agglomerate_Isotropic_createCoarseCell_Case_1();
 int test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False();
 int test_Agglomerate_Isotropic_createCoarseCell_Case_3();
@@ -34,13 +24,6 @@ int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10();
 int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13();
-
-int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells();
-int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_2();
-int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_3();
-int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_4();
-int test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_5();
-
 
 int test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
 

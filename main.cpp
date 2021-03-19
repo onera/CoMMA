@@ -88,15 +88,6 @@ int main() {
     test_computeConnectedComponent_9_Squares();
 
 //    cout<<"\nCall of test_removeDeletedCoarseCells_Case_1"<<endl;
-    test_removeDeletedCoarseCells_Case_1();
-    test_removeDeletedCoarseCells_Deletion_of_Coarse_Element();
-    test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_2();
-    test_removeDeletedCoarseCells_Deletion_of_Coarse_Element_Case_3();
-    test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False();
-    test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True();
-    test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4();
-    test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4();
-    test_choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8();
     test_Agglomerate_Isotropic_createCoarseCell_Case_1();
     test_Agglomerate_Isotropic_createCoarseCell_Case_1_isMutable_False();
     test_Agglomerate_Isotropic_createCoarseCell_Case_3();
@@ -131,16 +122,6 @@ int main() {
 //    }
 //
 //    cout << endl;
-
-    cout<<"\n\n\n"<<endl;
-    cout<<"=================================================================="<<endl;
-    cout<<"test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells"<<endl;
-
-    test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells();
-    test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_2();
-    test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_3();
-    test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_4();
-    test_agglomerate_Isotropic_Correction_Swap_12_Squares_12_isotropic_Cells_Case_5();
 
     test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
 
