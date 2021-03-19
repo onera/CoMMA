@@ -2323,3 +2323,738 @@ TEST(CoarseCellGraph_TestSuite, createCoarseCell_Delayed_Case_3) {
     }
 
 }
+
+
+TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells) {
+
+    //"""
+    //12 squares (4*3)
+    //"""
+
+    int nbCells = 12;
+
+    long row_ptr[13] = {0, 3, 7, 10, 14, 19, 23, 27, 32, 36, 39, 43, 46};
+    long col_ind[46] = {0, 1, 3, 0, 1, 2, 4, 1, 2, 5, 0, 3, 4, 6, 1, 3, 4, 5, 7, 2, 4, 5, 8, 3, 6,
+                        7, 9, 4, 6, 7, 8, 10, 5, 7, 8, 11, 6, 9, 10, 7, 9, 10, 11, 8, 10, 11};
+    double values[46] = {1., 0.1, 1., 0.1, 1., 0.1, 1.1, 0.1, 1., 1., 1., 1., 0.1, 1., 1.1,
+                         0.1, 1., 0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 1., 0.1, 1.,
+                         0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 0.1, 1., 0.1, 1., 0.1,
+                         1.,};
+
+
+    bool *isFineCellAgglomerated = new bool[nbCells];
+    for (int i = 0; i < nbCells; i++) {
+        isFineCellAgglomerated[i] = true;
+    }
+    long fineCellIndicesToCoarseCellIndices[12] = {0, 0, 0,
+                                                   0, 0, 2,
+                                                   3, 1, 1,
+                                                   1, 1, 1};
+
+    int goalCard = 4;
+    long indCoarseCell = 4;
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+
+    compute_Dicts_From_FineCellIndicesToCoarseCellIndices(nbCells, fineCellIndicesToCoarseCellIndices, dict_Coarse_Cells, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_0;
+    ref_dict_Card_Coarse_Cells_0[1] = unordered_set<long>({2, 3});
+    ref_dict_Card_Coarse_Cells_0[5] = unordered_set<long>({0, 1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells_0, dict_Card_Coarse_Cells);
+
+//    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+//    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+//    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 2;
+//    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+//    cout<<"\ndict_Coarse_Cells[0]: [";
+//    for(auto i:dict_Coarse_Cells[0]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[1]: [";
+//    for(auto i:dict_Coarse_Cells[1]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[2]: [";
+//    for(auto i:dict_Coarse_Cells[2]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[3]: [";
+//    for(auto i:dict_Coarse_Cells[3]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
+    agglomerate_Isotropic_Correction_Too_Big_Cells(dict_Coarse_Cells, dict_Card_Coarse_Cells,
+                                                   row_ptr, col_ind,
+                                                   dict_DistributionOfCardinalOfCoarseElements,
+                                                   fineCellIndicesToCoarseCellIndices,
+                                                   indCoarseCell,
+                                                   goalCard, false);
+
+//    self.assertEqual(4, indCoarseCell)
+//    self.assertEqual({0: [0, 1, 3, 4], 1: [7, 8, 10, 11], 2: [5, 2], 3: [6, 9]}, dict_Coarse_Cells)
+//    self.assertEqual({2: set([2, 3]), 4: set([0, 1])}, dict_Card_Coarse_Cells)
+//    self.assertEqual({2: 2, 4: 2}, dict_DistributionOfCardinalOfCoarseElements)
+//    np.testing.assert_almost_equal(np.array([]), fineCellIndicesToCoarseCellIndices[0])
+//    cout<<"\ndict_Coarse_Cells[0]: [";
+//    for(auto i:dict_Coarse_Cells[0]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Coarse_Cells[1]: [";
+//    for(auto i:dict_Coarse_Cells[1]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[2]: [";
+//    for(auto i:dict_Coarse_Cells[2]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[3]: [";
+//    for(auto i:dict_Coarse_Cells[3]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Card_Coarse_Cells[2]: [";
+//    for(auto i:dict_Card_Coarse_Cells[2]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
+//    cout<<"\ndict_Card_Coarse_Cells[3]: [";
+//    for(auto i:dict_Card_Coarse_Cells[3]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
+//    cout<<"\ndict_Card_Coarse_Cells[4]: [";
+//    for(auto i:dict_Card_Coarse_Cells[4]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"Keys dict_Card_Coarse_Cells: [";
+//    for(auto iKV:dict_Card_Coarse_Cells)
+//    {
+//        cout<<iKV.first<<", ";
+//    }
+//    cout<<"]"<<endl;
+    ASSERT_EQ(4, indCoarseCell);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
+    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 3, 4});
+    ref_dict_Coarse_Cells[1] = unordered_set<long>({7, 8, 10, 11});
+    ref_dict_Coarse_Cells[2] = unordered_set<long>({2, 5});
+    ref_dict_Coarse_Cells[3] = unordered_set<long>({6, 9});
+    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[2] = unordered_set<long>({2, 3});
+    ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({0, 1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[2] = 2;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 2;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+
+//
+//    assert(dict_Coarse_Cells.size() == 4);
+//    assert(dict_Coarse_Cells[0].count(0) == 1);
+//    assert(dict_Coarse_Cells[0].count(1) == 1);
+//    assert(dict_Coarse_Cells[0].count(3) == 1);
+//    assert(dict_Coarse_Cells[0].count(4) == 1);
+//
+//    assert(dict_Coarse_Cells[1].count(7) == 1);
+//    assert(dict_Coarse_Cells[1].count(8) == 1);
+//    assert(dict_Coarse_Cells[1].count(10) == 1);
+//    assert(dict_Coarse_Cells[1].count(11) == 1);
+//
+//    assert(dict_Coarse_Cells[2].count(5) == 1);
+//    assert(dict_Coarse_Cells[2].count(2) == 1);
+//
+//    assert(dict_Coarse_Cells[3].count(6) == 1);
+//    assert(dict_Coarse_Cells[3].count(9) == 1);
+
+//    assert(!dict_Card_Coarse_Cells.empty());
+////    cout << "dict_Card_Coarse_Cells.size() " << dict_Card_Coarse_Cells.size() << endl;
+//    assert(dict_Card_Coarse_Cells.size() == 2);
+//    assert(dict_Card_Coarse_Cells[2].count(2) == 1);
+//    assert(dict_Card_Coarse_Cells[2].count(3) == 1);
+//    assert(dict_Card_Coarse_Cells[4].count(0) == 1);
+//    assert(dict_Card_Coarse_Cells[4].count(1) == 1);
+//
+//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+//    assert(dict_DistributionOfCardinalOfCoarseElements[2] == 2);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 2);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[12] = {0, 0, 2, 0, 0, 2, 3, 1, 1, 3, 1, 1};
+    for (int i = 0; i < 12; i++) {
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
+//        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells_Case_2) {
+    //"""
+    //12 squares (4*3)
+    //"""
+
+    int nbCells = 12;
+
+    long row_ptr[13] = {0, 3, 7, 10, 14, 19, 23, 27, 32, 36, 39, 43, 46};
+    long col_ind[46] = {0, 1, 3, 0, 1, 2, 4, 1, 2, 5, 0, 3, 4, 6, 1, 3, 4, 5, 7, 2, 4, 5, 8, 3, 6,
+                        7, 9, 4, 6, 7, 8, 10, 5, 7, 8, 11, 6, 9, 10, 7, 9, 10, 11, 8, 10, 11};
+    double values[46] = {1., 0.1, 1., 0.1, 1., 0.1, 1.1, 0.1, 1., 1., 1., 1., 0.1, 1., 1.1,
+                         0.1, 1., 0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 1., 0.1, 1.,
+                         0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 0.1, 1., 0.1, 1., 0.1,
+                         1.,};
+
+
+    bool *isFineCellAgglomerated = new bool[nbCells];
+    for (int i = 0; i < nbCells; i++) {
+        isFineCellAgglomerated[i] = true;
+    }
+    long fineCellIndicesToCoarseCellIndices[12] = {0, 0, 1,
+                                                   0, 1, 1,
+                                                   1, 1, 1,
+                                                   2, 2, 1};
+
+    int goalCard = 4;
+    long indCoarseCell = 3;
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+
+    compute_Dicts_From_FineCellIndicesToCoarseCellIndices(nbCells, fineCellIndicesToCoarseCellIndices, dict_Coarse_Cells, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements);
+
+    agglomerate_Isotropic_Correction_Too_Big_Cells(dict_Coarse_Cells, dict_Card_Coarse_Cells,
+                                                   row_ptr, col_ind,
+                                                   dict_DistributionOfCardinalOfCoarseElements,
+                                                   fineCellIndicesToCoarseCellIndices,
+                                                   indCoarseCell,
+                                                   goalCard, false);
+
+    ASSERT_EQ(3, indCoarseCell);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
+    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 3, 6});
+    ref_dict_Coarse_Cells[1] = unordered_set<long>({2, 4, 5, 7,8 });
+    ref_dict_Coarse_Cells[2] = unordered_set<long>({9, 10, 11});
+
+    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({2});
+    ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[5] = unordered_set<long>({1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+
+//    assert(!dict_Coarse_Cells.empty());
+//    assert(dict_Coarse_Cells.size() == 3);
+//    cout << "dict_Coarse_Cells[2]: [";
+//    for (auto i :dict_Coarse_Cells[2]) {
+//        cout << i << ", ";
+//    }
+//    cout << "]" << endl;
+//    assert(dict_Coarse_Cells[0].size() == 4);
+//    assert(dict_Coarse_Cells[0].count(0) == 1);
+//    assert(dict_Coarse_Cells[0].count(1) == 1);
+//    assert(dict_Coarse_Cells[0].count(3) == 1);
+//    assert(dict_Coarse_Cells[0].count(6) == 1);
+//
+//
+//    assert(dict_Coarse_Cells[1].size() == 5);
+//    assert(dict_Coarse_Cells[1].count(2) == 1);
+//    assert(dict_Coarse_Cells[1].count(4) == 1);
+//    assert(dict_Coarse_Cells[1].count(5) == 1);
+//    assert(dict_Coarse_Cells[1].count(7) == 1);
+//    assert(dict_Coarse_Cells[1].count(8) == 1);
+//
+//    assert(dict_Coarse_Cells[2].count(9) == 1);
+//    assert(dict_Coarse_Cells[2].count(10) == 1);
+//    assert(dict_Coarse_Cells[2].count(11) == 1);
+
+//    assert(!dict_Card_Coarse_Cells.empty());
+//    assert(dict_Card_Coarse_Cells.size() == 3);
+//    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
+//    assert(dict_Card_Coarse_Cells[4].count(0) == 1);
+//    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
+//
+//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[12] = {0, 0, 1, 0, 1, 1, 0, 1, 1, 2, 2, 2};
+    for (int i = 0; i < 12; i++) {
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
+//        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
+
+    // MGridGen Test case
+    long matrixAdj_CRS_row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
+    long matrixAdj_CRS_col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
+                                      7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
+                                      14};
+    double matrixAdj_CRS_values[51] = {6.82842712, 2., 2., 2., 4.23606798, 1., 2., 4., 2.23606798, 2.23606798, 1., 4., 2.23606798,
+                                       6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,
+                                       2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,
+                                       3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,
+                                       3.16227766, 7.};
+
+    int nbCells = 15;
+    double volumes[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    int isOnBnd[15] = {1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2};
+    long fineCellIndicesToCoarseCellIndices[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    bool *isFineCellAgglomerated = new bool[nbCells];
+    for (int i = 0; i < nbCells; i++) {
+        isFineCellAgglomerated[i] = true;
+    }
+
+    vector<queue<long>> listOfSeeds(4);
+    listOfSeeds[0] = queue<long>();
+    listOfSeeds[1] = queue<long>();
+    listOfSeeds[2] = queue<long>();
+    listOfSeeds[3] = queue<long>();
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+
+    compute_Dicts_From_FineCellIndicesToCoarseCellIndices(nbCells, fineCellIndicesToCoarseCellIndices, dict_Coarse_Cells, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements);
+
+    long indCoarseCell = 1;
+    int minCard = 3;
+    int maxCard = 5;
+    bool checks = true;
+    bool verbose = true;
+    long numberOfFineAgglomeratedCells = nbCells;
+    int nbSizes = 2;
+    long sizes[2] = {16, 51};
+    agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
+                                                                sizes,
+                                                                listOfSeeds,
+                                                                dict_Coarse_Cells,
+                                                                dict_Card_Coarse_Cells,
+                                                                matrixAdj_CRS_row_ptr,
+                                                                matrixAdj_CRS_col_ind,
+                                                                matrixAdj_CRS_values, volumes,
+                                                                dict_DistributionOfCardinalOfCoarseElements,
+                                                                indCoarseCell,
+                                                                fineCellIndicesToCoarseCellIndices,
+                                                                numberOfFineAgglomeratedCells,
+                                                                isFineCellAgglomerated,
+                                                                isOnBnd,
+                                                                minCard,
+                                                                maxCard,
+                                                                checks,
+                                                                verbose);
+
+    cout << "\ndict_Coarse_Cells[0]: [";
+    for (auto i:dict_Coarse_Cells[0]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    assert(indCoarseCell == 2);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 2);
+    assert(dict_Coarse_Cells[0].count(0) == 1);
+    assert(dict_Coarse_Cells[0].count(1) == 1);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
+    assert(dict_Coarse_Cells[0].count(3) == 1);
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(5) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
+    assert(dict_Coarse_Cells[0].count(10) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
+    assert(dict_Coarse_Cells[0].count(13) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(!dict_Card_Coarse_Cells.empty());
+    assert(dict_Card_Coarse_Cells.size() == 2);
+    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
+    assert(dict_Card_Coarse_Cells[12].count(0) == 1);
+
+    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
+    assert(dict_DistributionOfCardinalOfCoarseElements[12] == 1);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0,
+                                                             0, 0, 0,
+                                                             1, 0, 0,
+                                                             0, 0, 1,
+                                                             0, 0, 1};
+    for (int i = 0; i < 15; i++) {
+
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+    agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
+                                                                sizes,
+                                                                listOfSeeds,
+                                                                dict_Coarse_Cells,
+                                                                dict_Card_Coarse_Cells,
+                                                                matrixAdj_CRS_row_ptr,
+                                                                matrixAdj_CRS_col_ind,
+                                                                matrixAdj_CRS_values, volumes,
+                                                                dict_DistributionOfCardinalOfCoarseElements,
+                                                                indCoarseCell,
+                                                                fineCellIndicesToCoarseCellIndices,
+                                                                numberOfFineAgglomeratedCells,
+                                                                isFineCellAgglomerated,
+                                                                isOnBnd,
+                                                                minCard,
+                                                                maxCard,
+                                                                checks,
+                                                                verbose);
+
+    cout << "\ndict_Coarse_Cells[2]: [";
+    for (auto i:dict_Coarse_Cells[2]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    assert(indCoarseCell == 3);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 3);
+    assert(dict_Coarse_Cells[0].count(0) == 1);
+    assert(dict_Coarse_Cells[0].count(1) == 1);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
+    assert(dict_Coarse_Cells[0].count(3) == 1);
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(5) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(10) == 1);
+    assert(dict_Coarse_Cells[0].count(13) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(dict_Coarse_Cells[2].count(7) == 1);
+    assert(dict_Coarse_Cells[2].count(9) == 1);
+    assert(dict_Coarse_Cells[2].count(12) == 1);
+
+    assert(!dict_Card_Coarse_Cells.empty());
+    assert(dict_Card_Coarse_Cells.size() == 2);
+    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
+    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
+    assert(dict_Card_Coarse_Cells[9].count(0) == 1);
+
+    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 2);
+    assert(dict_DistributionOfCardinalOfCoarseElements[9] == 1);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {0, 0, 0,
+                                                               0, 0, 0,
+                                                               1, 2, 0,
+                                                               2, 0, 1,
+                                                               2, 0, 1};
+    for (int i = 0; i < 15; i++) {
+
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
+    }
+
+    agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
+                                                                sizes,
+                                                                listOfSeeds,
+                                                                dict_Coarse_Cells,
+                                                                dict_Card_Coarse_Cells,
+                                                                matrixAdj_CRS_row_ptr,
+                                                                matrixAdj_CRS_col_ind,
+                                                                matrixAdj_CRS_values, volumes,
+                                                                dict_DistributionOfCardinalOfCoarseElements,
+                                                                indCoarseCell,
+                                                                fineCellIndicesToCoarseCellIndices,
+                                                                numberOfFineAgglomeratedCells,
+                                                                isFineCellAgglomerated,
+                                                                isOnBnd,
+                                                                minCard,
+                                                                maxCard,
+                                                                checks,
+                                                                verbose);
+
+//    cout<<"\ndict_Coarse_Cells[0]: [";
+//    for(auto i:dict_Coarse_Cells[0]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//    cout<<"\ndict_Coarse_Cells[1]: [";
+//    for(auto i:dict_Coarse_Cells[1]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Coarse_Cells[2]: [";
+//    for(auto i:dict_Coarse_Cells[2]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+//
+//    cout<<"\ndict_Coarse_Cells[3]: [";
+//    for(auto i:dict_Coarse_Cells[3]){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
+    assert(indCoarseCell == 4);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 4);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(5) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(10) == 1);
+    assert(dict_Coarse_Cells[0].count(13) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(dict_Coarse_Cells[2].count(7) == 1);
+    assert(dict_Coarse_Cells[2].count(9) == 1);
+    assert(dict_Coarse_Cells[2].count(12) == 1);
+
+    assert(dict_Coarse_Cells[3].count(0) == 1);
+    assert(dict_Coarse_Cells[3].count(1) == 1);
+    assert(dict_Coarse_Cells[3].count(3) == 1);
+
+    assert(!dict_Card_Coarse_Cells.empty());
+    assert(dict_Card_Coarse_Cells.size() == 2);
+    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
+    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
+    assert(dict_Card_Coarse_Cells[3].count(3) == 1);
+    assert(dict_Card_Coarse_Cells[6].count(0) == 1);
+
+    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 3);
+    assert(dict_DistributionOfCardinalOfCoarseElements[6] == 1);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[15] = {3, 3, 0,
+                                                               3, 0, 0,
+                                                               1, 2, 0,
+                                                               2, 0, 1,
+                                                               2, 0, 1};
+    for (int i = 0; i < 15; i++) {
+
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[i]);
+    }
+
+}
+
+TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell_v2) {
+
+    // MGridGen Test case
+    long matrixAdj_CRS_row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
+    long matrixAdj_CRS_col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
+                                      7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
+                                      14};
+    double matrixAdj_CRS_values[51] = {6.82842712, 2., 2., 2., 4.23606798, 1., 2., 4., 2.23606798, 2.23606798, 1., 4., 2.23606798,
+                                       6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,
+                                       2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,
+                                       3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,
+                                       3.16227766, 7.};
+
+    int nbCells = 15;
+    double volumes[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    int isOnBnd[15] = {1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2};
+    long fineCellIndicesToCoarseCellIndices[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    bool *isFineCellAgglomerated = new bool[nbCells];
+    for (int i = 0; i < nbCells; i++) {
+        isFineCellAgglomerated[i] = true;
+    }
+
+    vector<queue<long>> listOfSeeds(4);
+    listOfSeeds[0] = queue<long>();
+    listOfSeeds[1] = queue<long>();
+    listOfSeeds[2] = queue<long>();
+    listOfSeeds[3] = queue<long>();
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+
+    compute_Dicts_From_FineCellIndicesToCoarseCellIndices(nbCells, fineCellIndicesToCoarseCellIndices, dict_Coarse_Cells, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements);
+
+    long indCoarseCell = 1;
+    int minCard = 5;
+    int maxCard = 5;
+    bool checks = true;
+    bool verbose = false;
+    long numberOfFineAgglomeratedCells = nbCells;
+    int nbSizes = 2;
+    long sizes[2] = {16, 51};
+    agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
+                                                                sizes,
+                                                                listOfSeeds,
+                                                                dict_Coarse_Cells,
+                                                                dict_Card_Coarse_Cells,
+                                                                matrixAdj_CRS_row_ptr,
+                                                                matrixAdj_CRS_col_ind,
+                                                                matrixAdj_CRS_values, volumes,
+                                                                dict_DistributionOfCardinalOfCoarseElements,
+                                                                indCoarseCell,
+                                                                fineCellIndicesToCoarseCellIndices,
+                                                                numberOfFineAgglomeratedCells,
+                                                                isFineCellAgglomerated,
+                                                                isOnBnd,
+                                                                minCard,
+                                                                maxCard,
+                                                                checks,
+                                                                verbose);
+
+    cout << "\ndict_Coarse_Cells[0]: [";
+    for (auto i:dict_Coarse_Cells[0]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    cout << "\ndict_Coarse_Cells[1]: [";
+    for (auto i:dict_Coarse_Cells[1]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+
+    assert(indCoarseCell == 2);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 2);
+    assert(dict_Coarse_Cells[0].count(0) == 1);
+    assert(dict_Coarse_Cells[0].count(1) == 1);
+    assert(dict_Coarse_Cells[0].count(2) == 1);
+    assert(dict_Coarse_Cells[0].count(3) == 1);
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(5) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(10) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(13) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(!dict_Card_Coarse_Cells.empty());
+    assert(dict_Card_Coarse_Cells.size() == 2);
+    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
+    assert(dict_Card_Coarse_Cells[10].count(0) == 1);
+
+    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 1);
+    assert(dict_DistributionOfCardinalOfCoarseElements[10] == 1);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1};
+//    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
+//    for(auto i:fineCellIndicesToCoarseCellIndices){
+//        cout<<i<<", ";
+//    }
+//    cout<<"]"<<endl;
+
+    for (int i = 0; i < 15; i++) {
+
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+    agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
+                                                                sizes,
+                                                                listOfSeeds,
+                                                                dict_Coarse_Cells,
+                                                                dict_Card_Coarse_Cells,
+                                                                matrixAdj_CRS_row_ptr,
+                                                                matrixAdj_CRS_col_ind,
+                                                                matrixAdj_CRS_values, volumes,
+                                                                dict_DistributionOfCardinalOfCoarseElements,
+                                                                indCoarseCell,
+                                                                fineCellIndicesToCoarseCellIndices,
+                                                                numberOfFineAgglomeratedCells,
+                                                                isFineCellAgglomerated,
+                                                                isOnBnd,
+                                                                minCard,
+                                                                maxCard,
+                                                                checks,
+                                                                verbose);
+
+    cout << "\ndict_Coarse_Cells[0]: [";
+    for (auto i:dict_Coarse_Cells[0]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    cout << "\ndict_Coarse_Cells[1]: [";
+    for (auto i:dict_Coarse_Cells[1]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+    cout << "\ndict_Coarse_Cells[2]: [";
+    for (auto i:dict_Coarse_Cells[2]) {
+        cout << i << ", ";
+    }
+    cout << "]" << endl;
+
+    cout << "indCoarseCell " << indCoarseCell << endl;
+    assert(indCoarseCell == 3);
+    assert(!dict_Coarse_Cells.empty());
+    assert(dict_Coarse_Cells.size() == 3);
+
+    assert(dict_Coarse_Cells[0].count(4) == 1);
+    assert(dict_Coarse_Cells[0].count(7) == 1);
+    assert(dict_Coarse_Cells[0].count(8) == 1);
+    assert(dict_Coarse_Cells[0].count(9) == 1);
+    assert(dict_Coarse_Cells[0].count(12) == 1);
+
+    assert(dict_Coarse_Cells[1].count(6) == 1);
+    assert(dict_Coarse_Cells[1].count(10) == 1);
+    assert(dict_Coarse_Cells[1].count(11) == 1);
+    assert(dict_Coarse_Cells[1].count(13) == 1);
+    assert(dict_Coarse_Cells[1].count(14) == 1);
+
+    assert(dict_Coarse_Cells[2].count(0) == 1);
+    assert(dict_Coarse_Cells[2].count(1) == 1);
+    assert(dict_Coarse_Cells[2].count(2) == 1);
+    assert(dict_Coarse_Cells[2].count(3) == 1);
+    assert(dict_Coarse_Cells[2].count(5) == 1);
+
+    assert(!dict_Card_Coarse_Cells.empty());
+    assert(dict_Card_Coarse_Cells.size() == 1);
+    assert(dict_Card_Coarse_Cells[5].count(0) == 1);
+    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
+    assert(dict_Card_Coarse_Cells[5].count(2) == 1);
+
+    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 3);
+
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {2, 2, 2, 2, 0, 2, 1, 0, 0, 0, 1, 1, 0, 1, 1};
+
+    for (int i = 0; i < 15; i++) {
+
+        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
+    }
+}
+

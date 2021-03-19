@@ -109,9 +109,6 @@ int main() {
 
     test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
 
-    test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells();
-    test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells_Case_2();
-
 //    cout<<"\n\n\n"<<endl;
 //    cout<<"=================================================================="<<endl;
 //    cout<<"test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell"<<endl;
