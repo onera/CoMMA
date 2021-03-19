@@ -10,14 +10,6 @@ int test_CheckConnectivity_MGridGenDoc_example();
 
 int test_computeConnectedComponent_9_Squares();
 
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10();
-int test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13();
-
 int test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
 
 int test_agglomerate_Isotropic_Correction_Too_Big_Cells_12_Squares_12_isotropic_Cells();

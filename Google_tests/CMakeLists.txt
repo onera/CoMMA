@@ -11,7 +11,8 @@ add_executable(Google_Tests_run
         Tests_CC.cpp
         Tests_CoarseCellGraph.cpp
         Tests_Agglomerator.cpp
-        Tests_DualGraph.cpp)
+        Tests_DualGraph.cpp
+        Tests_SeedsPool.cpp)
 
 target_link_libraries(Google_Tests_run CoMMA_lib)
 

@@ -87,15 +87,6 @@ int main() {
 
     test_computeConnectedComponent_9_Squares();
 
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_0();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_2();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Ridge_1_V2();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_4();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_10();
-    test_agglomerate_Isotropic_Choice_Of_Seed_Case_Seed_Valley_13();
-
-
 
 
 //    unordered_set<int> set1{3, 1, 4, 6, 5, 9};
@@ -141,26 +132,11 @@ int main() {
 //    cout<<"=================================================================="<<endl;
 //    cout<<"test_computeAnisotropicLine_1_AnisotropicCell"<<endl;
     test_computeAnisotropicLine_1_AnisotropicCell();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level"<<endl;
     test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle"<<endl;
     test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_2"<<endl;
     test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_2();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends"<<endl;
     test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends();
+
     test_agglomerate_Anisotropic_One_Level();
     test_agglomerate_Anisotropic_One_Level_2();
     test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level();
