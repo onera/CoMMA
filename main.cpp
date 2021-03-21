@@ -3,8 +3,6 @@
 #include <unordered_set>
 #include "Agglomerator.h"
 #include "Agglomerator_Isotropic.h"
-#include "tests.h"
-#include "tests_agglomerate.h"
 using namespace std;
 
 
@@ -100,24 +98,17 @@ int main() {
 //
 //    cout << endl;
 
-    test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell"<<endl;
-
-    test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1();
 
     cout<<"\n\n\n"<<endl;
     cout<<"=================================================================="<<endl;
     cout<<"test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8"<<endl;
-    test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8();
-    test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9();
-    test_agglomerateOneLevel_Box_5x5x5_Anisotropic();
-
-    cout<<"\ntest_agglomerateOneLevel_MGridGen"<<endl;
-    test_agglomerateOneLevel_MGridGen();
-    test_agglomerateOneLevel_disconnected();
+//    test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8();
+//    test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9();
+//    test_agglomerateOneLevel_Box_5x5x5_Anisotropic();
+//
+//    cout<<"\ntest_agglomerateOneLevel_MGridGen"<<endl;
+//    test_agglomerateOneLevel_MGridGen();
+//    test_agglomerateOneLevel_disconnected();
 
     cout<<"Tout s'est bien fini!"<<endl;
     return 0;

@@ -1,17 +1,8 @@
-//
-// Created by Nicolas Lantos on 18/10/2017.
-//
-//#include "gtest/gtest.h"
-#include "Agglomerator_Isotropic.h"
-#include "Agglomerator.h"
-#include<assert.h>
-#include<iostream>
-#include<cmath>
+#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+#include "../CoMMA_lib/Agglomerator.h"
+#include "gtest/gtest.h"
 
-
-using namespace std;
-
-int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
+TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8) {
 
     // without CGNS
     long numberOfFineCells = 64;
@@ -140,30 +131,27 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
                         maxCard,
                         checks,
                         verbose);
-    cout << "sizes[0] " << sizes[0] << endl;
-    cout << "sizes[1] " << sizes[1] << endl;
-    cout << "sizes[2] " << sizes[2] << endl;
-    cout << "sizes[3] " << sizes[3] << endl;
-    cout << "sizes[4] " << sizes[4] << endl;
-    cout << "sizes[5] " << sizes[5] << endl;
-    cout << "sizes[6] " << sizes[6] << endl;
-    cout << "sizes[7] " << sizes[7] << endl;
-    cout << "sizes[8] " << sizes[8] << endl;
-    cout << "sizes[9] " << sizes[9] << endl;
+//    cout << "sizes[0] " << sizes[0] << endl;
+//    cout << "sizes[1] " << sizes[1] << endl;
+//    cout << "sizes[2] " << sizes[2] << endl;
+//    cout << "sizes[3] " << sizes[3] << endl;
+//    cout << "sizes[4] " << sizes[4] << endl;
+//    cout << "sizes[5] " << sizes[5] << endl;
+//    cout << "sizes[6] " << sizes[6] << endl;
+//    cout << "sizes[7] " << sizes[7] << endl;
+//    cout << "sizes[8] " << sizes[8] << endl;
+//    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0] == 64);
-    assert(sizes[1] == 344);
-    assert(sizes[2] == 8);//indCoarseCell
-    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
-    assert(sizes[4] == 24);//isOnValley_size
-    assert(sizes[5] == 24);//isOnRidge_size
-    assert(sizes[6] == 8);//isOnCorner_size
-    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8] == 64);//agglomerationLines_Idx_size
-    assert(sizes[9] == 64);//agglomerationLines_size
-
-
-
+    ASSERT_EQ(64, sizes[0]);
+    ASSERT_EQ(344, sizes[1]);
+    ASSERT_EQ(8, sizes[2]);//indCoarseCell
+    ASSERT_EQ(64, sizes[3]);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(24, sizes[4]);//isOnValley_size
+    ASSERT_EQ(24, sizes[5]);//isOnRidge_size
+    ASSERT_EQ(8, sizes[6]);//isOnCorner_size
+    ASSERT_EQ(64, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+    ASSERT_EQ(64, sizes[8]);//agglomerationLines_Idx_size
+    ASSERT_EQ(64, sizes[9]);//agglomerationLines_size
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 3, 3, 5, 5, 3, 3, 7, 7, 6, 6, 7, 7, 6, 6, 5, 5, 3, 3, 5, 5, 3, 3, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1,
                                                              0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0};
@@ -175,13 +163,11 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8() {
 
     for (int i = 0; i < 64; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
     }
-    return 1;
 }
 
-
-int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
+TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9) {
 
     // without CGNS
     long numberOfFineCells = 64;
@@ -322,17 +308,16 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
 //    cout<<"sizes[8] "<<sizes[8]<<endl;
 //    cout<<"sizes[9] "<<sizes[9]<<endl;
 
-    assert(sizes[0] == 64);
-    assert(sizes[1] == 344);
-    assert(sizes[2] == 7);//indCoarseCell
-    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
-
-    assert(sizes[4] == 24);//isOnValley_size
-    assert(sizes[5] == 24);//isOnRidge_size
-    assert(sizes[6] == 8);//isOnCorner_size
-    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8] == 64);//agglomerationLines_Idx_size
-    assert(sizes[9] == 64);//agglomerationLines_size
+    ASSERT_EQ(64, sizes[0]);
+    ASSERT_EQ(344, sizes[1]);
+    ASSERT_EQ(7, sizes[2]);//indCoarseCell
+    ASSERT_EQ(64, sizes[3]);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(24, sizes[4]);//isOnValley_size
+    ASSERT_EQ(24, sizes[5]);//isOnRidge_size
+    ASSERT_EQ(8, sizes[6]);//isOnCorner_size
+    ASSERT_EQ(64, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+    ASSERT_EQ(64, sizes[8]);//agglomerationLines_Idx_size
+    ASSERT_EQ(64, sizes[9]);//agglomerationLines_size
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {2, 6, 6, 6, 5, 6, 6, 3, 5, 5, 3, 3, 5, 5, 3, 3, 2, 6, 6, 6, 5, 6, 6, 3, 5, 5, 3, 3, 5, 5, 3, 3, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1,
                                                              0, 0, 2, 2, 4, 4, 2, 2, 4, 4, 1, 1, 0, 0, 1, 1, 0, 0};
@@ -347,13 +332,12 @@ int test_agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9() {
 
     for (int i = 0; i < 64; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
     }
-    return 1;
+
 }
 
-
-int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
+TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Anisotropic) {
 
     // without CGNS
     long numberOfFineCells = 64;
@@ -483,30 +467,30 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
                         maxCard,
                         checks,
                         verbose);
-    cout << "sizes[0] " << sizes[0] << endl;
-    cout << "sizes[1] " << sizes[1] << endl;
-    cout << "sizes[2] " << sizes[2] << endl;
-    cout << "sizes[3] " << sizes[3] << endl;
-    cout << "sizes[4] " << sizes[4] << endl;
-    cout << "sizes[5] " << sizes[5] << endl;
-    cout << "sizes[6] " << sizes[6] << endl;
-    cout << "sizes[7] " << sizes[7] << endl;
-    cout << "sizes[8] " << sizes[8] << endl;
-    cout << "sizes[9] " << sizes[9] << endl;
+//    cout << "sizes[0] " << sizes[0] << endl;
+//    cout << "sizes[1] " << sizes[1] << endl;
+//    cout << "sizes[2] " << sizes[2] << endl;
+//    cout << "sizes[3] " << sizes[3] << endl;
+//    cout << "sizes[4] " << sizes[4] << endl;
+//    cout << "sizes[5] " << sizes[5] << endl;
+//    cout << "sizes[6] " << sizes[6] << endl;
+//    cout << "sizes[7] " << sizes[7] << endl;
+//    cout << "sizes[8] " << sizes[8] << endl;
+//    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0] == 64);
-    assert(sizes[1] == 344);
-    assert(sizes[2] == 18);//indCoarseCell
-    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(64, sizes[0]);
+    ASSERT_EQ(344, sizes[1]);
+    ASSERT_EQ(18, sizes[2]);//indCoarseCell
+    ASSERT_EQ(64, sizes[3]);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(24, sizes[4]);//isOnValley_size
+    ASSERT_EQ(24, sizes[5]);//isOnRidge_size
+    ASSERT_EQ(8, sizes[6]);//isOnCorner_size
+    ASSERT_EQ(16, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+    ASSERT_EQ(17, sizes[8]);//agglomerationLines_Idx_size
+    ASSERT_EQ(16, sizes[9]);//agglomerationLines_size
 
-    assert(sizes[4] == 24);//isOnValley_size
-    assert(sizes[5] == 24);//isOnRidge_size
-    assert(sizes[6] == 8);//isOnCorner_size
-    assert(sizes[7] == 16);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8] == 17);//agglomerationLines_Idx_size
-    assert(sizes[9] == 16);//agglomerationLines_size
-
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8, 7,
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[64] = {0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8, 7, 15, 14, 6, 3, 11, 10, 1, 0, 5, 4, 2, 9, 13, 12, 8,
+                                                             7,
                                                              15, 14, 6, 3, 11, 10, 1, 17, 17, 17, 17, 17, 17, 16, 16, 17, 16, 16, 16, 17, 16, 16, 16};
 //            1, 6, 5, 2,
 //                                                             8, 13, 14, 9,
@@ -551,23 +535,21 @@ int test_agglomerateOneLevel_Box_5x5x5_Anisotropic() {
 //    cout<<endl;
 
     long fineAgglomerationLines_array_Idx_size = sizes[8];
-    assert(fineAgglomerationLines_array_Idx_size - 1 == 16);
+    ASSERT_EQ(16, fineAgglomerationLines_array_Idx_size - 1);
 
     long ref_agglomerationLines_Idx[17] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
 //        cout <<agglomerationLines_Idx[i]<<", ";
-        assert(ref_agglomerationLines_Idx[i] == agglomerationLines_Idx[i]);
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], agglomerationLines_Idx[i]);
     }
     long ref_fineAgglomerationLines_array[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     for (int i = 0; i < agglomerationLines_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
-        assert(ref_fineAgglomerationLines_array[i] == agglomerationLines[i]);
+        ASSERT_EQ(ref_fineAgglomerationLines_array[i], agglomerationLines[i]);
     }
 
-
-    return 1;
 }
 
-int test_agglomerateOneLevel_MGridGen() {
+TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
 
     // MGridGen Test case
     int nb_fc = 15;
@@ -575,8 +557,8 @@ int test_agglomerateOneLevel_MGridGen() {
 
     long adjMatrix_row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
     long adjMatrix_col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
-                                      7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
-                                      14};
+                                  7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11,
+                                  14};
     double adjMatrix_areaValues[51] = {6.82842712, 2., 2., 2., 4.23606798, 1., 2., 4., 2.23606798, 2.23606798, 1., 4., 2.23606798,
                                        6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,
                                        2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,
@@ -585,15 +567,15 @@ int test_agglomerateOneLevel_MGridGen() {
 
     double volumes[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     long isOnBnd[15] = {1, 1, 0, 1, 1,
-                       0, 0, 0, 0, 0,
-                       0, 0, 2, 1, 2};
+                        0, 0, 0, 0, 0,
+                        0, 0, 2, 1, 2};
     long numberOfFineAgglomeratedCells = 0;
 
     long isOnRidge_size = 5;
     long isOnValley_size = 2;
     long isOnCorner_size = 0;
 
-    long array_isOnRidge[5] = {0, 1, 3, 4, };
+    long array_isOnRidge[5] = {0, 1, 3, 4,};
     long array_isOnValley[2] = {12, 14};
     long array_isOnCorner[0] = {};
 
@@ -681,30 +663,27 @@ int test_agglomerateOneLevel_MGridGen() {
 //    cout << "sizes[8] " << sizes[8] << endl;
 //    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0] == nb_fc);
-    assert(sizes[1] == adjMatrix_col_ind_size);
-    assert(sizes[2] == 2);//indCoarseCell
-    assert(sizes[3] == 15);//numberOfFineAgglomeratedCells
-
-    assert(sizes[4] == 2);//isOnValley_size
-    assert(sizes[5] == 5);//isOnRidge_size
-    assert(sizes[6] == 0);//isOnCorner_size
-    assert(sizes[7] == 15);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8] == 15);//agglomerationLines_Idx_size
-    assert(sizes[9] == 15);//agglomerationLines_size
+    ASSERT_EQ(nb_fc, sizes[0]);
+    ASSERT_EQ(adjMatrix_col_ind_size, sizes[1]);
+    ASSERT_EQ(2, sizes[2]);//indCoarseCell
+    ASSERT_EQ(15, sizes[3]);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(2, sizes[4]);//isOnValley_size
+    ASSERT_EQ(5, sizes[5]);//isOnRidge_size
+    ASSERT_EQ(0, sizes[6]);//isOnCorner_size
+    ASSERT_EQ(15, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+    ASSERT_EQ(15, sizes[8]);//agglomerationLines_Idx_size
+    ASSERT_EQ(15, sizes[9]);//agglomerationLines_size
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1};
 //    cout<<endl;
     for (int i = 0; i < nb_fc; i++) {
 //        cout<<fc_to_cc[i]<<", ";
 //        cout<<i<<", "<<fc_to_cc[i]<<" ref= "<<ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]<<endl;
-        assert(fc_to_cc[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fc_to_cc[i]);
     }
-
-    return 1;
 }
 
-int test_agglomerateOneLevel_disconnected() {
+TEST(CoMMA_TestSuite, agglomerateOneLevel_disconnected) {
 
     // MGridGen Test case
     int nb_fc = 10;
@@ -714,7 +693,7 @@ int test_agglomerateOneLevel_disconnected() {
     long adjMatrix_col_ind[24] = {0, 1, 2, 0, 1,
                                   0, 2, 3, 4, 3,
                                   4, 5, 6, 7, 8,
-                                  6, 7, 9, 6, 8, 9, 7,8, 9};
+                                  6, 7, 9, 6, 8, 9, 7, 8, 9};
     double adjMatrix_areaValues[24] = {1., 1., 1., 1., 2., 1., 2., 2., 1., 1., 2., 3., 2., 1., 1., 1., 2.,
                                        1., 1., 2., 1., 1., 1., 2.};
 
@@ -807,37 +786,34 @@ int test_agglomerateOneLevel_disconnected() {
                         maxCard,
                         checks,
                         verbose);
-    cout << "sizes[0] " << sizes[0] << endl;
-    cout << "sizes[1] " << sizes[1] << endl;
-    cout << "sizes[2] " << sizes[2] << endl;
-    cout << "sizes[3] " << sizes[3] << endl;
-    cout << "sizes[4] " << sizes[4] << endl;
-    cout << "sizes[5] " << sizes[5] << endl;
-    cout << "sizes[6] " << sizes[6] << endl;
-    cout << "sizes[7] " << sizes[7] << endl;
-    cout << "sizes[8] " << sizes[8] << endl;
-    cout << "sizes[9] " << sizes[9] << endl;
+//    cout << "sizes[0] " << sizes[0] << endl;
+//    cout << "sizes[1] " << sizes[1] << endl;
+//    cout << "sizes[2] " << sizes[2] << endl;
+//    cout << "sizes[3] " << sizes[3] << endl;
+//    cout << "sizes[4] " << sizes[4] << endl;
+//    cout << "sizes[5] " << sizes[5] << endl;
+//    cout << "sizes[6] " << sizes[6] << endl;
+//    cout << "sizes[7] " << sizes[7] << endl;
+//    cout << "sizes[8] " << sizes[8] << endl;
+//    cout << "sizes[9] " << sizes[9] << endl;
 
-    assert(sizes[0] == nb_fc);
-    assert(sizes[1] == adjMatrix_col_ind_size);
-    assert(sizes[2] == 4);//indCoarseCell
-    assert(sizes[3] == nb_fc);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(nb_fc, sizes[0] );
+    ASSERT_EQ(adjMatrix_col_ind_size, sizes[1]);
+    ASSERT_EQ(4, sizes[2]);//indCoarseCell
+    ASSERT_EQ(nb_fc, sizes[3]);//numberOfFineAgglomeratedCells
+    ASSERT_EQ(8, sizes[4]);//isOnValley_size
+    ASSERT_EQ(1, sizes[5]);//isOnRidge_size
+    ASSERT_EQ(1, sizes[6]);//isOnCorner_size
+    ASSERT_EQ(10, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+    ASSERT_EQ(10, sizes[8]);//agglomerationLines_Idx_size
+    ASSERT_EQ(10, sizes[9]);//agglomerationLines_size
 
-    assert(sizes[4] == 8);//isOnValley_size
-    assert(sizes[5] == 1);//isOnRidge_size
-    assert(sizes[6] == 1);//isOnCorner_size
-    assert(sizes[7] == 10);//arrayOfFineAnisotropicCompliantCells_size
-    assert(sizes[8] == 10);//agglomerationLines_Idx_size
-    assert(sizes[9] == 10);//agglomerationLines_size
-
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 2, 2, 3, 1, 1, 1, 1};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 3, 3, 2, 1, 1, 1, 1};
 //    cout<<endl;
     for (int i = 0; i < nb_fc; i++) {
-        cout<<fc_to_cc[i]<<", ";
+//        cout << fc_to_cc[i] << ", ";
 //        cout<<i<<", "<<fc_to_cc[i]<<" ref= "<<ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]<<endl;
-//        assert(fc_to_cc[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fc_to_cc[i]  );
     }
-
-    return 1;
 }
 

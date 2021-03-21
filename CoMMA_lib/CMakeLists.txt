@@ -6,15 +6,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(HEADER_FILES
         Agglomerator.h
         Agglomerator_Isotropic.h
-        tests.h
-        tests_agglomerate.h
         )
 
 set(SOURCE_FILES
         Agglomerator.cpp
         Agglomerator_Isotropic.cpp
-        tests.cpp
-        tests_agglomerate.cpp)
+        )
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})
