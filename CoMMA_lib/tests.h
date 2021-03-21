@@ -12,9 +12,6 @@ int test_computeConnectedComponent_9_Squares();
 
 int test_compute_Dicts_From_FineCellIndicesToCoarseCellIndices();
 
-int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell();
-int test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2();
-
 int test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1();
 
 int test_agglomerate_Isotropic_First_Step_Box_5x5x5();

@@ -2365,32 +2365,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic
     ref_dict_Card_Coarse_Cells_0[5] = unordered_set<long>({0, 1});
     ASSERT_EQ(ref_dict_Card_Coarse_Cells_0, dict_Card_Coarse_Cells);
 
-//    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-//    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
-//    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 2;
-//    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-//    cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[1]: [";
-//    for(auto i:dict_Coarse_Cells[1]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[2]: [";
-//    for(auto i:dict_Coarse_Cells[2]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[3]: [";
-//    for(auto i:dict_Coarse_Cells[3]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-
     agglomerate_Isotropic_Correction_Too_Big_Cells(dict_Coarse_Cells, dict_Card_Coarse_Cells,
                                                    row_ptr, col_ind,
                                                    dict_DistributionOfCardinalOfCoarseElements,
@@ -2398,56 +2372,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic
                                                    indCoarseCell,
                                                    goalCard, false);
 
-//    self.assertEqual(4, indCoarseCell)
-//    self.assertEqual({0: [0, 1, 3, 4], 1: [7, 8, 10, 11], 2: [5, 2], 3: [6, 9]}, dict_Coarse_Cells)
-//    self.assertEqual({2: set([2, 3]), 4: set([0, 1])}, dict_Card_Coarse_Cells)
-//    self.assertEqual({2: 2, 4: 2}, dict_DistributionOfCardinalOfCoarseElements)
-//    np.testing.assert_almost_equal(np.array([]), fineCellIndicesToCoarseCellIndices[0])
-//    cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//
-//    cout<<"\ndict_Coarse_Cells[1]: [";
-//    for(auto i:dict_Coarse_Cells[1]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[2]: [";
-//    for(auto i:dict_Coarse_Cells[2]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[3]: [";
-//    for(auto i:dict_Coarse_Cells[3]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//
-//    cout<<"\ndict_Card_Coarse_Cells[2]: [";
-//    for(auto i:dict_Card_Coarse_Cells[2]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-
-//    cout<<"\ndict_Card_Coarse_Cells[3]: [";
-//    for(auto i:dict_Card_Coarse_Cells[3]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-
-//    cout<<"\ndict_Card_Coarse_Cells[4]: [";
-//    for(auto i:dict_Card_Coarse_Cells[4]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"Keys dict_Card_Coarse_Cells: [";
-//    for(auto iKV:dict_Card_Coarse_Cells)
-//    {
-//        cout<<iKV.first<<", ";
-//    }
-//    cout<<"]"<<endl;
     ASSERT_EQ(4, indCoarseCell);
 
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
@@ -2466,37 +2390,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic
     ref_dict_DistributionOfCardinalOfCoarseElements[2] = 2;
     ref_dict_DistributionOfCardinalOfCoarseElements[4] = 2;
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-
-//
-//    assert(dict_Coarse_Cells.size() == 4);
-//    assert(dict_Coarse_Cells[0].count(0) == 1);
-//    assert(dict_Coarse_Cells[0].count(1) == 1);
-//    assert(dict_Coarse_Cells[0].count(3) == 1);
-//    assert(dict_Coarse_Cells[0].count(4) == 1);
-//
-//    assert(dict_Coarse_Cells[1].count(7) == 1);
-//    assert(dict_Coarse_Cells[1].count(8) == 1);
-//    assert(dict_Coarse_Cells[1].count(10) == 1);
-//    assert(dict_Coarse_Cells[1].count(11) == 1);
-//
-//    assert(dict_Coarse_Cells[2].count(5) == 1);
-//    assert(dict_Coarse_Cells[2].count(2) == 1);
-//
-//    assert(dict_Coarse_Cells[3].count(6) == 1);
-//    assert(dict_Coarse_Cells[3].count(9) == 1);
-
-//    assert(!dict_Card_Coarse_Cells.empty());
-////    cout << "dict_Card_Coarse_Cells.size() " << dict_Card_Coarse_Cells.size() << endl;
-//    assert(dict_Card_Coarse_Cells.size() == 2);
-//    assert(dict_Card_Coarse_Cells[2].count(2) == 1);
-//    assert(dict_Card_Coarse_Cells[2].count(3) == 1);
-//    assert(dict_Card_Coarse_Cells[4].count(0) == 1);
-//    assert(dict_Card_Coarse_Cells[4].count(1) == 1);
-//
-//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-//    assert(dict_DistributionOfCardinalOfCoarseElements[2] == 2);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 2);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[12] = {0, 0, 2, 0, 0, 2, 3, 1, 1, 3, 1, 1};
     for (int i = 0; i < 12; i++) {
@@ -2550,7 +2443,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic
 
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
     ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 3, 6});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({2, 4, 5, 7,8 });
+    ref_dict_Coarse_Cells[1] = unordered_set<long>({2, 4, 5, 7, 8});
     ref_dict_Coarse_Cells[2] = unordered_set<long>({9, 10, 11});
 
     ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
@@ -2567,47 +2460,9 @@ TEST(CoarseCellGraph_TestSuite, Correction_Too_Big_Cells_12_Squares_12_isotropic
     ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
 
-
-//    assert(!dict_Coarse_Cells.empty());
-//    assert(dict_Coarse_Cells.size() == 3);
-//    cout << "dict_Coarse_Cells[2]: [";
-//    for (auto i :dict_Coarse_Cells[2]) {
-//        cout << i << ", ";
-//    }
-//    cout << "]" << endl;
-//    assert(dict_Coarse_Cells[0].size() == 4);
-//    assert(dict_Coarse_Cells[0].count(0) == 1);
-//    assert(dict_Coarse_Cells[0].count(1) == 1);
-//    assert(dict_Coarse_Cells[0].count(3) == 1);
-//    assert(dict_Coarse_Cells[0].count(6) == 1);
-//
-//
-//    assert(dict_Coarse_Cells[1].size() == 5);
-//    assert(dict_Coarse_Cells[1].count(2) == 1);
-//    assert(dict_Coarse_Cells[1].count(4) == 1);
-//    assert(dict_Coarse_Cells[1].count(5) == 1);
-//    assert(dict_Coarse_Cells[1].count(7) == 1);
-//    assert(dict_Coarse_Cells[1].count(8) == 1);
-//
-//    assert(dict_Coarse_Cells[2].count(9) == 1);
-//    assert(dict_Coarse_Cells[2].count(10) == 1);
-//    assert(dict_Coarse_Cells[2].count(11) == 1);
-
-//    assert(!dict_Card_Coarse_Cells.empty());
-//    assert(dict_Card_Coarse_Cells.size() == 3);
-//    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
-//    assert(dict_Card_Coarse_Cells[4].count(0) == 1);
-//    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
-//
-//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
-
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[12] = {0, 0, 1, 0, 1, 1, 0, 1, 1, 2, 2, 2};
     for (int i = 0; i < 12; i++) {
         ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
-//        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
     }
 }
 
@@ -2674,39 +2529,23 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                                 checks,
                                                                 verbose);
 
-    cout << "\ndict_Coarse_Cells[0]: [";
-    for (auto i:dict_Coarse_Cells[0]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
-    assert(indCoarseCell == 2);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 2);
-    assert(dict_Coarse_Cells[0].count(0) == 1);
-    assert(dict_Coarse_Cells[0].count(1) == 1);
-    assert(dict_Coarse_Cells[0].count(2) == 1);
-    assert(dict_Coarse_Cells[0].count(3) == 1);
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(7) == 1);
-    assert(dict_Coarse_Cells[0].count(8) == 1);
-    assert(dict_Coarse_Cells[0].count(9) == 1);
-    assert(dict_Coarse_Cells[0].count(10) == 1);
-    assert(dict_Coarse_Cells[0].count(12) == 1);
-    assert(dict_Coarse_Cells[0].count(13) == 1);
+    ASSERT_EQ(2, indCoarseCell);
 
-    assert(dict_Coarse_Cells[1].count(6) == 1);
-    assert(dict_Coarse_Cells[1].count(11) == 1);
-    assert(dict_Coarse_Cells[1].count(14) == 1);
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
+    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13});
+    ref_dict_Coarse_Cells[1] = unordered_set<long>({6, 11, 14});
 
-    assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 2);
-    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[12].count(0) == 1);
+    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
 
-    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
-    assert(dict_DistributionOfCardinalOfCoarseElements[12] == 1);
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ref_dict_Card_Coarse_Cells[12] = unordered_set<long>({0});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[12] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0,
                                                              0, 0, 0,
@@ -2715,7 +2554,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                              0, 0, 1};
     for (int i = 0; i < 15; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
     }
     agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
                                                                 sizes,
@@ -2736,41 +2575,23 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                                 checks,
                                                                 verbose);
 
-    cout << "\ndict_Coarse_Cells[2]: [";
-    for (auto i:dict_Coarse_Cells[2]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
-    assert(indCoarseCell == 3);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 3);
-    assert(dict_Coarse_Cells[0].count(0) == 1);
-    assert(dict_Coarse_Cells[0].count(1) == 1);
-    assert(dict_Coarse_Cells[0].count(2) == 1);
-    assert(dict_Coarse_Cells[0].count(3) == 1);
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(8) == 1);
-    assert(dict_Coarse_Cells[0].count(10) == 1);
-    assert(dict_Coarse_Cells[0].count(13) == 1);
+    ASSERT_EQ(3, indCoarseCell);
 
-    assert(dict_Coarse_Cells[1].count(6) == 1);
-    assert(dict_Coarse_Cells[1].count(11) == 1);
-    assert(dict_Coarse_Cells[1].count(14) == 1);
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_2;
+    ref_dict_Coarse_Cells_2[0] = unordered_set<long>({0, 1, 2, 3, 4, 5,  8, 10, 13});
+    ref_dict_Coarse_Cells_2[1] = unordered_set<long>({6, 11, 14});
+    ref_dict_Coarse_Cells_2[2] = unordered_set<long>({7, 9, 12});
+    ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
-    assert(dict_Coarse_Cells[2].count(7) == 1);
-    assert(dict_Coarse_Cells[2].count(9) == 1);
-    assert(dict_Coarse_Cells[2].count(12) == 1);
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2;
+    ref_dict_Card_Coarse_Cells_2[3] = unordered_set<long>({1, 2});
+    ref_dict_Card_Coarse_Cells_2[9] = unordered_set<long>({0});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells_2, dict_Card_Coarse_Cells);
 
-    assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 2);
-    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
-    assert(dict_Card_Coarse_Cells[9].count(0) == 1);
-
-    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 2);
-    assert(dict_DistributionOfCardinalOfCoarseElements[9] == 1);
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2;
+    ref_dict_DistributionOfCardinalOfCoarseElements_2[3] = 2;
+    ref_dict_DistributionOfCardinalOfCoarseElements_2[9] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements_2, dict_DistributionOfCardinalOfCoarseElements);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {0, 0, 0,
                                                                0, 0, 0,
@@ -2778,8 +2599,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                                2, 0, 1,
                                                                2, 0, 1};
     for (int i = 0; i < 15; i++) {
-
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fineCellIndicesToCoarseCellIndices[i]);
     }
 
     agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
@@ -2801,61 +2621,57 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                                 checks,
                                                                 verbose);
 
-//    cout<<"\ndict_Coarse_Cells[0]: [";
-//    for(auto i:dict_Coarse_Cells[0]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-//    cout<<"\ndict_Coarse_Cells[1]: [";
-//    for(auto i:dict_Coarse_Cells[1]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
+    ASSERT_EQ(4, indCoarseCell);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_3;
+    ref_dict_Coarse_Cells_3[0] = unordered_set<long>({2, 4, 5,  8, 10, 13});
+    ref_dict_Coarse_Cells_3[1] = unordered_set<long>({6, 11, 14});
+    ref_dict_Coarse_Cells_3[2] = unordered_set<long>({7, 9, 12});
+    ref_dict_Coarse_Cells_3[3] = unordered_set<long>({0,1,3});
+    ASSERT_EQ(ref_dict_Coarse_Cells_3, dict_Coarse_Cells);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_3;
+    ref_dict_Card_Coarse_Cells_3[3] = unordered_set<long>({1, 2, 3});
+    ref_dict_Card_Coarse_Cells_3[6] = unordered_set<long>({0});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells_3, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_3;
+    ref_dict_DistributionOfCardinalOfCoarseElements_3[3] = 3;
+    ref_dict_DistributionOfCardinalOfCoarseElements_3[6] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements_3, dict_DistributionOfCardinalOfCoarseElements);
+
+//    assert(indCoarseCell == 4);
+//    assert(!dict_Coarse_Cells.empty());
+//    assert(dict_Coarse_Cells.size() == 4);
+//    assert(dict_Coarse_Cells[0].count(2) == 1);
+//    assert(dict_Coarse_Cells[0].count(4) == 1);
+//    assert(dict_Coarse_Cells[0].count(5) == 1);
+//    assert(dict_Coarse_Cells[0].count(8) == 1);
+//    assert(dict_Coarse_Cells[0].count(10) == 1);
+//    assert(dict_Coarse_Cells[0].count(13) == 1);
 //
-//    cout<<"\ndict_Coarse_Cells[2]: [";
-//    for(auto i:dict_Coarse_Cells[2]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
+//    assert(dict_Coarse_Cells[1].count(6) == 1);
+//    assert(dict_Coarse_Cells[1].count(11) == 1);
+//    assert(dict_Coarse_Cells[1].count(14) == 1);
 //
-//    cout<<"\ndict_Coarse_Cells[3]: [";
-//    for(auto i:dict_Coarse_Cells[3]){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
-
-    assert(indCoarseCell == 4);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 4);
-    assert(dict_Coarse_Cells[0].count(2) == 1);
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(8) == 1);
-    assert(dict_Coarse_Cells[0].count(10) == 1);
-    assert(dict_Coarse_Cells[0].count(13) == 1);
-
-    assert(dict_Coarse_Cells[1].count(6) == 1);
-    assert(dict_Coarse_Cells[1].count(11) == 1);
-    assert(dict_Coarse_Cells[1].count(14) == 1);
-
-    assert(dict_Coarse_Cells[2].count(7) == 1);
-    assert(dict_Coarse_Cells[2].count(9) == 1);
-    assert(dict_Coarse_Cells[2].count(12) == 1);
-
-    assert(dict_Coarse_Cells[3].count(0) == 1);
-    assert(dict_Coarse_Cells[3].count(1) == 1);
-    assert(dict_Coarse_Cells[3].count(3) == 1);
-
-    assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 2);
-    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
-    assert(dict_Card_Coarse_Cells[3].count(3) == 1);
-    assert(dict_Card_Coarse_Cells[6].count(0) == 1);
-
-    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 3);
-    assert(dict_DistributionOfCardinalOfCoarseElements[6] == 1);
+//    assert(dict_Coarse_Cells[2].count(7) == 1);
+//    assert(dict_Coarse_Cells[2].count(9) == 1);
+//    assert(dict_Coarse_Cells[2].count(12) == 1);
+//
+//    assert(dict_Coarse_Cells[3].count(0) == 1);
+//    assert(dict_Coarse_Cells[3].count(1) == 1);
+//    assert(dict_Coarse_Cells[3].count(3) == 1);
+//
+//    assert(!dict_Card_Coarse_Cells.empty());
+//    assert(dict_Card_Coarse_Cells.size() == 2);
+//    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
+//    assert(dict_Card_Coarse_Cells[3].count(2) == 1);
+//    assert(dict_Card_Coarse_Cells[3].count(3) == 1);
+//    assert(dict_Card_Coarse_Cells[6].count(0) == 1);
+//
+//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
+//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 3);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[6] == 1);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[15] = {3, 3, 0,
                                                                3, 0, 0,
@@ -2864,7 +2680,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
                                                                2, 0, 1};
     for (int i = 0; i < 15; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_3[i], fineCellIndicesToCoarseCellIndices[i]);
     }
 
 }
@@ -2932,57 +2748,30 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell_v2)
                                                                 checks,
                                                                 verbose);
 
-    cout << "\ndict_Coarse_Cells[0]: [";
-    for (auto i:dict_Coarse_Cells[0]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
-    cout << "\ndict_Coarse_Cells[1]: [";
-    for (auto i:dict_Coarse_Cells[1]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
+    ASSERT_EQ(2, indCoarseCell);
 
-    assert(indCoarseCell == 2);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 2);
-    assert(dict_Coarse_Cells[0].count(0) == 1);
-    assert(dict_Coarse_Cells[0].count(1) == 1);
-    assert(dict_Coarse_Cells[0].count(2) == 1);
-    assert(dict_Coarse_Cells[0].count(3) == 1);
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(5) == 1);
-    assert(dict_Coarse_Cells[0].count(7) == 1);
-    assert(dict_Coarse_Cells[0].count(8) == 1);
-    assert(dict_Coarse_Cells[0].count(9) == 1);
-    assert(dict_Coarse_Cells[0].count(12) == 1);
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
+    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 2, 3, 4, 5, 7, 8, 9, 12});
+    ref_dict_Coarse_Cells[1] = unordered_set<long>({6, 10, 11, 13, 14});
 
-    assert(dict_Coarse_Cells[1].count(6) == 1);
-    assert(dict_Coarse_Cells[1].count(10) == 1);
-    assert(dict_Coarse_Cells[1].count(11) == 1);
-    assert(dict_Coarse_Cells[1].count(13) == 1);
-    assert(dict_Coarse_Cells[1].count(14) == 1);
+    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
 
-    assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 2);
-    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[10].count(0) == 1);
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[5] = unordered_set<long>({1});
+    ref_dict_Card_Coarse_Cells[10] = unordered_set<long>({0});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
 
-    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 1);
-    assert(dict_DistributionOfCardinalOfCoarseElements[10] == 1);
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[10] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1};
-//    cout<<"\nfineCellIndicesToCoarseCellIndices: [";
-//    for(auto i:fineCellIndicesToCoarseCellIndices){
-//        cout<<i<<", ";
-//    }
-//    cout<<"]"<<endl;
 
     for (int i = 0; i < 15; i++) {
-
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
     }
+
     agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(nbSizes,
                                                                 sizes,
                                                                 listOfSeeds,
@@ -3002,59 +2791,28 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell_v2)
                                                                 checks,
                                                                 verbose);
 
-    cout << "\ndict_Coarse_Cells[0]: [";
-    for (auto i:dict_Coarse_Cells[0]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
-    cout << "\ndict_Coarse_Cells[1]: [";
-    for (auto i:dict_Coarse_Cells[1]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
-    cout << "\ndict_Coarse_Cells[2]: [";
-    for (auto i:dict_Coarse_Cells[2]) {
-        cout << i << ", ";
-    }
-    cout << "]" << endl;
+    ASSERT_EQ(3, indCoarseCell);
 
-    cout << "indCoarseCell " << indCoarseCell << endl;
-    assert(indCoarseCell == 3);
-    assert(!dict_Coarse_Cells.empty());
-    assert(dict_Coarse_Cells.size() == 3);
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_2;
+    ref_dict_Coarse_Cells_2[0] = unordered_set<long>({4, 7, 8, 9, 12});
+    ref_dict_Coarse_Cells_2[1] = unordered_set<long>({6, 10, 11, 13, 14});
+    ref_dict_Coarse_Cells_2[2] = unordered_set<long>({0,1,2,3,5});
 
-    assert(dict_Coarse_Cells[0].count(4) == 1);
-    assert(dict_Coarse_Cells[0].count(7) == 1);
-    assert(dict_Coarse_Cells[0].count(8) == 1);
-    assert(dict_Coarse_Cells[0].count(9) == 1);
-    assert(dict_Coarse_Cells[0].count(12) == 1);
+    ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
-    assert(dict_Coarse_Cells[1].count(6) == 1);
-    assert(dict_Coarse_Cells[1].count(10) == 1);
-    assert(dict_Coarse_Cells[1].count(11) == 1);
-    assert(dict_Coarse_Cells[1].count(13) == 1);
-    assert(dict_Coarse_Cells[1].count(14) == 1);
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2;
+    ref_dict_Card_Coarse_Cells_2[5] = unordered_set<long>({0, 1, 2});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells_2, dict_Card_Coarse_Cells);
 
-    assert(dict_Coarse_Cells[2].count(0) == 1);
-    assert(dict_Coarse_Cells[2].count(1) == 1);
-    assert(dict_Coarse_Cells[2].count(2) == 1);
-    assert(dict_Coarse_Cells[2].count(3) == 1);
-    assert(dict_Coarse_Cells[2].count(5) == 1);
-
-    assert(!dict_Card_Coarse_Cells.empty());
-    assert(dict_Card_Coarse_Cells.size() == 1);
-    assert(dict_Card_Coarse_Cells[5].count(0) == 1);
-    assert(dict_Card_Coarse_Cells[5].count(1) == 1);
-    assert(dict_Card_Coarse_Cells[5].count(2) == 1);
-
-    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-    assert(dict_DistributionOfCardinalOfCoarseElements[5] == 3);
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2;
+    ref_dict_DistributionOfCardinalOfCoarseElements_2[5] = 3;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements_2, dict_DistributionOfCardinalOfCoarseElements);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[15] = {2, 2, 2, 2, 0, 2, 1, 0, 0, 0, 1, 1, 0, 1, 1};
 
     for (int i = 0; i < 15; i++) {
 
-        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fineCellIndicesToCoarseCellIndices[i]);
     }
 }
 
