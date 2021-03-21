@@ -1571,9 +1571,9 @@ list<unordered_set<long>> computeConnectedComponent(
 //            cout << "iFineCell " << iFineCell << endl;
             setNext.erase(setNext.begin());     // setNext.pop( );
 //            cout << "setNext" << endl;
-            for (auto iF:setNext) {
-                cout << iF << ", ";
-            }
+//            for (auto iF:setNext) {
+//                cout << iF << ", ";
+//            }
 //            cout << endl;
             long ind = matrixAdj_CRS_row_ptr[iFineCell];  // Usefull to find neighbours of seed
             long ind_p_one = matrixAdj_CRS_row_ptr[iFineCell + 1];  // Usefull to find neighbours of seed

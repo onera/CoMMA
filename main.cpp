@@ -47,8 +47,6 @@ int main() {
 //    }
 //    cout<<"front= "<< toto.front()<<endl;
 
-    test_ComputeNumberOfCommonFaces();
-
 //    unordered_set<int> set_1;
 //    set_1.insert(1);
 //    set_1.insert(2);
@@ -72,7 +70,6 @@ int main() {
 //        cout<<j<<", ";
 //    }cout<<endl;
 
-    test_CheckConnectivity_MGridGenDoc_example();
     //
 //    unordered_set<int> set_1;
 //    set_1.insert(1);
@@ -84,10 +81,6 @@ int main() {
 //        cout<<j<<", ";
 //    }
 //    cout<<endl;
-
-    test_computeConnectedComponent_9_Squares();
-
-
 
 //    unordered_set<int> set1{3, 1, 4, 6, 5, 9};
 //    unordered_set<int> set2;
@@ -112,31 +105,8 @@ int main() {
 //    cout<<"\n\n\n"<<endl;
 //    cout<<"=================================================================="<<endl;
 //    cout<<"test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell"<<endl;
-    test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell();
-    test_agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo_1_cell_v2();
 
     test_agglomerate_Isotropic_CreateDelayedCoarseCells_Case_1();
-
-    test_agglomerate_Isotropic_First_Step_Box_5x5x5();
-    test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9"<<endl;
-    test_agglomerate_Isotropic_One_Level_v_2_Box_5x5x5_goalCard_9();
-
-//    cout<<"\n\n\n"<<endl;
-//    cout<<"=================================================================="<<endl;
-//    cout<<"test_computeAnisotropicLine_1_AnisotropicCell"<<endl;
-    test_computeAnisotropicLine_1_AnisotropicCell();
-    test_computeAnisotropicLine_Box_5x5x5_iso_and_Aniso_MG_1_level();
-    test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle();
-    test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_2();
-    test_computeAnisotropicLine_MostAnisotropicCellInTheMiddle_Iso_at_both_ends();
-
-    test_agglomerate_Anisotropic_One_Level();
-    test_agglomerate_Anisotropic_One_Level_2();
-    test_agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_MG_1_level();
 
     cout<<"\n\n\n"<<endl;
     cout<<"=================================================================="<<endl;
@@ -148,8 +118,6 @@ int main() {
     cout<<"\ntest_agglomerateOneLevel_MGridGen"<<endl;
     test_agglomerateOneLevel_MGridGen();
     test_agglomerateOneLevel_disconnected();
-    test_read_agglomeration_datas_from_file();
-    test_read_agglomeration_datas_from_file_and_agglomerate();
 
     cout<<"Tout s'est bien fini!"<<endl;
     return 0;
