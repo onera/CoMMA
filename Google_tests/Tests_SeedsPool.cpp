@@ -633,3 +633,141 @@ TEST(SeedsPool_TestSuite, choose_new_seed) {
     }
     ASSERT_EQ(21, sp.choose_new_seed(a_is_fc_agglomerated));
 }
+
+
+TEST(SeedsPool_TestSuite, boundary_value) {
+    int MGridGen_nb_cells = 15;
+//    MGridGen_is_on_bnd = np.array([1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2], dtype=int)
+    unordered_map<long, int> MGridGen_is_on_bnd_d;
+    MGridGen_is_on_bnd_d[0] = 1;
+    MGridGen_is_on_bnd_d[1] = 1;
+    MGridGen_is_on_bnd_d[3] = 1;
+    MGridGen_is_on_bnd_d[4] = 1;
+    MGridGen_is_on_bnd_d[12] = 2;
+    MGridGen_is_on_bnd_d[13] = 1;
+    MGridGen_is_on_bnd_d[14] = 2;
+
+    Seeds_Pool sp = Seeds_Pool(MGridGen_nb_cells, MGridGen_is_on_bnd_d);
+
+    ASSERT_EQ(1, sp.boundary_value(0));
+    ASSERT_EQ(1, sp.boundary_value(1));
+    ASSERT_EQ(0, sp.boundary_value(2));
+    ASSERT_EQ(1, sp.boundary_value(3));
+    ASSERT_EQ(1, sp.boundary_value(4));
+    ASSERT_EQ(0, sp.boundary_value(5));
+    ASSERT_EQ(0, sp.boundary_value(6));
+    ASSERT_EQ(0, sp.boundary_value(7));
+    ASSERT_EQ(0, sp.boundary_value(8));
+    ASSERT_EQ(0, sp.boundary_value(9));
+    ASSERT_EQ(0, sp.boundary_value(10));
+    ASSERT_EQ(0, sp.boundary_value(11));
+    ASSERT_EQ(2, sp.boundary_value(12));
+    ASSERT_EQ(1, sp.boundary_value(13));
+    ASSERT_EQ(2, sp.boundary_value(14));
+
+    unordered_map<long, int> MGridGen_is_on_bnd_d_crooked;
+    MGridGen_is_on_bnd_d_crooked[0] = 1;
+    MGridGen_is_on_bnd_d_crooked[1] = 1;
+    MGridGen_is_on_bnd_d_crooked[2] = 4;  // wrong value, for test only
+    MGridGen_is_on_bnd_d_crooked[3] = 1;
+    MGridGen_is_on_bnd_d_crooked[4] = 1;
+    MGridGen_is_on_bnd_d_crooked[12] = 2;
+    MGridGen_is_on_bnd_d_crooked[13] = 1;
+    MGridGen_is_on_bnd_d_crooked[14] = 2;
+
+
+    sp = Seeds_Pool(MGridGen_nb_cells, MGridGen_is_on_bnd_d_crooked);
+
+    ASSERT_EQ(1, sp.boundary_value(0));
+    ASSERT_EQ(1, sp.boundary_value(1));
+    ASSERT_EQ(3, sp.boundary_value(2));
+    ASSERT_EQ(1, sp.boundary_value(3));
+    ASSERT_EQ(1, sp.boundary_value(4));
+    ASSERT_EQ(0, sp.boundary_value(5));
+    ASSERT_EQ(0, sp.boundary_value(6));
+    ASSERT_EQ(0, sp.boundary_value(7));
+    ASSERT_EQ(0, sp.boundary_value(8));
+    ASSERT_EQ(0, sp.boundary_value(9));
+    ASSERT_EQ(0, sp.boundary_value(10));
+    ASSERT_EQ(0, sp.boundary_value(11));
+    ASSERT_EQ(2, sp.boundary_value(12));
+    ASSERT_EQ(1, sp.boundary_value(13));
+    ASSERT_EQ(2, sp.boundary_value(14));
+
+}
+
+TEST(SeedsPool_TestSuite, update) {
+    int MGridGen_nb_cells = 15;
+//    MGridGen_is_on_bnd = np.array([1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2], dtype=int)
+    unordered_map<long, int> MGridGen_is_on_bnd_d;
+    MGridGen_is_on_bnd_d[0] = 1;
+    MGridGen_is_on_bnd_d[1] = 1;
+    MGridGen_is_on_bnd_d[3] = 1;
+    MGridGen_is_on_bnd_d[4] = 1;
+    MGridGen_is_on_bnd_d[12] = 2;
+    MGridGen_is_on_bnd_d[13] = 1;
+    MGridGen_is_on_bnd_d[14] = 2;
+
+    Seeds_Pool sp = Seeds_Pool(MGridGen_nb_cells, MGridGen_is_on_bnd_d);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+//    ref_l_deque_of_seeds[3] = deque<long>({ 15, 0, 60, 3, 63, 48, 12, 51 });
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+    std::list<long> l_first;
+    l_first.push_back(12);
+    l_first.push_back(0);
+    sp.update(l_first);
+
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[1] = deque<long>({0 });
+    ref_l_deque_of_seeds[2] = deque<long>({12 });
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+
+    std::list<long> l_2;
+    l_2.push_back(14);
+    l_2.push_back(2);
+    sp.update(l_2);
+
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({2 });
+    ref_l_deque_of_seeds[1] = deque<long>({0 });
+    ref_l_deque_of_seeds[2] = deque<long>({12, 14 });
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+
+    unordered_map<long, int> MGridGen_is_on_bnd_d_crooked;
+    MGridGen_is_on_bnd_d_crooked[0] = 1;
+    MGridGen_is_on_bnd_d_crooked[1] = 1;
+    MGridGen_is_on_bnd_d_crooked[2] = 4;  // wrong value, for test only
+    MGridGen_is_on_bnd_d_crooked[3] = 1;
+    MGridGen_is_on_bnd_d_crooked[4] = 1;
+    MGridGen_is_on_bnd_d_crooked[12] = 2;
+    MGridGen_is_on_bnd_d_crooked[13] = 1;
+    MGridGen_is_on_bnd_d_crooked[14] = 2;
+
+    sp = Seeds_Pool(MGridGen_nb_cells, MGridGen_is_on_bnd_d_crooked);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[3] = deque<long>({2 });
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+    sp.d_is_on_bnd[2] = 4;
+
+    std::list<long> l_3;
+    l_3.push_back(14);
+    l_3.push_back(2);
+    sp.update(l_3);
+
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({14 });
+    ref_l_deque_of_seeds[3] = deque<long>({2, 2 });
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+}

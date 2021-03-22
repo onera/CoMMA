@@ -172,3 +172,47 @@ long Seeds_Pool::choose_new_seed(const bool *a_is_fc_agglomerated) {
     }
     return seed;
 }
+
+int Seeds_Pool::boundary_value(const long i_fc) {
+    auto i_fc_finder = this->d_is_on_bnd.find(i_fc);
+    if (i_fc_finder != this->d_is_on_bnd.end()) {
+        return this->d_is_on_bnd[i_fc];
+    } else {
+        return 0;
+    }
+
+}
+
+void Seeds_Pool::update(
+        list<long> l_new_seeds,
+        bool is_extremal_vertex) {
+
+    if (!is_extremal_vertex){
+        for (long i_new_seed :l_new_seeds){
+            // the value of isOnBnd[_i_lvl-1][i_new_seed] may be strictly bigger than 3, in case of partitionning
+            // via Metis or Scotch.
+            int value_is_on_bnd = 0;
+            auto i_new_seed_finder = this->d_is_on_bnd.find(i_new_seed);
+            if (i_new_seed_finder != this->d_is_on_bnd.end()) {
+                value_is_on_bnd = this->d_is_on_bnd[i_new_seed];
+            }
+            // Update of isOnBnd to avoid value > 3
+            if(value_is_on_bnd >= 3){
+                value_is_on_bnd = 3;
+                this->d_is_on_bnd[i_new_seed] = 3;
+            }
+            this->l_deque_of_seeds[value_is_on_bnd].push_back(i_new_seed);
+        }
+    }else {
+        // here we add as bnd point at the extremity of graph, where eccentricity=diameter
+        // TODO: useful?
+        for (long i_new_seed :l_new_seeds) {
+            this->d_is_on_bnd[i_new_seed] = 4;
+            //self._update(3, i_new_seed)
+            this->l_deque_of_seeds[3].push_back(i_new_seed);
+
+        }
+    }
+}
+
+
