@@ -2527,23 +2527,23 @@ long agglomerate_Isotropic_Choice_Of_Seed(vector<queue<long>> &listOfSeeds,
                                           unordered_set<long> isOnRidge,
                                           unordered_set<long> isOnValley) {
     //
-    //Chose a correct seed in the fine cell pool of not agglomerated cells.
+    //Choose a correct seed in the fine cell pool of not agglomerated cells.
     //:param listOfSeeds: list of 4 deques. Deques are eventually reduced but no add.
     //:param numberOfFineCells: Usefull if the listOfSeeds contains no correct seed (not already agglomerated!)
     //:return: a correct seed (not already agglomerated!)
     //"""
-    // We chose preferably the corners, then the ridges, then the valey, and finaly interior cells:
+    // We chose preferably the corners, then the ridges, then the valley, and finally interior cells:
     // see NIA (Mavriplis uses Wall and farfield only)
 
     long seed = -1;
-    for (int iL = 3; iL > -1; iL--) {
-        if (!listOfSeeds[iL].empty()) {
-            seed = listOfSeeds[iL].front();
-            listOfSeeds[iL].pop();
+    for (int i_l = 3; i_l > -1; i_l--) {
+        if (!listOfSeeds[i_l].empty()) {
+            seed = listOfSeeds[i_l].front();
+            listOfSeeds[i_l].pop();
             while (isFineCellAgglomerated[seed]) {
-                if (!listOfSeeds[iL].empty()) {
-                    seed = listOfSeeds[iL].front();
-                    listOfSeeds[iL].pop();
+                if (!listOfSeeds[i_l].empty()) {
+                    seed = listOfSeeds[i_l].front();
+                    listOfSeeds[i_l].pop();
                 } else {
                     break;
                 }
@@ -2557,9 +2557,9 @@ long agglomerate_Isotropic_Choice_Of_Seed(vector<queue<long>> &listOfSeeds,
     }
     // if no seed were found in listOfSeeds... we look in ridges or valley
     if (seed == -1 or isFineCellAgglomerated[seed]) {
-        for (int iL = 2; iL > -1; iL--) {
+        for (int i_l = 2; i_l > -1; i_l--) {
             // we check in _isOnRidge/_isOnValley if anything is available?
-            if (iL == 2) {
+            if (i_l == 2) {
                 if (!isOnRidge.empty()) {
                     seed = *isOnRidge.begin();
                     isOnRidge.erase(seed);
@@ -2574,7 +2574,7 @@ long agglomerate_Isotropic_Choice_Of_Seed(vector<queue<long>> &listOfSeeds,
                     }
                     break;
                 }
-            } else if (iL == 1) {
+            } else if (i_l == 1) {
                 if (!isOnValley.empty()) {
                     seed = *isOnValley.begin();
                     isOnValley.erase(seed);

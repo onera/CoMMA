@@ -6,11 +6,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(HEADER_FILES
         Agglomerator.h
         Agglomerator_Isotropic.h
+        Seeds_Pool.h
         )
 
 set(SOURCE_FILES
         Agglomerator.cpp
         Agglomerator_Isotropic.cpp
+        Seeds_Pool.cpp
         )
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
