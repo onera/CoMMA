@@ -5,7 +5,7 @@
 #ifndef COMMA_PROJECT_SEEDS_POOL_H
 #define COMMA_PROJECT_SEEDS_POOL_H
 
-#define NULL nullptr
+//#define NULL nullptr
 
 #include <unordered_map>
 #include <unordered_set>
@@ -27,6 +27,7 @@ public :
                unordered_set<long> is_on_valley = unordered_set<long>({}),
                int init_bnd_level = 3);
 
+    // Attributes
     int number_of_cells;
     unordered_map<long, int> d_is_on_bnd;
     unordered_set<long> is_on_corner;
@@ -35,11 +36,15 @@ public :
     int init_bnd_level;
     vector<deque<long>> l_deque_of_seeds;
 
+    // Methods
     long choose_new_seed(const bool *a_is_fc_agglomerated);
 
     int boundary_value(const long i_fc);
 
     void update(list<long> l_new_seeds, bool is_extremal_vertex = false);
+
+    bool is_empty(int i_level=0);
+    bool is_initialized();
 };
 
 #endif //COMMA_PROJECT_SEEDS_POOL_H

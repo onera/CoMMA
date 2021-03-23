@@ -771,3 +771,197 @@ TEST(SeedsPool_TestSuite, update) {
     ref_l_deque_of_seeds[3] = deque<long>({2, 2 });
     ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
 }
+
+TEST(SeedsPool_TestSuite, is_empty_box_5x5x5) {
+
+    int Box_5x5x5_number_of_cells = 64;
+    unordered_map<long, int> Box_5x5x5_is_on_bnd_d_modified;
+    Box_5x5x5_is_on_bnd_d_modified[0] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[1] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[2] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[3] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[4] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[5] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[6] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[7] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[8] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[9] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[10] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[11] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[12] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[13] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[14] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[15] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[16] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[17] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[18] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[19] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[20] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[23] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[24] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[27] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[28] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[29] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[30] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[31] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[32] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[33] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[34] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[35] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[36] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[39] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[40] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[43] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[44] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[45] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[46] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[47] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[48] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[49] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[50] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[51] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[52] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[53] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[54] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[55] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[56] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[57] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[58] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[59] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[60] = 1;
+    Box_5x5x5_is_on_bnd_d_modified[61] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[62] = 2;
+    Box_5x5x5_is_on_bnd_d_modified[63] = 1;
+
+    unordered_set<long> s_Box_5x5x5_is_on_corner = unordered_set<long>({0, 3, 12, 15, 48, 51, 60, 63});
+
+    unordered_set<long> s_Box_5x5x5_is_on_ridge = unordered_set<long>({1, 2, 4, 7, 8, 11, 13, 14, 16, 19,
+                                                                       28, 31, 32, 35, 44, 47, 49, 50, 52, 55,
+                                                                       56, 59, 61, 62});
+
+    unordered_set<long> s_Box_5x5x5_is_on_valley = unordered_set<long>({5, 6, 9, 10, 17, 18, 20, 23, 24, 27,
+                                                                        29, 30, 33, 34, 36, 39, 40, 43, 45, 46,
+                                                                        53, 54, 57, 58});
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+
+    Seeds_Pool sp = Seeds_Pool(Box_5x5x5_number_of_cells, Box_5x5x5_is_on_bnd_d_modified,
+                               empty_set, empty_set, empty_set,
+                               1);
+
+    ASSERT_EQ(empty_set, sp.is_on_corner);
+    ASSERT_EQ(empty_set, sp.is_on_ridge);
+    ASSERT_EQ(empty_set, sp.is_on_valley);
+
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[1] = deque<long>({27, 24, 23, 34, 5, 63, 36, 39, 10, 43, 46, 17, 48, 51, 40, 53, 54, 57, 45, 58, 0, 29, 33, 12, 9, 6, 3, 60, 30, 15, 18, 20});
+    ref_l_deque_of_seeds[2] = deque<long>({28, 19, 16, 14, 13, 59, 1, 31, 2, 61, 32, 56, 55, 52, 50, 11, 49, 4, 62, 47, 8, 44, 35, 7});
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+
+    ASSERT_FALSE(sp.is_empty());
+    ASSERT_TRUE(sp.is_empty(3));
+    ASSERT_FALSE(sp.is_empty(2));
+
+    int MGridGen_nb_cells = 15;
+    unordered_map<long, int> MGridGen_is_on_bnd_d;
+    MGridGen_is_on_bnd_d[0] = 1;
+    MGridGen_is_on_bnd_d[1] = 1;
+    MGridGen_is_on_bnd_d[3] = 1;
+    MGridGen_is_on_bnd_d[4] = 1;
+    MGridGen_is_on_bnd_d[12] = 2;
+    MGridGen_is_on_bnd_d[13] = 1;
+    MGridGen_is_on_bnd_d[14] = 2;
+    sp = Seeds_Pool(MGridGen_nb_cells, MGridGen_is_on_bnd_d);
+
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
+    ASSERT_TRUE(sp.is_empty());
+    ASSERT_TRUE(sp.is_empty(3));
+    ASSERT_TRUE(sp.is_empty(2));
+    ASSERT_TRUE(sp.is_empty(1));
+}
+
+TEST(SeedsPool_TestSuite, is_initialized_box_5x5x5) {
+
+    int Box_5x5x5_number_of_cells = 64;
+    unordered_map<long, int> Box_5x5x5_is_on_bnd_d;
+    Box_5x5x5_is_on_bnd_d[0] = 3;
+    Box_5x5x5_is_on_bnd_d[1] = 2;
+    Box_5x5x5_is_on_bnd_d[2] = 2;
+    Box_5x5x5_is_on_bnd_d[3] = 3;
+    Box_5x5x5_is_on_bnd_d[4] = 2;
+    Box_5x5x5_is_on_bnd_d[5] = 1;
+    Box_5x5x5_is_on_bnd_d[6] = 1;
+    Box_5x5x5_is_on_bnd_d[7] = 2;
+    Box_5x5x5_is_on_bnd_d[8] = 2;
+    Box_5x5x5_is_on_bnd_d[9] = 1;
+    Box_5x5x5_is_on_bnd_d[10] = 1;
+    Box_5x5x5_is_on_bnd_d[11] = 2;
+    Box_5x5x5_is_on_bnd_d[12] = 3;
+    Box_5x5x5_is_on_bnd_d[13] = 2;
+    Box_5x5x5_is_on_bnd_d[14] = 2;
+    Box_5x5x5_is_on_bnd_d[15] = 3;
+    Box_5x5x5_is_on_bnd_d[16] = 2;
+    Box_5x5x5_is_on_bnd_d[17] = 1;
+    Box_5x5x5_is_on_bnd_d[18] = 1;
+    Box_5x5x5_is_on_bnd_d[19] = 2;
+    Box_5x5x5_is_on_bnd_d[20] = 1;
+    Box_5x5x5_is_on_bnd_d[23] = 1;
+    Box_5x5x5_is_on_bnd_d[24] = 1;
+    Box_5x5x5_is_on_bnd_d[27] = 1;
+    Box_5x5x5_is_on_bnd_d[28] = 2;
+    Box_5x5x5_is_on_bnd_d[29] = 1;
+    Box_5x5x5_is_on_bnd_d[30] = 1;
+    Box_5x5x5_is_on_bnd_d[31] = 2;
+    Box_5x5x5_is_on_bnd_d[32] = 2;
+    Box_5x5x5_is_on_bnd_d[33] = 1;
+    Box_5x5x5_is_on_bnd_d[34] = 1;
+    Box_5x5x5_is_on_bnd_d[35] = 2;
+    Box_5x5x5_is_on_bnd_d[36] = 1;
+    Box_5x5x5_is_on_bnd_d[39] = 1;
+    Box_5x5x5_is_on_bnd_d[40] = 1;
+    Box_5x5x5_is_on_bnd_d[43] = 1;
+    Box_5x5x5_is_on_bnd_d[44] = 2;
+    Box_5x5x5_is_on_bnd_d[45] = 1;
+    Box_5x5x5_is_on_bnd_d[46] = 1;
+    Box_5x5x5_is_on_bnd_d[47] = 2;
+    Box_5x5x5_is_on_bnd_d[48] = 3;
+    Box_5x5x5_is_on_bnd_d[49] = 2;
+    Box_5x5x5_is_on_bnd_d[50] = 2;
+    Box_5x5x5_is_on_bnd_d[51] = 3;
+    Box_5x5x5_is_on_bnd_d[52] = 2;
+    Box_5x5x5_is_on_bnd_d[53] = 1;
+    Box_5x5x5_is_on_bnd_d[54] = 1;
+    Box_5x5x5_is_on_bnd_d[55] = 2;
+    Box_5x5x5_is_on_bnd_d[56] = 2;
+    Box_5x5x5_is_on_bnd_d[57] = 1;
+    Box_5x5x5_is_on_bnd_d[58] = 1;
+    Box_5x5x5_is_on_bnd_d[59] = 2;
+    Box_5x5x5_is_on_bnd_d[60] = 3;
+    Box_5x5x5_is_on_bnd_d[61] = 2;
+    Box_5x5x5_is_on_bnd_d[62] = 2;
+    Box_5x5x5_is_on_bnd_d[63] = 3;
+
+    unordered_set<long> s_Box_5x5x5_is_on_corner = unordered_set<long>({0, 3, 12, 15, 48, 51, 60, 63});
+
+    unordered_set<long> s_Box_5x5x5_is_on_ridge = unordered_set<long>({1, 2, 4, 7, 8, 11, 13, 14, 16, 19,
+                                                                       28, 31, 32, 35, 44, 47, 49, 50, 52, 55,
+                                                                       56, 59, 61, 62});
+
+    unordered_set<long> s_Box_5x5x5_is_on_valley = unordered_set<long>({5, 6, 9, 10, 17, 18, 20, 23, 24, 27,
+                                                                        29, 30, 33, 34, 36, 39, 40, 43, 45, 46,
+                                                                        53, 54, 57, 58});
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+
+    Seeds_Pool sp = Seeds_Pool(Box_5x5x5_number_of_cells, Box_5x5x5_is_on_bnd_d,
+                               empty_set, empty_set, empty_set,
+                               1);
+    ASSERT_TRUE(sp.is_initialized());
+}

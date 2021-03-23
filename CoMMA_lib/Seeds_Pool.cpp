@@ -47,9 +47,6 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
         for (auto i : is_on_valley) {
             this->is_on_valley.insert(i);  // Useful for initial seed choice
         }
-//        this->is_on_corner = is_on_corner; // Useful for initial seed choice
-//        this->is_on_ridge = is_on_ridge; // Useful for initial seed choice
-//        this->is_on_valley = is_on_valley; // Useful for initial seed choice
     }
 //    for (auto iPairDict:dict_ConnectivityTree) {
 //        max_dict[iPairDict.first] = iPairDict.second;
@@ -216,3 +213,23 @@ void Seeds_Pool::update(
 }
 
 
+bool Seeds_Pool::is_empty(int i_level){
+    assert (0 <= i_level);
+    assert (i_level <= 3);
+    if(this->l_deque_of_seeds.size()>0)
+    {
+        for (int i=3;  i>i_level-1; i--){
+
+            if(!this->l_deque_of_seeds[i].empty()) {
+                return false;
+            }
+        }
+    }
+    return true;
+
+
+}
+
+bool Seeds_Pool::is_initialized(){
+    return !d_is_on_bnd.empty();
+}
