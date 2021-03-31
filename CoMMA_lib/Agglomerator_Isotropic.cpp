@@ -173,13 +173,13 @@ void agglomerateOneLevel(long *sizes,
     long *fineAgglomerationLines_for_visu_array = NULL;
 
 //    long* arrayOfCoarseAnisotropicCompliantCells = NULL;
-    long numberOfAnisotropicLinesPOne_size = 0;
+//    long numberOfAnisotropicLinesPOne_size = 0;
 //    long agglomerationLines_size = 0;
 //    bool isAnisotropicLines = false;
     bool isAnisotropicLines = isAnisotropic && !isFirstAgglomeration;
     if (isAnisotropic) {
         if (isFirstAgglomeration) {
-            numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
+//            numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
             agglomerationLines_size = agglomerationLines_size;
             isAnisotropicLines = computeAnisotropicLine(sizes,
 
@@ -192,7 +192,7 @@ void agglomerateOneLevel(long *sizes,
 
 //            numberOfAnisotropicLinesPOne_size = sizes[3];  // number of agglomeration lines +1
 //            agglomerationLines_size = sizes[4];
-            numberOfAnisotropicLinesPOne_size = sizes[8];
+//            numberOfAnisotropicLinesPOne_size = sizes[8];
             agglomerationLines_size = sizes[9];
 //            cout << "numberOfAnisotropicLinesPOne_size " << numberOfAnisotropicLinesPOne_size << endl;
 //            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
@@ -227,7 +227,7 @@ void agglomerateOneLevel(long *sizes,
                                                                  agglomerationLines_Idx,
                                                                  agglomerationLines,
                                                                  fineCellToCoarseCell, isFineCellAgglomerated, arrayOfFineAnisotropicCompliantCells);//arrayOfCoarseAnisotropicCompliantCells);
-//            cout << "End of agglomerate_Anisotropic_One_Level_without_list_lines" << endl;
+
 //            agglomerationLines_Idx_size = sizes_aniso[0];
 //            numberOfFineCells = sizes_aniso[1];
 //            numberOfFineAgglomeratedCells = sizes_aniso[2];
@@ -478,10 +478,7 @@ void agglomerate_Isotropic_One_Level_v_2(long *sizes,
                     nbCoarseElem = iKVCC.first;
                 }
             }
-//            list_tmp_tmp = dict_Coarse_Cells.keys();
-//            nbCoarseElem = max(list_tmp_tmp)
             indCoarseCell = sizes[2];
-//            cout << "indCoarseCell " << indCoarseCell << " nbCoarseElem " << nbCoarseElem << endl;
             assert(indCoarseCell == (nbCoarseElem + 1));
         }
         // Phase de verification!
@@ -3137,7 +3134,6 @@ void agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(int Nbsizes,
         }
     }
 //    cout << "maxSize " << maxSize << endl;
-//    int maxSize = max(dict_Card_Coarse_Cells.keys());
     if (verbose) {
         cout << "\n\n\n__agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo maxSize= " << maxSize << endl;
     }
@@ -3383,11 +3379,15 @@ void agglomerate_Isotropic_Second_Step_Correction(int numberOfInts, long *sizes,
                                   dict_DistribOfCardOfCoarseCells);
 
         if (checks) {
-//            cout << "\tChecks!" << endl;
-//            cout << "\t\t consistancy" << endl;
+            if (verbose) {
+               cout << "\tChecks!" << endl;
+               cout << "\t\t consistancy" << endl;
+            }
             agglomerate_Isotropic_CheckConsistancyDictCoarseCells(dict_CoarseCells,
                                                                   dict_CardCoarseCells, sizes[0], fineCellToCoarseCell);
-//            cout << "\t\t connectivity" << endl;
+            if (verbose) {
+                cout << "\t\t connectivity" << endl;
+            }
             // Phase de verification!
             for (auto index :dict_CoarseCells) {
 
