@@ -423,13 +423,12 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
         return ;
     }
 
-    //new_Lines_index = np.zeros(len(fineAgglomerationLines_array_Idx), dtype=np.int32)
     long* new_Lines_index = new long[fineAgglomerationLines_array_Idx_size];
     for(long iNLI=0; iNLI<fineAgglomerationLines_array_Idx_size; iNLI++)
     {
         new_Lines_index[iNLI]=0;
     }
-//    new_Lines_index[0] = 0;
+
 
     long fineAgglomerationLines_array_size = fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size-1]-1;
     //cout<<"fineAgglomerationLines_array_size "<<fineAgglomerationLines_array_size<<endl;
@@ -442,9 +441,10 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
 
     long ind, indPOne, lineSize;
     long iCount;
+
     // Process of every agglomeration lines:
     for (long i=0; i<fineAgglomerationLines_array_Idx_size -1; i++){
-//        cout<<"i= "<<i<<endl;
+
         ind = fineAgglomerationLines_array_Idx[i];
         indPOne = fineAgglomerationLines_array_Idx[i + 1];
         lineSize = indPOne-ind;
@@ -534,7 +534,6 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
         set<long>::const_iterator send = setOfAnisotropicCompliantCoarseCells.end ();
         long i=0;
         for(; sit != send; sit++){
-//            cout<<"i = "<<i<<endl;
             AnisotropicCompliantCoarseCells_array[i] = * sit ;
             ++i;
         }

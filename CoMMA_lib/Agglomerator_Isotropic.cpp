@@ -175,13 +175,12 @@ void agglomerateOneLevel(long *sizes,
 //    long* arrayOfCoarseAnisotropicCompliantCells = NULL;
     long numberOfAnisotropicLinesPOne_size = 0;
 //    long agglomerationLines_size = 0;
-    bool isAnisotropicLines = false;
+//    bool isAnisotropicLines = false;
+    bool isAnisotropicLines = isAnisotropic && !isFirstAgglomeration;
     if (isAnisotropic) {
         if (isFirstAgglomeration) {
             numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
             agglomerationLines_size = agglomerationLines_size;
-
-//            cout << "Call of ALM.computeAnisotropicLine" << endl;
             isAnisotropicLines = computeAnisotropicLine(sizes,
 
                                                         adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
@@ -251,8 +250,8 @@ void agglomerateOneLevel(long *sizes,
             sizes[3] = sizes_aniso[2];
             sizes[7] = sizes_aniso[4];
             sizes[8] = sizes_aniso[0];
-            sizes[9] = sizes[8] - 1;
-
+//            sizes[9] = sizes[8] - 1;
+            sizes[9] = agglomerationLines_Idx[sizes[8]-1];
 
 //            if (agglomerationLines_Idx_size>0){
 //
@@ -572,7 +571,7 @@ void agglomerate_Isotropic_First_Step(long *sizes,
     }
 
     while (numberOfFineAgglomeratedCells < numberOfFineCells) {
-//        cout << "===> numberOfFineAgglomeratedCells " << numberOfFineAgglomeratedCells << endl;
+
         // 1) Choice of seed
         //////////////////////////////////////
         // no dict in or out
@@ -901,7 +900,6 @@ unordered_map<long, int> computation_Of_Neighbourhood(long seed, int numberOfOrd
     if (isSetOfFineCellsTmp) {
         delete setOfFineCells;
     }
-//    cout << "iOrderMax " << iOrder << endl;
     return dict_Neighbours_Of_Seed;
 }
 
@@ -2171,7 +2169,6 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
     int maxInd = min(maxCard, int(dict_Neighbours_Of_Seed.size()) + 1);
     int numberOfExternalFacesCurrentCoarseCell =
             matrixAdj_CRS_row_ptr[seed + 1] - matrixAdj_CRS_row_ptr[seed] + isOnFineBnd[seed] - 1;
-//    cout << "numberOfExternalFacesCurrentCoarseCell " << numberOfExternalFacesCurrentCoarseCell << endl;
     while (size_Current_Coarse_Cell < maxInd) {
 
         double minAR = numeric_limits<double>::max();
@@ -2284,12 +2281,11 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
         isFineCellAgglomerated_tmp[argminAR] = true;
         tmp_set.insert(argminAR);
     }
-//    cout << "end Loop while" << endl;
+
     // assert size_Current_Coarse_Cell == self.__goalCard, \
     //     "Pb: wrong number of fine cells in Current Coarse Cell" + str(set_of_fine_cells_for_Current_Coarse_Cell)
     // print "dict_Coarse_Cells_in_Creation",dict_Coarse_Cells_in_Creation
     set_of_fine_cells_for_Current_Coarse_Cell = dict_Coarse_Cells_in_Creation[argMinExternalFaces].first;
-//    cout << "before Loop iS" << endl;
     for (long iS = argMinExternalFaces + 1; iS < maxInd + 1; iS++) {
 
         // Merge/update:
@@ -2301,7 +2297,6 @@ unordered_set<long> choice_Of_Agglomerated_Cells(long seed,
         isFineCellAgglomerated_tmp[removedFCell] = false;
         tmp_set.erase(removedFCell);
     }
-//    cout << "after Loop iS" << endl;
     // update of nb_of_Agglomerated_cells and self._isFineCellAgglomerated_tmp
     numberOfFineAgglomeratedCells_tmp += argMinExternalFaces;
 
