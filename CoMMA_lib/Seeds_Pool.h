@@ -5,8 +5,6 @@
 #ifndef COMMA_PROJECT_SEEDS_POOL_H
 #define COMMA_PROJECT_SEEDS_POOL_H
 
-//#define NULL nullptr
-
 #include <unordered_map>
 #include <unordered_set>
 #include <cassert>

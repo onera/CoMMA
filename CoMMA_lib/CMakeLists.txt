@@ -7,12 +7,14 @@ set(HEADER_FILES
         Agglomerator.h
         Agglomerator_Isotropic.h
         Seeds_Pool.h
+        Dual_Graph.h
         )
 
 set(SOURCE_FILES
         Agglomerator.cpp
         Agglomerator_Isotropic.cpp
         Seeds_Pool.cpp
+        Dual_Graph.cpp
         )
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})

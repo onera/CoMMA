@@ -1,10 +1,10 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
-#include "../CoMMA_lib/Agglomerator.h"
+#include "../CoMMA_lib/Seeds_Pool.h"
 #include "gtest/gtest.h"
 
-#include "../CoMMA_lib/Seeds_Pool.h"
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1) {
+
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -43,7 +43,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1) {
     delete[] isFineCellAgglomerated;
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1_V2) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1_V2) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -89,7 +89,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Ridge_1_V2) {
     delete[] isFineCellAgglomerated;
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_4) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_4) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -125,7 +125,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_4) {
 
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_10) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_10) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -161,7 +161,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_10) {
 
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_13) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_13) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -193,7 +193,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_Valley_13) {
 
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_0) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_0) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -245,7 +245,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_0) {
     delete[] isFineCellAgglomerated;
 }
 
-TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_2) {
+TEST(Seeds_Pool_TestSuite, Choice_Of_Seed_Case_Seed_2) {
 
     long numberOfFineCells = 27;
     bool *isFineCellAgglomerated = new bool[numberOfFineCells];
@@ -296,7 +296,7 @@ TEST(SeedsPool_TestSuite, Choice_Of_Seed_Case_Seed_2) {
     delete[] isFineCellAgglomerated;
 }
 
-TEST(SeedsPool_TestSuite, init_box_5x5x5) {
+TEST(Seeds_Pool_TestSuite, init_box_5x5x5) {
     long Box_5x5x5_is_on_bnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1,
                                     1, 2, 3, 2, 2, 3, 2, 1, 1, 2,
                                     1, 0, 0, 1, 1, 0, 0, 1, 2, 1,
@@ -414,7 +414,7 @@ TEST(SeedsPool_TestSuite, init_box_5x5x5) {
 
 }
 
-TEST(SeedsPool_TestSuite, init_MGridGen) {
+TEST(Seeds_Pool_TestSuite, init_MGridGen) {
 
     int MGridGen_nb_cells = 15;
 //    MGridGen_is_on_bnd = np.array([1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2], dtype=int)
@@ -512,7 +512,7 @@ TEST(SeedsPool_TestSuite, init_MGridGen) {
 
 }
 
-TEST(SeedsPool_TestSuite, choose_new_seed) {
+TEST(Seeds_Pool_TestSuite, choose_new_seed) {
 
     int Box_5x5x5_number_of_cells = 64;
 
@@ -635,7 +635,7 @@ TEST(SeedsPool_TestSuite, choose_new_seed) {
 }
 
 
-TEST(SeedsPool_TestSuite, boundary_value) {
+TEST(Seeds_Pool_TestSuite, boundary_value) {
     int MGridGen_nb_cells = 15;
 //    MGridGen_is_on_bnd = np.array([1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2], dtype=int)
     unordered_map<long, int> MGridGen_is_on_bnd_d;
@@ -696,7 +696,7 @@ TEST(SeedsPool_TestSuite, boundary_value) {
 
 }
 
-TEST(SeedsPool_TestSuite, update) {
+TEST(Seeds_Pool_TestSuite, update) {
     int MGridGen_nb_cells = 15;
 //    MGridGen_is_on_bnd = np.array([1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2], dtype=int)
     unordered_map<long, int> MGridGen_is_on_bnd_d;
@@ -772,7 +772,7 @@ TEST(SeedsPool_TestSuite, update) {
     ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
 }
 
-TEST(SeedsPool_TestSuite, is_empty_box_5x5x5) {
+TEST(Seeds_Pool_TestSuite, is_empty_box_5x5x5) {
 
     int Box_5x5x5_number_of_cells = 64;
     unordered_map<long, int> Box_5x5x5_is_on_bnd_d_modified;
@@ -887,7 +887,7 @@ TEST(SeedsPool_TestSuite, is_empty_box_5x5x5) {
     ASSERT_TRUE(sp.is_empty(1));
 }
 
-TEST(SeedsPool_TestSuite, is_initialized_box_5x5x5) {
+TEST(Seeds_Pool_TestSuite, is_initialized_box_5x5x5) {
 
     int Box_5x5x5_number_of_cells = 64;
     unordered_map<long, int> Box_5x5x5_is_on_bnd_d;
