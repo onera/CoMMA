@@ -113,7 +113,7 @@ int removeSeparatingVertex(long seed, unordered_map<long, queue<long> *> dict_Co
                            long *matrixAdj_CRS_row_ptr,
                            long *matrixAdj_CRS_col_ind, long verbose = 0);
 
-//bool checkConnectivity(vector<long> listFineCells, long* matrixAdj_CRS_row_ptr, long* matrixAdj_CRS_col_ind, int verbose = 0);
+//bool check_connectivity(vector<long> listFineCells, long* matrixAdj_CRS_row_ptr, long* matrixAdj_CRS_col_ind, int verbose = 0);
 bool checkConnectivity_w_set(unordered_set<long> listFineCells, long *matrixAdj_CRS_row_ptr, long *matrixAdj_CRS_col_ind, int verbose = 0);
 
 

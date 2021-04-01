@@ -11,9 +11,12 @@
 #include <assert.h>
 #include <deque>
 #include <vector>
+#include <map>
+#include <algorithm>
 #include <list>
 #include <forward_list>
 #include "Seeds_Pool.h"
+#include <iostream>
 
 using namespace std;
 
@@ -50,8 +53,19 @@ public :
     forward_list<deque<long> *> _lines;
 
     // Methods
+
+    int get_nb_of_neighbours(long i_c);
     vector<long> get_neighbours(long i_c);
     vector<double> get_weights(long i_c);
+
+    bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
+
+    bool compute_anisotropic_line(long* sizes,
+                                  long * arrayOfFineAnisotropicCompliantCells,
+                                  long * agglomerationLines_Idx,
+                                  long * agglomerationLines,
+                                  bool verbose);
+
 };
 
 

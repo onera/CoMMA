@@ -22,9 +22,5 @@ void agglomerate_Anisotropic_One_Level_without_list_lines(long *sizes,
                                                           long *AnisotropicCompliantCoarseCells_array);
 
 
-class Agglomerator {
-
-};
-
 
 #endif //UNTITLED_AGGLOMERATOR_H

@@ -424,8 +424,8 @@ void agglomerate_Isotropic_One_Level_v_2(long *sizes,
 //        for (auto index :dict_Coarse_Cells) {
 //
 ////                unordered_set<long> s = dict_CoarseCells[index];
-//            if (!checkConnectivity_w_set(index.second, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)) {
-//                checkConnectivity_w_set(index.second, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind, 1);
+//            if (!check_connectivity(index.second, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)) {
+//                check_connectivity(index.second, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind, 1);
 //                cout << "Error for coarse cell " << index.first << " [";
 //                for (long iFC: index.second) {
 //                    cout << iFC << ", ";
@@ -1039,7 +1039,7 @@ int removeSeparatingVertex(long seed, unordered_map<long, queue<long> *> dict_Co
                     }
                     if (!checkConnectivity_w_set(tmp_set, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)) {
                         if (verbose) {
-                            cout << "\t\t\t!checkConnectivity" << endl;
+                            cout << "\t\t\t!check_connectivity" << endl;
                         }
                         for (auto iCell : iSubList) {
 
@@ -1174,7 +1174,7 @@ list<unordered_set<long>> partsList(vector<long> seq, int length) {
 }
 
 
-//bool checkConnectivity(vector<long> listFineCells,
+//bool check_connectivity(vector<long> listFineCells,
 //                       long *matrixAdj_CRS_row_ptr, long *matrixAdj_CRS_col_ind, int verbose) {
 //
 //
@@ -1503,10 +1503,10 @@ void splitNonConnectedCoarseCell(long &indCoarseElement,
     }
     // TODO Remove this in production
 //    // Check the splitted cell (indCoarseElement - 1)
-//    assert checkConnectivity(dict_Coarse_Cells[indCoarseElement - 1], matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)
+//    assert check_connectivity(dict_Coarse_Cells[indCoarseElement - 1], matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)
 //
 //    // Check the original coarse cell
-//    assert checkConnectivity(dict_Coarse_Cells[iCoarseCell], matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind);`
+//    assert check_connectivity(dict_Coarse_Cells[iCoarseCell], matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind);`
 //    vector<long> v(dict_Coarse_Cells[iCoarseCell].size());
 //    int i = 0;
 //    for (auto iFineCell:dict_Coarse_Cells[iCoarseCell]) {
@@ -3277,7 +3277,7 @@ void agglomerate_Isotropic_Correction_SplitTooBigCoarseCellInTwo(int Nbsizes,
                         }
                     }
 // if self._checks:
-//     if not Util.checkConnectivity(dict_Coarse_Elem[indCoarseCell - 1],
+//     if not Util.check_connectivity(dict_Coarse_Elem[indCoarseCell - 1],
 //                                   matrixAdj_CRS_row_ptr,
 //                                   matrixAdj_CRS_col_ind):
 //         print "ERROR", indCoarseCell - 1, dict_Coarse_Elem[indCoarseCell - 1]
