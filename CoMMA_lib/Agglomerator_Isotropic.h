@@ -2,8 +2,8 @@
 // Created by Nicolas Lantos on 18/10/2017.
 //
 
-#ifndef TEST_AGGLOMERATOR_ISOTROPIC_H
-#define TEST_AGGLOMERATOR_ISOTROPIC_H
+#ifndef AGGLOMERATOR_ISOTROPIC_H
+#define AGGLOMERATOR_ISOTROPIC_H
 
 #include <unordered_map>
 #include <unordered_set>
@@ -370,4 +370,4 @@ long read_double_array(std::fstream &stream,
 long read_long(std::fstream &stream);
 
 
-#endif TEST_AGGLOMERATOR_ISOTROPIC_H
+#endif AGGLOMERATOR_ISOTROPIC_H

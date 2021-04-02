@@ -1,5 +1,5 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
-#include "../CoMMA_lib/Agglomerator.h"
+#include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "gtest/gtest.h"
 
 

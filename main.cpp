@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <unordered_set>
-#include "Agglomerator.h"
+#include "Agglomerator_anisotropic.h"
 #include "Agglomerator_Isotropic.h"
 using namespace std;
 

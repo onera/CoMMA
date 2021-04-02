@@ -4,14 +4,14 @@ project(CoMMA_lib)
 set(CMAKE_CXX_STANDARD 11)
 
 set(HEADER_FILES
-        Agglomerator.h
+        Agglomerator_anisotropic.h
         Agglomerator_Isotropic.h
         Seeds_Pool.h
         Dual_Graph.h
         )
 
 set(SOURCE_FILES
-        Agglomerator.cpp
+        Agglomerator_anisotropic.cpp
         Agglomerator_Isotropic.cpp
         Seeds_Pool.cpp
         Dual_Graph.cpp

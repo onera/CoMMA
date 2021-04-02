@@ -2,7 +2,7 @@
 // Created by Nicolas Lantos on 10/10/2017.
 //
 
-#include "Agglomerator.h"
+#include "Agglomerator_anisotropic.h"
 #include <unordered_map>
 #include <map>
 #include <limits>

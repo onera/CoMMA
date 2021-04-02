@@ -3,7 +3,7 @@
 //
 
 #include "Agglomerator_Isotropic.h"
-#include "Agglomerator.h"
+#include "Agglomerator_anisotropic.h"
 
 #include <unordered_map>
 #include <unordered_set>
