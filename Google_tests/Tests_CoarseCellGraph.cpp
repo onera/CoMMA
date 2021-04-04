@@ -2,6 +2,7 @@
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "gtest/gtest.h"
 
+typedef unordered_map<long, unordered_set<long>> unorderedMap;
 TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_1) {
 
     int nbCells = 9;
@@ -2960,12 +2961,12 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
     ASSERT_EQ(4, indCoarseElement);
     ASSERT_EQ(11, numberOfFineAgglomeratedCells_tmp);
 
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_2;
-    ref_dict_Coarse_Cells_2[0] = unordered_set<long>({3});
-    ref_dict_Coarse_Cells_2[1] = unordered_set<long>({0,1, 2});
-    ref_dict_Coarse_Cells_2[2] = unordered_set<long>({4, 5, 6, 7});
-    ref_dict_Coarse_Cells_2[3] = unordered_set<long>({8, 9, 10});
+    unorderedMap ref_dict_Coarse_Cells_2 = {{0, unordered_set<long>({3})},
+                                            {1, unordered_set<long>({0, 1, 2})},
+                                            {2, unordered_set<long>({4, 5, 6, 7})},
+                                            {3, unordered_set<long>({8, 9, 10})}};
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
+
 
     unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2;
     ref_dict_Card_Coarse_Cells_2[1] = unordered_set<long>({0});
