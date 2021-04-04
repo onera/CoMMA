@@ -2579,7 +2579,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
     ASSERT_EQ(3, indCoarseCell);
 
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_2;
-    ref_dict_Coarse_Cells_2[0] = unordered_set<long>({0, 1, 2, 3, 4, 5,  8, 10, 13});
+    ref_dict_Coarse_Cells_2[0] = unordered_set<long>({0, 1, 2, 3, 4, 5, 8, 10, 13});
     ref_dict_Coarse_Cells_2[1] = unordered_set<long>({6, 11, 14});
     ref_dict_Coarse_Cells_2[2] = unordered_set<long>({7, 9, 12});
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
@@ -2625,10 +2625,10 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell) {
     ASSERT_EQ(4, indCoarseCell);
 
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_3;
-    ref_dict_Coarse_Cells_3[0] = unordered_set<long>({2, 4, 5,  8, 10, 13});
+    ref_dict_Coarse_Cells_3[0] = unordered_set<long>({2, 4, 5, 8, 10, 13});
     ref_dict_Coarse_Cells_3[1] = unordered_set<long>({6, 11, 14});
     ref_dict_Coarse_Cells_3[2] = unordered_set<long>({7, 9, 12});
-    ref_dict_Coarse_Cells_3[3] = unordered_set<long>({0,1,3});
+    ref_dict_Coarse_Cells_3[3] = unordered_set<long>({0, 1, 3});
     ASSERT_EQ(ref_dict_Coarse_Cells_3, dict_Coarse_Cells);
 
     unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_3;
@@ -2762,9 +2762,8 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell_v2)
     ref_dict_Card_Coarse_Cells[10] = unordered_set<long>({0});
     ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
 
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[10] = 1;
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements = {{5,  1},
+                                                                                {10, 1}};
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
 
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1};
@@ -2797,7 +2796,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_SplitTooBigCoarseCellInTwo_1_cell_v2)
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells_2;
     ref_dict_Coarse_Cells_2[0] = unordered_set<long>({4, 7, 8, 9, 12});
     ref_dict_Coarse_Cells_2[1] = unordered_set<long>({6, 10, 11, 13, 14});
-    ref_dict_Coarse_Cells_2[2] = unordered_set<long>({0,1,2,3,5});
+    ref_dict_Coarse_Cells_2[2] = unordered_set<long>({0, 1, 2, 3, 5});
 
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
@@ -2847,20 +2846,16 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
                      isFineCellAgglomerated_tmp,
                      fine_Cell_indices_To_Coarse_Cell_Indices, true, true);
 
-//    assert(indCoarseElement == 2);
-//    assert(numberOfFineAgglomeratedCells_tmp == 8);
-
     ASSERT_EQ(2, indCoarseElement);
     ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
 
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({3});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({0,1, 2});
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells = {{0, unordered_set<long>({3})},
+                                                                      {1, unordered_set<long>({0, 1, 2})},};
     ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
 
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
-    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells = {{1, unordered_set<long>({0})},
+                                                                          {3, unordered_set<long>({1})},};
+
     ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
 
     unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
@@ -2868,29 +2863,6 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
     ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
     ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-
-//    assert(dict_Coarse_Cells.size() == 2);
-//    assert(dict_Coarse_Cells[0].size() == 1);
-//    assert(dict_Coarse_Cells[0].count(3) == 1);
-
-//    assert(dict_Coarse_Cells[1].size() == 3);
-//    assert(dict_Coarse_Cells[1].count(0) == 1);
-//    assert(dict_Coarse_Cells[1].count(1) == 1);
-//    assert(dict_Coarse_Cells[1].count(2) == 1);
-
-//    assert(dict_Card_Coarse_Cells.size() == 2);
-//    assert(dict_Card_Coarse_Cells[1].size() == 1);
-//    assert(dict_Card_Coarse_Cells[1].count(0) == 1);
-//
-//
-//    assert(dict_Card_Coarse_Cells[3].size() == 1);
-//    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
-//
-//    assert(dict_DistributionOfCardinalOfCoarseElements.size() == 3);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[1] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
 
     bool ref_isFineCellAgglomerated_tmp[11] = {true, true, true, true, true, true, true, true, false, false, false,};
     long ref_fine_Cell_indices_To_Coarse_Cell_Indices[11] = {1, 1, 1, 0, -1, -1, -1, -1, -1, -1, -1};
@@ -2967,17 +2939,9 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
                                             {3, unordered_set<long>({8, 9, 10})}};
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2;
-    ref_dict_Card_Coarse_Cells_2[1] = unordered_set<long>({0});
-    ref_dict_Card_Coarse_Cells_2[3] = unordered_set<long>({1, 3});
-    ref_dict_Card_Coarse_Cells_2[4] = unordered_set<long>({2});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells_2, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2;
-    ref_dict_DistributionOfCardinalOfCoarseElements_2[1] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements_2[3] = 2;
-    ref_dict_DistributionOfCardinalOfCoarseElements_2[4] = 1;
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2 = {{1, 1},
+                                                                                  {3, 2},
+                                                                                  {4, 1}};
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements_2, dict_DistributionOfCardinalOfCoarseElements);
 
 
