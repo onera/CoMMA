@@ -27,7 +27,7 @@ public :
                const vector<long>& m_crs_row_ptr,
                const vector<long>& m_crs_col_ind,
                const vector<double>& m_crs_values,
-               double* volumes,
+               const vector<double>& volumes,
                unordered_map<long, int> &d_is_on_bnd,
                unordered_set<long> is_on_corner = unordered_set<long>({}),
                unordered_set<long> is_on_ridge = unordered_set<long>({}),
@@ -44,7 +44,7 @@ public :
     const vector<long> _m_CRS_Row_Ptr;
     const vector<long> _m_CRS_Col_Ind;
     const vector<double> _m_CRS_Values;
-    double* _volumes;
+    const vector<double> _volumes;
 
     // TODO manage this. A pointer is not what I want.
     Seeds_Pool* seeds_pool;

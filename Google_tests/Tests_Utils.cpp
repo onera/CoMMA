@@ -186,7 +186,7 @@ TEST(Utils_TestSuite, read_agglomeration_datas_from_file){
     long agglomerationLines_size = sizes[9];
 
 
-    // MGridGen Test case
+    // MGridGen_Dual_Graph Test case
     int ref_numberOfFineCells = 10;
     long ref_adjMatrix_col_ind_size = 24;
 

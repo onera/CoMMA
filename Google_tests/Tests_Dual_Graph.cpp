@@ -1,6 +1,8 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Dual_Graph.h"
+
+#include "MGridGen_Dual_Graph.h"
 #include "gtest/gtest.h"
 
 class box_5x5x5 : public ::testing::Test {
@@ -15,6 +17,7 @@ protected:
     vector<long> v_box_5x5x5_row_ptr;
     vector<long> v_box_5x5x5_col_ind;
     vector<double> v_box_5x5x5_values;
+    vector<double> v_box_5x5x5_volumes;
 
     virtual void SetUp() {
         v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
@@ -73,7 +76,7 @@ protected:
                               25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
                               50., 25., 25., 25., 25., 75.};
 
-        double box_5x5x5_volumes[64] = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+        v_box_5x5x5_volumes= {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
@@ -96,7 +99,7 @@ protected:
                            v_box_5x5x5_row_ptr,
                            v_box_5x5x5_col_ind,
                            v_box_5x5x5_values,
-                           box_5x5x5_volumes,
+                           v_box_5x5x5_volumes,
                            box_5x5x5_d_is_on_bnd);
 
     }
@@ -118,6 +121,7 @@ protected:
     vector<long> v_box_5x5x5_row_ptr;
     vector<long> v_box_5x5x5_col_ind;
     vector<double> v_box_5x5x5_values;
+    vector<double> v_box_5x5x5_volumes;
 
     virtual void SetUp() {
         v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
@@ -167,19 +171,8 @@ protected:
 
         box_5x5x5_number_of_cells = 64;
         box_5x5x5_col_ind_size = 344;
-//        v_box_5x5x5_row_ptr = new vector<long>;
-//        v_box_5x5x5_col_ind = new vector<long>;
-//        v_box_5x5x5_values = new vector<double>;
 
-//        for (int i = 0; i < box_5x5x5_number_of_cells + 1; i++) {
-//            v_box_5x5x5_row_ptr->push_back(tmp_box_5x5x5_row_ptr[i]);
-//        }
-//        for (int i = 0; i < box_5x5x5_col_ind_size; i++) {
-//            v_box_5x5x5_col_ind->push_back(tmp_box_5x5x5_col_ind[i]);
-//            v_box_5x5x5_values->push_back(tmp_box_5x5x5_values[i]);
-//        }
-
-        double box_5x5x5_volumes[64] = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                         125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
@@ -199,7 +192,7 @@ protected:
                            v_box_5x5x5_row_ptr,
                            v_box_5x5x5_col_ind,
                            v_box_5x5x5_values,
-                           box_5x5x5_volumes,
+                           v_box_5x5x5_volumes,
                            box_5x5x5_d_is_on_bnd);
 
     }
@@ -222,6 +215,7 @@ protected:
     vector<long> v_box_5x5x5_row_ptr;
     vector<long> v_box_5x5x5_col_ind;
     vector<double> v_box_5x5x5_values;
+    vector<double> v_box_5x5x5_volumes;
 
     virtual void SetUp() {
 
@@ -289,19 +283,8 @@ protected:
 
         box_5x5x5_number_of_cells = 64;
         box_5x5x5_col_ind_size = 344;
-//        v_box_5x5x5_row_ptr = new vector<long>;
-//        v_box_5x5x5_col_ind = new vector<long>;
-//        v_box_5x5x5_values = new vector<double>;
 
-//        for (int i = 0; i < box_5x5x5_number_of_cells + 1; i++) {
-//            v_box_5x5x5_row_ptr->push_back(tmp_box_5x5x5_row_ptr[i]);
-//        }
-//        for (int i = 0; i < box_5x5x5_col_ind_size; i++) {
-//            v_box_5x5x5_col_ind->push_back(tmp_box_5x5x5_col_ind[i]);
-//            v_box_5x5x5_values->push_back(tmp_box_5x5x5_values[i]);
-//        }
-
-        double box_5x5x5_volumes[64] = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
+        v_box_5x5x5_volumes = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                                         12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                                         12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                                         12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
@@ -322,7 +305,7 @@ protected:
                            v_box_5x5x5_row_ptr,
                            v_box_5x5x5_col_ind,
                            v_box_5x5x5_values,
-                           box_5x5x5_volumes,
+                           v_box_5x5x5_volumes,
                            box_5x5x5_d_is_on_bnd);
 
     }
@@ -332,78 +315,6 @@ protected:
 //        delete v_box_5x5x5_row_ptr;
 //        delete v_box_5x5x5_col_ind;
 //        delete v_box_5x5x5_values;
-    }
-};
-
-class MGridGen : public ::testing::Test {
-    // filename_ini = "box_1_rect_5_d_F.hdf"
-    // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
-
-protected:
-
-    Dual_Graph *g;
-    int MGridGen_nb_c;
-    int MGridGen_col_ind_size;
-    vector<long> v_MGridGen_row_ptr;
-    vector<long> v_MGridGen_col_ind;
-    vector<double> v_MGridGen_values;
-    unordered_set<long> s_MGridGen_is_on_corner;
-    unordered_set<long> s_MGridGen_is_on_ridge;
-    unordered_set<long> s_MGridGen_is_on_valley;
-
-    virtual void SetUp() {
-
-        v_MGridGen_row_ptr = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
-        v_MGridGen_col_ind = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4, 7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13,
-                              11, 14};
-
-        v_MGridGen_values = {6.82842712, 2., 2., 2., 4.23606798,
-                             1., 2., 4., 2.23606798, 2.23606798,
-                             1., 4., 2.23606798, 6.82842712, 2.,
-                             2., 2.23606798, 2., 2., 1.,
-                             2.23606798, 2.23606798, 4., 2., 2., 2., 1., 2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2., 3.16227766, 2., 6.,
-                             3.16227766, 3.16227766, 3.60555128,
-                             11., 3.16227766, 3.16227766, 8., 3.16227766, 7.};
-
-
-        MGridGen_nb_c = 15;
-        MGridGen_col_ind_size = 51;
-//        v_MGridGen_row_ptr = new vector<long>;
-//        v_MGridGen_col_ind = new vector<long>;
-//        v_MGridGen_values = new vector<double>;
-
-//        for (int i = 0; i < MGridGen_nb_c + 1; i++) {
-//            v_MGridGen_row_ptr->push_back(tmp_MGridGen_row_ptr[i]);
-//        }
-//        for (int i = 0; i < MGridGen_col_ind_size; i++) {
-//            v_MGridGen_col_ind->push_back(tmp_MGridGen_col_ind[i]);
-//            v_MGridGen_values->push_back(tmp_MGridGen_values[i]);
-//        }
-        double MGridGen_volumes[15] = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3.,
-                                       3., 1.5};
-        unordered_map<long, int> MGridGen_d_is_on_bnd;
-        MGridGen_d_is_on_bnd[0] = 1;
-        MGridGen_d_is_on_bnd[1] = 1;
-        MGridGen_d_is_on_bnd[3] = 1;
-        MGridGen_d_is_on_bnd[4] = 1;
-        MGridGen_d_is_on_bnd[12] = 2;
-        MGridGen_d_is_on_bnd[13] = 1;
-        MGridGen_d_is_on_bnd[14] = 2;
-        s_MGridGen_is_on_corner = {};
-        s_MGridGen_is_on_ridge = {12, 14};
-        s_MGridGen_is_on_valley = {0, 1, 3, 4, 13};
-
-        g = new Dual_Graph(MGridGen_nb_c,
-                           v_MGridGen_row_ptr,
-                           v_MGridGen_col_ind,
-                           v_MGridGen_values,
-                           MGridGen_volumes,
-                           MGridGen_d_is_on_bnd);
-
-    }
-
-    virtual void TearDown() {
-        delete g;
     }
 };
 
@@ -417,6 +328,7 @@ protected:
     vector<long> v_box_2x12_row_ptr;
     vector<long> v_box_2x12_col_ind;
     vector<double> v_box_2x12_values;
+    vector<double> v_box_2x12_volumes;
 
     virtual void SetUp() {
         v_box_2x12_row_ptr = {0, 3, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 89, 92};
@@ -473,19 +385,8 @@ protected:
 
         box_2x12_nb_fc = 24;
         box_2x12_col_ind_size = 92;
-//        v_box_2x12_row_ptr = new vector<long>;
-//        v_box_2x12_col_ind = new vector<long>;
-//        v_box_2x12_values = new vector<double>;
-//
-//        for (int i = 0; i < box_2x12_nb_fc + 1; i++) {
-//            v_box_2x12_row_ptr->push_back(tmp_box_2x12_row_ptr[i]);
-//        }
-//        for (int i = 0; i < box_2x12_col_ind_size; i++) {
-//            v_box_2x12_col_ind->push_back(tmp_box_2x12_col_ind[i]);
-//            v_box_2x12_values->push_back(tmp_box_2x12_values[i]);
-//        }
 
-        double box_2x12_volumes[24] = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+        v_box_2x12_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125.,};
 
@@ -502,7 +403,7 @@ protected:
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
-                           box_2x12_volumes,
+                           v_box_2x12_volumes,
                            box_2x12_d_is_on_bnd);
 
     }
@@ -525,6 +426,7 @@ protected:
     vector<long> v_box_2x12_row_ptr;
     vector<long> v_box_2x12_col_ind;
     vector<double> v_box_2x12_values;
+    vector<double> v_box_2x12_volumes;
 
     virtual void SetUp() {
         v_box_2x12_row_ptr = {0, 3, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 89, 92};
@@ -581,19 +483,8 @@ protected:
 
         box_2x12_nb_fc = 24;
         box_2x12_col_ind_size = 92;
-//        v_box_2x12_row_ptr = new vector<long>;
-//        v_box_2x12_col_ind = new vector<long>;
-//        v_box_2x12_values = new vector<double>;
-//
-//        for (int i = 0; i < box_2x12_nb_fc + 1; i++) {
-//            v_box_2x12_row_ptr->push_back(tmp_box_2x12_row_ptr[i]);
-//        }
-//        for (int i = 0; i < box_2x12_col_ind_size; i++) {
-//            v_box_2x12_col_ind->push_back(tmp_box_2x12_col_ind[i]);
-//            v_box_2x12_values->push_back(tmp_box_2x12_values[i]);
-//        }
 
-        double box_2x12_volumes[24] = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+        v_box_2x12_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125.,};
 
@@ -610,7 +501,7 @@ protected:
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
-                           box_2x12_volumes,
+                           v_box_2x12_volumes,
                            box_2x12_d_is_on_bnd);
 
     }
@@ -633,6 +524,7 @@ protected:
     vector<long> v_box_2x12_row_ptr;
     vector<long> v_box_2x12_col_ind;
     vector<double> v_box_2x12_values;
+    vector<double> v_box_2x12_volumes;
 
     virtual void SetUp() {
         v_box_2x12_row_ptr = {0, 3, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 89, 92};
@@ -689,19 +581,8 @@ protected:
 
         box_2x12_nb_fc = 24;
         box_2x12_col_ind_size = 92;
-//        v_box_2x12_row_ptr = new vector<long>;
-//        v_box_2x12_col_ind = new vector<long>;
-//        v_box_2x12_values = new vector<double>;
-//
-//        for (int i = 0; i < box_2x12_nb_fc + 1; i++) {
-//            v_box_2x12_row_ptr->push_back(tmp_box_2x12_row_ptr[i]);
-//        }
-//        for (int i = 0; i < box_2x12_col_ind_size; i++) {
-//            v_box_2x12_col_ind->push_back(tmp_box_2x12_col_ind[i]);
-//            v_box_2x12_values->push_back(tmp_box_2x12_values[i]);
-//        }
 
-        double box_2x12_volumes[24] = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+        v_box_2x12_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
                                        125., 125., 125., 125.,};
 
@@ -718,7 +599,7 @@ protected:
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
-                           box_2x12_volumes,
+                           v_box_2x12_volumes,
                            box_2x12_d_is_on_bnd);
 
     }
@@ -753,8 +634,7 @@ TEST_F(box_5x5x5, Dual_Graph_Box_5x5x5) {
     }
 }
 
-
-TEST_F(MGridGen, Dual_Graph_MGridGen) {
+TEST_F(MGridGen_Dual_Graph, Dual_Graph_MGridGen) {
 
     ASSERT_EQ(15, (*g).number_of_cells);
 
@@ -788,7 +668,7 @@ TEST_F(MGridGen, Dual_Graph_MGridGen) {
     }
 }
 
-TEST_F(MGridGen, Dual_Graph_CheckConnectivity_MGridGenDoc_example) {
+TEST_F(MGridGen_Dual_Graph, Dual_Graph_CheckConnectivity_MGridGenDoc_example) {
 
 //    unordered_set<long> s_MGridGen_is_on_ridge = unordered_set<long>({12, 14});
     ASSERT_TRUE((*g).check_connectivity(unordered_set<long>({0, 1, 3})));
@@ -819,7 +699,8 @@ TEST(Dual_Graph_TestSuite, compute_anisotropic_line_1_AnisotropicCell) {
                                     25, 32.5, 25,
                                     25, 25, 32.5};
 
-    double volumes[4] = {1.0, 1.0, 1.0, 1.0};
+    const vector<double>  v_volumes = {1.0, 1.0, 1.0, 1.0};
+
     unordered_map<long, int> d_is_on_bnd_d;
     d_is_on_bnd_d[0] = 1;
     d_is_on_bnd_d[1] = 1;
@@ -830,7 +711,7 @@ TEST(Dual_Graph_TestSuite, compute_anisotropic_line_1_AnisotropicCell) {
                               v_row_ptr,
                               v_col_ind,
                               v_values,
-                              volumes,
+                              v_volumes,
                               d_is_on_bnd_d);
 
     long arrayOfFineAnisotropicCompliantCells_size = 2;

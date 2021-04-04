@@ -14,7 +14,7 @@ add_executable(Google_Tests_run
         Tests_Dual_Graph.cpp
         Tests_Dual_Graph_old.cpp
         Tests_Seeds_Pool.cpp
-        Tests_CoMMA.cpp)
+        Tests_CoMMA.cpp MGridGen_Dual_Graph.h)
 
 target_link_libraries(Google_Tests_run CoMMA_lib)
 
