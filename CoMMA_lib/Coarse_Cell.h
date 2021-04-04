@@ -24,7 +24,14 @@ public:
 public:
     //Private methods:
     bool __check_connectivity(int verbose = 0);
+    void __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area);
+    void __compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour();
 
+public:
+    //Public methods:
+    void fill_cc_neighbouring(vector<long>& fc_2_cc);
+
+public:
     //private Fields
     Dual_Graph *__fc_graph;
     short int __dim;
