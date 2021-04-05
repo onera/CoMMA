@@ -14,7 +14,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 
     vector<Coarse_Cell> v_cc;
 
-    // CC #0
+    // CC //0
     //==========
     long i_cc = 0;
     unordered_set<long> s_fc_0 = {3};
@@ -53,7 +53,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref__tmp_fc_fine_cut_edges, v_cc[i_cc].__tmp_fc_fine_cut_edges);
     ASSERT_NEAR(ref__tmp_fc_fine_cut_edges[3][6], v_cc[i_cc].__tmp_fc_fine_cut_edges[3][6], 1e-10);
 
-    // CC #1
+    // CC //1
     //==========
     i_cc = 1;
     unordered_set<long> s_fc_1 = {0, 1, 2};
@@ -78,13 +78,13 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 
 //    self.assertEqual({1: {1: {0}, 2: {2, 3}}},
 //                     l_cc[
-//                             i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour)  # i_fc 3 has 2 neighbours outside i_cc 0
+//                             i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour)  // i_fc 3 has 2 neighbours outside i_cc 0
     // i_fc 3 has 2 neighbours outside i_cc 0
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{1, {0}},
                                                                           {2, {2, 3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
-    // CC #2
+    // CC //2
     //==========
     i_cc = 2;
     unordered_set<long> s_fc_2 = {4, 5, 7, 8};
@@ -106,10 +106,10 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}},
                                                                           {7, {4}},
                                                                           {8, {4}},
-                                                                          }}};
+                                                                  }}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
-    // CC #3
+    // CC //3
     //==========
     i_cc = 3;
     unordered_set<long> s_fc_3 = {6, 11, 13, 14};
@@ -139,7 +139,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
 
-    // CC #4
+    // CC //4
     //==========
     i_cc = 4;
     unordered_set<long> s_fc_4 = {9, 10, 12};
@@ -164,11 +164,272 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 //    {1: {9: {2},
 //         10: {2, 3}}}
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{9, {2}},
-                                                                          {10, {2,3}}
+                                                                          {10, {2, 3}}
                                                                   }}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
 }
 
+TEST_F(MGridGen_Dual_Graph, fill_cc_neighbouring_Case_1_MGridGen) {
 
 
+    vector<long> ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {3};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{3, {{1, {{1, 1.0}}},
+                                                                                                                                   {3, {{6, 2.2360679800000001}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    unordered_map<long, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{3, {1, 3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {0, 1, 2};
+
+    v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_1));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{1, {{0, {{3, 1.0}}}}},
+                                                 {2, {{2, {{5, 2.2360679800000001}}},
+                                                             {3, {{6, 2.2360679800000001}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][6], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][6], 1e-10);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{1, {0}},
+                                                                          {2, {2, 3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {4, 5, 7, 8};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_2));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{5, {{1, {{2,  2.2360679800000001}}}}},
+                                                 {7, {{4, {{9,  2.2360679800000001}}}}},
+                                                 {8, {{4, {{10, 1.4142135600000001}}}}},
+    };
+
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][2], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][2], 1e-10);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[7][4][9], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[7][4][9], 1e-10);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[8][4][10], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[8][4][10], 1e-10);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}},
+                                                                          {7, {4}},
+                                                                          {8, {4}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 3
+    //========================
+
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {6, 11, 13, 14};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6,  {{0, {{3,  2.2360679800000001}}},
+                                                              {1, {{2, 2.2360679800000001}}}}},
+                                                 {13, {{4, {{10, 3.16227766}}}}},
+
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][0][3], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][0][3], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][1][2], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][1][2], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[13][4][10], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[13][4][10], 1e-15);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{6, {0, 1}},
+                                                                          {13, {4}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+
+    //========================
+    // Create coarse cell 4
+    //========================
+    i_cc = 4;
+    unordered_set<long> s_fc_4 = {9, 10, 12};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_4));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{9,  {{2, {{7, 2.2360679800000001}}}}},
+                                                 {10, {{2, {{8, 1.4142135600000001}}},
+                                                              {3, {{13, 3.16227766}}}}},
+
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][7], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][7], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][2][8], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][2][8], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][3][13], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][3][13], 1e-15);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{9, {2}},
+                                                                          {10, {2, 3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+}
+
+TEST_F(MGridGen_Dual_Graph, fill_cc_neighbouring_Case_1_MGridGen_2) {
+
+    vector<long> ref_fc_2_cc = {3, 3, 2, 3, 1, 2, 3, 1, 1, 0, 1, 4, 0, 4, 4};
+
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {9, 12};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{9, {{1, {{7, 2.2360679800000001},
+                                                                                                                                        {10, 2.0}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][1][7], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][1][7], 1e-10);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][1][10], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][1][10], 1e-10);
+    unordered_map<long, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{9, {1}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {4, 7, 8, 10};
+
+    v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_1));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{4,  {{2, {{5, 2.0}}}}},
+                                                 {7,  {{0, {{9, 2.2360679800000001}}},}},
+                                                 {8,  {{2, {{5, 1.0}}}}},
+                                                 {10, {{0, {{9, 2.0}}},
+                                                              {4, {{13, 3.16227766}}}}}
+    };
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[4][2][5], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[4][2][5], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[7][0][9], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[7][0][9], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[8][2][5], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[8][2][5], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][0][9], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][0][9], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][4][13], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][4][13], 1e-10);
+
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{4, {2}},
+                                                                          {7, {0}},
+                                                                          {8, {2}},
+                                                                          {10, {0, 4}},
+                                                                  }}};
+
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {2, 5};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_2));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+//    self.assertEqual({2: {
+//                         3: {0: 2.0,
+//                             6: 2.23606797749979}
+//                          },
+//                     5: { 1: { 4: 2.0,
+//                               8: 1.0}
+//                     }},
+//                     l_cc[i_cc]._Coarse_Cell_v2__d_i_fc_to_j_cc_neighbourhood_to_j_fc)
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{2, {{3, {{0, 2.0},
+                                                                  {6, 2.2360679800000001}
+                                                          }}}},
+                                                 {5, {{1, {{4, 2.0},
+                                                                  {8, 1.0},
+                                                          }}}}
+    };
+
+//    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][0], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][0], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][6], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[2][3][6], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][4], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][4], 1e-10);
+    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][8], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[5][1][8], 1e-10);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{2, {3}},
+                                                                          {5, {1}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 3
+    //========================
+
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {0, 1, 3, 6};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+//    self.assertEqual({0: { 2: { 2: 2.0 }},
+//                     6: {
+//                         2: { 2: 2.23606797749979 },
+//                         4: { 11: 2.0 }
+//                     }},
+//                     l_cc[i_cc]._Coarse_Cell_v2__d_i_fc_to_j_cc_neighbourhood_to_j_fc)
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {
+            {0, {{2, {{2, 2.0}}}}},
+            {6, {{2, {{2, 2.2360679800000001}}},
+                        {4, {{11, 2.0}}}}},
+    };
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][2][2], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][2][2], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][1][2], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[6][1][2], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[13][4][10], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[13][4][10], 1e-15);
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{0, {2}},
+                                                                          {6, {2, 4}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //========================
+    // Create coarse cell 4
+    //========================
+    i_cc = 4;
+    unordered_set<long> s_fc_4 = {11, 13, 14};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_4));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{11,  {{3, {{6, 2.0}}}}},
+                                                 {13, {{1, {{10, 3.16227766}}}}},
+
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][7], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][7], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][2][8], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][2][8], 1e-15);
+//    ASSERT_NEAR(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][3][13], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[10][3][13], 1e-15);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{11, {3}},
+                                                                          {13, {1}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+}
