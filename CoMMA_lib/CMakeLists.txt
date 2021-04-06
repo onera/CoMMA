@@ -9,7 +9,8 @@ set(HEADER_FILES
         Seeds_Pool.h
         Dual_Graph.h
         Coarse_Cell.h
-        )
+        Agglomerator.h
+        Coarse_Cell_Graph.h)
 
 set(SOURCE_FILES
         Agglomerator_anisotropic.cpp
@@ -17,7 +18,8 @@ set(SOURCE_FILES
         Seeds_Pool.cpp
         Dual_Graph.cpp
         Coarse_Cell.cpp
-        )
+        Agglomerator.cpp
+        Coarse_Cell_Graph.cpp)
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})
