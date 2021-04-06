@@ -584,7 +584,7 @@ TEST_F(MGridGen_Dual_Graph, add_Case_1_MGridGen) {
         fc_2_cc[i_fc] = i_dest_cc;
     }
 
-    v_cc[i_dest_cc].check_consistency()
+    v_cc[i_dest_cc].check_consistency(fc_2_cc);
     ASSERT_EQ(1, v_cc[i_dest_cc].__card);
     ASSERT_EQ(0, v_cc[i_dest_cc].__compactness);
     ASSERT_TRUE(v_cc[i_dest_cc].is_connected());
@@ -602,7 +602,7 @@ TEST_F(MGridGen_Dual_Graph, add_Case_1_MGridGen) {
         fc_2_cc[i_fc] = i_dest_cc;
     }
 
-    v_cc[i_dest_cc].check_consistency();
+    v_cc[i_dest_cc].check_consistency(fc_2_cc);
     ASSERT_EQ(2, v_cc[i_dest_cc].__card);
     ASSERT_EQ(1, v_cc[i_dest_cc].__compactness);
     ASSERT_TRUE(v_cc[i_dest_cc].is_connected());
