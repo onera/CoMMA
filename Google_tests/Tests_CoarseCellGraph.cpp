@@ -1,7 +1,118 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
-#include "../CoMMA_lib/Agglomerator_anisotropic.h"
+#include "../CoMMA_lib/Dual_Graph.h"
+#include "../CoMMA_lib/Coarse_Cell_Graph.h"
 #include "gtest/gtest.h"
 
+class Test_CCG_box_5x5x5 : public ::testing::Test {
+    // filename_ini = "box_1_rect_5_d_F.hdf"
+    // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
+
+protected:
+
+    Dual_Graph *g;
+    int box_5x5x5_number_of_cells;
+    int box_5x5x5_col_ind_size;
+    vector<long> v_box_5x5x5_row_ptr;
+    vector<long> v_box_5x5x5_col_ind;
+    vector<double> v_box_5x5x5_values;
+    vector<double> v_box_5x5x5_volumes;
+
+    virtual void SetUp() {
+        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
+                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
+                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
+                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
+                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
+
+        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
+                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
+                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
+                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
+                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
+                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
+                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
+                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
+                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
+                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
+                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
+                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
+                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
+                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
+                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
+                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
+                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
+                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
+                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
+                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
+                               47, 59, 62, 63};
+
+        v_box_5x5x5_values = {75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25.,
+                              25., 25., 75., 25., 25., 25., 50., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25.,
+                              25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 75., 25.,
+                              25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+                              75., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 50., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 50., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25.,
+                              25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25., 50., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 50., 25., 25., 25., 50., 25., 25., 25., 25., 25.,
+                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50.,
+                              25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+                              50., 25., 25., 25., 25., 75.};
+
+        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
+
+        vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
+                                           0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
+                                           2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+
+        box_5x5x5_number_of_cells = 64;
+        box_5x5x5_col_ind_size = 344;
+
+        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
+        int i(0);
+        for (int value : box_5x5x5_is_on_bnd)
+            box_5x5x5_d_is_on_bnd[i++] = value;
+
+        g = new Dual_Graph(box_5x5x5_number_of_cells,
+                           v_box_5x5x5_row_ptr,
+                           v_box_5x5x5_col_ind,
+                           v_box_5x5x5_values,
+                           v_box_5x5x5_volumes,
+                           box_5x5x5_d_is_on_bnd);
+
+    }
+
+    virtual void TearDown() {
+        delete g;
+    }
+};
+
+TEST_F(Test_CCG_box_5x5x5, construct_box_5x5x5) {
+    Coarse_Cell_Graph ccg((*g));
+    ASSERT_EQ(64, ccg._fc_graph.number_of_cells);
+    ASSERT_FALSE(ccg._a_is_fc_agglomerated[0]);
+
+}
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_1) {
 
@@ -2939,9 +3050,16 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
                                             {3, unordered_set<long>({8, 9, 10})}};
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2 = {
+                                                                         {1, unordered_set<long>({0})},
+                                                                         {3, unordered_set<long>({1,3})},
+                                                                         {4, unordered_set<long>({2})}};
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells_2, dict_Card_Coarse_Cells);
+
     unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2 = {{1, 1},
                                                                                   {3, 2},
                                                                                   {4, 1}};
+
     ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements_2, dict_DistributionOfCardinalOfCoarseElements);
 
 
@@ -2995,6 +3113,431 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
 //
 //        assert(isFineCellAgglomerated_tmp[i] == ref_isFineCellAgglomerated_tmp_3[i]);
 //        assert(fine_Cell_indices_To_Coarse_Cell_Indices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i]);
+    }
+}
+
+TEST(CC_TestSuite, createCoarseCell_Case_1) {
+
+    int iLevel = 0;
+    unordered_set<long> l({4, 5, 6, 7});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({4, 5, 6, 7});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({2});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, 2, 2, 2, 2};
+
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+
+}
+
+TEST(CC_TestSuite, createCoarseCell_Case_1_isMutable_False) {
+// Ex case 2
+    int iLevel = 0;
+    unordered_set<long> l({4, 5, 6, 7});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices, false);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, 2, 2, 2, 2};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CC_TestSuite, createCoarseCell_Case_3) {
+
+    unordered_set<long> l({4, 5, 6});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(7, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({4, 5, 6});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1, 2});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 2;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, false};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, 2, 2, 2, -1};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CC_TestSuite, createCoarseCell_Delayed_Case_1) {
+
+    unordered_set<long> l({4, 5, 6, 7});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices, true, true);
+
+    ASSERT_EQ(2, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+
+    // Real Creation:
+    createADelayedCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
+                             indCoarseElement,
+                             fine_Cell_indices_To_Coarse_Cell_Indices);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({4, 5, 6, 7});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({2});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp_2[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[8] = {1, 1, 1, 0, 2, 2, 2, 2};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp_2[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CC_TestSuite, createCoarseCell_Delayed_Case_1_isMutable_False) {
+
+    unordered_set<long> l({4, 5, 6, 7});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices, false, true);
+
+    ASSERT_EQ(2, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[4] = 1;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+
+    }
+
+    // Real Creation:
+    createADelayedCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
+                             indCoarseElement,
+                             fine_Cell_indices_To_Coarse_Cell_Indices);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
+
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({4, 5, 6, 7});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({2});
+
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+
+//    assert(dict_Coarse_Elem.size() == 3);
+//    assert(dict_Coarse_Elem[0].size() == 1);
+//    assert(dict_Coarse_Elem[0].count(3) == 1);
+//    assert(dict_Coarse_Elem[1].size() == 3);
+//    assert(dict_Coarse_Elem[1].count(0) == 1);
+//    assert(dict_Coarse_Elem[1].count(1) == 1);
+//    assert(dict_Coarse_Elem[1].count(2) == 1);
+//
+//    assert(dict_Card_Coarse_Cells.size() == 3);
+//    assert(dict_Card_Coarse_Cells[1].size() == 1);
+//    assert(dict_Card_Coarse_Cells[1].count(0) == 1);
+//    assert(dict_Card_Coarse_Cells[3].size() == 1);
+//    assert(dict_Card_Coarse_Cells[3].count(1) == 1);
+//    assert(dict_Card_Coarse_Cells[4].size() == 1);
+//    assert(dict_Card_Coarse_Cells[4].count(2) == 1);
+//
+//    assert(dict_DistributionOfCardinalOfCoarseElements.size() == 3);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[1] == 1);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
+//    assert(dict_DistributionOfCardinalOfCoarseElements[4] == 1);
+
+    bool ref_isFineCellAgglomerated_tmp_2[8] = {true, true, true, true, true, true, true, true};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[8] = {1, 1, 1, 0, 2, 2, 2, 2};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp_2[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+}
+
+TEST(CC_TestSuite, createCoarseCell_Delayed_Case_3) {
+
+
+    unordered_set<long> l({4, 5, 6});
+
+    unordered_map<long, unordered_set<long>> dict_Coarse_Elem;
+    dict_Coarse_Elem[0] = unordered_set<long>({3});
+    dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+
+    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+
+    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
+    dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
+
+    long fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    long indCoarseElement = 2;
+    long numberOfFineAgglomeratedCells_tmp = 4;
+    bool isFineCellAgglomerated_tmp[8] = {true, true, true, true, false, false, false, false};
+
+    createCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements,
+                     indCoarseElement, numberOfFineAgglomeratedCells_tmp,
+                     isFineCellAgglomerated_tmp,
+                     fine_Cell_indices_To_Coarse_Cell_Indices, true, true);
+
+    ASSERT_EQ(2, indCoarseElement);
+    ASSERT_EQ(7, numberOfFineAgglomeratedCells_tmp);
+
+    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
+    ref_dict_Coarse_Elem[0] = unordered_set<long>({3});
+    ref_dict_Coarse_Elem[1] = unordered_set<long>({1, 2, 0});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
+    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0});
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
+    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
+    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 2;
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp[8] = {true, true, true, true, true, true, true, false};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[8] = {1, 1, 1, 0, -1, -1, -1, -1};
+    for (int i = 0; i < 8; i++) {
+        assert(isFineCellAgglomerated_tmp[i] == ref_isFineCellAgglomerated_tmp[i]);
+        assert(fine_Cell_indices_To_Coarse_Cell_Indices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    }
+
+    // Real Creation:
+    createADelayedCoarseCell(l, dict_Coarse_Elem, dict_Card_Coarse_Cells,
+                             indCoarseElement,
+                             fine_Cell_indices_To_Coarse_Cell_Indices);
+
+    ASSERT_EQ(3, indCoarseElement);
+    ASSERT_EQ(7, numberOfFineAgglomeratedCells_tmp);
+
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({4, 5, 6});
+    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Elem);
+
+    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1, 2});
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+
+    // the map was already up to date.
+    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
+
+    bool ref_isFineCellAgglomerated_tmp_2[8] = {true, true, true, true, true, true, true, false};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[8] = {1, 1, 1, 0, 2, 2, 2, -1};
+    for (int i = 0; i < 8; i++) {
+
+        ASSERT_EQ(ref_isFineCellAgglomerated_tmp_2[i], isFineCellAgglomerated_tmp[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
     }
 }
 
