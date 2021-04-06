@@ -18,18 +18,34 @@ public:
 
     bool is_connected();
 
+    unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
+
 public:
     //protected
     bool _is_finalized = false;
 public:
     //Private methods:
     bool __check_connectivity(int verbose = 0);
+
     void __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area);
+
     void __compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour();
+
+    void __delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(const long &i_fc,
+                                                                               const long &j_cc,
+                                                                               const long &j_fc);
 
 public:
     //Public methods:
-    void fill_cc_neighbouring(vector<long>& fc_2_cc);
+    void fill_cc_neighbouring(vector<long> &fc_2_cc);
+
+    unordered_set<long> get_s_cc_neighbours();
+
+    unordered_set<long> compute_s_leaves();
+
+    void add_fc(unordered_set<long> s_fc_to_add, vector<long> fc_2_cc);
+
+    bool check_consistency(vector<long> &fc_2_cc);
 
 public:
     //private Fields
@@ -71,7 +87,7 @@ public:
     //####################################################
     // coarse edges  #  No sense     #  Number Cc neighbours
     //
-    unordered_map<long, unordered_map<long, unordered_set<long>>> d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour;
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour;
     // Dict[outer fine_cell_degree, Dict[int:i_fc, Set[int: j_cc]]]
 
     double __boundary_area = 0.0;

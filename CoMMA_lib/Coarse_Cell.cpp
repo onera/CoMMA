@@ -116,7 +116,7 @@ bool Coarse_Cell::__check_connectivity(
             long i_fc = *set_next.begin();
             set_next.erase(set_next.begin());
 
-            for (auto i_k_v :(*this).__d_def[i_fc]) {
+            for (auto &i_k_v :(*this).__d_def[i_fc]) {
 
                 long i_fc_n = i_k_v.first;
                 if (dict_global_to_local.count(i_fc_n) > 0) {
@@ -215,7 +215,6 @@ void Coarse_Cell::fill_cc_neighbouring(vector<long> &fc_2_cc) {
 
 }
 
-
 void Coarse_Cell::__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area) {
 //    if(j_cc not in (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]){
 //        (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc] = dict()
@@ -225,7 +224,7 @@ void Coarse_Cell::__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long
     (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc][j_fc] = j_fc_area;
 }
 
-void Coarse_Cell::__compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(){
+void Coarse_Cell::__compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour() {
 
 /**
  * Compute (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour from (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc
@@ -246,4 +245,249 @@ void Coarse_Cell::__compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour()
             }
         }
     }
+}
+
+unordered_set<long> Coarse_Cell::get_s_cc_neighbours() {
+
+    unordered_set<long> s_cc;
+    for (auto &i_k_v : (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc) {
+//        cout<<"i_fc "<< i_k_v.first<<endl;
+        for (auto &j_k_v : (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_k_v.first]) {
+            s_cc.insert(j_k_v.first);
+        }
+    }
+    return s_cc;
+}
+
+unordered_set<long> Coarse_Cell::compute_s_leaves() {
+    /**
+     * We look for vertices of degree one (or zero) in the cc.
+     * :return: set of leaves:
+     */
+    unordered_set<long> s_leaves;
+    for (auto &i_k_v : (*this).__d_def) {
+        long i_fc = i_k_v.first;
+        unsigned short int nb_common_faces_i_fc = (*this).__d_def[i_fc].size();
+        assert(((*this).__d_def.size() == 1) || nb_common_faces_i_fc > 0);
+        // if a cc composed of only one fc then the fc is a leaf : nb_common_faces_i_fc==0
+        if (nb_common_faces_i_fc < 2) {
+            s_leaves.insert(i_fc);
+        }
+    }
+    return s_leaves;
+}
+
+void Coarse_Cell::add_fc(unordered_set<long> s_fc_to_add,
+                         vector<long> fc_2_cc) {
+
+    // attention, fc_2_cc has not yet been updated:
+    // we want the old i_cc associated with each fc to add
+    (*this).__is_connectivity_up_to_date = false;
+
+    // Update of cardinal
+    //////////////////////////////////////////////
+    (*this).__card += s_fc_to_add.size();
+
+    // i_fc are new fc to add
+    for (const long &i_fc : s_fc_to_add) {
+
+        // print("add_fc", i_fc)
+        // (*this).__d_def[i_fc] = dict()  // subgraph describing the cc
+        vector<long> v_neighbours = (*(*this).__fc_graph).get_neighbours(i_fc);
+        vector<double> v_weights = (*(*this).__fc_graph).get_weights(i_fc);
+
+        assert(v_neighbours.size() == v_weights.size());
+
+        for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+            long i_fc_n = v_neighbours[i_n];
+            double i_w_fc_n = v_weights[i_n];
+
+            //            for
+            //    i_fc_n, i_w_fc_n
+            //    in
+            //    zip((*this).__fc_graph.get_neighbours(i_fc), (*this).__fc_graph.get_weights(i_fc)):
+            //// if i_fc_n in s_def:
+            if ((*this).__d_def.count(i_fc_n) > 0) {
+                // i_fc_n are fc already in current cc.
+                if (i_fc == i_fc_n) {
+                    // Here we put boundary information inside a variable and remove it of d_def: which contains so
+                    // only real neighbour
+                    (*this).__boundary_area += i_w_fc_n;
+                } else {
+
+                    // update of __d_def
+                    (*this).__d_def[i_fc][i_fc_n] = i_w_fc_n;
+                    (*this).__d_def[i_fc_n][i_fc] = i_w_fc_n;
+
+                    // update of compactness
+                    if (s_fc_to_add.count(i_fc_n) == 0) {
+                        unsigned short int old_compactness = (*this).__d_def[i_fc_n].size() - 1;
+                        unsigned short int new_compactness = (*this).__d_def[i_fc_n].size();
+
+                        (*this).__d_compactness_to_s_fc[old_compactness].erase(i_fc_n);
+                        if ((*this).__d_compactness_to_s_fc[old_compactness].empty()) {
+                            (*this).__d_compactness_to_s_fc.erase(old_compactness);
+                        }
+                        if ((*this).__d_compactness_to_s_fc.count(new_compactness) > 0) {
+                            (*this).__d_compactness_to_s_fc[new_compactness].insert(i_fc_n);
+                        } else {
+                            (*this).__d_compactness_to_s_fc[new_compactness] = unordered_set<long>({i_fc_n});
+                        }
+                    }
+                    // update of __d_i_fc_to_j_cc_neighbourhood_to_j_fc:
+                    // i_fc_n must be at the "boundary of current cc.
+//                    if((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc.count(i_fc_n)==0){
+//
+//                    }
+
+//                    print(i_fc_n, (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc)
+//                    print('assert i_fc_n in (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc, str(i_fc_n)')
+                    assert((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc.count(i_fc_n) > 0);
+//                    in(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc, str(i_fc_n)
+                    // il se peut que la cc precedente etait de taille 1.
+                    long &j_cc = fc_2_cc[i_fc];  // We want the old cc index of i_fc
+                    // print(i_fc_n, j_cc,i_fc)
+                    (*this).__delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc_n,
+                                                                                                  j_cc,
+                                                                                                  i_fc);
+                }
+            } else {
+                // update of d_i_fc_to_j_cc_neighbourhood_to_j_fc
+                long &j_cc_n = fc_2_cc[i_fc_n];  // We want the old cc index of i_fc
+//                if ((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc.count(i_fc)){
+//                (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc] = dict()
+//                }
+                (*this).__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, j_cc_n, i_fc_n,
+                                                                       i_w_fc_n);
+            }
+        }
+    }
+
+    // Update of compactness for new fc
+    //////////////////////////////////////////////////////////////////////
+    for (const long &i_fc : s_fc_to_add) {
+
+        unsigned short int compactness = (*this).__d_def[i_fc].size();
+        if ((*this).__d_compactness_to_s_fc.count(compactness)) {
+            (*this).__d_compactness_to_s_fc[compactness].insert(i_fc);
+        } else {
+            (*this).__d_compactness_to_s_fc[compactness] = unordered_set<long>({i_fc});
+        }
+    }
+    unsigned short int max_comp = 0;
+    for (auto &i_k_v :(*this).__d_compactness_to_s_fc) {
+        if (max_comp < i_k_v.first) {
+            max_comp = i_k_v.first;
+        }
+    }
+//    unsigned short int max_comp = max((*this).__d_compactness_to_s_fc.keys())
+
+    for (unsigned short int i_comp = 0; i_comp < max(max_comp + 1, 4); i_comp++) {
+        if ((*this).__d_compactness_to_s_fc.count(i_comp) > 0 && !(*this).__d_compactness_to_s_fc[i_comp].empty()) {
+            (*this).__compactness = i_comp;
+            break;
+        }
+    }
+
+    // TODO ne pas tout recalculer.
+    (*this).__compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour();
+}
+
+
+void Coarse_Cell::__delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(const long &i_fc,
+                                                                                        const long &j_cc,
+                                                                                        const long &j_fc) {
+    // print("__delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc", i_fc, j_cc, j_fc)
+    // print((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc])
+    (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc].erase(j_fc);
+    if ((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc].empty()) {
+        (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].erase(j_cc);
+    }
+    if ((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].empty()) {
+        (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc.erase(i_fc);
+    }
+
+}
+
+unordered_set<long> Coarse_Cell::get_s_fc_w_outer_neighbours(unsigned short int min_degree) {
+    unordered_set<long> s_fc;
+    for (auto &i_k_v : (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour) {
+        unsigned short int i_d = i_k_v.first;
+        if (i_d >= min_degree) {
+            for (auto &j_k_v : (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_d]) {
+//                set((*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_d].keys()));
+                s_fc.insert(j_k_v.first);
+            }
+
+        }
+    }
+    return s_fc;
+}
+
+bool Coarse_Cell::check_consistency(vector<long> &fc_2_cc) {
+/**
+ * check_consistency between __d_i_fc_to_j_cc_neighbourhood_to_j_fc and d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour
+ */
+    return true;
+//    for (auto &i_k_v:(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc) {
+//        long i_fc = i_k_v.first;
+//        for (auto &j_k_v:(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]) {
+//            long j_cc = j_k_v.first;
+//
+//            if (fc_2_cc.size()>0) {
+//                for (auto &k_k_v:(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc]) {
+//                    long j_fc= k_k_v.first;
+//                    if(fc_2_cc[j_fc] != j_cc){
+//                        cout<<"\t\t\t\ti_fc "<< i_fc<< "j_fc"<< j_fc<< "j_cc"<< j_cc<< "fc_2_cc"<< fc_2_cc[j_fc]);
+//                    }
+//                    assert(fc_2_cc[j_fc] == j_cc);
+//                }
+//            }
+//            nb = len((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc])
+//// if nb not in (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour:
+//// print("\n" + str(i_fc) + "\t" + str(j_cc) + "\t" + str(nb))
+//            assert
+//                    nb
+//            in
+//            (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, str(i_fc) + "\t" + str(
+//                    j_cc) + "\t" + str(nb)
+//            assert
+//                    i_fc
+//            in
+//            (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb]
+//            // if j_cc not in (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb][i_fc]:
+//            //     print("\ni_cc", (*this).__i_cc)
+//            //     print(nb, i_fc, j_cc, (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour,  (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc])
+//            assert
+//                    j_cc
+//            in
+//            (*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb][i_fc]
+//        }
+//    }
+//    for
+//    i_degree
+//    in(*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour:
+//    for
+//    i_fc
+//    in(*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree]:
+//    for
+//    j_cc
+//    in(*this).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc]:
+//    if i_fc
+//        not in(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc:
+//    print(i_fc, j_cc, i_fc, (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc)
+//    return False
+//    elif
+//            j_cc
+//    not in(*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]:
+//    print(i_fc, j_cc, i_fc, (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc])
+//    return False
+//    elif
+//    i_degree != len((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc]):
+//    print(i_fc, j_cc, i_fc, (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc], i_degree)
+//    return False
+//    else:
+//    return True
+//    return True
+
 }
