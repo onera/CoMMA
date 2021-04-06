@@ -113,7 +113,9 @@ TEST_F(Test_CCG_box_5x5x5, construct_box_5x5x5) {
     ASSERT_FALSE(ccg._a_is_fc_agglomerated[0]);
 
 }
+
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
+
 TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_1) {
 
     int nbCells = 9;

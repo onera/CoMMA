@@ -9,7 +9,7 @@ add_executable(Google_Tests_run
         Tests_Utils.cpp
         Tests_Agglomerator_isotropic.cpp
         Tests_Coarse_Cell.cpp
-        Tests_CoarseCellGraph.cpp
+        Tests_Coarse_Cell_Graph.cpp
         Tests_Agglomerator.cpp
         Tests_Dual_Graph.cpp
         Tests_Dual_Graph_old.cpp
