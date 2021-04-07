@@ -574,6 +574,8 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
     long ref_fine_agglomeration_lines_array[fine_agglomeration_lines_array_size] = {0, 1, 23, 2, 4, 5, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
                                                                                     24, 25, 26, 27, 28, 29, 30, 31};
 
+    // Part one: from array to forward_list<deque<long> *> *
+    //======================================================
     long nb_agglomeration_lines = 0;
     forward_list<deque<long> *> *agglomeration_lines = new forward_list<deque<long> *>();
 
@@ -609,24 +611,25 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
         i_count++;
     }
 
+    // Part two: from forward_list<deque<long> *> * to array
+    //======================================================
+
     long sizes[2] = {0, 0};
 
     long a_agglo_lines_idx[nb_fc];  // not initialized
     long a_agglo_lines[nb_fc];  // not initialized
-    convert_fine_agglomeration_lines_to_fine_agglomeration_lines_arrays(nb_fc,
-                                                                        nb_agglomeration_lines,
-                                                                        agglomeration_lines,
-                                                                        sizes,
-                                                                        a_agglo_lines_idx,
-                                                                            a_agglo_lines);
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_fc,
+                                                      nb_agglomeration_lines,
+                                                      agglomeration_lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
 
     ASSERT_EQ(17, sizes[0]);
     ASSERT_EQ(33, sizes[1]);
     for (int i = 0; i < sizes[0]; i++) {
         ASSERT_EQ(ref_fine_agglomeration_lines_array_idx[i], a_agglo_lines_idx[i]);
-//        cout << a_agglo_lines_idx[i] << ", ";
     }
-//    cout << "endl";
 
     for (int i = 0; i < sizes[1]; i++) {
         ASSERT_EQ(ref_fine_agglomeration_lines_array[i], a_agglo_lines[i]);
