@@ -149,7 +149,6 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
                                           bool verbose) {
 
     // Rmk: costly function: sort of a dictionary!
-
     long nb_fc = this->number_of_cells;
 
     long nb_anisotropic_compliant_fc = sizes[7];
@@ -159,23 +158,19 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
     bool isAnisotropicLines = false;
     // self._listOfSetAnisotropicCompliant[iLevel] contains the set of anisotropic compliant cells (i.e. Hexa and
     //                                                                                                prism)
-    // d_anisotropic_fc
-    // isAnisotropic
 
     // TODO Au lieu de faire un tableau avec toutes les cellules, les Hexa et les prismes sont suffisants!
     double *maxArray = new double[nb_fc];
     unordered_map<long, double> d_anisotropic_fc;// keys are the ratio Max to average (ratioArray[iCell]) and value
     //                                                 the (global) index of the cell.
 
-
-    // Process of every fine cells:
-    // TODO a priori on pourrait faire le calcul uniquement pour les cellules hexe/prism
-    // for iCell in xrange(nb_fc):
+    // Process of every compliant fine cells:
     long i_fc;
     long ind, ind_p_one, i_neighbour_fc;
     double min_weight, max_weight, averageWeight, weight;
 
     for (int i_loc_fc = 0; i_loc_fc < nb_anisotropic_compliant_fc; ++i_loc_fc) {
+
         i_fc = array_of_anisotropic_compliant_fc[i_loc_fc];
         ind = this->_m_CRS_Row_Ptr[i_fc];
         ind_p_one = this->_m_CRS_Row_Ptr[i_fc + 1];

@@ -4,7 +4,8 @@
 
 #include "Coarse_Cell_Graph.h"
 Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph& fc_graph,
-                                     int verbose):_fc_graph(fc_graph), _verbose(verbose){
+                                     int verbose,
+                                     vector<long> debug_only_fc_to_cc):_fc_graph(fc_graph), _verbose(verbose){
     vector<bool> tmp(fc_graph.number_of_cells, false);
     (*this)._a_is_fc_agglomerated = tmp;
 

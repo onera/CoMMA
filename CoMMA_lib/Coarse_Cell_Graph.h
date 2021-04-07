@@ -11,7 +11,10 @@
 class Coarse_Cell_Graph {
 public:
     Coarse_Cell_Graph(Dual_Graph& fc_graph,
-                      int verbose=0);
+                      int verbose=0,
+                      vector<long> debug_only_fc_to_cc = vector<long>()
+                      //debug_a_anisotropic_lines: Optional[List[Deque]] = None,
+    );
 
 //protected:
     int _verbose;

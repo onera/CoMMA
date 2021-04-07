@@ -1,9 +1,11 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
+//#include "../CoMMA_lib/interface.h"
+#include "../CoMMA_lib/Util.h"
 #include "gtest/gtest.h"
 
 
-TEST(Utils_TestSuite, PartsList){
+TEST(Utils_TestSuite, PartsList) {
 
     vector<long> seq({0, 3, 1});
     list<unordered_set<long>> listOfSet = partsList(seq);
@@ -14,11 +16,11 @@ TEST(Utils_TestSuite, PartsList){
 //        cout << endl;
 //    }
 
-    EXPECT_EQ(7,listOfSet.size());
+    EXPECT_EQ(7, listOfSet.size());
     //ASSERT_EQ(
 }
 
-TEST(Utils_TestSuite, PartsList_length_1){
+TEST(Utils_TestSuite, PartsList_length_1) {
 
     vector<long> seq({0, 3, 1});
     list<unordered_set<long>> listOfSet = partsList(seq, 1);
@@ -29,29 +31,29 @@ TEST(Utils_TestSuite, PartsList_length_1){
 //        }
 //        cout << endl;
 //    }
-    EXPECT_EQ(3,listOfSet.size());
+    EXPECT_EQ(3, listOfSet.size());
     //ASSERT_EQ(
 }
 
-TEST(Utils_TestSuite, PartsList_length_2){
+TEST(Utils_TestSuite, PartsList_length_2) {
 
     vector<long> seq({0, 3, 1});
     list<unordered_set<long>> listOfSet = partsList(seq, 2);
-    EXPECT_EQ(3,listOfSet.size());
+    EXPECT_EQ(3, listOfSet.size());
     //ASSERT_EQ(
 }
 
-TEST(Utils_TestSuite, PartsList_length_3){
+TEST(Utils_TestSuite, PartsList_length_3) {
 
     vector<long> seq({0, 3, 1});
     list<unordered_set<long>> listOfSet = partsList(seq, 3);
-    EXPECT_EQ(1,listOfSet.size());
+    EXPECT_EQ(1, listOfSet.size());
 
 }
 
 //queue<unordered_set<long>> partsList(vector<long> seq, int length)
 
-TEST(Utils_TestSuite, CheckConnectivity_MGridGenDoc_example){
+TEST(Utils_TestSuite, CheckConnectivity_MGridGenDoc_example) {
     long row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
     long col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
                         7, 8, 9, 5, 7, 8, 10, 7, 9, 10, 12, 8, 9, 10, 13, 6, 11, 13, 14, 9, 12, 10, 11, 13, 11, 14};
@@ -92,7 +94,7 @@ TEST(Utils_TestSuite, CheckConnectivity_MGridGenDoc_example){
 }
 
 
-TEST(Utils_TestSuite, ComputeNumberOfCommonFaces){
+TEST(Utils_TestSuite, ComputeNumberOfCommonFaces) {
 
     long row_ptr[16] = {0, 3, 6, 10, 13, 16, 20, 24, 28, 32, 36, 40, 44, 46, 49, 51};
     long col_ind[51] = {0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 4, 5, 8, 2, 3, 6, 11, 4,
@@ -113,19 +115,19 @@ TEST(Utils_TestSuite, ComputeNumberOfCommonFaces){
 
     long iCC = 1;
 
-    ASSERT_EQ(1,computeNumberOfCommonFaces(0, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(1,computeNumberOfCommonFaces(1, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(2,computeNumberOfCommonFaces(2, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(0,computeNumberOfCommonFaces(3, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(2,computeNumberOfCommonFaces(4, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(3,computeNumberOfCommonFaces(5, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(2,computeNumberOfCommonFaces(6, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
-    ASSERT_EQ(2,computeNumberOfCommonFaces(11, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(1, computeNumberOfCommonFaces(0, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(1, computeNumberOfCommonFaces(1, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(2, computeNumberOfCommonFaces(2, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(0, computeNumberOfCommonFaces(3, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(2, computeNumberOfCommonFaces(4, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(3, computeNumberOfCommonFaces(5, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(2, computeNumberOfCommonFaces(6, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
+    ASSERT_EQ(2, computeNumberOfCommonFaces(11, iCC, row_ptr, col_ind, fine_Cell_indices_To_C_C_Indices));
 
 }
 
 
-TEST(Utils_TestSuite, read_agglomeration_datas_from_file){
+TEST(Utils_TestSuite, read_agglomeration_datas_from_file) {
 
     // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
     string filename = "/Users/lantos/CLionProjects/CoMMA/Google_tests/tests/0_Inputs/Datas_Agglomeration_10_24.txt";
@@ -229,57 +231,57 @@ TEST(Utils_TestSuite, read_agglomeration_datas_from_file){
     int ref_maxCard = 5;
 
     // Checks
-    ASSERT_EQ(ref_numberOfFineCells , numberOfFineCells);
-    ASSERT_EQ(ref_adjMatrix_col_ind_size , adjMatrix_col_ind_size);
+    ASSERT_EQ(ref_numberOfFineCells, numberOfFineCells);
+    ASSERT_EQ(ref_adjMatrix_col_ind_size, adjMatrix_col_ind_size);
 
-    ASSERT_EQ(ref_isFirstAgglomeration , isFirstAgglomeration_long[0]);
-    ASSERT_EQ(ref_isAnisotropic , isAnisotropic_long[0]);
+    ASSERT_EQ(ref_isFirstAgglomeration, isFirstAgglomeration_long[0]);
+    ASSERT_EQ(ref_isAnisotropic, isAnisotropic_long[0]);
 
-    ASSERT_EQ(ref_dimension , dimension[0]);
-    ASSERT_EQ(ref_goalCard , goalCard[0]);
-    ASSERT_EQ(ref_minCard , minCard[0]);
-    ASSERT_EQ(ref_maxCard , maxCard[0]);
+    ASSERT_EQ(ref_dimension, dimension[0]);
+    ASSERT_EQ(ref_goalCard, goalCard[0]);
+    ASSERT_EQ(ref_minCard, minCard[0]);
+    ASSERT_EQ(ref_maxCard, maxCard[0]);
 
     for (int i = 0; i < numberOfFineCells + 1; i++) {
         ASSERT_EQ(ref_adjMatrix_row_ptr[i], adjMatrix_row_ptr[i]);
     }
     for (int i = 0; i < ref_adjMatrix_col_ind_size; i++) {
-        ASSERT_EQ(ref_adjMatrix_col_ind[i] , adjMatrix_col_ind[i]);
+        ASSERT_EQ(ref_adjMatrix_col_ind[i], adjMatrix_col_ind[i]);
     }
 
     for (int i = 0; i < ref_adjMatrix_col_ind_size; i++) {
-        ASSERT_EQ(ref_adjMatrix_areaValues[i] , adjMatrix_areaValues[i]);
+        ASSERT_EQ(ref_adjMatrix_areaValues[i], adjMatrix_areaValues[i]);
     }
 
     for (int i = 0; i < numberOfFineCells; i++) {
-        ASSERT_EQ(ref_volumes[i] , volumes[i]);
+        ASSERT_EQ(ref_volumes[i], volumes[i]);
     }
 
     for (int i = 0; i < numberOfFineCells; i++) {
-        ASSERT_EQ(ref_arrayOfFineAnisotropicCompliantCells[i] , arrayOfFineAnisotropicCompliantCells[i]);
+        ASSERT_EQ(ref_arrayOfFineAnisotropicCompliantCells[i], arrayOfFineAnisotropicCompliantCells[i]);
     }
     for (int i = 0; i < numberOfFineCells; i++) {
-        ASSERT_EQ(ref_isOnBnd[i] , isOnFineBnd_l[i]);
+        ASSERT_EQ(ref_isOnBnd[i], isOnFineBnd_l[i]);
     }
     for (int i = 0; i < ref_isOnValley_size; i++) {
-        ASSERT_EQ(ref_array_isOnValley[i] , array_isOnValley[i]);
+        ASSERT_EQ(ref_array_isOnValley[i], array_isOnValley[i]);
     }
 
     for (int i = 0; i < ref_isOnRidge_size; i++) {
-        ASSERT_EQ(ref_array_isOnRidge[i] , array_isOnRidge[i]);
+        ASSERT_EQ(ref_array_isOnRidge[i], array_isOnRidge[i]);
     }
     for (int i = 0; i < ref_isOnCorner_size; i++) {
-        ASSERT_EQ(ref_array_isOnCorner[i] , array_isOnCorner[i]);
+        ASSERT_EQ(ref_array_isOnCorner[i], array_isOnCorner[i]);
     }
     for (int i = 0; i < numberOfFineCells; i++) {
-        ASSERT_EQ(ref_agglomerationLines_Idx[i] , agglomerationLines_Idx[i]);
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], agglomerationLines_Idx[i]);
     }
     for (int i = 0; i < numberOfFineCells; i++) {
-        ASSERT_EQ(ref_agglomerationLines[i] , agglomerationLines[i]);
+        ASSERT_EQ(ref_agglomerationLines[i], agglomerationLines[i]);
     }
 }
 
-TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerate){
+TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerate) {
 
     // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
     //    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Outputs/Datas_Agglomeration_10_24.txt";
@@ -353,7 +355,7 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
 
     for (int i = 1; i < 2/*nb_domain*/; i++) {
 
-        std::cout <<"\nDomain "<<i<<" "<< a_filenames[i] << "\n";
+        std::cout << "\nDomain " << i << " " << a_filenames[i] << "\n";
         string filename = input_folder + a_filenames[i];
         long sizes[10];
         long *adjMatrix_row_ptr = NULL;
@@ -476,7 +478,7 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
 
 //        cout << "\nfineCellIndicesToCoarseCellIndices: [";
         for (auto i:fineCellIndicesToCoarseCellIndices) {
-            ASSERT_TRUE(i<sizes[2]);
+            ASSERT_TRUE(i < sizes[2]);
         }
 //        cout << "]" << endl;
 
@@ -488,8 +490,7 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
 }
 
 
-
-TEST(Utils_TestSuite, compute_Dicts_From_FineCellIndicesToCoarseCellIndices){
+TEST(Utils_TestSuite, compute_Dicts_From_FineCellIndicesToCoarseCellIndices) {
     //"""
     //12 squares (4*3)
     //"""
@@ -518,7 +519,7 @@ TEST(Utils_TestSuite, compute_Dicts_From_FineCellIndicesToCoarseCellIndices){
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
     ref_dict_Coarse_Elem[0] = unordered_set<long>({0, 1, 3});
     ref_dict_Coarse_Elem[1] = unordered_set<long>({2, 4, 5, 6, 7, 8, 11});
-    ref_dict_Coarse_Elem[2] = unordered_set<long>({9,10});
+    ref_dict_Coarse_Elem[2] = unordered_set<long>({9, 10});
     ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Cells);
 
     unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
@@ -560,4 +561,79 @@ TEST(Utils_TestSuite, compute_Dicts_From_FineCellIndicesToCoarseCellIndices){
 //    assert(dict_DistributionOfCardinalOfCoarseElements[2] == 1);
 //    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
 //    assert(dict_DistributionOfCardinalOfCoarseElements[7] == 1);
+}
+
+TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_lines_arrays) {
+
+    const long nb_fc = 55;  // This number is arbitrary ! It should only be bigger than fine_agglomeration_lines_array_size;
+
+    const long fine_agglomeration_lines_array_idx_size = 17;
+    const long fine_agglomeration_lines_array_size = 33;
+
+    long ref_fine_agglomeration_lines_array_idx[17] = {0, 3, 4, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33};
+    long ref_fine_agglomeration_lines_array[fine_agglomeration_lines_array_size] = {0, 1, 23, 2, 4, 5, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                                                                                    24, 25, 26, 27, 28, 29, 30, 31};
+
+    long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> *agglomeration_lines = new forward_list<deque<long> *>();
+
+    convert_agglomeration_lines_arrays_to_agglomeration_lines(fine_agglomeration_lines_array_idx_size,
+                                                              fine_agglomeration_lines_array_size,
+                                                              ref_fine_agglomeration_lines_array_idx,
+                                                              ref_fine_agglomeration_lines_array,
+                                                              nb_agglomeration_lines,
+                                                              agglomeration_lines);
+    // Checks:
+    //=========
+    vector<deque<long> > ref_agglomeration_lines = {deque<long>({0, 1, 23}),
+                                                    deque<long>({2}),
+                                                    deque<long>({4, 5, 3}),
+                                                    deque<long>({6, 7}),
+                                                    deque<long>({8, 9}),
+                                                    deque<long>({10, 11}),
+                                                    deque<long>({12, 13}),
+                                                    deque<long>({14, 15}),
+                                                    deque<long>({16, 17}),
+                                                    deque<long>({18, 19}),
+                                                    deque<long>({20, 21}),
+                                                    deque<long>({22, 23}),
+                                                    deque<long>({24, 25}),
+                                                    deque<long>({26, 27}),
+                                                    deque<long>({28, 29}),
+                                                    deque<long>({30, 31})
+    };
+    ASSERT_EQ(16, nb_agglomeration_lines);
+    int i_count = 0;
+    for (auto &line :(*agglomeration_lines)) {
+        ASSERT_EQ(ref_agglomeration_lines[i_count], (*line));
+        i_count++;
+    }
+
+    long sizes[2] = {0, 0};
+
+    long a_agglo_lines_idx[nb_fc];  // not initialized
+    long a_agglo_lines[nb_fc];  // not initialized
+    convert_fine_agglomeration_lines_to_fine_agglomeration_lines_arrays(nb_fc,
+                                                                        nb_agglomeration_lines,
+                                                                        agglomeration_lines,
+                                                                        sizes,
+                                                                        a_agglo_lines_idx,
+                                                                            a_agglo_lines);
+
+    ASSERT_EQ(17, sizes[0]);
+    ASSERT_EQ(33, sizes[1]);
+    for (int i = 0; i < sizes[0]; i++) {
+        ASSERT_EQ(ref_fine_agglomeration_lines_array_idx[i], a_agglo_lines_idx[i]);
+//        cout << a_agglo_lines_idx[i] << ", ";
+    }
+//    cout << "endl";
+
+    for (int i = 0; i < sizes[1]; i++) {
+        ASSERT_EQ(ref_fine_agglomeration_lines_array[i], a_agglo_lines[i]);
+    }
+    //TODO check this deletion: valgrind???
+    for (auto &line :(*agglomeration_lines)) {
+        delete line;
+    }
+    delete agglomeration_lines;
 }
