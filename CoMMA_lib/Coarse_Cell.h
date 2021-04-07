@@ -34,7 +34,10 @@ public:
     void __delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(const long &i_fc,
                                                                                const long &j_cc,
                                                                                const long &j_fc);
+    void __remove_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc_old);
 
+    void __add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc);
+    
 public:
     //Public methods:
     void fill_cc_neighbouring(vector<long> &fc_2_cc);
@@ -47,7 +50,17 @@ public:
 
     bool check_consistency(vector<long> &fc_2_cc);
 
-public:
+    void update_cc_neighbour(long i_fc, long i_fc_n, long i_cc_old, long i_cc_new);
+
+    void update_cc_neighbour_renumbering(unordered_map<long,long> dict_old_cc_to_new_cc);
+
+    unordered_set<long> get_s_fc();
+
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> get_d_fc_w_outer_neighbours_j_cc_and_s_j_fc();
+
+    void remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_2_cc);
+    
+ public:
     //private Fields
     Dual_Graph *__fc_graph;
     short int __dim;
