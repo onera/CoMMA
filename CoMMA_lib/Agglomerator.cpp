@@ -94,19 +94,17 @@ void Agglomerator::_set_agglomeration_parameter(
 }
 
 
-Coarse_Cell_Graph Agglomerator::__agglomerate_one_level(
+Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
         Dual_Graph graph,
         vector<long> debug_only_fc_to_cc,
         short int debug_only_steps,  // arbitrary value greater than 7
-        unsigned long fineAgglomerationLines_array_Idx_size,
-        unsigned long fineAgglomerationLines_array_size,
-        long *fineAgglomerationLines_array_Idx,
-        long *fineAgglomerationLines_array) {
+        forward_list<deque<long> *> *agglo_lines,
+        forward_list<deque<long> *> *agglo_lines_p_one) {
+
     /**
      * Agglomerate one level
      */
 
-//    aniso_lines_l_m_one, aniso_lines_l = None, None
     if(!debug_only_fc_to_cc.empty()){
         assert(debug_only_steps==-1);
     }
@@ -144,6 +142,6 @@ Coarse_Cell_Graph Agglomerator::__agglomerate_one_level(
 cout<<"toto";
         ccg= new Coarse_Cell_Graph(graph);
     }
-    return *ccg;//, aniso_lines_l_m_one, aniso_lines_l;
+    return ccg;//, aniso_lines_l_m_one, aniso_lines_l;
 
 }

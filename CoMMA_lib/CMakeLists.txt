@@ -21,7 +21,7 @@ set(SOURCE_FILES
         Coarse_Cell.cpp
         Agglomerator.cpp
         Coarse_Cell_Graph.cpp
-        Util.cpp)
+        Util.cpp )
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})

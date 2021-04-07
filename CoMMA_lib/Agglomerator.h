@@ -26,16 +26,16 @@ public :
             unsigned short int min_card = 0,
             unsigned short int max_card = 0);
 
-    Coarse_Cell_Graph __agglomerate_one_level(
+    Coarse_Cell_Graph* __agglomerate_one_level(
             Dual_Graph graph,
             vector<long> debug_only_fc_to_cc,
-            short int debug_only_steps = -1,  // arbitrary value greater than 7
-            unsigned long fineAgglomerationLines_array_Idx_size=0,
-            unsigned long fineAgglomerationLines_array_size=0,
-            long *fineAgglomerationLines_array_Idx=NULL,
-            long *fineAgglomerationLines_array=NULL);
+            short int debug_only_steps,  // arbitrary value greater than 7
+            forward_list<deque<long> *> * agglo_lines,
+            forward_list<deque<long> *> * agglo_lines_p_one
+    );
 
-private:
+public:
+    //private fields
     int __verbose;
     bool __checks;
 

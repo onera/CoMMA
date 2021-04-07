@@ -696,6 +696,14 @@ unordered_set<long> Coarse_Cell::get_s_fc() {
   return s_fc;
 }
 
+unordered_set<long>* Coarse_Cell::get_s_fc_v2() {
+    unordered_set<long>* s = new unordered_set<long>();
+    for (auto &i_k_v :(*this).__d_def) {
+        (*s).insert(i_k_v.first);
+    }
+    return s;
+}
+
 unordered_map<long, unordered_map<long, unordered_map<long, double>>> Coarse_Cell::get_d_fc_w_outer_neighbours_j_cc_and_s_j_fc() {
   return __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
 }

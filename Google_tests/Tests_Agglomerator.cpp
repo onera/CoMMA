@@ -1,6 +1,28 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
+#include "../CoMMA_lib/Agglomerator.h"
+#include "../CoMMA_lib/Dual_Graph.h"
+#include "MGridGen_Dual_Graph.h"
 #include "gtest/gtest.h"
+
+TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    ASSERT_TRUE(agg.__is_visu_data_stored);
+    ASSERT_EQ(0, agg.__verbose);
+    ASSERT_EQ(2, agg.__dimension);
+    ASSERT_TRUE(agg.__checks);
+    ASSERT_FALSE(agg.__is_anisotropic);
+}
 
 TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False) {
     //"""
