@@ -76,6 +76,7 @@ public:
     unsigned short int __card;
     unsigned short int __compactness;
 
+    long __s_fc = -1; // if cc is of size 1, the __d_def map will not work
     unordered_map<long, unordered_map<long, double>> __d_def;  // subgraph describing the cc
     unordered_map<unsigned short int, unordered_set<long>> __d_compactness_to_s_fc; // TODO ordered dict????
 
@@ -83,7 +84,7 @@ public:
     unordered_map<long, double> __d_i_fc_to_volume;  // volumes associated with each inner fc.
 
     unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
-    // The fine cell i_fc has edge to i_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
+    // The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
     // i.e. i_fc in self.__icc, j_fc in icc
 
     // Only fine informations.

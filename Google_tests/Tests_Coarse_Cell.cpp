@@ -24,9 +24,9 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 
     ASSERT_EQ(ref_cc_cardinality[i_cc], v_cc[i_cc].__card);
     ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
+
     ASSERT_NEAR(ref_cc_volumes[i_cc], v_cc[i_cc].volume, 1e-10);
     ASSERT_EQ(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area);
-    ASSERT_TRUE(v_cc[i_cc].is_connected());
     ASSERT_TRUE(v_cc[i_cc].__is_isotropic);
     ASSERT_FALSE(v_cc[i_cc].__is_delayed);
 
@@ -66,7 +66,6 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
     ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
     ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
-    ASSERT_TRUE(v_cc[i_cc].is_connected());
 
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_1 = {{1, {1, 2}},
                                                                                           {2, {0}}};
@@ -95,7 +94,6 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
     ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
     ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
-    ASSERT_TRUE(v_cc[i_cc].is_connected());
 
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_2 = {{2, {8, 4, 5, 7}}};
     ASSERT_EQ(ref_d_compactness_to_s_fc_2, v_cc[i_cc].__d_compactness_to_s_fc);
@@ -121,7 +119,6 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
     ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
     ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
-    ASSERT_TRUE(v_cc[i_cc].is_connected());
 
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_3 = {{1, {6, 13, 14}},
                                                                                           {3, {11}}};
@@ -150,7 +147,6 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
     ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
     ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
-    ASSERT_TRUE(v_cc[i_cc].is_connected());
 
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_4 = {{1, {10, 12}},
                                                                                           {2, {9}}};
@@ -337,6 +333,43 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen_v2) {
                                                                   }}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
     ASSERT_EQ(s_fc_4, (*v_cc[i_cc].get_s_fc_v2()));
+
+}
+
+TEST_F(MGridGen_Dual_Graph, is_connected_MGridGen) {
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3};
+
+    // CC N°0
+    //==========
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {0, 1, 2};
+    Coarse_Cell cc_0((*g), i_cc, s_fc_0);
+    ASSERT_TRUE(cc_0.is_connected());
+
+    // CC N°1
+    //==========
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {3, 4, 5};
+
+    Coarse_Cell cc_1((*g), i_cc, s_fc_1);
+    ASSERT_FALSE(cc_1.is_connected());
+
+    // CC N°2
+    //==========
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {6, 7, 8};
+
+    Coarse_Cell cc_2((*g), i_cc, s_fc_2);
+    ASSERT_FALSE(cc_1.is_connected());
+
+    // CC N°3
+    //==========
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {9, 10, 11, 12, 13, 14};
+
+    Coarse_Cell cc_3((*g), i_cc, s_fc_3);
+    ASSERT_FALSE(cc_1.is_connected());
 
 }
 
@@ -730,12 +763,18 @@ TEST_F(MGridGen_Dual_Graph, compute_s_leaves_Case_1_MGridGen) {
     ASSERT_EQ(unordered_set<long>({10, 12}), v_cc[i_cc].compute_s_leaves());
 }
 
-TEST_F(MGridGen_Dual_Graph, add_Case_1_MGridGen) {
+TEST_F(MGridGen_Dual_Graph, add_fc_Case_1_MGridGen) {
 
+    vector<long> ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+    unsigned short int ref_cc_cardinality[5] = {1, 3, 4, 4, 3};
+    unsigned short int ref_cc_compactness[5] = {0, 1, 2, 1, 1};
+    double ref_cc_volumes[5] = {1.0, 5.0, 4.5, 9.5, 6.0};
+    double ref_cc_boundary_area[5] = {4.0, 15.064495099999998, 11.828427120000001, 25.0, 17.0};
+
+
+//    vector<long> fc_2_cc((*g).number_of_cells, -1);
     vector<long> fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
     vector<Coarse_Cell> v_cc;
-
-//    Coarse_Cell cc& =  v_cc[i_dest_cc];
 
     //========================
     // Create coarse cell 0
@@ -749,35 +788,192 @@ TEST_F(MGridGen_Dual_Graph, add_Case_1_MGridGen) {
     unordered_set<long> s_fc = {3};
 
     v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc);
+
+    // Checks:
+    //=======
+    unordered_map<long, unordered_map<long, double>> ref_d_def;
+    ASSERT_EQ(ref_d_def, v_cc[i_cc].__d_def);
+    ASSERT_EQ(ref_cc_cardinality[i_cc], v_cc[i_cc].__card);
+    ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
+    ASSERT_NEAR(ref_cc_volumes[i_cc], v_cc[i_cc].volume, 1e-10);
+    ASSERT_EQ(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area);
+    ASSERT_TRUE(v_cc[i_cc].__is_isotropic);
+    ASSERT_FALSE(v_cc[i_cc].__is_delayed);
+    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ASSERT_FALSE(v_cc[i_dest_cc].__is_connectivity_up_to_date);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc = {{0, unordered_set<long>({3})}};
+    ASSERT_EQ(ref_d_compactness_to_s_fc, v_cc[i_cc].__d_compactness_to_s_fc);
+
     v_cc[i_dest_cc].fill_cc_neighbouring(fc_2_cc);
     for (const long &i_fc: s_fc) {
         fc_2_cc[i_fc] = i_dest_cc;
     }
 
-    v_cc[i_dest_cc].check_consistency(fc_2_cc);
-    ASSERT_EQ(1, v_cc[i_dest_cc].__card);
-    ASSERT_EQ(0, v_cc[i_dest_cc].__compactness);
     ASSERT_TRUE(v_cc[i_dest_cc].is_connected());
     ASSERT_EQ(unordered_set<long>({3}), v_cc[i_dest_cc].compute_s_leaves());
     ASSERT_EQ(unordered_set<long>({3}), v_cc[i_dest_cc].get_s_fc_w_outer_neighbours());
-    unordered_map<unsigned short int, unordered_set<long>> ref_d = {{0, unordered_set<long>({3})}};
-    ASSERT_EQ(ref_d, v_cc[i_dest_cc].__d_compactness_to_s_fc);
 
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{3, {1, 3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{3, {{1, {{1, 1.0}}},
+                                                                                                                                   {3, {{6, 2.2360679800000001}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ASSERT_TRUE(v_cc[i_dest_cc].check_consistency(fc_2_cc));
+
+    unordered_map<long, unordered_map<long, double>> ref__tmp_fc_fine_cut_edges = {{3, {{1, 1.0},
+                                                                                               {6, 2.2360679800000001}}}};
+    ASSERT_EQ(ref__tmp_fc_fine_cut_edges, v_cc[i_cc].__tmp_fc_fine_cut_edges);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {0};
+    v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_1));
+    fc_2_cc[0] = i_cc;
+    ASSERT_EQ(1, v_cc[i_cc].__card);
+
+    ref__tmp_fc_fine_cut_edges = {{0, {{1, 2.0},
+                                       {2, 2.0}}}};
+    ASSERT_EQ(ref__tmp_fc_fine_cut_edges, v_cc[i_cc].__tmp_fc_fine_cut_edges);
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    // Add N°1
     i_source_cc = -1;
-    i_dest_cc = 0;
-    s_fc = {6};
+    i_dest_cc = 1;
+    s_fc = {1};
 
+    v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
+
+    for (const long &i_fc: s_fc) {
+        fc_2_cc[i_fc] = i_dest_cc;
+    }
+    ASSERT_EQ(2, v_cc[i_cc].__card);
+
+    // Add N°2
+    s_fc = {2};
     v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
     for (const long &i_fc: s_fc) {
         fc_2_cc[i_fc] = i_dest_cc;
     }
 
-    v_cc[i_dest_cc].check_consistency(fc_2_cc);
-    ASSERT_EQ(2, v_cc[i_dest_cc].__card);
-    ASSERT_EQ(1, v_cc[i_dest_cc].__compactness);
-    ASSERT_TRUE(v_cc[i_dest_cc].is_connected());
-    ASSERT_EQ(unordered_set<long>({3, 6}), v_cc[i_dest_cc].compute_s_leaves());
-    ASSERT_EQ(unordered_set<long>({3, 6}), v_cc[i_dest_cc].get_s_fc_w_outer_neighbours());
-    ref_d = {{1, unordered_set<long>({3, 6})}};
-    ASSERT_EQ(ref_d, v_cc[i_dest_cc].__d_compactness_to_s_fc);
+    //========
+    // Checks
+    //========
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    ASSERT_EQ(ref_cc_cardinality[i_cc], v_cc[i_cc].__card);
+    ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
+    ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
+    ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_1 = {{1, {1, 2}},
+                                                                                          {2, {0}}};
+    ASSERT_EQ(ref_d_compactness_to_s_fc_1, v_cc[i_cc].__d_compactness_to_s_fc);
+
+    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ASSERT_TRUE(v_cc[i_cc].__is_isotropic);
+    ASSERT_FALSE(v_cc[i_cc].__is_delayed);
+
+    // i_fc 3 has 2 neighbours outside i_cc 0
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{1, {0}},
+                                                                          {2, {2, 3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+    ASSERT_EQ(unordered_set<long>({0, 1, 2}), (*v_cc[i_cc].get_s_fc_v2()));
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {4};
+    v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_2));
+    fc_2_cc[4] = i_cc;
+
+    ASSERT_EQ(1, v_cc[i_cc].__card);
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    // Add N°1
+    i_source_cc = -1;
+    i_dest_cc = 2;
+    s_fc = {5, 7};
+
+    v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
+
+    for (const long &i_fc: s_fc) {
+        fc_2_cc[i_fc] = i_dest_cc;
+    }
+    ASSERT_EQ(3, v_cc[i_cc].__card);
+
+    // Add N°2
+    s_fc = {8};
+    v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
+    for (const long &i_fc: s_fc) {
+        fc_2_cc[i_fc] = i_dest_cc;
+    }
+
+    //========
+    // Checks
+    //========
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    ASSERT_EQ(ref_cc_cardinality[i_cc], v_cc[i_cc].__card);
+    ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
+    ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
+    ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_2 = {{2, {8, 4, 5, 7}}};
+    ASSERT_EQ(ref_d_compactness_to_s_fc_2, v_cc[i_cc].__d_compactness_to_s_fc);
+
+    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}},
+                                                                          {7, {4}},
+                                                                          {8, {4}},
+                                                                  }}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+    ASSERT_EQ(unordered_set<long>({4, 5, 7, 8}), (*v_cc[i_cc].get_s_fc_v2()));
+
+
+    //========================
+    // Create coarse cell 3
+    //========================
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {6, 11};
+    v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    fc_2_cc[6] = i_cc;
+    fc_2_cc[11] = i_cc;
+    ASSERT_EQ(2, v_cc[i_cc].__card);
+
+    // Add N°1
+    i_source_cc = -1;
+    i_dest_cc = 3;
+    s_fc = {13, 14};
+
+    v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
+
+    for (const long &i_fc: s_fc) {
+        fc_2_cc[i_fc] = i_dest_cc;
+    }
+
+    ASSERT_EQ(ref_cc_cardinality[i_cc], v_cc[i_cc].__card);
+    ASSERT_EQ(ref_cc_compactness[i_cc], v_cc[i_cc].__compactness);
+    ASSERT_EQ(ref_cc_volumes[i_cc], v_cc[i_cc].volume);
+    ASSERT_NEAR(ref_cc_boundary_area[i_cc], v_cc[i_cc].__boundary_area, 1e-10);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_3 = {{1, {6, 13, 14}},
+                                                                                          {3, {11}}};
+
+    ASSERT_EQ(ref_d_compactness_to_s_fc_3, v_cc[i_cc].__d_compactness_to_s_fc);
+    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ASSERT_TRUE(v_cc[i_cc].__is_isotropic);
+    ASSERT_FALSE(v_cc[i_cc].__is_delayed);
+//    {1: {6: {0, 1},
+//         13: {4}}}
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{6, {0, 1}},
+                                                                          {13, {4}}
+                                                                  }}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+    ASSERT_EQ(unordered_set<long>({6,11,13,14}), (*v_cc[i_cc].get_s_fc_v2()));
 }

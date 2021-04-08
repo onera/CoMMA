@@ -175,11 +175,11 @@ unordered_map<long, unordered_set<long>*>* Coarse_Cell_Graph::get_d_cc_all()
     for(auto & i_k_v : (*this)._d_isotropic_cc)
     {
         long i_cc = i_k_v.first;
-        for(auto& i  : (*((* i_k_v.second).get_s_fc_v2())))
-        {
-            cout<<i<<", ";
-        }
-        cout<<endl;
+//        for(auto& i  : (*((* i_k_v.second).get_s_fc_v2())))
+//        {
+//            cout<<i<<", ";
+//        }
+//        cout<<endl;
         (*d)[i_cc] = new unordered_set<long>(*(* i_k_v.second).get_s_fc_v2());
 //        if (*d)[i_cc]==NULL;
 
