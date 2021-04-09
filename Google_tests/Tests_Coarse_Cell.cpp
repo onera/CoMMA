@@ -834,10 +834,12 @@ TEST_F(MGridGen_Dual_Graph, add_fc_Case_1_MGridGen) {
     unordered_set<long> s_fc_1 = {0};
     v_cc.push_back(Coarse_Cell((*g), i_cc, s_fc_1));
     fc_2_cc[0] = i_cc;
+
     ASSERT_EQ(1, v_cc[i_cc].__card);
+    ASSERT_EQ(0, v_cc[i_cc].__compactness);
 
     ref__tmp_fc_fine_cut_edges = {{0, {{1, 2.0},
-                                       {2, 2.0}}}};
+                                              {2, 2.0}}}};
     ASSERT_EQ(ref__tmp_fc_fine_cut_edges, v_cc[i_cc].__tmp_fc_fine_cut_edges);
     v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
 
@@ -847,11 +849,12 @@ TEST_F(MGridGen_Dual_Graph, add_fc_Case_1_MGridGen) {
     s_fc = {1};
 
     v_cc[i_dest_cc].add_fc(s_fc, fc_2_cc = fc_2_cc);
-
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
     for (const long &i_fc: s_fc) {
         fc_2_cc[i_fc] = i_dest_cc;
     }
     ASSERT_EQ(2, v_cc[i_cc].__card);
+    ASSERT_EQ(1, v_cc[i_cc].__compactness);
 
     // Add N°2
     s_fc = {2};
@@ -975,5 +978,168 @@ TEST_F(MGridGen_Dual_Graph, add_fc_Case_1_MGridGen) {
                                                                           {13, {4}}
                                                                   }}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
-    ASSERT_EQ(unordered_set<long>({6,11,13,14}), (*v_cc[i_cc].get_s_fc_v2()));
+    ASSERT_EQ(unordered_set<long>({6, 11, 13, 14}), (*v_cc[i_cc].get_s_fc_v2()));
+}
+
+TEST_F(MGridGen_Dual_Graph, add_fc_scenario_Case_1_MGridGen) {
+
+//    scenario = [['A', -1, 0, {3}, 1, 0, True, {3}, {3}],
+//    ['A', -1, 0, {6}, 2, 1, True, {3, 6}, {3, 6}],
+//    ['A', -1, 0, {0, 1, 2}, 5, 2, True, set(), {2, 6}],
+//    ['A', -1, 0, {14}, 6, 0, False, {14}, {2, 6, 14}],
+//    ['A', -1, 0, {11, 13}, 8, 1, True, {13, 14}, {2, 13}],
+//    ['A', -1, 0, {5}, 9, 1, True, {5, 13, 14}, {5, 13}],
+//    ['A', -1, 0, {8, 10}, 11, 1, True, {14}, {5, 8, 10, }],
+//    ['A', -1, 0, {9, 12}, 13, 1, True, {12, 14}, {5, 8, 9}],
+//    ['A', -1, 0, {7, 4}, 15, 1, True, {12, 14}, set()],
+//    ]
+
+    vector<long> fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+
+    vector<unordered_set<long>> v_s_fc = {unordered_set<long>({3}),
+                                          unordered_set<long>({6}),
+                                          unordered_set<long>({0, 1, 2}),
+                                          unordered_set<long>({14}),
+                                          unordered_set<long>({11, 13}),
+                                          unordered_set<long>({5}),
+                                          unordered_set<long>({8, 10}),
+                                          unordered_set<long>({9, 12}),
+                                          unordered_set<long>({7, 4})
+    };
+    vector<unsigned short int> v_cardinality = {1, 2, 5, 6, 8, 9, 11, 13, 15};
+    vector<unsigned short int> v_compactness = {0, 1, 2, 0, 1, 1, 1, 1, 1};
+    vector<bool> v_connectivity = {true, true, true, false, true, true, true, true, true};
+
+    vector<unordered_set<long>> v_s_leaves = {unordered_set<long>({3}),
+                                              unordered_set<long>({3, 6}),
+                                              unordered_set<long>({}),
+                                              unordered_set<long>({14}),
+                                              unordered_set<long>({13, 14}),
+                                              unordered_set<long>({5, 13, 14}),
+                                              unordered_set<long>({14}),
+                                              unordered_set<long>({12, 14}),
+                                              unordered_set<long>({12, 14})
+    };
+
+    vector<unordered_set<long>> v_s_fc_w_outer_neighbours = {unordered_set<long>({3}),
+                                                             unordered_set<long>({3, 6}),
+                                                             unordered_set<long>({2, 6}),
+                                                             unordered_set<long>({2, 6, 14}),
+                                                             unordered_set<long>({2, 13}),
+                                                             unordered_set<long>({5, 13}),
+                                                             unordered_set<long>({5, 8, 10}),
+                                                             unordered_set<long>({5, 8, 9}),
+                                                             unordered_set<long>({})
+    };
+
+    vector<unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>>> v_d_outer = {{{1, {{3,  {1, 3}}}}},
+            // 1
+                                                                                                     {{1, {{3,  {1}},
+                                                                                                                  {6,  {1, 3}}}}},
+            // 2
+                                                                                                     {{1, {{2,  {2}},
+                                                                                                                  {6,  {3}}}}},
+            // 3
+                                                                                                     {{1, {{2,  {2}},
+                                                                                                                  {6,  {3}},
+                                                                                                                  {14, {3}}
+                                                                                                          }}},
+            // 4
+                                                                                                     {{1, {{2,  {2}},
+                                                                                                                  {13, {4}}}}
+                                                                                                     },
+            //5
+                                                                                                     {{1, {{13, {4}}}}, {2, {{5, {2}}}}},
+            //6
+                                                                                                     { {1, { {5, { 2 }}, {10, { 4 }}, {8, { 2 }} }} },
+            //7
+
+                                                                                                     { {1, { {5, { 2 }}, {8, { 2 }}, {9, { 2 }} }} },
+            //8
+
+                                                                                                     {}
+
+    };
+    vector<unordered_map<long, unordered_map<long, unordered_map<long, double>>>> v_d_i_fc_to_j_cc = {{{3,  {{1, {{1,  1.0}}},
+                                                                                                                    {3, {{6, 2.2360679800000001}}}}}},
+            // 1
+                                                                                                      {{3,  {{1, {{1,  1.0}}}}},
+                                                                                                                                                {6,  {{3, {{11, 2.0}}},
+                                                                                                                                                             {1, {{2, 2.2360679800000001}}}}},
+                                                                                                      },
+            // 2
+                                                                                                      {{2,  {{2, {{5,  2.2360679800000001}}}}},
+                                                                                                                                                {6,  {{3, {{11, 2.0}}}}},
+                                                                                                      },
+            // 3
+                                                                                                      {{2,  {{2, {{5,  2.2360679800000001}}}}},
+                                                                                                                                                {6,  {{3, {{11, 2.0}}}}},
+                                                                                                                                                                        {14, {{3, {{11, 3.16227766}}}}},
+                                                                                                      },
+            // 4
+                                                                                                      {{13, {{4, {{10, 3.16227766}}}}},
+                                                                                                                                                {2,  {{2, {{5,  2.2360679800000001}}}}}},
+            // 5
+                                                                                                      {{13, {{4, {{10, 3.16227766}}}}},
+                                                                                                                                                {5,  {{2, {{8,  1.0},
+                                                                                                                                                                  {4, 2.0}}}}}},
+            // 6
+                                                                                                      {{8,  {{2, {{7,  1}}}}},                  {10, {{4, {{9,  2}}}}}, {5,  {{2, {{4,  2}}}}}},
+                                                                                                      {{9,  {{2, {{7,  2.2360679800000001}}}}}, {8,  {{2, {{7,  1}}}}}, {5,  {{2, {{4,  2}}}}}},
+                                                                                                      {}
+    };
+
+    vector<unordered_map<long, unordered_map<long, double>>> v_tmp_fc_fine_cut_edges = {{{3,  {{1,  1.0},
+                                                                                                        {6, 2.2360679800000001}}}},
+            // 1
+                                                                                        {{3,  {{1,  1.0}}},
+                                                                                                                   {6,  {{11, 2.0},
+                                                                                                                                {2, 2.2360679800000001}}}
+                                                                                        },
+            // 2
+                                                                                        {{2,  {{5,  2.2360679800000001}}},
+                                                                                                                   {6,  {{11, 2.0}}}
+                                                                                        },
+            // 3
+                                                                                        {{2,  {{5,  2.2360679800000001}}},
+                                                                                                                   {6,  {{11, 2.0}}},
+                                                                                                {14, {{11, 3.16227766}}}
+                                                                                        },
+            // 4
+                                                                                        {{13, {{10, 3.16227766}}}, {2,  {{5,  2.2360679800000001}}}},
+
+            // 5
+                                                                                        {{5,  {{8,  1}, {4, 2}}},  {13, {{10, 3.16227766}}}},
+            // 6
+                                                                                        { {8, { {7, 1} }}, {10, { {9, 2} }}, {5, { {4, 2} }} },
+            // 7
+                                                                                        { {9, { {7, 2.2360679800000001} }}, {8, { {7, 1} }}, {5, { {4, 2} }} },
+            // 8
+                                                                                        {}
+
+    };
+
+//========================
+// Create coarse cell 0
+//========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {};
+    Coarse_Cell cc((*g), i_cc, s_fc_0);
+
+    for (int i = 0; i < 9; i++) {
+        cout << "\ni= " << i << endl;
+        cc.add_fc(v_s_fc[i], fc_2_cc = fc_2_cc);
+        cc.fill_cc_neighbouring(fc_2_cc);
+        for (const long &i_fc : v_s_fc[i]) {
+            fc_2_cc[i_fc] = 0;
+        }
+        ASSERT_EQ(v_cardinality[i], cc.__card);
+        ASSERT_EQ(v_compactness[i], cc.__compactness);
+        ASSERT_EQ(v_connectivity[i], cc.is_connected());
+        ASSERT_EQ(v_s_leaves[i], cc.compute_s_leaves());
+        ASSERT_EQ(v_s_fc_w_outer_neighbours[i], cc.get_s_fc_w_outer_neighbours());
+        ASSERT_EQ(v_d_i_fc_to_j_cc[i], cc.__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+        ASSERT_EQ(v_d_outer[i], cc.d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+        ASSERT_EQ(v_tmp_fc_fine_cut_edges[i], cc.__tmp_fc_fine_cut_edges);
+    }
 }

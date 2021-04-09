@@ -35,6 +35,9 @@ public:
                                                                                const long &j_cc,
                                                                                const long &j_fc);
 
+    void __delete_and_propagate_deletion__tmp_fc_fine_cut_edges(const long &i_fc,
+                                                                const long &j_fc);
+
     void __remove_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc_old);
 
     void __add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc);
@@ -56,7 +59,7 @@ public:
     void update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc);
 
     unordered_set<long> get_s_fc();  //Karim
-    unordered_set<long>* get_s_fc_v2();  //Mine
+    unordered_set<long> *get_s_fc_v2();  //Mine
 
     unordered_map<long, unordered_map<long, unordered_map<long, double>>> get_d_fc_w_outer_neighbours_j_cc_and_s_j_fc();
 
@@ -76,7 +79,7 @@ public:
     unsigned short int __card;
     unsigned short int __compactness;
 
-    long __s_fc = -1; // if cc is of size 1, the __d_def map will not work
+    unordered_set<long> __s_fc; // if cc is of size 1, the __d_def map will not work
     unordered_map<long, unordered_map<long, double>> __d_def;  // subgraph describing the cc
     unordered_map<unsigned short int, unordered_set<long>> __d_compactness_to_s_fc; // TODO ordered dict????
 
