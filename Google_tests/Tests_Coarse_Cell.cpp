@@ -556,7 +556,7 @@ TEST_F(MGridGen_Dual_Graph, fill_cc_neighbouring_Case_1_MGridGen_2) {
                                s_fc_2));
     v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
     ASSERT_TRUE(v_cc[i_cc].__is_cc_neighbourhood_build);
-//    self.assertEqual({2: {
+//    ASSERT_EQ({2: {
 //                         3: {0: 2.0,
 //                             6: 2.23606797749979}
 //                          },
@@ -1035,26 +1035,26 @@ TEST_F(MGridGen_Dual_Graph, add_fc_scenario_Case_1_MGridGen) {
     vector<unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>>> v_d_outer = {{{1, {{3,  {1, 3}}}}},
             // 1
                                                                                                      {{1, {{3,  {1}},
-                                                                                                                  {6,  {1, 3}}}}},
+                                                                                                                      {6,  {1, 3}}}}},
             // 2
                                                                                                      {{1, {{2,  {2}},
-                                                                                                                  {6,  {3}}}}},
+                                                                                                                      {6,  {3}}}}},
             // 3
                                                                                                      {{1, {{2,  {2}},
-                                                                                                                  {6,  {3}},
-                                                                                                                  {14, {3}}
+                                                                                                                      {6,  {3}},
+                                                                                                                                 {14, {3}}
                                                                                                           }}},
             // 4
                                                                                                      {{1, {{2,  {2}},
-                                                                                                                  {13, {4}}}}
+                                                                                                                      {13, {4}}}}
                                                                                                      },
             //5
                                                                                                      {{1, {{13, {4}}}}, {2, {{5, {2}}}}},
             //6
-                                                                                                     { {1, { {5, { 2 }}, {10, { 4 }}, {8, { 2 }} }} },
+                                                                                                     {{1, {{5,  {2}}, {10, {4}}, {8,  {2}}}}},
             //7
 
-                                                                                                     { {1, { {5, { 2 }}, {8, { 2 }}, {9, { 2 }} }} },
+                                                                                                     {{1, {{5,  {2}}, {8,  {2}}, {9,  {2}}}}},
             //8
 
                                                                                                      {}
@@ -1093,27 +1093,27 @@ TEST_F(MGridGen_Dual_Graph, add_fc_scenario_Case_1_MGridGen) {
                                                                                                         {6, 2.2360679800000001}}}},
             // 1
                                                                                         {{3,  {{1,  1.0}}},
-                                                                                                                   {6,  {{11, 2.0},
-                                                                                                                                {2, 2.2360679800000001}}}
+                                                                                                                           {6,  {{11, 2.0},
+                                                                                                                                        {2, 2.2360679800000001}}}
                                                                                         },
             // 2
                                                                                         {{2,  {{5,  2.2360679800000001}}},
-                                                                                                                   {6,  {{11, 2.0}}}
+                                                                                                                           {6,  {{11, 2.0}}}
                                                                                         },
             // 3
                                                                                         {{2,  {{5,  2.2360679800000001}}},
-                                                                                                                   {6,  {{11, 2.0}}},
-                                                                                                {14, {{11, 3.16227766}}}
+                                                                                                                           {6,  {{11, 2.0}}},
+                                                                                                                                            {14, {{11, 3.16227766}}}
                                                                                         },
             // 4
-                                                                                        {{13, {{10, 3.16227766}}}, {2,  {{5,  2.2360679800000001}}}},
+                                                                                        {{13, {{10, 3.16227766}}},         {2,  {{5,  2.2360679800000001}}}},
 
             // 5
-                                                                                        {{5,  {{8,  1}, {4, 2}}},  {13, {{10, 3.16227766}}}},
+                                                                                        {{5,  {{8,  1}, {4, 2}}},          {13, {{10, 3.16227766}}}},
             // 6
-                                                                                        { {8, { {7, 1} }}, {10, { {9, 2} }}, {5, { {4, 2} }} },
+                                                                                        {{8,  {{7,  1}}},                  {10, {{9,  2}}}, {5,  {{4,  2}}}},
             // 7
-                                                                                        { {9, { {7, 2.2360679800000001} }}, {8, { {7, 1} }}, {5, { {4, 2} }} },
+                                                                                        {{9,  {{7,  2.2360679800000001}}}, {8,  {{7,  1}}}, {5,  {{4,  2}}}},
             // 8
                                                                                         {}
 
@@ -1142,4 +1142,186 @@ TEST_F(MGridGen_Dual_Graph, add_fc_scenario_Case_1_MGridGen) {
         ASSERT_EQ(v_d_outer[i], cc.d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
         ASSERT_EQ(v_tmp_fc_fine_cut_edges[i], cc.__tmp_fc_fine_cut_edges);
     }
+}
+
+TEST_F(MGridGen_Dual_Graph, get_s_fc_w_outer_neighbours_Case_1_MGridGen) {
+
+    vector<long> ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {3};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+
+    ASSERT_EQ(s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {0, 1, 2};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_1));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_1 = unordered_set<long>({1, 2});
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {4, 5, 7, 8};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_2));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    unordered_set<long> ref_s_fc_2 = unordered_set<long>({8, 5, 7});
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 3
+    //========================
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {6, 11, 13, 14};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_3 = unordered_set<long>({6, 13});
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 4
+    //========================
+    i_cc = 4;
+    unordered_set<long> s_fc_4 = {9, 10, 12};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_4));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_4 = unordered_set<long>({10, 9});
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+}
+
+TEST_F(MGridGen_Dual_Graph, get_s_fc_w_outer_neighbours_Case_1_MGridGen_2) {
+
+    vector<long> ref_fc_2_cc = {3, 3, 2, 3, 1, 2, 3, 1, 1, 0, 1, 4, 0, 4, 4};
+
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {9, 12};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    unordered_set<long> ref_s_fc_0 = unordered_set<long>({9});
+    ASSERT_EQ(ref_s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(ref_s_fc_0, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(3));
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {4, 7, 8, 10};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_1));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_1 = unordered_set<long>({8, 10, 4, 7});
+
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_1, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {2, 5};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_2));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_2 = unordered_set<long>({2, 5});
+
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(ref_s_fc_2, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(3));
+
+    //========================
+    // Create coarse cell 3
+    //========================
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {0, 1, 3, 6};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_3 = unordered_set<long>({0, 6});
+
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_3, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
+    //========================
+    // Create coarse cell 4
+    //========================
+    i_cc = 4;
+    unordered_set<long> s_fc_4 = {11, 13, 14};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_4));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    unordered_set<long> ref_s_fc_4 = unordered_set<long>({11, 13});
+
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours());
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours(0));
+    ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
+    ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
+
 }
