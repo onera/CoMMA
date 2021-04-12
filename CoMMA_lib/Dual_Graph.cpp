@@ -474,7 +474,7 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
 }
 
 unordered_map<long, unordered_set<pair<long,long>, pair_hash>>  Dual_Graph::_compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc) {
-  
+
   unordered_map<long, unordered_set<pair<long,long>, pair_hash>> d_cut_edges;
 
   for(auto & d_cc_k_v : d_cc) {
@@ -522,7 +522,7 @@ long Dual_Graph::_compute_subgraph_root(unordered_set<long> s_fc) {
   for(auto i_fc : s_fc) {
     // Computation of the degree of the node in the CC subgraph.
     unsigned short int nb_common_faces_i_fc = compute_degree_of_node_in_subgraph(i_fc, s_fc);
-    
+
     if(nb_common_faces_i_fc > max_number_common_faces) {
       max_number_common_faces = nb_common_faces_i_fc;
       arg_max_number_common_faces = i_fc;
@@ -558,8 +558,8 @@ void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_
       d_neighbours_of_seed.erase(i_fc);
     else
       d_neighbours_of_seed[i_fc] = 2;
-    
-  }  
+
+  }
 }
 
 
@@ -588,17 +588,17 @@ void compute_characteristics_utility(vector<double> aspect_ratio, double & min, 
   max = *max_element(aspect_ratio.begin(), aspect_ratio.end());
   mean = accumulate(aspect_ratio.begin(), aspect_ratio.end(), 0);
   mean /= aspect_ratio.size();
-  
+
   sd = 0.;
   for(auto ar : aspect_ratio) {
     sd += (ar - mean) * (ar - mean);
   }
-  
+
   sd = sqrt(sd / aspect_ratio.size());
-  
-  
+
+
   // TODO
-  median = 0.; 
+  median = 0.;
 }
 
 
@@ -626,7 +626,7 @@ vector<double> Dual_Graph::compute_aspect_ratio_and_characteristics(double & min
   }
 
   compute_characteristics_utility(aspect_ratio, min, max, mean, sd, median);
-  
+
   return aspect_ratio;
   //return aspect_ratio, aspect_ratio.min(), aspect_ratio.max(), np.mean(aspect_ratio), np.std(aspect_ratio), np.median(aspect_ratio)
 }
@@ -642,10 +642,10 @@ void Dual_Graph::compute_aspect_ratio_characteristics(double & min, double & max
     for(int i = 0 ; i < number_of_cells ; i++)
       s_cells.insert(i);
     set_difference(s_cells.begin(), s_cells.end(), s_anisotropic_compliant_cells.begin(), s_anisotropic_compliant_cells.end(), back_inserter(v_iso));
-    
+
     unsigned short int nb_aniso = s_anisotropic_compliant_cells.size();
     unsigned short int nb_iso = v_iso.size();;
-      
+
     vector<double> a_aspect_ratio = compute_aspect_ratio();
     vector<double> a_aspect_ratio_iso;
     vector<double> a_aspect_ratio_aniso;
@@ -783,7 +783,7 @@ void Dual_Graph::compute_breadth_first_search(unordered_set<long> set_of_fc, lon
 void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> & predecessor, long & i_depth, unordered_map<long, vector<long> > & d_spanning_tree) {
   assert(set_of_fc.size() == number_of_cells);
   //unordered_map<long, vector<long> > d_spanning_tree;
-  
+
   unordered_set<long> s_fc_visited;
   unordered_map<long, vector<long> > d_fringe;
   d_fringe[0];
@@ -792,7 +792,7 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
   i_depth = 0;
   s_fc_visited.insert(current_seed);
   if(!predecessor.empty()) {
-    for(int i = 0 ; i < predecessor.size() ; i++) 
+    for(int i = 0 ; i < predecessor.size() ; i++)
       predecessor[i] = -1;
   }
 
@@ -801,11 +801,11 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
       /* TODO For reproduction testing: to remove hazard in set iteration (from != python version and much more!)
 	 print("BFS_v2 remove this!!!!!! Useless when stabilized")
 	 print("As I had the sorting of initial Dictionary for dynamic graph, this should be useless!!!!")
-	 
+
 	 Add to insure independence w.r.t. data structure
 	 l_sorted_neighbours = list(self.get_neighbours(i_current_seed))
 	 l_sorted_neighbours.sort()*/
-      
+
       for(auto i_fc_neighbour : get_neighbours(i_current_seed)) {
 	// for i_fc_neighbour in self.get_neighbours(i_current_seed):
 	if(i_fc_neighbour != i_current_seed && set_of_fc.count(i_fc_neighbour) > 0) {
@@ -877,3 +877,48 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
 */
 
 
+
+unsigned short int Dual_Graph::compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc) {
+    // Compute Compactness of a cc
+    // Be careful: connectivity is assumed
+    if (s_fc.size() > 1) {
+        unordered_map<long, unsigned short int> dict_fc_compactness = compute_fc_compactness_inside_a_cc(s_fc);
+        if (dict_fc_compactness.empty()) {
+            return 0;
+        }
+        unsigned short int min_comp = USHRT_MAX;
+        for (auto &i_k_v :dict_fc_compactness) {
+            if (i_k_v.second < min_comp) {
+                min_comp = i_k_v.second;
+            }
+        }
+        return min_comp;
+    } else {
+        return 0;
+    }
+}
+
+unordered_map<long, unsigned short int> Dual_Graph::compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc) {
+    unordered_map<long, unsigned short int> dict_fc_compactness;
+    if (s_fc.size() > 1) {
+
+        // for every fc constituting a cc
+        for (const long &i_fc : s_fc) {
+
+            vector<long> v_neighbours = get_neighbours(i_fc);
+            for (const long &i_fc_n : v_neighbours) {
+                if ((s_fc.count(i_fc_n)) && (i_fc != i_fc_n)) {
+                    if (dict_fc_compactness.count(i_fc)) {
+                        dict_fc_compactness[i_fc]++;
+                    } else {
+                        dict_fc_compactness[i_fc] = 1;
+                    }
+                }
+            }
+            if (dict_fc_compactness.count(i_fc) == 0) {
+                dict_fc_compactness[i_fc] = 0;
+            }
+        }
+    }
+    return dict_fc_compactness;
+}

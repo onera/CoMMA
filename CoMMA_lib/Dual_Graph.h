@@ -17,9 +17,11 @@
 #include <forward_list>
 #include "Seeds_Pool.h"
 #include <iostream>
+#include <climits>
 #include <utility>
 #include <cmath>
 #include <numeric>
+
 using namespace std;
 
 struct pair_hash {
@@ -85,7 +87,9 @@ public :
     double compute_average_fc_compactness_inside_a_cc(unordered_set<long> set_of_fc);
     void compute_breadth_first_search(unordered_set<long> set_of_fc, long current_seed, unordered_map<long,long> dict_inv_list_of_fc, vector<long> color, long & max_color, unordered_set<long> & s_fc_max_color, unordered_map<long, vector<long>> & d_spanning_tree);
     void compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> & predecessor, long & i_depth, unordered_map<long, vector<long> > & d_spanning_tree);
+    unsigned short int compute_min_fc_compactness_inside_a_cc(unordered_set<long>& s_fc);
+    unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
 };
 
-void compute_characteristics_utility(vector<double> aspect_ratio, double & min, double & max, double & mean, double & sd, double & median);
+
 #endif //COMMA_PROJECT_DUAL_GRAPH_H
