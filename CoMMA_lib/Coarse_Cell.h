@@ -65,6 +65,25 @@ public:
 
     void remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_2_cc);
 
+    inline void __compute_compactness(){
+
+        unsigned short int max_comp = 0;
+        for (auto &i_k_v :(*this).__d_compactness_to_s_fc) {
+            if (max_comp < i_k_v.first) {
+                max_comp = i_k_v.first;
+            }
+        }
+        //    unsigned short int max_comp = max((*this).__d_compactness_to_s_fc.keys())
+
+        for (unsigned short int i_comp = 0; i_comp < max(max_comp + 1, 4); i_comp++) {
+            if ((*this).__d_compactness_to_s_fc.count(i_comp) > 0 && !(*this).__d_compactness_to_s_fc[i_comp].empty()) {
+                (*this).__compactness = i_comp;
+                break;
+            }
+        }
+    }
+
+
 public:
     //private Fields
     Dual_Graph *__fc_graph;

@@ -3,6 +3,7 @@
 #include "../CoMMA_lib/Coarse_Cell.h"
 #include "gtest/gtest.h"
 #include "MGridGen_Dual_Graph.h"
+#include <iomanip>
 
 TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 
@@ -1127,7 +1128,7 @@ TEST_F(MGridGen_Dual_Graph, add_fc_scenario_Case_1_MGridGen) {
     Coarse_Cell cc((*g), i_cc, s_fc_0);
 
     for (int i = 0; i < 9; i++) {
-        cout << "\ni= " << i << endl;
+//        cout << "\ni= " << i << endl;
         cc.add_fc(v_s_fc[i], fc_2_cc = fc_2_cc);
         cc.fill_cc_neighbouring(fc_2_cc);
         for (const long &i_fc : v_s_fc[i]) {
@@ -1324,4 +1325,189 @@ TEST_F(MGridGen_Dual_Graph, get_s_fc_w_outer_neighbours_Case_1_MGridGen_2) {
     ASSERT_EQ(ref_s_fc_4, v_cc[i_cc].get_s_fc_w_outer_neighbours(1));
     ASSERT_EQ(empty_set, v_cc[i_cc].get_s_fc_w_outer_neighbours(2));
 
+}
+
+TEST_F(MGridGen_Dual_Graph, remove_fc_Case_1_MGridGen) {
+
+
+// add or remove, from i_cc, to i_cc, s_fc, card, compactness, is_connected?, s_leaves, s_fc_outer_degree
+//scenario = [['A', -1, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 15, 1, True, {12, 14}, set()],
+//['R', 0, 1, {6},           14, 1, True, {3, 12, 14}, {3, 2, 11}],
+//['R', 0, 2, {12},          13, 1, True, {3, 14}, {3, 2, 9, 11}],
+//['R', 0, 5, {14},          12, 1, True, {3, 11}, {3, 2, 9, 11}],
+//['R', 0, 3, {0, 1, 2, 3, }, 8, 1, True, {11}, {11, 5, 9}],
+//['R', 0, 4, {11, 13},       6, 2, True, set(), {5, 10, 9}],
+//]
+    vector<long> v_i_dest_cc = {1, 2, 5, 3, 4};
+    vector<unordered_set<long>> v_s_fc = {unordered_set<long>({6}),
+                                          unordered_set<long>({12}),
+                                          unordered_set<long>({14}),
+                                          unordered_set<long>({0, 1, 2, 3}),
+                                          unordered_set<long>({11, 13}),
+    };
+    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+
+    unsigned short int ref_cc_cardinality[6] = {14, 13, 12, 8, 6};
+    unsigned short int ref_cc_compactness[6] = {1, 1, 1, 1, 2};
+    vector<bool> v_connectivity = {true, true, true, true, true};
+    double ref_cc_volumes[5] = {1.0, 5.0, 4.5, 9.5, 6.0};
+    double ref_cc_boundary_area[5] = {4.0, 15.064495099999998, 11.828427120000001, 25.0, 17.0};
+
+    vector<unordered_set<long>> v_s_leaves = {unordered_set<long>({3, 14, 12}),
+                                              unordered_set<long>({3, 14}),
+                                              unordered_set<long>({3, 11}),
+                                              unordered_set<long>({11}),
+                                              unordered_set<long>({})
+    };
+
+    vector<unordered_set<long>> v_s_fc_w_outer_neighbours = {unordered_set<long>({2, 3, 11}),
+                                                             unordered_set<long>({2, 3, 9, 11}),
+                                                             unordered_set<long>({2, 3, 9, 11}),
+                                                             unordered_set<long>({5, 9, 11}),
+                                                             unordered_set<long>({5, 9, 10})
+    };
+
+    vector<unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>>> v_d_outer = {{{1, {{2,  {1}}, {3,  {1}}, {11, {1}}}}},
+            // 1
+                                                                                                     {{1, {{2,  {1}}, {3,  {1}}, {11, {1}},    {9, {2}}}}},
+            // 2
+                                                                                                     {{1, {{2,  {1}}, {3,  {1}}, {11, {1, 5}}, {9, {2}}}}},
+            // 3
+                                                                                                     {{1, {{9,  {2}},
+                                                                                                           {11,  {5, 1}},
+                                                                                                                                 {5, {3}}
+                                                                                                          }}},
+            // 4
+                                                                                                     {{1, {{9,  {2}},
+                                                                                                                      {5, {3}},
+                                                                                                                  {10, {4}}}}
+                                                                                                     },
+            //5
+                                                                                                     {{1, {{13, {4}}}}, {2, {{5, {2}}}}}
+    };
+
+    vector<unordered_map<long, unordered_map<long, unordered_map<long, double>>>> v_d_i_fc_to_j_cc = {{{11, {{1, {{6,  2}}}}},
+                                                                                                       {3,  {{1, {{6,  2.2360679800000001}}}}},
+                                                                                                       {2,  {{1, {{6,  2.2360679800000001}}}}}},
+            // 1
+                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
+                                                                                                        {11, { {1, { {6, 2} }} }},
+                                                                                                        {3, { {1, { {6, 2.2360679800000001} }} }},
+                                                                                                        {2, { {1, { {6, 2.2360679800000001} }} }} },
+            // 2
+                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
+                                                                                                        {11, { {1, { {6, 2} }},
+                                                                                                               {5, { {14, 3.16227766} }}}},
+                                                                                                        {3, { {1, { {6, 2.2360679800000001} }} }},
+                                                                                                        {2, { {1, { {6, 2.2360679800000001} }} }} },
+            // 3
+                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
+                                                                                                        {11, { {1, { {6, 2} }},
+                                                                                                               {5, { {14, 3.16227766} }}}},
+                                                                                                               {5, { {3, { {2, 2.2360679800000001} }} }},
+                                                                                                               },
+            // 4
+                                                                                                      { {10, { {4, { {13, 3.16227766} }} }}, {5, { {3, { {2, 2.2360679800000001} }} }}, {9, { {2, { {12, 3.605551280000000} }} }} },
+            // 5
+                                                                                                      {{13, {{4, {{10, 3.16227766}}}}},
+                                                                                                                                                {5,  {{2, {{8,  1.0},
+                                                                                                                                                                  {4, 2.0}}}}}},
+            // 6
+                                                                                                      {{8,  {{2, {{7,  1}}}}},                  {10, {{4, {{9,  2}}}}}, {5,  {{2, {{4,  2}}}}}},
+                                                                                                      {{9,  {{2, {{7,  2.2360679800000001}}}}}, {8,  {{2, {{7,  1}}}}}, {5,  {{2, {{4,  2}}}}}},
+                                                                                                      {}
+    };
+
+    vector<unordered_map<long, unordered_map<long, double>>> v_tmp_fc_fine_cut_edges = {{{11, {{6,  2}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+            // 1
+                                                                                        {{9, {{12,  3.605551280000000}}}, {11, {{6,  2}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+            // 2
+                                                                                        {{9, {{12,  3.605551280000000}}}, {11, {{6,  2},
+                                                                                                                                       {14,  3.16227766}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+            // 3
+                                                                                        { {5, { {2, 2.2360679800000001} }}, {11, { {14, 3.16227766}, {6, 2} }}, {9, { {12, 3.605551280000000} }} },
+            // 4
+                                                                                        {{10, {{13, 3.16227766}}},
+                                                                                         {5,  {{2,  2.2360679800000001}}},
+                                                                                                {9,  {{12,  3.605551280000000}}}
+                                                                                         }
+    };
+
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+    for (const long &i_fc: s_fc_0) {
+        ref_fc_2_cc[i_fc] = 0;
+    }
+    long i_dest_cc = 1;
+    //========================
+    // Remove some cells: step 1
+    //========================
+    for (int i = 0; i < 5; i++) {
+//        cout << "\ni= " << i << endl;
+
+        i_dest_cc = v_i_dest_cc[i];
+        for (const long &i_fc: v_s_fc[i]) {
+            ref_fc_2_cc[i_fc] = i_dest_cc;
+        }
+        v_cc[i_cc].remove_fc(v_s_fc[i], ref_fc_2_cc);
+//        if( i==1){
+////            cout << setprecision(15) << fixed;
+////            cout<<v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][12]<<endl;
+//            ASSERT_NEAR(v_d_i_fc_to_j_cc[i][9][2][12],v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc[9][2][12],  1e-15);
+//        }
+        ASSERT_EQ(ref_cc_cardinality[i], v_cc[i_cc].__card);
+        ASSERT_EQ(ref_cc_compactness[i], v_cc[i_cc].__compactness);
+        ASSERT_EQ(v_connectivity[i], v_cc[i_cc].is_connected());
+        ASSERT_EQ(v_s_leaves[i], v_cc[i_cc].compute_s_leaves());
+        ASSERT_EQ(v_s_fc_w_outer_neighbours[i], v_cc[i_cc].get_s_fc_w_outer_neighbours());
+        ASSERT_EQ(v_d_i_fc_to_j_cc[i], v_cc[i_cc].__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+        ASSERT_EQ(v_d_outer[i], v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+        ASSERT_EQ(v_tmp_fc_fine_cut_edges[i], v_cc[i_cc].__tmp_fc_fine_cut_edges);
+//    ASSERT_NEAR(ref_cc_volumes[i_dest_cc], v_cc[i_cc].volume, 1e-10);
+//    ASSERT_EQ(ref_cc_boundary_area[i_dest_cc], v_cc[i_cc].__boundary_area);
+//    ASSERT_TRUE(v_cc[i_cc].__is_isotropic);
+//    ASSERT_FALSE(v_cc[i_cc].__is_delayed);
+//    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+//    ASSERT_FALSE(v_cc[i_dest_cc].__is_connectivity_up_to_date);
+    }
+
+//
+//for i, l in enumerate(scenario):
+//
+//op = l[0]
+//
+//i_source_cc = l[1]
+//i_dest_cc = l[2]
+//s_fc = l[3]
+//
+//if op == "A":
+//cc = l_cc[i_dest_cc]
+//for i_fc in s_fc:
+//fc_2_cc[i_fc] = i_dest_cc
+//
+//        cc.add_fc(s_fc, fc_2_cc=fc_2_cc)
+//# cc.fill_cc_neighbouring(fc_2_cc)
+//
+//elif l[0] == "R":
+//cc = l_cc[i_source_cc]
+//for i_fc in s_fc:
+//fc_2_cc[i_fc] = i_dest_cc
+//
+//        cc.remove_fc(s_fc, fc_2_cc=fc_2_cc)
+//# cc.fill_cc_neighbouring(fc_2_cc)
+//
+//self.assertEqual(l[4], cc.card)
+//self.assertEqual(l[5], cc.compactness)
+//self.assertEqual(l[6], cc.is_connected())
+//self.assertEqual(l[7], cc.compute_s_leaves())
+//self.assertEqual(l[8], cc.get_s_fc_w_outer_neighbours())
 }
