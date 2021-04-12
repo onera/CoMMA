@@ -3,7 +3,6 @@
 //
 
 #include "Coarse_Cell.h"
-#include <climits>
 
 Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
                          long i_cc,

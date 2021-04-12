@@ -19,9 +19,13 @@ public:
                         bool is_anisotropic = false,
                         bool is_creation_delayed = false);
     void fill_cc_neighbouring();
-    unordered_map<long, unordered_set<long>*>* get_d_cc_all();
+//    unordered_map<long, unordered_set<long>*>* get_d_cc_all();
+    unordered_map<long, unordered_set<long>> get_d_cc_all();
 
-//protected:
+    unordered_map<unsigned short int, long> get_d_distribution_of_cardinal_of_isotropic_cc();
+    unsigned short int get_cc_compactness(const long& i_cc);
+
+    //protected:
     int _verbose;
 
     Dual_Graph _fc_graph;
@@ -54,13 +58,13 @@ public:
     unordered_map<long, Coarse_Cell*> _d_isotropic_cc;
     // Contains the CC index: list of FC, that can be modified (not anisotropic CC, and not "boundary" CC!
 
-    unordered_map<long, unordered_set<long>*>  _d_anisotropic_cc; // Dict of indices of anisotropic CC
+    unordered_map<long, unordered_set<long>>  _d_anisotropic_cc; // Dict of indices of anisotropic CC
 
     // Pointers from caracteristics to cc index:
-    unordered_map<long, unordered_set<long>> _d_card_2_cc;  // Contains the CC that can be modified, indexed by their
+    unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  // Contains the CC that can be modified, indexed by their
     // cardinal i.e. {card: set of index of coarse cells of cardinal card}
 
-    unordered_map<long, unordered_set<long>> _d_compactness_2_cc; // Contains for every degree of compactness the list of
+    unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; // Contains for every degree of compactness the list of
     // CC of this type i.e. {deg_Of_compactness: set of CC of compactness deg_Of_compactness}
 
     //==================

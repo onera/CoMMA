@@ -126,82 +126,130 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
     ccg.cc_create_a_cc(s_cc_0);
     ASSERT_EQ(1, ccg._cc_counter);
 
-    unordered_map<long, unordered_set<long>*> ref_d_cc_all={{0, new unordered_set<long>({3})}};
-//    ASSERT_EQ(ref_d_cc_all, (*(ccg.get_d_cc_all())));
-    for (auto& i_k_v :ref_d_cc_all)
-    {
-        ASSERT_EQ((*i_k_v.second), (* ((*(ccg.get_d_cc_all()))[i_k_v.first])));
-    }
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({3})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+//    for (auto& i_k_v :ref_d_cc_all)
+//    {
+//        ASSERT_EQ((*i_k_v.second), ccg.get_d_cc_all()[i_k_v.first]);
 //
-//    ASSERT_EQ({1: 1}, ccg.d_distribution_of_cardinal_of_isotropic_cc)                 ;
-//    ASSERT_EQ({1: {0}}, ccg._d_card_2_cc)                                              ;
+//    }
 //
-//    ASSERT_EQ({0: {0}}, ccg._d_compactness_2_cc)                                       ;
-//    ASSERT_EQ(0, ccg.get_cc_compactness(0))                                            ;
+    unordered_map<unsigned short int, long> ref_d_dist_of_card = {{1, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {0}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+    ASSERT_EQ(0, ccg.get_cc_compactness(0));
 //
-//    ASSERT_EQ([], ccg._delayed_cc)                                                     ;
-//    ref_fc_2_cc = np.array([-1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]);
-//    np.testing.assert_equal(ref_fc_2_cc, ccg.fc_2_cc);
-//
-//    //========================
-//    // Create coarse cell 1
-//    //========================
-//    ccg.cc_create_a_cc({1, 2, 0})
-//
-//    ASSERT_EQ(ccg.nb_cc, 2)
-//    ASSERT_EQ({0: {3}, 1: {0, 1, 2}}, ccg.get_d_cc_all())
-//    ASSERT_EQ({1: 1, 3: 1}, ccg.d_distribution_of_cardinal_of_isotropic_cc)
-//    ASSERT_EQ({1: {0}, 3: {1}}, ccg._d_card_2_cc)
-//
-//    ASSERT_EQ({0: {0}, 1: {1}}, ccg._d_compactness_2_cc, 1)
-//    ASSERT_EQ(0, ccg.get_cc_compactness(0))
-//    ASSERT_EQ(1, ccg.get_cc_compactness(1))
-//
-//    ASSERT_EQ([], ccg._delayed_cc)
-//
-//    ref_fc_2_cc = np.array([1, 1, 1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
-//    np.testing.assert_equal(ref_fc_2_cc, ccg.fc_2_cc)
-//
-//    s: Set[int] = {4, 5, 8, 7}
-//
-//    ccg.cc_create_a_cc(s)
-//
-//    ASSERT_EQ(ccg.nb_cc, 3)
-//    ASSERT_EQ({0: {3}, 1: {0, 1, 2}, 2: {8, 4, 5, 7}}, ccg.get_d_cc_all())
-//    ASSERT_EQ({1: 1, 3: 1, 4: 1}, ccg.d_distribution_of_cardinal_of_isotropic_cc)
-//    ASSERT_EQ({1: {0}, 3: {1}, 4: {2}}, ccg._d_card_2_cc)
-//
-//    ASSERT_EQ({0: {0}, 1: {1}, 2: {2}}, ccg._d_compactness_2_cc, 1)
-//    ASSERT_EQ(0, ccg.get_cc_compactness(0))
-//    ASSERT_EQ(1, ccg.get_cc_compactness(1))
-//    ASSERT_EQ(2, ccg.get_cc_compactness(2))
-//
-//    ASSERT_EQ([], ccg._delayed_cc)
-//// print(ccg._fc_2_cc.__repr__())
-//    ref_fc_2_cc = np.array([1, 1, 1, 0, 2, 2, -1, 2, 2, -1, -1, -1, -1, -1, -1])
-//    np.testing.assert_equal(ref_fc_2_cc, ccg.fc_2_cc)
-//
-//    ccg.cc_create_a_cc({6, 11, 13, 14})
-//    ccg.cc_create_a_cc({10, 9, 12})
-//
-//    ASSERT_EQ(ccg.nb_cc, 5)
-//    ASSERT_EQ({0: {3}, 1: {0, 1, 2}, 2: {8, 4, 5, 7}, 3: {11, 13, 6, 14}, 4: {9, 10, 12}},
-//                     ccg.get_d_cc_all())
+    ASSERT_TRUE(ccg._delayed_cc.empty());
+    vector<long> ref_fc_2_cc = {-1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    unordered_set<long> s_cc_1 = {1, 2, 0};
+    ccg.cc_create_a_cc(s_cc_1);
+
+    ASSERT_EQ(ccg._cc_counter, 2);
+    ref_d_cc_all[1] = unordered_set<long>({0, 1, 2});
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_dist_of_card[3] = 1;
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+//    ASSERT_EQ({ 1: 1, 3: 1 }, ccg.d_distribution_of_cardinal_of_isotropic_cc)
+//    ASSERT_EQ({ 1: { 0 }, 3: { 1 }}, ccg._d_card_2_cc)
+    ref_d_card_2_cc[3] = {1};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+//    ASSERT_EQ({ 0: { 0 }, 1: { 1 }}, ccg._d_compactness_2_cc, 1);
+    ref_d_compactness_2_cc[1] = {1};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ASSERT_EQ(0, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+
+    ASSERT_TRUE(ccg._delayed_cc.empty());
+
+    ref_fc_2_cc = {1, 1, 1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    unordered_set<long> s_cc_2 = {4, 5, 8, 7};
+    ccg.cc_create_a_cc(s_cc_2);
+
+    ASSERT_EQ(ccg._cc_counter, 3);
+    ref_d_cc_all[2] = unordered_set<long>({4, 5, 8, 7});
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_dist_of_card[4] = 1;
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_card_2_cc[4] = {2};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+//    ASSERT_EQ({ 0: { 0 }, 1: { 1 }}, ccg._d_compactness_2_cc, 1);
+    ref_d_compactness_2_cc[2] = {2};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ASSERT_EQ(0, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+    ASSERT_EQ(2, ccg.get_cc_compactness(2));
+
+    ASSERT_TRUE(ccg._delayed_cc.empty());
+
+    ref_fc_2_cc = {1, 1, 1, 0, 2, 2, -1, 2, 2, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    //========================
+    // Create coarse cell 3 and 4
+    //========================
+    unordered_set<long> s_cc_3 = {6, 11, 13, 14};
+    ccg.cc_create_a_cc(s_cc_3);
+
+    unordered_set<long> s_cc_4 = {10, 9, 12};
+    ccg.cc_create_a_cc(s_cc_4);
+
+    ASSERT_EQ(ccg._cc_counter, 5);
+    ref_d_cc_all[3] = unordered_set<long>(s_cc_3);
+    ref_d_cc_all[4] = unordered_set<long>(s_cc_4);
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_dist_of_card[3] = 2;
+    ref_d_dist_of_card[4] = 2;
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
 //    ASSERT_EQ({1: 1, 3: 2, 4: 2}, ccg.d_distribution_of_cardinal_of_isotropic_cc)
+
+    ref_d_card_2_cc[4].insert(3);
+    ref_d_card_2_cc[3].insert(4);
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
 //    ASSERT_EQ({1: {0}, 3: {1, 4}, 4: {2, 3}}, ccg._d_card_2_cc)
-//
+    ref_d_compactness_2_cc[1].insert(3);
+    ref_d_compactness_2_cc[1].insert(4);
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
 //    ASSERT_EQ({0: {0}, 1: {1, 3, 4}, 2: {2}}, ccg._d_compactness_2_cc, 1)
-//    ASSERT_EQ(0, ccg.get_cc_compactness(0))
-//    ASSERT_EQ(1, ccg.get_cc_compactness(1))
-//    ASSERT_EQ(2, ccg.get_cc_compactness(2))
-//    ASSERT_EQ(1, ccg.get_cc_compactness(3))
-//    ASSERT_EQ(1, ccg.get_cc_compactness(4))
-//
-//// print(ccg._fc_2_cc.__repr__())
+    ASSERT_EQ(0, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+    ASSERT_EQ(2, ccg.get_cc_compactness(2));
+    ASSERT_EQ(1, ccg.get_cc_compactness(3));
+    ASSERT_EQ(1, ccg.get_cc_compactness(4));
+
+// print(ccg._fc_2_cc.__repr__())
+    ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
 //    ref_fc_2_cc = np.array([1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3])
 //    np.testing.assert_equal(ref_fc_2_cc, ccg.fc_2_cc)
-//    ASSERT_EQ(64, ccg._fc_graph.number_of_cells);
-//    ASSERT_FALSE(ccg._a_is_fc_agglomerated[0]);
+    ASSERT_EQ(64, ccg._fc_graph.number_of_cells);
+    ASSERT_FALSE(ccg._a_is_fc_agglomerated[0]);
 }
 
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
@@ -3140,9 +3188,9 @@ TEST(CoarseCellGraph_TestSuite, CreateDelayedCoarseCells_Case_1) {
     ASSERT_EQ(ref_dict_Coarse_Cells_2, dict_Coarse_Cells);
 
     unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells_2 = {
-                                                                         {1, unordered_set<long>({0})},
-                                                                         {3, unordered_set<long>({1,3})},
-                                                                         {4, unordered_set<long>({2})}};
+            {1, unordered_set<long>({0})},
+            {3, unordered_set<long>({1, 3})},
+            {4, unordered_set<long>({2})}};
     ASSERT_EQ(ref_dict_Card_Coarse_Cells_2, dict_Card_Coarse_Cells);
 
     unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements_2 = {{1, 1},
