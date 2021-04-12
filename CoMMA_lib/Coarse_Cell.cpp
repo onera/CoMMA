@@ -749,6 +749,7 @@ void Coarse_Cell::update_cc_neighbour(long i_fc, long i_fc_n, long i_cc_old, lon
 
     if (__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].find(i_cc_new) != __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].end())
         nb_fine_edges_wrt_cc_new = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_new].size();
+
     assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.find(nb_fine_edges_wrt_cc_old) != d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.end());
     assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc_old].find(i_fc) != d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc_old].end());
     assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc_old][i_fc].find(i_cc_old) !=
@@ -765,42 +766,6 @@ void Coarse_Cell::update_cc_neighbour(long i_fc, long i_fc_n, long i_cc_old, lon
     __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, i_cc_new, i_fc_n, area);
 
 
-}
-
-void Coarse_Cell::update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc) {
-    cout << "Call of update_cc_neighbour_renumbering" << endl;
-    for (auto &i_fc_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc) {
-        long i_fc = i_fc_k_v.first;
-        vector<long> l_i_cc_sorted;
-        for (auto &i_cc_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc])
-            l_i_cc_sorted.push_back(i_cc_k_v.first);
-        sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
-        for (auto &i_cc_old : l_i_cc_sorted) {
-            if (dict_old_cc_to_new_cc.count(i_cc_old) > 0) {
-                long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
-                __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_new] = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old];
-                __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].erase(i_cc_old);
-            }
-        }
-    }
-
-    for (auto &i_degree_k_v : d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour) {
-        unsigned short int i_degree = i_degree_k_v.first;
-        for (auto &i_fc_k_v : d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree]) {
-            vector<long> l_i_cc_sorted;
-            long i_fc = i_fc_k_v.first;
-            for (auto &i_cc : d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc])
-                l_i_cc_sorted.push_back(i_cc);
-            sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
-            for (auto i_cc_old : l_i_cc_sorted) {
-                if (dict_old_cc_to_new_cc.count(i_cc_old) > 0) {
-                    long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
-                    d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].erase(i_cc_old);
-                    d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].insert(i_cc_new);
-                }
-            }
-        }
-    }
 }
 
 void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_2_cc) {

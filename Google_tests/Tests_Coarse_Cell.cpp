@@ -3,6 +3,7 @@
 #include "../CoMMA_lib/Coarse_Cell.h"
 #include "gtest/gtest.h"
 #include "MGridGen_Dual_Graph.h"
+#include "MGridGen_ext_v2_Dual_Graph.h"
 #include <iomanip>
 
 TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
@@ -1327,8 +1328,8 @@ TEST_F(MGridGen_Dual_Graph, get_s_fc_w_outer_neighbours_Case_1_MGridGen_2) {
 
 }
 
-TEST_F(MGridGen_Dual_Graph, remove_fc_Case_1_MGridGen) {
 
+TEST_F(MGridGen_Dual_Graph, remove_fc_Case_1_MGridGen) {
 
 // add or remove, from i_cc, to i_cc, s_fc, card, compactness, is_connected?, s_leaves, s_fc_outer_degree
 //scenario = [['A', -1, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 15, 1, True, {12, 14}, set()],
@@ -1374,63 +1375,63 @@ TEST_F(MGridGen_Dual_Graph, remove_fc_Case_1_MGridGen) {
                                                                                                      {{1, {{2,  {1}}, {3,  {1}}, {11, {1, 5}}, {9, {2}}}}},
             // 3
                                                                                                      {{1, {{9,  {2}},
-                                                                                                           {11,  {5, 1}},
-                                                                                                                                 {5, {3}}
+                                                                                                                      {11, {5, 1}},
+                                                                                                                                 {5,  {3}}
                                                                                                           }}},
             // 4
                                                                                                      {{1, {{9,  {2}},
-                                                                                                                      {5, {3}},
-                                                                                                                  {10, {4}}}}
+                                                                                                                      {5,  {3}},
+                                                                                                                                 {10, {4}}}}
                                                                                                      },
             //5
                                                                                                      {{1, {{13, {4}}}}, {2, {{5, {2}}}}}
     };
 
     vector<unordered_map<long, unordered_map<long, unordered_map<long, double>>>> v_d_i_fc_to_j_cc = {{{11, {{1, {{6,  2}}}}},
-                                                                                                       {3,  {{1, {{6,  2.2360679800000001}}}}},
-                                                                                                       {2,  {{1, {{6,  2.2360679800000001}}}}}},
+                                                                                                                                                {3,  {{1, {{6, 2.2360679800000001}}}}},
+                                                                                                                                                                                        {2, {{1, {{6,  2.2360679800000001}}}}}},
             // 1
-                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
-                                                                                                        {11, { {1, { {6, 2} }} }},
-                                                                                                        {3, { {1, { {6, 2.2360679800000001} }} }},
-                                                                                                        {2, { {1, { {6, 2.2360679800000001} }} }} },
+                                                                                                      {{9,  {{2, {{12, 3.605551280000000}}}}},
+                                                                                                                                                {11, {{1, {{6, 2}}}}},
+                                                                                                                                                                                        {3, {{1, {{6,  2.2360679800000001}}}}},
+                                                                                                              {2, {{1, {{6, 2.2360679800000001}}}}}},
             // 2
-                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
-                                                                                                        {11, { {1, { {6, 2} }},
-                                                                                                               {5, { {14, 3.16227766} }}}},
-                                                                                                        {3, { {1, { {6, 2.2360679800000001} }} }},
-                                                                                                        {2, { {1, { {6, 2.2360679800000001} }} }} },
+                                                                                                      {{9,  {{2, {{12, 3.605551280000000}}}}},
+                                                                                                                                                {11, {{1, {{6, 2}}},
+                                                                                                                                                             {5, {{14, 3.16227766}}}}},
+                                                                                                                                                                                        {3, {{1, {{6,  2.2360679800000001}}}}},
+                                                                                                              {2, {{1, {{6, 2.2360679800000001}}}}}},
             // 3
-                                                                                                      { {9, { {2, { {12, 3.605551280000000} }} }},
-                                                                                                        {11, { {1, { {6, 2} }},
-                                                                                                               {5, { {14, 3.16227766} }}}},
-                                                                                                               {5, { {3, { {2, 2.2360679800000001} }} }},
-                                                                                                               },
+                                                                                                      {{9,  {{2, {{12, 3.605551280000000}}}}},
+                                                                                                                                                {11, {{1, {{6, 2}}},
+                                                                                                                                                             {5, {{14, 3.16227766}}}}},
+                                                                                                                                                                                        {5, {{3, {{2,  2.2360679800000001}}}}},
+                                                                                                      },
             // 4
-                                                                                                      { {10, { {4, { {13, 3.16227766} }} }}, {5, { {3, { {2, 2.2360679800000001} }} }}, {9, { {2, { {12, 3.605551280000000} }} }} },
+                                                                                                      {{10, {{4, {{13, 3.16227766}}}}},         {5,  {{3, {{2, 2.2360679800000001}}}}}, {9, {{2, {{12, 3.605551280000000}}}}}},
             // 5
                                                                                                       {{13, {{4, {{10, 3.16227766}}}}},
-                                                                                                                                                {5,  {{2, {{8,  1.0},
+                                                                                                                                                {5,  {{2, {{8, 1.0},
                                                                                                                                                                   {4, 2.0}}}}}},
             // 6
-                                                                                                      {{8,  {{2, {{7,  1}}}}},                  {10, {{4, {{9,  2}}}}}, {5,  {{2, {{4,  2}}}}}},
-                                                                                                      {{9,  {{2, {{7,  2.2360679800000001}}}}}, {8,  {{2, {{7,  1}}}}}, {5,  {{2, {{4,  2}}}}}},
+                                                                                                      {{8,  {{2, {{7,  1}}}}},                  {10, {{4, {{9, 2}}}}},                  {5, {{2, {{4,  2}}}}}},
+                                                                                                      {{9,  {{2, {{7,  2.2360679800000001}}}}}, {8,  {{2, {{7, 1}}}}},                  {5, {{2, {{4,  2}}}}}},
                                                                                                       {}
     };
 
-    vector<unordered_map<long, unordered_map<long, double>>> v_tmp_fc_fine_cut_edges = {{{11, {{6,  2}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+    vector<unordered_map<long, unordered_map<long, double>>> v_tmp_fc_fine_cut_edges = {{{11, {{6,  2}}},                  {3,  {{6,  2.2360679800000001}}},           {2, {{6,  2.2360679800000001}}}},
             // 1
-                                                                                        {{9, {{12,  3.605551280000000}}}, {11, {{6,  2}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+                                                                                        {{9,  {{12, 3.605551280000000}}},  {11, {{6,  2}}},                            {3, {{6,  2.2360679800000001}}}, {2, {{6, 2.2360679800000001}}}},
             // 2
-                                                                                        {{9, {{12,  3.605551280000000}}}, {11, {{6,  2},
-                                                                                                                                       {14,  3.16227766}}},                  {3,  {{6,  2.2360679800000001}}}, {2,  {{6,  2.2360679800000001}}}},
+                                                                                        {{9,  {{12, 3.605551280000000}}},  {11, {{6,  2},
+                                                                                                                                                   {14, 3.16227766}}}, {3, {{6,  2.2360679800000001}}}, {2, {{6, 2.2360679800000001}}}},
             // 3
-                                                                                        { {5, { {2, 2.2360679800000001} }}, {11, { {14, 3.16227766}, {6, 2} }}, {9, { {12, 3.605551280000000} }} },
+                                                                                        {{5,  {{2,  2.2360679800000001}}}, {11, {{14, 3.16227766}, {6,  2}}},          {9, {{12, 3.605551280000000}}}},
             // 4
                                                                                         {{10, {{13, 3.16227766}}},
-                                                                                         {5,  {{2,  2.2360679800000001}}},
-                                                                                                {9,  {{12,  3.605551280000000}}}
-                                                                                         }
+                                                                                                                           {5,  {{2,  2.2360679800000001}}},
+                                                                                                                                                                       {9, {{12, 3.605551280000000}}}
+                                                                                        }
     };
 
     vector<Coarse_Cell> v_cc;
@@ -1510,4 +1511,130 @@ TEST_F(MGridGen_Dual_Graph, remove_fc_Case_1_MGridGen) {
 //self.assertEqual(l[6], cc.is_connected())
 //self.assertEqual(l[7], cc.compute_s_leaves())
 //self.assertEqual(l[8], cc.get_s_fc_w_outer_neighbours())
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, update_cc_neighbour_MGridGen_ext_v2) {
+
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0,
+                                0, 0, 1, 3, 3,
+                                2, 2, 2, 2, 5,
+                                3, 3, 3, 4, 4,
+                                4, 4, 5, 4, 2,
+                                0};
+    vector<Coarse_Cell> v_cc;
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    long i_cc = 0;
+    unordered_set<long> s_fc_0 = {0, 1, 2, 3, 4, 5, 6, 25};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_0));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    i_cc = 1;
+    unordered_set<long> s_fc_1 = {7};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_1));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+//    ccg.cc_create_a_cc({7})
+    //========================
+    // Create coarse cell 2
+    //========================
+    i_cc = 2;
+    unordered_set<long> s_fc_2 = {10, 11, 12, 13, 24};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_2));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+
+//    ccg.cc_create_a_cc({10, 11, 12, 13, 24})
+    //========================
+    // Create coarse cell 3
+    //========================
+    i_cc = 3;
+    unordered_set<long> s_fc_3 = {8, 9, 15, 16, 17};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_3));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+//    ccg.cc_create_a_cc({8, 9, 15, 16, 17})
+    //========================
+    // Create coarse cell 4
+    //========================
+    i_cc = 4;
+    unordered_set<long> s_fc_4 = {18, 19, 20, 21, 23};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_4));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+//    ccg.cc_create_a_cc({18, 19, 20, 21, 23})
+    //========================
+    // Create coarse cell 5
+    //========================
+    i_cc = 5;
+    unordered_set<long> s_fc_5 = {14, 22};
+    v_cc.push_back(Coarse_Cell((*g),
+                               i_cc,
+                               s_fc_5));
+    v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
+
+//    ccg.cc_create_a_cc({14, 22})
+
+
+// cc = ccg._d_isotropic_cc[0]
+// fc 9: 3->2
+    long i_origin_cc = 3;
+    long i_destination_cc = 2;
+
+    unordered_set<long> s_fc = {9};
+
+//    origin_cc = ccg._d_isotropic_cc[i_origin_cc]
+//    destination_cc = ccg._d_isotropic_cc[i_destination_cc]
+
+    v_cc[i_destination_cc].add_fc(s_fc, ref_fc_2_cc);
+
+    unordered_set<long> union_s_fc = v_cc[i_destination_cc].get_s_fc();
+    for (const long &i_fc :v_cc[i_origin_cc].get_s_fc()) {
+        union_s_fc.insert(i_fc);
+    }
+
+    unordered_set<long> s_fc_n;
+
+    long i_fc = 9;
+    vector<long> v_neighbours = (*g).get_neighbours(i_fc);
+    for (const long &i_fc_n :  v_neighbours) {
+        s_fc_n.insert(i_fc_n);
+    }
+
+    for (const long &i_fc_n :  union_s_fc) {
+        if (s_fc_n.count(i_fc_n) > 0) {
+            s_fc_n.erase(i_fc_n);
+        }
+    }
+    unordered_set<long> ref_s_fc_n = {18, 23};
+    ASSERT_EQ(ref_s_fc_n, s_fc_n);
+    // s_fc_n = set(ccg._fc_graph.get_neighbours(i_fc)) - union_s_fc
+
+    for (const long &i_fc_n: s_fc_n) {
+        const long &i_cc_n = ref_fc_2_cc[i_fc_n];
+        v_cc[i_cc_n].update_cc_neighbour(i_fc_n, i_fc, i_origin_cc, i_destination_cc);
+    }
+
+
+    ref_fc_2_cc[i_fc] = i_destination_cc;
+    v_cc[i_origin_cc].remove_fc(s_fc, ref_fc_2_cc);
+
+    ASSERT_TRUE(v_cc[i_destination_cc].check_consistency(ref_fc_2_cc));
+    ASSERT_TRUE(v_cc[i_origin_cc].check_consistency(ref_fc_2_cc));
 }

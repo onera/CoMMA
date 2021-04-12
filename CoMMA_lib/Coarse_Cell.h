@@ -56,8 +56,6 @@ public:
 
     void update_cc_neighbour(long i_fc, long i_fc_n, long i_cc_old, long i_cc_new);
 
-    void update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc);
-
     unordered_set<long> get_s_fc();  //Karim
     unordered_set<long> *get_s_fc_v2();  //Mine
 
