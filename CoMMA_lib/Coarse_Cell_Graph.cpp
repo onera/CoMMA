@@ -61,8 +61,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
     }
 }
 
-
-long Coarse_Cell_Graph::cc_create_a_cc(unordered_set<long> &s_fc,
+long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
 
@@ -166,6 +165,31 @@ void Coarse_Cell_Graph::fill_cc_neighbouring() {
     }
 }
 
+unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_iso() {
+
+    // Watch out that delayed_cc may not be empty , i.e. not yet created and numbered!
+    unordered_map<long, unordered_set<long>> d;
+
+    for (auto &i_k_v : _d_isotropic_cc) {
+        long i_cc = i_k_v.first;
+        unordered_set<long> tmp(i_k_v.second->get_s_fc());
+        d[i_cc] = tmp;
+    }
+    return d;
+}
+
+unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_aniso() {
+
+    // Watch out that delayed_cc may not be empty , i.e. not yet created and numbered!
+    unordered_map<long, unordered_set<long>> d;
+
+    for (auto &i_k_v : _d_anisotropic_cc) {
+        long i_cc = i_k_v.first;
+        d[i_cc] = i_k_v.second;
+    }
+    return d;
+}
+
 unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_all() {
     // assert not (*this)._delayed_cc`
     // Watch out that delayed_cc may not be empty , i.e. not yet created and numbered!
@@ -208,17 +232,30 @@ unordered_map<unsigned short int, long> Coarse_Cell_Graph::get_d_distribution_of
 }
 
 unsigned short int Coarse_Cell_Graph::get_cc_compactness(const long &i_cc) {
+//    cout<< _d_isotropic_cc.count(i_cc)<<endl;
 
     if (_d_isotropic_cc.count(i_cc)){
+//        cout<<"True"<<endl;
         return (*_d_isotropic_cc[i_cc]).__compactness;
     }
-    else{
+    else if(_d_anisotropic_cc.count(i_cc)){
+//        cout<<"False"<<endl;
         unsigned short int c = _fc_graph.compute_min_fc_compactness_inside_a_cc(_d_anisotropic_cc[i_cc]);
         if(c != (unsigned short int)(_d_anisotropic_cc[i_cc].size() > 1)) {
             cerr<<"Warning anisotropic CC of compactness >1"<< c<<endl;
         }
         return (unsigned short int)((_d_anisotropic_cc[i_cc].size()) > 1);
+    }else{
+        //Delayed cc
+        unsigned short int c = _fc_graph.compute_min_fc_compactness_inside_a_cc(_delayed_cc[i_cc]);
+        return c;
     }
+}
 
-
+void Coarse_Cell_Graph::cc_create_all_delayed_cc(){
+    for (const unordered_set<long>& s_fc: _delayed_cc)
+    {
+        cc_create_a_cc(s_fc);
+    }
+    _delayed_cc.clear();
 }

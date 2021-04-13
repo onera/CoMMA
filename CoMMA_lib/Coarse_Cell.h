@@ -11,7 +11,7 @@ class Coarse_Cell {
 public:
     Coarse_Cell(Dual_Graph &fc_graph,
                 long i_cc,
-                unordered_set<long> &s_fc,
+                const unordered_set<long> &s_fc,
                 bool is_isotropic = true,
                 bool is_delayed = false
     );

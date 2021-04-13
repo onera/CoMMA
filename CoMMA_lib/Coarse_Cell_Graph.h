@@ -15,15 +15,19 @@ public:
                       vector<long> debug_only_fc_to_cc = vector<long>(),
                       forward_list<deque<long> *> *debug_a_anisotropic_lines = NULL);
 
-    long cc_create_a_cc(unordered_set<long> &s_fc,
+    long cc_create_a_cc(const unordered_set<long> &s_fc,
                         bool is_anisotropic = false,
                         bool is_creation_delayed = false);
     void fill_cc_neighbouring();
 //    unordered_map<long, unordered_set<long>*>* get_d_cc_all();
     unordered_map<long, unordered_set<long>> get_d_cc_all();
+    unordered_map<long, unordered_set<long>> get_d_cc_iso();
+    unordered_map<long, unordered_set<long>> get_d_cc_aniso();
 
     unordered_map<unsigned short int, long> get_d_distribution_of_cardinal_of_isotropic_cc();
     unsigned short int get_cc_compactness(const long& i_cc);
+
+    void cc_create_all_delayed_cc();
 
     //protected:
     int _verbose;

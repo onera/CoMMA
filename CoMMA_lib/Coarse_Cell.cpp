@@ -6,7 +6,7 @@
 
 Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
                          long i_cc,
-                         unordered_set<long> &s_fc,
+                         const unordered_set<long> &s_fc,
                          bool is_isotropic,
                          bool is_delayed) : __dim(fc_graph._dimension), __is_isotropic(is_isotropic), __is_delayed(is_delayed) {
     // input set of fc is empty!
