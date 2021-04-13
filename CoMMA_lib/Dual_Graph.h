@@ -17,8 +17,16 @@
 #include <forward_list>
 #include "Seeds_Pool.h"
 #include <iostream>
-
+#include <utility>
+#include <cmath>
+#include <numeric>
 using namespace std;
+
+struct pair_hash {
+    inline std::size_t operator()(const std::pair<int,int> & v) const {
+        return v.first*31+v.second;
+    }
+};
 
 class Dual_Graph {
 
@@ -65,8 +73,19 @@ public :
                                   long * agglomerationLines_Idx,
                                   long * agglomerationLines,
                                   bool verbose);
-
+    unordered_map<long, unordered_set<pair<long,long>, pair_hash>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
+    //unordered_map<long, unordered_set<Tuple>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
+    long _compute_subgraph_root(unordered_set<long> s_fc);
+    void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, long> & d_neighbours_of_seed);
+    unsigned short int compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc);
+    vector<double> compute_aspect_ratio();
+    vector<double> compute_aspect_ratio_and_characteristics(double & min, double & max, double & mean, double & sd, double & median);
+    void  compute_aspect_ratio_characteristics(double & min, double & max, double & mean, double & sd, double & median, double min_aniso, double max_aniso, double mean_aniso, double sd_aniso, double median_aniso);
+    unordered_map<long, long> compute_fc_compactness_inside_a_cc(unordered_set<long> set_of_fc);
+    double compute_average_fc_compactness_inside_a_cc(unordered_set<long> set_of_fc);
+    void compute_breadth_first_search(unordered_set<long> set_of_fc, long current_seed, unordered_map<long,long> dict_inv_list_of_fc, vector<long> color, long & max_color, unordered_set<long> & s_fc_max_color, unordered_map<long, vector<long>> & d_spanning_tree);
+    void compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> & predecessor, long & i_depth, unordered_map<long, vector<long> > & d_spanning_tree);
 };
 
-
+void compute_characteristics_utility(vector<double> aspect_ratio, double & min, double & max, double & mean, double & sd, double & median);
 #endif //COMMA_PROJECT_DUAL_GRAPH_H
