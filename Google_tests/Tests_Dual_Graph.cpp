@@ -3,6 +3,7 @@
 #include "../CoMMA_lib/Dual_Graph.h"
 
 #include "MGridGen_Dual_Graph.h"
+#include "Graphs_biconnected_Dual_Graph.h"
 #include "gtest/gtest.h"
 
 class box_5x5x5 : public ::testing::Test {
@@ -1024,3 +1025,99 @@ TEST_F(MGridGen_Dual_Graph, compute_min_fc_compactness_inside_a_cc_mgridgen) {
 }
 
 
+TEST_F(MGridGen_Dual_Graph, compute_fc_compactness_inside_a_cc_mgridgen) {
+
+    unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3, 6});
+    unordered_map<long, unsigned short int> ref_d_fc_compactness = {{0, 2},
+                                                                    {1, 2},
+                                                                    {2, 2},
+                                                                    {3, 2},
+                                                                    {6, 2},
+    };
+    unordered_map<long, unsigned short int> d_fc_compactness = (*g).compute_fc_compactness_inside_a_cc(s_fc);
+    ASSERT_EQ(ref_d_fc_compactness, d_fc_compactness);
+
+    s_fc = unordered_set<long>({0, 1, 2, 3, 6, 5, 11});
+    d_fc_compactness = (*g).compute_fc_compactness_inside_a_cc(s_fc);
+    ref_d_fc_compactness = {{0,  2},
+                            {1,  2},
+                            {2,  3},
+                            {3,  2},
+                            {5,  1},
+                            {6,  3},
+                            {11, 1}
+    };
+    ASSERT_EQ(ref_d_fc_compactness, d_fc_compactness);
+
+    s_fc = unordered_set<long>({0, 1, 2, 3, 6, 5, 11, 14});
+    d_fc_compactness = (*g).compute_fc_compactness_inside_a_cc(s_fc);
+    ref_d_fc_compactness = {{0,  2},
+                            {1,  2},
+                            {2,  3},
+                            {3,  2},
+                            {5,  1},
+                            {6,  3},
+                            {11, 2},
+                            {14, 1}
+    };
+    ASSERT_EQ(ref_d_fc_compactness, d_fc_compactness);
+
+    s_fc = unordered_set<long>({2, 6, 5, 11, 14});
+    d_fc_compactness = (*g).compute_fc_compactness_inside_a_cc(s_fc);
+    ref_d_fc_compactness = {{2,  2},
+                            {3,  2},
+                            {5,  1},
+                            {6,  2},
+                            {11, 2},
+                            {14, 1}
+    };
+    ASSERT_EQ(ref_d_fc_compactness, d_fc_compactness);
+}
+
+
+TEST_F(MGridGen_Dual_Graph, compute_average_fc_compactness_inside_a_cc_mgridgen) {
+
+    unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3, 6});
+    ASSERT_EQ(2, (*g).compute_average_fc_compactness_inside_a_cc(s_fc));
+
+    s_fc = unordered_set<long>({0, 1, 2, 3});
+    ASSERT_EQ(1.5, (*g).compute_average_fc_compactness_inside_a_cc(s_fc));
+
+    s_fc = unordered_set<long>({0});
+    ASSERT_EQ(0, (*g).compute_average_fc_compactness_inside_a_cc({0}));
+
+    s_fc = unordered_set<long>({4, 5, 7, 8, 9, 10});
+    ASSERT_EQ(2.3333333333333335, (*g).compute_average_fc_compactness_inside_a_cc(s_fc));
+}
+
+TEST_F(Graphs_biconnected, compute_Degree_Of_Node_In_SubGraph) {
+
+    unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3,4, 5, 6, 7});
+    long seed = 0;
+    ASSERT_EQ(3, (*g).compute_degree_of_node_in_subgraph(seed, s_fc));
+
+    seed = 5;
+    ASSERT_EQ(4, (*g).compute_degree_of_node_in_subgraph(seed, s_fc));
+
+    seed = 0;
+    s_fc = unordered_set<long>({2, 6, 3, 7});
+    ASSERT_EQ(0, (*g).compute_degree_of_node_in_subgraph(seed, s_fc));
+
+    seed = 0;
+    s_fc = unordered_set<long>({1, 2, 6, 3, 7});
+    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(seed, s_fc));
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_Degree_Of_Node_In_SubGraph_MGridGen) {
+
+    unordered_set<long> s_fc_1 = unordered_set<long>({9, 4, 7, 14, 2, 0, 12, 13, 5, 11, 8, 10});
+    
+    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(0, s_fc_1)) ;
+    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(1, s_fc_1)) ;
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(2, s_fc_1)) ;
+    ASSERT_EQ(0, (*g).compute_degree_of_node_in_subgraph(3, s_fc_1)) ;
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(4, s_fc_1)) ;
+    ASSERT_EQ(3, (*g).compute_degree_of_node_in_subgraph(5, s_fc_1)) ;
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(6, s_fc_1)) ;
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(11, s_fc_1));
+}

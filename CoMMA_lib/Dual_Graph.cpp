@@ -501,11 +501,13 @@ unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::_com
 }
 
 unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc) {
-    unsigned short int deg(0);
 
-    for (auto i_fc_n : get_neighbours(i_fc))
-        if (i_fc_n != i_fc && s_of_fc.count(i_fc) > 0)
+    unsigned short int deg(0);
+    for (const long& i_fc_n : get_neighbours(i_fc)) {
+        if (i_fc_n != i_fc && s_of_fc.count(i_fc_n) > 0) {
             deg++;
+        }
+    }
     return deg;
 }
 
