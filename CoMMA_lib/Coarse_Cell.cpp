@@ -731,7 +731,7 @@ void Coarse_Cell::__add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbou
 
     if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.count(new_nb) > 0) {
         if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[new_nb].count(i_fc) > 0) {
-            assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[new_nb][i_fc].count(i_cc) > 0);
+            assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[new_nb][i_fc].count(i_cc) == 0);
             d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[new_nb][i_fc].insert(i_cc);
         } else
             d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[new_nb][i_fc] = {i_cc};
