@@ -88,6 +88,7 @@ public :
     void compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> & predecessor, long & i_depth, unordered_map<long, vector<long> > & d_spanning_tree);
     unsigned short int compute_min_fc_compactness_inside_a_cc(unordered_set<long>& s_fc);
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
+    vector<unordered_set<long>> compute_connected_components(const unordered_set<long>& s_initial_cc);
 };
 
 

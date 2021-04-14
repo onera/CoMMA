@@ -503,7 +503,7 @@ unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::_com
 unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc) {
 
     unsigned short int deg(0);
-    for (const long& i_fc_n : get_neighbours(i_fc)) {
+    for (const long &i_fc_n : get_neighbours(i_fc)) {
         if (i_fc_n != i_fc && s_of_fc.count(i_fc_n) > 0) {
             deg++;
         }
@@ -891,4 +891,79 @@ unordered_map<long, unsigned short int> Dual_Graph::compute_fc_compactness_insid
         }
     }
     return dict_fc_compactness;
+}
+
+
+vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unordered_set<long> &s_initial_fc) {
+
+
+/**
+ * With a set of non connected fine cells (s_initial_cc), we compute connected components of the graph.
+ * :param s_initial_cc: set of fine cells composing the initial coarse cell (not connected).
+ * :return: a set of connected component (stored as frozenset)
+ */
+
+    vector<unordered_set<long>> v_of_connected_set;
+    vector<long> v_initial_fc(s_initial_fc.size());
+    int i = 0;
+    for (const long &i_fc: s_initial_fc) {
+        v_initial_fc[i++] = i_fc;
+    }
+    unsigned short int size_cc = s_initial_fc.size();
+    if (size_cc <= 1) {
+        unordered_set<long> s = {v_initial_fc[0]};
+        v_of_connected_set.push_back(s);
+        return v_of_connected_set;
+    }
+    vector<bool> is_already_connected(size_cc, false);
+    is_already_connected[0] = true;
+
+    unordered_set<long> s_next({v_initial_fc[0]});
+    unsigned short int nb_connected_fc = 1;
+    unordered_map<long, unsigned short int> dict_global_to_local;
+    for (unsigned short int i_fc_loc = 0; i_fc_loc < size_cc; i_fc_loc++) {
+        dict_global_to_local[v_initial_fc[i_fc_loc]] = i_fc_loc;
+    }
+
+    unordered_set<long> s_fc({v_initial_fc[0]});
+    while (nb_connected_fc < size_cc) {
+        if (!s_next.empty()) {
+
+            const long i_fc = *s_next.begin(); // equiv. i_fc = s_next.pop()
+            s_next.erase(s_next.begin()); // equiv. i_fc = s_next.pop()
+            for (const long& i_fc_n : get_neighbours(i_fc)) {
+                if (dict_global_to_local.count(i_fc_n)) {
+                    if ((i_fc_n != i_fc) && (!is_already_connected[dict_global_to_local[i_fc_n]])) {
+                        s_next.insert(i_fc_n);
+                        nb_connected_fc++;
+                        is_already_connected[dict_global_to_local[i_fc_n]] = true;
+                        s_fc.insert(i_fc_n);
+                    }
+                }
+            }
+        } else {
+            // End of a connected component
+            v_of_connected_set.push_back(unordered_set<long>(s_fc));
+            short int arg_new_seed = -1;  // This is the new seed of the new connected component
+            for (unsigned short int i = 0; i < size_cc; i++){
+                if (!is_already_connected[i]) {
+                    arg_new_seed = i;
+                    is_already_connected[i] = true;
+                    nb_connected_fc++;
+                    break;
+                }
+            }
+
+            // Creation of a new connected component
+            s_fc = {v_initial_fc[arg_new_seed]};
+            s_next = {v_initial_fc[arg_new_seed]};
+        }
+    }
+
+
+// We add the last connected component
+    v_of_connected_set.push_back(s_fc);
+
+    return v_of_connected_set;
+
 }

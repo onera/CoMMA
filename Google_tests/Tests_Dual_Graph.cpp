@@ -4,6 +4,7 @@
 
 #include "MGridGen_Dual_Graph.h"
 #include "Graphs_biconnected_Dual_Graph.h"
+#include "Nine_squares_3x3_Dual_Graph.h"
 #include "gtest/gtest.h"
 
 class box_5x5x5 : public ::testing::Test {
@@ -1065,7 +1066,6 @@ TEST_F(MGridGen_Dual_Graph, compute_fc_compactness_inside_a_cc_mgridgen) {
     s_fc = unordered_set<long>({2, 6, 5, 11, 14});
     d_fc_compactness = (*g).compute_fc_compactness_inside_a_cc(s_fc);
     ref_d_fc_compactness = {{2,  2},
-                            {3,  2},
                             {5,  1},
                             {6,  2},
                             {11, 2},
@@ -1092,7 +1092,7 @@ TEST_F(MGridGen_Dual_Graph, compute_average_fc_compactness_inside_a_cc_mgridgen)
 
 TEST_F(Graphs_biconnected, compute_Degree_Of_Node_In_SubGraph) {
 
-    unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3,4, 5, 6, 7});
+    unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3, 4, 5, 6, 7});
     long seed = 0;
     ASSERT_EQ(3, (*g).compute_degree_of_node_in_subgraph(seed, s_fc));
 
@@ -1111,13 +1111,41 @@ TEST_F(Graphs_biconnected, compute_Degree_Of_Node_In_SubGraph) {
 TEST_F(MGridGen_Dual_Graph, compute_Degree_Of_Node_In_SubGraph_MGridGen) {
 
     unordered_set<long> s_fc_1 = unordered_set<long>({9, 4, 7, 14, 2, 0, 12, 13, 5, 11, 8, 10});
-    
-    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(0, s_fc_1)) ;
-    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(1, s_fc_1)) ;
-    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(2, s_fc_1)) ;
-    ASSERT_EQ(0, (*g).compute_degree_of_node_in_subgraph(3, s_fc_1)) ;
-    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(4, s_fc_1)) ;
-    ASSERT_EQ(3, (*g).compute_degree_of_node_in_subgraph(5, s_fc_1)) ;
-    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(6, s_fc_1)) ;
+
+    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(0, s_fc_1));
+    ASSERT_EQ(1, (*g).compute_degree_of_node_in_subgraph(1, s_fc_1));
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(2, s_fc_1));
+    ASSERT_EQ(0, (*g).compute_degree_of_node_in_subgraph(3, s_fc_1));
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(4, s_fc_1));
+    ASSERT_EQ(3, (*g).compute_degree_of_node_in_subgraph(5, s_fc_1));
+    ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(6, s_fc_1));
     ASSERT_EQ(2, (*g).compute_degree_of_node_in_subgraph(11, s_fc_1));
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, compute_connected_component_9_squares) {
+
+
+/**
+ * 9 squares (3*3)
+ */
+    unordered_set<long> s_initial_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
+    vector<unordered_set<long>> l_of_connected_set = (*g).compute_connected_components(s_initial_fc);
+    vector<unordered_set<long>> ref_connected_component = {s_initial_fc};
+    ASSERT_EQ(ref_connected_component, l_of_connected_set);
+
+    s_initial_fc = {0, 1, 2, 6, 7, 8};
+    l_of_connected_set = (*g).compute_connected_components(s_initial_fc);
+    ref_connected_component = {unordered_set<long>({6, 7, 8}), unordered_set<long>({0, 1, 2})};
+    ASSERT_EQ(ref_connected_component, l_of_connected_set);
+
+    s_initial_fc = {0, 2, 4, 6, 8};
+    l_of_connected_set = (*g).compute_connected_components(s_initial_fc);
+    ref_connected_component = {unordered_set<long>({8}), unordered_set<long>({6}), unordered_set<long>({4}), unordered_set<long>({2}), unordered_set<long>({0})};
+    ASSERT_EQ(ref_connected_component, l_of_connected_set);
+
+    s_initial_fc = {0, 2, 4, 1, 8};
+    l_of_connected_set = (*g).compute_connected_components(s_initial_fc);
+    ref_connected_component = {unordered_set<long>({8}), unordered_set<long>({0, 1, 2, 4 }) };
+    ASSERT_EQ(ref_connected_component, l_of_connected_set);
 }
