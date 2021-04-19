@@ -631,8 +631,7 @@ vector<double> Dual_Graph::compute_aspect_ratio_and_characteristics(double &min,
 }
 
 
-void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double min_aniso, double max_aniso, double mean_aniso, double sd_aniso,
-                                                      double median_aniso) {
+void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso) {
     bool separate_iso_and_aniso(false);
     if (separate_iso_and_aniso) {
         vector<long> v_iso;
@@ -804,47 +803,6 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
     i_depth--;
 }
 
-/*
-    def compute_breadth_first_search_v2(self,
-                                        set_of_fc,
-                                        current_seed: int,
-                                        predecessor: np.ndarray = None):
-
-        while i_depth < len(d_fringe):
-
-            for i_current_seed in d_fringe[i_depth]:
-
-                # TODO For reproduction testing: to remove hazard in set iteration (from != python version and much more!)
-                # print("BFS_v2 remove this!!!!!! Useless when stabilized")
-                # print("As I had the sorting of initial Dictionary for dynamic graph, this should be useless!!!!")
-
-                # Add to insure independence w.r.t. data structure
-                # l_sorted_neighbours = list(self.get_neighbours(i_current_seed))
-                # l_sorted_neighbours.sort()
-                for i_fc_neighbour in self.get_neighbours(i_current_seed):
-                    # for i_fc_neighbour in self.get_neighbours(i_current_seed):
-
-                    if i_fc_neighbour != i_current_seed and i_fc_neighbour in set_of_fc:
-                        if i_fc_neighbour not in s_fc_visited:
-
-                            if i_depth + 1 in d_fringe:
-                                d_fringe[i_depth + 1].append(i_fc_neighbour)
-                            else:
-                                d_fringe[i_depth + 1] = [i_fc_neighbour]
-                            if predecessor is not None:
-                                predecessor[i_fc_neighbour] = i_current_seed
-                            if i_current_seed in d_spanning_tree:
-                                d_spanning_tree[i_current_seed].append(i_fc_neighbour)
-                            else:
-                                d_spanning_tree[i_current_seed] = [i_fc_neighbour]
-                            s_fc_visited.add(i_fc_neighbour)
-            i_depth += 1
-        # print(d_fringe)
-        if predecessor is not None:
-            return i_depth - 1, d_fringe, d_spanning_tree, predecessor
-        else:
-            return i_depth - 1, d_fringe, d_spanning_tree
-*/
 
 
 
@@ -967,3 +925,250 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
     return v_of_connected_set;
 
 }
+
+vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
+  /*
+    We first compute the maximum degree of the graph to approx the maximum number of color
+    This is not an optimal coloring.
+    :param a_cells_color: an np.ndarray initialized to -1
+    :return: an  of colors
+  */
+
+  int max_number_of_neighbours(0);
+  
+  // Process cells/vertices
+
+  for(int i_cell = 0 ; i_cell < number_of_cells ; i_cell++) {
+    unordered_set<long> s;
+    vector<long> a_neighbours = get_neighbours(i_cell);
+    int i(0);
+    for(auto ind_neighbor_cell : a_neighbours) {
+      i++;
+      if(ind_neighbor_cell != i_cell) // if the cell is on boundary, it is defined in the row_ptr table
+	s.insert(ind_neighbor_cell);
+    }
+    if(s.size() > max_number_of_neighbours)
+      max_number_of_neighbours = s.size();
+  }
+
+  for(int i_cell = 0 ; i_cell < number_of_cells ; i_cell++) {
+    if(a_cells_color[i_cell] == -1) {
+      unordered_set<long> available_colour;
+      for(int i = 0 ; i < max_number_of_neighbours + 2 ; i++) // plus 2 est au pif!!!
+	available_colour.insert(i);
+      
+      vector<long> a_neighbours = get_neighbours(i_cell);
+      int i(0);
+      for(auto ind_neighbor_cell : a_neighbours) {
+	i++;
+	if(ind_neighbor_cell != i_cell) { //if the cell is on boundary, it is defined in the row=ptr table
+	  long c = a_cells_color[ind_neighbor_cell];
+	  if (c != -1 && available_colour.count(c) > 0)
+	    available_colour.erase(c);
+	}
+      }
+      a_cells_color[i_cell] = *available_colour.begin();
+      available_colour.erase(*available_colour.begin());
+    }
+  }
+
+  return a_cells_color;
+
+}
+
+vector<double> Dual_Graph::compute_a_visualization_data(Available_Datas data_type) {
+  if(data_type == Available_Datas::COMPACTNESS) 
+    return vector<double>(number_of_cells, 0.);
+  else if(data_type == Available_Datas::CARD) 
+    return vector<double>(number_of_cells, 1.);
+  else if(data_type == Available_Datas::ASPECT_RATIO) {
+    double min(0), max(0), mean(0), sd(0), median(0);
+    return compute_aspect_ratio_and_characteristics(min, max, mean, sd, median);
+  }
+  else if(data_type == Available_Datas::CELL_INDEX) {
+    vector<double> tmp;
+    for(int i = 0; i < number_of_cells; i++)
+      tmp.push_back(i);
+  }
+  else if(data_type == Available_Datas::CELL_COLOR)
+    return compute_cells_color(vector<double>(number_of_cells, -1.));
+  else if(data_type == Available_Datas::CELLS_ON_BND) {
+    assert(!seeds_pool->is_empty());
+    vector<double> a_is_on_bnd(number_of_cells, 0.);
+    for(auto i_k_v : seeds_pool->d_is_on_bnd) {
+      long i = i_k_v.first;
+      a_is_on_bnd[i] = i_k_v.second;
+    }
+    return a_is_on_bnd;
+  }
+  else {
+    // throw exception;
+  }
+}
+
+void Dual_Graph::compute_mesh_characteristics(int & nb_cells, int & nb_iso, int & nb_aniso) {
+  nb_cells = number_of_cells;
+  nb_aniso = s_anisotropic_compliant_cells.size();
+  nb_iso = number_of_cells - nb_aniso;
+}
+
+void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso, int & nb_cells, int & nb_iso, int & nb_aniso) { 
+  Available_Characteristic c = Available_Characteristic::COMPACTNESS_DIST | Available_Characteristic::COMPACTNESS;
+  c = c |Available_Characteristic::CARD;
+  c = c |Available_Characteristic::CARD_DIST;
+
+  if((c & characteristic) != Available_Characteristic::NONE)
+    return;
+  else if(characteristic == Available_Characteristic::MESH)
+    compute_mesh_characteristics(nb_cells, nb_iso, nb_aniso);
+  else if(characteristic == Available_Characteristic::ASPECT_RATIO)
+    compute_aspect_ratio_characteristics(min, max, mean, sd, median, min_aniso, max_aniso, mean_aniso, sd_aniso, median_aniso);
+}
+
+vector<long> Dual_Graph::get_vertices_iterable() {
+  vector<long> tmp;
+  for(int i = 0 ; i < number_of_cells ; i++)
+    tmp.push_back(i);
+  return tmp;
+}
+
+unordered_map<long, vector<long> > Dual_Graph::compute_d_cc(vector<long> fc_2_cc) {
+  assert(fc_2_cc.size() == number_of_cells);
+  unordered_map<long, vector<long>> d_cc;
+  for(auto i_fc : get_vertices_iterable()) {
+    long i_cc = fc_2_cc[i_fc];
+    if (d_cc.count(i_cc) > 0)
+      d_cc[i_cc].push_back(i_fc);
+    else {
+      d_cc[i_cc];
+      d_cc[i_cc].push_back(i_fc);
+    }      
+  }
+  return d_cc;
+}
+
+unordered_map<long, unordered_set<pair<long,long>, pair_hash>> Dual_Graph::compute_d_cc_edges(vector<long> fc_2_cc) {
+  unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cc_edges;
+
+  for(int i_v = 0 ; i_v < number_of_cells ; i_v++) {
+    for(int i = _m_CRS_Row_Ptr[i_v] ; i < _m_CRS_Row_Ptr[i_v+1] ; i++) {
+      long i_w = _m_CRS_Col_Ind[i];
+      long i_cc = fc_2_cc[i_v];
+      pair<long,long> edge;
+      if (i_v < i_w) {
+	edge.first = i_v;
+	edge.second = i_w;
+      }
+      else {
+	edge.first = i_w;
+	edge.second = i_v;
+      }
+
+      if (i_v != i_w) {
+	if(i_cc == fc_2_cc[i_w]) {
+	  if(d_cc_edges.count(i_cc) == 0)
+	    d_cc_edges[i_cc];
+	  d_cc_edges.insert(edge);
+	}
+	else {
+	  i_cc = -1;
+	  if(d_cc_edges.count(i_cc) == 0)
+	    d_cc_edges[i_cc];
+	  d_cc_edges.insert(edge);
+	}
+      }
+    }
+  }
+  return d_cc_edges;
+}
+
+unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_function)(int)) {
+  // TODO Cythonize This
+  if(test_function == nullptr) {
+    unsigned short int deg(0);
+    for(auto i_fc_n : get_neighbours(i_fc))
+      if (i_fc_n != i_fc)
+	deg += 1;
+    return deg;
+  }
+  else {
+    unsigned short int deg(0);
+    for(auto i_fc_n : get_neighbours(i_fc))
+      if(i_fc_n != i_fc && (*test_function)(i_fc_n))
+	deg += 1;
+    return deg;
+  }
+}
+
+void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> & row_ptr_l, vector<long> & col_ind_l, vector<long> & g_to_l) {
+  unsigned short int number_Of_Nodes_L = set_of_node.size();
+  unsigned short int number_of_nodes_g = number_of_cells;
+  assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
+
+  vector<unordered_map<long, double>> adj_Matrix(number_of_nodes_g);
+
+  int count(0), i_c(0);
+  g_to_l.reserve(number_of_nodes_g);
+  for(int i = 0 ; i < number_of_nodes_g ; i++)
+    g_to_l[i] = -1;
+  
+  for(auto iV : set_of_node) {
+    g_to_l[iV] = i_c;
+    i_c++;
+  }
+
+  for(auto iV : set_of_node) {
+    for(int i = _m_CRS_Row_Ptr[iV] ; i < _m_CRS_Row_Ptr[iV+1] ; i++) {
+      long i_w = _m_CRS_Col_Ind[i];
+      if(set_of_node.count(i_w) > 0) {
+	adj_Matrix[g_to_l[iV]][g_to_l[i_w]] = _m_CRS_Values[i];
+	count++;
+      }
+    }
+  }
+  row_ptr_l.reserve(number_Of_Nodes_L+1);
+  for(int i = 0 ; i < number_Of_Nodes_L+1 ; i++)
+    row_ptr_l[i] = 1;
+
+  col_ind_l.reserve(count);
+  for(int i = 0 ; i < count ; i++)
+    col_ind_l[i] = 0;
+  vector<double> values_l(count, 0.);
+
+  row_ptr_l[0] = 0;
+  long index_col_and_values = 0;
+
+  for(int i = 0 ; i < number_Of_Nodes_L ; i++) {
+    vector<long> sortedList_i;
+    for (auto adj_M_i_k_v : adj_Matrix[i])
+      sortedList_i.push_back(adj_M_i_k_v.first);
+    for(auto j : sortedList_i) {
+      values_l[index_col_and_values] = adj_Matrix[i][j];
+      col_ind_l[index_col_and_values] = j;
+      
+      index_col_and_values++;
+      row_ptr_l[i+1] = index_col_and_values;
+    }
+  }
+}
+
+unordered_set<long> Dual_Graph::compute_s_leaves(unordered_set<long> s_fc) {
+  unordered_set<long> s_leaves;
+
+  if(s_fc.size() == 0) {
+    for(int i = 0 ; i < number_of_cells ; i++)
+      s_fc.insert(i);
+  }
+
+  for(auto i_fc : s_fc) {
+    unsigned short int nb_common_faces_i_fc = compute_degree_of_node_in_subgraph(i_fc, s_fc);
+    if(nb_common_faces_i_fc < 2)
+      s_leaves.insert(i_fc);
+  }
+  return s_leaves;
+}
+
+/*
+create_coarser_dual_graph
+generate_coarser_dual_graph
+ */
