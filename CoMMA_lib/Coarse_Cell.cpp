@@ -597,7 +597,7 @@ void Coarse_Cell::__delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_
 }
 
 void Coarse_Cell::__delete_and_propagate_deletion__tmp_fc_fine_cut_edges(const long &i_fc,
-                                                                                        const long &j_fc) {
+                                                                         const long &j_fc) {
     // print("__delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc", i_fc, j_cc, j_fc)
     // print((*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc])
 //    del self.__tmp_fc_fine_cut_edges[i_fc][j_fc]
@@ -609,8 +609,6 @@ void Coarse_Cell::__delete_and_propagate_deletion__tmp_fc_fine_cut_edges(const l
         (*this).__tmp_fc_fine_cut_edges.erase(i_fc);
     }
 }
-
-
 
 
 unordered_set<long> Coarse_Cell::get_s_fc_w_outer_neighbours(unsigned short int min_degree) {
@@ -763,7 +761,7 @@ void Coarse_Cell::update_cc_neighbour(long i_fc, long i_fc_n, long i_cc_old, lon
     assert(__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old].find(i_fc_n) != __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old].end());
     double area = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old][i_fc_n];
     __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, i_cc_new, i_fc_n, area);
-
+    __delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, i_cc_old, i_fc_n);
 
 }
 
@@ -784,7 +782,7 @@ void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_
             __d_compactness_to_s_fc.erase(compactness);
     }
 
-    for (const long& i_fc : s_fc_to_remove) {
+    for (const long &i_fc : s_fc_to_remove) {
 
         vector<long> v_neighbours = (*(*this).__fc_graph).get_neighbours(i_fc);
         vector<double> v_weights = (*(*this).__fc_graph).get_weights(i_fc);
@@ -796,7 +794,7 @@ void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_
             long i_fc_n = v_neighbours[i_n];
             double i_w_fc_n = v_weights[i_n];
 
-            if ((*this).__s_fc.count(i_fc_n)>0) {
+            if ((*this).__s_fc.count(i_fc_n) > 0) {
                 /* i_fc_n are fc already in current cc.
                    no need to take care of i_fc_n in s_fc_to_remove because they will be deleted later via del __d_def[i_fc]*/
                 if (i_fc == i_fc_n) {
@@ -805,7 +803,7 @@ void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_
                     __boundary_area -= i_w_fc_n;
                 } else {
                     // TODO usefull?
-                    if (s_fc_to_remove.count(i_fc_n) == 0 ) {
+                    if (s_fc_to_remove.count(i_fc_n) == 0) {
                         s_modified_fc.insert(i_fc_n);
                     }
 
@@ -889,3 +887,50 @@ unordered_map<long, unordered_map<long, unordered_map<long, double>>> Coarse_Cel
     return __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
 }
 
+void Coarse_Cell::update_icc(long new_i_cc) {
+    __i_cc = new_i_cc;
+}
+
+void Coarse_Cell::update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc) {
+    // print("Call of update_cc_neighbour_renumbering")
+    for (auto &i_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc) {
+        long i_fc = i_k_v.first;
+        // Useful to avoid collision: by bad luck a new i_cc can be the same as an old one
+        vector<long> l_i_cc_sorted(__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].size()); // conscious copy
+        long i = 0;
+        for (auto &j_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]) {
+            l_i_cc_sorted[i++] = j_k_v.first;
+        }
+        sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
+
+        for (const long &i_cc_old :l_i_cc_sorted) {
+            if (dict_old_cc_to_new_cc.count(i_cc_old)) {
+                long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
+                __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_new] = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old];
+                __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].erase(i_cc_old);
+            }
+        }
+    }
+    for (auto& i_k_v :d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour) {
+
+        unsigned short i_degree = i_k_v.first;
+        for (auto& j_k_v :d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree]) {
+            long i_fc = j_k_v.first;
+            vector<long> l_i_cc_sorted(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].size()); // conscious copy
+            long i = 0;
+            for (const long &j_cc : d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc]) {
+                l_i_cc_sorted[i++] = j_cc;
+            }
+            sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
+            for(const long& i_cc_old : l_i_cc_sorted){
+                if (dict_old_cc_to_new_cc.count(i_cc_old)){
+                    long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
+                    d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].erase(i_cc_old);
+                    d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].insert(i_cc_new);
+                }
+            }
+        }
+
+
+    }
+}

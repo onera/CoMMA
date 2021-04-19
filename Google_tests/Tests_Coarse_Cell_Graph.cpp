@@ -1,7 +1,10 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Dual_Graph.h"
 #include "../CoMMA_lib/Coarse_Cell_Graph.h"
+
 #include "MGridGen_Dual_Graph.h"
+#include "MGridGen_ext_v2_Dual_Graph.h"
+
 #include "gtest/gtest.h"
 
 class Test_CCG_box_5x5x5 : public ::testing::Test {
@@ -124,6 +127,12 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
     //========================
     unordered_set<long> s_cc_0 = {3};
     ccg.cc_create_a_cc(s_cc_0);
+
+    ASSERT_TRUE(ccg.is_isotropic_cc(0));
+    ASSERT_FALSE(ccg.is_fc_agglomerated_in_isotropic_cc(0));
+    ASSERT_TRUE(ccg.is_fc_agglomerated_in_isotropic_cc(3));
+    ASSERT_FALSE(ccg.is_anisotropic_cc(0));
+
     ASSERT_EQ(1, ccg._cc_counter);
     ASSERT_EQ(1, ccg._nb_of_agglomerated_fc);
 
@@ -149,6 +158,11 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
     //========================
     unordered_set<long> s_cc_1 = {1, 2, 0};
     ccg.cc_create_a_cc(s_cc_1);
+
+    ASSERT_TRUE(ccg.is_isotropic_cc(1));
+    ASSERT_FALSE(ccg.is_anisotropic_cc(1));
+    ASSERT_TRUE(ccg.is_fc_agglomerated_in_isotropic_cc(0));
+    ASSERT_TRUE(ccg.is_fc_agglomerated_in_isotropic_cc(3));
 
     ASSERT_EQ(ccg._cc_counter, 2);
     ASSERT_EQ(4, ccg._nb_of_agglomerated_fc);
@@ -177,6 +191,9 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
     //========================
     unordered_set<long> s_cc_2 = {4, 5, 8, 7};
     ccg.cc_create_a_cc(s_cc_2);
+
+    ASSERT_TRUE(ccg.is_isotropic_cc(2));
+    ASSERT_FALSE(ccg.is_anisotropic_cc(2));
 
     ASSERT_EQ(ccg._cc_counter, 3);
     ASSERT_EQ(8, ccg._nb_of_agglomerated_fc);
@@ -208,8 +225,14 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
     unordered_set<long> s_cc_3 = {6, 11, 13, 14};
     ccg.cc_create_a_cc(s_cc_3);
 
+    ASSERT_TRUE(ccg.is_isotropic_cc(3));
+    ASSERT_FALSE(ccg.is_anisotropic_cc(3));
+
     unordered_set<long> s_cc_4 = {10, 9, 12};
     ccg.cc_create_a_cc(s_cc_4);
+
+    ASSERT_TRUE(ccg.is_isotropic_cc(4));
+    ASSERT_FALSE(ccg.is_anisotropic_cc(4));
 
     ASSERT_EQ(ccg._cc_counter, 5);
     ASSERT_EQ(15, ccg._nb_of_agglomerated_fc);
@@ -252,9 +275,9 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_1_MGridGen) {
 TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
 
     unordered_set<long> empty_set = unordered_set<long>({});
-    unordered_map<long, unordered_set<long>>  empty_dict_l_sl;
-    unordered_map<unsigned short int, unordered_set<long>>  empty_dict_s_sl;
-    unordered_map<unsigned short int, long>  empty_dict_s_l;
+    unordered_map<long, unordered_set<long>> empty_dict_l_sl;
+    unordered_map<unsigned short int, unordered_set<long>> empty_dict_s_sl;
+    unordered_map<unsigned short int, long> empty_dict_s_l;
 
     Coarse_Cell_Graph ccg((*g));
     ASSERT_EQ(ccg._cc_counter, 0);
@@ -265,6 +288,12 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
     //========================
     unordered_set<long> s_cc_0 = {3};
     ccg.cc_create_a_cc(s_cc_0, is_anisotropic);
+
+    ASSERT_FALSE(ccg.is_isotropic_cc(0));
+    ASSERT_TRUE(ccg.is_anisotropic_cc(0));
+    ASSERT_FALSE(ccg.is_fc_agglomerated_in_isotropic_cc(0));
+
+
     ASSERT_EQ(1, ccg._cc_counter);
 
     unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({3})}};
@@ -291,6 +320,9 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
     unordered_set<long> s_cc_1 = {1, 2, 0};
     ccg.cc_create_a_cc(s_cc_1, is_anisotropic);
 
+    ASSERT_FALSE(ccg.is_isotropic_cc(1));
+    ASSERT_TRUE(ccg.is_anisotropic_cc(1));
+
     ASSERT_EQ(ccg._cc_counter, 2);
     ref_d_cc_all[1] = unordered_set<long>({0, 1, 2});
     ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
@@ -315,6 +347,10 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
     //========================
     unordered_set<long> s_cc_2 = {4, 5, 8, 7};
     ccg.cc_create_a_cc(s_cc_2, is_anisotropic);
+
+    ASSERT_FALSE(ccg.is_isotropic_cc(2));
+    ASSERT_TRUE(ccg.is_anisotropic_cc(2));
+
 
     ASSERT_EQ(ccg._cc_counter, 3);
     ref_d_cc_all[2] = unordered_set<long>({4, 5, 8, 7});
@@ -346,8 +382,14 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
     unordered_set<long> s_cc_3 = {6, 11, 13, 14};
     ccg.cc_create_a_cc(s_cc_3, is_anisotropic);
 
+    ASSERT_FALSE(ccg.is_isotropic_cc(3));
+    ASSERT_TRUE(ccg.is_anisotropic_cc(3));
+
     unordered_set<long> s_cc_4 = {10, 9, 12};
     ccg.cc_create_a_cc(s_cc_4, is_anisotropic);
+
+    ASSERT_FALSE(ccg.is_isotropic_cc(4));
+    ASSERT_TRUE(ccg.is_anisotropic_cc(4));
 
     ASSERT_EQ(ccg._cc_counter, 5);
     ref_d_cc_all[3] = unordered_set<long>(s_cc_3);
@@ -357,8 +399,6 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_Case_2_MGridGen_is_anisotropic) {
     ref_d_dist_of_card[3] = 2;
     ref_d_dist_of_card[4] = 2;
     ASSERT_EQ(empty_dict_s_l, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
-
-//    ASSERT_EQ({1: 1, 3: 2, 4: 2}, ccg.d_distribution_of_cardinal_of_isotropic_cc)
 
     ref_d_card_2_cc[4].insert(3);
     ref_d_card_2_cc[3].insert(4);
@@ -392,9 +432,9 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_delayed_Case_1_MGridGen) {
     bool is_creation_delayed = true;
 
     unordered_set<long> empty_set = unordered_set<long>({});
-    unordered_map<long, unordered_set<long>>  empty_dict_l_sl;
-    unordered_map<unsigned short int, unordered_set<long>>  empty_dict_s_sl;
-    unordered_map<unsigned short int, long>  empty_dict_s_l;
+    unordered_map<long, unordered_set<long>> empty_dict_l_sl;
+    unordered_map<unsigned short int, unordered_set<long>> empty_dict_s_sl;
+    unordered_map<unsigned short int, long> empty_dict_s_l;
 
     Coarse_Cell_Graph ccg((*g));
     ASSERT_EQ(ccg._cc_counter, 0);
@@ -464,7 +504,7 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_delayed_Case_1_MGridGen) {
     ASSERT_EQ(s_cc_2, ccg._delayed_cc[2]);
 
 
-    ref_fc_2_cc = {-1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ref_fc_2_cc = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
     ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
 
     //========================
@@ -501,25 +541,25 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_delayed_Case_1_MGridGen) {
 
     ASSERT_EQ(ccg._cc_counter, 5);
     //{ (0, { 11, 6, 13, 14 }), (1, { 3 }), (2, { 0, 2, 1 }), (3, { 7, 8, 5, 4 }), (4, { 12, 9, 10 }) }
-    ref_d_cc_all[1]=unordered_set<long>({3});
-    ref_d_cc_all[2]=unordered_set<long>({0, 2, 1});
-    ref_d_cc_all[3]=unordered_set<long>({ 7, 8, 5, 4});
-    ref_d_cc_all[4]=unordered_set<long>({12, 9, 10});
+    ref_d_cc_all[1] = unordered_set<long>({3});
+    ref_d_cc_all[2] = unordered_set<long>({0, 2, 1});
+    ref_d_cc_all[3] = unordered_set<long>({7, 8, 5, 4});
+    ref_d_cc_all[4] = unordered_set<long>({12, 9, 10});
     ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
 
-    ref_d_dist_of_card[1]=1;
-    ref_d_dist_of_card[3]=2;
-    ref_d_dist_of_card[4]=2;
+    ref_d_dist_of_card[1] = 1;
+    ref_d_dist_of_card[3] = 2;
+    ref_d_dist_of_card[4] = 2;
     ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
 
-    ref_d_card_2_cc[1]=unordered_set<long>({1});
-    ref_d_card_2_cc[3]=unordered_set<long>({4, 2});
-    ref_d_card_2_cc[4]=unordered_set<long>({3, 0});
+    ref_d_card_2_cc[1] = unordered_set<long>({1});
+    ref_d_card_2_cc[3] = unordered_set<long>({4, 2});
+    ref_d_card_2_cc[4] = unordered_set<long>({3, 0});
     ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
 
-    ref_d_compactness_2_cc[0]=unordered_set<long>({1});
-    ref_d_compactness_2_cc[1]=unordered_set<long>({4,2, 0});
-    ref_d_compactness_2_cc[2]=unordered_set<long>({3});
+    ref_d_compactness_2_cc[0] = unordered_set<long>({1});
+    ref_d_compactness_2_cc[1] = unordered_set<long>({4, 2, 0});
+    ref_d_compactness_2_cc[2] = unordered_set<long>({3});
     ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
 
     ASSERT_EQ(1, ccg.get_cc_compactness(0));
@@ -527,8 +567,533 @@ TEST_F(MGridGen_Dual_Graph, create_a_cc_delayed_Case_1_MGridGen) {
     ASSERT_EQ(1, ccg.get_cc_compactness(2));
     ASSERT_EQ(2, ccg.get_cc_compactness(3));
     ASSERT_EQ(1, ccg.get_cc_compactness(4));
-    ref_fc_2_cc = {2, 2, 2, 1, 3, 3, 0, 3, 3, 4, 4, 0, 4, 0, 0 };
+    ref_fc_2_cc = {2, 2, 2, 1, 3, 3, 0, 3, 3, 4, 4, 0, 4, 0, 0};
     ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, _cc_update_neighbours_MGridGen_ext_v2) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0,
+                                0, 0, 1, 3, 3,
+                                2, 2, 2, 2, 5,
+                                3, 3, 3, 4, 4,
+                                4, 4, 5, 4, 2,
+                                0};
+
+    //========================
+    // Create coarse cell 0
+    //========================
+    unordered_set<long> s_fc_0 = {0, 1, 2, 3, 4, 5, 6, 25};
+    ccg.cc_create_a_cc(s_fc_0);
+
+    //========================
+    // Create coarse cell 1
+    //========================
+    unordered_set<long> s_fc_1 = {7};
+    ccg.cc_create_a_cc(s_fc_1);
+
+    //========================
+    // Create coarse cell 2
+    //========================
+    unordered_set<long> s_fc_2 = {10, 11, 12, 13, 24};
+    ccg.cc_create_a_cc(s_fc_2);
+
+    //========================
+    // Create coarse cell 3
+    //========================
+    unordered_set<long> s_fc_3 = {8, 9, 15, 16, 17};
+    ccg.cc_create_a_cc(s_fc_3);
+
+    //========================
+    // Create coarse cell 4
+    //========================
+    unordered_set<long> s_fc_4 = {18, 19, 20, 21, 23};
+    ccg.cc_create_a_cc(s_fc_4);
+
+    //========================
+    // Create coarse cell 5
+    //========================
+    unordered_set<long> s_fc_5 = {14, 22};
+    ccg.cc_create_a_cc(s_fc_5);
+
+    ccg.fill_cc_neighbouring();
+
+    // cc = ccg._d_isotropic_cc[0]
+    // fc 9: 3->2
+    long i_origin_cc = 3;
+    long i_destination_cc = 2;
+
+    unordered_set<long> s_fc = {9};
+
+    Coarse_Cell *origin_cc = ccg._d_isotropic_cc[i_origin_cc];
+    Coarse_Cell *destination_cc = ccg._d_isotropic_cc[i_destination_cc];
+
+    (*destination_cc).add_fc(s_fc, ref_fc_2_cc);
+
+    unordered_set<long> union_s_fc = (*destination_cc).get_s_fc();
+    for (const long &i_fc :(*origin_cc).get_s_fc()) {
+        union_s_fc.insert(i_fc);
+    }
+
+    unordered_set<long> s_fc_n;
+
+    long i_fc = 9;
+    vector<long> v_neighbours = (*g).get_neighbours(i_fc);
+    for (const long &i_fc_n :  v_neighbours) {
+        s_fc_n.insert(i_fc_n);
+    }
+
+    for (const long &i_fc_n :  union_s_fc) {
+        if (s_fc_n.count(i_fc_n) > 0) {
+            s_fc_n.erase(i_fc_n);
+        }
+    }
+    unordered_set<long> ref_s_fc_n = {18, 23};
+    ASSERT_EQ(ref_s_fc_n, s_fc_n);
+    // s_fc_n = set(ccg._fc_graph.get_neighbours(i_fc)) - union_s_fc
+
+//    for (const long &i_fc_n: s_fc_n) {
+//        const long &i_cc_n = ref_fc_2_cc[i_fc_n];
+//        (*ccg._d_isotropic_cc[i_cc_n]).update_cc_neighbour(i_fc_n, i_fc, i_origin_cc, i_destination_cc);
+//    }
+    ccg._cc_update_neighbours(i_fc,
+                              s_fc_n,
+                              i_origin_cc,
+                              i_destination_cc);
+    ccg._fc_2_cc[i_fc] = i_destination_cc;
+
+//    ref_fc_2_cc[i_fc] = i_destination_cc;
+    (*origin_cc).remove_fc(s_fc, ref_fc_2_cc);
+
+    ASSERT_TRUE((*destination_cc).check_consistency(ref_fc_2_cc));
+    ASSERT_TRUE((*origin_cc).check_consistency(ref_fc_2_cc));
+}
+
+
+TEST_F(MGridGen_Dual_Graph, swap_fc_case_1_MGridGen) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    ccg.cc_create_a_cc({0, 2});
+    ccg.cc_create_a_cc({1, 3});
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({0, 2})},
+                                                             {1, unordered_set<long>({1, 3})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{2, {0, 1}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short int, long> ref_d_dist_of_card = {{2, 2}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(1, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, {0, 1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ccg.fill_cc_neighbouring();
+
+    long i_fc = 0;
+    long i_origin_cc = 0;
+    long i_target_cc = 1;
+    unordered_set<long> s_fc = {i_fc};
+    unordered_set<long> set_removed_cc = ccg.cc_swap_fc(s_fc, i_origin_cc, i_target_cc);
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    ASSERT_EQ(empty_set, set_removed_cc);
+
+    ref_d_cc_all = {{0, unordered_set<long>({2})},
+                    {1, unordered_set<long>({1, 3, 0})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+    ref_d_card_2_cc = {{1, {0}},
+                       {3, {1}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_d_dist_of_card = {{1, 1},
+                          {3, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(0, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+
+    ref_d_compactness_2_cc = {{0, {0}},
+                              {1, {1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    vector<long> ref_fc_2_cc = {1, 1, 0, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(MGridGen_Dual_Graph, swap_fc_case_2_MGridGen) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    ccg.cc_create_a_cc({0, 2});
+    ccg.cc_create_a_cc({1, 3});
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({0, 2})},
+                                                             {1, unordered_set<long>({1, 3})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{2, {0, 1}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short int, long> ref_d_dist_of_card = {{2, 2}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(1, ccg.get_cc_compactness(0));
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, {0, 1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ccg.fill_cc_neighbouring();
+
+    unordered_set<long> s_fc = {0, 2};
+    long i_origin_cc = 0;
+    long i_target_cc = 1;
+    unordered_set<long> set_removed_cc = ccg.cc_swap_fc(s_fc, i_origin_cc, i_target_cc);
+    ccg._s_cc_to_remove = set_removed_cc;
+    unordered_set<long> ref_s_removed = unordered_set<long>({0});
+    ASSERT_EQ(ref_s_removed, ccg._s_cc_to_remove);
+
+    ref_d_cc_all = {{1, unordered_set<long>({1, 3, 0, 2})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{4, {1}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_d_dist_of_card = {{4, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(1, ccg.get_cc_compactness(1));
+
+    ref_d_compactness_2_cc = {{1, {1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    vector<long> ref_fc_2_cc = {1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.cc_renumber();
+    ref_s_removed = unordered_set<long>({});
+    ASSERT_EQ(ref_s_removed, ccg._s_cc_to_remove);
+
+    ref_d_cc_all = {{0, unordered_set<long>({1, 3, 0, 2})}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{4, {0}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_d_dist_of_card = {{4, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(1, ccg.get_cc_compactness(0));
+
+    ref_d_compactness_2_cc = {{1, {0}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ref_fc_2_cc = {0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, swap_fc_case_MGridGen_ext_v2) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    ccg.cc_create_a_cc({0, 1, 2, 3, 4, 25});
+    ccg.cc_create_a_cc({6, 7, 5});
+    ccg.cc_create_a_cc({10, 11, 12, 13, 24});
+    ccg.cc_create_a_cc({8, 9, 15, 16, 17});
+    ccg.cc_create_a_cc({18, 19, 20, 21, 23});
+    ccg.cc_create_a_cc({14, 22});
+
+    ccg.fill_cc_neighbouring();
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 2, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    //============================
+    // First swap
+    //============================
+    unordered_set<long> s_fc = {5};
+    long i_origin_cc = 1;
+    long i_target_cc = 0;
+    unordered_set<long> set_removed_cc = ccg.cc_swap_fc(s_fc, i_origin_cc, i_target_cc);
+    ccg._s_cc_to_remove = set_removed_cc;
+
+    Coarse_Cell *cc = ccg._d_isotropic_cc[0];
+
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{2,  {{2, {{10, 2.0}}}}},
+                                                                                                                       {4,  {{2, {{11, 1.0}}}}},
+                                                                                                                       {5,  {{1, {{6,  1.0}}},
+                                                                                                                                    {2, {{11, 1.0},
+                                                                                                                                                {12, 1.0},
+                                                                                                                                                {13, 1.0}}}}},
+                                                                                                                       {25, {{1, {{6,  3.16227766}}}}},
+
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{2, {2}},
+                                                                                                                                                      {4, {2}},
+                                                                                                                                                      {5, {1}},
+                                                                                                                                                      {25, {1}},
+                                                                                                                                              }},
+                                                                                                                                          {3, {{5, {2}}}}
+    };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    cc = ccg._d_isotropic_cc[1];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6, {{2, {{13, 2.0}}},
+                                                             {0, {{5, 1.0}, {25, 3.16227766}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{6, {0}}}},
+                                                              {1, {{6, {2}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    cc = ccg._d_isotropic_cc[2];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{10, {{0, {{2, 2.0}}}, {3, {{9,  1.0}}}, {4, {{23, 1.0}}}}},
+                                                 {11, {{0, {{5, 1.0},        {4, 1.0}}},
+                                                                        {4, {{23, 1}}}}},
+                                                 {12, {{0, {{5, 1}}},
+                                                                        {5, {{14, 1}}},
+                                                                                          {4, {{19, 2}, {23, 1}}}}},
+                                                 {24, {{3, {{8, 2.23606798}, {9, 1}, {17, 1}}}}},
+                                                 {13, {{1, {{6, 2}}},
+                                                                        {0, {{5,  1}}},
+                                                                                          {5, {{14, 1}, {22, 2.23606798}}}}}
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{13, {0, 1}}, {10, {4, 3, 0}}, {11, {4, 0}}, {12, {0, 5}}}},
+                                                              {2, {{11, {0}},    {12, {4}},       {13, {5}}}},
+                                                              {3, {{24, {3}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+
+    cc = ccg._d_isotropic_cc[4];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{18, {{3, {{9,  1.0}, {17, 2.23606798}}}}},
+                                                 {19, {{2, {{12, 2.0}}}, {5, {{14, 1.0}}}}},
+                                                 {20, {{5, {{14, 1},   {22, 1}}}}},
+                                                 {23, {{3, {{9,  1}}},   {2, {{10, 1}, {11, 1}, {12, 1}}}}}
+    };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{3, {{23, {2}}}},
+                                                              {1, {{23, {3}}, {19, {5, 2}}}},
+                                                              {2, {{18, {3}}, {20, {5}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //============================
+    // Second swap
+    //============================
+    s_fc = {6};
+    ccg.cc_swap_fc(s_fc, 1, 0);
+
+    cc = ccg._d_isotropic_cc[0];
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6, {{2, {{13, 2}}}, {1, {{7, 3.16227766}}}}},
+                                                 {4, {{2, {{11, 1}}}}},
+                                                 {5, {{2, {{13, 1}, {12, 1}, {11, 1}}}}},
+                                                 {2, {{2, {{10, 2}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{3, {{5, {2}}}},
+                                                              {1, {{2, {2}}, {4, {2}}, {6, {1, 2}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //============================
+    // Third swap
+    //============================
+    s_fc = {9};
+    ccg.cc_swap_fc(s_fc, 3, 2);
+
+    cc = ccg._d_isotropic_cc[4];
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{20, {{5, {{14, 1}, {22, 1}}}}},
+                                                 {19, {{2, {{12, 2}}}, {5, {{14, 1}}}}},
+                                                 {23, {{2, {{9,  1}, {10, 1}, {11, 1}, {12, 1}}}}},
+                                                 {18, {{2, {{9,  1}}}, {3, {{17, 2.23606798}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{4, {{23, {2}}}},
+                                                              {3, {{23, {2}}}},
+                                                              {1, {{18, {2, 3}}, {19, {5, 2}}}},
+                                                              {2, {{20, {5}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //============================
+    // Fourth swap
+    //============================
+    s_fc = {13};
+    ccg.cc_swap_fc(s_fc, 2, 0);
+    ccg.check_cc_consistency();
+    cc = ccg._d_isotropic_cc[0];
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{13, {{5, {{22, 2.23606798}, {14, 1}}}, {2, {{12, 2.23606798}}}}},
+                                                 {6,  {{1, {{7,  3.16227766}}}}},
+                                                 {4,  {{2, {{11, 1}}}}},
+                                                 {5,  {{2, {{12, 1},          {11, 1}}}}},
+                                                 {2,  {{2, {{10, 2}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{2, {2}}, {4,  {2}}, {6, {1}}, {13, {2}}}},
+                                                              {2, {{5, {2}}, {13, {5}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //============================
+    // Fifth swap
+    //============================
+    s_fc = {14};
+    ccg.cc_swap_fc(s_fc, 5, 4);
+    ccg.check_cc_consistency();
+    cc = ccg._d_isotropic_cc[4];
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{20, {{5, {{22, 1}}}}},
+                                                 {14, {{5, {{22, 1}}}, {0, {{13, 1}}}, {2, {{12, 1}}}}},
+                                                 {19, {{2, {{12, 2}}}}},
+                                                 {23, {{2, {{9,  1}, {10, 1}, {11, 1}, {12, 1}}}}},
+                                                 {18, {{2, {{9,  1}}}, {3, {{17, 2.23606798}}}}}};
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+//
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{4, {{23, {2}}}},
+                                                              {1, {{18, {3, 2}}, {19, {2}}, {14, {2, 0, 5}}, {20, {5}}}}};
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+}
+
+TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    ccg.cc_create_a_cc({2});
+    ccg.cc_create_a_cc({0, 1, 3});
+    ccg.cc_create_a_cc({6});
+    ccg.cc_create_a_cc({11, 13, 14});
+    ccg.cc_create_a_cc({5,4,7, 8, 9, 10, 12});
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({2})},
+                                                             {1, unordered_set<long>({0, 1, 3})},
+                                                             {2, unordered_set<long>({6})},
+                                                             {3, unordered_set<long>({11, 13, 14})},
+                                                             {4, unordered_set<long>({5, 10, 9, 4, 8, 7, 12})},
+                                                             };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {2, 0}},
+                                                                              {3, {1, 3}},
+                                                                              {7, {4}}
+                                                                              };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short int, long> ref_d_dist_of_card = {{1, 2},
+                                                                  {3, 2},
+                                                                  {7, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {0, 2}},
+                                                                                     {1, {1, 3, 4}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ccg.fill_cc_neighbouring();
+
+    vector<long> ref_fc_2_cc = {1, 1, 0, 1, 4, 4, 2, 4, 4, 4, 4, 3, 4, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    Coarse_Cell *cc = ccg._d_isotropic_cc[2];
+
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {0, { {2, 2.23606798} }}, {1, { {3, 2.23606798} }}, {3, { {11, 2} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {1, { {6, { 3, 1, 0 }} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    cc = ccg._d_isotropic_cc[4];
+
+     ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {3, { {13, 3.16227766} }} }}, {5, { {0, { {2, 2.23606798} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 0 }}, {10, { 3 }} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    //============================
+    // First swap
+    //============================
+    unordered_set<long> s_fc = {2};
+    long i_origin_cc = 0;
+    long i_target_cc = 1;
+    unordered_set<long> set_removed_cc = ccg.cc_swap_fc(s_fc, i_origin_cc, i_target_cc);
+    ccg._s_cc_to_remove = set_removed_cc;
+
+    cc = ccg._d_isotropic_cc[2];
+
+     ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {1, { {2, 2.23606798}, {3, 2.23606798} }}, {3, { {11, 2} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {2, { {6, { 1}} }},
+                                                                 {1, { {6, { 3, 1}} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    cc = ccg._d_isotropic_cc[4];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {3, { {13, 3.16227766} }} }}, {5, { {1, { {2, 2.23606798} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 1 }}, {10, { 3 }} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    ccg.cc_renumber();
+
+    ref_d_cc_all = {{0, unordered_set<long>({0, 1,2,  3})},
+                    {1, unordered_set<long>({6})},
+                    {2, unordered_set<long>({11, 13, 14})},
+                    {3, unordered_set<long>({5, 10, 9, 4, 8, 7, 12})},
+                    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{4, {0}},
+                       {7, {3}},
+                       {3, {2}},
+                       {1, {1}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_d_dist_of_card = {{4, 1},
+                          {1, 1},
+                          {3, 1},
+                          {7, 1},
+                          };
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+    ref_d_compactness_2_cc = {{1, {0, 2, 3}},
+                              {0, {1}},
+                              };
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    cc = ccg._d_isotropic_cc[1];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {0, { {2, 2.23606798}, {3, 2.23606798} }},
+                                                        {2, { {11, 2} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {2, { {6, { 0}} }},
+                                                                {1, { {6, { 2, 0}} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
+    cc = ccg._d_isotropic_cc[3];
+
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {2, { {13, 3.16227766} }} }},
+                                                 {5, { {0, { {2, 2.23606798} }} }} };
+    ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
+
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 0 }}, {10, { 2 }} }} };
+    ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
+
 
 }
 

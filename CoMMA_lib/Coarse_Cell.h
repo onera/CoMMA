@@ -81,7 +81,9 @@ public:
         }
     }
 
+    void update_icc(long new_i_cc);
 
+    void update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc);
 public:
     //private Fields
     Dual_Graph *__fc_graph;
