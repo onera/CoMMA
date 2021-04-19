@@ -6,7 +6,7 @@
 #define COMMA_PROJECT_GRAPH_BIC_DUAL_GRAPH_H
 
 #include "gtest/gtest.h"
-#include "../CoMMA_lib/Dual_graph.h"
+#include "../CoMMA_lib/Dual_Graph.h"
 class Graphs_biconnected : public ::testing::Test {
 
 protected:

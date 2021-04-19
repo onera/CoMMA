@@ -6,7 +6,7 @@
 #define COMMA_PROJECT_MGRIDGEN_EXT_V2_DUAL_GRAPH_H
 
 #include "gtest/gtest.h"
-#include "../CoMMA_lib/Dual_graph.h"
+#include "../CoMMA_lib/Dual_Graph.h"
 
 class MGridGen_ext_v2_Dual_Graph : public ::testing::Test {
     // filename_ini = "box_1_rect_5_d_F.hdf"

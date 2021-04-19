@@ -6,7 +6,7 @@
 #define COMMA_PROJECT_NINE_SQUARES_DUAL_GRAPH_H
 
 #include "gtest/gtest.h"
-#include "../CoMMA_lib/Dual_graph.h"
+#include "../CoMMA_lib/Dual_Graph.h"
 
 class Nine_squares_3x3_Dual_Graph : public ::testing::Test {
 
