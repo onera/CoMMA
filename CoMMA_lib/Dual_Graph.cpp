@@ -631,7 +631,8 @@ vector<double> Dual_Graph::compute_aspect_ratio_and_characteristics(double &min,
 }
 
 
-void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso) {
+void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso,
+                                                      double &median_aniso) {
     bool separate_iso_and_aniso(false);
     if (separate_iso_and_aniso) {
         vector<long> v_iso;
@@ -967,245 +968,240 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
 }
 
 vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
-  /*
-    We first compute the maximum degree of the graph to approx the maximum number of color
-    This is not an optimal coloring.
-    :param a_cells_color: an np.ndarray initialized to -1
-    :return: an  of colors
-  */
+    /*
+      We first compute the maximum degree of the graph to approx the maximum number of color
+      This is not an optimal coloring.
+      :param a_cells_color: an np.ndarray initialized to -1
+      :return: an  of colors
+    */
 
-  int max_number_of_neighbours(0);
+    int max_number_of_neighbours(0);
 
-  // Process cells/vertices
+    // Process cells/vertices
 
-  for(int i_cell = 0 ; i_cell < number_of_cells ; i_cell++) {
-    unordered_set<long> s;
-    vector<long> a_neighbours = get_neighbours(i_cell);
-    int i(0);
-    for(auto ind_neighbor_cell : a_neighbours) {
-      i++;
-      if(ind_neighbor_cell != i_cell) // if the cell is on boundary, it is defined in the row_ptr table
-	s.insert(ind_neighbor_cell);
+    for (int i_cell = 0; i_cell < number_of_cells; i_cell++) {
+        unordered_set<long> s;
+        vector<long> a_neighbours = get_neighbours(i_cell);
+        int i(0);
+        for (auto ind_neighbor_cell : a_neighbours) {
+            i++;
+            if (ind_neighbor_cell != i_cell) // if the cell is on boundary, it is defined in the row_ptr table
+                s.insert(ind_neighbor_cell);
+        }
+        if (s.size() > max_number_of_neighbours)
+            max_number_of_neighbours = s.size();
     }
-    if(s.size() > max_number_of_neighbours)
-      max_number_of_neighbours = s.size();
-  }
 
-  for(int i_cell = 0 ; i_cell < number_of_cells ; i_cell++) {
-    if(a_cells_color[i_cell] == -1) {
-      unordered_set<long> available_colour;
-      for(int i = 0 ; i < max_number_of_neighbours + 2 ; i++) // plus 2 est au pif!!!
-	available_colour.insert(i);
+    for (int i_cell = 0; i_cell < number_of_cells; i_cell++) {
+        if (a_cells_color[i_cell] == -1) {
+            unordered_set<long> available_colour;
+            for (int i = 0; i < max_number_of_neighbours + 2; i++) // plus 2 est au pif!!!
+                available_colour.insert(i);
 
-      vector<long> a_neighbours = get_neighbours(i_cell);
-      int i(0);
-      for(auto ind_neighbor_cell : a_neighbours) {
-	i++;
-	if(ind_neighbor_cell != i_cell) { //if the cell is on boundary, it is defined in the row=ptr table
-	  long c = a_cells_color[ind_neighbor_cell];
-	  if (c != -1 && available_colour.count(c) > 0)
-	    available_colour.erase(c);
-	}
-      }
-      a_cells_color[i_cell] = *available_colour.begin();
-      available_colour.erase(*available_colour.begin());
+            vector<long> a_neighbours = get_neighbours(i_cell);
+            int i(0);
+            for (auto ind_neighbor_cell : a_neighbours) {
+                i++;
+                if (ind_neighbor_cell != i_cell) { //if the cell is on boundary, it is defined in the row=ptr table
+                    long c = a_cells_color[ind_neighbor_cell];
+                    if (c != -1 && available_colour.count(c) > 0)
+                        available_colour.erase(c);
+                }
+            }
+            a_cells_color[i_cell] = *available_colour.begin();
+            available_colour.erase(*available_colour.begin());
+        }
     }
-  }
 
-  return a_cells_color;
+    return a_cells_color;
 
 }
 
 vector<double> Dual_Graph::compute_a_visualization_data(Available_Datas data_type) {
-  if(data_type == Available_Datas::COMPACTNESS)
-    return vector<double>(number_of_cells, 0.);
-  else if(data_type == Available_Datas::CARD)
-    return vector<double>(number_of_cells, 1.);
-  else if(data_type == Available_Datas::ASPECT_RATIO) {
-    double min(0), max(0), mean(0), sd(0), median(0);
-    return compute_aspect_ratio_and_characteristics(min, max, mean, sd, median);
-  }
-  else if(data_type == Available_Datas::CELL_INDEX) {
-    vector<double> tmp;
-    for(int i = 0; i < number_of_cells; i++)
-      tmp.push_back(i);
-  }
-  else if(data_type == Available_Datas::CELL_COLOR)
-    return compute_cells_color(vector<double>(number_of_cells, -1.));
-  else if(data_type == Available_Datas::CELLS_ON_BND) {
-    assert(!seeds_pool->is_empty());
-    vector<double> a_is_on_bnd(number_of_cells, 0.);
-    for(auto i_k_v : seeds_pool->d_is_on_bnd) {
-      long i = i_k_v.first;
-      a_is_on_bnd[i] = i_k_v.second;
+    if (data_type == Available_Datas::COMPACTNESS)
+        return vector<double>(number_of_cells, 0.);
+    else if (data_type == Available_Datas::CARD)
+        return vector<double>(number_of_cells, 1.);
+    else if (data_type == Available_Datas::ASPECT_RATIO) {
+        double min(0), max(0), mean(0), sd(0), median(0);
+        return compute_aspect_ratio_and_characteristics(min, max, mean, sd, median);
+    } else if (data_type == Available_Datas::CELL_INDEX) {
+        vector<double> tmp;
+        for (int i = 0; i < number_of_cells; i++)
+            tmp.push_back(i);
+    } else if (data_type == Available_Datas::CELL_COLOR)
+        return compute_cells_color(vector<double>(number_of_cells, -1.));
+    else if (data_type == Available_Datas::CELLS_ON_BND) {
+        assert(!seeds_pool->is_empty());
+        vector<double> a_is_on_bnd(number_of_cells, 0.);
+        for (auto i_k_v : seeds_pool->d_is_on_bnd) {
+            long i = i_k_v.first;
+            a_is_on_bnd[i] = i_k_v.second;
+        }
+        return a_is_on_bnd;
+    } else {
+        // throw exception;
     }
-    return a_is_on_bnd;
-  }
-  else {
-    // throw exception;
-  }
 }
 
-void Dual_Graph::compute_mesh_characteristics(int & nb_cells, int & nb_iso, int & nb_aniso) {
-  nb_cells = number_of_cells;
-  nb_aniso = s_anisotropic_compliant_cells.size();
-  nb_iso = number_of_cells - nb_aniso;
+void Dual_Graph::compute_mesh_characteristics(int &nb_cells, int &nb_iso, int &nb_aniso) {
+    nb_cells = number_of_cells;
+    nb_aniso = s_anisotropic_compliant_cells.size();
+    nb_iso = number_of_cells - nb_aniso;
 }
 
-void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso, int & nb_cells, int & nb_iso, int & nb_aniso) {
-  Available_Characteristic c = Available_Characteristic::COMPACTNESS_DIST | Available_Characteristic::COMPACTNESS;
-  c = c |Available_Characteristic::CARD;
-  c = c |Available_Characteristic::CARD_DIST;
+void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso,
+                                         double &mean_aniso, double &sd_aniso, double &median_aniso, int &nb_cells, int &nb_iso, int &nb_aniso) {
+    Available_Characteristic c = Available_Characteristic::COMPACTNESS_DIST | Available_Characteristic::COMPACTNESS;
+    c = c | Available_Characteristic::CARD;
+    c = c | Available_Characteristic::CARD_DIST;
 
-  if((c & characteristic) != Available_Characteristic::NONE)
-    return;
-  else if(characteristic == Available_Characteristic::MESH)
-    compute_mesh_characteristics(nb_cells, nb_iso, nb_aniso);
-  else if(characteristic == Available_Characteristic::ASPECT_RATIO)
-    compute_aspect_ratio_characteristics(min, max, mean, sd, median, min_aniso, max_aniso, mean_aniso, sd_aniso, median_aniso);
+    if ((c & characteristic) != Available_Characteristic::NONE)
+        return;
+    else if (characteristic == Available_Characteristic::MESH)
+        compute_mesh_characteristics(nb_cells, nb_iso, nb_aniso);
+    else if (characteristic == Available_Characteristic::ASPECT_RATIO)
+        compute_aspect_ratio_characteristics(min, max, mean, sd, median, min_aniso, max_aniso, mean_aniso, sd_aniso, median_aniso);
 }
 
 vector<long> Dual_Graph::get_vertices_iterable() {
-  vector<long> tmp;
-  for(int i = 0 ; i < number_of_cells ; i++)
-    tmp.push_back(i);
-  return tmp;
+    vector<long> tmp;
+    for (int i = 0; i < number_of_cells; i++)
+        tmp.push_back(i);
+    return tmp;
 }
 
 unordered_map<long, vector<long> > Dual_Graph::compute_d_cc(vector<long> fc_2_cc) {
-  assert(fc_2_cc.size() == number_of_cells);
-  unordered_map<long, vector<long>> d_cc;
-  for(auto i_fc : get_vertices_iterable()) {
-    long i_cc = fc_2_cc[i_fc];
-    if (d_cc.count(i_cc) > 0)
-      d_cc[i_cc].push_back(i_fc);
-    else {
-      d_cc[i_cc];
-      d_cc[i_cc].push_back(i_fc);
+    assert(fc_2_cc.size() == number_of_cells);
+    unordered_map<long, vector<long>> d_cc;
+    for (auto i_fc : get_vertices_iterable()) {
+        long i_cc = fc_2_cc[i_fc];
+        if (d_cc.count(i_cc) > 0)
+            d_cc[i_cc].push_back(i_fc);
+        else {
+            d_cc[i_cc];
+            d_cc[i_cc].push_back(i_fc);
+        }
     }
-  }
-  return d_cc;
+    return d_cc;
 }
 
-unordered_map<long, unordered_set<pair<long,long>, pair_hash>> Dual_Graph::compute_d_cc_edges(vector<long> fc_2_cc) {
-  unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cc_edges;
+unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::compute_d_cc_edges(vector<long> fc_2_cc) {
+    unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cc_edges;
 
-  for(int i_v = 0 ; i_v < number_of_cells ; i_v++) {
-    for(int i = _m_CRS_Row_Ptr[i_v] ; i < _m_CRS_Row_Ptr[i_v+1] ; i++) {
-      long i_w = _m_CRS_Col_Ind[i];
-      long i_cc = fc_2_cc[i_v];
-      pair<long,long> edge;
-      if (i_v < i_w) {
-	edge.first = i_v;
-	edge.second = i_w;
-      }
-      else {
-	edge.first = i_w;
-	edge.second = i_v;
-      }
+    for (int i_v = 0; i_v < number_of_cells; i_v++) {
+        for (int i = _m_CRS_Row_Ptr[i_v]; i < _m_CRS_Row_Ptr[i_v + 1]; i++) {
+            long i_w = _m_CRS_Col_Ind[i];
+            long i_cc = fc_2_cc[i_v];
+            pair<long, long> edge;
+            if (i_v < i_w) {
+                edge.first = i_v;
+                edge.second = i_w;
+            } else {
+                edge.first = i_w;
+                edge.second = i_v;
+            }
 
-      if (i_v != i_w) {
-	if(i_cc == fc_2_cc[i_w]) {
-	  if(d_cc_edges.count(i_cc) == 0)
-	    d_cc_edges[i_cc];
-	  d_cc_edges.insert(edge);
-	}
-	else {
-	  i_cc = -1;
-	  if(d_cc_edges.count(i_cc) == 0)
-	    d_cc_edges[i_cc];
-	  d_cc_edges.insert(edge);
-	}
-      }
+            if (i_v != i_w) {
+                if (i_cc == fc_2_cc[i_w]) {
+                    if (d_cc_edges.count(i_cc) == 0)
+                        d_cc_edges[i_cc];
+                    d_cc_edges.insert(edge);
+                } else {
+                    i_cc = -1;
+                    if (d_cc_edges.count(i_cc) == 0)
+                        d_cc_edges[i_cc];
+                    d_cc_edges.insert(edge);
+                }
+            }
+        }
     }
-  }
-  return d_cc_edges;
+    return d_cc_edges;
 }
 
 unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_function)(int)) {
-  // TODO Cythonize This
-  if(test_function == nullptr) {
-    unsigned short int deg(0);
-    for(auto i_fc_n : get_neighbours(i_fc))
-      if (i_fc_n != i_fc)
-	deg += 1;
-    return deg;
-  }
-  else {
-    unsigned short int deg(0);
-    for(auto i_fc_n : get_neighbours(i_fc))
-      if(i_fc_n != i_fc && (*test_function)(i_fc_n))
-	deg += 1;
-    return deg;
-  }
+    // TODO Cythonize This
+    if (test_function == nullptr) {
+        unsigned short int deg(0);
+        for (auto i_fc_n : get_neighbours(i_fc))
+            if (i_fc_n != i_fc)
+                deg += 1;
+        return deg;
+    } else {
+        unsigned short int deg(0);
+        for (auto i_fc_n : get_neighbours(i_fc))
+            if (i_fc_n != i_fc && (*test_function)(i_fc_n))
+                deg += 1;
+        return deg;
+    }
 }
 
-void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> & row_ptr_l, vector<long> & col_ind_l, vector<long> & g_to_l) {
-  unsigned short int number_Of_Nodes_L = set_of_node.size();
-  unsigned short int number_of_nodes_g = number_of_cells;
-  assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
+void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<long> &g_to_l) {
+    unsigned short int number_Of_Nodes_L = set_of_node.size();
+    unsigned short int number_of_nodes_g = number_of_cells;
+    assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
 
-  vector<unordered_map<long, double>> adj_Matrix(number_of_nodes_g);
+    vector<unordered_map<long, double>> adj_Matrix(number_of_nodes_g);
 
-  int count(0), i_c(0);
-  g_to_l.reserve(number_of_nodes_g);
-  for(int i = 0 ; i < number_of_nodes_g ; i++)
-    g_to_l[i] = -1;
+    int count(0), i_c(0);
+    g_to_l.reserve(number_of_nodes_g);
+    for (int i = 0; i < number_of_nodes_g; i++)
+        g_to_l[i] = -1;
 
-  for(auto iV : set_of_node) {
-    g_to_l[iV] = i_c;
-    i_c++;
-  }
-
-  for(auto iV : set_of_node) {
-    for(int i = _m_CRS_Row_Ptr[iV] ; i < _m_CRS_Row_Ptr[iV+1] ; i++) {
-      long i_w = _m_CRS_Col_Ind[i];
-      if(set_of_node.count(i_w) > 0) {
-	adj_Matrix[g_to_l[iV]][g_to_l[i_w]] = _m_CRS_Values[i];
-	count++;
-      }
+    for (auto iV : set_of_node) {
+        g_to_l[iV] = i_c;
+        i_c++;
     }
-  }
-  row_ptr_l.reserve(number_Of_Nodes_L+1);
-  for(int i = 0 ; i < number_Of_Nodes_L+1 ; i++)
-    row_ptr_l[i] = 1;
 
-  col_ind_l.reserve(count);
-  for(int i = 0 ; i < count ; i++)
-    col_ind_l[i] = 0;
-  vector<double> values_l(count, 0.);
-
-  row_ptr_l[0] = 0;
-  long index_col_and_values = 0;
-
-  for(int i = 0 ; i < number_Of_Nodes_L ; i++) {
-    vector<long> sortedList_i;
-    for (auto adj_M_i_k_v : adj_Matrix[i])
-      sortedList_i.push_back(adj_M_i_k_v.first);
-    for(auto j : sortedList_i) {
-      values_l[index_col_and_values] = adj_Matrix[i][j];
-      col_ind_l[index_col_and_values] = j;
-
-      index_col_and_values++;
-      row_ptr_l[i+1] = index_col_and_values;
+    for (auto iV : set_of_node) {
+        for (int i = _m_CRS_Row_Ptr[iV]; i < _m_CRS_Row_Ptr[iV + 1]; i++) {
+            long i_w = _m_CRS_Col_Ind[i];
+            if (set_of_node.count(i_w) > 0) {
+                adj_Matrix[g_to_l[iV]][g_to_l[i_w]] = _m_CRS_Values[i];
+                count++;
+            }
+        }
     }
-  }
+    row_ptr_l.reserve(number_Of_Nodes_L + 1);
+    for (int i = 0; i < number_Of_Nodes_L + 1; i++)
+        row_ptr_l[i] = 1;
+
+    col_ind_l.reserve(count);
+    for (int i = 0; i < count; i++)
+        col_ind_l[i] = 0;
+    vector<double> values_l(count, 0.);
+
+    row_ptr_l[0] = 0;
+    long index_col_and_values = 0;
+
+    for (int i = 0; i < number_Of_Nodes_L; i++) {
+        vector<long> sortedList_i;
+        for (auto adj_M_i_k_v : adj_Matrix[i])
+            sortedList_i.push_back(adj_M_i_k_v.first);
+        for (auto j : sortedList_i) {
+            values_l[index_col_and_values] = adj_Matrix[i][j];
+            col_ind_l[index_col_and_values] = j;
+
+            index_col_and_values++;
+            row_ptr_l[i + 1] = index_col_and_values;
+        }
+    }
 }
 
 unordered_set<long> Dual_Graph::compute_s_leaves(unordered_set<long> s_fc) {
-  unordered_set<long> s_leaves;
+    unordered_set<long> s_leaves;
 
-  if(s_fc.size() == 0) {
-    for(int i = 0 ; i < number_of_cells ; i++)
-      s_fc.insert(i);
-  }
+    if (s_fc.size() == 0) {
+        for (int i = 0; i < number_of_cells; i++)
+            s_fc.insert(i);
+    }
 
-  for(auto i_fc : s_fc) {
-    unsigned short int nb_common_faces_i_fc = compute_degree_of_node_in_subgraph(i_fc, s_fc);
-    if(nb_common_faces_i_fc < 2)
-      s_leaves.insert(i_fc);
-  }
-  return s_leaves;
+    for (auto i_fc : s_fc) {
+        unsigned short int nb_common_faces_i_fc = compute_degree_of_node_in_subgraph(i_fc, s_fc);
+        if (nb_common_faces_i_fc < 2)
+            s_leaves.insert(i_fc);
+    }
+    return s_leaves;
 }
 
 /*
@@ -1215,7 +1211,7 @@ generate_coarser_dual_graph
 
 
 int Dual_Graph::compute_distance_from_seed_to_first_vertex_of_degree_2(long seed,
-                                                           unordered_map<long, queue<long> *> dict_Covering_Tree) {
+                                                                       unordered_map<long, queue<long> *> dict_Covering_Tree) {
     // TODO Cette fonction ne me parait pas ausi utile que pourrait le laisser penser son nom.
     // TODO En gros vu les arbres passes en arg, le retour est toujours 0 ou 1.
     // TODO et le nom n'est pas top, car le degre peut etre de plus de 2.
@@ -1233,7 +1229,7 @@ int Dual_Graph::compute_distance_from_seed_to_first_vertex_of_degree_2(long seed
     return dist;
 }
 
-unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long& max_seed,
+unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long &max_seed,
                                                                             vector<long> listOfFineCells) {
 
 
@@ -1631,4 +1627,110 @@ int Dual_Graph::remove_separating_vertex(long seed,
             }
         }
     }
+}
+
+// TODO Ici on utilise le card...
+// TODO Est-ce qu'utiliser une autre metrique serait pertinent?
+unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
+                                                                 unsigned short &nb_of_order_of_neighbourhood,
+                                                                 unsigned short max_card,
+                                                                 vector<bool> &isFineCellAgglomerated_tmp,
+                                                                 unordered_set<long> s_of_constrained_fc) {
+    // cout<<"Call of compute_neighbourhood_of_cc"<<endl;
+
+    // Basic checks
+    assert(max_card != -1);
+    // TODO resoudre le probleme suivant: si l'ordre n'est pas assez grand,
+    // c'est a dire que le nombre de voisin trouve n'est pas suffisant pour constituer une cellule grossiere entiere,
+    // il faut peut-etre faire une boucle while pour aller le plus loin possible!
+    if(max_card==0)
+    {
+        max_card = USHRT_MAX;
+    }
+
+    // This function computes the neighbourhood of a seed passed as argument.
+    // It looks in the neighbourhood of order at least nb_of_order_of_neighbourhood, but if the size of the set of neighbour
+    // is too small (<max_card), we look in higher order neighbourhood.
+    //
+    unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
+    unordered_map<long, int> d_n_of_order_o_m_one;  // dict of FC with the order of neighbouring from seed
+    for(const long& i_fc : s_seeds)
+    {
+        d_n_of_order_o_m_one[i_fc] = 0;
+    }
+
+
+    int i_order = 1;
+
+    while ((i_order < nb_of_order_of_neighbourhood + 1) ||
+           (d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
+
+        unordered_map<long, int> d_n_of_order_o;
+
+        //d_n_of_seed.update(d_n_of_order_o_m_one)
+        for (auto id_M_one:d_n_of_order_o_m_one) {
+            d_n_of_seed[id_M_one.first] = id_M_one.second;
+        }
+
+        for (const auto& i_k_v : d_n_of_order_o_m_one) {
+
+            long seed_tmp = i_k_v.first;
+            for (const long& i_fc_n : get_neighbours(seed_tmp)) {
+
+                if ((d_n_of_seed.count(i_fc_n) == 0) &&
+                    ((!isFineCellAgglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
+                    if (d_n_of_order_o.count(i_fc_n) == 0) {
+                        if (!(s_of_constrained_fc).empty()) {
+                            if ((s_of_constrained_fc).count(i_fc_n)) {
+                                if(d_n_of_order_o_m_one.count(i_fc_n)){
+                                    if(i_order < d_n_of_order_o_m_one[i_fc_n]){
+                                        d_n_of_order_o[i_fc_n] = i_order;
+                                    }
+                                } else {
+                                    d_n_of_order_o[i_fc_n] = i_order;
+                                }
+                            }
+                        } else {
+                            // a fc can be access via multiple ways. We look for the quickest
+                            if (d_n_of_order_o_m_one.count(i_fc_n))
+                            {
+                                if(i_order < d_n_of_order_o_m_one[i_fc_n])
+                                {
+                                    d_n_of_order_o[i_fc_n] = i_order;
+                                }
+                            } else {
+                                d_n_of_order_o[i_fc_n] = i_order;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Exit condition
+        if (d_n_of_order_o.empty()) {
+            // No more neighbours available:
+            break;
+        }
+
+        // Copy: d_n_of_order_o_m_one = d_n_of_order_o;
+        d_n_of_order_o_m_one.clear();
+        for (auto id:d_n_of_order_o) {
+            d_n_of_order_o_m_one[id.first] = id.second;
+        }
+        i_order++;
+    }
+    // Update of d_n_of_seed
+    //d_n_of_seed.update(d_n_of_order_o_m_one)
+    for (auto id_M_one:d_n_of_order_o_m_one) {
+        d_n_of_seed[id_M_one.first] = id_M_one.second;
+    }
+
+    // We remove the seed from the neighbours of seed
+    for(const long &i_fc:s_seeds){
+        d_n_of_seed.erase(i_fc);
+    }
+
+    nb_of_order_of_neighbourhood = i_order;
+    return d_n_of_seed;
 }

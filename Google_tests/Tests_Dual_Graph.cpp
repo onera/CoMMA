@@ -1186,7 +1186,7 @@ TEST_F(Edge_7_Dual_Graph, find_seed_via_frontal_method_Case_2) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_025) {
 
-    vector<long> listOfFineCells =  {0, 2, 5};
+    vector<long> listOfFineCells = {0, 2, 5};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1213,7 +1213,7 @@ TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_025) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_10265813119) {
 
-    vector<long> listOfFineCells =  {10, 2, 6, 5, 8, 13, 11, 9};
+    vector<long> listOfFineCells = {10, 2, 6, 5, 8, 13, 11, 9};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1368,7 +1368,7 @@ TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_457810) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_205) {
 
-    vector<long> listOfFineCells =  {2, 0, 5};
+    vector<long> listOfFineCells = {2, 0, 5};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1602,7 +1602,7 @@ TEST_F(Edge_8_Dual_Graph, find_seed_via_frontal_method_Case_4_random) {
 
 TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
 
-    vector<long> listOfFineCells =  {5, 0, 3, 4, 2, 7, 1, 6, 8};
+    vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1619,7 +1619,7 @@ TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
     ref_max_dict[7] = new queue<long>({1});
     ref_max_dict[8] = new queue<long>({2});
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1638,7 +1638,7 @@ TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
 
 TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
 
-    vector<long> listOfFineCells =   {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1656,7 +1656,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
     ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
 
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1675,7 +1675,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
 
 TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6_seed_6) {
 
-    vector<long> listOfFineCells =   {6, 0, 1, 2, 3, 4, 5, 7, 8};
+    vector<long> listOfFineCells = {6, 0, 1, 2, 3, 4, 5, 7, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1693,7 +1693,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6_seed_6) {
     ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
 
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1841,7 +1841,7 @@ TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_10265813119) {
 
 TEST_F(Edge_9_3_Dual_Graph, remove_separating_vertex_10265813119) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8});
     unordered_set<long> ref_s_fc({0, 1, 2, 5, 6, 7, 8});
 
@@ -1858,7 +1858,7 @@ TEST_F(Edge_9_3_Dual_Graph, remove_separating_vertex_10265813119) {
 
 TEST_F(Edge_9_Dual_Graph, remove_separating_vertex_Case_5_random) {
 
-    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6, 8};
+    vector<long> v_fc = {5, 0, 3, 4, 2, 7, 1, 6, 8};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
     unordered_set<long> ref_s_fc({0, 1, 3, 5, 6, 7, 8});
 
@@ -1875,7 +1875,7 @@ TEST_F(Edge_9_Dual_Graph, remove_separating_vertex_Case_5_random) {
 
 TEST_F(Example_6_Dual_Graph, remove_separating_vertex_Case_6) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
     unordered_set<long> ref_s_fc({1, 3, 4, 5, 6, 7, 8});
 
@@ -1892,7 +1892,7 @@ TEST_F(Example_6_Dual_Graph, remove_separating_vertex_Case_6) {
 
 TEST_F(Edge_8_Dual_Graph, remove_separating_vertex_Case_4_random) {
 
-    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6};
+    vector<long> v_fc = {5, 0, 3, 4, 2, 7, 1, 6};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2});
     unordered_set<long> ref_s_fc({0, 1, 2, 3, 5, 6, 7});
 
@@ -1909,7 +1909,7 @@ TEST_F(Edge_8_Dual_Graph, remove_separating_vertex_Case_4_random) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_0) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1926,7 +1926,7 @@ TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_0) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_1) {
 
-    vector<long> v_fc ={1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vector<long> v_fc = {1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 1, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1943,7 +1943,7 @@ TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_1) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_9) {
 
-    vector<long> v_fc ={9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
+    vector<long> v_fc = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1990,4 +1990,264 @@ TEST_F(Example_9_Dual_Graph, remove_separating_vertex_Case_9_random) {
     (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
 
     ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_0) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {8,3},
+                                                      {11,3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,1},
+                                                      {3,1},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {8,3},
+                                                      {11,3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_2) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1, 2, 3, 6};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{4,2},
+                                                      {5,1},
+                                                      {7,3},
+                                                      {8,2},
+                                                      {10,3},
+                                                      {11,1},
+                                                      {13,2},
+                                                      {14,2}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_case_3_cc_not_connected) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1, 11};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated
+                                                                                 );
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,1},
+                                                      {3,1},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,1},
+                                                      {8,3},
+                                                      {9,3},
+                                                      {10,2},
+                                                      {13,1},
+                                                      {14,1}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 1, 11, 3, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {8,3},
+                                                      {11,3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_11) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {8,3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {7,4}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(5, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118_max_card) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 10;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {7,4},
+                                                      {9,5},
+                                                      {10,6},
+                                                      {12,6}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(7, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_1184) {
+//    Not enough cells due to restriction.
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,1},
+                                                      {2,1},
+                                                      {3,2},
+                                                      {5,2},
+                                                      {6,2}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(3, number_of_order_of_neighbourhood);
+}
+
+
+TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_13) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 11, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed= (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                 number_of_order_of_neighbourhood,
+                                                                                 goal_card,
+                                                                                 a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,1},
+                                                      {4,3},
+                                                      {5,2},
+                                                      {6,2},
+                                                      {7,4},
+                                                      {8,3},
+                                                      {10,4},
+                                                      {11,3},
+                                                      {13,4},
+                                                      {14,4}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(5, number_of_order_of_neighbourhood);
 }
