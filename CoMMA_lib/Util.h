@@ -6,7 +6,11 @@
 #define COMMA_PROJECT_UTIL_H
 #include <assert.h>
 #include <deque>
+#include <vector>
+#include <unordered_set>
+#include <list>
 #include <forward_list>
+#include <cmath>
 
 using namespace std;
 void convert_agglomeration_lines_arrays_to_agglomeration_lines(
@@ -37,4 +41,5 @@ void convert_agglo_lines_to_agglomeration_lines_arrays(const long &nb_fc,
                                                        long *agglo_lines_array_idx,
                                                        long *agglo_lines_array);
 
+list<unordered_set<long>> parts_list(vector<long> seq, int length);
 #endif //COMMA_PROJECT_UTIL_H

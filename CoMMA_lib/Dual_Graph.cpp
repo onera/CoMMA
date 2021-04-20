@@ -803,6 +803,47 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
     i_depth--;
 }
 
+/*
+    def compute_breadth_first_search_v2(self,
+                                        set_of_fc,
+                                        current_seed: int,
+                                        predecessor: np.ndarray = None):
+
+        while i_depth < len(d_fringe):
+
+            for i_current_seed in d_fringe[i_depth]:
+
+                # TODO For reproduction testing: to remove hazard in set iteration (from != python version and much more!)
+                # print("BFS_v2 remove this!!!!!! Useless when stabilized")
+                # print("As I had the sorting of initial Dictionary for dynamic graph, this should be useless!!!!")
+
+                # Add to insure independence w.r.t. data structure
+                # l_sorted_neighbours = list(self.get_neighbours(i_current_seed))
+                # l_sorted_neighbours.sort()
+                for i_fc_neighbour in self.get_neighbours(i_current_seed):
+                    # for i_fc_neighbour in self.get_neighbours(i_current_seed):
+
+                    if i_fc_neighbour != i_current_seed and i_fc_neighbour in set_of_fc:
+                        if i_fc_neighbour not in s_fc_visited:
+
+                            if i_depth + 1 in d_fringe:
+                                d_fringe[i_depth + 1].append(i_fc_neighbour)
+                            else:
+                                d_fringe[i_depth + 1] = [i_fc_neighbour]
+                            if predecessor is not None:
+                                predecessor[i_fc_neighbour] = i_current_seed
+                            if i_current_seed in d_spanning_tree:
+                                d_spanning_tree[i_current_seed].append(i_fc_neighbour)
+                            else:
+                                d_spanning_tree[i_current_seed] = [i_fc_neighbour]
+                            s_fc_visited.add(i_fc_neighbour)
+            i_depth += 1
+        # print(d_fringe)
+        if predecessor is not None:
+            return i_depth - 1, d_fringe, d_spanning_tree, predecessor
+        else:
+            return i_depth - 1, d_fringe, d_spanning_tree
+*/
 
 
 
@@ -851,7 +892,6 @@ unordered_map<long, unsigned short int> Dual_Graph::compute_fc_compactness_insid
     return dict_fc_compactness;
 }
 
-
 vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unordered_set<long> &s_initial_fc) {
 
 
@@ -889,7 +929,7 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
 
             const long i_fc = *s_next.begin(); // equiv. i_fc = s_next.pop()
             s_next.erase(s_next.begin()); // equiv. i_fc = s_next.pop()
-            for (const long& i_fc_n : get_neighbours(i_fc)) {
+            for (const long &i_fc_n : get_neighbours(i_fc)) {
                 if (dict_global_to_local.count(i_fc_n)) {
                     if ((i_fc_n != i_fc) && (!is_already_connected[dict_global_to_local[i_fc_n]])) {
                         s_next.insert(i_fc_n);
@@ -903,7 +943,7 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
             // End of a connected component
             v_of_connected_set.push_back(unordered_set<long>(s_fc));
             short int arg_new_seed = -1;  // This is the new seed of the new connected component
-            for (unsigned short int i = 0; i < size_cc; i++){
+            for (unsigned short int i = 0; i < size_cc; i++) {
                 if (!is_already_connected[i]) {
                     arg_new_seed = i;
                     is_already_connected[i] = true;
@@ -935,7 +975,7 @@ vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
   */
 
   int max_number_of_neighbours(0);
-  
+
   // Process cells/vertices
 
   for(int i_cell = 0 ; i_cell < number_of_cells ; i_cell++) {
@@ -956,7 +996,7 @@ vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
       unordered_set<long> available_colour;
       for(int i = 0 ; i < max_number_of_neighbours + 2 ; i++) // plus 2 est au pif!!!
 	available_colour.insert(i);
-      
+
       vector<long> a_neighbours = get_neighbours(i_cell);
       int i(0);
       for(auto ind_neighbor_cell : a_neighbours) {
@@ -977,9 +1017,9 @@ vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
 }
 
 vector<double> Dual_Graph::compute_a_visualization_data(Available_Datas data_type) {
-  if(data_type == Available_Datas::COMPACTNESS) 
+  if(data_type == Available_Datas::COMPACTNESS)
     return vector<double>(number_of_cells, 0.);
-  else if(data_type == Available_Datas::CARD) 
+  else if(data_type == Available_Datas::CARD)
     return vector<double>(number_of_cells, 1.);
   else if(data_type == Available_Datas::ASPECT_RATIO) {
     double min(0), max(0), mean(0), sd(0), median(0);
@@ -1012,7 +1052,7 @@ void Dual_Graph::compute_mesh_characteristics(int & nb_cells, int & nb_iso, int 
   nb_iso = number_of_cells - nb_aniso;
 }
 
-void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso, int & nb_cells, int & nb_iso, int & nb_aniso) { 
+void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso, double &median_aniso, int & nb_cells, int & nb_iso, int & nb_aniso) {
   Available_Characteristic c = Available_Characteristic::COMPACTNESS_DIST | Available_Characteristic::COMPACTNESS;
   c = c |Available_Characteristic::CARD;
   c = c |Available_Characteristic::CARD_DIST;
@@ -1042,7 +1082,7 @@ unordered_map<long, vector<long> > Dual_Graph::compute_d_cc(vector<long> fc_2_cc
     else {
       d_cc[i_cc];
       d_cc[i_cc].push_back(i_fc);
-    }      
+    }
   }
   return d_cc;
 }
@@ -1111,7 +1151,7 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
   g_to_l.reserve(number_of_nodes_g);
   for(int i = 0 ; i < number_of_nodes_g ; i++)
     g_to_l[i] = -1;
-  
+
   for(auto iV : set_of_node) {
     g_to_l[iV] = i_c;
     i_c++;
@@ -1145,7 +1185,7 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
     for(auto j : sortedList_i) {
       values_l[index_col_and_values] = adj_Matrix[i][j];
       col_ind_l[index_col_and_values] = j;
-      
+
       index_col_and_values++;
       row_ptr_l[i+1] = index_col_and_values;
     }
@@ -1172,3 +1212,423 @@ unordered_set<long> Dual_Graph::compute_s_leaves(unordered_set<long> s_fc) {
 create_coarser_dual_graph
 generate_coarser_dual_graph
  */
+
+
+int Dual_Graph::compute_distance_from_seed_to_first_vertex_of_degree_2(long seed,
+                                                           unordered_map<long, queue<long> *> dict_Covering_Tree) {
+    // TODO Cette fonction ne me parait pas ausi utile que pourrait le laisser penser son nom.
+    // TODO En gros vu les arbres passes en arg, le retour est toujours 0 ou 1.
+    // TODO et le nom n'est pas top, car le degre peut etre de plus de 2.
+    long iter_seed = seed;
+    int dist = 0;
+    while (dict_Covering_Tree.count(iter_seed) == 1) {
+
+        if ((*dict_Covering_Tree[iter_seed]).size() == 1) {
+            iter_seed = (*dict_Covering_Tree[iter_seed]).front();
+            dist += 1;
+        } else {
+            return dist;
+        }
+    }
+    return dist;
+}
+
+unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long& max_seed,
+                                                                            vector<long> listOfFineCells) {
+
+
+//"""
+//This function finds the fine cells in the list listOfFineCells that defined the biggest distance of the covering tree.
+//:param listOfFineCells:
+//:param matrixAdj_CRS_row_ptr:
+//:param matrixAdj_CRS_col_ind:
+//:return:
+//"""
+
+    long nbIteration = 5;
+
+    long seed = listOfFineCells[0];
+    int argSeed = 0;  //TODO Check int/Long
+    unordered_set<long> possibleSeed;
+    int iteration = 0;
+
+//    long max_seed = -1;
+    int max_dist = -1;
+    int max_length = -1;
+    unordered_map<long, queue<long> *> max_dict;
+
+    int nbOfCells = listOfFineCells.size();
+    unordered_map<long, int> dict_inv_listOfFineCells;
+    unordered_set<long> setOfFineCells(nbOfCells);
+    for (int i = 0; i < nbOfCells; i++) {
+        dict_inv_listOfFineCells[listOfFineCells[i]] = i;
+        setOfFineCells.insert(listOfFineCells[i]);
+    }
+
+
+    vector<int> colour = vector<int>(nbOfCells);//-1 * np.ones((nbOfCells,), dtype=int)
+
+    // Loop to find a good seed.
+    // Many iteration are needed.
+    while (iteration < nbIteration) {
+
+        // print "\niter", iteration
+        unordered_map<long, queue<long> *> dict_ConnectivityTree;
+
+        // parcours en profondeur
+        //Initialisation of the vector to -1;
+        for (int i = 0; i < nbOfCells; i++) {
+            colour[i] = -1;
+        }
+
+        colour[argSeed] = 0;
+        int maxColour = 0;
+
+        queue<long> queueOfNewSeed = queue<long>({seed});
+
+        long old_seed = seed;
+
+        while (!queueOfNewSeed.empty()) {
+
+            seed = queueOfNewSeed.front();
+//            cout<<iteration<<" seed "<<seed<<endl;
+            queueOfNewSeed.pop();
+            argSeed = dict_inv_listOfFineCells[seed];
+
+            long ind = _m_CRS_Row_Ptr[seed];
+            long ind_p_one = _m_CRS_Row_Ptr[seed + 1];
+            for (long iNCell = ind; iNCell < ind_p_one; ++iNCell) // Process of Neighbours
+            {
+                long indNeighborCell = _m_CRS_Col_Ind[iNCell];
+//                cout<<"\t"<<indNeighborCell<<endl;
+                if ((indNeighborCell != seed) && (setOfFineCells.count(indNeighborCell) == 1)) {
+
+                    int arg = dict_inv_listOfFineCells[indNeighborCell];
+
+                    if (colour[arg] == -1) {
+                        colour[arg] = colour[argSeed] + 1;
+                        queueOfNewSeed.push(indNeighborCell);
+                        //cout<<"queueOfNewSeed.front() "<<queueOfNewSeed.front()<<endl;
+                        if (maxColour < colour[argSeed] + 1) {
+                            maxColour = colour[argSeed] + 1;
+                        }
+                    }
+                    // building of connectivity tree:
+                    if (dict_ConnectivityTree.count(seed) == 1) {
+                        (*dict_ConnectivityTree[seed]).push(indNeighborCell);
+                    } else {
+                        dict_ConnectivityTree[seed] = new queue<long>({indNeighborCell});
+                    }
+
+                }
+            }
+        }
+        if (max_length <= maxColour) {  // max length c'est la longueur max pour toutes les iterations
+
+            int dist = compute_distance_from_seed_to_first_vertex_of_degree_2(old_seed, dict_ConnectivityTree);
+            if (max_length < maxColour) {
+                possibleSeed.clear();
+            }
+            max_length = maxColour;  // max length c'est la longueur max pour toutes les iterations
+
+            if (max_dist <= dist) {
+                max_seed = old_seed;
+                max_dist = dist;
+
+                // Deep copy:
+                //unordered_map<long, queue<long>*> max_dict;
+                //max_dict.erase();
+                for (auto iPairMD:max_dict) {
+                    delete iPairMD.second;
+                }
+                for (auto iPairDict:dict_ConnectivityTree) {
+                    max_dict[iPairDict.first] = iPairDict.second;
+//                    while(!(*iPair.second).empty())
+//                    {
+//                        (* max_dict[iPair.first]).push((*iPair.second).front());
+//                        (*iPair.second).pop();
+//                    }
+                }
+                //max_dict = copy.deepcopy(dict_ConnectivityTree);
+            } else {
+                // Destruction of the pointer to queue
+                for (auto iPairDict:dict_ConnectivityTree) {
+                    delete iPairDict.second;
+                }
+            }
+        }
+        unordered_set<long> set_max_New_Seed;
+        for (int i = 0; i < nbOfCells; ++i) {
+            if (colour[i] == maxColour) {
+                set_max_New_Seed.insert(listOfFineCells[i]);
+            }
+        }
+
+        if (set_max_New_Seed.size() == 1) {
+
+            for (auto s : set_max_New_Seed) {
+                seed = s;  //set_max_New_Seed.pop();
+            }
+
+            if (possibleSeed.count(seed) == 0) {
+                argSeed = dict_inv_listOfFineCells[seed];
+                possibleSeed.insert(old_seed);
+            } else {
+//                sizes[2] = max_seed;
+                return max_dict;
+            }
+        } else {
+            bool isAllSeedTested = true;
+
+            for (auto newSeed: set_max_New_Seed) {
+
+                if (possibleSeed.count(newSeed) == 0) {
+                    isAllSeedTested = false;
+                    seed = newSeed;
+                    argSeed = dict_inv_listOfFineCells[seed];
+                    possibleSeed.insert(old_seed);
+                }
+            }
+            if (isAllSeedTested) {
+                //seed = max_seed;
+//                sizes[2] = max_seed;
+                return max_dict;
+            }
+
+        }
+        iteration += 1;
+
+        // print "maxColour", maxColour
+        // print "maxDist", max_dist, "seed", max_seed, "dict", max_dict
+//        return max_seed, max_dict;
+    }
+//    sizes[2] = max_seed;
+    return max_dict;
+}
+
+int Dual_Graph::remove_separating_vertex(long seed,
+                                         unordered_map<long, queue<long> *> d_spanning_tree,
+                                         unordered_set<long> &s_fc,
+                                         long verbose) {
+    // TODO Check pertinence of the algorithm. Can we do better???
+    //The bipartition of the too big cell is a complex problem.
+    //This is a stupid version of a solution.
+    //The goal is to remove from s_fc the vertices that may split the coarse in more than two parts.
+    //
+    //:param seed:
+    //:param d_spanning_tree:
+    //:param s_fc:
+    //:param matrixAdj_CRS_row_ptr:
+    //:param matrixAdj_CRS_col_ind:
+    //:return:
+    //"""
+
+    // We remove from the s_fc the cells of degree greater than (or equal to) 3.
+
+    long iter_seed = seed;
+    unordered_set<long> first_cc;  // it was list we try set
+    unordered_set<long> second_cc(s_fc);  // it was list we try set = list(s_fc)
+    unordered_set<long> setRemovedCells;
+
+    // If seed is not on a cycle, we move as much as possible until we face a vertex of third degree (Cycle).
+    while (d_spanning_tree.count(iter_seed)) {
+        if ((*d_spanning_tree[iter_seed]).size() == 1) {
+            first_cc.insert(iter_seed);
+            second_cc.erase(iter_seed);
+            iter_seed = (*d_spanning_tree[iter_seed]).front();
+        } else {
+            break;
+        }
+
+    }
+    if (verbose) {
+        cout << "iter_seed " << iter_seed << " d_spanning_tree.count(iter_seed) "
+             << d_spanning_tree.count(iter_seed) << endl;
+        cout << "[";
+        for (auto i : first_cc) {
+            cout << i << ", ";
+        }
+        cout << "]";
+        cout << "[";
+        for (auto i : second_cc) {
+            cout << i << ", ";
+        }
+        cout << "]" << endl;
+    }
+    if (d_spanning_tree.count(iter_seed) == 1) {
+
+        unordered_set<long> s_l({iter_seed});  // = set([iter_seed])
+        unordered_set<long> s_l_plus_one;
+
+        while (!s_l.empty()) {
+
+//            print "\ns_l", s_l
+            if (verbose) {
+                cout << "\ts_l = [";
+
+                for (auto iFineCell: s_l) {
+                    cout << iFineCell << ", ";
+                }
+                cout << "]" << endl;
+            }
+            unordered_set<long> set_l_cells_to_remove;
+            unordered_set<long> tmp_set_l(s_l);  // copy: we will remove some element during the computation
+            if (verbose) {
+                cout << "\ttmp_set_l = [";
+
+                for (auto iFineCell: tmp_set_l) {
+                    cout << iFineCell << ", ";
+                }
+                cout << "]" << endl;
+            }
+            for (int i_length = 1; i_length < s_l.size() + 1; i_length++) {
+                if (verbose) {
+                    cout << "\t\ti_length " << i_length << endl;
+                }
+                vector<long> vector_tmp_SetL(tmp_set_l.size());
+                int i = 0;
+                for (auto iFC : tmp_set_l) {
+                    vector_tmp_SetL[i++] = iFC;
+                }
+                list<unordered_set<long>> list_of_list_l = parts_list(vector_tmp_SetL, i_length);
+                if (verbose) {
+                    cout << "\t\tlist_of_list_l" << endl;
+                }
+
+                for (auto iSubList : list_of_list_l) {
+                    if (verbose) {
+                        cout << "\t\t\tiSubList = [";
+
+                        for (auto iFcell : iSubList) {
+                            cout << iFcell << ", ";
+                        }
+                        cout << "]" << endl;
+                    }
+
+                    unordered_set<long> tmp_set(second_cc);
+                    for (auto i_cell:iSubList) {
+                        tmp_set.erase(i_cell);
+                    }
+                    if (verbose) {
+                        cout << "\t\t\ttmp_set = [";
+
+                        for (auto iFcell : tmp_set) {
+                            cout << iFcell << ", ";
+                        }
+                        cout << "]" << endl;
+                    }
+//                    vector<long> v_tmp_list(tmp_set.size());
+//                    int i = 0;
+//                    for (auto iCell :tmp_set) {
+//                        v_tmp_list[i] = iCell;
+//                        ++i;
+//                    }
+                    if (verbose) {
+                        cout << "\t\t\t=== 4" << endl;
+                    }
+                    if (!check_connectivity(tmp_set)) {
+                        if (verbose) {
+                            cout << "\t\t\t!check_connectivity" << endl;
+                        }
+                        for (auto iCell : iSubList) {
+
+                            if (tmp_set_l.count(iCell)) {
+                                tmp_set_l.erase(iCell);
+                            }
+                            if (s_fc.count(iCell)) {
+                                set_l_cells_to_remove.insert(iCell);
+                            }
+                        }
+                    }
+                    if (verbose) {
+                        cout << "\t\t\t=== 5" << endl;
+                    }
+                }
+            }
+            if (verbose) {
+                cout << "\t=== 6" << endl;
+            }
+
+
+// cout<< "set_l_cells_to_remove"<<endl;
+// set_l_cells_to_remove
+            unordered_set<long> setL_Minus_setLCellsToRemove(s_l);
+            for (long iCell : set_l_cells_to_remove) {
+                setL_Minus_setLCellsToRemove.erase(iCell);
+            }
+            if (verbose) {
+                cout << "=== 7" << endl;
+            }
+// Construction of the next level of the tree
+            for (long iCell : setL_Minus_setLCellsToRemove) {
+                if (verbose) { cout << "iCell " << iCell << endl; }
+                if (d_spanning_tree.count(iCell) == 1) {
+                    if (verbose) { cout << "=== 8" << endl; }
+                    long iN = (*d_spanning_tree[iCell]).front();
+                    if (verbose) { cout << "iN " << iN << endl; }
+                    while (!(*d_spanning_tree[iCell]).empty()) {
+                        if (verbose) { cout << "iN " << iN << endl; }
+                        (*d_spanning_tree[iCell]).pop();
+                        if ((s_l.count(iN) == 0) && (first_cc.count(iN) == 0) &&
+                            (setRemovedCells.count(iN) == 0)) {
+                            if (verbose) { cout << "s_l_plus_one.insert(" << iN << ")" << endl; }
+                            s_l_plus_one.insert(iN);
+                        }
+                        iN = (*d_spanning_tree[iCell]).front();
+
+                    }
+                }
+            }
+            if (verbose) { cout << "Update" << endl; }
+            for (auto id_Cell:set_l_cells_to_remove) {
+                setRemovedCells.insert(id_Cell);  //setRemovedCells.merge(set_l_cells_to_remove);
+            }
+
+//s_fc -= set_l_cells_to_remove
+            for (long iCell : set_l_cells_to_remove) {
+                if (verbose) { cout << "s_fc.erase(" << iCell << ")" << endl; }
+                s_fc.erase(iCell);
+            }
+
+            setL_Minus_setLCellsToRemove = s_l;
+            for (long iCell : set_l_cells_to_remove) {
+                setL_Minus_setLCellsToRemove.erase(iCell);
+            }
+
+            for (auto iC :setL_Minus_setLCellsToRemove) {
+                first_cc.insert(iC);
+                second_cc.erase(iC);
+
+            }
+            if (verbose) { cout << "=== 9" << endl; }
+// print first_cc, second_cc
+// print s_l, s_l_plus_one
+            if (verbose) {
+                cout << "s_l_plus_one" << endl;
+
+                cout << "[";
+                for (auto id_Ce:s_l_plus_one) {
+                    cout << id_Ce << ", ";
+                }
+                cout << "]" << endl;
+            }
+            s_l = s_l_plus_one;
+// listOfListL = partsList(list(s_l))
+            s_l_plus_one.clear(); // = set([])
+            if (verbose) {
+                cout << "s_l = [";
+
+                for (auto id_Ce:s_l) {
+                    cout << id_Ce << ", ";
+                }
+                cout << "]" << endl;
+                cout << "s_l_plus_one = [";
+                for (auto id_Ce:s_l_plus_one) {
+                    cout << id_Ce << ", ";
+                }
+                cout << "]" << endl;
+                cout << "=== 10\n\n\n" << endl;
+            }
+        }
+    }
+}

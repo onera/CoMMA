@@ -5,21 +5,7 @@
 #include "Agglomerator_Isotropic.h"
 #include "Agglomerator_anisotropic.h"
 
-#include <unordered_map>
-#include <unordered_set>
-#include <list>
-#include<queue>
-#include<iostream>
-#include<math.h>
-#include <assert.h>
-#include <stdexcept>
-#include <algorithm>
-#include <exception>
 
-#include <string>
-
-#include <fstream>
-#include <iomanip>
 
 using namespace std;
 

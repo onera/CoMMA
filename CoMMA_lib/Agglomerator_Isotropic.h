@@ -11,6 +11,16 @@
 #include <queue>
 #include <string>
 
+#include <iostream>
+#include <cmath>
+#include <cassert>
+#include <stdexcept>
+#include <algorithm>
+#include <exception>
+
+#include <fstream>
+#include <iomanip>
+
 using namespace std;
 
 void agglomerateOneLevel(long *sizes,
@@ -361,9 +371,10 @@ void read_agglomeration_datas_from_file(string filename,
                                         long *goalCard,
                                         long *minCard,
                                         long *maxCard
-                                        );
+);
 
-long read_long_array(std::fstream &stream, long*&array);
+long read_long_array(std::fstream &stream, long *&array);
+
 long read_double_array(std::fstream &stream,
                        double *&array);
 

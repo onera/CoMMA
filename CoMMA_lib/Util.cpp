@@ -61,3 +61,32 @@ void convert_agglo_lines_to_agglomeration_lines_arrays(const long &nb_fc,
     sizes[0] = nb_lines+1;
     sizes[1] = number_of_fc_in_agglomeration_lines;
 }
+
+
+list<unordered_set<long>> parts_list(vector<long> seq, int length) {
+    // generates all subparts of a list:
+    list<unordered_set<long>> p;
+    int i = 1;
+    int iMax = pow(2, seq.size()) - 1;
+
+    while (i <= iMax) {
+        unordered_set<long> s;
+        int j = 0, jmax = seq.size() - 1;
+        while (j <= jmax) {
+            if (((i >> j) & 1) == 1) {
+                s.insert(seq[j]);
+            }
+            j += 1;
+        }
+        if (length > 0) {
+            if (s.size() == length) {
+                p.push_back(s);
+            }
+        } else {
+            p.push_back(s);
+        }
+        i += 1;
+    }
+    return p;
+}
+

@@ -8,26 +8,27 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cassert>
-#include <assert.h>
+#include <cmath>
 #include <deque>
+#include<queue>
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <list>
 #include <forward_list>
 #include "Seeds_Pool.h"
+#include "Util.h"
 #include <iostream>
 #include <climits>
 #include <utility>
-#include <cmath>
 #include <numeric>
 #include "Metrics_And_Datas.h"
 
 using namespace std;
 
 struct pair_hash {
-    inline std::size_t operator()(const std::pair<int,int> & v) const {
-        return v.first*31+v.second;
+    inline std::size_t operator()(const std::pair<int, int> &v) const {
+        return v.first * 31 + v.second;
     }
 };
 
@@ -35,10 +36,10 @@ class Dual_Graph {
 
 public :
     Dual_Graph(long nb_c,
-               const vector<long>& m_crs_row_ptr,
-               const vector<long>& m_crs_col_ind,
-               const vector<double>& m_crs_values,
-               const vector<double>& volumes,
+               const vector<long> &m_crs_row_ptr,
+               const vector<long> &m_crs_col_ind,
+               const vector<double> &m_crs_values,
+               const vector<double> &volumes,
                unordered_map<long, int> &d_is_on_bnd,
                unordered_set<long> is_on_corner = unordered_set<long>({}),
                unordered_set<long> is_on_ridge = unordered_set<long>({}),
@@ -58,7 +59,7 @@ public :
     const vector<double> _volumes;
 
     // TODO manage this. A pointer is not what I want.
-    Seeds_Pool* seeds_pool;
+    Seeds_Pool *seeds_pool;
     unordered_set<long> s_anisotropic_compliant_cells;
     int _lines_size = 0;
     forward_list<deque<long> *> _lines;
@@ -71,10 +72,10 @@ public :
 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
-    bool compute_anisotropic_line(long* sizes,
-                                  long * arrayOfFineAnisotropicCompliantCells,
-                                  long * agglomerationLines_Idx,
-                                  long * agglomerationLines,
+    bool compute_anisotropic_line(long *sizes,
+                                  long *arrayOfFineAnisotropicCompliantCells,
+                                  long *agglomerationLines_Idx,
+                                  long *agglomerationLines,
                                   bool verbose);
     unordered_map<long, unordered_set<pair<long,long>, pair_hash>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
     //unordered_map<long, unordered_set<Tuple>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
@@ -99,6 +100,13 @@ public :
     unsigned short int compute_degree_of_node(int i_fc, bool (*test_function)(int) = nullptr);
     void compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> & row_ptr_l, vector<long> & col_ind_l, vector<long> & g_to_l);
     unordered_set<long> compute_s_leaves(unordered_set<long> s_fc);
+    int compute_distance_from_seed_to_first_vertex_of_degree_2(long seed, unordered_map<long, queue<long> *> dict_Covering_Tree);
+    unordered_map<long, queue<long> *> find_seed_via_frontal_method(long& max_seed,
+                                                                    vector<long> listOfFineCells);
+    int remove_separating_vertex(long seed,
+                                 unordered_map<long, queue<long> *> d_spanning_tree,
+                                 unordered_set<long> &s_fc,
+                                 long verbose = 0);
 };
 
 

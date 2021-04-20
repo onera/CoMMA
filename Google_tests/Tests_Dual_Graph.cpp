@@ -3,6 +3,14 @@
 #include "../CoMMA_lib/Dual_Graph.h"
 
 #include "MGridGen_Dual_Graph.h"
+#include "Edge_7_Dual_Graph.h"
+#include "Example_6_Dual_Graph.h"
+#include "Example_7_Dual_Graph.h"
+#include "Example_8_Dual_Graph.h"
+#include "Example_9_Dual_Graph.h"
+#include "Edge_8_Dual_Graph.h"
+#include "Edge_9_Dual_Graph.h"
+#include "Edge_9_3_Dual_Graph.h"
 #include "Graphs_biconnected_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "gtest/gtest.h"
@@ -1009,7 +1017,6 @@ TEST_F(box_5x5x5_aniso, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
 
 }
 
-
 TEST_F(MGridGen_Dual_Graph, compute_min_fc_compactness_inside_a_cc_mgridgen) {
 
     unordered_set<long> s_fc = unordered_set<long>({0, 1, 2, 3, 6});
@@ -1024,7 +1031,6 @@ TEST_F(MGridGen_Dual_Graph, compute_min_fc_compactness_inside_a_cc_mgridgen) {
     s_fc = unordered_set<long>({4, 5, 7, 8, 9, 10});
     ASSERT_EQ(2, (*g).compute_min_fc_compactness_inside_a_cc(s_fc));
 }
-
 
 TEST_F(MGridGen_Dual_Graph, compute_fc_compactness_inside_a_cc_mgridgen) {
 
@@ -1073,7 +1079,6 @@ TEST_F(MGridGen_Dual_Graph, compute_fc_compactness_inside_a_cc_mgridgen) {
     };
     ASSERT_EQ(ref_d_fc_compactness, d_fc_compactness);
 }
-
 
 TEST_F(MGridGen_Dual_Graph, compute_average_fc_compactness_inside_a_cc_mgridgen) {
 
@@ -1146,6 +1151,843 @@ TEST_F(Nine_squares_3x3_Dual_Graph, compute_connected_component_9_squares) {
 
     s_initial_fc = {0, 2, 4, 1, 8};
     l_of_connected_set = (*g).compute_connected_components(s_initial_fc);
-    ref_connected_component = {unordered_set<long>({8}), unordered_set<long>({0, 1, 2, 4 }) };
+    ref_connected_component = {unordered_set<long>({8}), unordered_set<long>({0, 1, 2, 4})};
     ASSERT_EQ(ref_connected_component, l_of_connected_set);
+}
+
+TEST_F(Edge_7_Dual_Graph, find_seed_via_frontal_method_Case_2) {
+
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(6, max_seed);   // correct answer 1, 3, 6
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[3] = new queue<long>({2, 4});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_025) {
+
+    vector<long> listOfFineCells =  {0, 2, 5};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(5, max_seed);   // correct answer 1, 3, 6
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({2});
+    ref_max_dict[2] = new queue<long>({0, 5});
+    ref_max_dict[5] = new queue<long>({2});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_10265813119) {
+
+    vector<long> listOfFineCells =  {10, 2, 6, 5, 8, 13, 11, 9};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(9, max_seed);   // correct answer 1, 3, 6
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[10] = new queue<long>({8, 9, 13});
+    ref_max_dict[8] = new queue<long>({5, 10});
+    ref_max_dict[9] = new queue<long>({10});
+    ref_max_dict[13] = new queue<long>({10, 11});
+    ref_max_dict[5] = new queue<long>({2, 8});
+    ref_max_dict[11] = new queue<long>({6, 13});
+    ref_max_dict[2] = new queue<long>({5, 6});
+    ref_max_dict[6] = new queue<long>({2, 11});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_136111314) {
+
+    vector<long> listOfFineCells = {1, 3, 6, 11, 13, 14};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(13, max_seed);   // correct answer 1, 3, 6
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[1] = new queue<long>({3});
+    ref_max_dict[14] = new queue<long>({11});
+    ref_max_dict[3] = new queue<long>({1, 6});
+    ref_max_dict[6] = new queue<long>({3, 11});
+    ref_max_dict[11] = new queue<long>({6, 13, 14});
+    ref_max_dict[13] = new queue<long>({11});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_520810131411) {
+
+    vector<long> listOfFineCells = {5, 2, 0, 8, 10, 13, 14, 11};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(0, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[5] = new queue<long>({2, 8});
+    ref_max_dict[2] = new queue<long>({0, 5});
+    ref_max_dict[8] = new queue<long>({5, 10});
+    ref_max_dict[0] = new queue<long>({2});
+    ref_max_dict[13] = new queue<long>({10, 11});
+    ref_max_dict[10] = new queue<long>({8, 13});
+    ref_max_dict[11] = new queue<long>({13, 14});
+    ref_max_dict[14] = new queue<long>({11});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_145208101311) {
+
+    vector<long> listOfFineCells = {14, 5, 2, 0, 8, 10, 13, 11};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(0, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[14] = new queue<long>({11});
+    ref_max_dict[11] = new queue<long>({13, 14});
+    ref_max_dict[13] = new queue<long>({10, 11});
+    ref_max_dict[0] = new queue<long>({2});
+    ref_max_dict[10] = new queue<long>({8, 13});
+    ref_max_dict[8] = new queue<long>({5, 10});
+    ref_max_dict[5] = new queue<long>({2, 8});
+    ref_max_dict[2] = new queue<long>({0, 5});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_457810) {
+
+    vector<long> listOfFineCells = {8, 7, 5, 4, 10};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(10, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[8] = new queue<long>({5, 7, 10});
+    ref_max_dict[5] = new queue<long>({4, 8});
+    ref_max_dict[7] = new queue<long>({4, 8});
+    ref_max_dict[10] = new queue<long>({8});
+    ref_max_dict[4] = new queue<long>({5, 7});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_205) {
+
+    vector<long> listOfFineCells =  {2, 0, 5};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(5, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[2] = new queue<long>({0, 5});
+    ref_max_dict[0] = new queue<long>({2,});
+    ref_max_dict[5] = new queue<long>({2,});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_All) {
+
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(12, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[10] = new queue<long>({8, 9, 13});
+    ref_max_dict[7] = new queue<long>({4, 8, 9});
+    ref_max_dict[12] = new queue<long>({9,});
+    ref_max_dict[9] = new queue<long>({7, 10, 12});
+    ref_max_dict[0] = new queue<long>({1, 2,});
+    ref_max_dict[13] = new queue<long>({10, 11});
+    ref_max_dict[1] = new queue<long>({0, 3});
+    ref_max_dict[14] = new queue<long>({11});
+    ref_max_dict[2] = new queue<long>({0, 5, 6});
+    ref_max_dict[3] = new queue<long>({1, 6});
+    ref_max_dict[5] = new queue<long>({2, 4, 8});
+    ref_max_dict[6] = new queue<long>({2, 3, 11});
+    ref_max_dict[4] = new queue<long>({5, 7});
+    ref_max_dict[8] = new queue<long>({5, 7, 10});
+    ref_max_dict[11] = new queue<long>({6, 13, 14});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_9_3_Dual_Graph, find_seed_via_frontal_method_Case_3_seed_0) {
+
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(7, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2, 7});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[7] = new queue<long>({1});
+    ref_max_dict[3] = new queue<long>({2, 4, 8});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[8] = new queue<long>({3});
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_9_3_Dual_Graph, find_seed_via_frontal_method_Case_3_seed_1) {
+
+    vector<long> listOfFineCells = {1, 2, 3, 4, 5, 6, 7, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(8, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[1] = new queue<long>({2, 7});
+    ref_max_dict[2] = new queue<long>({1, 3, 4, 5});
+    ref_max_dict[3] = new queue<long>({2, 4, 8});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[5] = new queue<long>({2, 4, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[7] = new queue<long>({1});
+    ref_max_dict[8] = new queue<long>({3});
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_9_3_Dual_Graph, find_seed_via_frontal_method_Case_3_seed_6) {
+
+    vector<long> listOfFineCells = {6, 7, 8, 1, 3, 5, 4, 0, 2};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(8, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2, 7});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5});
+    ref_max_dict[3] = new queue<long>({2, 4, 8});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[7] = new queue<long>({1});
+    ref_max_dict[8] = new queue<long>({3});
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_9_3_Dual_Graph, find_seed_via_frontal_method_Case_3_seed_8) {
+
+    vector<long> listOfFineCells = {8, 1, 2, 3, 4, 5, 0, 6, 7};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(7, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2, 7});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5});
+    ref_max_dict[3] = new queue<long>({2, 4, 8});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[7] = new queue<long>({1});
+    ref_max_dict[8] = new queue<long>({3});
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_8_Dual_Graph, find_seed_via_frontal_method_Case_4_random) {
+
+    vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(7, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2, 7});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5});
+    ref_max_dict[3] = new queue<long>({2, 4});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[7] = new queue<long>({1});
+
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
+
+    vector<long> listOfFineCells =  {5, 0, 3, 4, 2, 7, 1, 6, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(7, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 2, 5});
+    ref_max_dict[1] = new queue<long>({0, 2, 7});
+    ref_max_dict[2] = new queue<long>({0, 1, 3, 4, 5, 8});
+    ref_max_dict[3] = new queue<long>({2, 4});
+    ref_max_dict[4] = new queue<long>({2, 3, 5, 6});
+    ref_max_dict[5] = new queue<long>({0, 2, 4, 6});
+    ref_max_dict[6] = new queue<long>({4, 5});
+    ref_max_dict[7] = new queue<long>({1});
+    ref_max_dict[8] = new queue<long>({2});
+
+    int i_count=0;
+    for (auto i : dict_ConnectivityTree) {
+//        cout<< "i_count " << i_count++<<endl;
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
+
+    vector<long> listOfFineCells =   {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(4, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 5, 8});
+    ref_max_dict[1] = new queue<long>({0, 2});
+    ref_max_dict[2] = new queue<long>({1, 6, 7});
+    ref_max_dict[3] = new queue<long>({4, 6, 7});
+    ref_max_dict[4] = new queue<long>({3, 7, 8});
+    ref_max_dict[5] = new queue<long>({0, 8});
+    ref_max_dict[6] = new queue<long>({2, 3, 7});
+    ref_max_dict[7] = new queue<long>({2, 3, 4, 6, 8});
+    ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
+
+
+    int i_count=0;
+    for (auto i : dict_ConnectivityTree) {
+//        cout<< "i_count " << i_count++<<endl;
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6_seed_6) {
+
+    vector<long> listOfFineCells =   {6, 0, 1, 2, 3, 4, 5, 7, 8};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(4, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[0] = new queue<long>({1, 5, 8});
+    ref_max_dict[1] = new queue<long>({0, 2});
+    ref_max_dict[2] = new queue<long>({1, 6, 7});
+    ref_max_dict[3] = new queue<long>({4, 6, 7});
+    ref_max_dict[4] = new queue<long>({3, 7, 8});
+    ref_max_dict[5] = new queue<long>({0, 8});
+    ref_max_dict[6] = new queue<long>({2, 3, 7});
+    ref_max_dict[7] = new queue<long>({2, 3, 4, 6, 8});
+    ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
+
+
+    int i_count=0;
+    for (auto i : dict_ConnectivityTree) {
+//        cout<< "i_count " << i_count++<<endl;
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+
+TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_All_shuffled) {
+
+    vector<long> listOfFineCells = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 1, 11, 3, 8, 10};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+
+    EXPECT_EQ(12, max_seed);
+
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[14] = new queue<long>({11});
+    ref_max_dict[6] = new queue<long>({2, 3, 11});
+    ref_max_dict[1] = new queue<long>({0, 3});
+    ref_max_dict[3] = new queue<long>({1, 6});
+    ref_max_dict[9] = new queue<long>({7, 10, 12});
+    ref_max_dict[7] = new queue<long>({4, 8, 9});
+    ref_max_dict[10] = new queue<long>({8, 9, 13});
+    ref_max_dict[12] = new queue<long>({9,});
+    ref_max_dict[4] = new queue<long>({5, 7});
+    ref_max_dict[8] = new queue<long>({5, 7, 10});
+    ref_max_dict[13] = new queue<long>({10, 11});
+    ref_max_dict[0] = new queue<long>({1, 2,});
+    ref_max_dict[5] = new queue<long>({2, 4, 8});
+    ref_max_dict[11] = new queue<long>({6, 13, 14});
+    ref_max_dict[2] = new queue<long>({0, 5, 6});
+
+    for (auto i : dict_ConnectivityTree) {
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+//        cout << i.first << ": [";
+//        while (!(*i.second).empty()) {
+//            cout << (*i.second).front() << ", ";
+//            (*i.second).pop();
+//        }
+//        cout << "]" << endl;
+    }
+    for (auto i : dict_ConnectivityTree) {
+        delete ref_max_dict[i.first];
+        delete dict_ConnectivityTree[i.first];
+    }
+}
+
+TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_all) {
+
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
+    //    dict_ConnectivityTree = {0: [1], 2: [0, 6], 3: [1], 4: [5], 5: [2], 6: [2, 3], 7: [4, 8], 8: [5], 9: [7, 10], 10: [8, 13], 11: [6, 14], 12: [9], 13: [11]}
+    ASSERT_EQ(12, max_seed);
+    long new_seed = 12;
+
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    unordered_set<long> ref_s_fc({0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14});
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Edge_7_Dual_Graph, remove_separating_vertex_Case_2) {
+
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
+    long new_seed = 1;
+    unordered_map<long, queue<long> *> d_spanning_tree;
+    d_spanning_tree[0] = new queue<long>({5});
+    d_spanning_tree[1] = new queue<long>({0, 2});
+    d_spanning_tree[2] = new queue<long>({3, 4});
+    d_spanning_tree[5] = new queue<long>({6});
+
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6});
+    (*g).remove_separating_vertex(new_seed, d_spanning_tree, s_fc);
+
+    unordered_set<long> ref_s_fc({0, 1, 2, 3, 5, 6});
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_205) {
+
+    vector<long> v_fc = {2, 0, 5};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(5, max_seed);
+
+    long new_seed = 0;
+    unordered_map<long, queue<long> *> dict_SpanningTree;
+    dict_SpanningTree[0] = new queue<long>({2});
+    dict_SpanningTree[2] = new queue<long>({5});
+
+    unordered_set<long> s_fc({2, 0, 5});
+    (*g).remove_separating_vertex(new_seed, dict_SpanningTree, s_fc);
+
+    unordered_set<long> ref_s_fc({2, 0, 5});
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+
+TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_136111314) {
+
+    vector<long> v_fc = {1, 3, 6, 11, 13, 14};
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(13, max_seed);
+
+    long new_seed = 1;
+
+    unordered_set<long> s_fc({1, 3, 6, 11, 13, 14});
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    unordered_set<long> ref_s_fc({1, 3, 6, 13, 14});
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_10265813119) {
+
+    vector<long> v_fc = {10, 2, 6, 5, 8, 13, 11, 9};
+    unordered_set<long> s_fc({10, 2, 6, 5, 8, 13, 11, 9});
+    unordered_set<long> ref_s_fc({2, 5, 6, 8, 9, 10, 11, 13});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(9, max_seed);
+
+    long new_seed = 1;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+
+TEST_F(Edge_9_3_Dual_Graph, remove_separating_vertex_10265813119) {
+
+    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8});
+    unordered_set<long> ref_s_fc({0, 1, 2, 5, 6, 7, 8});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(7, max_seed);
+
+    long new_seed = 7;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Edge_9_Dual_Graph, remove_separating_vertex_Case_5_random) {
+
+    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6, 8};
+    unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
+    unordered_set<long> ref_s_fc({0, 1, 3, 5, 6, 7, 8});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(7, max_seed);
+
+    long new_seed = 7;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_6_Dual_Graph, remove_separating_vertex_Case_6) {
+
+    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
+    unordered_set<long> ref_s_fc({1, 3, 4, 5, 6, 7, 8});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(4, max_seed);
+
+    long new_seed = 4;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Edge_8_Dual_Graph, remove_separating_vertex_Case_4_random) {
+
+    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6};
+    unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2});
+    unordered_set<long> ref_s_fc({0, 1, 2, 3, 5, 6, 7});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(7, max_seed);
+
+    long new_seed = 7;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_0) {
+
+    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(5, max_seed);
+
+    long new_seed = 5;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_1) {
+
+    vector<long> v_fc ={1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    unordered_set<long> ref_s_fc({0, 1, 3, 4, 5, 6, 7, 8, 9, 10});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(3, max_seed);
+
+    long new_seed = 3;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_9) {
+
+    vector<long> v_fc ={9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(5, max_seed);
+
+    long new_seed = 5;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_8_Dual_Graph, remove_separating_vertex_Case_8_random) {
+
+    vector<long> v_fc = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    unordered_set<long> ref_s_fc({1, 2, 3, 4, 5, 6, 7, 10});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(7, max_seed);
+
+    long new_seed = 7;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+TEST_F(Example_9_Dual_Graph, remove_separating_vertex_Case_9_random) {
+
+    vector<long> v_fc = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
+    unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    unordered_set<long> ref_s_fc({0, 1, 2, 3, 4, 6, 8, 9, 10});
+
+    long max_seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, v_fc);
+    ASSERT_EQ(9, max_seed);
+
+    long new_seed = 9;
+
+    (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
+
+    ASSERT_EQ(ref_s_fc, s_fc);
 }
