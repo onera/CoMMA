@@ -12,7 +12,6 @@ add_executable(Google_Tests_run
         Tests_Coarse_Cell_Graph.cpp
         Tests_Agglomerator.cpp
         Tests_Dual_Graph.cpp
-        Tests_Dual_Graph_old.cpp
         Tests_Seeds_Pool.cpp
         Tests_CoMMA.cpp
         )
