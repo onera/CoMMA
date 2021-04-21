@@ -1136,7 +1136,11 @@ unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_func
     }
 }
 
-void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<long> &g_to_l) {
+void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node,
+                                                            vector<long> &row_ptr_l,
+                                                            vector<long> &col_ind_l,
+                                                            vector<double> &values_l,
+                                                            vector<long> &g_to_l) {
     unsigned short int number_Of_Nodes_L = set_of_node.size();
     unsigned short int number_of_nodes_g = number_of_cells;
     assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
@@ -1144,7 +1148,8 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
     vector<unordered_map<long, double>> adj_Matrix(number_of_nodes_g);
 
     int count(0), i_c(0);
-    g_to_l.reserve(number_of_nodes_g);
+
+    g_to_l.resize(number_of_nodes_g);
     for (int i = 0; i < number_of_nodes_g; i++)
         g_to_l[i] = -1;
 
@@ -1162,14 +1167,17 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
             }
         }
     }
-    row_ptr_l.reserve(number_Of_Nodes_L + 1);
+
+    row_ptr_l.resize(number_Of_Nodes_L + 1);
     for (int i = 0; i < number_Of_Nodes_L + 1; i++)
         row_ptr_l[i] = 1;
 
-    col_ind_l.reserve(count);
-    for (int i = 0; i < count; i++)
+    col_ind_l.resize(count);
+    values_l.resize(count);
+    for (int i = 0; i < count; i++) {
         col_ind_l[i] = 0;
-    vector<double> values_l(count, 0.);
+        values_l[i] = 0.0;
+    }
 
     row_ptr_l[0] = 0;
     long index_col_and_values = 0;
@@ -1643,8 +1651,7 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
     // TODO resoudre le probleme suivant: si l'ordre n'est pas assez grand,
     // c'est a dire que le nombre de voisin trouve n'est pas suffisant pour constituer une cellule grossiere entiere,
     // il faut peut-etre faire une boucle while pour aller le plus loin possible!
-    if(max_card==0)
-    {
+    if (max_card == 0) {
         max_card = USHRT_MAX;
     }
 
@@ -1654,8 +1661,7 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
     //
     unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
     unordered_map<long, int> d_n_of_order_o_m_one;  // dict of FC with the order of neighbouring from seed
-    for(const long& i_fc : s_seeds)
-    {
+    for (const long &i_fc : s_seeds) {
         d_n_of_order_o_m_one[i_fc] = 0;
     }
 
@@ -1672,18 +1678,18 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
             d_n_of_seed[id_M_one.first] = id_M_one.second;
         }
 
-        for (const auto& i_k_v : d_n_of_order_o_m_one) {
+        for (const auto &i_k_v : d_n_of_order_o_m_one) {
 
             long seed_tmp = i_k_v.first;
-            for (const long& i_fc_n : get_neighbours(seed_tmp)) {
+            for (const long &i_fc_n : get_neighbours(seed_tmp)) {
 
                 if ((d_n_of_seed.count(i_fc_n) == 0) &&
                     ((!isFineCellAgglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
                     if (d_n_of_order_o.count(i_fc_n) == 0) {
                         if (!(s_of_constrained_fc).empty()) {
                             if ((s_of_constrained_fc).count(i_fc_n)) {
-                                if(d_n_of_order_o_m_one.count(i_fc_n)){
-                                    if(i_order < d_n_of_order_o_m_one[i_fc_n]){
+                                if (d_n_of_order_o_m_one.count(i_fc_n)) {
+                                    if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
                                         d_n_of_order_o[i_fc_n] = i_order;
                                     }
                                 } else {
@@ -1692,10 +1698,8 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
                             }
                         } else {
                             // a fc can be access via multiple ways. We look for the quickest
-                            if (d_n_of_order_o_m_one.count(i_fc_n))
-                            {
-                                if(i_order < d_n_of_order_o_m_one[i_fc_n])
-                                {
+                            if (d_n_of_order_o_m_one.count(i_fc_n)) {
+                                if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
                                     d_n_of_order_o[i_fc_n] = i_order;
                                 }
                             } else {
@@ -1727,7 +1731,7 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
     }
 
     // We remove the seed from the neighbours of seed
-    for(const long &i_fc:s_seeds){
+    for (const long &i_fc:s_seeds) {
         d_n_of_seed.erase(i_fc);
     }
 
