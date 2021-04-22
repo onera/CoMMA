@@ -44,7 +44,13 @@ protected:
                            v_Example_8_col_ind,
                            v_Example_8_values,
                            v_Example_8_volumes,
-                           Example_8_d_is_on_bnd);
+                           Example_8_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
 
     }
 

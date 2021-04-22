@@ -59,7 +59,13 @@ protected:
                            v_graph_biconnected_col_ind,
                            v_graph_biconnected_values,
                            v_graph_biconnected_volumes,
-                           graph_biconnected_d_is_on_bnd);
+                           graph_biconnected_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
 
     }
 

@@ -7,6 +7,7 @@
 
 #include "gtest/gtest.h"
 #include"../CoMMA_lib/Dual_Graph.h"
+
 class MGridGen_Dual_Graph : public ::testing::Test {
     // filename_ini = "box_1_rect_5_d_F.hdf"
     // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
@@ -42,19 +43,19 @@ protected:
         MGridGen_nb_c = 15;
         MGridGen_col_ind_size = 51;
         v_MGridGen_volumes = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3.,
-                                       3., 1.5};
+                              3., 1.5};
 
-        std::map<std::string,int> annee_perso { {"philippe", 1983},
-                                                {"gérard" , 1967} };
+        std::map<std::string, int> annee_perso{{"philippe", 1983},
+                                               {"gérard",   1967}};
 
-        unordered_map<long, int> MGridGen_d_is_on_bnd {{0, 1},
-                                                       {1, 1},
-                                                       {3, 1},
-                                                       {4, 1},
-                                                       {12, 2},
-                                                       {13, 1},
-                                                       {14, 2}
-                                                       };
+        unordered_map<long, int> MGridGen_d_is_on_bnd{{0,  1},
+                                                      {1,  1},
+                                                      {3,  1},
+                                                      {4,  1},
+                                                      {12, 2},
+                                                      {13, 1},
+                                                      {14, 2}
+        };
 //        MGridGen_d_is_on_bnd[0] = 1;
 //        MGridGen_d_is_on_bnd[1] = 1;
 //        MGridGen_d_is_on_bnd[3] = 1;
@@ -72,8 +73,13 @@ protected:
                            v_MGridGen_col_ind,
                            v_MGridGen_values,
                            v_MGridGen_volumes,
-                           MGridGen_d_is_on_bnd);
-
+                           MGridGen_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
     }
 
     virtual void TearDown() {

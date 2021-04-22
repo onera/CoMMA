@@ -45,7 +45,13 @@ protected:
                            v_Example_9_col_ind,
                            v_Example_9_values,
                            v_Example_9_volumes,
-                           Example_9_d_is_on_bnd);
+                           Example_9_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
 
     }
 

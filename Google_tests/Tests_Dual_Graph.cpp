@@ -647,9 +647,9 @@ TEST_F(box_5x5x5, Dual_Graph_Box_5x5x5) {
 TEST_F(MGridGen_Dual_Graph, Dual_Graph_MGridGen) {
 
     ASSERT_EQ(15, (*g).number_of_cells);
-
-    ASSERT_EQ(s_MGridGen_is_on_corner, (*g).seeds_pool->is_on_corner);
-    ASSERT_EQ(s_MGridGen_is_on_ridge, (*g).seeds_pool->is_on_ridge);
+    unordered_set<long> empty_set = unordered_set<long>({});
+    ASSERT_EQ(empty_set, (*g).seeds_pool->is_on_corner);
+    ASSERT_EQ(empty_set, (*g).seeds_pool->is_on_ridge);
     ASSERT_EQ(s_MGridGen_is_on_valley, (*g).seeds_pool->is_on_valley);
     long myints_0[3] = {0, 1, 2};
     vector<long> ref_neighbours_0(myints_0, myints_0 + sizeof(myints_0) / sizeof(long));
@@ -676,6 +676,39 @@ TEST_F(MGridGen_Dual_Graph, Dual_Graph_MGridGen) {
     for (int i = 0; i < ref_neighbours_n_1.size(); i++) {
         ASSERT_NEAR(ref_neighbours_n_1[i], (*g).get_weights(1)[i], 1e-10);
     }
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, Dual_Graph_MGridGen) {
+
+    ASSERT_EQ(9, (*g).number_of_cells);
+
+    vector<long> ref_neighbours_0= {0, 1, 3};
+    vector<long> ref_neighbours_1= {0, 1, 2, 4};
+
+    ASSERT_EQ(ref_neighbours_0, (*g).get_neighbours(0));
+    ASSERT_EQ(ref_neighbours_1, (*g).get_neighbours(1));
+
+    ASSERT_EQ(3, (*g).get_nb_of_neighbours(0));
+    ASSERT_EQ(4, (*g).get_nb_of_neighbours(1));
+
+    vector<double> ref_neighbours_n_0= {1.0, 1., 1.};
+    vector<double> ref_neighbours_n_1={1.0, 1.0,1.0,1.0,};
+
+    for (int i = 0; i < ref_neighbours_n_0.size(); i++) {
+        ASSERT_NEAR(ref_neighbours_n_0[i], (*g).get_weights(0)[i], 1e-10);
+    }
+
+    for (int i = 0; i < ref_neighbours_n_1.size(); i++) {
+        ASSERT_NEAR(ref_neighbours_n_1[i], (*g).get_weights(1)[i], 1e-10);
+    }
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8 });
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
 }
 
 TEST_F(MGridGen_Dual_Graph, Dual_Graph_CheckConnectivity_MGridGenDoc_example) {
