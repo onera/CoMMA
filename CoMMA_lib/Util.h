@@ -8,6 +8,7 @@
 #include <deque>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <list>
 #include <forward_list>
 #include <cmath>
@@ -42,4 +43,14 @@ void convert_agglo_lines_to_agglomeration_lines_arrays(const long &nb_fc,
                                                        long *agglo_lines_array);
 
 list<unordered_set<long>> parts_list(vector<long> seq, int length);
+
+inline unordered_set<long> d_keys_to_set(const unordered_map<long, unsigned short>& dict){
+    unordered_set<long> s_neighbours_of_seed = {};
+    for (const auto &i_k_v : dict) {
+        s_neighbours_of_seed.insert(i_k_v.first);
+    }
+return s_neighbours_of_seed;
+}
+
+
 #endif //COMMA_PROJECT_UTIL_H

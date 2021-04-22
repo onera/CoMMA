@@ -1992,6 +1992,7 @@ TEST_F(Example_9_Dual_Graph, remove_separating_vertex_Case_9_random) {
     ASSERT_EQ(ref_s_fc, s_fc);
 }
 
+//TODO rename compute_neighbourhood_of_cc to compute_neighbourhood
 TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_0) {
 
 
@@ -2066,7 +2067,7 @@ TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_2) {
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
 }
 
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_case_3_cc_not_connected) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_case_3_cc_not_connected) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2094,8 +2095,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_case_3_cc_not_con
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
 }
 
-
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2121,7 +2121,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints) {
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
 }
 
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_11) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_11) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2146,7 +2146,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_11)
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
 }
 
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2171,7 +2171,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118
     ASSERT_EQ(5, number_of_order_of_neighbourhood);
 }
 
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118_max_card) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118_max_card) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2199,7 +2199,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118
     ASSERT_EQ(7, number_of_order_of_neighbourhood);
 }
 
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_1184) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_1184) {
 //    Not enough cells due to restriction.
 
     vector<bool> a_is_fc_agglomerated(15, false);
@@ -2222,8 +2222,7 @@ TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_118
     ASSERT_EQ(3, number_of_order_of_neighbourhood);
 }
 
-
-TEST_F(MGridGen_Dual_Graph, computation_of_neighbourhood_of_cc_w_constraints_13) {
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_13) {
 
 
     vector<bool> a_is_fc_agglomerated(15, false);

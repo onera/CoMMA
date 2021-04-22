@@ -49,6 +49,11 @@ public:
         return _d_isotropic_cc.count(_fc_2_cc[i_fc]);
     }
 
+    inline bool is_fc_not_already_agglomerated(const long &i_fc)
+    {
+        return !_a_is_fc_agglomerated[i_fc];
+    }
+
     void __remove_an_isotropic_cc(const long &i_cc);
 
     void _cc_update_neighbours(const long &i_fc,

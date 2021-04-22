@@ -61,7 +61,7 @@ Dual_Graph::Dual_Graph(long nb_c,
     this->_verbose = verbose;
 }
 
-vector<long> Dual_Graph::get_neighbours(long i_c) {
+vector<long> Dual_Graph::get_neighbours(const long &i_c) const {
     long ind = this->_m_CRS_Row_Ptr[i_c];
     long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
     vector<long> result(this->_m_CRS_Col_Ind.begin() + ind, this->_m_CRS_Col_Ind.begin() + ind_p_one);
@@ -69,7 +69,7 @@ vector<long> Dual_Graph::get_neighbours(long i_c) {
 
 }
 
-vector<double> Dual_Graph::get_weights(long i_c) {
+vector<double> Dual_Graph::get_weights(const long &i_c) const {
     long ind = this->_m_CRS_Row_Ptr[i_c];
     long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
     vector<double> result(this->_m_CRS_Values.begin() + ind, this->_m_CRS_Values.begin() + ind_p_one);
@@ -137,7 +137,7 @@ bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
 
 }
 
-int Dual_Graph::get_nb_of_neighbours(long i_c) {
+unsigned short Dual_Graph::get_nb_of_neighbours(long i_c) {
     return this->_m_CRS_Row_Ptr[i_c + 1] - this->_m_CRS_Row_Ptr[i_c];
 }
 

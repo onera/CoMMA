@@ -66,11 +66,11 @@ public :
 
     // Methods
 
-    int get_nb_of_neighbours(long i_c);
+    unsigned short get_nb_of_neighbours(long i_c);
 
-    vector<long> get_neighbours(long i_c);
+    vector<long> get_neighbours(const long& i_c)const;
 
-    vector<double> get_weights(long i_c);
+    vector<double> get_weights(const long&  i_c)const;
 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
