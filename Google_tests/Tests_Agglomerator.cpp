@@ -3,6 +3,7 @@
 #include "../CoMMA_lib/Agglomerator.h"
 #include "../CoMMA_lib/Dual_Graph.h"
 #include "MGridGen_Dual_Graph.h"
+#include "Nine_squares_3x3_Dual_Graph.h"
 #include "gtest/gtest.h"
 
 TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {
@@ -24,90 +25,99 @@ TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {
     ASSERT_FALSE(agg.__is_anisotropic);
 }
 
-TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False) {
+TEST_F(Nine_squares_3x3_Dual_Graph, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False) {
     //"""
     //9 squares (3*3)
     //:return:
     //"""
-    int nbCells = 9;
+    //    int nbCells = 9;
+    //
+    //    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
+    //    long col_ind[33] = {0, 1, 3, 0, 1,
+    //                        2, 4, 1, 2, 5,
+    //                        0, 3, 4, 6, 1,
+    //                        3, 4, 5, 7, 2,
+    //                        4, 5, 8, 3, 6,
+    //                        7, 4, 6, 7, 8, 5, 7, 8};
+    //    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0, 1.0, 1.0,
+    //                         1.0, 1.0, 1.0};
+    Agglomerator agg((*g), 0, 1, 2, true);
 
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0};
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
-    for (int i = 0; i < 4; i++) {
-        listOfSeeds[i] = queue<long>();
-    }
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
 
-    int goalCard = 4;
-    int maxCard = 6;
-    bool isFineCellAgglomerated_tmp[9] = {false, false, false, false, false, false, false, false, false};
-    unordered_map<long, int> dict_Neighbours_Of_Seed = computation_Of_Neighbourhood(seed, 3, row_ptr,
-                                                                                    col_ind, maxCard,  // __goalCard
-                                                                                    isFineCellAgglomerated_tmp);
-    unordered_map<long, int> ref_d_neighbours_of_seed;
-    ref_d_neighbours_of_seed[1] = 1;
-    ref_d_neighbours_of_seed[2] = 2;
-    ref_d_neighbours_of_seed[3] = 1;
-    ref_d_neighbours_of_seed[4] = 2;
-    ref_d_neighbours_of_seed[5] = 3;
-    ref_d_neighbours_of_seed[6] = 2;
-    ref_d_neighbours_of_seed[7] = 3;
-
-    ASSERT_EQ(ref_d_neighbours_of_seed, dict_Neighbours_Of_Seed);
-
-    double volumes[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    int isOnBnd[9] = {2, 1, 2, 1, 0, 1, 2, 1, 2};
-
-    long numberOfFineAgglomeratedCells_tmp = 0;
-    unordered_set<long> set_of_fine_cells_for_Current_Coarse_Cell =
-            choice_Of_Agglomerated_Cells(
-                    seed, listOfSeeds, dict_Neighbours_Of_Seed,
-                    row_ptr,
-                    col_ind, values, volumes,
-                    goalCard,
-                    maxCard,
-                    isFineCellAgglomerated_tmp,
-                    isOnBnd,
-                    numberOfFineAgglomeratedCells_tmp,
-                    false);
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          false);
 
     unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
-    ASSERT_EQ(ref_s_of_fc, set_of_fine_cells_for_Current_Coarse_Cell);
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
 
-    ASSERT_EQ(4, numberOfFineAgglomeratedCells_tmp);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, false, true, true, false, false, false, false};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
     }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 8, 2, 6, 6, 2});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
-    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-    ref_d_neighbours_of_seed_2[2] = 2;
-    ref_d_neighbours_of_seed_2[5] = 3;
-    ref_d_neighbours_of_seed_2[6] = 2;
-    ref_d_neighbours_of_seed_2[7] = 3;
-    ASSERT_EQ(ref_d_neighbours_of_seed_2, dict_Neighbours_Of_Seed);
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed ={{2, 2},
+                                                                   {5, 3},
+                                                                   {6, 2},
+                                                                   {7, 3}};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 
-    vector<queue<long>> ref_l_of_seeds(4);
-    ref_l_of_seeds[0] = queue<long>();
-    ref_l_of_seeds[1] = queue<long>();
-    ref_l_of_seeds[2] = queue<long>({2, 6});
-    ref_l_of_seeds[3] = queue<long>();
-    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
+//
+//    ASSERT_EQ(4, numberOfFineAgglomeratedCells_tmp);
+//
+//    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, false, true, true, false, false, false, false};
+//    for (int i = 0; i < 9; i++) {
+//        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
+//    }
+//
+//    unordered_map<long, int> ref_d_neighbours_of_seed_2;
+//    ref_d_neighbours_of_seed_2[2] = 2;
+//    ref_d_neighbours_of_seed_2[5] = 3;
+//    ref_d_neighbours_of_seed_2[6] = 2;
+//    ref_d_neighbours_of_seed_2[7] = 3;
+//    ASSERT_EQ(ref_d_neighbours_of_seed_2, d_neighbours_of_seed);
+//
+//    vector<queue<long>> ref_l_of_seeds(4);
+//    ref_l_of_seeds[0] = queue<long>();
+//    ref_l_of_seeds[1] = queue<long>();
+//    ref_l_of_seeds[2] = queue<long>({2, 6});
+//    ref_l_of_seeds[3] = queue<long>();
+//    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
+//    vector<queue<long>> listOfSeeds(4);
+//    for (int i = 0; i < 4; i++) {
+//        listOfSeeds[i] = queue<long>();
+//    }
+
 }
 
 TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True) {
@@ -1121,13 +1131,13 @@ TEST(Agglomerator_TestSuite, agglomerate_Anisotropic_One_Level_Box_5x5x5_Aniso_M
     long ref_fineAgglomerationLines_array_Idx[17] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
     for (int i = 0; i < fineAgglomerationLines_array_Idx_size; i++) {
         // cout <<AnisotropicCompliantCoarseCells_array[i]<<", ";
-        ASSERT_EQ(ref_fineAgglomerationLines_array_Idx[i] , fineAgglomerationLines_array_Idx[i]);
+        ASSERT_EQ(ref_fineAgglomerationLines_array_Idx[i], fineAgglomerationLines_array_Idx[i]);
     }
     long ref_fineAgglomerationLines_array[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                                                  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
                                                  20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
     for (int i = 0; i < fineAgglomerationLines_array_Idx[fineAgglomerationLines_array_Idx_size - 1]; i++) {
-        ASSERT_EQ(ref_fineAgglomerationLines_array[i] ,  fineAgglomerationLines_array[i]);
+        ASSERT_EQ(ref_fineAgglomerationLines_array[i], fineAgglomerationLines_array[i]);
     }
 
     delete[] fineCellToCoarseCell;
