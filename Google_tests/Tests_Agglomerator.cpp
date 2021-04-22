@@ -2,6 +2,7 @@
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
 #include "../CoMMA_lib/Dual_Graph.h"
+#include "../CoMMA_lib/First_Order_Neighbourhood.h"
 #include "MGridGen_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "gtest/gtest.h"
@@ -25,27 +26,120 @@ TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {
     ASSERT_FALSE(agg.__is_anisotropic);
 }
 
-TEST_F(Nine_squares_3x3_Dual_Graph, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False) {
-    //"""
-    //9 squares (3*3)
-    //:return:
-    //"""
-    //    int nbCells = 9;
-    //
-    //    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    //    long col_ind[33] = {0, 1, 3, 0, 1,
-    //                        2, 4, 1, 2, 5,
-    //                        0, 3, 4, 6, 1,
-    //                        3, 4, 5, 7, 2,
-    //                        4, 5, 8, 3, 6,
-    //                        7, 4, 6, 7, 8, 5, 7, 8};
-    //    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0, 1.0, 1.0,
-    //                         1.0, 1.0, 1.0};
+TEST_F(Nine_squares_3x3_Dual_Graph, __compute_best_fc_to_add_9_Squares_isOrderPrimary_False) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+
+    long seed = 0;
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    unsigned short compactness = 0;
+    bool is_order_primary = false;
+
+    // Computation of the initial aspect ratio: we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
+    double cc_surf = 0.0;
+    vector<double> a_neighbours_weights = (*g).get_weights(seed);
+    unsigned short nb_neighbours = (*g).get_nb_of_neighbours(seed);
+    for (const double &w:a_neighbours_weights) {
+        cc_surf += w;
+    }
+
+    // volume of cc is at first the volume of the seed.
+    double vol_cc = (*g)._volumes[seed];
+
+    unordered_set<long> s_of_fc_for_current_cc = {seed};
+
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+
+    unordered_set<long> s_neighbours_of_seed = d_keys_to_set(d_neighbours_of_seed);
+    First_Order_Neighbourhood f_o_neighbourhood = First_Order_Neighbourhood(s_neighbours_of_seed);
+
+    vector<long> v = (*g).get_neighbours(seed);
+    unordered_set<long> s_up(v.begin(), v.end());
+
+    unordered_set<long> fon = f_o_neighbourhood.update(seed, s_up);
+
+    long argmin_ar = -1;
+    double min_ar_surf = numeric_limits<double>::max();
+    double min_ar_vol = numeric_limits<double>::max();
+    unsigned short max_faces_in_common = 0;
+
+    agg.__compute_best_fc_to_add((*g),
+                                 fon,
+                                 d_neighbours_of_seed,
+                                 is_order_primary,
+                                 cc_surf,
+                                 vol_cc,
+                                 s_of_fc_for_current_cc,
+                                 argmin_ar,
+                                 max_faces_in_common,
+                                 min_ar_surf,
+                                 min_ar_vol);
+    ASSERT_EQ(3, argmin_ar);
+    ASSERT_EQ(1, max_faces_in_common);
+    ASSERT_EQ(5.0, min_ar_surf);
+    ASSERT_EQ(2.0, min_ar_vol);
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderPrimary_False) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+
+    long seed = 0;
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic((*g),
+                                                                            seed,
+                                                                            d_neighbours_of_seed,
+                                                                            goal_card,
+                                                                            max_card,
+                                                                            compactness,
+                                                                            false);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
+                                                                    {5, 3},
+                                                                    {6, 2},
+                                                                    {7, 3}};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_False) {
+
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
@@ -83,375 +177,258 @@ TEST_F(Nine_squares_3x3_Dual_Graph, choice_Of_Agglomerated_Cells_9_Squares_isOrd
     for (int i = 0; i < 4; i++) {
         ref_l_deque_of_seeds[i] = deque<long>();
     }
-    ref_l_deque_of_seeds[2] = deque<long>({0, 8, 2, 6, 6, 2});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 2, 6});
     ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
-    unordered_map<long, unsigned short> ref_d_neighbours_of_seed ={{2, 2},
-                                                                   {5, 3},
-                                                                   {6, 2},
-                                                                   {7, 3}};
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
+                                                                    {5, 3},
+                                                                    {6, 2},
+                                                                    {7, 3}};
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
-
-//
-//    ASSERT_EQ(4, numberOfFineAgglomeratedCells_tmp);
-//
-//    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, false, true, true, false, false, false, false};
-//    for (int i = 0; i < 9; i++) {
-//        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
-//    }
-//
-//    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-//    ref_d_neighbours_of_seed_2[2] = 2;
-//    ref_d_neighbours_of_seed_2[5] = 3;
-//    ref_d_neighbours_of_seed_2[6] = 2;
-//    ref_d_neighbours_of_seed_2[7] = 3;
-//    ASSERT_EQ(ref_d_neighbours_of_seed_2, d_neighbours_of_seed);
-//
-//    vector<queue<long>> ref_l_of_seeds(4);
-//    ref_l_of_seeds[0] = queue<long>();
-//    ref_l_of_seeds[1] = queue<long>();
-//    ref_l_of_seeds[2] = queue<long>({2, 6});
-//    ref_l_of_seeds[3] = queue<long>();
-//    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
-//    vector<queue<long>> listOfSeeds(4);
-//    for (int i = 0; i < 4; i++) {
-//        listOfSeeds[i] = queue<long>();
-//    }
-
 }
 
-TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True) {
-    //"""
-    //9 squares (3*3)
-    //:return:
-    //"""
-    int nbCells = 9;
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True) {
 
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1, 2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1, 3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6, 7, 4, 6, 7, 8,
-                        5, 7, 8};
-    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0};
+    Agglomerator agg((*g), 0, 1, 2, true);
 
-    int iLevel = 1;
-    long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
-    for (int i = 0; i < 4; i++) {
-        listOfSeeds[i] = queue<long>();
-    }
-
-    int goalCard = 4;
-    int maxCard = 6;
-    bool isFineCellAgglomerated_tmp[9] = {false, false, false, false, false, false, false, false, false};
-    unordered_map<long, int> dict_Neighbours_Of_Seed = computation_Of_Neighbourhood(seed, 3, row_ptr,
-                                                                                    col_ind, maxCard,  // __goalCard
-                                                                                    isFineCellAgglomerated_tmp);
-    unordered_map<long, int> ref;
-    ref[1] = 1;
-    ref[2] = 2;
-    ref[3] = 1;
-    ref[4] = 2;
-    ref[5] = 3;
-    ref[6] = 2;
-    ref[7] = 3;
-
-    ASSERT_EQ(ref, dict_Neighbours_Of_Seed);
-
-    double volumes[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    int isOnBnd[9] = {2, 1, 2, 1, 0, 1, 2, 1, 2};
-
-    long numberOfFineAgglomeratedCells_tmp = 0;
-    unordered_set<long> set_of_fine_cells_for_Current_Coarse_Cell =
-            choice_Of_Agglomerated_Cells(
-                    seed, listOfSeeds, dict_Neighbours_Of_Seed,
-                    row_ptr,
-                    col_ind, values, volumes,
-                    goalCard,
-                    maxCard,
-                    isFineCellAgglomerated_tmp,
-                    isOnBnd,
-                    numberOfFineAgglomeratedCells_tmp,
-                    true);
-
-    unordered_set<long> ref_s_of_fc({0, 1, 3, 6});  //0,1, 2, 3 is also correct!
-    ASSERT_EQ(ref_s_of_fc, set_of_fine_cells_for_Current_Coarse_Cell);
-
-    ASSERT_EQ(4, numberOfFineAgglomeratedCells_tmp);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, false, true, false, false, true, false, false};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
-    }
-    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-    ref_d_neighbours_of_seed_2[4] = 2;
-    ref_d_neighbours_of_seed_2[5] = 3;
-    ref_d_neighbours_of_seed_2[2] = 2;
-    ref_d_neighbours_of_seed_2[7] = 3;
-    ASSERT_EQ(ref_d_neighbours_of_seed_2, dict_Neighbours_Of_Seed);
-
-    vector<queue<long>> ref_l_of_seeds(4);
-    ref_l_of_seeds[0] = queue<long>({4});
-    ref_l_of_seeds[1] = queue<long>();
-    ref_l_of_seeds[2] = queue<long>({2});
-    ref_l_of_seeds[3] = queue<long>();
-    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
-
-}
-
-TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4) {
-    //"""
-    //9 squares (3*3)
-    //:return:
-    //"""
-
-    int nbCells = 9;
-
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0};
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          true);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(1, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
-        listOfSeeds[i] = queue<long>();
+        ref_l_deque_of_seeds[i] = deque<long>();
     }
+    ref_l_deque_of_seeds[0] = deque<long>({4});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 6});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
-    int goalCard = 8;
-    int maxCard = 8;
-    bool isFineCellAgglomerated_tmp[9] = {false, false, false, false, false, false, false, false, false};
-    unordered_map<long, int> dict_Neighbours_Of_Seed = computation_Of_Neighbourhood(seed, 4, row_ptr,
-                                                                                    col_ind, maxCard,  // __goalCard
-                                                                                    isFineCellAgglomerated_tmp);
-    unordered_map<long, int> ref;
-    ref[1] = 1;
-    ref[2] = 2;
-    ref[3] = 1;
-    ref[4] = 2;
-    ref[5] = 3;
-    ref[6] = 2;
-    ref[7] = 3;
-    ref[8] = 4;
-    ASSERT_EQ(ref, dict_Neighbours_Of_Seed);
-
-    double volumes[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    int isOnBnd[9] = {2, 1, 2, 1, 0, 1, 2, 1, 2};
-
-    long numberOfFineAgglomeratedCells_tmp = 0;
-    unordered_set<long> set_of_fine_cells_for_Current_Coarse_Cell =
-            choice_Of_Agglomerated_Cells(
-                    seed, listOfSeeds, dict_Neighbours_Of_Seed,
-                    row_ptr,
-                    col_ind, values, volumes,
-                    goalCard,
-                    maxCard,
-                    isFineCellAgglomerated_tmp,
-                    isOnBnd,
-                    numberOfFineAgglomeratedCells_tmp,
-                    false);
-
-    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4, 5, 6, 7});
-    ASSERT_EQ(ref_s_of_fc, set_of_fine_cells_for_Current_Coarse_Cell);
-    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, false};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
-    }
-
-    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-    ref_d_neighbours_of_seed_2[8] = 4;
-    ASSERT_EQ(ref_d_neighbours_of_seed_2, dict_Neighbours_Of_Seed);
-
-    vector<queue<long>> ref_l_of_seeds(4);
-    ref_l_of_seeds[0] = queue<long>();
-    ref_l_of_seeds[1] = queue<long>();
-    ref_l_of_seeds[2] = queue<long>({8});
-    ref_l_of_seeds[3] = queue<long>();
-    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{4, 2},
+                                                                    {5, 3},
+                                                                    {6, 2},
+                                                                    {7, 3}};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
-TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4) {
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_False_GoalCard_8) {
 
-    //"""
-    //9 squares (3*3)
-    //:return:
-    //"""
-    int nbCells = 9;
+    Agglomerator agg((*g), 0, 1, 2, true);
 
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0};
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    unsigned short goal_card = 8;
+    unsigned short max_card = 8;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          false);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
-        listOfSeeds[i] = queue<long>();
+        ref_l_deque_of_seeds[i] = deque<long>();
     }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
-    int goalCard = 8;
-    int maxCard = 8;
-    bool isFineCellAgglomerated_tmp[9] = {false, false, false, false, false, false, false, false, false};
-    unordered_map<long, int> dict_Neighbours_Of_Seed = computation_Of_Neighbourhood(seed, 4, row_ptr,
-                                                                                    col_ind, maxCard,  // __goalCard
-                                                                                    isFineCellAgglomerated_tmp);
-    unordered_map<long, int> ref;
-    ref[1] = 1;
-    ref[2] = 2;
-    ref[3] = 1;
-    ref[4] = 2;
-    ref[5] = 3;
-    ref[6] = 2;
-    ref[7] = 3;
-    ref[8] = 4;
-    ASSERT_EQ(ref, dict_Neighbours_Of_Seed);
-
-    double volumes[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    int isOnBnd[9] = {2, 1, 2, 1, 0, 1, 2, 1, 2};
-
-    long numberOfFineAgglomeratedCells_tmp = 0;
-    unordered_set<long> set_of_fine_cells_for_Current_Coarse_Cell =
-            choice_Of_Agglomerated_Cells(
-                    seed, listOfSeeds, dict_Neighbours_Of_Seed,
-                    row_ptr,
-                    col_ind, values, volumes,
-                    goalCard,
-                    maxCard,
-                    isFineCellAgglomerated_tmp,
-                    isOnBnd,
-                    numberOfFineAgglomeratedCells_tmp,
-                    true);
-
-    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4, 5, 6, 7});
-    ASSERT_EQ(ref_s_of_fc, set_of_fine_cells_for_Current_Coarse_Cell);
-
-    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, false};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
-    }
-
-    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-    ref_d_neighbours_of_seed_2[8] = 4;
-    ASSERT_EQ(ref_d_neighbours_of_seed_2, dict_Neighbours_Of_Seed);
-
-    vector<queue<long>> ref_l_of_seeds(4);
-    ref_l_of_seeds[0] = queue<long>();
-    ref_l_of_seeds[1] = queue<long>();
-    ref_l_of_seeds[2] = queue<long>({8});
-    ref_l_of_seeds[3] = queue<long>();
-    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
-TEST(Agglomerator_TestSuite, choice_Of_Agglomerated_Cells_9_Squares_isOrderPrimary_True_GoalCard_8) {
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True_GoalCard_8) {
 
-    //"""
-    //9 squares (3*3)
-    //:return:
-    //"""
-    int nbCells = 9;
+    Agglomerator agg((*g), 0, 1, 2, true);
 
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    double values[33] = {1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0, 1.0, 1.0,
-                         1.0, 1.0, 1.0};
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
-    vector<queue<long>> listOfSeeds(4);
+    unsigned short goal_card = 8;
+    unsigned short max_card = 8;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          true);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
-        listOfSeeds[i] = queue<long>();
+        ref_l_deque_of_seeds[i] = deque<long>();
     }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
-    int goalCard = 8;
-    int maxCard = 8;
-    bool isFineCellAgglomerated_tmp[9] = {false, false, false, false, false, false, false, false, false};
-    unordered_map<long, int> dict_Neighbours_Of_Seed = computation_Of_Neighbourhood(seed, 3, row_ptr,
-                                                                                    col_ind, maxCard,  // __goalCard
-                                                                                    isFineCellAgglomerated_tmp);
-    unordered_map<long, int> ref;
-    ref[1] = 1;
-    ref[2] = 2;
-    ref[3] = 1;
-    ref[4] = 2;
-    ref[5] = 3;
-    ref[6] = 2;
-    ref[7] = 3;
-    ASSERT_EQ(ref, dict_Neighbours_Of_Seed);
-
-    double volumes[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    int isOnBnd[9] = {2, 1, 2, 1, 0, 1, 2, 1, 2};
-
-    long numberOfFineAgglomeratedCells_tmp = 0;
-    unordered_set<long> set_of_fine_cells_for_Current_Coarse_Cell =
-            choice_Of_Agglomerated_Cells(
-                    seed, listOfSeeds, dict_Neighbours_Of_Seed,
-                    row_ptr,
-                    col_ind, values, volumes,
-                    goalCard,
-                    maxCard,
-                    isFineCellAgglomerated_tmp,
-                    isOnBnd,
-                    numberOfFineAgglomeratedCells_tmp,
-                    true);
-
-    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4, 5, 6, 7});
-    ASSERT_EQ(ref_s_of_fc, set_of_fine_cells_for_Current_Coarse_Cell);
-
-    ASSERT_EQ(8, numberOfFineAgglomeratedCells_tmp);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, false};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated_tmp[i]);
-    }
-    unordered_map<long, int> ref_d_neighbours_of_seed_2;
-    ASSERT_EQ(ref_d_neighbours_of_seed_2, dict_Neighbours_Of_Seed);
-
-    vector<queue<long>> ref_l_of_seeds(4);
-    ref_l_of_seeds[0] = queue<long>();
-    ref_l_of_seeds[1] = queue<long>();
-    ref_l_of_seeds[2] = queue<long>({8});
-    ref_l_of_seeds[3] = queue<long>();
-    ASSERT_EQ(ref_l_of_seeds, listOfSeeds);
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+
+    long seed = 0;
+    unsigned short goal_card = 8;
+    unsigned short max_card = 8;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+    d_neighbours_of_seed[8] = 4;
+
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          false);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{8, 4}};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+
+    long seed = 0;
+    unsigned short goal_card = 8;
+    unsigned short max_card = 8;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    d_neighbours_of_seed[1] = 1;
+    d_neighbours_of_seed[2] = 2;
+    d_neighbours_of_seed[3] = 1;
+    d_neighbours_of_seed[4] = 2;
+    d_neighbours_of_seed[5] = 3;
+    d_neighbours_of_seed[6] = 2;
+    d_neighbours_of_seed[7] = 3;
+    d_neighbours_of_seed[8] = 4;
+
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+                                                                                          seed,
+                                                                                          d_neighbours_of_seed,
+                                                                                          goal_card,
+                                                                                          max_card,
+                                                                                          "basic",
+                                                                                          compactness,
+                                                                                          true);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{8, 4}};
+    ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+/////////////////
+/////////////////
+/////////////////
+/////////////////
+/////////////////
+
 
 TEST(Agglomerator_TestSuite, agglomerate_Isotropic_First_Step_Box_5x5x5) {
 

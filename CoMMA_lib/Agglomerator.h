@@ -79,6 +79,17 @@ public :
                                                     bool &is_fc_adjacent_to_any_cell_of_the_cc,
                                                     unsigned short &number_faces_in_common) const;
 
+    void __compute_best_fc_to_add(Dual_Graph &graph,
+                                                unordered_set<long> fon,
+                                                const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                const bool &is_order_primary,
+                                                const double &cc_surf,
+                                                const double &vol_cc,
+                                                const unordered_set<long> &s_of_fc_for_current_cc,
+                                                long &argmin_ar,
+                                                unsigned short &max_faces_in_common,
+                                                double &min_ar_surf,
+                                                double &min_ar_vol);
 public:
     //private fields
     int __verbose;

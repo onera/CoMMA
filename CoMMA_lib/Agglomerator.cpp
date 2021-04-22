@@ -222,7 +222,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
         const unsigned short goal_card,
         const unsigned short max_card,
         unsigned short &compactness,
-        bool is_order_primary) {
+        const bool is_order_primary) {
 
     // Number of fine cells constituting the current coarse cell in construction.
     unsigned short size_current_cc = 1; // CC contains only one cell: the seed
@@ -280,88 +280,24 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
     // Choice of the fine cells to agglomerate
     while (size_current_cc < max_ind) {
 
-        double min_ar = numeric_limits<double>::max();
+        long argmin_ar = -1;
         double min_ar_surf = numeric_limits<double>::max();
         double min_ar_vol = numeric_limits<double>::max();
-        long argmin_ar = -1;
+        unsigned short max_faces_in_common = 0;
 
-        int max_faces_in_common = 0;
-        long arg_max_faces_in_common = -1;
+        __compute_best_fc_to_add(graph,
+                                 fon,
+                                 dict_neighbours_of_seed,
+                                 is_order_primary,
+                                 cc_surf,
+                                 vol_cc,
+                                 s_of_fc_for_current_cc,
+                                 argmin_ar,
+                                 max_faces_in_common,
+                                 min_ar_surf,
+                                 min_ar_vol);
 
-        // For every fc in the neighbourhood:
-        // we update the new aspect ratio
-        // verifier que fon est un sous ensemble de dict_neighbours_of_seed
-        // assert fon.issubset(dict_neighbours_of_seed.keys())
-        for (const long &i_fc: fon) {  // we test every possible new cells to chose the one that locally
 
-            // minimizes the Aspect Ratio.
-            if (arg_max_faces_in_common == -1) {
-                arg_max_faces_in_common = i_fc;
-            }
-
-            // update of the vol
-            double new_ar_vol = vol_cc + graph._volumes[i_fc];
-
-            unsigned short number_faces_in_common = 0;
-            bool is_fc_adjacent_to_any_cell_of_the_cc = false;
-            double new_ar_surf = cc_surf;
-
-            __compute_ar_surf_adjacency_nb_face_common(graph, i_fc, s_of_fc_for_current_cc,
-                                                       new_ar_surf,
-                                                       is_fc_adjacent_to_any_cell_of_the_cc,
-                                                       number_faces_in_common);
-
-            cout << i_fc << "\t" << new_ar_surf << "\t" << is_fc_adjacent_to_any_cell_of_the_cc << "\t" << number_faces_in_common << endl;
-            double new_ar = pow(new_ar_surf, 1.5) / new_ar_vol;
-
-            // TODO useful???
-            long order = dict_neighbours_of_seed[i_fc];
-
-            // TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
-            // TODO also need to remove the list of min_ar, argmin_ar, etc.
-            if (number_faces_in_common >= max_faces_in_common or is_order_primary) {  // if is_order_primary is True the order of
-                // neighbourhood is primary
-                if (number_faces_in_common == max_faces_in_common or is_order_primary) {
-
-                    if (order <= dict_neighbours_of_seed[arg_max_faces_in_common]) {
-                        if (order == dict_neighbours_of_seed[arg_max_faces_in_common]) {
-                            if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
-                                // The second condition asserts the connectivity of the coarse element.
-                                min_ar = new_ar;
-                                argmin_ar = i_fc;
-                                min_ar_surf = new_ar_surf;
-                                min_ar_vol = new_ar_vol;
-
-                                arg_max_faces_in_common = i_fc;
-                                // The number of face in common is the same no need to touch it
-                            }
-                        } else {
-                            // Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
-                            arg_max_faces_in_common = i_fc;
-                            min_ar = new_ar;
-                            argmin_ar = i_fc;
-                            min_ar_surf = new_ar_surf;
-                            min_ar_vol = new_ar_vol;
-// The number of face in common is the same no need to touch it
-                        }
-                    }
-                } else {
-// Case :number_faces_in_common > max_faces_in_common:
-                    max_faces_in_common = number_faces_in_common;
-                    arg_max_faces_in_common = i_fc;
-                    min_ar = new_ar;
-                    argmin_ar = i_fc;
-                    min_ar_surf = new_ar_surf;
-                    min_ar_vol = new_ar_vol;
-                }
-            }
-//            cout<<max_faces_in_common<<;
-//            arg_max_faces_in_common = i_fc;
-//            min_ar = new_ar;
-//            argmin_ar = i_fc;
-//            min_ar_surf = new_ar_surf;
-//            min_ar_vol = new_ar_vol;""
-        }
         number_of_external_faces_current_cc += graph.get_nb_of_neighbours(argmin_ar)
                                                + (*graph.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
 
@@ -489,6 +425,94 @@ list<long> Agglomerator::__create_list_of_seeds(Coarse_Cell_Graph cc_graph,
         }
     }
     return l_of_new_seed;
+}
+
+void Agglomerator::__compute_best_fc_to_add(Dual_Graph &graph,
+                                            unordered_set<long> fon,
+                                            const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                            const bool &is_order_primary,
+                                            const double &cc_surf,
+                                            const double &vol_cc,
+                                            const unordered_set<long> &s_of_fc_for_current_cc,
+                                            long &argmin_ar,
+                                            unsigned short &max_faces_in_common,
+                                            double &min_ar_surf,
+                                            double &min_ar_vol
+) {
+
+
+    double min_ar = numeric_limits<double>::max();
+    long arg_max_faces_in_common = -1;
+
+    // For every fc in the neighbourhood:
+    // we update the new aspect ratio
+    // verifier que fon est un sous ensemble de dict_neighbours_of_seed
+    // assert fon.issubset(dict_neighbours_of_seed.keys())
+    for (const long &i_fc: fon) {  // we test every possible new cells to chose the one that locally
+
+        // minimizes the Aspect Ratio.
+        if (arg_max_faces_in_common == -1) {
+            arg_max_faces_in_common = i_fc;
+        }
+
+        // update of the vol
+        double new_ar_vol = vol_cc + graph._volumes[i_fc];
+
+        unsigned short number_faces_in_common = 0;
+        bool is_fc_adjacent_to_any_cell_of_the_cc = false;
+        double new_ar_surf = cc_surf;
+
+        __compute_ar_surf_adjacency_nb_face_common(graph, i_fc, s_of_fc_for_current_cc,
+                                                   new_ar_surf,
+                                                   is_fc_adjacent_to_any_cell_of_the_cc,
+                                                   number_faces_in_common);
+
+//        cout << i_fc << "\t" << new_ar_surf << "\t" << is_fc_adjacent_to_any_cell_of_the_cc << "\t" << number_faces_in_common <<
+//             endl;
+        double new_ar = pow(new_ar_surf, 1.5) / new_ar_vol;
+
+        // TODO useful???
+        const unsigned short & order = dict_neighbours_of_seed.at(i_fc); // [i_fc] is not const.
+
+// TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
+// TODO also need to remove the list of min_ar, argmin_ar, etc.
+        if (number_faces_in_common >= max_faces_in_common or is_order_primary) {  // if is_order_primary is True the order of
+// neighbourhood is primary
+            if (number_faces_in_common == max_faces_in_common or is_order_primary) {
+
+                if (order <= dict_neighbours_of_seed.at(arg_max_faces_in_common)) {  // [arg_max_faces_in_common] is not const.
+                    if (order == dict_neighbours_of_seed.at(arg_max_faces_in_common)) {
+                        if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
+// The second condition asserts the connectivity of the coarse element.
+                            min_ar = new_ar;
+                            argmin_ar = i_fc;
+                            min_ar_surf = new_ar_surf;
+                            min_ar_vol = new_ar_vol;
+
+                            arg_max_faces_in_common = i_fc;
+// The number of face in common is the same no need to touch it
+                        }
+                    } else {
+// Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
+                        arg_max_faces_in_common = i_fc;
+                        min_ar = new_ar;
+                        argmin_ar = i_fc;
+                        min_ar_surf = new_ar_surf;
+                        min_ar_vol = new_ar_vol;
+// The number of face in common is the same no need to touch it
+                    }
+                }
+            } else {
+// Case :number_faces_in_common > max_faces_in_common:
+                max_faces_in_common = number_faces_in_common;
+                arg_max_faces_in_common = i_fc;
+                min_ar = new_ar;
+                argmin_ar = i_fc;
+                min_ar_surf = new_ar_surf;
+                min_ar_vol = new_ar_vol;
+            }
+        }
+    }
 }
 
 unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected(
