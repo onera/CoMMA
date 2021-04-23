@@ -589,9 +589,8 @@ void Coarse_Cell_Graph::cc_renumber() {
         _update_cc_neighbour(min_cc, dict_old_cc_to_new_cc);
 
         _cc_counter -= _s_cc_to_remove.size();
-        if (_cc_counter != new_i_cc)
-        {
-            cerr<<"Problem consistency in number of Coarse cells " << _cc_counter << " " <<new_i_cc<<endl;
+        if (_cc_counter != new_i_cc) {
+            cerr << "Problem consistency in number of Coarse cells " << _cc_counter << " " << new_i_cc << endl;
         }
         assert(_cc_counter == new_i_cc);
 
@@ -609,9 +608,9 @@ bool Coarse_Cell_Graph::__check_s_cc_to_remove_are_isotropic() {
             if (_d_isotropic_cc[i_cc] != NULL) {
                 cerr << "Cc " << i_cc << " is not empty: {";
                 for (const long &i: (*_d_isotropic_cc[i_cc]).get_s_fc()) {
-                    cerr<<i<<", ";
+                    cerr << i << ", ";
                 }
-                cerr<<"}"<<endl;
+                cerr << "}" << endl;
             }
             assert((*_d_isotropic_cc[i_cc]).get_s_fc().empty());
         }
@@ -620,7 +619,7 @@ bool Coarse_Cell_Graph::__check_s_cc_to_remove_are_isotropic() {
 }
 
 
-void Coarse_Cell_Graph::_update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc){
+void Coarse_Cell_Graph::_update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc) {
 
     /**
      * Update cc index for the cc neighbours of renumbered cc.
@@ -629,14 +628,12 @@ void Coarse_Cell_Graph::_update_cc_neighbour(long min_cc, unordered_map<long, lo
     // be careful that self._cc_counter is currently before the deletion of removed cc.
     // for i_cc in range(min_cc + 1, self._cc_counter):
     unordered_set<long> s_cc_to_update;
-    for (const auto& i_k_v: dict_old_cc_to_new_cc)
-    {
+    for (const auto &i_k_v: dict_old_cc_to_new_cc) {
         // we process it from smaller to bigger to avoid rewrite data and the alea in set.
-        const long i_cc=i_k_v.first;
+        const long i_cc = i_k_v.first;
         const long i_cc_new = i_k_v.second;
-        if (_d_isotropic_cc.count(i_cc_new))
-        {
-            Coarse_Cell* cc_new = _d_isotropic_cc[i_cc_new];
+        if (_d_isotropic_cc.count(i_cc_new)) {
+            Coarse_Cell *cc_new = _d_isotropic_cc[i_cc_new];
             (*cc_new).update_cc_neighbour_renumbering(dict_old_cc_to_new_cc);
             unordered_set<long> s_cc = (*cc_new).get_s_cc_neighbours();
             s_cc_to_update.insert(s_cc.begin(), s_cc.end());
@@ -647,23 +644,24 @@ void Coarse_Cell_Graph::_update_cc_neighbour(long min_cc, unordered_map<long, lo
 
     // We take care of cc that are neighbour of renumbered cc.
     for (const auto &i_k_v : dict_old_cc_to_new_cc) {
-        if (s_cc_to_update.count(i_k_v.second)){
+        if (s_cc_to_update.count(i_k_v.second)) {
             s_cc_to_update.erase(i_k_v.second);
         }
     }
 //    s_cc_to_update -= set(dict_old_cc_to_new_cc.values());
     // print("s_cc_to_update", s_cc_to_update)
-    for(const long& i_cc : s_cc_to_update) {
-        if (_d_isotropic_cc.count(i_cc)){
+    for (const long &i_cc : s_cc_to_update) {
+        if (_d_isotropic_cc.count(i_cc)) {
             (*_d_isotropic_cc[i_cc]).update_cc_neighbour_renumbering(dict_old_cc_to_new_cc);
         }
 
     }
 }
 
-bool Coarse_Cell_Graph::check_cc_consistency(){
+// TODO remove this
+bool Coarse_Cell_Graph::check_cc_consistency() {
     // print("check_cc_consistency")
-    for (auto& i_k_v: _d_isotropic_cc) {
+    for (auto &i_k_v: _d_isotropic_cc) {
         // print(i_cc)
         Coarse_Cell *cc = _d_isotropic_cc[i_k_v.first];
         if (!(*cc).check_consistency(_fc_2_cc)) {
@@ -672,3 +670,152 @@ bool Coarse_Cell_Graph::check_cc_consistency(){
     }
     return true;
 }
+
+bool Coarse_Cell_Graph::_check_consistency() {
+
+/**
+ *  We check that the data are consistant between dict_cc, dict_Card_Coarse_Cells and fc_to_cc
+ */
+
+    bool result = true;
+
+
+    //=========================
+    // Check isotropic part
+    //=========================
+
+    for (const auto &i_k_v : _d_isotropic_cc) {
+        const long &i_cc = i_k_v.first;
+        Coarse_Cell *cc = _d_isotropic_cc[i_cc];
+        for (const long &i_fc : (*cc).get_s_fc()) {
+            result = result && _fc_2_cc[i_fc] == i_cc;
+        }
+
+        unsigned short card = (*cc).__card;
+        result = result && _d_card_2_cc.count(card);
+        result = result && _d_card_2_cc[card].count(i_cc);
+
+        unsigned short compactness = (*cc).__compactness;
+        result = result && (_d_compactness_2_cc.count(compactness) && _d_compactness_2_cc[compactness].count(i_cc));
+
+        result = result && (*cc).check_consistency(_fc_2_cc);
+        if (!result) {
+            cerr << "Trouble of consistency in isotropic cc " << i_cc << endl;
+//           print(i_cc, (*cc).get_s_fc(), self._d_compactness_2_cc)
+        }
+    }
+    //=========================
+    // Check anisotropic part
+    //=========================
+    for (const auto &i_k_v : _d_anisotropic_cc) {
+        const long &i_cc = i_k_v.first;
+        for (const long &i_fc : _d_anisotropic_cc[i_cc]) {
+            result = result && _fc_2_cc[i_fc] == i_cc;
+        }
+        if (!result) {
+            cerr << "Trouble of consistency in anisotropic cc " << i_cc << endl;
+        }
+    }
+    if (!result) {
+        cerr << "Failed after step 1" << endl;
+    }
+
+    //=========================
+    // Check _d_card_2_cc
+    //=========================
+    for (const auto &i_k_v : _d_card_2_cc) {
+        const unsigned short &i_size = i_k_v.first;
+        for (const long &i_cc : _d_card_2_cc[i_size]) {
+            result = result && _d_isotropic_cc.count(i_cc);
+            result = result && (*_d_isotropic_cc[i_cc]).__card == i_size;
+        }
+    }
+    if (!result) {
+        cerr << "Failed after step 2" << endl;
+    }
+
+    //=========================
+    // Check _fc_2_cc
+    //=========================
+
+    for (long i_fc = 0; i_fc < _fc_graph.number_of_cells; i_fc++) {
+        long i_cc = _fc_2_cc[i_fc];
+        if (_d_isotropic_cc.count(i_cc)) {
+
+            // i_cc is an isotropic cell
+            if ((*_d_isotropic_cc[i_cc]).get_s_fc().count(i_fc) == 0) {
+                cerr << "i_cc not in dict_cc i_fc: " << i_fc << " i_cc " << i_cc << endl;
+//                print("i_cc not in dict_cc i_fc:", i_fc, "i_cc", i_cc, "l",
+//                      self._d_isotropic_cc[i_cc].get_s_fc())
+
+            }
+            result = result && (*_d_isotropic_cc[i_cc]).get_s_fc().count(i_fc);
+
+        } else if (_d_anisotropic_cc.count(i_cc)) {
+
+            // i_cc is an anisotropic cell
+            if (_d_anisotropic_cc[i_cc].count(i_fc) == 0) {
+                cerr << "i_cc not in dict_cc i_fc: " << i_fc << " i_cc " << i_cc << endl;
+//                print("i_cc not in dict_cc i_fc:", i_fc, "i_cc", i_cc, "l", self._d_anisotropic_cc[i_cc])
+
+            }
+            result = result && _d_anisotropic_cc[i_cc].count(i_fc);
+        } else {
+            cerr << "Unknown i_cc: " << i_cc << " i_fc " << i_cc << endl;
+            exit(1);
+
+        }
+    }
+    if (!result) {
+        cerr << "Failed after step 3" << endl;
+    }
+
+    return result;
+}
+
+// TODO remove calls to this function for production
+bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
+
+    assert(is_agglomeration_done());
+
+    //=========================
+    // checks the number of cc: i.e. no delayed cc left
+    //=========================
+
+    if (is_agglomeration_isotropic()) {
+
+        long nb_cc = 0;
+        for (auto &i_k_v: _d_isotropic_cc) {
+            if (nb_cc < i_k_v.first) {
+                nb_cc = i_k_v.first;
+            }
+        }
+        assert(_cc_counter == nb_cc+1);
+        bool result = _check_consistency();
+        if (!result) {
+            cerr << "storage in unconsistent" << endl;
+            return false;
+        }
+
+        //=========================
+        // Connectivity checking
+        //=========================
+        for (auto &i_k_v: _d_isotropic_cc) {
+            long i_cc = i_k_v.first;
+            Coarse_Cell *cc = i_k_v.second;
+            const unordered_set<long> &s_fc = (*cc).get_s_fc();
+            if (!_fc_graph.check_connectivity(s_fc)) {
+                _fc_graph.check_connectivity(s_fc, true);  // We force output in case of trouble!
+                cerr << "Error for Coarse cell " << i_cc << endl;
+//                print("Error at level", self._i_lvl, "for coarse cell", index, s_of_fc)
+                result = false;
+            }
+        }
+        return result;
+    } else {
+        bool result = _check_consistency();
+        return result && is_agglomeration_anisotropic();
+    }
+
+}
+

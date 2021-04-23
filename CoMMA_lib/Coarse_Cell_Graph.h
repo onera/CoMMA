@@ -54,6 +54,28 @@ public:
         return !_a_is_fc_agglomerated[i_fc];
     }
 
+    inline bool is_agglomeration_done(){
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return _nb_of_agglomerated_fc == _fc_graph.number_of_cells;
+    }
+
+    inline bool is_agglomeration_isotropic(){
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return !_d_isotropic_cc.empty();
+    }
+
+    inline bool is_agglomeration_anisotropic(){
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return !_d_anisotropic_cc.empty();
+    }
+
+
     void __remove_an_isotropic_cc(const long &i_cc);
 
     void _cc_update_neighbours(const long &i_fc,
@@ -64,11 +86,13 @@ public:
 
     void cc_renumber();
 
-    bool __check_s_cc_to_remove_are_isotropic();
-
     void _update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc);
 
     bool check_cc_consistency();
+    bool _check_consistency() ;
+    bool __check_s_cc_to_remove_are_isotropic();
+    bool check_data_consistency_and_connectivity();
+
     //protected:
     int _verbose;
 

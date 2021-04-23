@@ -1097,6 +1097,38 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
 
 }
 
+TEST_F(Test_CCG_box_5x5x5, check_consistency_Case_1_box_5x5x5) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {0, 1, 4, 5, 16, 17, 20, 21};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 11, 14, 15, 26, 27, 30, 31};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {2, 3, 6, 7, 18, 19, 22, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {8, 9, 12, 13, 28, 29, 24, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {32, 33, 36, 37, 52, 53, 48, 49};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={34, 35, 38, 39, 50, 51, 54, 55};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {40, 41, 44, 45, 56, 57, 60, 61};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {42, 43, 46, 47, 58, 59, 62, 63};
+    ccg.cc_create_a_cc(s_fc);
+
+    ASSERT_TRUE(ccg._check_consistency());
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 
