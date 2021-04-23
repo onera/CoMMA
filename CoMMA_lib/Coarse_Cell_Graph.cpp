@@ -790,7 +790,7 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
                 nb_cc = i_k_v.first;
             }
         }
-        assert(_cc_counter == nb_cc+1);
+        assert(_cc_counter == nb_cc + 1);
         bool result = _check_consistency();
         if (!result) {
             cerr << "storage in unconsistent" << endl;
@@ -819,3 +819,94 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
 
 }
 
+
+unordered_map<long, unsigned short> Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood(const long i_fc) const {
+
+    // TODO est-ce qu'il n'y aurait pas moyen de trier d'une manière ou d'une autre les voisins grossiers?
+    // TODO Tas?
+    unordered_map<long, unsigned short> d_n_cc;
+    for (const long &i_fc_neighbour: _fc_graph.get_neighbours(i_fc)) {
+        if (i_fc != i_fc_neighbour) {
+            long i_cc_n = _fc_2_cc[i_fc_neighbour];
+            if (d_n_cc.count(i_cc_n)) {
+                d_n_cc[i_cc_n] += 1;
+            } else {
+                d_n_cc[i_cc_n] = 1;
+            }
+        }
+    }
+    return d_n_cc;
+}
+
+unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::compute_dict_faces_in_common_faces_with_cc_neighbourhood(const long &i_fc) const {
+
+
+    // return Dict[i_cc:{i_fc_neighbour, ...}]
+
+    // TODO est-ce qu'il n'y aurait pas moyen de trier d'une manière ou d'une autre les voisins grossiers?
+    // TODO Tas?
+
+    // TODO  remove compute_nb_faces_in_common_faces_with_cc_neighbourhood() et juste récupérer len()???
+    unordered_map<long, unordered_set<long>> d_n_cc;
+    for (const long &i_fc_neighbour :_fc_graph.get_neighbours(i_fc)) {
+        if (i_fc != i_fc_neighbour) {
+            long i_cc = _fc_2_cc[i_fc_neighbour];
+            if (is_isotropic_cc(i_cc)) {
+                // We want only isotropic neighbours
+                if (d_n_cc.count(i_cc)) {
+                    d_n_cc[i_cc].insert(i_fc_neighbour);
+                } else {
+                    d_n_cc[i_cc] = {i_fc_neighbour};
+                }
+            }
+        }
+    }
+    return d_n_cc;
+}
+
+void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long& i_fc,
+                                                                          const unordered_set<long>& s_unwanted_fc,
+                                                                          unordered_set<long>& set_argmax_number_common_faces,
+                                                                          unordered_map<long, unsigned short>& dict_adjacent_cc
+                                                                          )const {
+
+// TODO le nom ne convient pas ca fait plus que la fonction compute_nb_faces_in_common_faces_with_cc_neighbourhood()
+/**
+ * Computes the number of faces in contact of every cc neighours
+ *       For every fine cell, i_fc, inside i_cc,
+ *       we look for which coarse neighbour shares the most common faces with it.
+ *
+ *  return: the set of arg_max and the dict of neighbouring cc
+ */
+
+    unsigned short max_number_common_faces = 0;
+
+    // We process every neighbour of i_fc
+    for (const long & i_fc_neighbour:_fc_graph.get_neighbours(i_fc)){
+        if(i_fc_neighbour != i_fc && (s_unwanted_fc.count(i_fc_neighbour)==0)){
+            // second term is to check that the neighbour does not belong to current incomplete cc.
+            long i_cc_neighbour = _fc_2_cc[i_fc_neighbour];
+            if (is_isotropic_cc(i_cc_neighbour)){
+                // we add the coarse cell containing the fine cell i_cc_neighbour in dict_adjacent_cc
+                if (dict_adjacent_cc.count(i_cc_neighbour)){
+                    dict_adjacent_cc[i_cc_neighbour] += 1;
+                }else
+                {
+                    dict_adjacent_cc[i_cc_neighbour] = 1;
+                }
+                // On essaye de reperer le voisin qui a le plus grand nombre de face commune
+                // pour le rattacher a lui.
+                if(dict_adjacent_cc[i_cc_neighbour] > max_number_common_faces)
+                {
+                    max_number_common_faces = dict_adjacent_cc[i_cc_neighbour];
+                    set_argmax_number_common_faces = {i_cc_neighbour};
+                }
+                else if (dict_adjacent_cc[i_cc_neighbour] == max_number_common_faces){
+                    set_argmax_number_common_faces.insert(i_cc_neighbour);
+                }
+            }
+        }
+}
+
+
+}

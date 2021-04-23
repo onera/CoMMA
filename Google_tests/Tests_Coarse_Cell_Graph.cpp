@@ -1129,6 +1129,81 @@ TEST_F(Test_CCG_box_5x5x5, check_consistency_Case_1_box_5x5x5) {
     ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
 }
 
+TEST_F(MGridGen_Dual_Graph, compute_cc_root_Case_1_MGridGen) {
+
+    Coarse_Cell_Graph ccg((*g));
+    unordered_set<long> s_fc ={2, 3, 6, 11};
+    ccg.cc_create_a_cc(s_fc);
+
+    ASSERT_EQ(6, (*g)._compute_subgraph_root((*ccg._d_isotropic_cc[0]).get_s_fc()));
+
+    s_fc ={4, 5, 7, 8, 9};
+    ccg.cc_create_a_cc(s_fc);
+
+    ASSERT_EQ(7, (*g)._compute_subgraph_root((*ccg._d_isotropic_cc[1]).get_s_fc()));
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourhood_MGridGen) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {3};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {1, 2, 0};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {4, 5, 8, 7};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 11, 13, 14};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 9, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    vector<long> ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<long, unsigned short> ref_d_nb_faces ={{1, 1}, {0, 1}, {3, 1}};
+    ASSERT_EQ(ref_d_nb_faces, ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood(6));
+    unordered_map<long, unordered_set<long>> ref_d_faces ={{0, {3}},
+                                                           {1, {2}},
+                                                           {3, {11}}};
+    ASSERT_EQ(ref_d_faces, ccg.compute_dict_faces_in_common_faces_with_cc_neighbourhood(6))   ;
+
+    unordered_set<long> set_argmax_number_common_faces;
+    unordered_map<long, unsigned short> dict_adjacent_cc;
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(6,
+                                                                             empty_set,
+                                                                             set_argmax_number_common_faces,
+                                                                             dict_adjacent_cc);
+
+    unordered_set<long> ref_set_argmax_number_common_faces = {0,1,3};
+    ASSERT_EQ(ref_set_argmax_number_common_faces,set_argmax_number_common_faces);
+    ref_d_nb_faces ={{1, 1}, {0, 1}, {3, 1}};
+    ASSERT_EQ(ref_d_nb_faces,dict_adjacent_cc);
+
+    ref_d_nb_faces ={{2, 2}, {4, 1}};
+    ASSERT_EQ(ref_d_nb_faces, ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood(8));
+
+    ref_d_faces ={{2, {5, 7}},
+                  {4, {10}}};
+    ASSERT_EQ(ref_d_faces, ccg.compute_dict_faces_in_common_faces_with_cc_neighbourhood(8));
+
+    set_argmax_number_common_faces.clear();
+     dict_adjacent_cc.clear();
+
+    ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(8, empty_set,
+                                                                             set_argmax_number_common_faces,
+                                                                             dict_adjacent_cc);
+    ref_set_argmax_number_common_faces = {2};
+    ASSERT_EQ(ref_set_argmax_number_common_faces,set_argmax_number_common_faces);
+    ref_d_nb_faces ={{2, 2}, {4, 1}};
+    ASSERT_EQ(ref_d_nb_faces,dict_adjacent_cc);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 
