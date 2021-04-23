@@ -107,19 +107,14 @@ public:
 
     unordered_set<long> get_s_isotropic_cc_of_size(unsigned short size_min = 0, unsigned short size_max = 0);
 
-    void correction_make_small_cc_bigger(unordered_map<long, unordered_set<long>> &dict_Coarse_Elem,
-                                         unordered_map<int, unordered_set<long>> &dict_Card_Coarse_Cells,
-                                         long *matrixAdj_CRS_row_ptr,
-                                         long *matrixAdj_CRS_col_ind,
-                                         unordered_map<int, long> &dict_DistributionOfCardinalOfCoarseElements,
-                                         long &indCoarseCell,
-                                         long &numberOfFineAgglomeratedCells,
-                                         bool *isFineCellAgglomerated,
-                                         long *fineCellToCoarseCell,
-                                         int minCard,
-                                         int goalCard,
-                                         int thresholdCard,
+    void correction_make_small_cc_bigger(const unsigned short &min_card,
+                                         const unsigned short &goal_card,
+                                         const unsigned short &threshold_card,
                                          bool verbose);
+
+    void cc_split_non_connected_cc(const long& i_cc);
+
+    unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
     //protected:
     int _verbose;

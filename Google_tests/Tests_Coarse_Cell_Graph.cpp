@@ -7,6 +7,7 @@
 #include "MGridGen_ext_v2_Dual_Graph.h"
 #include "Box_5x5x5_Dual_Graph.h"
 #include "Box_5x5x5_Aniso_Dual_Graph.h"
+#include "Nine_squares_3x3_Dual_Graph.h"
 
 #include "gtest/gtest.h"
 
@@ -1216,29 +1217,6 @@ TEST_F(Example_One_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbou
     ASSERT_EQ(ref_d_nb_faces, dict_adjacent_cc);
 }
 
-//TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
-//
-//    Coarse_Cell_Graph ccg((*g));
-//
-//    unordered_set<long> s_fc ={0, 2};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={4,5};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={1,3,6};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={7,8};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    ccg.fill_cc_neighbouring();
-//
-//    ccg.correction_make_small_cc_bigger(threshold_card = 0, min_card = 3, goal_card = 4)
-//
-//    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
-//    ASSERT_EQ(ref_fc_2_cc, ccg.fc_2_cc);
-//}
 TEST_F(MGridGen_Dual_Graph, get_cc_of_size_MGridGen) {
 
     unordered_set<long> empty_set = unordered_set<long>({});
@@ -1304,6 +1282,106 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, get_cc_of_size_Box_5x5x5_aniso_MG_1_level) {
     unordered_set<long> empty_set = unordered_set<long>({});
     ASSERT_EQ(empty_set, ccg.get_s_isotropic_cc_of_size());
 }
+
+TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_1) {
+
+    //===================================================================//
+    //  Remark: split_no_connected_cc is now embedded inside cc_swap_fc  //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {2, 5, 8};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {6};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {1, 3, 4, 7};
+    ccg.cc_create_a_cc(s_fc);
+
+    ASSERT_EQ(4, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, {0}},
+                                                             {1, {8, 2, 5}},
+                                                             {2, {6}},
+                                                             {3, {1, 3, 4, 7}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0, 2}},
+                                                                              {3, {1}},
+                                                                              {4, {3}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 2},
+                                                    {3, 1},
+                                                    {4, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    vector<long> ref_fc_2_cc = {0, 3, 1, 3, 3, 1, 2, 3, 1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {0, 2}},
+                                                                                     {1, {1, 3}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ccg.fill_cc_neighbouring();
+
+    unordered_set<long> s_to_swap = {5};
+    ccg.cc_swap_fc(s_to_swap, 1, 3);
+
+    ref_fc_2_cc = {0, 3, 1, 3, 3, 3, 2, 3, 4};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+    ASSERT_EQ(5, ccg._cc_counter);
+
+    ref_d_cc_all = {{0, {0}},
+                    {1, {2}},
+                    {2, {6}},
+                    {3, {1, 3, 4, 5, 7}},
+                    {4, {8}}};
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{1, {0, 1, 2, 4}},
+                       {5, {3}}};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_dist = {{1, 4},
+                {5, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_compactness_2_cc = {{0, {0, 1, 2, 4}},
+                              {1, { 3}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+}
+
+//TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
+//
+//    Coarse_Cell_Graph ccg((*g));
+//
+//    unordered_set<long> s_fc ={0, 2};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={4,5};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={1,3,6};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={7,8};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    ccg.fill_cc_neighbouring();
+//
+//    ccg.correction_make_small_cc_bigger(threshold_card = 0, min_card = 3, goal_card = 4)
+//
+//    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
+//    ASSERT_EQ(ref_fc_2_cc, ccg.fc_2_cc);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
