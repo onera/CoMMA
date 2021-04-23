@@ -2,116 +2,119 @@
 #include "../CoMMA_lib/Dual_Graph.h"
 #include "../CoMMA_lib/Coarse_Cell_Graph.h"
 
+#include "Example_One_Dual_Graph.h"
 #include "MGridGen_Dual_Graph.h"
 #include "MGridGen_ext_v2_Dual_Graph.h"
+#include "Box_5x5x5_Dual_Graph.h"
+#include "Box_5x5x5_Aniso_Dual_Graph.h"
 
 #include "gtest/gtest.h"
 
-class Test_CCG_box_5x5x5 : public ::testing::Test {
-    // filename_ini = "box_1_rect_5_d_F.hdf"
-    // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
+//class Test_CCG_box_5x5x5 : public ::testing::Test {
+//    // filename_ini = "box_1_rect_5_d_F.hdf"
+//    // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
+//
+//protected:
+//
+//    Dual_Graph *g;
+//    int box_5x5x5_number_of_cells;
+//    int box_5x5x5_col_ind_size;
+//    vector<long> v_box_5x5x5_row_ptr;
+//    vector<long> v_box_5x5x5_col_ind;
+//    vector<double> v_box_5x5x5_values;
+//    vector<double> v_box_5x5x5_volumes;
+//
+//    virtual void SetUp() {
+//        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
+//                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
+//                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
+//                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
+//                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
+//
+//        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
+//                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
+//                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
+//                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
+//                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
+//                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
+//                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
+//                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
+//                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
+//                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
+//                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
+//                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
+//                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
+//                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
+//                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
+//                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
+//                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
+//                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
+//                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
+//                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
+//                               47, 59, 62, 63};
+//
+//        v_box_5x5x5_values = {75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25.,
+//                              25., 25., 75., 25., 25., 25., 50., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25.,
+//                              25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 75., 25.,
+//                              25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+//                              75., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 50., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 50., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25.,
+//                              25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25., 50., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 50., 25., 25., 25., 50., 25., 25., 25., 25., 25.,
+//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50.,
+//                              25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
+//                              50., 25., 25., 25., 25., 75.};
+//
+//        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
+//
+//        vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
+//                                           0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
+//                                           2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+//
+//        box_5x5x5_number_of_cells = 64;
+//        box_5x5x5_col_ind_size = 344;
+//
+//        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
+//        int i(0);
+//        for (int value : box_5x5x5_is_on_bnd)
+//            box_5x5x5_d_is_on_bnd[i++] = value;
+//
+//        g = new Dual_Graph(box_5x5x5_number_of_cells,
+//                           v_box_5x5x5_row_ptr,
+//                           v_box_5x5x5_col_ind,
+//                           v_box_5x5x5_values,
+//                           v_box_5x5x5_volumes,
+//                           box_5x5x5_d_is_on_bnd);
+//
+//    }
+//
+//    virtual void TearDown() {
+//        delete g;
+//    }
+//};
 
-protected:
-
-    Dual_Graph *g;
-    int box_5x5x5_number_of_cells;
-    int box_5x5x5_col_ind_size;
-    vector<long> v_box_5x5x5_row_ptr;
-    vector<long> v_box_5x5x5_col_ind;
-    vector<double> v_box_5x5x5_values;
-    vector<double> v_box_5x5x5_volumes;
-
-    virtual void SetUp() {
-        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
-                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
-                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
-                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
-                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
-
-        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
-                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
-                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
-                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
-                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
-                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
-                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
-                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
-                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
-                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
-                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
-                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
-                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
-                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
-                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
-                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
-                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
-                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
-                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
-                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
-                               47, 59, 62, 63};
-
-        v_box_5x5x5_values = {75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 75., 25., 25., 25., 50., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25.,
-                              25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 75., 25.,
-                              25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              75., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 50., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 50., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25., 50., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 50., 25., 25., 25., 50., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50.,
-                              25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              50., 25., 25., 25., 25., 75.};
-
-        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
-
-        vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
-                                           0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
-                                           2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-
-        box_5x5x5_number_of_cells = 64;
-        box_5x5x5_col_ind_size = 344;
-
-        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
-        int i(0);
-        for (int value : box_5x5x5_is_on_bnd)
-            box_5x5x5_d_is_on_bnd[i++] = value;
-
-        g = new Dual_Graph(box_5x5x5_number_of_cells,
-                           v_box_5x5x5_row_ptr,
-                           v_box_5x5x5_col_ind,
-                           v_box_5x5x5_values,
-                           v_box_5x5x5_volumes,
-                           box_5x5x5_d_is_on_bnd);
-
-    }
-
-    virtual void TearDown() {
-        delete g;
-    }
-};
-
-TEST_F(Test_CCG_box_5x5x5, constructor_box_5x5x5) {
+TEST_F(Box_5x5x5_Dual_Graph, constructor_box_5x5x5) {
     Coarse_Cell_Graph ccg((*g));
     ASSERT_EQ(64, ccg._fc_graph.number_of_cells);
     ASSERT_FALSE(ccg._a_is_fc_agglomerated[0]);
@@ -976,20 +979,20 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
     ccg.cc_create_a_cc({0, 1, 3});
     ccg.cc_create_a_cc({6});
     ccg.cc_create_a_cc({11, 13, 14});
-    ccg.cc_create_a_cc({5,4,7, 8, 9, 10, 12});
+    ccg.cc_create_a_cc({5, 4, 7, 8, 9, 10, 12});
 
     unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, unordered_set<long>({2})},
                                                              {1, unordered_set<long>({0, 1, 3})},
                                                              {2, unordered_set<long>({6})},
                                                              {3, unordered_set<long>({11, 13, 14})},
                                                              {4, unordered_set<long>({5, 10, 9, 4, 8, 7, 12})},
-                                                             };
+    };
     ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
 
     unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {2, 0}},
                                                                               {3, {1, 3}},
                                                                               {7, {4}}
-                                                                              };
+    };
     ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
 
     unordered_map<unsigned short int, long> ref_d_dist_of_card = {{1, 2},
@@ -1008,18 +1011,19 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
 
     Coarse_Cell *cc = ccg._d_isotropic_cc[2];
 
-    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {0, { {2, 2.23606798} }}, {1, { {3, 2.23606798} }}, {3, { {11, 2} }} }} };
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6, {{0, {{2, 2.23606798}}}, {1, {{3, 2.23606798}}}, {3, {{11, 2}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {1, { {6, { 3, 1, 0 }} }} };
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{6, {3, 1, 0}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     cc = ccg._d_isotropic_cc[4];
 
-     ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {3, { {13, 3.16227766} }} }}, {5, { {0, { {2, 2.23606798} }} }} };
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{10, {{3, {{13, 3.16227766}}}}},
+                                                 {5,  {{0, {{2,  2.23606798}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 0 }}, {10, { 3 }} }} };
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {0}}, {10, {3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     //============================
@@ -1033,28 +1037,29 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
 
     cc = ccg._d_isotropic_cc[2];
 
-     ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {1, { {2, 2.23606798}, {3, 2.23606798} }}, {3, { {11, 2} }} }} };
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6, {{1, {{2, 2.23606798}, {3, 2.23606798}}}, {3, {{11, 2}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {2, { {6, { 1}} }},
-                                                                 {1, { {6, { 3, 1}} }} };
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{6, {1}}}},
+                                                              {1, {{6, {3, 1}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     cc = ccg._d_isotropic_cc[4];
 
-    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {3, { {13, 3.16227766} }} }}, {5, { {1, { {2, 2.23606798} }} }} };
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{10, {{3, {{13, 3.16227766}}}}},
+                                                 {5,  {{1, {{2,  2.23606798}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 1 }}, {10, { 3 }} }} };
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}}, {10, {3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     ccg.cc_renumber();
 
-    ref_d_cc_all = {{0, unordered_set<long>({0, 1,2,  3})},
+    ref_d_cc_all = {{0, unordered_set<long>({0, 1, 2, 3})},
                     {1, unordered_set<long>({6})},
                     {2, unordered_set<long>({11, 13, 14})},
                     {3, unordered_set<long>({5, 10, 9, 4, 8, 7, 12})},
-                    };
+    };
     ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
 
     ref_d_card_2_cc = {{4, {0}},
@@ -1068,36 +1073,36 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
                           {1, 1},
                           {3, 1},
                           {7, 1},
-                          };
+    };
     ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
     ref_d_compactness_2_cc = {{1, {0, 2, 3}},
                               {0, {1}},
-                              };
+    };
     ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
 
     cc = ccg._d_isotropic_cc[1];
 
-    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = { {6, { {0, { {2, 2.23606798}, {3, 2.23606798} }},
-                                                        {2, { {11, 2} }} }} };
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{6, {{0, {{2, 2.23606798}, {3, 2.23606798}}},
+                                                             {2, {{11, 2}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour =  { {2, { {6, { 0}} }},
-                                                                {1, { {6, { 2, 0}} }} };
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{6, {0}}}},
+                                                              {1, {{6, {2, 0}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     cc = ccg._d_isotropic_cc[3];
 
-    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc ={ {10, { {2, { {13, 3.16227766} }} }},
-                                                 {5, { {0, { {2, 2.23606798} }} }} };
+    ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc = {{10, {{2, {{13, 3.16227766}}}}},
+                                                 {5,  {{0, {{2,  2.23606798}}}}}};
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = { {1, { {5, { 0 }}, {10, { 2 }} }} };
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {0}}, {10, {2}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
 
 }
 
-TEST_F(Test_CCG_box_5x5x5, check_consistency_Case_1_box_5x5x5) {
+TEST_F(Box_5x5x5_Dual_Graph, check_consistency_Case_1_box_5x5x5) {
 
     Coarse_Cell_Graph ccg((*g));
 
@@ -1116,7 +1121,7 @@ TEST_F(Test_CCG_box_5x5x5, check_consistency_Case_1_box_5x5x5) {
     s_fc = {32, 33, 36, 37, 52, 53, 48, 49};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={34, 35, 38, 39, 50, 51, 54, 55};
+    s_fc = {34, 35, 38, 39, 50, 51, 54, 55};
     ccg.cc_create_a_cc(s_fc);
 
     s_fc = {40, 41, 44, 45, 56, 57, 60, 61};
@@ -1132,18 +1137,18 @@ TEST_F(Test_CCG_box_5x5x5, check_consistency_Case_1_box_5x5x5) {
 TEST_F(MGridGen_Dual_Graph, compute_cc_root_Case_1_MGridGen) {
 
     Coarse_Cell_Graph ccg((*g));
-    unordered_set<long> s_fc ={2, 3, 6, 11};
+    unordered_set<long> s_fc = {2, 3, 6, 11};
     ccg.cc_create_a_cc(s_fc);
 
     ASSERT_EQ(6, (*g)._compute_subgraph_root((*ccg._d_isotropic_cc[0]).get_s_fc()));
 
-    s_fc ={4, 5, 7, 8, 9};
+    s_fc = {4, 5, 7, 8, 9};
     ccg.cc_create_a_cc(s_fc);
 
     ASSERT_EQ(7, (*g)._compute_subgraph_root((*ccg._d_isotropic_cc[1]).get_s_fc()));
 }
 
-TEST_F(MGridGen_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourhood_MGridGen) {
+TEST_F(Example_One_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourhood_MGridGen) {
 
     Coarse_Cell_Graph ccg((*g));
 
@@ -1165,12 +1170,14 @@ TEST_F(MGridGen_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourho
     vector<long> ref_fc_2_cc = {1, 1, 1, 0, 2, 2, 3, 2, 2, 4, 4, 3, 4, 3, 3};
     ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
 
-    unordered_map<long, unsigned short> ref_d_nb_faces ={{1, 1}, {0, 1}, {3, 1}};
+    unordered_map<long, unsigned short> ref_d_nb_faces = {{1, 1},
+                                                          {0, 1},
+                                                          {3, 1}};
     ASSERT_EQ(ref_d_nb_faces, ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood(6));
-    unordered_map<long, unordered_set<long>> ref_d_faces ={{0, {3}},
-                                                           {1, {2}},
-                                                           {3, {11}}};
-    ASSERT_EQ(ref_d_faces, ccg.compute_dict_faces_in_common_faces_with_cc_neighbourhood(6))   ;
+    unordered_map<long, unordered_set<long>> ref_d_faces = {{0, {3}},
+                                                            {1, {2}},
+                                                            {3, {11}}};
+    ASSERT_EQ(ref_d_faces, ccg.compute_dict_faces_in_common_faces_with_cc_neighbourhood(6));
 
     unordered_set<long> set_argmax_number_common_faces;
     unordered_map<long, unsigned short> dict_adjacent_cc;
@@ -1181,29 +1188,123 @@ TEST_F(MGridGen_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourho
                                                                              set_argmax_number_common_faces,
                                                                              dict_adjacent_cc);
 
-    unordered_set<long> ref_set_argmax_number_common_faces = {0,1,3};
-    ASSERT_EQ(ref_set_argmax_number_common_faces,set_argmax_number_common_faces);
-    ref_d_nb_faces ={{1, 1}, {0, 1}, {3, 1}};
-    ASSERT_EQ(ref_d_nb_faces,dict_adjacent_cc);
+    unordered_set<long> ref_set_argmax_number_common_faces = {0, 1, 3};
+    ASSERT_EQ(ref_set_argmax_number_common_faces, set_argmax_number_common_faces);
+    ref_d_nb_faces = {{1, 1},
+                      {0, 1},
+                      {3, 1}};
+    ASSERT_EQ(ref_d_nb_faces, dict_adjacent_cc);
 
-    ref_d_nb_faces ={{2, 2}, {4, 1}};
+    ref_d_nb_faces = {{2, 2},
+                      {4, 1}};
     ASSERT_EQ(ref_d_nb_faces, ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood(8));
 
-    ref_d_faces ={{2, {5, 7}},
-                  {4, {10}}};
+    ref_d_faces = {{2, {5, 7}},
+                   {4, {10}}};
     ASSERT_EQ(ref_d_faces, ccg.compute_dict_faces_in_common_faces_with_cc_neighbourhood(8));
 
     set_argmax_number_common_faces.clear();
-     dict_adjacent_cc.clear();
+    dict_adjacent_cc.clear();
 
     ccg.compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(8, empty_set,
                                                                              set_argmax_number_common_faces,
                                                                              dict_adjacent_cc);
     ref_set_argmax_number_common_faces = {2};
-    ASSERT_EQ(ref_set_argmax_number_common_faces,set_argmax_number_common_faces);
-    ref_d_nb_faces ={{2, 2}, {4, 1}};
-    ASSERT_EQ(ref_d_nb_faces,dict_adjacent_cc);
+    ASSERT_EQ(ref_set_argmax_number_common_faces, set_argmax_number_common_faces);
+    ref_d_nb_faces = {{2, 2},
+                      {4, 1}};
+    ASSERT_EQ(ref_d_nb_faces, dict_adjacent_cc);
 }
+
+//TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
+//
+//    Coarse_Cell_Graph ccg((*g));
+//
+//    unordered_set<long> s_fc ={0, 2};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={4,5};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={1,3,6};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    s_fc ={7,8};
+//    ccg.cc_create_a_cc(s_fc);
+//
+//    ccg.fill_cc_neighbouring();
+//
+//    ccg.correction_make_small_cc_bigger(threshold_card = 0, min_card = 3, goal_card = 4)
+//
+//    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
+//    ASSERT_EQ(ref_fc_2_cc, ccg.fc_2_cc);
+//}
+TEST_F(MGridGen_Dual_Graph, get_cc_of_size_MGridGen) {
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {3};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {1, 2, 0};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {4, 5, 8, 7};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 11, 13, 14};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 9, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    unordered_set<long> ref_s_1 = {0, 1, 2, 3, 4};
+    unordered_set<long> ref_s_4 = {1, 2, 3, 4};
+    unordered_set<long> ref_s_6 = {0};
+    unordered_set<long> s_1 = ccg.get_s_isotropic_cc_of_size();
+    ASSERT_EQ(ref_s_1, s_1);
+
+    unordered_set<long> s_2 = ccg.get_s_isotropic_cc_of_size(0);
+    ASSERT_EQ(ref_s_1, s_2);
+
+    unordered_set<long> s_3 = ccg.get_s_isotropic_cc_of_size(1);
+    ASSERT_EQ(ref_s_1, s_3);
+
+    unordered_set<long> s_4 = ccg.get_s_isotropic_cc_of_size(2);
+    ASSERT_EQ(ref_s_4, s_4);
+
+    unordered_set<long> s_5 = ccg.get_s_isotropic_cc_of_size(2, 3);
+    ASSERT_EQ(empty_set, s_5);
+
+    unordered_set<long> s_6 = ccg.get_s_isotropic_cc_of_size(0, 3);
+    ASSERT_EQ(ref_s_6, s_6);
+}
+
+TEST_F(Box_5x5x5_Aniso_Dual_Graph, get_cc_of_size_Box_5x5x5_aniso_MG_1_level) {
+
+
+    Coarse_Cell_Graph ccg((*g));
+
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {5, 21};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    s_fc = {37, 53};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    s_fc = {6, 22};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    ASSERT_EQ(empty_set, ccg.get_s_isotropic_cc_of_size());
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 

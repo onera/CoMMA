@@ -864,11 +864,11 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::compute_dict_faces_i
     return d_n_cc;
 }
 
-void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long& i_fc,
-                                                                          const unordered_set<long>& s_unwanted_fc,
-                                                                          unordered_set<long>& set_argmax_number_common_faces,
-                                                                          unordered_map<long, unsigned short>& dict_adjacent_cc
-                                                                          )const {
+void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long &i_fc,
+                                                                                             const unordered_set<long> &s_unwanted_fc,
+                                                                                             unordered_set<long> &set_argmax_number_common_faces,
+                                                                                             unordered_map<long, unsigned short> &dict_adjacent_cc
+) const {
 
 // TODO le nom ne convient pas ca fait plus que la fonction compute_nb_faces_in_common_faces_with_cc_neighbourhood()
 /**
@@ -882,31 +882,399 @@ void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w
     unsigned short max_number_common_faces = 0;
 
     // We process every neighbour of i_fc
-    for (const long & i_fc_neighbour:_fc_graph.get_neighbours(i_fc)){
-        if(i_fc_neighbour != i_fc && (s_unwanted_fc.count(i_fc_neighbour)==0)){
+    for (const long &i_fc_neighbour:_fc_graph.get_neighbours(i_fc)) {
+        if (i_fc_neighbour != i_fc && (s_unwanted_fc.count(i_fc_neighbour) == 0)) {
             // second term is to check that the neighbour does not belong to current incomplete cc.
             long i_cc_neighbour = _fc_2_cc[i_fc_neighbour];
-            if (is_isotropic_cc(i_cc_neighbour)){
+            if (is_isotropic_cc(i_cc_neighbour)) {
                 // we add the coarse cell containing the fine cell i_cc_neighbour in dict_adjacent_cc
-                if (dict_adjacent_cc.count(i_cc_neighbour)){
+                if (dict_adjacent_cc.count(i_cc_neighbour)) {
                     dict_adjacent_cc[i_cc_neighbour] += 1;
-                }else
-                {
+                } else {
                     dict_adjacent_cc[i_cc_neighbour] = 1;
                 }
                 // On essaye de reperer le voisin qui a le plus grand nombre de face commune
                 // pour le rattacher a lui.
-                if(dict_adjacent_cc[i_cc_neighbour] > max_number_common_faces)
-                {
+                if (dict_adjacent_cc[i_cc_neighbour] > max_number_common_faces) {
                     max_number_common_faces = dict_adjacent_cc[i_cc_neighbour];
                     set_argmax_number_common_faces = {i_cc_neighbour};
-                }
-                else if (dict_adjacent_cc[i_cc_neighbour] == max_number_common_faces){
+                } else if (dict_adjacent_cc[i_cc_neighbour] == max_number_common_faces) {
                     set_argmax_number_common_faces.insert(i_cc_neighbour);
                 }
             }
         }
+    }
 }
 
+void Coarse_Cell_Graph::correction_make_small_cc_bigger(unordered_map<long, unordered_set<long>> &dict_Coarse_Elem,
+                                                        unordered_map<int, unordered_set<long>> &dict_Card_Coarse_Cells,
+                                                        long *matrixAdj_CRS_row_ptr,
+                                                        long *matrixAdj_CRS_col_ind,
+                                                        unordered_map<int, long> &dict_DistributionOfCardinalOfCoarseElements,
+                                                        long &indCoarseCell,
+                                                        long &numberOfFineAgglomeratedCells,
+                                                        bool *isFineCellAgglomerated,
+                                                        long *fineCellToCoarseCell,
+                                                        int minCard,
+                                                        int goalCard,
+                                                        int thresholdCard,
+                                                        bool verbose) {
+    /**
+     * We try take make too small cc bigger
+     */
 
+    /*
+    if (verbose) {
+        cout << "Call of __makeSmallCellBigger" << endl;
+    }
+
+    unordered_set<long> set_removedCoarseCells;
+
+    for (int iSize = thresholdCard + 1; iSize < minCard; iSize++) {
+
+        if (dict_Card_Coarse_Cells.count(iSize) == 1) {
+
+
+            unordered_set<long> copyOfdict_Card_Coarse_Cells_iSize = dict_Card_Coarse_Cells[iSize];
+            // For every coarse cell of size iSize
+            for (auto iCoarseCell: copyOfdict_Card_Coarse_Cells_iSize) {
+//                cout<<"\n\tiCoarseCell "<<iCoarseCell<<endl;
+                // Special case: it can happened that a coarse cell is whole "eaten" in the process it is
+                // added to set_removedCoarseCells.
+                if (dict_Coarse_Elem.count(iCoarseCell) == 0) {
+                    continue;
+                }
+                // print "\nInitial Coarse cell ", iCoarseCell, dict_Coarse_Elem[iCoarseCell]
+
+                // search of the fine cell at the "root" of the coarse cell, i.e. the fine cell with the most
+                // faces in common with its coarse cell.
+                int maxNumberCommonFaces = -1;
+                long argMaxNumberCommonFaces = -1;
+                for (long iFineCell: dict_Coarse_Elem[iCoarseCell]) {
+                    int nbCommonFaces_iFineCell = computeNumberOfCommonFaces(iFineCell, iCoarseCell,
+                                                                             matrixAdj_CRS_row_ptr,
+                                                                             matrixAdj_CRS_col_ind,
+                                                                             fineCellToCoarseCell);
+                    if (nbCommonFaces_iFineCell > maxNumberCommonFaces) {
+                        maxNumberCommonFaces = nbCommonFaces_iFineCell;
+                        argMaxNumberCommonFaces = iFineCell;
+
+                    }
+                }
+
+                long seed = argMaxNumberCommonFaces;
+                // From this cell (seed) we try to add extra fine cells!
+
+                // Building of the neighbourhood:
+                // TODO Replace this with self.__agglomerate_Isotropic_Computation_Of_Neighbourhood() if possible???
+                int numberOfOrderOfNeighbourhood = 3;
+                unordered_map<long, int> dict_Neighbours_Of_Seed;  // set (with unicity) des indices des cellules du 1er voisinage de seed
+                unordered_map<long, int> dict_Neighbours_Of_Order_O_M_One;
+                dict_Neighbours_Of_Order_O_M_One[seed] = 0;
+
+                int iOrder = 1;
+
+                // for iOrder in xrange(1, numberOfOrderOfNeighbourhood+1):
+                while ((iOrder < numberOfOrderOfNeighbourhood + 1) ||
+                       (dict_Neighbours_Of_Seed.size() + dict_Neighbours_Of_Order_O_M_One.size() < goalCard)) {
+
+                    unordered_map<long, int> dict_Neighbours_Of_Order_O;
+
+                    // dict_Neighbours_Of_Seed.update(dict_Neighbours_Of_Order_O_M_One)
+                    for (auto iKV_O_M_One:dict_Neighbours_Of_Order_O_M_One) {
+                        dict_Neighbours_Of_Seed[iKV_O_M_One.first] = iKV_O_M_One.second;
+                    }
+                    for (auto seed_tmp :dict_Neighbours_Of_Order_O_M_One) {
+
+                        long ind = matrixAdj_CRS_row_ptr[seed_tmp.first];            // Usefull to find neighbours of seed
+                        long ind_p_one = matrixAdj_CRS_row_ptr[seed_tmp.first +
+                                                               1];  // Usefull to find neighbours of seed
+                        for (long i = ind; i < ind_p_one; i++) {
+                            long indFCellNeighbour = matrixAdj_CRS_col_ind[i];
+                            if ((indFCellNeighbour != seed_tmp.first) &&
+                                (dict_Coarse_Elem.count(fineCellToCoarseCell[indFCellNeighbour]) == 1)) {
+                                // The second part is to avoid the work with anisotropic cells
+                                if (dict_Neighbours_Of_Seed.count(indFCellNeighbour) ==
+                                    0) {  // We take all cells even if they are already agglomerated to another coarse neighbour!
+                                    if (dict_Neighbours_Of_Order_O.count(indFCellNeighbour) == 0) {
+                                        dict_Neighbours_Of_Order_O[indFCellNeighbour] = iOrder;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Exit condition
+                    if (dict_Neighbours_Of_Order_O.empty()) {
+                        // No more neighbours available:
+                        break;
+                    }
+
+                    dict_Neighbours_Of_Order_O_M_One = dict_Neighbours_Of_Order_O;  //copy
+                    iOrder += 1;
+                }
+
+                // Update of dict_Neighbours_Of_Seed
+                // dict_Neighbours_Of_Seed.update(dict_Neighbours_Of_Order_O_M_One)
+                for (auto iKV : dict_Neighbours_Of_Order_O_M_One) {
+                    dict_Neighbours_Of_Seed[iKV.first] = iKV.second;
+                }
+                // print "dict_Neighbours_Of_Seed 1 ", dict_Neighbours_Of_Seed
+                int maxOrderOfNeighbourhood = iOrder;
+
+                // We remove all fine cell already contained in the current coarse element
+                for (long iFC :dict_Coarse_Elem[iCoarseCell]) {
+                    if (dict_Neighbours_Of_Seed.count(iFC) == 1) {
+                        dict_Neighbours_Of_Seed.erase(iFC);
+                    }
+                }
+                // print iCoarseCell, "size", len(dict_Coarse_Elem[iCoarseCell]), "add", len(dict_Neighbours_Of_Seed), "dict=", dict_Neighbours_Of_Seed
+                // print "dict_Neighbours_Of_Seed 2 ", dict_Neighbours_Of_Seed
+                // On ajoute des cellules fines a notre cellule grossiere courante
+                //////////////////////////////////////////////////////////////////
+
+                // Number of fine cells constituting the current coarse cell in construction.
+//                unordered_set<long> list_of_fine_cells_for_Current_Coarse_Cell = dict_Coarse_Elem[iCoarseCell];
+                int size_Current_Coarse_Cell = dict_Coarse_Elem[iCoarseCell].size();
+
+                // If no neighbour is found for seed: this case happened only when isotropic cell is surrounded
+                // by anisotropic cells.
+                if (dict_Neighbours_Of_Seed.empty()) {
+                    // print "\nInitial Coarse cell ", iCoarseCell, dict_Coarse_Elem[iCoarseCell]
+                    // print "Trouble dict_Neighbours_Of_Seed is empty for seed " + str(seed)
+                    // raise ValueError("Trouble dict_Neighbours_Of_Seed is empty for seed " + str(seed))
+                    continue;
+                }
+
+                int nbFCellsToAdd = goalCard - size_Current_Coarse_Cell;
+                assert(dict_Neighbours_Of_Seed.size() >= nbFCellsToAdd);
+                unordered_set<long> setOfModifiedCoarseCells = {iCoarseCell};
+
+                // Choice of the fine cells to agglomerate
+                while (size_Current_Coarse_Cell < goalCard) {
+//                    cout<<"\n => Size of current coarse cell "<<size_Current_Coarse_Cell<<endl;
+//                    cout<<"[";
+//                    for (auto iC: dict_Coarse_Elem[iCoarseCell]){
+//                        cout<<iC<<", ";
+//                    }
+//                    cout<<"]"<<endl;
+
+                    int maxFacesInCommon = 0;
+                    long argMaxFacesInCommon = -1;
+                    bool isDefaultValue_argMax = true;
+                    // For every fine cell in the neighbourhood:
+                    for (auto iKV : dict_Neighbours_Of_Seed) {   // On teste toutes les nouvelles cellules possibles pour prendre celle qui minimise localement l'Aspect Ratio.
+
+                        long iFinerCell = iKV.first;
+                        if (argMaxFacesInCommon == -1) {
+                            argMaxFacesInCommon = iFinerCell;
+                        }
+
+                        if (dict_Coarse_Elem.count(fineCellToCoarseCell[iFinerCell]) == 1) {
+                            // Est ce que la cellule grossiere associee a la cellule fine iFinerCell existe et est mutable?
+                            // numberFacesInCommon = self.__computeNumberOfCommonFaces(iFinerCell, iCoarseCell, iLevel,
+                            //                                                         matrixAdj_CRS_row_ptr,
+                            //                                                         matrixAdj_CRS_col_ind,
+                            //                                                         dict_Coarse_Elem)
+                            int numberFacesInCommon = computeNumberOfCommonFaces(iFinerCell, iCoarseCell,
+                                                                                 matrixAdj_CRS_row_ptr,
+                                                                                 matrixAdj_CRS_col_ind,
+                                                                                 fineCellToCoarseCell);
+                            // print "iFinerCell", iFinerCell, numberFacesInCommon, ' in CoarseCell', self._Fine_Cell_indices_To_Coarse_Cell_Indices[iLevel][iFinerCell], dict_Coarse_Elem[ self._Fine_Cell_indices_To_Coarse_Cell_Indices[iLevel][iFinerCell]]
+//                            cout<< "\t\tiFinerCell "<< iFinerCell<<" "<<numberFacesInCommon<< " in CoarseCell "<<fineCellToCoarseCell[iFinerCell]<<endl;//, dict_Coarse_Elem[ self._Fine_Cell_indices_To_Coarse_Cell_Indices[iLevel][iFinerCell]]
+                            int order = dict_Neighbours_Of_Seed[iFinerCell];
+
+                            // TODO This version seems good but refactorisation to do: perhaps it is not needed to compute every new possible coarse cell aspect ratio?
+                            // TODO also need to remove the list of minAR, argminAR, etc.
+                            if (numberFacesInCommon >= maxFacesInCommon) {
+                                if (numberFacesInCommon == maxFacesInCommon) {
+                                    if (order <= dict_Neighbours_Of_Seed[argMaxFacesInCommon]) {
+//                                        cout<<"IF numberFacesInCommon "<<numberFacesInCommon<<" iFinerCell "<<iFinerCell<<endl;
+                                        //Creation of tmp_list_Current vector
+//                                        vector<long> tmp_list_Current(dict_Coarse_Elem[iCoarseCell].size());
+//                                        int i_tmp = 0;
+//                                        for (auto iFC:dict_Coarse_Elem[iCoarseCell]) {
+//                                            tmp_list_Current[i_tmp] = iFC;
+//                                            i_tmp++;
+//                                        }
+//                                        tmp_list_Current.push_back(iFinerCell);
+
+                                        //Creation of tmp_list_Neighbour vector
+//                                        vector<long> tmp_list_Neighbour(
+//                                                dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]].size() - 1);
+//                                        i_tmp = 0;
+//                                        for (auto iFC:dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]]) {
+//                                            if (iFC != iFinerCell) {
+//                                                tmp_list_Neighbour[i_tmp] = iFC;
+//                                                i_tmp++;
+//                                            }
+//                                        }
+                                        unordered_set<long> tmp_set_Current = dict_Coarse_Elem[iCoarseCell];
+                                        tmp_set_Current.insert(iFinerCell);
+                                        unordered_set<long> tmp_set_Neighbour = dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]];
+                                        tmp_set_Neighbour.erase(iFinerCell);
+                                        // print "iFinerCell", iFinerCell
+                                        // tmp_list_Neighbour.erase(iFinerCell);
+                                        if ((checkConnectivity_w_set(tmp_set_Current, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)) &&
+                                            (checkConnectivity_w_set(tmp_set_Neighbour, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind))) {
+                                            // The second condition asserts the connectivity of the coarse element.
+                                            argMaxFacesInCommon = iFinerCell;
+                                            isDefaultValue_argMax = false;
+                                            // The number of face in common is the same no need to touch it
+                                        }
+                                    }
+                                } else {
+//                                    cout<<"Else numberFacesInCommon "<<numberFacesInCommon<<" iFinerCell "<<iFinerCell<<endl;
+//                                    tmp_list_Current = list_of_fine_cells_for_Current_Coarse_Cell[:]
+//                                    tmp_list_Current.append(iFinerCell);
+//                                    tmp_list_Neighbour = dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]][:];
+//                                    tmp_list_Neighbour.remove(iFinerCell);
+                                    //Creation of tmp_list_Current vector
+                                    vector<long> tmp_list_Current(dict_Coarse_Elem[iCoarseCell].size());
+                                    int i_tmp = 0;
+                                    for (auto iFC:dict_Coarse_Elem[iCoarseCell]) {
+                                        tmp_list_Current[i_tmp] = iFC;
+                                        i_tmp++;
+                                    }
+                                    tmp_list_Current.push_back(iFinerCell);
+//                                    cout<<"\t\ttmp_list_Current= [";
+//                                    for (int i=0; i<tmp_list_Current.size(); i++)
+//                                    {
+//                                        cout<<tmp_list_Current[i]<<", ";
+//                                    }
+//                                    cout<<"]"<<endl;
+                                    //Creation of tmp_list_Neighbour vector
+                                    vector<long> tmp_list_Neighbour(dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]].size() - 1);
+                                    i_tmp = 0;
+                                    for (auto iFC:dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]]) {
+                                        if (iFC != iFinerCell) {
+                                            tmp_list_Neighbour[i_tmp] = iFC;
+                                            i_tmp++;
+                                        }
+                                    }
+//                                    cout<<"\t\ttmp_list_Neighbour= [";
+//                                    for (int i=0; i<tmp_list_Neighbour.size(); i++)
+//                                    {
+//                                        cout<<tmp_list_Neighbour[i]<<", ";
+//                                    }
+//                                    cout<<"]"<<endl;
+                                    unordered_set<long> tmp_set_Current = dict_Coarse_Elem[iCoarseCell];
+                                    tmp_set_Current.insert(iFinerCell);
+                                    unordered_set<long> tmp_set_Neighbour = dict_Coarse_Elem[fineCellToCoarseCell[iFinerCell]];
+                                    tmp_set_Neighbour.erase(iFinerCell);
+
+                                    if ((checkConnectivity_w_set(tmp_set_Current, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind))
+                                        && (checkConnectivity_w_set(tmp_set_Neighbour, matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind))) {
+
+                                        // Case :numberFacesInCommon > maxFacesInCommon:
+                                        maxFacesInCommon = numberFacesInCommon;
+                                        argMaxFacesInCommon = iFinerCell;
+                                        isDefaultValue_argMax = false;
+//                                        cout<<"\t\targMaxFacesInCommon "<<iFinerCell<<endl;
+                                    }
+//                                    else{
+//                                        cout<<"\t\t\tProbleme"<<endl;
+// }
+                                }
+                            }
+                        }
+                    }
+                    if (!isDefaultValue_argMax) {
+                        // list_of_fine_cells_for_Current_Coarse_Cell.append(argMaxFacesInCommon)
+                        size_Current_Coarse_Cell += 1;
+
+                        dict_Neighbours_Of_Seed.erase(argMaxFacesInCommon);
+                        long iOldCoarseCell = fineCellToCoarseCell[argMaxFacesInCommon];
+                        // dict_Coarse_Elem[iOldCoarseCell].remove(argMaxFacesInCommon)
+//                        cout<<"Swap fine Cell "<<argMaxFacesInCommon<<" from "<<iOldCoarseCell<<" to "<<iCoarseCell<<endl;
+                        unordered_set<long> set_tmp = swapFineCell(argMaxFacesInCommon, iOldCoarseCell, iCoarseCell,
+                                                                   dict_Coarse_Elem, dict_Card_Coarse_Cells,
+                                                                   dict_DistributionOfCardinalOfCoarseElements,
+                                                                   fineCellToCoarseCell);
+                        setOfModifiedCoarseCells.insert(iOldCoarseCell);
+                        for (auto iST:set_tmp) {
+                            set_removedCoarseCells.insert(iST);
+                        }
+                    } else {
+                        break;
+                    }
+                    // set_removedCoarseCells.update(set_tmp);
+                }
+                // print "iCoarseCell", iCoarseCell
+
+                // Phase de verification!
+                for (long iCC: setOfModifiedCoarseCells) {
+
+                    if (dict_Coarse_Elem.count(iCC) == 1) {  // iCC cell may have been eaten!
+//                        cout<<"test of CC "<<iCC<<endl;
+//                        vector<long> l(dict_Coarse_Elem[iCC].size());
+//                        int i_iFC_tmp = 0;
+//                        for (long iFC_tmp : dict_Coarse_Elem[iCC]) {
+//                            l[i_iFC_tmp] = iFC_tmp;
+//                            i_iFC_tmp++;
+//                        }
+                        if (!checkConnectivity_w_set(dict_Coarse_Elem[iCC], matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind)) {
+                            // print "Treatment of non connected cell", iCC, "l=", l
+                            splitNonConnectedCoarseCell(indCoarseCell,
+                                                        numberOfFineAgglomeratedCells, iCC,
+                                                        dict_Coarse_Elem, dict_Card_Coarse_Cells,
+                                                        dict_DistributionOfCardinalOfCoarseElements,
+                                                        matrixAdj_CRS_row_ptr, matrixAdj_CRS_col_ind,
+                                                        isFineCellAgglomerated,
+                                                        fineCellToCoarseCell);
+                        }
+                    }
+                }
+//                assert((size_Current_Coarse_Cell == goalCard);
+                //"Pb: wrong number of fine cells in Current Coarse Cell" + str(
+                // list_of_fine_cells_for_Current_Coarse_Cell)
+            }
+        }
+    }
+    // print "Final Coarse cell ", iCoarseCell, dict_Coarse_Elem[iCoarseCell], "set_removedCoarseCells", set_removedCoarseCells
+    if (!set_removedCoarseCells.empty()) {
+        removeDeletedCoarseCells_v3(dict_Coarse_Elem,
+                                    dict_Card_Coarse_Cells,
+                                    fineCellToCoarseCell,
+                                    set_removedCoarseCells,
+                                    indCoarseCell);
+    }
+    if (verbose) {
+        cout << "End of __makeSmallCellBigger" << endl;
+    }
+//    return dict_Coarse_Elem, dict_Card_Coarse_Cells, indCoarseCell, numberOfFineAgglomeratedCells
+*/
+}
+
+unordered_set<long> Coarse_Cell_Graph::get_s_isotropic_cc_of_size(unsigned short size_min, unsigned short size_max) {
+    /**
+        * :param size_min: included
+        * :param size_max: not included
+        */
+
+    if (_d_isotropic_cc.empty()) {
+        return unordered_set<long>();
+    }
+    unordered_set<long> s_cc;
+    unsigned short max_card = 0;
+    if (size_max == 0) {
+        for (const auto &i_k_v :_d_card_2_cc) {
+            if (max_card < i_k_v.first) {
+                max_card = i_k_v.first;
+            }
+        }
+        size_max = max_card + 1;
+    }
+
+    for (unsigned short i_size = size_min; i_size < size_max; i_size++) {
+        if (_d_card_2_cc.count(i_size)) {
+//            s_cc.update(self._d_card_2_cc[i_size])
+            for (const long &i_cc: _d_card_2_cc[i_size]) {
+                s_cc.insert(i_cc);
+            }
+        }
+
+
+    }
+
+    return s_cc;
 }

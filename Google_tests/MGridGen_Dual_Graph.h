@@ -45,9 +45,6 @@ protected:
         v_MGridGen_volumes = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3.,
                               3., 1.5};
 
-        std::map<std::string, int> annee_perso{{"philippe", 1983},
-                                               {"gérard",   1967}};
-
         unordered_map<long, int> MGridGen_d_is_on_bnd{{0,  1},
                                                       {1,  1},
                                                       {3,  1},
@@ -56,13 +53,6 @@ protected:
                                                       {13, 1},
                                                       {14, 2}
         };
-//        MGridGen_d_is_on_bnd[0] = 1;
-//        MGridGen_d_is_on_bnd[1] = 1;
-//        MGridGen_d_is_on_bnd[3] = 1;
-//        MGridGen_d_is_on_bnd[4] = 1;
-//        MGridGen_d_is_on_bnd[12] = 2;
-//        MGridGen_d_is_on_bnd[13] = 1;
-//        MGridGen_d_is_on_bnd[14] = 2;
 
         s_MGridGen_is_on_corner = {};
         s_MGridGen_is_on_ridge = {12, 14};

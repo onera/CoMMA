@@ -105,6 +105,21 @@ public:
                                                                               unordered_set<long> &set_argmax_number_common_faces,
                                                                               unordered_map<long, unsigned short> &dict_adjacent_cc) const;
 
+    unordered_set<long> get_s_isotropic_cc_of_size(unsigned short size_min = 0, unsigned short size_max = 0);
+
+    void correction_make_small_cc_bigger(unordered_map<long, unordered_set<long>> &dict_Coarse_Elem,
+                                         unordered_map<int, unordered_set<long>> &dict_Card_Coarse_Cells,
+                                         long *matrixAdj_CRS_row_ptr,
+                                         long *matrixAdj_CRS_col_ind,
+                                         unordered_map<int, long> &dict_DistributionOfCardinalOfCoarseElements,
+                                         long &indCoarseCell,
+                                         long &numberOfFineAgglomeratedCells,
+                                         bool *isFineCellAgglomerated,
+                                         long *fineCellToCoarseCell,
+                                         int minCard,
+                                         int goalCard,
+                                         int thresholdCard,
+                                         bool verbose);
 
     //protected:
     int _verbose;
