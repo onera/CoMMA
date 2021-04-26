@@ -1149,7 +1149,7 @@ TEST_F(MGridGen_Dual_Graph, compute_cc_root_Case_1_MGridGen) {
     ASSERT_EQ(7, (*g)._compute_subgraph_root((*ccg._d_isotropic_cc[1]).get_s_fc()));
 }
 
-TEST_F(Example_One_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourhood_MGridGen) {
+TEST_F(MGridGen_Dual_Graph, compute_nb_faces_in_common_faces_with_cc_neighbourhood_MGridGen) {
 
     Coarse_Cell_Graph ccg((*g));
 
@@ -1354,364 +1354,447 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_1) {
     ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
 
     ref_d_compactness_2_cc = {{0, {0, 1, 2, 4}},
-                              {1, { 3}}};
+                              {1, {3}}};
     ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
 
 }
 
-//TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
-//
-//    Coarse_Cell_Graph ccg((*g));
-//
-//    unordered_set<long> s_fc ={0, 2};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={4,5};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={1,3,6};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    s_fc ={7,8};
-//    ccg.cc_create_a_cc(s_fc);
-//
-//    ccg.fill_cc_neighbouring();
-//
-//    ccg.correction_make_small_cc_bigger(threshold_card = 0, min_card = 3, goal_card = 4)
-//
-//    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
-//    ASSERT_EQ(ref_fc_2_cc, ccg.fc_2_cc);
-//}
+TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_2) {
+
+    //===================================================================//
+    //  Remark: split_no_connected_cc is now embedded inside cc_swap_fc  //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 1, 2};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 7, 8};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {3, 4, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    unordered_set<long> s_to_swap = {1};
+    ccg.cc_swap_fc(s_to_swap, 0, 2);
+    s_to_swap = {7};
+    ccg.cc_swap_fc(s_to_swap, 1, 2);
+
+    vector<long> ref_fc_2_cc = {0, 2, 3, 2, 2, 2, 1, 2, 4};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ASSERT_EQ(5, ccg._cc_counter);
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{3, {2}},
+                                                             {1, {6}},
+                                                             {2, {1, 3, 4, 5, 7}},
+                                                             {0, {0}},
+                                                             {4, {8}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0, 1, 3, 4}},
+                                                                              {5, {2}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 4},
+                                                    {5, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_3) {
+
+    //===================================================================//
+    //  Remark: split_no_connected_cc is now embedded inside cc_swap_fc  //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 1, 2};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {6, 7, 8};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {3, 4, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    long i_cc = 0;
+    Coarse_Cell *cc = ccg._d_isotropic_cc[i_cc];
+
+    unordered_set<long> ref_leaves = {0, 2};
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    unordered_set<long> ref_outer = {0, 1, 2};
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 1;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 8, 6 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 6, 7, 8 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 2;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 3, 5 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 3, 4, 5 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    //=============================
+    // Swap 1
+    //=============================
+
+    unordered_set<long> s_to_swap = {1};
+    ccg.cc_swap_fc(s_to_swap, 0, 2);
+
+    ASSERT_EQ(4, ccg._cc_counter);
+    i_cc = 0;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 0 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 0 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 2;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 1, 3, 5 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = {1, 3, 4, 5 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 3;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 2 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 2 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    //=============================
+    // Swap 2
+    //=============================
+    s_to_swap = {3};
+    ccg.cc_swap_fc(s_to_swap, 2, 1);
+
+    ASSERT_EQ(4, ccg._cc_counter);
+
+    i_cc = 1;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 3, 8 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 3, 7, 8 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 2;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 1,  5 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = {1,  4, 5 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    ref_outer = { 4};
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours(2));
+
+    //=============================
+    // Swap 3
+    //=============================
+    s_to_swap = {5};
+    ccg.cc_swap_fc(s_to_swap, 2, 3);
+
+    ASSERT_EQ(4, ccg._cc_counter);
+
+    i_cc = 0;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 0 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 0 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 1;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 3, 8 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 3, 7, 8 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 2;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 1,4 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 1,4};
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    i_cc = 3;
+    cc = ccg._d_isotropic_cc[i_cc];
+    ref_leaves = { 2, 5 };
+    ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
+    ref_outer = { 2,5 };
+    ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
+
+    //=============================
+    // Swap 4
+    //=============================
+    s_to_swap = {7};
+    ccg.cc_swap_fc(s_to_swap, 1, 2);
+
+    ASSERT_EQ(5, ccg._cc_counter);
+
+    vector<long> ref_fc_2_cc = {0, 2, 3, 1, 2, 3, 1, 2, 4};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, {0}},
+                                                             {1, {3, 6}},
+                                                             {2, {1, 4, 7}},
+                                                             {3, {2, 5}},
+                                                             {4, {8}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0, 4}},
+                                                                              {2, {3, 1}},
+                                                                              {3, {2}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 2},
+                                                    {2, 2},
+                                                    {3, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_5) {
+
+    //===================================================================//
+    //  Remark: split_no_connected_cc is now embedded inside cc_swap_fc  //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 1, 2};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {6, 7, 8};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {3, 4, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    unordered_set<long> s_to_swap = {1};
+    ccg.cc_swap_fc(s_to_swap, 0, 2);
+
+    s_to_swap = {3};
+    ccg.cc_swap_fc(s_to_swap, 2, 1);
+    s_to_swap = {5};
+    ccg.cc_swap_fc(s_to_swap, 2, 1);
+
+    s_to_swap = {1};
+    ccg.cc_swap_fc(s_to_swap, 2, 3);
+
+    s_to_swap = {4};
+    ccg.cc_swap_fc(s_to_swap, 2, 3);
+
+    vector<long> ref_fc_2_cc = {0, 3, 3, 1, 3, 1, 1, 1, 1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ASSERT_EQ(4, ccg._cc_counter);
+
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, {0}},
+                                                             {1, {3, 5, 6, 7, 8}},
+                                                             {3, {1,2,4}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0}},
+                                                                              {5, {1}},
+                                                                              {3, {3}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 1},
+                                                    {3, 1},
+                                                    {5, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+}
+
+TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 2};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={4,5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={1,3,6};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={7,8};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    unsigned short threshold_card = 0;
+    unsigned short min_card = 3;
+    unsigned short goal_card = 4;
+    ccg.correction_make_small_cc_bigger(min_card, goal_card, threshold_card);
+    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_Dual_Graph, correction_make_small_cc_bigger_case_1_Mgridgen) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 1, 2, 3, 6, 11};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={4, 5, 7, 8, 10, 13};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={9, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={14};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    unsigned short threshold_card = 0;
+    unsigned short min_card = 3;
+    unsigned short goal_card = 4;
+    ccg.correction_make_small_cc_bigger(min_card, goal_card, threshold_card);
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 1, 1, 0, 2, 1, 2, 1, 3, 2, 1, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_make_small_cc_bigger_case_1_Mgridgen_ext_v2) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 1, 2, 3, 4, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={6, 7, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={10, 11, 12, 13, 24};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={8, 9, 15, 16, 17};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={18, 19, 20, 21, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={14, 22};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 2, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unsigned short threshold_card = 0;
+    unsigned short min_card = 3;
+    unsigned short goal_card = 4;
+    ccg.correction_make_small_cc_bigger(min_card, goal_card, threshold_card);
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+    ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 5, 5, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_Dual_Graph, correction_reduce_too_big_cc_case_1_Mgridgen) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 1, 2, 3, 6, 11};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={4, 5, 7, 8, 10, 13};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={9, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={14};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    unsigned short goal_card = 4;
+    ccg.correction_reduce_too_big_cc(goal_card);
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 1, 1, 0, 1, 1, 2, 2, 3, 2, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(Example_One_Dual_Graph, correction_reduce_too_big_cc_case_1_Example_One) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 2};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={4,5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={1,3,6};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={7,8};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    unsigned short goal_card = 3;
+    ccg.correction_reduce_too_big_cc(goal_card);
+    vector<long> ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_reduce_too_big_cc_case_1_Mgridgen_ext_v2) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc ={0, 1, 2, 3, 4, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={6, 7, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={10, 11, 12, 13, 24};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={8, 9, 15, 16, 17};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={18, 19, 20, 21, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc ={14, 22};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 2, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unsigned short goal_card = 3;
+    ccg.correction_reduce_too_big_cc(goal_card);
+
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+    ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 5, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
-
-TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_1) {
-
-    int nbCells = 9;
-
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    unordered_set<long> listInitialCoarseCell({0, 1, 2, 3, 4, 5, 6, 7, 8});
-    bool isFineCellAgglomerated[9] = {true, true, true, true, true, true, true, true, true};
-    long fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 3, 1, 3, 3, 3, 2, 3, 1};
-
-    long indCoarseElement = 4;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
-
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    dict_Coarse_Cells[0] = unordered_set<long>({0});
-    dict_Coarse_Cells[1] = unordered_set<long>({2, 8});
-    dict_Coarse_Cells[2] = unordered_set<long>({6});
-    dict_Coarse_Cells[3] = unordered_set<long>({1, 3, 4, 5, 7});
-
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
-    dict_Card_Coarse_Cells[1] = unordered_set<long>({0, 2});
-    dict_Card_Coarse_Cells[2] = unordered_set<long>({1});
-    dict_Card_Coarse_Cells[5] = unordered_set<long>({3});
-
-    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
-    dict_DistributionOfCardinalOfCoarseElements[1] = 2;
-    dict_DistributionOfCardinalOfCoarseElements[2] = 1;
-    dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-
-    long iCoarseCell = 1;
-
-    splitNonConnectedCoarseCell(indCoarseElement, numberOfFineAgglomeratedCells,
-                                iCoarseCell,
-                                dict_Coarse_Cells, dict_Card_Coarse_Cells,
-                                dict_DistributionOfCardinalOfCoarseElements,
-                                row_ptr, col_ind,
-                                isFineCellAgglomerated,
-                                fine_Cell_indices_To_Coarse_Cell_Indices);
-
-    ASSERT_EQ(5, indCoarseElement);
-
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({0});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({2});
-    ref_dict_Coarse_Cells[2] = unordered_set<long>({6});
-    ref_dict_Coarse_Cells[3] = unordered_set<long>({1, 3, 4, 5, 7});
-    ref_dict_Coarse_Cells[4] = unordered_set<long>({8});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0, 1, 2, 4});
-    ref_dict_Card_Coarse_Cells[5] = unordered_set<long>({3});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 4;
-    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 3, 1, 3, 3, 3, 2, 3, 4};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
-    }
-
-}
-
-TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_2) {
-    int nbCells = 9;
-
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-    unordered_set<long> listInitialCoarseCell({0, 1, 2, 3, 4, 5, 6, 7, 8});
-    bool isFineCellAgglomerated[9] = {true, true, true, true, true, true, true, true, true};
-    long fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 2, 0, 2, 2, 2, 1, 2, 1};
-
-    long indCoarseElement = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
-
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    dict_Coarse_Cells[0] = unordered_set<long>({0, 2});
-    dict_Coarse_Cells[1] = unordered_set<long>({6, 8});
-    dict_Coarse_Cells[2] = unordered_set<long>({1, 3, 4, 5, 7});
-
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
-    dict_Card_Coarse_Cells[2] = unordered_set<long>({0, 1});
-    dict_Card_Coarse_Cells[5] = unordered_set<long>({2});
-
-    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
-    dict_DistributionOfCardinalOfCoarseElements[2] = 2;
-    dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-
-    long iCoarseCell = 1;
-
-    splitNonConnectedCoarseCell(indCoarseElement, numberOfFineAgglomeratedCells,
-                                iCoarseCell,
-                                dict_Coarse_Cells, dict_Card_Coarse_Cells,
-                                dict_DistributionOfCardinalOfCoarseElements,
-                                row_ptr, col_ind,
-                                isFineCellAgglomerated,
-                                fine_Cell_indices_To_Coarse_Cell_Indices);
-
-
-    ASSERT_EQ(4, indCoarseElement);
-
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 2});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({6});
-    ref_dict_Coarse_Cells[2] = unordered_set<long>({1, 3, 4, 5, 7});
-    ref_dict_Coarse_Cells[3] = unordered_set<long>({8});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({1, 3});
-    ref_dict_Card_Coarse_Cells[2] = unordered_set<long>({0});
-    ref_dict_Card_Coarse_Cells[5] = unordered_set<long>({2});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 2;
-    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[2] = 1;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 2, 0, 2, 2, 2, 1, 2, 3};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
-
-    }
-
-    iCoarseCell = 0;
-
-    splitNonConnectedCoarseCell(indCoarseElement, numberOfFineAgglomeratedCells,
-                                iCoarseCell,
-                                dict_Coarse_Cells, dict_Card_Coarse_Cells,
-                                dict_DistributionOfCardinalOfCoarseElements,
-                                row_ptr, col_ind,
-                                isFineCellAgglomerated,
-                                fine_Cell_indices_To_Coarse_Cell_Indices);
-    ASSERT_EQ(5, indCoarseElement);
-
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({0});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({6});
-    ref_dict_Coarse_Cells[2] = unordered_set<long>({1, 3, 4, 5, 7});
-    ref_dict_Coarse_Cells[3] = unordered_set<long>({8});
-    ref_dict_Coarse_Cells[4] = unordered_set<long>({2});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
-
-    ref_dict_Card_Coarse_Cells.erase(2);
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({0, 1, 3, 4});
-    ref_dict_Card_Coarse_Cells[5] = unordered_set<long>({2});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    ref_dict_DistributionOfCardinalOfCoarseElements.erase(2);
-    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 4;
-    ref_dict_DistributionOfCardinalOfCoarseElements[5] = 1;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-    bool ref_isFineCellAgglomerated_tmp_2[9] = {true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[9] = {0, 2, 4, 2, 2, 2, 1, 2, 3};
-    for (int i = 0; i < 9; i++) {
-
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp_2[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices_2[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
-    }
-}
-
-TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_3) {
-
-    int nbCells = 9;
-
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-
-    bool isFineCellAgglomerated[9] = {true, true, true, true, true, true, true, true, true};
-    long fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 2, 0, 1, 2, 0, 1, 2, 1};
-
-    long indCoarseElement = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
-
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    dict_Coarse_Cells[0] = unordered_set<long>({0, 2, 5});
-    dict_Coarse_Cells[1] = unordered_set<long>({3, 6, 8});
-    dict_Coarse_Cells[2] = unordered_set<long>({1, 4, 7});
-
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
-    dict_Card_Coarse_Cells[3] = unordered_set<long>({0, 1, 2});
-
-    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
-    dict_DistributionOfCardinalOfCoarseElements[3] = 3;
-
-    long iCoarseCell = 1;
-
-    splitNonConnectedCoarseCell(indCoarseElement, numberOfFineAgglomeratedCells,
-                                iCoarseCell,
-                                dict_Coarse_Cells, dict_Card_Coarse_Cells,
-                                dict_DistributionOfCardinalOfCoarseElements,
-                                row_ptr, col_ind,
-                                isFineCellAgglomerated,
-                                fine_Cell_indices_To_Coarse_Cell_Indices);
-
-
-    ASSERT_EQ(4, indCoarseElement);
-
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 2, 5});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({3, 6});
-    ref_dict_Coarse_Cells[2] = unordered_set<long>({1, 4, 7});
-    ref_dict_Coarse_Cells[3] = unordered_set<long>({8});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({3});
-    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({0, 2});
-    ref_dict_Card_Coarse_Cells[2] = unordered_set<long>({1});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[2] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 2;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 2, 0, 1, 2, 0, 1, 2, 3};
-    for (int i = 0; i < 9; i++) {
-
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
-    }
-
-}
-
-TEST(CoarseCellGraph_TestSuite, splitNonConnectedCoarseCell_9_Squares_5) {
-
-    int nbCells = 9;
-
-    long row_ptr[10] = {0, 3, 7, 10, 14, 19, 23, 26, 30, 33};
-    long col_ind[33] = {0, 1, 3, 0, 1,
-                        2, 4, 1, 2, 5,
-                        0, 3, 4, 6, 1,
-                        3, 4, 5, 7, 2,
-                        4, 5, 8, 3, 6,
-                        7, 4, 6, 7, 8, 5, 7, 8};
-
-    bool isFineCellAgglomerated[9] = {true, true, true, true, true, true, true, true, true};
-    long fine_Cell_indices_To_Coarse_Cell_Indices[9] = {0, 2, 0, 1, 2, 1, 0, 0, 1};
-
-    long indCoarseElement = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
-
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    dict_Coarse_Cells[0] = unordered_set<long>({0, 2, 6, 7});
-    dict_Coarse_Cells[1] = unordered_set<long>({3, 5, 8});
-    dict_Coarse_Cells[2] = unordered_set<long>({1, 4});
-
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
-    dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
-    dict_Card_Coarse_Cells[2] = unordered_set<long>({2});
-    dict_Card_Coarse_Cells[4] = unordered_set<long>({0});
-
-    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
-    dict_DistributionOfCardinalOfCoarseElements[2] = 1;
-    dict_DistributionOfCardinalOfCoarseElements[3] = 1;
-    dict_DistributionOfCardinalOfCoarseElements[4] = 1;
-
-    long iCoarseCell = 0;
-
-    splitNonConnectedCoarseCell(indCoarseElement, numberOfFineAgglomeratedCells,
-                                iCoarseCell,
-                                dict_Coarse_Cells, dict_Card_Coarse_Cells,
-                                dict_DistributionOfCardinalOfCoarseElements,
-                                row_ptr, col_ind,
-                                isFineCellAgglomerated,
-                                fine_Cell_indices_To_Coarse_Cell_Indices);
-
-
-    ASSERT_EQ(5, indCoarseElement);
-
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
-    ref_dict_Coarse_Cells[0] = unordered_set<long>({6, 7});
-    ref_dict_Coarse_Cells[1] = unordered_set<long>({3, 5, 8});
-    ref_dict_Coarse_Cells[2] = unordered_set<long>({1, 4});
-    ref_dict_Coarse_Cells[3] = unordered_set<long>({0});
-    ref_dict_Coarse_Cells[4] = unordered_set<long>({2});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[1] = unordered_set<long>({3, 4});
-    ref_dict_Card_Coarse_Cells[2] = unordered_set<long>({0, 2});
-    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({1});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[1] = 2;
-    ref_dict_DistributionOfCardinalOfCoarseElements[2] = 2;
-    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-    bool ref_isFineCellAgglomerated_tmp[9] = {true, true, true, true, true, true, true, true, true};
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[9] = {3, 2, 4, 1, 2, 1, 0, 0, 1};
-    for (int i = 0; i < 9; i++) {
-        ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fine_Cell_indices_To_Coarse_Cell_Indices[i]);
-
-    }
-}
 
 TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_3_isotropicCell_0_anisotropic) {
 

@@ -110,7 +110,11 @@ public:
     void correction_make_small_cc_bigger(const unsigned short &min_card,
                                          const unsigned short &goal_card,
                                          const unsigned short &threshold_card,
-                                         bool verbose);
+                                         bool verbose=false);
+
+    void correction_reduce_too_big_cc(const unsigned short &goal_card,
+                                      const unsigned short & verbose= 0);
+
 
     void cc_split_non_connected_cc(const long& i_cc);
 
