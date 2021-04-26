@@ -288,8 +288,8 @@ void Coarse_Cell_Graph::__remove_an_isotropic_cc(const long &i_cc) {
 }
 
 unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
-                                                  const long &i_origin_cc,
-                                                  const long &i_destination_cc) {
+                                                  const long i_origin_cc,
+                                                  const long i_destination_cc) {
 
 
 /***
@@ -303,7 +303,7 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
  *
  */
 // TODO Verifier qu'on ne presuppose pas la connectivity!!!!
-    if(_verbose) {
+    if (_verbose) {
         cout << "Swap CC: {";
         for (const long &i_fc: s_fc) {
             cout << i_fc << ", ";
@@ -582,10 +582,10 @@ void Coarse_Cell_Graph::cc_renumber() {
                     _d_anisotropic_cc[new_i_cc] = _d_anisotropic_cc[i_cc];
                     for (const long &i_fc :_d_anisotropic_cc[new_i_cc]) {
                         _fc_2_cc[i_fc] = new_i_cc;
-
-                        _d_anisotropic_cc.erase(i_cc);
-                        new_i_cc++;
                     }
+                    _d_anisotropic_cc.erase(i_cc);
+                    new_i_cc++;
+
 
                 }
 // new_i_cc = _cc_counter - len(_s_cc_to_remove)
@@ -793,6 +793,11 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
 
         long nb_cc = 0;
         for (auto &i_k_v: _d_isotropic_cc) {
+            if (nb_cc < i_k_v.first) {
+                nb_cc = i_k_v.first;
+            }
+        }
+        for (auto &i_k_v: _d_anisotropic_cc) {
             if (nb_cc < i_k_v.first) {
                 nb_cc = i_k_v.first;
             }
@@ -1235,7 +1240,7 @@ void Coarse_Cell_Graph::correction_reduce_too_big_cc(const unsigned short &goal_
                     }
                 }
 
-                if(min_card_neighbour < goal_card) {
+                if (min_card_neighbour < goal_card) {
 
                     unordered_set<long> s_fc_to_swap = {i_fc};
                     unordered_set<long> set_tmp = cc_swap_fc(s_fc_to_swap, i_cc, arg_min_card_neighbour);
@@ -1250,8 +1255,7 @@ void Coarse_Cell_Graph::correction_reduce_too_big_cc(const unsigned short &goal_
                         _s_cc_to_remove.insert(i_cc_to_delete);
                     }
 
-                    if(!set_tmp.empty())
-                    {
+                    if (!set_tmp.empty()) {
                         // print("set_tmp", set_tmp)
                         is_change = false;
                         break;
@@ -1264,5 +1268,274 @@ void Coarse_Cell_Graph::correction_reduce_too_big_cc(const unsigned short &goal_
     if (_verbose) {
         cout << "After Destruction too big cells" << endl;
         //print("dict_DistributionOfCardinalOfCoarseElements", self.d_distribution_of_cardinal_of_isotropic_cc)
+    }
+}
+
+void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &threshold_card) {
+
+
+    /**
+     *  For every too small cc, we split it in fc and try to give it to the "optimal" cc neighbour.
+     */
+
+    // TODO move this function inside ccg_v1 calls of self._d_card_2_cc and self._d_isotropic_cc
+    assert(check_data_consistency_and_connectivity());
+    if (_verbose) {
+        cerr << "\t\tCall of correction_remove_too_small_cc" << endl;
+        cerr << "\t\tfc_2_cc" << endl;
+//        print("\t\t", self.fc_2_cc.__repr__())
+    }
+
+    // TODO REMOVE THIS
+    unordered_set<long> set_removed_cc = {};
+
+    // Treatment of too small cells:
+    // 1<= card(Coarse_Cell_v2) <= threshold_card
+    for (unsigned short i_cc_size = 1; i_cc_size < threshold_card + 1; i_cc_size++) {
+
+        if (_d_card_2_cc.count(i_cc_size)) {
+
+            unordered_set<long> s_temporary(_d_card_2_cc[i_cc_size]);
+
+            // The set of cc of card i_cc_size is not empty:
+            for (const long &i_cc :s_temporary) {
+
+                assert(is_isotropic_cc(i_cc));
+                Coarse_Cell *cc = _d_isotropic_cc[i_cc];
+
+                unordered_set<long> s_fc = (*cc).get_s_fc();
+                if (s_fc.size() > threshold_card) {
+                    continue;
+                }
+
+                // We process every fine cell separately
+                int iCount = 0;
+
+                vector<long> l_fc_in_i_cc(s_fc.size());
+                unordered_set<long> set_tmp(s_fc);
+
+                for (const long &i_fc:s_fc) {
+                    l_fc_in_i_cc[iCount] = i_fc;
+                    iCount++;
+                }
+
+                unsigned short size_of_original_cc = l_fc_in_i_cc.size();
+                unordered_set<long> untreated_fc;
+
+                for (unsigned short i = 0; i < l_fc_in_i_cc.size(); i++) {
+                    const long &i_fc = l_fc_in_i_cc[i];
+//                    cout << "i_fc " << i_fc << endl;
+                    // We process every neighbour of i_fc
+                    unordered_set<long> set_argmax_number_common_faces;
+                    unordered_map<long, unsigned short> dict_adjacent_cc;
+
+                    unordered_set<long> s_union(set_tmp);
+                    for (const long &i:untreated_fc) {
+                        s_union.insert(i);
+                    }
+
+                    compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(i_fc,
+                                                                                         s_union,
+                                                                                         set_argmax_number_common_faces,
+                                                                                         dict_adjacent_cc);
+                    //=================
+                    // Three cases:
+                    //=================
+
+                    // 1) No cc neighbour:
+                    //====================
+                    if (set_argmax_number_common_faces.size() < 1) {
+                        // No cc neighbour found!
+                        // We can be in this situation when a fine cell is included inside the rest of fine cells.
+                        // Putting it to the end should solve the problem!
+                        // This problem could occur several times.
+                        // Imagine a cc in "line" enclosed in anisotropic cells!
+                        // In the worst case scenario in the order of treatment of fc, we may need to
+                        // add (size_of_original_cc -1) times the most enclosed fc.
+
+                        int counter = 0;
+                        for (const long &i_tmp: l_fc_in_i_cc) {
+                            if (i_tmp == i_fc) {
+                                counter++;
+                            }
+                        }
+
+                        if (counter <= size_of_original_cc) {
+                            l_fc_in_i_cc.push_back(i_fc);
+                            continue;
+                        } else {
+                            // Problematic case!
+                            // the current incomplete cell has no (isotropic) neighbour!
+                            untreated_fc.insert(i_fc);
+                        }
+                    }
+                        // 2) One "optimal" cc neighbour:
+                    else if (set_argmax_number_common_faces.size() == 1) {
+
+                        // pop du premier!
+                        // arg_max = set_argmax_number_common_faces.pop()
+                        long arg_max = *set_argmax_number_common_faces.begin();
+                        set_argmax_number_common_faces.erase(arg_max);
+
+                        // Attention: do not replace self._fc_2_cc[i_fc] by i_cc because after a swap that disconnect a cc
+                        // a new one is created.
+                        unordered_set<long> s_fc_to_swap = {i_fc};
+                        unordered_set<long> set_tmp_2 = cc_swap_fc(s_fc_to_swap, _fc_2_cc[i_fc], arg_max);
+
+                        if (set_tmp_2.size() > 0) {
+                            long i_cc_to_delete = *set_tmp_2.begin();
+                            assert(set_tmp_2.size() == 1);
+                            assert(_s_cc_to_remove.count(i_cc_to_delete) == 0);
+                            _s_cc_to_remove.insert(i_cc_to_delete);
+                        }
+                    } else {
+
+
+                        // 3) More than one neighbour:
+                        // We choose the smallest coarse neighbour.
+                        // TODO Is it the better choice????
+
+                        long arg_min = numeric_limits<long>::max();
+                        unsigned short size_min = numeric_limits<int>::max();
+
+                        // TODO Is it the better choice????
+                        // We choose the smallest coarse neighbour.
+                        for (const long &i_c : set_argmax_number_common_faces) {
+                            // reminder dict_Coarse_Elem contains only isotropic agglomeration
+                            if ((*_d_isotropic_cc[i_c]).__card < size_min) {
+                                size_min = (*_d_isotropic_cc[i_c]).__card;
+                                arg_min = i_c;
+                            }
+                        }
+
+                        long arg_max = arg_min;
+                        // Attention: do not replace self._fc_2_cc[i_fc] by i_cc because after a swap that disconnect a cc
+                        // a new one is created.
+                        unordered_set<long> s_fc_to_swap = {i_fc};
+                        unordered_set<long> set_tmp_2 = cc_swap_fc(s_fc_to_swap, _fc_2_cc[i_fc], arg_max);
+
+                        if (set_tmp_2.size() > 0) {
+                            long i_cc_to_delete = *set_tmp_2.begin();
+                            assert(set_tmp_2.size() == 1);
+                            assert(_s_cc_to_remove.count(i_cc_to_delete) == 0);
+                            _s_cc_to_remove.insert(i_cc_to_delete);
+                        }
+// // We add the current fine cell to the smallest neighbouring coarse cell!
+                    }
+                    set_tmp.erase(i_fc);
+
+
+                }
+
+                if (!untreated_fc.empty()) {
+
+                    // Maybe untreated_fc are not connected?
+                    if (_fc_graph.check_connectivity(untreated_fc)) {
+
+                        // A fc alone:
+                        if (untreated_fc.size() == 1) {
+
+                            long i_fc = *untreated_fc.begin();//l[0];
+
+//                            i_fc = untreated_fc.pop()
+
+                            // We look for the fc that shares the maximum area with the current fc (i_fc)
+                            long arg_fc_max = -1;
+                            double max_area = 0.0;
+
+                            const vector<long> &v_neighbours = _fc_graph.get_neighbours(i_fc);
+                            const vector<double> &v_weights = _fc_graph.get_weights(i_fc);
+
+                            assert(v_neighbours.size() == v_weights.size());
+
+                            for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+                                // We process every neighbour of i_fc
+                                long i_fc_n = v_neighbours[i_n];
+                                double i_w_fc_n = v_weights[i_n];
+
+                                if ((i_fc_n != i_fc) || i_w_fc_n > max_area) {
+                                    max_area = i_w_fc_n;
+                                    arg_fc_max = i_fc_n;
+                                }
+                            }
+
+                            // TODO make a swap function for anisotropic cells
+                            // No swap here because we deal with only anisotropic fine cells!
+                            // They are not registrered in Dicts...
+                            // TODO Change this manage anisotropic cc
+                            if (arg_fc_max != -1) {
+                                long i_aniso_cc = _fc_2_cc[arg_fc_max];
+                                // TODO use update????
+                                // Update of self._d_card_2_cc:
+                                unsigned short size = 1;
+                                unsigned short compactness = 0;
+
+                                // 1) We remove the cell from i_origin_cc
+                                assert(_d_card_2_cc.count(size));
+                                assert(_d_card_2_cc[size].count(i_cc));
+                                assert(_d_isotropic_cc.count(i_cc));
+
+                                assert(_d_compactness_2_cc.count(compactness));
+
+                                _d_card_2_cc[size].erase(i_cc);
+                                if (_d_card_2_cc[size].empty()) {
+                                    _d_card_2_cc.erase(size);
+                                }
+                                _d_compactness_2_cc[compactness].erase(i_cc);
+                                if (_d_compactness_2_cc[compactness].empty()) {
+                                    _d_compactness_2_cc.erase(compactness);
+                                }
+                                // TODO TROUBlE we don't modify the cardinal of the host cell.
+                                _d_isotropic_cc.erase(i_cc);
+
+                                assert(_s_cc_to_remove.count(i_cc) == 0);
+                                _s_cc_to_remove.insert(i_cc);
+
+                                _fc_2_cc[i_fc] = i_aniso_cc;
+                                // print(i_fc, i_aniso_cc)
+                                _d_anisotropic_cc[i_aniso_cc].insert(i_fc);
+                                cout << "Treatment: " << i_fc << " is in anisotropic CC: " << i_aniso_cc << endl;
+                            }
+
+                        } else {
+                            // Nothing to do the coarse cell already exists
+                            // We have done our best!
+                            if (_verbose) {
+                                cout << "UntreatedCells are connected Pfff! {";
+                                for (const long &i_fc :untreated_fc) {
+                                    cout << i_fc << ", ";
+                                }
+                                cout << "} and original cell {";
+                                for (const long &i_fc :l_fc_in_i_cc) {
+                                    cout << i_fc << ", ";
+                                }
+                                cout << "}" << endl;
+                            }
+                        }
+
+
+                    } else {
+                        cout << "Problematic non connected untreated cells" << endl;
+                        cout << "UntreatedCells {";
+                        for (const long &i_fc :untreated_fc) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "} and original cell {";
+                        for (const long &i_fc :l_fc_in_i_cc) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "}" << endl;
+//                        print("l=", untreated_fc, "and original cell", l_fc_in_i_cc)
+//                        raise ValueError("Problematic case! Untreated cells are not connected!")
+                        exit(1);
+                    }
+                }
+
+            }
+        }
+    }
+    if (_verbose) {
+        cout << "fc_2_cc" << endl;
+        //    print(self.fc_2_cc.__repr__())
     }
 }

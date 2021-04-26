@@ -34,8 +34,8 @@ public:
     void cc_create_all_delayed_cc();
 
     unordered_set<long> cc_swap_fc(unordered_set<long> &s_fc,
-                                   const long &i_origin_cc,
-                                   const long &i_destination_cc);
+                                   const long i_origin_cc,
+                                   const long i_destination_cc);
 
     inline bool is_anisotropic_cc(const long &i_cc) const {
         return (!_d_anisotropic_cc.empty()) && (_d_anisotropic_cc.count(i_cc));
@@ -115,6 +115,7 @@ public:
     void correction_reduce_too_big_cc(const unsigned short &goal_card,
                                       const unsigned short & verbose= 0);
 
+    void correction_remove_too_small_cc(const unsigned short &threshold_card);
 
     void cc_split_non_connected_cc(const long& i_cc);
 

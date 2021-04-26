@@ -8,112 +8,10 @@
 #include "Box_5x5x5_Dual_Graph.h"
 #include "Box_5x5x5_Aniso_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
+#include "Twelve_squares_4x3_Dual_Graph.h"
+#include "Fifteen_squares_5x3_Dual_Graph.h"
 
 #include "gtest/gtest.h"
-
-//class Test_CCG_box_5x5x5 : public ::testing::Test {
-//    // filename_ini = "box_1_rect_5_d_F.hdf"
-//    // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))
-//
-//protected:
-//
-//    Dual_Graph *g;
-//    int box_5x5x5_number_of_cells;
-//    int box_5x5x5_col_ind_size;
-//    vector<long> v_box_5x5x5_row_ptr;
-//    vector<long> v_box_5x5x5_col_ind;
-//    vector<double> v_box_5x5x5_values;
-//    vector<double> v_box_5x5x5_volumes;
-//
-//    virtual void SetUp() {
-//        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
-//                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
-//                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
-//                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
-//                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
-//
-//        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
-//                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
-//                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
-//                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
-//                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
-//                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
-//                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
-//                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
-//                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
-//                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
-//                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
-//                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
-//                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
-//                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
-//                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
-//                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
-//                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
-//                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
-//                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
-//                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
-//                               47, 59, 62, 63};
-//
-//        v_box_5x5x5_values = {75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25.,
-//                              25., 25., 75., 25., 25., 25., 50., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25.,
-//                              25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 75., 25.,
-//                              25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-//                              75., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 50., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 50., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25.,
-//                              25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25., 50., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 50., 25., 25., 25., 50., 25., 25., 25., 25., 25.,
-//                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50.,
-//                              25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-//                              50., 25., 25., 25., 25., 75.};
-//
-//        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-//                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
-//
-//        vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
-//                                           0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
-//                                           2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-//
-//        box_5x5x5_number_of_cells = 64;
-//        box_5x5x5_col_ind_size = 344;
-//
-//        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
-//        int i(0);
-//        for (int value : box_5x5x5_is_on_bnd)
-//            box_5x5x5_d_is_on_bnd[i++] = value;
-//
-//        g = new Dual_Graph(box_5x5x5_number_of_cells,
-//                           v_box_5x5x5_row_ptr,
-//                           v_box_5x5x5_col_ind,
-//                           v_box_5x5x5_values,
-//                           v_box_5x5x5_volumes,
-//                           box_5x5x5_d_is_on_bnd);
-//
-//    }
-//
-//    virtual void TearDown() {
-//        delete g;
-//    }
-//};
 
 TEST_F(Box_5x5x5_Dual_Graph, constructor_box_5x5x5) {
     Coarse_Cell_Graph ccg((*g));
@@ -675,7 +573,6 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, _cc_update_neighbours_MGridGen_ext_v2) {
     ASSERT_TRUE((*destination_cc).check_consistency(ref_fc_2_cc));
     ASSERT_TRUE((*origin_cc).check_consistency(ref_fc_2_cc));
 }
-
 
 TEST_F(MGridGen_Dual_Graph, swap_fc_case_1_MGridGen) {
 
@@ -1437,16 +1334,16 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_3) {
 
     i_cc = 1;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 8, 6 };
+    ref_leaves = {8, 6};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 6, 7, 8 };
+    ref_outer = {6, 7, 8};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 2;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 3, 5 };
+    ref_leaves = {3, 5};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 3, 4, 5 };
+    ref_outer = {3, 4, 5};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     //=============================
@@ -1459,23 +1356,23 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_3) {
     ASSERT_EQ(4, ccg._cc_counter);
     i_cc = 0;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 0 };
+    ref_leaves = {0};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 0 };
+    ref_outer = {0};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 2;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 1, 3, 5 };
+    ref_leaves = {1, 3, 5};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = {1, 3, 4, 5 };
+    ref_outer = {1, 3, 4, 5};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 3;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 2 };
+    ref_leaves = {2};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 2 };
+    ref_outer = {2};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     //=============================
@@ -1488,19 +1385,19 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_3) {
 
     i_cc = 1;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 3, 8 };
+    ref_leaves = {3, 8};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 3, 7, 8 };
+    ref_outer = {3, 7, 8};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 2;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 1,  5 };
+    ref_leaves = {1, 5};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = {1,  4, 5 };
+    ref_outer = {1, 4, 5};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
-    ref_outer = { 4};
+    ref_outer = {4};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours(2));
 
     //=============================
@@ -1513,30 +1410,30 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_3) {
 
     i_cc = 0;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 0 };
+    ref_leaves = {0};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 0 };
+    ref_outer = {0};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 1;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 3, 8 };
+    ref_leaves = {3, 8};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 3, 7, 8 };
+    ref_outer = {3, 7, 8};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 2;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 1,4 };
+    ref_leaves = {1, 4};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 1,4};
+    ref_outer = {1, 4};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     i_cc = 3;
     cc = ccg._d_isotropic_cc[i_cc];
-    ref_leaves = { 2, 5 };
+    ref_leaves = {2, 5};
     ASSERT_EQ(ref_leaves, (*cc).compute_s_leaves());
-    ref_outer = { 2,5 };
+    ref_outer = {2, 5};
     ASSERT_EQ(ref_outer, (*cc).get_s_fc_w_outer_neighbours());
 
     //=============================
@@ -1610,7 +1507,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_5) {
 
     unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, {0}},
                                                              {1, {3, 5, 6, 7, 8}},
-                                                             {3, {1,2,4}},
+                                                             {3, {1, 2, 4}},
     };
     ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
 
@@ -1631,16 +1528,16 @@ TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_On
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 2};
+    unordered_set<long> s_fc = {0, 2};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={4,5};
+    s_fc = {4, 5};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={1,3,6};
+    s_fc = {1, 3, 6};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={7,8};
+    s_fc = {7, 8};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1656,16 +1553,16 @@ TEST_F(MGridGen_Dual_Graph, correction_make_small_cc_bigger_case_1_Mgridgen) {
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 1, 2, 3, 6, 11};
+    unordered_set<long> s_fc = {0, 1, 2, 3, 6, 11};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={4, 5, 7, 8, 10, 13};
+    s_fc = {4, 5, 7, 8, 10, 13};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={9, 12};
+    s_fc = {9, 12};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={14};
+    s_fc = {14};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1681,22 +1578,22 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_make_small_cc_bigger_case_1_Mgridg
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 1, 2, 3, 4, 25};
+    unordered_set<long> s_fc = {0, 1, 2, 3, 4, 25};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={6, 7, 5};
+    s_fc = {6, 7, 5};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={10, 11, 12, 13, 24};
+    s_fc = {10, 11, 12, 13, 24};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={8, 9, 15, 16, 17};
+    s_fc = {8, 9, 15, 16, 17};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={18, 19, 20, 21, 23};
+    s_fc = {18, 19, 20, 21, 23};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={14, 22};
+    s_fc = {14, 22};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1716,16 +1613,16 @@ TEST_F(MGridGen_Dual_Graph, correction_reduce_too_big_cc_case_1_Mgridgen) {
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 1, 2, 3, 6, 11};
+    unordered_set<long> s_fc = {0, 1, 2, 3, 6, 11};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={4, 5, 7, 8, 10, 13};
+    s_fc = {4, 5, 7, 8, 10, 13};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={9, 12};
+    s_fc = {9, 12};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={14};
+    s_fc = {14};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1739,16 +1636,16 @@ TEST_F(Example_One_Dual_Graph, correction_reduce_too_big_cc_case_1_Example_One) 
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 2};
+    unordered_set<long> s_fc = {0, 2};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={4,5};
+    s_fc = {4, 5};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={1,3,6};
+    s_fc = {1, 3, 6};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={7,8};
+    s_fc = {7, 8};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1763,22 +1660,22 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_reduce_too_big_cc_case_1_Mgridgen_
 
     Coarse_Cell_Graph ccg((*g));
 
-    unordered_set<long> s_fc ={0, 1, 2, 3, 4, 25};
+    unordered_set<long> s_fc = {0, 1, 2, 3, 4, 25};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={6, 7, 5};
+    s_fc = {6, 7, 5};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={10, 11, 12, 13, 24};
+    s_fc = {10, 11, 12, 13, 24};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={8, 9, 15, 16, 17};
+    s_fc = {8, 9, 15, 16, 17};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={18, 19, 20, 21, 23};
+    s_fc = {18, 19, 20, 21, 23};
     ccg.cc_create_a_cc(s_fc);
 
-    s_fc ={14, 22};
+    s_fc = {14, 22};
     ccg.cc_create_a_cc(s_fc);
 
     ccg.fill_cc_neighbouring();
@@ -1791,6 +1688,595 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_reduce_too_big_cc_case_1_Mgridgen_
     ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
     ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 5, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
     ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+
+TEST_F(Nine_squares_3x3_Dual_Graph, correction_remove_too_small_cc_9_Squares_3_isotropicCell_4) {
+
+    //===================================================================//
+    //  All cells except the number 4 is supposed to be anisotropic
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {4};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {0, 3, 6};
+    ccg.cc_create_a_cc(s_fc, true);
+    s_fc = {1};
+    ccg.cc_create_a_cc(s_fc, true);
+    s_fc = {7};
+    ccg.cc_create_a_cc(s_fc, true);
+    s_fc = {2, 5, 8};
+    ccg.cc_create_a_cc(s_fc, true);
+    ccg.fill_cc_neighbouring();
+
+    ASSERT_EQ(5, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{0, {4}}
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    vector<long> ref_fc_2_cc = {1, 2, 4, 1, 0, 4, 1, 3, 4};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {0}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    unsigned short threshold_card = 4;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+
+    ref_fc_2_cc = {1, 2, 4, 1, 3, 4, 1, 3, 4};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+    ccg.cc_renumber();
+
+    ASSERT_EQ(4, ccg._cc_counter);
+
+    ref_d_iso = {};
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<long, unordered_set<long>> ref_d_all = {{0, {0, 3, 6}},
+                                                          {1, {1}},
+                                                          {2, {4, 7}},
+                                                          {3, {2, 5, 8}},
+    };
+
+    ASSERT_EQ(ref_d_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {};
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_dist = {};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_compactness_2_cc = {};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, correction_remove_too_small_cc_9_Squares_3_isotropicCell_0_anisotropic) {
+
+    //===================================================================//
+    //  0 is anisotropic
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {1};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    s_fc = {0, 3, 6};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {4};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {2, 5, 7, 8};
+    ccg.cc_create_a_cc(s_fc);
+    ccg.fill_cc_neighbouring();
+
+    ASSERT_EQ(4, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{2, {4}},
+                                                          {1, {0, 3, 6}},
+                                                          {3, {2, 5, 7, 8}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {2}},
+                                                                              {3, {1}},
+                                                                              {4, {3}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 1},
+                                                    {3, 1},
+                                                    {4, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    vector<long> ref_fc_2_cc = {1, 0, 3, 1, 2, 3, 1, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {2}},
+                                                                                     {1, {1, 3}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    unsigned short threshold_card = 2;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+
+    ref_fc_2_cc = {1, 0, 3, 1, 3, 3, 1, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.cc_renumber();
+
+    ASSERT_EQ(3, ccg._cc_counter);
+
+    ref_d_iso = {{1, {0, 3, 6}},
+                 {2, {2, 4, 5, 7, 8}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<long, unordered_set<long>> ref_d_all = {{0, {1}},
+                                                          {1, {0, 3, 6}},
+                                                          {2, {2, 4, 5, 7, 8}},
+    };
+
+    ASSERT_EQ(ref_d_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{3, {1}},
+                       {5, {2}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_dist =  {{3, 1},
+                 {5, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_compactness_2_cc = {{1, {2, 1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ref_fc_2_cc = {1, 0, 2, 1, 2, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, correction_remove_too_small_cc_9_Squares_Too_small_Cell_size_2) {
+
+    //===================================================================//
+    //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {1, 4};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {0, 3, 6};
+    ccg.cc_create_a_cc(s_fc);
+    s_fc = {2, 5, 7, 8};
+    ccg.cc_create_a_cc(s_fc);
+    ccg.fill_cc_neighbouring();
+
+    ASSERT_EQ(3, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{0, {1, 4}},
+                                                          {1, {0, 3, 6}},
+                                                          {2, {2, 5, 7, 8}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{2, {0}},
+                                                                              {3, {1}},
+                                                                              {4, {2}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{2, 1},
+                                                    {3, 1},
+                                                    {4, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    vector<long> ref_fc_2_cc = {1, 0, 2, 1, 0, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, { 2, 1, 0 }}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    unsigned short threshold_card = 2;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+
+    ref_fc_2_cc = { 1, 2, 2, 1, 2, 2, 1, 2, 2 };
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.cc_renumber();
+
+    ASSERT_EQ(2, ccg._cc_counter);
+
+    ref_d_iso = {{0, {0, 3, 6}},
+                 {1, {1, 2, 4, 5, 7, 8}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{3, {0}},
+                       {6, {1}}
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_dist =  {{3, 1},
+                 {6, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_compactness_2_cc = {{1, {0}},
+                              {2, {1}},};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ref_fc_2_cc = {0, 1, 1, 0, 1, 1, 0, 1, 1 };
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, correction_remove_too_small_cc_9_Squares_Too_small_Cell_size_2_case_2) {
+
+    //===================================================================//
+    //  1 and 2 are anisotropic
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {1, 4};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {0, 3, 6};
+    ccg.cc_create_a_cc(s_fc, true);
+    s_fc = {2, 5, 7, 8};
+    ccg.cc_create_a_cc(s_fc, true);
+    ccg.fill_cc_neighbouring();
+
+    ASSERT_EQ(3, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{0, {1, 4}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<long, unordered_set<long>> ref_d_all = {{0, {1, 4}},
+                                                          {1, {0, 3, 6}},
+                                                          {2, {2, 5, 7, 8}},
+    };
+    ASSERT_EQ(ref_d_all, ccg.get_d_cc_all());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{2, {0}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{2, 1},
+                                                    };
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    vector<long> ref_fc_2_cc = {1, 0, 2, 1, 0, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, {0 }}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    unsigned short threshold_card = 2;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+
+    ref_fc_2_cc = { 1, 0, 2, 1, 0, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.cc_renumber();
+
+    ASSERT_EQ(3, ccg._cc_counter);
+
+     ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+    ASSERT_EQ(ref_d_all, ccg.get_d_cc_all());
+
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(Twelve_squares_4x3_Dual_Graph, correction_remove_too_small_cc_12_Squares_9_isotropicCell) {
+
+    //===================================================================//
+    //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 3};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 9};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {1, 4, 5, 8, 11};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {7, 10};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {2};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    unordered_set<long> s_fc_to_swap = {4};
+    ccg.cc_swap_fc(s_fc_to_swap, 2, 5);
+    s_fc_to_swap = {5};
+    ccg.cc_swap_fc(s_fc_to_swap, 2, 4);
+
+    vector<long> ref_fc_2_cc = {0, 6, 4, 0, 5, 4, 1, 3, 2, 1, 3, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ASSERT_EQ(7, ccg._cc_counter);
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{0, {0, 3}},
+                                                          {1, {9, 6}},
+                                                          {2, {8, 11}},
+                                                          {3, {10, 7}},
+                                                          {4, {2, 5}},
+                                                          {5, {4}},
+                                                          {6, {1}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc ={{1, {5, 6}},
+                                                                             {2, {0,1,2,3,4}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{1, 2},
+                                                    {2, 5}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, { 5, 6 }},
+                                                                                     {1, { 0,1,2,3,4}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    //================================
+    // Correction
+    //================================
+    unsigned short threshold_card = 2;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+    ccg.cc_renumber();
+
+    ASSERT_EQ(2, ccg._cc_counter);
+
+    ref_d_iso = {{0, { 10, 7, 9, 6, 3, 11, 8}},
+                 {1, { 2, 5, 1, 4, 0}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {
+                       {7, {0}},
+                       {5, {1}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_dist =  {{7, 1},
+                 {5, 1},
+                 };
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    ref_d_compactness_2_cc = {{1, {0, 1}},
+                              };
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ref_fc_2_cc = { 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0 };
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(Fifteen_squares_5x3_Dual_Graph, correction_remove_too_small_cc_15_Squares_6_isotropicCell_9_anisotropic) {
+
+    //===================================================================//
+    //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 3, 6,};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    s_fc = {2, 5, 8};
+    ccg.cc_create_a_cc(s_fc, true);
+
+    s_fc = {1, 4, 7};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {9, 10, 11, 12, 13, 14};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    vector<long> ref_fc_2_cc = {0, 2, 1,
+                                0, 2, 1,
+                                0, 2, 1,
+                                3, 3, 3,
+                                3, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+
+    //================================
+    // Correction
+    //================================
+    unsigned short threshold_card = 3;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+    ccg.cc_renumber();
+
+
+    ASSERT_EQ(3, ccg._cc_counter);
+
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{2, {9, 10, 11, 12, 13, 14, 7, 4, 1}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc ={{9, {2}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{9, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, { 2}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+
+    ref_fc_2_cc = { 0, 2, 1, 0, 2, 1, 0, 2, 1, 2, 2, 2, 2, 2, 2  };
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(MGridGen_Dual_Graph, correction_remove_too_small_cc_MGridGen) {
+
+    //===================================================================//
+    //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 1,};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {2, 3, 6};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {11, 14, 13};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {4, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {7, 8};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {9, 10, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    vector<long> ref_fc_2_cc = {0, 0, 1, 1, 3, 3, 1, 4, 4, 5, 5, 2, 5, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+
+    //================================
+    // Correction
+    //================================
+    unsigned short threshold_card = 3;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+    ref_fc_2_cc = {1, 1, 1, 1, 3, 3, 1, 3, 3, 2, 2, 2, 2, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    unordered_set<long> ref_s_cc_to_remove = {5, 0, 4};
+    ASSERT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
+    ccg.cc_renumber();
+
+    ccg.correction_remove_too_small_cc(5);
+    ref_s_cc_to_remove = {2};
+    ASSERT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
+    ref_fc_2_cc = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.cc_renumber();
+
+    ref_s_cc_to_remove = {};
+    ASSERT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
+
+    ASSERT_EQ(2, ccg._cc_counter);
+
+    unordered_map<long, unordered_set<long>> ref_d_iso = {{0, {0, 1, 2, 3, 4, 5, 6}},
+                                                          {1, {7, 8, 9, 10, 11, 12, 13, 14}},
+    };
+    ASSERT_EQ(ref_d_iso, ccg.get_d_cc_iso());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc ={{7, {0}},
+                                                                             {8, {1}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short, long> ref_dist = {{7, 1},
+                                                    {8, 1}};
+    ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{1, { 0, 1}}};
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+
+    ref_fc_2_cc = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 };
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_remove_too_small_cc_MGridGen_ext_v2) {
+
+    //===================================================================//
+    //
+    //===================================================================//
+
+    Coarse_Cell_Graph ccg((*g));
+
+    // Create the first coarse cell
+    //=============================
+    unordered_set<long> s_fc = {0, 1,2, 3, 4, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 7, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 11, 12, 13, 24};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {8, 9, 15, 16, 17};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {18, 19, 20, 21, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {14, 22};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 2, 2, 2, 2, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+
+    //================================
+    // Correction
+    //================================
+    unsigned short threshold_card = 3;  // wrong value in 2D but for test!
+    ccg.correction_remove_too_small_cc(threshold_card);
+    ccg.cc_renumber();
+
+    ref_fc_2_cc = { 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 1, 1, 1, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 1, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2927,7 +3413,6 @@ TEST(CoarseCellGraph_TestSuite, removeDeletedCoarseCells_Deletion_of_Coarse_Elem
         ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
     }
 }
-
 
 TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells) {
 
