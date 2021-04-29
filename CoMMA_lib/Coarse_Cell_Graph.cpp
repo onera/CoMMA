@@ -797,9 +797,18 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
                 nb_cc = i_k_v.first;
             }
         }
-        for (auto &i_k_v: _d_anisotropic_cc) {
-            if (nb_cc < i_k_v.first) {
-                nb_cc = i_k_v.first;
+        if (!_d_anisotropic_cc.empty()) {
+            for (auto &i_k_v: _d_anisotropic_cc) {
+                if (nb_cc < i_k_v.first) {
+                    nb_cc = i_k_v.first;
+                }
+            }
+        }
+        if (!_s_cc_to_remove.empty()) {
+            for (const long i_fc: _s_cc_to_remove) {
+                if (nb_cc < i_fc) {
+                    nb_cc = i_fc;
+                }
             }
         }
         assert(_cc_counter == nb_cc + 1);
