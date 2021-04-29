@@ -31,7 +31,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __compute_best_fc_to_add_9_Squares_isOrderPr
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -96,7 +96,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -122,7 +122,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -143,7 +143,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -171,7 +171,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -192,7 +192,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -220,7 +220,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(1, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -242,7 +242,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -270,7 +270,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -288,7 +288,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -316,7 +316,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -334,7 +334,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -363,7 +363,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {
@@ -381,7 +381,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     Agglomerator agg((*g), 0, 1, 2, true);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -410,7 +410,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
-    ASSERT_EQ(ref_fc_2_cc, agg.__l_cc_graphs[0]._fc_2_cc);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
     vector<deque<long>> ref_l_deque_of_seeds(4);
     for (int i = 0; i < 4; i++) {

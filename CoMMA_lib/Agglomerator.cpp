@@ -10,7 +10,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
                            bool is_visu_data_stored,
                            int dimension,
                            bool checks
-) : __verbose(verbose), __checks(checks), __dimension(dimension) {
+) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph) {
 
     if (((*this).__dimension != 2) && ((*this).__dimension != 3)) {
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
@@ -25,15 +25,10 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
     // Anisotropic agglomeration datas:
     // For every level, we have a set containing the admissible cells for anisotropy cell number:
     // For level 0, it is the cell number of prism or hexahedron ...
-    (*this).__l_of_s_anisotropic_compliant_fc.push_back(graph.s_anisotropic_compliant_cells);
-
-    // for every defined level (1 by default), contains the associated fine/coarse graph
-    // e.g. (*this).__l_fc_graphs[0]= finest dual graph
-    //      (*this).__l_fc_graphs[1]= first level coarse graph
-    (*this).__l_fc_graphs.push_back(graph);
-
-//    (*this).__l_cc_graphs: Optional[List[ccg.Coarse_Cell_Graph]] = None
-
+    __l_of_s_anisotropic_compliant_fc.push_back(graph.s_anisotropic_compliant_cells);
+    __cc_graphs = NULL;
+    __v_nb_lines = {};
+    __v_lines = {};
     //=================
     // Visualization:
     //=================
@@ -43,22 +38,15 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 
 
 void Agglomerator::_set_agglomeration_parameter(
-        short int nb_of_coarse_level,
         bool is_anisotropic,
         string kind_of_agglomerator,
         unsigned short int goal_card,
         unsigned short int min_card,
         unsigned short int max_card) {
 
-    (*this).__is_anisotropic = is_anisotropic;
+    __is_anisotropic = is_anisotropic;
 
-    if (nb_of_coarse_level != -1) {
-        (*this).__nb_of_coarse_level = nb_of_coarse_level;
-    } else {
-        (*this).__nb_of_coarse_level = 100;
-    }
-
-    (*this).__kind_of_agglomerator = kind_of_agglomerator;
+    __kind_of_agglomerator = kind_of_agglomerator;
     // print("Call of agglomerator {}".format((*this).__kind_of_agglomerator))
     unordered_map<unsigned short int, unsigned short int> d_default_min_card = {{2, 3},
                                                                                 {3, 6}};
@@ -96,11 +84,9 @@ void Agglomerator::_set_agglomeration_parameter(
 
 
 Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
-        Dual_Graph graph,
         vector<long> debug_only_fc_to_cc,
-        short int debug_only_steps,  // arbitrary value greater than 7
-        forward_list<deque<long> *> *agglo_lines,
-        forward_list<deque<long> *> *agglo_lines_p_one) {
+        short int debug_only_steps // arbitrary value greater than 7
+) {
 
     /**
      * Agglomerate one level
@@ -117,7 +103,7 @@ Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
         // ccg = CCG_w_CC.Coarse_Cell_Graph_w_CC(graph, i_lvl=i_lvl)
         // ccg = CCG_1.Coarse_Cell_Graph_v1(graph, i_lvl=i_lvl)
 //        ccg = self._initialize_ccg(graph, i_lvl = i_lvl);
-        ccg = new Coarse_Cell_Graph(graph);
+        ccg = new Coarse_Cell_Graph(__fc_graphs);
 
 
         // TODO On pourrait ne l'allouer qu'une seule fois!
@@ -139,8 +125,8 @@ Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
 //        ccg = self._initialize_ccg(graph, i_lvl = i_lvl, debug_only_fc_to_cc = debug_only_fc_to_cc)
 //        ccg.fill_cc_neighbouring()
 //        self.__l_nb_of_cells.append(ccg.nb_cc)
-        cout << "toto";
-        ccg = new Coarse_Cell_Graph(graph);
+
+        ccg = new Coarse_Cell_Graph(__fc_graphs);
     }
     return ccg;//, aniso_lines_l_m_one, aniso_lines_l;
 
@@ -472,7 +458,7 @@ void Agglomerator::__compute_best_fc_to_add(Dual_Graph &graph,
         double new_ar = pow(new_ar_surf, 1.5) / new_ar_vol;
 
         // TODO useful???
-        const unsigned short & order = dict_neighbours_of_seed.at(i_fc); // [i_fc] is not const.
+        const unsigned short &order = dict_neighbours_of_seed.at(i_fc); // [i_fc] is not const.
 
 // TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
 // TODO also need to remove the list of min_ar, argmin_ar, etc.
@@ -735,8 +721,9 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected(
     return empty_set;
 }
 
-void Agglomerator::initialize_l_cc_graphs_for_tests_only(Coarse_Cell_Graph &ccg) {
-    __l_cc_graphs.push_back(ccg);
+void Agglomerator::initialize_l_cc_graphs_for_tests_only(Coarse_Cell_Graph *ccg) {
+//    __l_cc_graphs.push_back(ccg);
+    __cc_graphs = ccg;
 }
 
 
@@ -770,3 +757,87 @@ void Agglomerator::__compute_ar_surf_adjacency_nb_face_common(
     }
 
 }
+
+void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
+                                         string kind_of_agglomerator,
+                                         const short goal_card,
+                                         const short min_card,
+                                         const short max_card,
+                                         unsigned long nb_aniso_agglo_lines,
+                                         forward_list<deque<long> *> *aniso_agglo_lines,
+                                         vector<long> debug_only_fc_to_cc,
+                                         const short debug_only_steps
+) {
+
+    /**
+     * Main function of the agglomerator.
+     *
+     * For the current zone, we agglomerate fine cells to create coarse cells.
+     * :param nb_of_coarse_level: number of coarse level to create
+     * :param is_anisotropic: do we want an anisotropic agglomeration (True) or an isotropic (False)?
+     * :param kind_of_agglomerator: do we want a basic agglomeration or a triconnected one?
+     * :param goal_card: goal cardinal of the coarse cells
+     * :param min_card: minimum cardinal of the coarse cells
+     * :param max_card: maximum cardinal of the coarse cells
+     */
+    _set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    forward_list<deque<long> *> *agglo_lines_l_p_one = NULL;
+    Coarse_Cell_Graph *ccg = NULL;
+    if (!debug_only_fc_to_cc.empty()) {
+
+        // For debug purpose only:
+        assert(nb_aniso_agglo_lines == 0);  // Up to now we do not manage anisotropic lines for debugging.
+        __cc_graphs = __agglomerate_one_level(debug_only_fc_to_cc);
+
+    } else {
+        if (__is_anisotropic) {
+            __v_nb_lines.push_back(nb_aniso_agglo_lines);
+            __v_lines.push_back(aniso_agglo_lines);
+        }
+
+        __cc_graphs = __agglomerate_one_level(debug_only_fc_to_cc,
+                                              debug_only_steps);
+    }
+
+    assert((*__cc_graphs).check_cc_consistency());
+
+//    if (agglo_lines_l != NULL) {
+//
+//        agglo_lines_l_m_one_array_idx, agglo_lines_l_m_one_array = convert_agglo_lines_to_agglomeration_lines_arrays(nb_lines_l, aniso_lines_l_m_one)
+//
+//        convert_agglo_lines_to_agglomeration_lines_arrays(
+//        const long &nb_fc,
+//        const unsigned long &nb_lines,
+//        forward_list<deque<long> *> *agglo_lines,
+//        long *sizes,
+//        long *agglo_lines_array_idx,
+//        long *agglo_lines_array);
+//    }
+//
+//    if (agglo_lines_l_p_one != NULL) {
+//        agglo_lines_l_array_idx, agglo_lines_l_array = u.convert_fine_agglomeration_lines_to_fine_agglomeration_lines_arrays(
+//                ccg.nb_cc, aniso_lines_l)
+//
+//    }
+//
+//
+//    return get_nb_cells_at_level(1), ccg.fc_2_cc, \
+//                   agglo_lines_l_m_one_array_idx, agglo_lines_l_m_one_array, \
+//                   agglo_lines_l_array_idx, agglo_lines_l_array;
+}
+
+void Agglomerator::get_agglo_lines(int level,
+                                   long *sizes,
+                                   long *agglo_lines_array_idx,
+                                   long *agglo_lines_array) {
+    assert(__cc_graphs->is_agglomeration_anisotropic());
+    assert(level == 0 || level == 1);
+
+    convert_agglo_lines_to_agglomeration_lines_arrays(__v_nb_lines[level],
+                                                      __v_lines[level],
+                                                      sizes,
+                                                      agglo_lines_array_idx,
+                                                      agglo_lines_array);
+}
+
