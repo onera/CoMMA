@@ -29,12 +29,11 @@ void convert_agglomeration_lines_arrays_to_agglomeration_lines(
     }
 }
 
-void convert_agglo_lines_to_agglomeration_lines_arrays(const long &nb_fc,
-                                                       const unsigned long &nb_lines,
+void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long &nb_lines, // because forward_list does not have a size() method.
                                                        forward_list<deque<long> *> *agglo_lines,
-                                                       long *sizes,
-                                                       long *agglo_lines_array_idx,
-                                                       long *agglo_lines_array) {
+                                                       long *sizes,  // out
+                                                       long *agglo_lines_array_idx,// out
+                                                       long *agglo_lines_array ) {  // out
     // arrays agglo_lines_array_idx and agglo_lines_array are already allocated.
     // As we agglomerate cells, the number of agglo lines does not vary a priori, but they are getting smaller and smaller.
 
