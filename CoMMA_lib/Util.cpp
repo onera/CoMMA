@@ -29,7 +29,7 @@ void convert_agglomeration_lines_arrays_to_agglomeration_lines(
     }
 }
 
-void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long &nb_lines, // because forward_list does not have a size() method.
+void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long nb_lines, // because forward_list does not have a size() method.
                                                        forward_list<deque<long> *> *agglo_lines,
                                                        long *sizes,  // out
                                                        long *agglo_lines_array_idx,// out

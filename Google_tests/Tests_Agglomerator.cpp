@@ -423,6 +423,22 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    agg.agglomerate_one_level(false);
+}
+
 /////////////////
 /////////////////
 /////////////////
