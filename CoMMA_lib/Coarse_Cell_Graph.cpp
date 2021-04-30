@@ -1007,7 +1007,7 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
             }
         }
         unordered_set<long> s_seed = {seed};
-        unordered_map<long, int> d_neighbours_of_seed = {};
+        unordered_map<long, unsigned short> d_neighbours_of_seed = {};
         _fc_graph.compute_neighbourhood_of_cc(s_seed,
                                               nb_of_order_of_neighbourhood,
                                               d_neighbours_of_seed,

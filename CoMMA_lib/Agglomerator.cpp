@@ -215,9 +215,9 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
     if (__kind_of_agglomerator == "basic") {
         short compactness = -1;
         unordered_set<long> s_current_cc = __choose_optimal_cc_basic_v2(seed,
-                                                           d_n_of_seed,
-                                                           compactness,
-                                                           is_order_primary);
+                                                                        d_n_of_seed,
+                                                                        compactness,
+                                                                        is_order_primary);
 
 //        cout<<"Not yet implemented:__choose_optimal_cc_basic_v2(cc_graph, seed,is_order_primary);"<<endl;
 //        exit(1);
@@ -994,29 +994,44 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
 
     // set of fc for current cc:
     unordered_set<long> s_fc_for_current_cc = {seed};
-//    unordered_set<long> s_seeds = {seed};
-////        graph = (*__cc_graphs)._fc_graph;
-////        test_func = (*__cc_graphs).is_fc_not_already_agglomerated
-//
-//    // Compute self.__min_neighbourhood order neighbourhood:
-//    //====================================
-//    unsigned short max_order_of_neighbourhood = __min_neighbourhood;  //in and out
-//
-//    unordered_map<long, int> d_n_of_seed = __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
-//                                                                                   max_order_of_neighbourhood,
-//                                                                                   __goal_card,
-//                                                                                   (*__cc_graphs)._a_is_fc_agglomerated);
-//
-//
-//    // If no neighbour is found for seed: this case happened only when isotropic cell is surrounded
-//    // by anisotropic cells.
-//    if (d_n_of_seed.empty()) {
-//        // d_n_of_seed is empty, i.e: the cc is not complete
-//        // and no neighbour are available!
-//        compactness = 0;
-//        return s_fc_for_current_cc, 0, d_n_of_seed;
-//    }
-//
+
+    unordered_set<long> s_seeds = {seed};
+//        graph = (*__cc_graphs)._fc_graph;
+//        test_func = (*__cc_graphs).is_fc_not_already_agglomerated
+
+    // Compute self.__min_neighbourhood order neighbourhood:
+    //====================================
+    unsigned short max_order_of_neighbourhood = __min_neighbourhood;  //in and out
+    __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
+                                            max_order_of_neighbourhood,
+                                            dict_neighbours_of_seed,
+                                            __goal_card,
+                                            (*__cc_graphs)._a_is_fc_agglomerated);
+
+
+    // If no neighbour is found for seed: this case happened only when isotropic cell is surrounded
+    // by anisotropic cells.
+    if (dict_neighbours_of_seed.empty()) {
+        // d_n_of_seed is empty, i.e: the cc is not complete
+        // and no neighbour are available!
+        compactness = 0;
+        return s_fc_for_current_cc;
+    }
+//    qfjmhdskfhj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //// TODO remove this
 //    if len(d_n_of_seed) + len(s_fc_for_current_cc) < self.__goal_card:
 //// Not enough available neighbour: creation of a (too small) coarse cell.

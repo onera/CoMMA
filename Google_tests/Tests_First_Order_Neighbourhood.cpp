@@ -14,13 +14,13 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) 
     unsigned short goal_card = 6;
     unsigned short number_of_order_of_neighbourhood = 3;
     unordered_set<long> s_seeds = {seed};
-    unordered_map<long, int> d_neighbours_of_seed = {};
+    unordered_map<long, unsigned short> d_neighbours_of_seed = {};
     (*g).compute_neighbourhood_of_cc(s_seeds,
                                      number_of_order_of_neighbourhood,
                                      d_neighbours_of_seed,
                                      goal_card,
                                      a_is_fc_agglomerated);
-    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,  3},
+    unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  3},
                                                       {2,  2},
                                                       {3,  2},
                                                       {4,  1},

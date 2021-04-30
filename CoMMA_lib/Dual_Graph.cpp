@@ -1640,11 +1640,11 @@ int Dual_Graph::remove_separating_vertex(long seed,
 // TODO Ici on utilise le card...
 // TODO Est-ce qu'utiliser une autre metrique serait pertinent?
 void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
-                                                                 unsigned short &nb_of_order_of_neighbourhood,
-                                                                 unordered_map<long, int>& d_n_of_seed,
-                                                                 const unsigned short max_card,
-                                                                 vector<bool> &isFineCellAgglomerated_tmp,
-                                                                 unordered_set<long> s_of_constrained_fc) {
+                                             unsigned short &nb_of_order_of_neighbourhood,
+                                             unordered_map<long, unsigned short> &d_n_of_seed,
+                                             const unsigned short max_card,
+                                             vector<bool> &isFineCellAgglomerated_tmp,
+                                             unordered_set<long> s_of_constrained_fc) {
     // cout<<"Call of compute_neighbourhood_of_cc"<<endl;
 
     // Basic checks

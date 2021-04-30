@@ -143,7 +143,7 @@ public :
 
     void compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
                                      unsigned short &nb_of_order_of_neighbourhood,
-                                     unordered_map<long, int> &d_n_of_seed,
+                                     unordered_map<long, unsigned short> &d_n_of_seed,
                                      const unsigned short max_card,
                                      vector<bool> &isFineCellAgglomerated_tmp,
                                      unordered_set<long> s_of_constrained_fc = {});
