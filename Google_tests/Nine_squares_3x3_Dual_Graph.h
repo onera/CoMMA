@@ -55,7 +55,13 @@ protected:
                            v_Nine_squares_col_ind,
                            v_Nine_squares_values,
                            v_Nine_squares_volumes,
-                           Nine_squares_d_is_on_bnd);
+                           Nine_squares_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
 
     }
 

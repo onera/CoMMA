@@ -43,7 +43,13 @@ protected:
                            v_Edge_7_col_ind,
                            v_Edge_7_values,
                            v_Edge_7_volumes,
-                           Edge_7_d_is_on_bnd);
+                           Edge_7_d_is_on_bnd,
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           unordered_set<long>({}),
+                           0,
+                           2);
 
     }
 

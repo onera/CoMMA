@@ -11,7 +11,8 @@ set(HEADER_FILES
         Coarse_Cell.h
         Agglomerator.h
         Coarse_Cell_Graph.h
-        Util.h)
+        Util.h
+        First_Order_Neighbourhood.h)
 
 set(SOURCE_FILES
         Agglomerator_anisotropic.cpp
@@ -21,7 +22,8 @@ set(SOURCE_FILES
         Coarse_Cell.cpp
         Agglomerator.cpp
         Coarse_Cell_Graph.cpp
-        Util.cpp )
+        Util.cpp
+        First_Order_Neighbourhood.cpp)
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})

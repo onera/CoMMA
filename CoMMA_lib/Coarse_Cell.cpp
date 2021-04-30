@@ -95,7 +95,7 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
 
 bool Coarse_Cell::is_connected() {
 
-    if (not(*this).__is_connectivity_up_to_date) {
+    if (!(*this).__is_connectivity_up_to_date) {
         (*this).__is_connected = (*this).__check_connectivity();
         (*this).__is_connectivity_up_to_date = true;
     }

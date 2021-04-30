@@ -33,21 +33,47 @@ public:
 
     void cc_create_all_delayed_cc();
 
-    unordered_set<long> cc_swap_fc(unordered_set<long>& s_fc,
-                                   const long &i_origin_cc,
-                                   const long &i_destination_cc);
+    unordered_set<long> cc_swap_fc(unordered_set<long> &s_fc,
+                                   const long i_origin_cc,
+                                   const long i_destination_cc);
 
-    inline bool is_anisotropic_cc(const long &i_cc) {
+    inline bool is_anisotropic_cc(const long &i_cc) const {
         return (!_d_anisotropic_cc.empty()) && (_d_anisotropic_cc.count(i_cc));
     }
 
-    inline bool is_isotropic_cc(const long &i_cc) {
+    inline bool is_isotropic_cc(const long &i_cc) const {
         return (!_d_isotropic_cc.empty()) && (_d_isotropic_cc.count(i_cc));
     }
 
-    inline bool is_fc_agglomerated_in_isotropic_cc(const long &i_fc) {
+    inline bool is_fc_agglomerated_in_isotropic_cc(const long &i_fc) const {
         return _d_isotropic_cc.count(_fc_2_cc[i_fc]);
     }
+
+    inline bool is_fc_not_already_agglomerated(const long &i_fc) const {
+        return !_a_is_fc_agglomerated[i_fc];
+    }
+
+    inline bool is_agglomeration_done() {
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return _nb_of_agglomerated_fc == _fc_graph.number_of_cells;
+    }
+
+    inline bool is_agglomeration_isotropic() {
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return !_d_isotropic_cc.empty();
+    }
+
+    inline bool is_agglomeration_anisotropic() {
+        /**
+         * The computation and/or recovery of cc depends of the data structure
+         */
+        return !_d_anisotropic_cc.empty();
+    }
+
 
     void __remove_an_isotropic_cc(const long &i_cc);
 
@@ -55,15 +81,45 @@ public:
                                const unordered_set<long> &s_fc,
                                const long &i_origin_cc,
                                const long &i_dest_cc);
+
     void __add_a_cc(const long &i_cc);
 
     void cc_renumber();
 
-    bool __check_s_cc_to_remove_are_isotropic();
-
     void _update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc);
 
     bool check_cc_consistency();
+
+    bool _check_consistency();
+
+    bool __check_s_cc_to_remove_are_isotropic();
+
+    bool check_data_consistency_and_connectivity();
+
+    unordered_map<long, unsigned short> compute_nb_faces_in_common_faces_with_cc_neighbourhood(const long i_fc) const;
+
+    unordered_map<long, unordered_set<long>> compute_dict_faces_in_common_faces_with_cc_neighbourhood(const long &i_fc) const;
+
+    void compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long &i_fc,
+                                                                              const unordered_set<long> &s_unwanted_fc,
+                                                                              unordered_set<long> &set_argmax_number_common_faces,
+                                                                              unordered_map<long, unsigned short> &dict_adjacent_cc) const;
+
+    unordered_set<long> get_s_isotropic_cc_of_size(unsigned short size_min = 0, unsigned short size_max = 0);
+
+    void correction_make_small_cc_bigger(const unsigned short &min_card,
+                                         const unsigned short &goal_card,
+                                         const unsigned short &threshold_card,
+                                         bool verbose=false);
+
+    void correction_reduce_too_big_cc(const unsigned short &goal_card,
+                                      const unsigned short & verbose= 0);
+
+    void correction_remove_too_small_cc(const unsigned short &threshold_card);
+
+    void cc_split_non_connected_cc(const long& i_cc);
+
+    unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
     void cc_remove_deleted_cc(unordered_set<long> set_removed_cc);
 

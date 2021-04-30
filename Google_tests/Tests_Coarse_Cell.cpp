@@ -100,7 +100,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_2 = {{2, {8, 4, 5, 7}}};
     ASSERT_EQ(ref_d_compactness_to_s_fc_2, v_cc[i_cc].__d_compactness_to_s_fc);
 
-    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ASSERT_TRUE(v_cc[i_cc]._is_finalized);
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}},
                                                                           {7, {4}},
                                                                           {8, {4}},
@@ -266,7 +266,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen_v2) {
     unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_to_s_fc_2 = {{2, {8, 4, 5, 7}}};
     ASSERT_EQ(ref_d_compactness_to_s_fc_2, v_cc[i_cc].__d_compactness_to_s_fc);
 
-    ASSERT_FALSE(v_cc[i_cc]._is_finalized);
+    ASSERT_TRUE(v_cc[i_cc]._is_finalized);
     ASSERT_FALSE(v_cc[i_cc].__is_isotropic);
     ASSERT_FALSE(v_cc[i_cc].__is_delayed);
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{5, {1}},

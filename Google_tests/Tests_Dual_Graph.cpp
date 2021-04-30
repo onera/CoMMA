@@ -13,111 +13,10 @@
 #include "Edge_9_3_Dual_Graph.h"
 #include "Graphs_biconnected_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
+#include "Box_5x5x5_Dual_Graph.h"
+#include "Box_5x5x5_Aniso_Dual_Graph.h"
+
 #include "gtest/gtest.h"
-
-class box_5x5x5 : public ::testing::Test {
-    // filename_ini = "box_1_rect_5_d_F.hdf"
-    // input_directory = os.path.join((*this).cgns_path, os.path.join("0_Inputs", "0_Box"))
-
-protected:
-
-    Dual_Graph *g;
-    int box_5x5x5_number_of_cells;
-    int box_5x5x5_col_ind_size;
-    vector<long> v_box_5x5x5_row_ptr;
-    vector<long> v_box_5x5x5_col_ind;
-    vector<double> v_box_5x5x5_values;
-    vector<double> v_box_5x5x5_volumes;
-
-    virtual void SetUp() {
-        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
-                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
-                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
-                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
-                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
-
-        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
-                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
-                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
-                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
-                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
-                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
-                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
-                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
-                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
-                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
-                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
-                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
-                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
-                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
-                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
-                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
-                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
-                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
-                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
-                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
-                               47, 59, 62, 63};
-
-        v_box_5x5x5_values = {75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 75., 25., 25., 25., 50., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25.,
-                              25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 75., 25.,
-                              25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              75., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 50., 25., 25., 50., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 50., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25.,
-                              25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25., 50., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 50., 25., 25., 25., 50., 25., 25., 25., 25., 25.,
-                              25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50.,
-                              25., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25.,
-                              50., 25., 25., 25., 25., 75.};
-
-        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
-
-        vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
-                                           0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
-                                           2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-
-        box_5x5x5_number_of_cells = 64;
-        box_5x5x5_col_ind_size = 344;
-
-        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
-        int i(0);
-        for (int value : box_5x5x5_is_on_bnd)
-            box_5x5x5_d_is_on_bnd[i++] = value;
-
-        g = new Dual_Graph(box_5x5x5_number_of_cells,
-                           v_box_5x5x5_row_ptr,
-                           v_box_5x5x5_col_ind,
-                           v_box_5x5x5_values,
-                           v_box_5x5x5_volumes,
-                           box_5x5x5_d_is_on_bnd);
-
-    }
-
-    virtual void TearDown() {
-        delete g;
-    }
-};
 
 class box_5x5x5_iso_and_aniso : public ::testing::Test {
     // filename_ini = "box_1_rect_5_d_F.hdf"
@@ -192,119 +91,6 @@ protected:
         int box_5x5x5_is_on_bnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
                                        0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
                                        2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-
-        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
-        for (int i = 0; i < box_5x5x5_number_of_cells; i++) {
-            box_5x5x5_d_is_on_bnd[i] = box_5x5x5_is_on_bnd[i];
-        }
-
-        g = new Dual_Graph(box_5x5x5_number_of_cells,
-                           v_box_5x5x5_row_ptr,
-                           v_box_5x5x5_col_ind,
-                           v_box_5x5x5_values,
-                           v_box_5x5x5_volumes,
-                           box_5x5x5_d_is_on_bnd);
-
-    }
-
-    virtual void TearDown() {
-        delete g;
-//        delete v_box_5x5x5_row_ptr;
-//        delete v_box_5x5x5_col_ind;
-//        delete v_box_5x5x5_values;
-    }
-};
-
-class box_5x5x5_aniso : public ::testing::Test {
-
-protected:
-
-    Dual_Graph *g;
-    int box_5x5x5_number_of_cells;
-    int box_5x5x5_col_ind_size;
-    vector<long> v_box_5x5x5_row_ptr;
-    vector<long> v_box_5x5x5_col_ind;
-    vector<double> v_box_5x5x5_values;
-    vector<double> v_box_5x5x5_volumes;
-
-    virtual void SetUp() {
-
-
-        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
-                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
-                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
-                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
-                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
-
-        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
-                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
-                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
-                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
-                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
-                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
-                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
-                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
-                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
-                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
-                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
-                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
-                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
-                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
-                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
-                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
-                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
-                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
-                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
-                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
-                               47, 59, 62, 63};
-
-        v_box_5x5x5_values = {30., 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 27.5,
-                              2.5, 2.5, 25., 2.5, 30., 2.5, 25., 2.5, 27.5, 2.5, 2.5,
-                              25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5,
-                              2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5,
-                              25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5,
-                              2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 30., 2.5, 25.,
-                              2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5,
-                              2.5, 30., 25., 25., 5., 2.5, 2.5, 25., 25., 2.5, 2.5,
-                              2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
-                              5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
-                              2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25.,
-                              2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5,
-                              25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5,
-                              25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                              2.5, 25., 25., 2.5, 2.5, 5., 25., 25., 5., 2.5, 2.5,
-                              25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                              2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5,
-                              2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5,
-                              2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
-                              2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25.,
-                              2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                              25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 5., 25.,
-                              25., 30., 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5,
-                              27.5, 2.5, 2.5, 25., 2.5, 30., 2.5, 25., 2.5, 27.5, 2.5,
-                              2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25.,
-                              2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5, 2.5,
-                              2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25.,
-                              2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 30., 2.5,
-                              25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25.,
-                              2.5, 2.5, 30.};
-
-        box_5x5x5_number_of_cells = 64;
-        box_5x5x5_col_ind_size = 344;
-
-        v_box_5x5x5_volumes = {12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                               12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                               12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                               12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                               12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
-                               12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5};
-
-        int box_5x5x5_is_on_bnd[64] = {1, 0, 0, 1, 0, -1, -1, 0, 0, -1, -1, 0, 1, 0, 0, 1, 0,
-                                       -1, -1, 0, -1, -2, -2, -1, -1, -2, -2, -1, 0, -1, -1, 0, 0, -1,
-                                       -1, 0, -1, -2, -2, -1, -1, -2, -2, -1, 0, -1, -1, 0, 1, 0, 0,
-                                       1, 0, -1, -1, 0, 0, -1, -1, 0, 1, 0, 0, 1};
 
         unordered_map<long, int> box_5x5x5_d_is_on_bnd;
         for (int i = 0; i < box_5x5x5_number_of_cells; i++) {
@@ -622,7 +408,7 @@ protected:
     }
 };
 
-TEST_F(box_5x5x5, Dual_Graph_Box_5x5x5) {
+TEST_F(Box_5x5x5_Dual_Graph, Dual_Graph_Box_5x5x5) {
     unordered_set<long> empty_set = unordered_set<long>({});
     unordered_set<long> ref_isOnRidge({1, 2, 4, 7, 8, 11, 13, 14, 16, 19, 28, 31, 32, 35, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62});
     unordered_set<long> ref_isOnValley({5, 6, 9, 10, 17, 18, 20, 23, 24, 27, 29, 30, 33, 34, 36, 39, 40, 43, 45, 46, 53, 54, 57, 58});
@@ -647,9 +433,9 @@ TEST_F(box_5x5x5, Dual_Graph_Box_5x5x5) {
 TEST_F(MGridGen_Dual_Graph, Dual_Graph_MGridGen) {
 
     ASSERT_EQ(15, (*g).number_of_cells);
-
-    ASSERT_EQ(s_MGridGen_is_on_corner, (*g).seeds_pool->is_on_corner);
-    ASSERT_EQ(s_MGridGen_is_on_ridge, (*g).seeds_pool->is_on_ridge);
+    unordered_set<long> empty_set = unordered_set<long>({});
+    ASSERT_EQ(empty_set, (*g).seeds_pool->is_on_corner);
+    ASSERT_EQ(empty_set, (*g).seeds_pool->is_on_ridge);
     ASSERT_EQ(s_MGridGen_is_on_valley, (*g).seeds_pool->is_on_valley);
     long myints_0[3] = {0, 1, 2};
     vector<long> ref_neighbours_0(myints_0, myints_0 + sizeof(myints_0) / sizeof(long));
@@ -676,6 +462,39 @@ TEST_F(MGridGen_Dual_Graph, Dual_Graph_MGridGen) {
     for (int i = 0; i < ref_neighbours_n_1.size(); i++) {
         ASSERT_NEAR(ref_neighbours_n_1[i], (*g).get_weights(1)[i], 1e-10);
     }
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, Dual_Graph_MGridGen) {
+
+    ASSERT_EQ(9, (*g).number_of_cells);
+
+    vector<long> ref_neighbours_0= {0, 1, 3};
+    vector<long> ref_neighbours_1= {0, 1, 2, 4};
+
+    ASSERT_EQ(ref_neighbours_0, (*g).get_neighbours(0));
+    ASSERT_EQ(ref_neighbours_1, (*g).get_neighbours(1));
+
+    ASSERT_EQ(3, (*g).get_nb_of_neighbours(0));
+    ASSERT_EQ(4, (*g).get_nb_of_neighbours(1));
+
+    vector<double> ref_neighbours_n_0= {1.0, 1., 1.};
+    vector<double> ref_neighbours_n_1={1.0, 1.0,1.0,1.0,};
+
+    for (int i = 0; i < ref_neighbours_n_0.size(); i++) {
+        ASSERT_NEAR(ref_neighbours_n_0[i], (*g).get_weights(0)[i], 1e-10);
+    }
+
+    for (int i = 0; i < ref_neighbours_n_1.size(); i++) {
+        ASSERT_NEAR(ref_neighbours_n_1[i], (*g).get_weights(1)[i], 1e-10);
+    }
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8 });
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
 }
 
 TEST_F(MGridGen_Dual_Graph, Dual_Graph_CheckConnectivity_MGridGenDoc_example) {
@@ -941,7 +760,7 @@ TEST_F(box_2x12_ter, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_Iso
     delete[] agglomerationLines;
 }
 
-TEST_F(box_5x5x5_aniso, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
+TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
 
     long numberOfFineAnisotropicCompliantCells = 64;
     long arrayOfFineAnisotropicCompliantCells[64] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -1186,7 +1005,7 @@ TEST_F(Edge_7_Dual_Graph, find_seed_via_frontal_method_Case_2) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_025) {
 
-    vector<long> listOfFineCells =  {0, 2, 5};
+    vector<long> listOfFineCells = {0, 2, 5};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1213,7 +1032,7 @@ TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_025) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_10265813119) {
 
-    vector<long> listOfFineCells =  {10, 2, 6, 5, 8, 13, 11, 9};
+    vector<long> listOfFineCells = {10, 2, 6, 5, 8, 13, 11, 9};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1368,7 +1187,7 @@ TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_457810) {
 
 TEST_F(MGridGen_Dual_Graph, find_seed_via_frontal_method_Case_205) {
 
-    vector<long> listOfFineCells =  {2, 0, 5};
+    vector<long> listOfFineCells = {2, 0, 5};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1602,7 +1421,7 @@ TEST_F(Edge_8_Dual_Graph, find_seed_via_frontal_method_Case_4_random) {
 
 TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
 
-    vector<long> listOfFineCells =  {5, 0, 3, 4, 2, 7, 1, 6, 8};
+    vector<long> listOfFineCells = {5, 0, 3, 4, 2, 7, 1, 6, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1619,7 +1438,7 @@ TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
     ref_max_dict[7] = new queue<long>({1});
     ref_max_dict[8] = new queue<long>({2});
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1638,7 +1457,7 @@ TEST_F(Edge_9_Dual_Graph, find_seed_via_frontal_method_Case_5_random) {
 
 TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
 
-    vector<long> listOfFineCells =   {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> listOfFineCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1656,7 +1475,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
     ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
 
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1675,7 +1494,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6) {
 
 TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6_seed_6) {
 
-    vector<long> listOfFineCells =   {6, 0, 1, 2, 3, 4, 5, 7, 8};
+    vector<long> listOfFineCells = {6, 0, 1, 2, 3, 4, 5, 7, 8};
     long max_seed = -1;
     unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(max_seed, listOfFineCells);
 
@@ -1693,7 +1512,7 @@ TEST_F(Example_6_Dual_Graph, find_seed_via_frontal_method_Case_6_seed_6) {
     ref_max_dict[8] = new queue<long>({0, 4, 5, 7});
 
 
-    int i_count=0;
+    int i_count = 0;
     for (auto i : dict_ConnectivityTree) {
 //        cout<< "i_count " << i_count++<<endl;
         ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
@@ -1841,7 +1660,7 @@ TEST_F(MGridGen_Dual_Graph, remove_separating_vertex_10265813119) {
 
 TEST_F(Edge_9_3_Dual_Graph, remove_separating_vertex_10265813119) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8});
     unordered_set<long> ref_s_fc({0, 1, 2, 5, 6, 7, 8});
 
@@ -1858,7 +1677,7 @@ TEST_F(Edge_9_3_Dual_Graph, remove_separating_vertex_10265813119) {
 
 TEST_F(Edge_9_Dual_Graph, remove_separating_vertex_Case_5_random) {
 
-    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6, 8};
+    vector<long> v_fc = {5, 0, 3, 4, 2, 7, 1, 6, 8};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
     unordered_set<long> ref_s_fc({0, 1, 3, 5, 6, 7, 8});
 
@@ -1875,7 +1694,7 @@ TEST_F(Edge_9_Dual_Graph, remove_separating_vertex_Case_5_random) {
 
 TEST_F(Example_6_Dual_Graph, remove_separating_vertex_Case_6) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2, 8});
     unordered_set<long> ref_s_fc({1, 3, 4, 5, 6, 7, 8});
 
@@ -1892,7 +1711,7 @@ TEST_F(Example_6_Dual_Graph, remove_separating_vertex_Case_6) {
 
 TEST_F(Edge_8_Dual_Graph, remove_separating_vertex_Case_4_random) {
 
-    vector<long> v_fc ={5, 0, 3, 4, 2, 7, 1, 6};
+    vector<long> v_fc = {5, 0, 3, 4, 2, 7, 1, 6};
     unordered_set<long> s_fc({6, 7, 1, 3, 5, 4, 0, 2});
     unordered_set<long> ref_s_fc({0, 1, 2, 3, 5, 6, 7});
 
@@ -1909,7 +1728,7 @@ TEST_F(Edge_8_Dual_Graph, remove_separating_vertex_Case_4_random) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_0) {
 
-    vector<long> v_fc ={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1926,7 +1745,7 @@ TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_0) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_1) {
 
-    vector<long> v_fc ={1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vector<long> v_fc = {1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 1, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1943,7 +1762,7 @@ TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_1) {
 
 TEST_F(Example_7_Dual_Graph, remove_separating_vertex_Case_7_seed_9) {
 
-    vector<long> v_fc ={9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
+    vector<long> v_fc = {9, 1, 0, 2, 3, 4, 5, 6, 7, 8, 10};
     unordered_set<long> s_fc({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     unordered_set<long> ref_s_fc({0, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
@@ -1990,4 +1809,345 @@ TEST_F(Example_9_Dual_Graph, remove_separating_vertex_Case_9_random) {
     (*g).remove_separating_vertex(new_seed, dict_ConnectivityTree, s_fc);
 
     ASSERT_EQ(ref_s_fc, s_fc);
+}
+
+//TODO rename compute_neighbourhood_of_cc to compute_neighbourhood
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_0) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,  1},
+                                                      {2,  1},
+                                                      {3,  2},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  2},
+                                                      {8,  3},
+                                                      {11, 3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,  1},
+                                                      {3,  1},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  2},
+                                                      {8,  3},
+                                                      {11, 3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_2) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1, 2, 3, 6};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{4,  2},
+                                                      {5,  1},
+                                                      {7,  3},
+                                                      {8,  2},
+                                                      {10, 3},
+                                                      {11, 1},
+                                                      {13, 2},
+                                                      {14, 2}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_case_3_cc_not_connected) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0, 1, 11};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated
+    );
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,  1},
+                                                      {3,  1},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  1},
+                                                      {8,  3},
+                                                      {9,  3},
+                                                      {10, 2},
+                                                      {13, 1},
+                                                      {14, 1}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 1, 11, 3, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,  1},
+                                                      {2,  1},
+                                                      {3,  2},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  2},
+                                                      {8,  3},
+                                                      {11, 3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_11) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1, 1},
+                                                      {2, 1},
+                                                      {3, 2},
+                                                      {4, 3},
+                                                      {5, 2},
+                                                      {6, 2},
+                                                      {8, 3}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(4, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1, 1},
+                                                      {2, 1},
+                                                      {3, 2},
+                                                      {4, 3},
+                                                      {5, 2},
+                                                      {6, 2},
+                                                      {7, 4}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(5, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118_max_card) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 10;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,  1},
+                                                      {2,  1},
+                                                      {3,  2},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  2},
+                                                      {7,  4},
+                                                      {9,  5},
+                                                      {10, 6},
+                                                      {12, 6}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(7, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_1184) {
+//    Not enough cells due to restriction.
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 7, 2, 0, 12, 13, 5, 6, 1, 3, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{1, 1},
+                                                      {2, 1},
+                                                      {3, 2},
+                                                      {5, 2},
+                                                      {6, 2}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(3, number_of_order_of_neighbourhood);
+}
+
+TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_13) {
+
+
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_set<long> s_of_constrained_fc = {9, 4, 7, 14, 2, 0, 12, 13, 5, 6, 11, 8, 10};
+    unordered_map<long, int> dict_fc_n_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
+                                                                                  number_of_order_of_neighbourhood,
+                                                                                  goal_card,
+                                                                                  a_is_fc_agglomerated, s_of_constrained_fc);
+    unordered_map<long, int> ref_dict_fc_n_of_seed = {{2,  1},
+                                                      {4,  3},
+                                                      {5,  2},
+                                                      {6,  2},
+                                                      {7,  4},
+                                                      {8,  3},
+                                                      {10, 4},
+                                                      {11, 3},
+                                                      {13, 4},
+                                                      {14, 4}
+    };
+    ASSERT_EQ(ref_dict_fc_n_of_seed, dict_fc_n_of_seed);
+    ASSERT_EQ(5, number_of_order_of_neighbourhood);
+}
+
+TEST_F(Graphs_biconnected, compute_Local_CRS_Subgraph_From_Global) {
+
+    unordered_set<long> s_of_node = {0, 1, 2, 3, 4, 5, 6, 7};
+
+
+    vector<long> row_ptr_l;
+    vector<long> col_ind_l;
+    vector<double> values_l;
+    vector<long> g_to_l;
+    (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
+                                                    col_ind_l,
+                                                    values_l,
+                                                    g_to_l);
+    vector<long> ref_col_ind_l = { 1, 4, 5, 0, 2, 4, 5, 1, 3, 6, 7, 2, 6, 7, 0, 1, 5, 0, 1, 4, 6, 2, 3, 5, 7, 2, 3, 6 };
+    vector<double> ref_values_l = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    vector<long> ref_g_to_l = { 7, 6, 5, 4, 3, 2, 1, 0 };
+    ASSERT_EQ((*g)._m_CRS_Row_Ptr, row_ptr_l);
+    ASSERT_EQ(ref_col_ind_l, col_ind_l);
+    ASSERT_EQ(ref_values_l, values_l);
+    ASSERT_EQ(ref_g_to_l, g_to_l);
+
+    s_of_node = {0, 1, 2, 3};
+    (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
+                                                    col_ind_l,
+                                                    values_l,
+                                                    g_to_l);
+    vector<long> ref_row_ptr_l = { 0, 1, 3, 5, 6 };
+    ref_col_ind_l = {1, 0, 2, 1, 3, 2};
+    ref_values_l = {1, 1, 1, 1, 1, 1};
+    ref_g_to_l = {3, 2, 1, 0, -1, -1, -1, -1};
+
+    ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
+    ASSERT_EQ(ref_col_ind_l, col_ind_l);
+    ASSERT_EQ(ref_values_l, values_l);
+    ASSERT_EQ(ref_g_to_l, g_to_l);
+
+    s_of_node = {0, 1, 4, 5};
+    (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
+                                                    col_ind_l,
+                                                    values_l,
+                                                    g_to_l);
+    ref_row_ptr_l = { 0, 3, 6, 9, 12 };
+    ref_col_ind_l = {1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2};
+    ref_values_l = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+    ref_g_to_l = {3, 2, -1, -1, 1, 0, -1, -1};
+
+    ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
+    ASSERT_EQ(ref_col_ind_l, col_ind_l);
+    ASSERT_EQ(ref_values_l, values_l);
+    ASSERT_EQ(ref_g_to_l, g_to_l);
+
+    s_of_node = {7, 6, 2, 3};
+    (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
+                                                    col_ind_l,
+                                                    values_l,
+                                                    g_to_l);
+    ref_row_ptr_l = { 0, 3, 6, 9, 12 };
+    ref_col_ind_l = { 3, 2, 1, 3, 2, 0, 3, 0, 1, 2, 0, 1 };
+    ref_values_l = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+    ref_g_to_l = { -1, -1, 1, 0, -1, -1, 2, 3 };
+
+    ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
+    ASSERT_EQ(ref_col_ind_l, col_ind_l);
+    ASSERT_EQ(ref_values_l, values_l);
+    ASSERT_EQ(ref_g_to_l, g_to_l);
+
+
+    s_of_node = {7};
+    (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
+                                                    col_ind_l,
+                                                    values_l,
+                                                    g_to_l);
+    ref_row_ptr_l = { 0, 1 };
+    ref_col_ind_l = {};
+    ref_values_l = {};
+    ref_g_to_l = {-1, -1, -1, -1, -1, -1, -1, 0};
+
+    ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
+    ASSERT_EQ(ref_col_ind_l, col_ind_l);
+    ASSERT_EQ(ref_values_l, values_l);
+    ASSERT_EQ(ref_g_to_l, g_to_l);
 }

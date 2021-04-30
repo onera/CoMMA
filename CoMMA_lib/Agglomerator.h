@@ -8,6 +8,7 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell_Graph.h"
 
+
 class Agglomerator {
 
 public :
@@ -26,14 +27,69 @@ public :
             unsigned short int min_card = 0,
             unsigned short int max_card = 0);
 
-    Coarse_Cell_Graph* __agglomerate_one_level(
+    Coarse_Cell_Graph *__agglomerate_one_level(
             Dual_Graph graph,
             vector<long> debug_only_fc_to_cc,
             short int debug_only_steps,  // arbitrary value greater than 7
-            forward_list<deque<long> *> * agglo_lines,
-            forward_list<deque<long> *> * agglo_lines_p_one
+            forward_list<deque<long> *> *agglo_lines,
+            forward_list<deque<long> *> *agglo_lines_p_one
     );
 
+    unordered_set<long> _choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph cc_graph,
+                                                                const long &seed,
+                                                                unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                                const unsigned short goal_card,
+                                                                const unsigned short max_card,
+                                                                string kind_of_agglomerator,
+                                                                unsigned short &compactness,
+                                                                bool is_order_primary = false,
+                                                                bool increase_neighbouring = true,
+                                                                unordered_set<long> set_of_fc_for_current_cc = {});
+
+    unordered_set<long> __choose_optimal_cc_basic(
+            Dual_Graph graph,
+            const long &seed,
+            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+            const unsigned short goal_card,
+            const unsigned short max_card,
+            unsigned short &compactness,
+            bool is_order_primary = false);
+
+    list<long> __create_list_of_seeds(Coarse_Cell_Graph cc_graph,
+                                      const long &seed,
+                                      const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                      unordered_set<long> s_current_cc);
+
+    unordered_set<long> __choose_optimal_cc_triconnected(
+            Coarse_Cell_Graph cc_graph,
+            const long &seed,
+            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+            const unsigned short goal_card,
+            const unsigned short max_card,
+            unsigned short &compactness,
+            bool increase_neighbouring,
+            unordered_set<long> s_of_fc_for_current_cc);
+
+    void initialize_l_cc_graphs_for_tests_only(Coarse_Cell_Graph &value);
+
+    void __compute_ar_surf_adjacency_nb_face_common(const Dual_Graph &graph,
+                                                    const long &i_fc,
+                                                    const unordered_set<long> &s_of_fc_for_current_cc,
+                                                    double &new_ar_surf,
+                                                    bool &is_fc_adjacent_to_any_cell_of_the_cc,
+                                                    unsigned short &number_faces_in_common) const;
+
+    void __compute_best_fc_to_add(Dual_Graph &graph,
+                                                unordered_set<long> fon,
+                                                const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                const bool &is_order_primary,
+                                                const double &cc_surf,
+                                                const double &vol_cc,
+                                                const unordered_set<long> &s_of_fc_for_current_cc,
+                                                long &argmin_ar,
+                                                unsigned short &max_faces_in_common,
+                                                double &min_ar_surf,
+                                                double &min_ar_vol);
 public:
     //private fields
     int __verbose;
@@ -63,8 +119,8 @@ public:
     // for every defined level (1 by default), contains the associated fine/coarse graph
     // e.g. self.__l_fc_graphs[0]= finest dual graph
     //      self.__l_fc_graphs[1]= first level coarse graph
-    vector<Dual_Graph> __l_fc_graphs;
-    vector<Dual_Graph> __l_cc_graphs;
+    vector<Dual_Graph> __l_fc_graphs;  // TODO Is it really useful?
+    vector<Coarse_Cell_Graph> __l_cc_graphs;  // TODO Is it really useful?
 
     //=================
     // Visualization:
