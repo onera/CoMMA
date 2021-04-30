@@ -6,7 +6,7 @@
 #define COMMA_PROJECT_EDGE_SEVEN_DUAL_GRAPH_H
 
 #include "gtest/gtest.h"
-#include "../CoMMA_lib/Dual_graph.h"
+#include "../CoMMA_lib/Dual_Graph.h"
 class Edge_7_Dual_Graph : public ::testing::Test {
     // filename_ini = "box_1_rect_5_d_F.hdf"
     // input_directory = os.path.join(self.cgns_path, os.path.join("0_Inputs", "0_Box"))

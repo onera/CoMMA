@@ -672,3 +672,269 @@ bool Coarse_Cell_Graph::check_cc_consistency(){
     }
     return true;
 }
+
+void Coarse_Cell_Graph::cc_remove_deleted_cc(unordered_set<long> set_removed_cc) {
+
+  /*
+    Deletion of some cc and renumbering of all cc
+    :param set_removed_cc: set of index of cc to remove
+    :return: None
+  */
+  long new_cc;
+  assert(_delayed_cc.size() > 0);
+  if(set_removed_cc.size() > 0) {
+    if(_d_isotropic_cc.size() > 0) {
+      for(auto i_cc : set_removed_cc) {
+	if (_d_isotropic_cc.count(i_cc) > 0) {
+	  // Check that self._d_isotropic_cc[i_cc] is empty
+	  cerr << "test " << _d_isotropic_cc.count(i_cc) << endl;
+	  if (_d_isotropic_cc.count(i_cc) > 0)
+	    cerr << "Cc" << i_cc << "is not empty : " << _d_isotropic_cc[i_cc]->get_s_fc().size() << endl;
+	  assert(_d_isotropic_cc.count(i_cc) == 0); 
+	  
+	}
+      }
+      
+      long min_cc = *min_element(set_removed_cc.begin(), set_removed_cc.end());
+      unordered_map<long,long> dict_old_cc_to_new_cc;
+      new_cc = min_cc;
+      
+      for(long i_cc = min_cc+1 ; i_cc < _cc_counter ; i_cc++) {
+	if(_d_isotropic_cc.count(i_cc) > 0) {
+	  dict_old_cc_to_new_cc[i_cc] = new_cc;
+	  _d_isotropic_cc[new_cc] = _d_isotropic_cc[i_cc];
+	  for(auto i_fc : _d_isotropic_cc[new_cc]->get_s_fc())
+	    _fc_2_cc[i_fc] = new_cc;
+	  unsigned short int i_cc_size = _d_isotropic_cc[i_cc]->__card;
+	  _d_card_2_cc[i_cc_size].erase(i_cc);
+	  _d_card_2_cc[i_cc_size].insert(new_cc);
+
+	  unsigned short int compactness = _d_isotropic_cc[i_cc]->__compactness;
+
+	  _d_compactness_2_cc[compactness].erase(i_cc);
+	  _d_compactness_2_cc[compactness].insert(new_cc);
+
+	  _d_isotropic_cc.erase(i_cc);
+	  new_cc ++;
+	}
+      }
+
+    }
+    else
+      new_cc = _cc_counter - set_removed_cc.size();
+    _cc_counter -= set_removed_cc.size();
+    if (_cc_counter != new_cc)
+      cerr << "Problem consistency in number of Coarse cells " << _cc_counter << " " << new_cc << endl;
+    assert(_cc_counter == new_cc);
+  }
+}
+
+unsigned short int Coarse_Cell_Graph::get_cc_cardinal(long i_cc) {
+  if (is_isotropic_cc(i_cc))
+    return _d_isotropic_cc[i_cc]->__card;
+  else
+    return _d_anisotropic_cc[i_cc].size();
+}
+
+void Coarse_Cell_Graph::cc_update_cc_specifics(unordered_set<long> set_of_fc_to_add, long i_target_cc) {
+  /*
+        Update a cc with some (not yet agglomerated) fine cells.
+   */
+
+  if(is_isotropic_cc(i_target_cc)) {
+    unsigned short int old_card = get_cc_cardinal(i_target_cc);
+    Coarse_Cell * target_cc = _d_isotropic_cc[i_target_cc];
+    unsigned short int old_deg_compactness = target_cc->__compactness;
+
+    // update of the definition of the cc
+    target_cc->add_fc(set_of_fc_to_add, _fc_2_cc);
+
+    unsigned short int new_card = target_cc->__card;
+
+    // Update of dict_Card_Coarse_Cells:
+    _d_card_2_cc[new_card];
+    _d_card_2_cc[new_card].insert(i_target_cc);
+
+    assert(_d_card_2_cc.count(old_card) > 0 && _d_card_2_cc[old_card].count(i_target_cc) > 0);
+      
+    _d_card_2_cc[old_card].erase(i_target_cc);
+    if(_d_card_2_cc[old_card].size() == 0)
+      _d_card_2_cc.erase(old_card);
+
+    if (_d_compactness_2_cc.size() > 0) {
+      _d_compactness_2_cc[old_deg_compactness].erase(i_target_cc);
+      // TODO peut-etre eviter de recalculer. On l'avait avant dans le choix de la CC.
+      unsigned short int deg_compactness = target_cc->__compactness;
+      _d_compactness_2_cc[deg_compactness];
+      _d_compactness_2_cc[deg_compactness].insert(i_target_cc);
+
+    }
+  }
+  else
+    _d_anisotropic_cc[i_target_cc].insert(set_of_fc_to_add.begin(), set_of_fc_to_add.end());
+}
+
+
+unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::compute_dict_faces_in_common_faces_with_cc_neighbourhood(long i_fc) {
+  /*
+    
+    :param i_fc:
+    :return: Dict[i_cc:{i_fc_neighbour, ...}]
+  */
+  // TODO est-ce qu'il n'y aurait pas moyen de trier d'une manière ou d'une autre les voisins grossiers?
+  // TODO Tas?
+
+  // TODO  remove compute_nb_faces_in_common_faces_with_cc_neighbourhood() et juste récupérer len()???
+  unordered_map<long, unordered_set<long>> d_n_cc;
+  for(auto i_fc_neighbour: _fc_graph.get_neighbours(i_fc)) {
+    if (i_fc != i_fc_neighbour) {
+      long i_cc = _fc_2_cc[i_fc_neighbour];
+      if(is_isotropic_cc(i_cc)) {
+	// We want only isotropic neighbours
+	d_n_cc[i_cc];
+	d_n_cc[i_cc].insert(i_fc_neighbour);
+      }
+    }
+  }
+  return d_n_cc;
+}
+
+bool compare_size(pair<long, unordered_set<long>> a, pair<long, unordered_set<long>> b) {
+  return a.second.size() < b.second.size();
+}
+
+void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell_Graph * ccg_l_m_one, int verbose) {
+  /*TODO work only on border fc!!!
+    set_removed_coarse_cells: Set[int] = set()*/
+  unordered_set<long> set_removed_coarse_cells_l_m_one;
+  int iteration(0);
+  bool is_at_least_one_swap(true);
+  // int count(0);
+  while(iteration < nb_iteration && is_at_least_one_swap) {
+    //TODO: improvement Work only on fc at the edge of cc...
+    if (_verbose)
+      cerr << "iteration " << iteration << endl;
+    is_at_least_one_swap = false;
+    int nb_of_swap(0);
+    /* TODO je crois qu'il le faisait dans un ordre aleatoire sur les fc dans MGridGen.
+       Process every isotropic coarse cells*/
+    // conscious copy
+    unordered_set<long> cc_keys;
+    for(auto i_cc_k_v: _d_isotropic_cc)
+      cc_keys.insert(i_cc_k_v.first);
+    for(auto i_cc:cc_keys) {
+      Coarse_Cell * cc = _d_isotropic_cc[i_cc];
+      vector<long> v_s_fc;
+      unordered_set<long> s_leaves = cc->compute_s_leaves();
+      unordered_set<long> neigbours = cc->get_s_fc_w_outer_neighbours(2);
+
+      set_intersection(s_leaves.begin(), s_leaves.end(), neigbours.begin(), neigbours.end(), v_s_fc.begin());
+      unordered_set<long> s_fc(v_s_fc.begin(), v_s_fc.end());
+      for(auto i_fc : s_fc) {
+	unordered_map<long, unordered_set<long>> d_n_fc = compute_dict_faces_in_common_faces_with_cc_neighbourhood(i_fc);
+	// sort wrt number of edge
+	// TODO sorting... you can't sort a map!
+	vector<pair<long, unordered_set<long>>> d_n_fc_v(d_n_fc.begin(), d_n_fc.end());
+	// can't sort the map?
+	sort(d_n_fc_v.begin(), d_n_fc_v.end(), compare_size);
+
+	vector<long> l_keys_i_cc;
+	for(auto d_n_fc_k_v : d_n_fc_v)
+	  l_keys_i_cc.push_back(d_n_fc_k_v.first);
+	unsigned short int i_last_key = l_keys_i_cc.size() - 1;
+	auto it = find(l_keys_i_cc.begin(), l_keys_i_cc.end(), i_cc);
+	int index = distance(l_keys_i_cc.begin(), it);
+	if (d_n_fc.count(i_cc) || index < i_last_key) {
+	  /* Is there a better cc for i_fc.
+	     First condition, a cc of size one.
+	     Second condition, i_cc is not the best cc for i_fc : l_keys_i_cc[i_last_key] is better*/
+	  long argmax_nb_common_faces_n = l_keys_i_cc[i_last_key];
+	  unsigned short int max_nb_common_faces_n = d_n_fc[l_keys_i_cc[i_last_key]].size();
+	  unsigned short int min_size(1);
+	  if (max_nb_common_faces_n > min_size) {
+	    unordered_set<long> tmp;
+	    tmp.insert(i_fc);
+	    unordered_set<long> set_tmp = cc_swap_fc(tmp, i_cc, argmax_nb_common_faces_n);
+	    // set_removed_coarse_cells.update(set_tmp)
+	    assert(check_cc_consistency());
+	    vector<long> inter;
+	    set_intersection(_s_cc_to_remove.begin(), _s_cc_to_remove.end(), set_tmp.begin(), set_tmp.end(), inter.begin());
+	    assert(inter.size() == 0);
+	    _s_cc_to_remove.insert(set_tmp.begin(), set_tmp.end());
+	    
+	    // self.plot_cc("tmp_" + str(iteration) + "_" + str(nb_of_swap))
+	    if (ccg_l_m_one != NULL) {
+	      long i_cc_l_m_one = ccg_l_m_one->_fc_2_cc[i_fc];
+	      unordered_set<long> s_cc;
+	      for(auto i_fc_n: d_n_fc[l_keys_i_cc[i_last_key]])
+		s_cc.insert(ccg_l_m_one->_fc_2_cc[i_fc_n]);
+	      if(s_cc.size() == 1) {
+		  long argmax_nb_common_faces_n_l_m_one = *s_cc.begin();
+		  s_cc.erase(*s_cc.begin());
+		  //print("l_m_one :Swap ", i_fc, i_cc_l_m_one, ccg_l_m_one.get_cc(i_cc_l_m_one),
+		  //argmax_nb_common_faces_n_l_m_one, ccg_l_m_one.get_cc(argmax_nb_common_faces_n_l_m_one), )
+		  //TODO : check arguments? 
+		  //assert(ccg_l_m_one->check_cc_consistency(_fc_2_cc));
+		  assert(ccg_l_m_one->check_cc_consistency());
+		  // Swap lower level
+		  unordered_set<long> tmp;
+		  tmp.insert(i_fc);
+		  unordered_set<long> set_tmp = ccg_l_m_one->cc_swap_fc(tmp, i_cc_l_m_one,
+									argmax_nb_common_faces_n_l_m_one);
+		  assert(ccg_l_m_one->check_cc_consistency());
+		  set_removed_coarse_cells_l_m_one.insert(set_tmp.begin(), set_tmp.end());
+		  
+	      }
+	      else {
+		// TODO on fait pareil (i.e. on prend le résultat du pop), mais on doit pouvoir trouver mieux.
+		long argmax_nb_common_faces_n_l_m_one = *s_cc.begin();
+		s_cc.erase(*s_cc.begin());
+		
+		// print("l_m_one :Swap ", i_fc, i_cc_l_m_one, ccg_l_m_one.get_cc(i_cc_l_m_one),
+		// argmax_nb_common_faces_n_l_m_one,
+		// ccg_l_m_one.get_cc(argmax_nb_common_faces_n_l_m_one), )
+		//assert ccg_l_m_one.check_cc_consistency()
+		unordered_set<long> tmp;
+		tmp.insert(i_fc);
+		unordered_set<long> set_tmp = ccg_l_m_one->cc_swap_fc(tmp, i_cc_l_m_one,
+                                                                     argmax_nb_common_faces_n_l_m_one);
+		// assert ccg_l_m_one.check_cc_consistency()
+		set_removed_coarse_cells_l_m_one.insert(set_tmp.begin(), set_tmp.end());
+	      }
+	    }
+	    nb_of_swap ++;
+	    is_at_least_one_swap = true;
+	    // assert ccg_l_m_one.check_data_consistency_and_connectivity()
+	    // assert self.check_data_consistency_and_connectivity()
+	  }
+
+	}
+      }
+    }
+    //
+    iteration ++;
+    if(_verbose) {
+      cerr << "nb_of_swap = "  << nb_of_swap << endl;
+      cerr << "After iteration" << iteration << endl;
+      // cerr << "Dict_distribution_of_cardinal_of_cc" << d_distribution_of_cardinal_of_isotropic_cc << endl;
+    }
+  }
+  if(set_removed_coarse_cells_l_m_one.size() > 0) {
+    cerr << "set_removed_coarse_cells_l_m_one ";
+    for (auto elt : set_removed_coarse_cells_l_m_one)
+      cerr << elt << " ";
+    cerr<< endl;
+    //print("set_removed_coarse_cells_l_m_one", set_removed_coarse_cells_l_m_one)
+    //raise ValueError
+  }
+  /*
+        # if set_removed_coarse_cells:
+        #     print("set_removed_coarse_cells", set_removed_coarse_cells)
+        #     self.cc_remove_deleted_cc(set_removed_coarse_cells)
+        # raise ValueError
+  */
+  if (ccg_l_m_one != NULL)
+    assert(ccg_l_m_one->check_cc_consistency());
+
+}
+

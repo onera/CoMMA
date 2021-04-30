@@ -64,6 +64,17 @@ public:
     void _update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc);
 
     bool check_cc_consistency();
+
+    void cc_remove_deleted_cc(unordered_set<long> set_removed_cc);
+
+    unsigned short int get_cc_cardinal(long i_cc);
+
+    void cc_update_cc_specifics(unordered_set<long> set_of_fc_to_add, long i_target_cc);
+
+    unordered_map<long, unordered_set<long>> compute_dict_faces_in_common_faces_with_cc_neighbourhood(long i_fc);
+
+    void correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell_Graph * ccg_l_m_one = NULL, int verbose = 1);
+
     //protected:
     int _verbose;
 
