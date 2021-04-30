@@ -1007,10 +1007,12 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
             }
         }
         unordered_set<long> s_seed = {seed};
-        unordered_map<long, int> d_neighbours_of_seed = _fc_graph.compute_neighbourhood_of_cc(s_seed,
-                                                                                              nb_of_order_of_neighbourhood,
-                                                                                              goal_card,
-                                                                                              v_is_fc_agglomerated_in_isotropic_cc);
+        unordered_map<long, int> d_neighbours_of_seed = {};
+        _fc_graph.compute_neighbourhood_of_cc(s_seed,
+                                              nb_of_order_of_neighbourhood,
+                                              d_neighbours_of_seed,
+                                              goal_card,
+                                              v_is_fc_agglomerated_in_isotropic_cc);
 
         // We remove all fine cell already contained in the current coarse element
         for (const long &i_fc : (*cc).get_s_fc()) {
