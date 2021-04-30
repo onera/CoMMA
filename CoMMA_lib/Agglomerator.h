@@ -67,14 +67,11 @@ public:
                                                                 bool increase_neighbouring = true,
                                                                 unordered_set<long> set_of_fc_for_current_cc = {});
 
-    unordered_set<long> __choose_optimal_cc_basic(
-            Dual_Graph graph,
+    unordered_set<long> __choose_optimal_cc_basic_v2_sub(
             const long seed,
             unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-            const unsigned short goal_card,
-            const unsigned short max_card,
             unsigned short &compactness,
-            bool is_order_primary = false);
+            const bool is_order_primary = false);
 
     unordered_set<long> __choose_optimal_cc_basic_v2(const long seed,
                                                      unordered_map<long, unsigned short> &dict_neighbours_of_seed,

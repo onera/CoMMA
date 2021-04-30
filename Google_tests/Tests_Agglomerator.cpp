@@ -110,13 +110,13 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     d_neighbours_of_seed[5] = 3;
     d_neighbours_of_seed[6] = 2;
     d_neighbours_of_seed[7] = 3;
-    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic((*g),
-                                                                            seed,
-                                                                            d_neighbours_of_seed,
-                                                                            goal_card,
-                                                                            max_card,
-                                                                            compactness,
-                                                                            false);
+    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic_v2_sub((*g),
+                                                                                   seed,
+                                                                                   d_neighbours_of_seed,
+                                                                                   goal_card,
+                                                                                   max_card,
+                                                                                   compactness,
+                                                                                   false);
 
     unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);

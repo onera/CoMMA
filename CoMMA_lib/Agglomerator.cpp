@@ -156,12 +156,12 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
 
     if (kind_of_agglomerator == "basic") {
 
-        s_current_cc = __choose_optimal_cc_basic(cc_graph._fc_graph, seed,
-                                                 dict_neighbours_of_seed,
-                                                 goal_card,
-                                                 max_card,
-                                                 compactness,
-                                                 is_order_primary);
+        s_current_cc = __choose_optimal_cc_basic_v2_sub(cc_graph._fc_graph, seed,
+                                                        dict_neighbours_of_seed,
+                                                        goal_card,
+                                                        max_card,
+                                                        compactness,
+                                                        is_order_primary);
     } else if (kind_of_agglomerator == "triconnected") {
         s_current_cc = __choose_optimal_cc_triconnected(cc_graph,
                                                         seed,
@@ -249,12 +249,9 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
     return s_current_cc;
 }
 
-unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
-        Dual_Graph graph,
+unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2_sub(
         const long seed,
         unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-        const unsigned short goal_card,
-        const unsigned short max_card,
         unsigned short &compactness,
         const bool is_order_primary) {
 
@@ -275,18 +272,18 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
     // while size_current_cc + len(listOfNeighborsForAgglomeration) < self.__maximumSizeOfAgglomeratedElement:
 
     // We build the cc by adding to the seed the fc that minimizes the AR at every step (local optimization)
-    unsigned short min_size = goal_card;
+    unsigned short min_size = __goal_card;
 
     // Computation of the initial aspect ratio: we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
     double cc_surf = 0.0;
-    vector<double> a_neighbours_weights = graph.get_weights(seed);
-    unsigned short nb_neighbours = graph.get_nb_of_neighbours(seed);
+    vector<double> a_neighbours_weights = __fc_graphs.get_weights(seed);
+    unsigned short nb_neighbours = __fc_graphs.get_nb_of_neighbours(seed);
     for (const double &w:a_neighbours_weights) {
         cc_surf += w;
     }
 
     // volume of cc is at first the volume of the seed.
-    double vol_cc = graph._volumes[seed];
+    double vol_cc = __fc_graphs._volumes[seed];
 
     // This dictionary is used to store the eligible cc: i.e. its size is inside the permitted range.
     // This is useful to track back our step if needed.
@@ -296,17 +293,17 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
     // dict_cc_in_creation[size_current_cc] = [set(s_of_fc_for_current_cc),
     //                                         {index of the last added fc: order (neighbourhood) of the last added fc}]
     double min_external_faces = numeric_limits<double>::max();
-    int arg_min_external_faces = min_size;
+    unsigned short arg_min_external_faces = min_size;
 
-    unsigned short max_ind = min(max_card, (unsigned short) (dict_neighbours_of_seed.size() + 1));
-    int number_of_external_faces_current_cc = nb_neighbours + (*graph.seeds_pool).boundary_value(seed) - 1;
+    unsigned short max_ind = min(__max_card, (short) (dict_neighbours_of_seed.size() + 1));
+    int number_of_external_faces_current_cc = nb_neighbours + (*__fc_graphs.seeds_pool).boundary_value(seed) - 1;
     // print("\nseed=", seed)
 
     unordered_set<long> s_neighbours_of_seed = d_keys_to_set(dict_neighbours_of_seed);
 
     First_Order_Neighbourhood f_o_neighbourhood = First_Order_Neighbourhood(s_neighbours_of_seed);
 
-    vector<long> v = graph.get_neighbours(seed);
+    vector<long> v = __fc_graphs.get_neighbours(seed);
     unordered_set<long> s_up(v.begin(), v.end());
 
     unordered_set<long> fon = f_o_neighbourhood.update(seed, s_up);
@@ -319,7 +316,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
         double min_ar_vol = numeric_limits<double>::max();
         unsigned short max_faces_in_common = 0;
 
-        __compute_best_fc_to_add(graph,
+        __compute_best_fc_to_add(__fc_graphs,
                                  fon,
                                  dict_neighbours_of_seed,
                                  is_order_primary,
@@ -332,8 +329,8 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
                                  min_ar_vol);
 
 
-        number_of_external_faces_current_cc += graph.get_nb_of_neighbours(argmin_ar)
-                                               + (*graph.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
+        number_of_external_faces_current_cc += __fc_graphs.get_nb_of_neighbours(argmin_ar)
+                                               + (*__fc_graphs.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
 
         size_current_cc++;
         s_of_fc_for_current_cc.insert(argmin_ar);
@@ -363,6 +360,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
 //                            dict_neighbours_of_seed[argmin_ar]
 //                        }];
         }
+
         // Update of cc_surf and vol_cc with the new fc added
         cc_surf = min_ar_surf;
         vol_cc = min_ar_vol;
@@ -370,7 +368,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
         // Remove added fc from the available neighbours
         dict_neighbours_of_seed.erase(argmin_ar);
 
-        vector<long> v = graph.get_neighbours(argmin_ar);
+        vector<long> v = __fc_graphs.get_neighbours(argmin_ar);
         unordered_set<long> s_up(v.begin(), v.end());
         fon = f_o_neighbourhood.update(argmin_ar, s_up);
     }
@@ -392,7 +390,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
     }
 
     assert(arg_min_external_faces == s_of_fc_for_current_cc.size());
-    compactness = graph.compute_min_fc_compactness_inside_a_cc(s_of_fc_for_current_cc);
+    compactness = __fc_graphs.compute_min_fc_compactness_inside_a_cc(s_of_fc_for_current_cc);
     return s_of_fc_for_current_cc;
 }
 
@@ -996,14 +994,12 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
     unordered_set<long> s_fc_for_current_cc = {seed};
 
     unordered_set<long> s_seeds = {seed};
-//        graph = (*__cc_graphs)._fc_graph;
-//        test_func = (*__cc_graphs).is_fc_not_already_agglomerated
 
     // Compute self.__min_neighbourhood order neighbourhood:
     //====================================
-    unsigned short max_order_of_neighbourhood = __min_neighbourhood;  //in and out
+    unsigned short max_order_of_neighbourhood = __min_neighbourhood;
     __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
-                                            max_order_of_neighbourhood,
+                                            max_order_of_neighbourhood,   //in and out
                                             dict_neighbours_of_seed,
                                             __goal_card,
                                             (*__cc_graphs)._a_is_fc_agglomerated);
@@ -1017,217 +1013,163 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
         compactness = 0;
         return s_fc_for_current_cc;
     }
-//    qfjmhdskfhj
+
+    // TODO remove this
+    if ((dict_neighbours_of_seed.size() + s_fc_for_current_cc.size()) < __goal_card) {
+        // Not enough available neighbour: creation of a (too small) coarse cell.
+        // s_fc_for_current_cc.update(d_n_of_seed)
+        for (auto &i_k_v : dict_neighbours_of_seed) {
+            s_fc_for_current_cc.insert(i_k_v.first);
+        }
+
+        bool is_creation_delayed = (s_fc_for_current_cc.size() <= __threshold_card);
+        if (is_creation_delayed) {
+
+            compactness = 0;
+            return s_fc_for_current_cc;
+        } else {
+            compactness = __dimension;
+            return s_fc_for_current_cc;
+        }
+    }
 
 
 
 
 
 
+    // On dit que les voisins sont OK
+    // (pas de test pour l'instant sur leur pertinence: wall Far field, aspect Ratio...)
+    // On les declare visite/agglomere
+    // Rq: Mavriplis ne fait pas d'optimisation de choix dans les cellules fines!
+    // C'est fait seulement dans le choix de la seed
+
+    // Tant que la cellule agglomeree courante n'est pas complete
+    // On a trop de voisin pour pas assez de place dans l'element grossier en construction.
+    // while size_current_cc + len(listOfNeighborsForAgglomeration) < self.__maximumSizeOfAgglomeratedElement:
+
+    // We build the cc by adding to the seed the fc that minimizes the AR at every step (local optimization)
+    unsigned short min_size = __goal_card;
+
+    // Computation of the initial aspect ratio:
+    // we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
+    double cc_surf = 0.0;
+    vector<double> a_neighbours_weights = __fc_graphs.get_weights(seed);
+    unsigned short nb_neighbours = __fc_graphs.get_nb_of_neighbours(seed);
+    for (const double &w:a_neighbours_weights) {
+        cc_surf += w;
+    }
+
+    // volume of cc is at first the volume of the seed.
+    double vol_cc = __fc_graphs._volumes[seed];
+
+    // This dictionary is used to store the eligible cc: i.e. its size is inside the permitted range.
+    // This is useful to track back our step if needed.
+
+    unordered_map<unsigned short, pair<unordered_set<long>, unordered_map<long, int>>> dict_cc_in_creation;
+
+    //    Dict[int, List[Set[int], Dict[int, int]]] = dict()
+    // d_cc_in_creation[size_current_cc] = [set(s_of_fc_for_current_cc),
+    //                                         {index of the last added fc: order (neighbourhood) of the last added fc}]
+    double min_external_faces = numeric_limits<double>::max();
+    unsigned short arg_min_external_faces = min_size;
+
+    unsigned short max_ind = min(__max_card, (short) (dict_neighbours_of_seed.size() + 1));
+    int number_of_external_faces_current_cc = nb_neighbours + (*__fc_graphs.seeds_pool).boundary_value(seed) - 1;
+    // print("\nseed=", seed)
+    unordered_set<long> s_neighbours_of_seed = d_keys_to_set(dict_neighbours_of_seed);
+
+    First_Order_Neighbourhood f_o_neighbourhood = First_Order_Neighbourhood(s_neighbours_of_seed);
+
+    vector<long> v = __fc_graphs.get_neighbours(seed);
+    unordered_set<long> s_up(v.begin(), v.end());
+
+    unordered_set<long> fon = f_o_neighbourhood.update(seed, s_up);
+
+    // Choice of the fine cells to agglomerate
+    while (size_current_cc < max_ind) {
+
+        long argmin_ar = -1;
+        double min_ar_surf = numeric_limits<double>::max();
+        double min_ar_vol = numeric_limits<double>::max();
+        unsigned short max_faces_in_common = 0;
+
+        __compute_best_fc_to_add(__fc_graphs,
+                                 fon,
+                                 dict_neighbours_of_seed,
+                                 is_order_primary,
+                                 cc_surf,
+                                 vol_cc,
+                                 s_fc_for_current_cc,
+                                 argmin_ar,
+                                 max_faces_in_common,
+                                 min_ar_surf,
+                                 min_ar_vol);
+
+        number_of_external_faces_current_cc += __fc_graphs.get_nb_of_neighbours(argmin_ar)
+                                               + (*__fc_graphs.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
+
+        size_current_cc++;
+        s_fc_for_current_cc.insert(argmin_ar);
 
 
+        // if the constructed cc is eligible, i.e. its size is inside the permitted range
+        // we store it inside d_cc_in_creation
+        // This choice is based on the idea that the smallest cc (w.r.t. card) is may be not the one that minimized
+        // the number of external faces.
+        if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
+
+            if (number_of_external_faces_current_cc <= min_external_faces) {
+
+                min_external_faces = number_of_external_faces_current_cc;
+                arg_min_external_faces = size_current_cc;
+            }
+
+            unordered_map<long, int> new_dict;
+            new_dict[argmin_ar] = dict_neighbours_of_seed[argmin_ar];
+
+            pair<unordered_set<long>, unordered_map<long, int>> p = make_pair(s_fc_for_current_cc, new_dict);
+            dict_cc_in_creation[size_current_cc] = p;
+
+//            dict_cc_in_creation[size_current_cc] = [
+//                    set(s_of_fc_for_current_cc),
+//                        {
+//                            argmin_ar:
+//                            dict_neighbours_of_seed[argmin_ar]
+//                        }];
+        }
+
+        // Update of cc_surf and vol_cc with the new fc added
+        cc_surf = min_ar_surf;
+        vol_cc = min_ar_vol;
 
 
+        // Remove added fc from the available neighbours
+        dict_neighbours_of_seed.erase(argmin_ar);
+
+        vector<long> v = __fc_graphs.get_neighbours(argmin_ar);
+        unordered_set<long> s_up(v.begin(), v.end());
+        fon = f_o_neighbourhood.update(argmin_ar, s_up);
+    }
+    s_fc_for_current_cc = dict_cc_in_creation[arg_min_external_faces].first;
 
 
+    // If we do not chose the biggest cc, we put the useless fc back to the pool
+    for (long i_s = arg_min_external_faces + 1; i_s < max_ind + 1; i_s++) {
+        // for all size of Cell from arg_min_external_faces+1 to  min(max_card, len(dict_neighbours_of_seed) + 1) + 1
+        //dict_neighbours_of_seed.
+        //            update(dict_cc_in_creation[i_s][1])
+        // Merge/update:
+        for (auto iKV:dict_cc_in_creation[i_s].second) {
+            dict_neighbours_of_seed[iKV.first] = iKV.second;
+        }
 
 
-//// TODO remove this
-//    if len(d_n_of_seed) + len(s_fc_for_current_cc) < self.__goal_card:
-//// Not enough available neighbour: creation of a (too small) coarse cell.
-//    s_fc_for_current_cc.update(d_n_of_seed)
-//    is_creation_delayed = len(s_fc_for_current_cc) <= self.__threshold_card
-//    if is_creation_delayed:
-//        return s_fc_for_current_cc, 0, dict()
-//    else:
-//    return s_fc_for_current_cc, self.__dimension, dict()
-//
-//// TODO deal with that?
-//// return s_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc)
-//
-//// Number of fine cells constituting the current cc in construction.
-//    size_current_cc:
-//    int = 1  // cc contains only one cell: the seed
-//
-//// On dit que les voisins sont OK
-//// (pas de test pour l'instant sur leur pertinence: wall Far field, aspect Ratio...)
-//// On les declare visite/agglomere
-//// Rq: Mavriplis ne fait pas d'optimisation de choix dans les cellules fines!
-//// C'est fait seulement dans le choix de la seed
-//
-//// Tant que la cellule agglomeree courante n'est pas complete
-//// On a trop de voisin pour pas assez de place dans l'element grossier en construction.
-//// while size_current_cc + len(listOfNeighborsForAgglomeration) < self.__maximumSizeOfAgglomeratedElement:
-//
-//// We build the cc by adding to the seed the fc that minimizes the AR at every step (local optimization)
-//    min_size = self.__goal_card
-//
-//// Computation of the initial aspect ratio:
-//// we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
-//    cc_surf = 0.0
-//    a_neighbours_weights = graph.get_weights(seed)
-//    nb_neighbours = graph.get_nb_of_neighbours(seed)
-//    for
-//    w
-//            in
-//    a_neighbours_weights:
-//    cc_surf += w
-//
-//// volume of cc is at first the volume of the seed.
-//    vol_cc = graph._volumes[seed]
-//
-//// This dictionary is used to store the eligible cc: i.e. its size is inside the permitted range.
-//// This is useful to track back our step if needed.
-//
-//    d_cc_in_creation:
-//    Dict[int, List[Set[int], Dict[int, int]]] = dict()
-//// d_cc_in_creation[size_current_cc] = [set(s_of_fc_for_current_cc),
-////                                         {index of the last added fc: order (neighbourhood) of the last added fc}]
-//
-//    min_external_faces:
-//    float = sys.float_info.max
-//    arg_min_external_faces:
-//    int = min_size
-//
-//    max_ind = min(self.__max_card, len(d_n_of_seed) + 1)
-//    nb_of_external_faces_current_cc = nb_neighbours + graph.seeds_pool.boundary_value(seed) - 1
-//
-//    f_o_neighbourhood = f_o_n.First_Order_Neighbourhood(d_n_of_seed.keys())
-//    fon = f_o_neighbourhood.update(seed, set(graph.get_neighbours(seed)))
-//
-//// Choice of the fine cells to agglomerate
-//    while size_current_cc < max_ind:
-//
-//    min_ar = sys.float_info.max
-//    min_ar_surf = sys.float_info.max
-//    min_ar_vol = sys.float_info.max
-//    argmin_ar = -1
-//
-//    max_faces_in_common = 0
-//    arg_max_faces_in_common = -1
-//
-//// For every fc in the neighbourhood:
-//// we update the new aspect ratio
-//// verifier que fon est un sous ensemble de dict_neighbours_of_seed
-//// assert fon.issubset(dict_neighbours_of_seed.keys())
-//    for
-//    i_fc
-//            in
-//    fon:  // we test every possible new cells to chose the one that locally
-//
-//// minimizes the Aspect Ratio.
-//    if arg_max_faces_in_common == -1:
-//    arg_max_faces_in_common = i_fc
-//
-//    is_fc_adjacent_to_any_cell_of_the_cc = False
-//    new_ar_surf = cc_surf
-//// update of the vol
-//    new_ar_vol = vol_cc + graph._volumes[i_fc]
-//
-//    number_faces_in_common = 0
-//
-//// Computation of the new aspect ratio of the tested coarse element
-//    for
-//    i_fc_n, i_w_fc_n
-//    in
-//    zip(graph.get_neighbours(i_fc), graph.get_weights(i_fc)):
-//
-//    if i_fc_n == i_fc:  // Boundary surface
-//    new_ar_surf += i_w_fc_n
-//
-//    elif
-//            i_fc_n
-//    not in
-//    s_fc_for_current_cc:
-//    new_ar_surf += i_w_fc_n
-//
-//    else:
-//    is_fc_adjacent_to_any_cell_of_the_cc = True
-//    new_ar_surf -= i_w_fc_n
-//    number_faces_in_common += 1
-//
-//    new_ar = new_ar_surf * *1.5 / new_ar_vol
-//
-//    order = d_n_of_seed[i_fc]
-//
-//// TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
-//// TODO also need to remove the list of min_ar, argmin_ar, etc.
-//    if number_faces_in_common >= max_faces_in_common or is_order_primary:  // if is_order_primary is True the order of
-//// neighbourhood is primary
-//    if number_faces_in_common == max_faces_in_common or is_order_primary:
-//    if order <= d_n_of_seed[arg_max_faces_in_common]:
-//    if order == d_n_of_seed[arg_max_faces_in_common]:
-//    if new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc:
-//// The second condition asserts the connectivity of the coarse element.
-//    min_ar = new_ar
-//    argmin_ar = i_fc
-//    min_ar_surf = new_ar_surf
-//    min_ar_vol = new_ar_vol
-//
-//    arg_max_faces_in_common = i_fc
-//// The number of face in common is the same no need to touch it
-//    else:
-//// Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
-//    arg_max_faces_in_common = i_fc
-//    min_ar = new_ar
-//    argmin_ar = i_fc
-//    min_ar_surf = new_ar_surf
-//    min_ar_vol = new_ar_vol
-//// The number of face in common is the same no need to touch it
-//    else:
-//// Case :number_faces_in_common > max_faces_in_common:
-//    max_faces_in_common = number_faces_in_common
-//    arg_max_faces_in_common = i_fc
-//    min_ar = new_ar
-//    argmin_ar = i_fc
-//    min_ar_surf = new_ar_surf
-//    min_ar_vol = new_ar_vol
-//
-//    nb_of_external_faces_current_cc += graph.get_nb_of_neighbours(argmin_ar) + \
-//                                               graph.seeds_pool.boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common
-//
-//    size_current_cc += 1
-//    s_fc_for_current_cc.add(argmin_ar)
-//
-//// if the constructed cc is eligible, i.e. its size is inside the permitted range
-//// we store it inside d_cc_in_creation
-//    // This choice is based on the idea that the smallest cc (w.r.t. card) is may be not the one that minimized
-//    // the number of external faces.
-//    if min_size <= size_current_cc <= max_ind or size_current_cc == max_ind:
-//    if nb_of_external_faces_current_cc <= min_external_faces:
-//    min_external_faces = nb_of_external_faces_current_cc
-//    arg_min_external_faces = size_current_cc
-//    d_cc_in_creation[size_current_cc] = [set(s_fc_for_current_cc),
-//                {
-//                    argmin_ar:
-//                    d_n_of_seed[argmin_ar]
-//                }]
-//            // Update of cc_surf and vol_cc with the new fc added
-//    cc_surf = min_ar_surf
-//    vol_cc = min_ar_vol
-//
-//    // Remove added fc from the available neighbours
-//    d_n_of_seed.pop(argmin_ar)
-//    fon = f_o_neighbourhood.update(argmin_ar, set(graph.get_neighbours(argmin_ar)))
-//
-//    s_of_fc_for_current_cc = d_cc_in_creation[arg_min_external_faces][0]
-//
-//    // If we do not chose the biggest cc, we put the useless fc back to the pool
-//    for
-//    i_s
-//            in
-//    range(arg_min_external_faces + 1, max_ind + 1):
-//    // for all size of Cell from arg_min_external_faces+1 to  min(max_card, len(dict_neighbours_of_seed) + 1) + 1
-//    d_n_of_seed.update(d_cc_in_creation[i_s][1])
-//
-//    // print("arg_min_external_faces + 1", arg_min_external_faces + 1, "max_ind + 1", max_ind + 1)
-//    // raise ValueError
-//
-//    assert
-//    arg_min_external_faces == len(s_of_fc_for_current_cc)
-//
-//    return s_of_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(
-//            s_of_fc_for_current_cc), d_n_of_seed
-    unordered_set<long> s_of_fc_for_current_cc = {seed};
-    return s_of_fc_for_current_cc;
+        // print("arg_min_external_faces + 1", arg_min_external_faces + 1, "max_ind + 1", max_ind + 1)
+        // raise ValueError
+    }
+
+    assert(arg_min_external_faces == s_fc_for_current_cc.size());
+    compactness = __fc_graphs.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc);
+    return s_fc_for_current_cc;
 }
