@@ -65,7 +65,15 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
 
-// print("cc_create_a_cc", s_fc, "is_creation_delayed", is_creation_delayed)
+    if(true){
+
+        cout<<"cc_create_a_cc:"<<" is_creation_delayed "<<is_creation_delayed<<endl;
+        cout<<"\ns_fc: [";
+        for(auto i:s_fc){
+            cout<<i<<", ";
+        }
+        cout<<"]"<<endl;
+    }
     assert((!is_anisotropic) || (!is_creation_delayed));
 
     for (const long &i_fc :s_fc) {
@@ -1407,7 +1415,7 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                         // TODO Is it the better choice????
 
                         long arg_min = numeric_limits<long>::max();
-                        unsigned short size_min = numeric_limits<int>::max();
+                        unsigned short size_min = numeric_limits<unsigned short>::max();
 
                         // TODO Is it the better choice????
                         // We choose the smallest coarse neighbour.

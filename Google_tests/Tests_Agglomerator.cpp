@@ -94,14 +94,19 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __compute_best_fc_to_add_9_Squares_isOrderPr
 TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderPrimary_False) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
+    bool is_anisotropic = false;
+    unsigned short min_card = 0;
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    string kind_of_agglomerator="basic";
+
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
     agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
-    unsigned short goal_card = 4;
-    unsigned short max_card = 6;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -110,11 +115,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     d_neighbours_of_seed[5] = 3;
     d_neighbours_of_seed[6] = 2;
     d_neighbours_of_seed[7] = 3;
-    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic_v2_sub((*g),
-                                                                                   seed,
+    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic_v2_sub(seed,
                                                                                    d_neighbours_of_seed,
-                                                                                   goal_card,
-                                                                                   max_card,
                                                                                    compactness,
                                                                                    false);
 
@@ -148,7 +150,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -197,7 +199,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -247,7 +249,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -293,7 +295,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -339,7 +341,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -386,7 +388,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    unsigned short compactness = 0;
+    short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -425,7 +427,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
 TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
 
-    unsigned short int verbose = 0;
+    unsigned short int verbose = 1;
     bool is_visu_data_stored = true;
     int dimension = 2;
     bool checks = true;
@@ -436,7 +438,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
                                     dimension,
                                     checks);
 
-//    agg.agglomerate_one_level(false);
+    agg.agglomerate_one_level(false);
 
 }
 

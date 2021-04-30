@@ -14,6 +14,7 @@ public:
                       int verbose = 0,
                       vector<long> debug_only_fc_to_cc = vector<long>(),
                       forward_list<deque<long> *> *debug_a_anisotropic_lines = NULL);
+
     inline long get_number_of_fc_agglomerated(){
         return _nb_of_agglomerated_fc;
 
