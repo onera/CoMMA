@@ -15,6 +15,21 @@ public:
                       vector<long> debug_only_fc_to_cc = vector<long>(),
                       forward_list<deque<long> *> *debug_a_anisotropic_lines = NULL);
 
+    inline long get_number_of_fc_agglomerated(){
+        return _nb_of_agglomerated_fc;
+
+    }
+    long choose_new_seed(){
+        return (*_fc_graph.seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
+    }
+
+
+
+public:
+    //Private
+
+public:
+    //TODO to categorize: public private etc...
     long cc_create_a_cc(const unordered_set<long> &s_fc,
                         bool is_anisotropic = false,
                         bool is_creation_delayed = false);

@@ -35,7 +35,7 @@ public :
     vector<deque<long>> l_deque_of_seeds;
 
     // Methods
-    long choose_new_seed(const bool *a_is_fc_agglomerated);
+    long choose_new_seed(const vector<bool> a_is_fc_agglomerated);
 
     int boundary_value(const long i_fc);
 

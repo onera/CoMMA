@@ -35,8 +35,7 @@ forward_list<deque < long> > convertFineAgglomerationLines_arraysToFineAgglomera
         long *fineAgglomerationLines_array);
 forward_list<int> test();
 
-void convert_agglo_lines_to_agglomeration_lines_arrays(const long &nb_fc,
-                                                       const unsigned long &nb_lines,
+void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long nb_lines,
                                                        forward_list<deque<long> *> *agglo_lines,
                                                        long *sizes,
                                                        long *agglo_lines_array_idx,

@@ -618,8 +618,7 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
 
     long a_agglo_lines_idx[nb_fc];  // not initialized
     long a_agglo_lines[nb_fc];  // not initialized
-    convert_agglo_lines_to_agglomeration_lines_arrays(nb_fc,
-                                                      nb_agglomeration_lines,
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
                                                       agglomeration_lines,
                                                       sizes,
                                                       a_agglo_lines_idx,

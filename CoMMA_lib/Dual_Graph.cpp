@@ -1639,11 +1639,12 @@ int Dual_Graph::remove_separating_vertex(long seed,
 
 // TODO Ici on utilise le card...
 // TODO Est-ce qu'utiliser une autre metrique serait pertinent?
-unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
-                                                                 unsigned short &nb_of_order_of_neighbourhood,
-                                                                 unsigned short max_card,
-                                                                 vector<bool> &isFineCellAgglomerated_tmp,
-                                                                 unordered_set<long> s_of_constrained_fc) {
+void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
+                                             unsigned short &nb_of_order_of_neighbourhood,
+                                             unordered_map<long, unsigned short> &d_n_of_seed,
+                                             const unsigned short max_card,
+                                             vector<bool> &isFineCellAgglomerated_tmp,
+                                             unordered_set<long> s_of_constrained_fc) {
     // cout<<"Call of compute_neighbourhood_of_cc"<<endl;
 
     // Basic checks
@@ -1651,15 +1652,12 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
     // TODO resoudre le probleme suivant: si l'ordre n'est pas assez grand,
     // c'est a dire que le nombre de voisin trouve n'est pas suffisant pour constituer une cellule grossiere entiere,
     // il faut peut-etre faire une boucle while pour aller le plus loin possible!
-    if (max_card == 0) {
-        max_card = USHRT_MAX;
-    }
 
     // This function computes the neighbourhood of a seed passed as argument.
     // It looks in the neighbourhood of order at least nb_of_order_of_neighbourhood, but if the size of the set of neighbour
     // is too small (<max_card), we look in higher order neighbourhood.
     //
-    unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
+//    unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
     unordered_map<long, int> d_n_of_order_o_m_one;  // dict of FC with the order of neighbouring from seed
     for (const long &i_fc : s_seeds) {
         d_n_of_order_o_m_one[i_fc] = 0;
@@ -1736,5 +1734,5 @@ unordered_map<long, int> Dual_Graph::compute_neighbourhood_of_cc(const unordered
     }
 
     nb_of_order_of_neighbourhood = i_order;
-    return d_n_of_seed;
+//    return d_n_of_seed;
 }

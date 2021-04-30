@@ -65,7 +65,15 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
 
-// print("cc_create_a_cc", s_fc, "is_creation_delayed", is_creation_delayed)
+    if(true){
+
+        cout<<"cc_create_a_cc:"<<" is_creation_delayed "<<is_creation_delayed<<endl;
+        cout<<"\ns_fc: [";
+        for(auto i:s_fc){
+            cout<<i<<", ";
+        }
+        cout<<"]"<<endl;
+    }
     assert((!is_anisotropic) || (!is_creation_delayed));
 
     for (const long &i_fc :s_fc) {
@@ -797,9 +805,18 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
                 nb_cc = i_k_v.first;
             }
         }
-        for (auto &i_k_v: _d_anisotropic_cc) {
-            if (nb_cc < i_k_v.first) {
-                nb_cc = i_k_v.first;
+        if (!_d_anisotropic_cc.empty()) {
+            for (auto &i_k_v: _d_anisotropic_cc) {
+                if (nb_cc < i_k_v.first) {
+                    nb_cc = i_k_v.first;
+                }
+            }
+        }
+        if (!_s_cc_to_remove.empty()) {
+            for (const long i_fc: _s_cc_to_remove) {
+                if (nb_cc < i_fc) {
+                    nb_cc = i_fc;
+                }
             }
         }
         assert(_cc_counter == nb_cc + 1);
@@ -998,10 +1015,12 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
             }
         }
         unordered_set<long> s_seed = {seed};
-        unordered_map<long, int> d_neighbours_of_seed = _fc_graph.compute_neighbourhood_of_cc(s_seed,
-                                                                                              nb_of_order_of_neighbourhood,
-                                                                                              goal_card,
-                                                                                              v_is_fc_agglomerated_in_isotropic_cc);
+        unordered_map<long, unsigned short> d_neighbours_of_seed = {};
+        _fc_graph.compute_neighbourhood_of_cc(s_seed,
+                                              nb_of_order_of_neighbourhood,
+                                              d_neighbours_of_seed,
+                                              goal_card,
+                                              v_is_fc_agglomerated_in_isotropic_cc);
 
         // We remove all fine cell already contained in the current coarse element
         for (const long &i_fc : (*cc).get_s_fc()) {
@@ -1396,7 +1415,7 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                         // TODO Is it the better choice????
 
                         long arg_min = numeric_limits<long>::max();
-                        unsigned short size_min = numeric_limits<int>::max();
+                        unsigned short size_min = numeric_limits<unsigned short>::max();
 
                         // TODO Is it the better choice????
                         // We choose the smallest coarse neighbour.

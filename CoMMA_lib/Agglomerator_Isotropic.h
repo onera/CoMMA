@@ -381,4 +381,4 @@ long read_double_array(std::fstream &stream,
 long read_long(std::fstream &stream);
 
 
-#endif AGGLOMERATOR_ISOTROPIC_H
+#endif //AGGLOMERATOR_ISOTROPIC_H
