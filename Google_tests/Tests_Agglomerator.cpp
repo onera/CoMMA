@@ -436,7 +436,8 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
                                     dimension,
                                     checks);
 
-    agg.agglomerate_one_level(false);
+//    agg.agglomerate_one_level(false);
+
 }
 
 /////////////////

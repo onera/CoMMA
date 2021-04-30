@@ -40,9 +40,9 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 void Agglomerator::_set_agglomeration_parameter(
         bool is_anisotropic,
         string kind_of_agglomerator,
-        unsigned short int goal_card,
-        unsigned short int min_card,
-        unsigned short int max_card) {
+        short goal_card,
+        short min_card,
+        short max_card) {
 
     __is_anisotropic = is_anisotropic;
 
@@ -58,24 +58,24 @@ void Agglomerator::_set_agglomeration_parameter(
                                                                                       {3, 3}};
 
     // Definition of (*this).__min_card
-    if (min_card == 0) {
+    if (min_card == -1) {
         (*this).__min_card = d_default_min_card[(*this).__dimension];
     } else {
         (*this).__min_card = min_card;
     }
 
     // Definition of (*this).__max_card
-    if (max_card == 0) {
+    if (max_card == -1) {
         (*this).__max_card = d_default_max_card[(*this).__dimension];
     } else {
         (*this).__max_card = max_card;
     }
 
     // Definition of (*this).__goal_card
-    if (goal_card == 0) {
-        (*this).__goal_card = d_default_goal_card[(*this).__dimension];
+    if (goal_card == -1) {
+        __goal_card = d_default_goal_card[(*this).__dimension];
     } else {
-        (*this).__goal_card = goal_card;
+        __goal_card = goal_card;
     }
 
     // Definition of (*this).__threshold_card
@@ -83,7 +83,7 @@ void Agglomerator::_set_agglomeration_parameter(
 }
 
 
-Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
+void Agglomerator::__agglomerate_one_level(
         vector<long> debug_only_fc_to_cc,
         short int debug_only_steps // arbitrary value greater than 7
 ) {
@@ -100,36 +100,24 @@ Coarse_Cell_Graph *Agglomerator::__agglomerate_one_level(
 
         // General case
         // Creation of the CCG
-        // ccg = CCG_w_CC.Coarse_Cell_Graph_w_CC(graph, i_lvl=i_lvl)
-        // ccg = CCG_1.Coarse_Cell_Graph_v1(graph, i_lvl=i_lvl)
-//        ccg = self._initialize_ccg(graph, i_lvl = i_lvl);
-        ccg = new Coarse_Cell_Graph(__fc_graphs);
+        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs);
 
 
         // TODO On pourrait ne l'allouer qu'une seule fois!
 
-//        // Is the agglomeration anisotropic?
-//        if(self.__is_anisotropic){
-//            aniso_lines_l_m_one, aniso_lines_l = self._agglomerate_one_level_anisotropic_part(i_lvl,
+        // Is the agglomeration anisotropic?
+//        if(__is_anisotropic){
+//            _agglomerate_one_level_anisotropic_part(i_lvl,
 //                                                                                              ccg,
 //                                                                                              aniso_lines);
 //        }
-//
-//        self._agglomerate_one_level_isotropic_part(i_lvl, ccg, debug_only_steps = debug_only_steps)
+
+        _agglomerate_one_level_isotropic_part(debug_only_steps);
     } else {
 
-// For debug purpose:
-
-// ccg = CCG_1.Coarse_Cell_Graph_v1(graph, i_lvl=i_lvl, debug_only_fc_to_cc=debug_only_fc_to_cc)
-// ccg = CCG_w_CC.Coarse_Cell_Graph_w_CC(graph, i_lvl=i_lvl, debug_only_fc_to_cc=debug_only_fc_to_cc)
-//        ccg = self._initialize_ccg(graph, i_lvl = i_lvl, debug_only_fc_to_cc = debug_only_fc_to_cc)
-//        ccg.fill_cc_neighbouring()
-//        self.__l_nb_of_cells.append(ccg.nb_cc)
-
-        ccg = new Coarse_Cell_Graph(__fc_graphs);
+        // For debug purpose:
+        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs);
     }
-    return ccg;//, aniso_lines_l_m_one, aniso_lines_l;
-
 }
 
 
@@ -201,9 +189,69 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
     return s_current_cc;
 }
 
+// TODO rename this afterwards.
+unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(const long seed,
+                                                                             unsigned short &compactness,
+                                                                             bool is_order_primary, // _correction_split_too_big_cc_in_two(...)
+                                                                             bool increase_neighbouring// _correction_split_too_big_cc_in_two(...)
+) {
+
+
+    /**
+     * The goal of this function is to choose from a pool of neighbour the better one to build a compact coarse cell
+     * Called by :
+     * - self._create_optimal_cc_v2(...)
+     * - self._correction_split_too_big_cc_in_two(...)
+     * - self._correction_triconnected_sub(...)
+     * :param is_order_primary: modify the order of priority for agglomeration. False is the default value and the
+     *  number of face in common is primary. True, the order of neighbourhood is primary
+     */
+    assert(__goal_card != -1);  // self.__goal_card has been initialized
+
+    // Definition of the current cc
+    // remark: does contain seed
+    unordered_set<long> s_current_cc = {};
+    unordered_map<long, unsigned short> d_n_of_seed;
+    if (__kind_of_agglomerator == "basic") {
+        short compactness = -1;
+        unordered_set<long> s_current_cc = __choose_optimal_cc_basic_v2(seed,
+                                                           d_n_of_seed,
+                                                           compactness,
+                                                           is_order_primary);
+
+//        cout<<"Not yet implemented:__choose_optimal_cc_basic_v2(cc_graph, seed,is_order_primary);"<<endl;
+//        exit(1);
+    } else if (__kind_of_agglomerator == "triconnected") {
+//        s_current_cc, compactness,
+//                d_n_of_seed = self.__choose_optimal_cc_triconnected_v2(cc_graph,
+//                                                                       seed,
+//                                                                       increase_neighbouring)
+        cout << "Not yet implemented:__choose_optimal_cc_triconnected_v2(...);" << endl;
+        exit(1);
+    } else {
+        exit(1);
+    }
+
+
+    // Remark: chosen CC may not be exactly of size self.__goal_card
+
+    //====================================
+    // Create of l_of_new_seeds:
+    //====================================
+
+    list<long> l_of_new_seeds = __create_list_of_seeds(*__cc_graphs, seed, d_n_of_seed, s_current_cc);
+
+    //====================================
+    // Update of list_of_seeds:
+    //====================================
+    (*__fc_graphs.seeds_pool).update(l_of_new_seeds);
+
+    return s_current_cc;
+}
+
 unordered_set<long> Agglomerator::__choose_optimal_cc_basic(
         Dual_Graph graph,
-        const long &seed,
+        const long seed,
         unordered_map<long, unsigned short> &dict_neighbours_of_seed,
         const unsigned short goal_card,
         const unsigned short max_card,
@@ -353,6 +401,7 @@ list<long> Agglomerator::__create_list_of_seeds(Coarse_Cell_Graph cc_graph,
                                                 const long &seed,
                                                 const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                                 unordered_set<long> s_current_cc) {
+    // TODO Change type return? vector?
     // TODO test this
 
     //===========================
@@ -782,13 +831,11 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
      */
     _set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
-    forward_list<deque<long> *> *agglo_lines_l_p_one = NULL;
-    Coarse_Cell_Graph *ccg = NULL;
     if (!debug_only_fc_to_cc.empty()) {
 
         // For debug purpose only:
         assert(nb_aniso_agglo_lines == 0);  // Up to now we do not manage anisotropic lines for debugging.
-        __cc_graphs = __agglomerate_one_level(debug_only_fc_to_cc);
+        __agglomerate_one_level(debug_only_fc_to_cc);
 
     } else {
         if (__is_anisotropic) {
@@ -796,8 +843,8 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
             __v_lines.push_back(aniso_agglo_lines);
         }
 
-        __cc_graphs = __agglomerate_one_level(debug_only_fc_to_cc,
-                                              debug_only_steps);
+        __agglomerate_one_level(debug_only_fc_to_cc,
+                                debug_only_steps);
     }
 
     assert((*__cc_graphs).check_cc_consistency());
@@ -841,3 +888,331 @@ void Agglomerator::get_agglo_lines(int level,
                                                       agglo_lines_array);
 }
 
+
+void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_steps) {
+    /**
+     *  isotropic agglomeration of one level of mesh.
+     *  We do not necessary agglomerate all neighbouring cells.
+     */
+
+    // I) First try: we work on every fC
+    //====================================
+    _agglomerate_sub_sub_isotropic_first_step();
+
+//    if(__cc_graphs.is_cc_grid_not_structured(__goal_card)) {
+//    //     if len(self.__d_cc_to_compactness) != 1 or 3 not in self.__d_cc_to_compactness:
+//
+//    _correction_main_triconnected(cc_graph);
+//}
+//            // pass
+//        // cc_graph._fc_graph.plot_graph("tmp_" + str(i_lvl),
+//        //                               output_directory="/Users/lantos/PycharmProjects/Aggrid/Tests/0_Outputs",
+//        //                               array_to_plot=cc_graph.fc_2_cc)
+//        cc_graph.cc_create_all_delayed_cc()
+//        cc_graph.fill_cc_neighbouring()
+//        // print "After First Step : dict_Distribution_Of_Cardinal_Of_CC", dict_Distribution_Of_Cardinal_Of_CC
+//
+//        // TODO ATTENTION AU CHANGEMENT DE LISTE AVEC LE DELETE!
+//        // TODO voir TP python. Peut etre faire une boucle tant que non vide...
+//        // II) Correction: treatment of incomplete cells!
+//        if self.__kind_of_agglomerator == "basic" and cc_graph.is_cc_grid_not_structured(self.__goal_card):
+//            if self.__verbose:
+//                print("Call of self._correction_main_basic(" + str(i_lvl) + ", cc_graph)")
+//            self._correction_main_basic(cc_graph, debug_only_steps=debug_only_steps)
+//
+//        cc_graph.cc_renumber()
+//        self.__l_nb_of_cells.append(cc_graph.nb_cc)
+//        assert(cc_graph.check_data_consistency_and_connectivity());
+    exit(1);
+}
+
+void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
+
+
+/**
+ * First try to build an agglomeration.
+ * From the boundary of the domain, (corner, ridge or valley) we build agglomerated cells of cardinal goal_card
+ */
+    long nb_of_fc = __l_nb_of_cells[0];
+
+    while ((*__cc_graphs).get_number_of_fc_agglomerated() < nb_of_fc) {
+
+        // 1) Choose a new seed
+        //====================================
+        long seed = (*__cc_graphs).choose_new_seed();
+        if (__verbose) {
+            cout << "seed = " << seed << endl;
+        }
+
+
+        // 2) Computation of optimal coarse cell
+        //====================================
+
+        _create_optimal_cc_v2(seed);
+        // print("\n",cc_graph._cc_counter-1, seed, cc_graph._d_isotropic_cc[cc_graph._cc_counter-1].get_s_fc())
+    }
+}
+
+
+// Agglomerator stuff:
+// difference between _create_optimal_cc and _create_optimal_cc_v2 is that the computation of the neighbourhood is
+// included inside  for _create_optimal_cc_v2
+void Agglomerator::_create_optimal_cc_v2(const long seed) {
+
+    /**
+     * main function for isotropic agglomeration: it chooses the "optimal" fc for a given seed.
+     * The goal of this function is to choose from a pool of neighbours the best CC to build
+     * If there is not enough fc available in dict_neighbours_of_seed we create an incomplete cc: i.e. too small.
+     *
+     * -> Called from self._agglomerate_sub_sub_isotropic_first_step(...):
+     * - Creates a cc.
+     *
+     */
+    unsigned short compactness = 0;
+    unordered_set<long> set_current_cc = _choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                    compactness);
+
+    // Creation of cc:
+    //====================================
+    bool is_anistropic = false;
+    bool is_creation_delayed = compactness < __dimension;
+    (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
+
+}
+
+
+unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
+                                                               unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                               short &compactness,
+                                                               const bool is_order_primary) {
+
+
+    cout << "Call of __choose_optimal_cc_basic_v2" << endl;
+
+    // Number of fine cells constituting the current coarse cell in construction.
+    unsigned short size_current_cc = 1; // CC contains only one cell: the seed
+
+    // set of fc for current cc:
+    unordered_set<long> s_fc_for_current_cc = {seed};
+//    unordered_set<long> s_seeds = {seed};
+////        graph = (*__cc_graphs)._fc_graph;
+////        test_func = (*__cc_graphs).is_fc_not_already_agglomerated
+//
+//    // Compute self.__min_neighbourhood order neighbourhood:
+//    //====================================
+//    unsigned short max_order_of_neighbourhood = __min_neighbourhood;  //in and out
+//
+//    unordered_map<long, int> d_n_of_seed = __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
+//                                                                                   max_order_of_neighbourhood,
+//                                                                                   __goal_card,
+//                                                                                   (*__cc_graphs)._a_is_fc_agglomerated);
+//
+//
+//    // If no neighbour is found for seed: this case happened only when isotropic cell is surrounded
+//    // by anisotropic cells.
+//    if (d_n_of_seed.empty()) {
+//        // d_n_of_seed is empty, i.e: the cc is not complete
+//        // and no neighbour are available!
+//        compactness = 0;
+//        return s_fc_for_current_cc, 0, d_n_of_seed;
+//    }
+//
+//// TODO remove this
+//    if len(d_n_of_seed) + len(s_fc_for_current_cc) < self.__goal_card:
+//// Not enough available neighbour: creation of a (too small) coarse cell.
+//    s_fc_for_current_cc.update(d_n_of_seed)
+//    is_creation_delayed = len(s_fc_for_current_cc) <= self.__threshold_card
+//    if is_creation_delayed:
+//        return s_fc_for_current_cc, 0, dict()
+//    else:
+//    return s_fc_for_current_cc, self.__dimension, dict()
+//
+//// TODO deal with that?
+//// return s_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc)
+//
+//// Number of fine cells constituting the current cc in construction.
+//    size_current_cc:
+//    int = 1  // cc contains only one cell: the seed
+//
+//// On dit que les voisins sont OK
+//// (pas de test pour l'instant sur leur pertinence: wall Far field, aspect Ratio...)
+//// On les declare visite/agglomere
+//// Rq: Mavriplis ne fait pas d'optimisation de choix dans les cellules fines!
+//// C'est fait seulement dans le choix de la seed
+//
+//// Tant que la cellule agglomeree courante n'est pas complete
+//// On a trop de voisin pour pas assez de place dans l'element grossier en construction.
+//// while size_current_cc + len(listOfNeighborsForAgglomeration) < self.__maximumSizeOfAgglomeratedElement:
+//
+//// We build the cc by adding to the seed the fc that minimizes the AR at every step (local optimization)
+//    min_size = self.__goal_card
+//
+//// Computation of the initial aspect ratio:
+//// we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
+//    cc_surf = 0.0
+//    a_neighbours_weights = graph.get_weights(seed)
+//    nb_neighbours = graph.get_nb_of_neighbours(seed)
+//    for
+//    w
+//            in
+//    a_neighbours_weights:
+//    cc_surf += w
+//
+//// volume of cc is at first the volume of the seed.
+//    vol_cc = graph._volumes[seed]
+//
+//// This dictionary is used to store the eligible cc: i.e. its size is inside the permitted range.
+//// This is useful to track back our step if needed.
+//
+//    d_cc_in_creation:
+//    Dict[int, List[Set[int], Dict[int, int]]] = dict()
+//// d_cc_in_creation[size_current_cc] = [set(s_of_fc_for_current_cc),
+////                                         {index of the last added fc: order (neighbourhood) of the last added fc}]
+//
+//    min_external_faces:
+//    float = sys.float_info.max
+//    arg_min_external_faces:
+//    int = min_size
+//
+//    max_ind = min(self.__max_card, len(d_n_of_seed) + 1)
+//    nb_of_external_faces_current_cc = nb_neighbours + graph.seeds_pool.boundary_value(seed) - 1
+//
+//    f_o_neighbourhood = f_o_n.First_Order_Neighbourhood(d_n_of_seed.keys())
+//    fon = f_o_neighbourhood.update(seed, set(graph.get_neighbours(seed)))
+//
+//// Choice of the fine cells to agglomerate
+//    while size_current_cc < max_ind:
+//
+//    min_ar = sys.float_info.max
+//    min_ar_surf = sys.float_info.max
+//    min_ar_vol = sys.float_info.max
+//    argmin_ar = -1
+//
+//    max_faces_in_common = 0
+//    arg_max_faces_in_common = -1
+//
+//// For every fc in the neighbourhood:
+//// we update the new aspect ratio
+//// verifier que fon est un sous ensemble de dict_neighbours_of_seed
+//// assert fon.issubset(dict_neighbours_of_seed.keys())
+//    for
+//    i_fc
+//            in
+//    fon:  // we test every possible new cells to chose the one that locally
+//
+//// minimizes the Aspect Ratio.
+//    if arg_max_faces_in_common == -1:
+//    arg_max_faces_in_common = i_fc
+//
+//    is_fc_adjacent_to_any_cell_of_the_cc = False
+//    new_ar_surf = cc_surf
+//// update of the vol
+//    new_ar_vol = vol_cc + graph._volumes[i_fc]
+//
+//    number_faces_in_common = 0
+//
+//// Computation of the new aspect ratio of the tested coarse element
+//    for
+//    i_fc_n, i_w_fc_n
+//    in
+//    zip(graph.get_neighbours(i_fc), graph.get_weights(i_fc)):
+//
+//    if i_fc_n == i_fc:  // Boundary surface
+//    new_ar_surf += i_w_fc_n
+//
+//    elif
+//            i_fc_n
+//    not in
+//    s_fc_for_current_cc:
+//    new_ar_surf += i_w_fc_n
+//
+//    else:
+//    is_fc_adjacent_to_any_cell_of_the_cc = True
+//    new_ar_surf -= i_w_fc_n
+//    number_faces_in_common += 1
+//
+//    new_ar = new_ar_surf * *1.5 / new_ar_vol
+//
+//    order = d_n_of_seed[i_fc]
+//
+//// TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
+//// TODO also need to remove the list of min_ar, argmin_ar, etc.
+//    if number_faces_in_common >= max_faces_in_common or is_order_primary:  // if is_order_primary is True the order of
+//// neighbourhood is primary
+//    if number_faces_in_common == max_faces_in_common or is_order_primary:
+//    if order <= d_n_of_seed[arg_max_faces_in_common]:
+//    if order == d_n_of_seed[arg_max_faces_in_common]:
+//    if new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc:
+//// The second condition asserts the connectivity of the coarse element.
+//    min_ar = new_ar
+//    argmin_ar = i_fc
+//    min_ar_surf = new_ar_surf
+//    min_ar_vol = new_ar_vol
+//
+//    arg_max_faces_in_common = i_fc
+//// The number of face in common is the same no need to touch it
+//    else:
+//// Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
+//    arg_max_faces_in_common = i_fc
+//    min_ar = new_ar
+//    argmin_ar = i_fc
+//    min_ar_surf = new_ar_surf
+//    min_ar_vol = new_ar_vol
+//// The number of face in common is the same no need to touch it
+//    else:
+//// Case :number_faces_in_common > max_faces_in_common:
+//    max_faces_in_common = number_faces_in_common
+//    arg_max_faces_in_common = i_fc
+//    min_ar = new_ar
+//    argmin_ar = i_fc
+//    min_ar_surf = new_ar_surf
+//    min_ar_vol = new_ar_vol
+//
+//    nb_of_external_faces_current_cc += graph.get_nb_of_neighbours(argmin_ar) + \
+//                                               graph.seeds_pool.boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common
+//
+//    size_current_cc += 1
+//    s_fc_for_current_cc.add(argmin_ar)
+//
+//// if the constructed cc is eligible, i.e. its size is inside the permitted range
+//// we store it inside d_cc_in_creation
+//    // This choice is based on the idea that the smallest cc (w.r.t. card) is may be not the one that minimized
+//    // the number of external faces.
+//    if min_size <= size_current_cc <= max_ind or size_current_cc == max_ind:
+//    if nb_of_external_faces_current_cc <= min_external_faces:
+//    min_external_faces = nb_of_external_faces_current_cc
+//    arg_min_external_faces = size_current_cc
+//    d_cc_in_creation[size_current_cc] = [set(s_fc_for_current_cc),
+//                {
+//                    argmin_ar:
+//                    d_n_of_seed[argmin_ar]
+//                }]
+//            // Update of cc_surf and vol_cc with the new fc added
+//    cc_surf = min_ar_surf
+//    vol_cc = min_ar_vol
+//
+//    // Remove added fc from the available neighbours
+//    d_n_of_seed.pop(argmin_ar)
+//    fon = f_o_neighbourhood.update(argmin_ar, set(graph.get_neighbours(argmin_ar)))
+//
+//    s_of_fc_for_current_cc = d_cc_in_creation[arg_min_external_faces][0]
+//
+//    // If we do not chose the biggest cc, we put the useless fc back to the pool
+//    for
+//    i_s
+//            in
+//    range(arg_min_external_faces + 1, max_ind + 1):
+//    // for all size of Cell from arg_min_external_faces+1 to  min(max_card, len(dict_neighbours_of_seed) + 1) + 1
+//    d_n_of_seed.update(d_cc_in_creation[i_s][1])
+//
+//    // print("arg_min_external_faces + 1", arg_min_external_faces + 1, "max_ind + 1", max_ind + 1)
+//    // raise ValueError
+//
+//    assert
+//    arg_min_external_faces == len(s_of_fc_for_current_cc)
+//
+//    return s_of_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(
+//            s_of_fc_for_current_cc), d_n_of_seed
+    unordered_set<long> s_of_fc_for_current_cc = {seed};
+    return s_of_fc_for_current_cc;
+}
