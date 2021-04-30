@@ -450,11 +450,7 @@ TEST(Seeds_Pool_TestSuite, init_MGridGen) {
 //    ref_l_deque_of_seeds[3] = deque<long>({15, 0, 60, 3, 63, 48, 12, 51});
     ASSERT_EQ(ref_l_deque_of_seeds, sp.l_deque_of_seeds);
 
-    bool a_is_fc_agglomerated[MGridGen_nb_cells];
-    for (int i = 0; i<MGridGen_nb_cells; i++)
-    {
-        a_is_fc_agglomerated[i]=false;
-    }
+    vector<bool> a_is_fc_agglomerated(MGridGen_nb_cells, false);
 
     ASSERT_EQ(14, sp.choose_new_seed(a_is_fc_agglomerated));
     ASSERT_EQ(12, sp.choose_new_seed(a_is_fc_agglomerated));
@@ -574,11 +570,7 @@ TEST(Seeds_Pool_TestSuite, choose_new_seed) {
     Box_5x5x5_is_on_bnd_d[62] = 2;
     Box_5x5x5_is_on_bnd_d[63] = 3;
 
-    bool a_is_fc_agglomerated[Box_5x5x5_number_of_cells];
-    for (int i = 0; i<Box_5x5x5_number_of_cells; i++)
-    {
-        a_is_fc_agglomerated[i]=false;
-    }
+    vector<bool> a_is_fc_agglomerated(Box_5x5x5_number_of_cells, false);
 
     Seeds_Pool sp = Seeds_Pool(Box_5x5x5_number_of_cells, Box_5x5x5_is_on_bnd_d);
 

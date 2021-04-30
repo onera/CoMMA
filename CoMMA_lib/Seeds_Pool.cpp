@@ -91,7 +91,7 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     }
 }
 
-long Seeds_Pool::choose_new_seed(const bool *a_is_fc_agglomerated) {
+long Seeds_Pool::choose_new_seed(const vector<bool> a_is_fc_agglomerated) {
 //
 //Choose a correct seed from the fc pool list_of_seeds beyond not agglomerated fc.
 //:param a_is_fc_agglomerated:
