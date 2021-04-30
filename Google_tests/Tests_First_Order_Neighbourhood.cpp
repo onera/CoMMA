@@ -14,10 +14,12 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) 
     unsigned short goal_card = 6;
     unsigned short number_of_order_of_neighbourhood = 3;
     unordered_set<long> s_seeds = {seed};
-    unordered_map<long, int> d_neighbours_of_seed = (*g).compute_neighbourhood_of_cc(s_seeds,
-                                                                                     number_of_order_of_neighbourhood,
-                                                                                     goal_card,
-                                                                                     a_is_fc_agglomerated);
+    unordered_map<long, int> d_neighbours_of_seed = {};
+    (*g).compute_neighbourhood_of_cc(s_seeds,
+                                     number_of_order_of_neighbourhood,
+                                     d_neighbours_of_seed,
+                                     goal_card,
+                                     a_is_fc_agglomerated);
     unordered_map<long, int> ref_dict_fc_n_of_seed = {{1,  3},
                                                       {2,  2},
                                                       {3,  2},
@@ -62,28 +64,28 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) 
 
     seed = 12;
     s_up.clear();
-    for (const long & i_fc:   (*g).get_neighbours(seed)){
+    for (const long &i_fc:   (*g).get_neighbours(seed)) {
         s_up.insert(i_fc);
     }
     fon = f_o_neighbourhood.update(seed, s_up);
-    ref_fon = { 4, 5, 10, 13, 14, 19, 23};
+    ref_fon = {4, 5, 10, 13, 14, 19, 23};
     ASSERT_EQ(ref_fon, fon);
 
     seed = 23;
     s_up.clear();
-    for (const long & i_fc:   (*g).get_neighbours(seed)){
+    for (const long &i_fc:   (*g).get_neighbours(seed)) {
         s_up.insert(i_fc);
     }
     fon = f_o_neighbourhood.update(seed, s_up);
-    ref_fon = { 4, 5, 9, 10, 13, 14, 18, 19};
+    ref_fon = {4, 5, 9, 10, 13, 14, 18, 19};
     ASSERT_EQ(ref_fon, fon);
 
     seed = 10;
     s_up.clear();
-    for (const long & i_fc:   (*g).get_neighbours(seed)){
+    for (const long &i_fc:   (*g).get_neighbours(seed)) {
         s_up.insert(i_fc);
     }
     fon = f_o_neighbourhood.update(seed, s_up);
-    ref_fon = {  2, 4, 5, 9, 13, 14, 18, 19, 24};
+    ref_fon = {2, 4, 5, 9, 13, 14, 18, 19, 24};
     ASSERT_EQ(ref_fon, fon);
 }

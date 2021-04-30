@@ -68,9 +68,9 @@ public :
 
     unsigned short get_nb_of_neighbours(long i_c);
 
-    vector<long> get_neighbours(const long& i_c)const;
+    vector<long> get_neighbours(const long &i_c) const;
 
-    vector<double> get_weights(const long&  i_c)const;
+    vector<double> get_weights(const long &i_c) const;
 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
@@ -140,11 +140,13 @@ public :
                                  unordered_set<long> &s_fc,
                                  long verbose = 0);
 
-    unordered_map<long, int> compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
-                                                         unsigned short &nb_of_order_of_neighbourhood,
-                                                         unsigned short max_card,
-                                                         vector<bool> &isFineCellAgglomerated_tmp,
-                                                         unordered_set<long> s_of_constrained_fc={});
+
+    void compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
+                                     unsigned short &nb_of_order_of_neighbourhood,
+                                     unordered_map<long, int> &d_n_of_seed,
+                                     const unsigned short max_card,
+                                     vector<bool> &isFineCellAgglomerated_tmp,
+                                     unordered_set<long> s_of_constrained_fc = {});
 };
 
 
