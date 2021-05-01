@@ -65,10 +65,9 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
 
-    if(true){
-
-        cout<<"cc_create_a_cc:"<<" is_creation_delayed "<<is_creation_delayed<<endl;
-        cout<<"\ns_fc: [";
+    if(false){
+        cout<<"\ncc_create_a_cc:"<<" is_creation_delayed "<<is_creation_delayed<<endl;
+        cout<<"s_fc: [";
         for(auto i:s_fc){
             cout<<i<<", ";
         }
@@ -103,14 +102,14 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         if (is_mutable) {
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
-            //###################################
+            //==================
             // (*this)._d_isotropic_cc[(*this)._cc_counter] = new_cc = Coarse_Cell_v1((*this)._fc_graph, (*this)._cc_counter,
             //                                                                    s_fc)
             Coarse_Cell *new_cc = new Coarse_Cell((*this)._fc_graph, (*this)._cc_counter, s_fc);
             (*this)._d_isotropic_cc[(*this)._cc_counter] = new_cc;
 
             // Update of dict_Card_Coarse_Cells:
-            //###################################
+            //==================
             unsigned short int card = (*new_cc).__card;
             if ((*this)._d_card_2_cc.count(card) > 0) {
                 //if card in (*this)._d_card_2_cc:
@@ -1576,15 +1575,15 @@ void Coarse_Cell_Graph::cc_remove_deleted_cc(unordered_set<long> set_removed_cc)
 	  cerr << "test " << _d_isotropic_cc.count(i_cc) << endl;
 	  if (_d_isotropic_cc.count(i_cc) > 0)
 	    cerr << "Cc" << i_cc << "is not empty : " << _d_isotropic_cc[i_cc]->get_s_fc().size() << endl;
-	  assert(_d_isotropic_cc.count(i_cc) == 0); 
-	  
+	  assert(_d_isotropic_cc.count(i_cc) == 0);
+
 	}
       }
-      
+
       long min_cc = *min_element(set_removed_cc.begin(), set_removed_cc.end());
       unordered_map<long,long> dict_old_cc_to_new_cc;
       new_cc = min_cc;
-      
+
       for(long i_cc = min_cc+1 ; i_cc < _cc_counter ; i_cc++) {
 	if(_d_isotropic_cc.count(i_cc) > 0) {
 	  dict_old_cc_to_new_cc[i_cc] = new_cc;
@@ -1642,7 +1641,7 @@ void Coarse_Cell_Graph::cc_update_cc_specifics(unordered_set<long> set_of_fc_to_
     _d_card_2_cc[new_card].insert(i_target_cc);
 
     assert(_d_card_2_cc.count(old_card) > 0 && _d_card_2_cc[old_card].count(i_target_cc) > 0);
-      
+
     _d_card_2_cc[old_card].erase(i_target_cc);
     if(_d_card_2_cc[old_card].size() == 0)
       _d_card_2_cc.erase(old_card);
@@ -1663,7 +1662,7 @@ void Coarse_Cell_Graph::cc_update_cc_specifics(unordered_set<long> set_of_fc_to_
 
 unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::compute_dict_faces_in_common_faces_with_cc_neighbourhood(long i_fc) {
   /*
-    
+
     :param i_fc:
     :return: Dict[i_cc:{i_fc_neighbour, ...}]
   */
@@ -1747,7 +1746,7 @@ void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell
 	    set_intersection(_s_cc_to_remove.begin(), _s_cc_to_remove.end(), set_tmp.begin(), set_tmp.end(), inter.begin());
 	    assert(inter.size() == 0);
 	    _s_cc_to_remove.insert(set_tmp.begin(), set_tmp.end());
-	    
+
 	    // self.plot_cc("tmp_" + str(iteration) + "_" + str(nb_of_swap))
 	    if (ccg_l_m_one != NULL) {
 	      long i_cc_l_m_one = ccg_l_m_one->_fc_2_cc[i_fc];
@@ -1759,7 +1758,7 @@ void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell
 		  s_cc.erase(*s_cc.begin());
 		  //print("l_m_one :Swap ", i_fc, i_cc_l_m_one, ccg_l_m_one.get_cc(i_cc_l_m_one),
 		  //argmax_nb_common_faces_n_l_m_one, ccg_l_m_one.get_cc(argmax_nb_common_faces_n_l_m_one), )
-		  //TODO : check arguments? 
+		  //TODO : check arguments?
 		  //assert(ccg_l_m_one->check_cc_consistency(_fc_2_cc));
 		  assert(ccg_l_m_one->check_cc_consistency());
 		  // Swap lower level
@@ -1769,13 +1768,13 @@ void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell
 									argmax_nb_common_faces_n_l_m_one);
 		  assert(ccg_l_m_one->check_cc_consistency());
 		  set_removed_coarse_cells_l_m_one.insert(set_tmp.begin(), set_tmp.end());
-		  
+
 	      }
 	      else {
 		// TODO on fait pareil (i.e. on prend le résultat du pop), mais on doit pouvoir trouver mieux.
 		long argmax_nb_common_faces_n_l_m_one = *s_cc.begin();
 		s_cc.erase(*s_cc.begin());
-		
+
 		// print("l_m_one :Swap ", i_fc, i_cc_l_m_one, ccg_l_m_one.get_cc(i_cc_l_m_one),
 		// argmax_nb_common_faces_n_l_m_one,
 		// ccg_l_m_one.get_cc(argmax_nb_common_faces_n_l_m_one), )
@@ -1824,3 +1823,27 @@ void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell
 
 }
 
+
+
+bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
+
+    // All fc are agglomerated
+    assert(_nb_of_agglomerated_fc == _fc_graph.number_of_cells);
+
+    if(!_d_anisotropic_cc.empty()){
+        return true;
+    }
+    else{
+        short goal_compactness=_fc_graph._dimension;
+
+        for(const auto& i_k_v :_d_isotropic_cc){
+            if ((*i_k_v.second).__compactness != goal_compactness){
+                return true;
+            }
+        }
+        if(!_delayed_cc.empty()){
+            return true;
+        }
+        return _fc_graph.s_anisotropic_compliant_cells.empty();
+    }
+}

@@ -2279,6 +2279,81 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_remove_too_small_cc_MGridGen_ext_v
     ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
 }
 
+TEST_F(Box_5x5x5_Dual_Graph, is_cc_grid_not_structured_box_5x5x5) {
+
+    Coarse_Cell_Graph ccg((*g));
+    unordered_set<long> s_fc = {0, 1, 4, 5, 16, 17, 20, 21};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 11, 14, 15, 26, 27, 30, 31};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {2, 3, 6, 7, 18, 19, 22, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {8, 9, 12, 13, 28, 29, 24, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {32, 33, 36, 37, 52, 53, 48, 49};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {34, 35, 38, 39, 50, 51, 54, 55};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {40, 41, 44, 45, 56, 57, 60, 61};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {42, 43, 46, 47, 58, 59, 62, 63};
+    ccg.cc_create_a_cc(s_fc);
+
+//    ccg.cc_create_a_cc({0, 1, 4, 5, 16, 17, 20, 21})
+//    ccg.cc_create_a_cc({10, 11, 14, 15, 26, 27, 30, 31})
+//    ccg.cc_create_a_cc({2, 3, 6, 7, 18, 19, 22, 23})
+//    ccg.cc_create_a_cc({8, 9, 12, 13, 28, 29, 24, 25})
+
+//    ccg.cc_create_a_cc({32, 33, 36, 37, 52, 53, 48, 49})
+//    ccg.cc_create_a_cc({34, 35, 38, 39, 50, 51, 54, 55})
+//    ccg.cc_create_a_cc({40, 41, 44, 45, 56, 57, 60, 61})
+//    ccg.cc_create_a_cc({42, 43, 46, 47, 58, 59, 62, 63})
+
+    ASSERT_FALSE(ccg.is_cc_grid_not_structured());
+
+    Coarse_Cell_Graph ccg_2((*g));
+    s_fc = {0, 1, 4, 5, 16, 17, 20, 21};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 14, 15, 26, 27, 30, 31};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {2, 3, 6, 7, 18, 19, 22, 23, 11};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {8, 9, 12, 13, 28, 29, 24, 25};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {32, 33, 36, 37, 52, 53, 48, 49};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {34, 35, 38, 39, 50, 51, 54, 55};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {40, 41, 44, 45, 56, 57, 60, 61};
+    ccg_2.cc_create_a_cc(s_fc);
+
+    s_fc = {42, 43, 46, 47, 58, 59, 62, 63};
+    ccg_2.cc_create_a_cc(s_fc);
+    //ccg.cc_create_a_cc({0, 1, 4, 5, 16, 17, 20, 21})
+    //ccg.cc_create_a_cc({10, 14, 15, 26, 27, 30, 31})
+    //ccg.cc_create_a_cc({2, 3, 6, 7, 18, 19, 22, 23, 11})
+    //ccg.cc_create_a_cc({8, 9, 12, 13, 28, 29, 24, 25})
+    //
+    //ccg.cc_create_a_cc({32, 33, 36, 37, 52, 53, 48, 49})
+    //ccg.cc_create_a_cc({34, 35, 38, 39, 50, 51, 54, 55})
+    //ccg.cc_create_a_cc({40, 41, 44, 45, 56, 57, 60, 61})
+    //ccg.cc_create_a_cc({42, 43, 46, 47, 58, 59, 62, 63})
+    //    self.assertTrue(ccg.is_cc_grid_not_structured())
+    ASSERT_TRUE(ccg_2.is_cc_grid_not_structured());
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 

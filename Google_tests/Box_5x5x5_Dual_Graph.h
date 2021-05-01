@@ -7,6 +7,7 @@
 
 #include "gtest/gtest.h"
 #include "../CoMMA_lib/Dual_graph.h"
+
 class Box_5x5x5_Dual_Graph : public ::testing::Test {
     // filename_ini = "box_1_rect_5_d_F.hdf"
     // input_directory = os.path.join((*this).cgns_path, os.path.join("0_Inputs", "0_Box"))
@@ -88,6 +89,14 @@ protected:
         vector<int> box_5x5x5_is_on_bnd = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
                                            0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
                                            2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+        unordered_set<long> box_5x5x5_s_anisotropic_compliant_cells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                                                       10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                                                                       20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+                                                                       30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                                                                       40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+                                                                       50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                                                                       60, 61, 62, 63};
+        unordered_set<long> empty_set = {};
 
         box_5x5x5_number_of_cells = 64;
         box_5x5x5_col_ind_size = 344;
@@ -102,12 +111,17 @@ protected:
                            v_box_5x5x5_col_ind,
                            v_box_5x5x5_values,
                            v_box_5x5x5_volumes,
-                           box_5x5x5_d_is_on_bnd);
-
+                           box_5x5x5_d_is_on_bnd,
+                           empty_set,
+                           empty_set,
+                           empty_set,
+                           box_5x5x5_s_anisotropic_compliant_cells
+        );
     }
 
     virtual void TearDown() {
         delete g;
     }
 };
+
 #endif //COMMA_PROJECT_BOX_FIVEXFIVEXFIVE_DUAL_GRAPH_H

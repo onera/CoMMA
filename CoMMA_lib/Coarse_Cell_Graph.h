@@ -19,11 +19,11 @@ public:
         return _nb_of_agglomerated_fc;
 
     }
-    long choose_new_seed(){
+    inline long choose_new_seed(){
         return (*_fc_graph.seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
     }
 
-
+    bool is_cc_grid_not_structured(short goal_card=-1);
 
 public:
     //Private
