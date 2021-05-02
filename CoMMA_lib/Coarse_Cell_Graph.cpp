@@ -1837,13 +1837,30 @@ bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
         short goal_compactness=_fc_graph._dimension;
 
         for(const auto& i_k_v :_d_isotropic_cc){
-            if ((*i_k_v.second).__compactness != goal_compactness){
+            if ((*i_k_v.second).__compactness != goal_compactness) {
                 return true;
             }
         }
-        if(!_delayed_cc.empty()){
+        if (!_delayed_cc.empty()) {
             return true;
         }
         return _fc_graph.s_anisotropic_compliant_cells.empty();
     }
+}
+
+void Coarse_Cell_Graph::correction_main_triconnected(short min_neighbourhood_correction_step,
+                                                     short goal_card,
+                                                     int verbose) {
+    // Not yet implemented
+}
+
+
+void Coarse_Cell_Graph::print_d_distribution_of_cardinal_of_isotropic_cc() {
+
+    unordered_map<unsigned short, long> d_dist = compute_d_distribution_of_cardinal_of_isotropic_cc();
+    cout << "{ ";
+    for (auto &i_k_v : d_dist) {
+        cout << i_k_v.first << ": " << i_k_v.second << ", ";
+    }
+    cout << "}" << endl;
 }

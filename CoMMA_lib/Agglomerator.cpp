@@ -144,7 +144,7 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
      * :param is_order_primary: modify the order of priority for agglomeration. False is the default value and the
     number of face in common is primary. True, the order of neighbourhood is primary
      */
-
+    _set_agglomeration_parameter(false, kind_of_agglomerator, goal_card, -1, max_card);
 //    graph = cc_graph._fc_graph
     // Definition of the current cc
     // remark: does contain seed
@@ -212,11 +212,11 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
     unordered_map<long, unsigned short> d_n_of_seed;
     if (__kind_of_agglomerator == "basic") {
         short compactness = -1;
-        unordered_set<long> s_current_cc = __choose_optimal_cc_basic_v2(seed,
-                                                                        d_n_of_seed,
-                                                                        compactness,
-                                                                        is_order_primary);
-
+        s_current_cc = __choose_optimal_cc_basic_v2(seed,
+                                                    d_n_of_seed,
+                                                    compactness,
+                                                    is_order_primary);
+        cout << "_choose_optimal_cc_and_update_seed_pool_v2 s_current_cc.size() " << s_current_cc.size() << endl;
 //        cout<<"Not yet implemented:__choose_optimal_cc_basic_v2(cc_graph, seed,is_order_primary);"<<endl;
 //        exit(1);
     } else if (__kind_of_agglomerator == "triconnected") {
@@ -895,30 +895,30 @@ void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_
     //====================================
     _agglomerate_sub_sub_isotropic_first_step();
 
-//    if(__cc_graphs.is_cc_grid_not_structured(__goal_card)) {
-//    //     if len(self.__d_cc_to_compactness) != 1 or 3 not in self.__d_cc_to_compactness:
-//
-//    _correction_main_triconnected(cc_graph);
-//}
-//            // pass
-//        // cc_graph._fc_graph.plot_graph("tmp_" + str(i_lvl),
-//        //                               output_directory="/Users/lantos/PycharmProjects/Aggrid/Tests/0_Outputs",
-//        //                               array_to_plot=cc_graph.fc_2_cc)
-//        cc_graph.cc_create_all_delayed_cc()
-//        cc_graph.fill_cc_neighbouring()
-//        // print "After First Step : dict_Distribution_Of_Cardinal_Of_CC", dict_Distribution_Of_Cardinal_Of_CC
-//
-//        // TODO ATTENTION AU CHANGEMENT DE LISTE AVEC LE DELETE!
-//        // TODO voir TP python. Peut etre faire une boucle tant que non vide...
-//        // II) Correction: treatment of incomplete cells!
-//        if self.__kind_of_agglomerator == "basic" and cc_graph.is_cc_grid_not_structured(self.__goal_card):
-//            if self.__verbose:
-//                print("Call of self._correction_main_basic(" + str(i_lvl) + ", cc_graph)")
-//            self._correction_main_basic(cc_graph, debug_only_steps=debug_only_steps)
-//
-//        cc_graph.cc_renumber()
-        __l_nb_of_cells.push_back((*__cc_graphs)._cc_counter);
-        assert((*__cc_graphs).check_data_consistency_and_connectivity());
+    if ((*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+
+//        cout<<"Not yet implemented:_correction_main_triconnected(*__cc_graphs);"<<endl;
+//        exit(1);
+        _correction_main_triconnected();
+    }
+
+    (*__cc_graphs).cc_create_all_delayed_cc();
+    (*__cc_graphs).fill_cc_neighbouring();
+    // print "After First Step : dict_Distribution_Of_Cardinal_Of_CC", dict_Distribution_Of_Cardinal_Of_CC
+
+    // TODO ATTENTION AU CHANGEMENT DE LISTE AVEC LE DELETE!
+    // TODO voir TP python. Peut etre faire une boucle tant que non vide...
+    // II) Correction: treatment of incomplete cells!
+    if (__kind_of_agglomerator == "basic" && (*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+        if (__verbose) {
+            cout << "Call of self._correction_main_basic(...)" << endl;
+        }
+        _correction_main_basic(debug_only_steps);
+    }
+
+    (*__cc_graphs).cc_renumber();
+    __l_nb_of_cells.push_back((*__cc_graphs)._cc_counter);
+    assert((*__cc_graphs).check_data_consistency_and_connectivity());
 }
 
 void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
@@ -936,7 +936,7 @@ void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
         //====================================
         long seed = (*__cc_graphs).choose_new_seed();
         if (__verbose) {
-            cout << "seed = " << seed << "\t"<<(*__cc_graphs).get_number_of_fc_agglomerated()<< endl;
+            cout << "seed = " << seed << "\t" << (*__cc_graphs).get_number_of_fc_agglomerated() << endl;
         }
 
 
@@ -991,7 +991,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
     unordered_set<long> s_seeds = {seed};
 
     // Compute self.__min_neighbourhood order neighbourhood:
-    //====================================
+    //======================================================
     unsigned short max_order_of_neighbourhood = __min_neighbourhood;
     __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
                                             max_order_of_neighbourhood,   //in and out
@@ -1028,9 +1028,183 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
         }
     }
 
-    unordered_set<long> s_fc =  __choose_optimal_cc_basic_v2_sub(seed,
-                                            dict_neighbours_of_seed,
-                                            compactness,
-                                            is_order_primary);
+    unordered_set<long> s_fc = __choose_optimal_cc_basic_v2_sub(seed,
+                                                                dict_neighbours_of_seed,
+                                                                compactness,
+                                                                is_order_primary);
+//    cout << "s_fc.size() " << s_fc.size() << endl;
     return s_fc;
 }
+
+
+void Agglomerator::_correction_main_basic(const short debug_only_steps) {
+
+
+/**
+ * :param debug_only_steps: 0 no correction, 1 first step only, ... 6: all 6 correction steps. 10 (arbitrary strictly greater than 6) all steps
+ */
+
+    const short nb_iteration = 4;
+
+    if (__verbose) {
+        cout << "\nCorrection_main_basic" << endl;
+        cout << "===========================" << endl;
+    }
+
+    for (short i = 0; i < nb_iteration; i++) {
+        if (__verbose) {
+            cout << "\n\n\n" << endl;
+            cout << "\t==========================================" << endl;
+            cout << "\tITERATION\t" << i << endl;
+            cout << "\tnb_cc      :\t" << (*__cc_graphs)._cc_counter;
+            cout << "\tnb_cc iso  :\t" << (*__cc_graphs)._d_isotropic_cc.size();
+            cout << "\tnb_cc aniso:\t" << ((*__cc_graphs)._cc_counter - (*__cc_graphs)._d_isotropic_cc.size());
+            cout << "\n\td_distribution_of_cardinal_of_cc: ";
+            (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+        }
+
+        // Step 1:
+        //======================================================
+        if (debug_only_steps >= 1) {
+
+
+            if (__verbose) {
+                cout << "\n\t// Step 1: remove_too_small_cc" << endl;
+                cout << "\t//=============================" << endl;
+            }
+
+            // Step One: too small coarse cells (1<= size<are agglomerated, fine cell by fine cell
+            // to their "better" neighbour. 1<= Card <= self.__threshold
+
+            (*__cc_graphs).correction_remove_too_small_cc(__threshold_card);
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+
+            if (__verbose) {
+//                print("\t\t----> Correction After step one: dict_DistributionOfCardinalOfCoarseElements",
+//                      cc_graph.d_distribution_of_cardinal_of_isotropic_cc)
+                cout << "\t\t----> Correction After step one: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+            }
+        }
+
+        // Step 2:
+        //======================================================
+        if (debug_only_steps >= 2) {
+
+            if (__verbose) {
+                cout << "\n\t// Step 2: make_small_cc_bigger" << endl;
+                cout << "\t//==============================" << endl;
+            }
+            (*__cc_graphs).correction_make_small_cc_bigger(__threshold_card,
+                                                           __min_card,
+                                                           __goal_card,
+                                                           __verbose);
+            if (__verbose) {
+
+                cout << "\t\t----> end Step 2: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+
+            }
+
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+        }
+
+        // Step 3:
+        //======================================================
+        if (debug_only_steps >= 3) {
+
+            if (__verbose || true) {
+
+                cout << "\n\t// Step 3: swap leaf" << endl;
+                cout << "\t//==============================" << endl;
+            }
+
+            // Swap for every fine cell.
+//            (*__cc_graphs).correction_swap_leaf_fc_v2();
+
+            if (__verbose) {
+
+                cout << "\t\t----> end Step 3: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+
+            }
+
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+        }
+        // Step 4:
+        //======================================================
+        if (debug_only_steps >= 4) {
+
+            if (__verbose) {
+
+                cout << "\n\t// Step 4: swap leaf" << endl;
+                cout << "\t//==============================" << endl;
+            }
+
+
+            // Step four: Too big cells are corrected!
+            // We look for leaves in too big cc and give it to the smallest neighbour without any further consideration
+            // (no card, or anything else)
+            (*__cc_graphs).correction_reduce_too_big_cc(__goal_card, __verbose);
+
+            if (__verbose) {
+
+                cout << "\t\t----> end Step 4: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+
+            }
+
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+
+        }
+
+
+        // Step 5:
+        //======================================================
+        if (debug_only_steps >= 5) {
+
+            if (__verbose || true) {
+
+                cout << "\n\t// Step 5: split_too_big_cc_in_two" << endl;
+                cout << "\t//=================================" << endl;
+            }
+
+
+//            _correction_split_too_big_cc_in_two((*__cc_graphs));
+
+            if (__verbose) {
+
+                cout << "\t\t----> end Step 5: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+
+            }
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+        }
+        // Step 6:
+        //======================================================
+        if (debug_only_steps >= 6) {
+
+            if (__verbose) {
+
+                cout << "\n\t// Step 6: remove_too_small_cc" << endl;
+                cout << "\t//===============================" << endl;
+            }
+            (*__cc_graphs).correction_remove_too_small_cc(__threshold_card);
+
+            if (__verbose) {
+
+                cout << "\t\t----> end Step 6: distribution_of_cardinal_of_isotropic_cc ";
+                (*__cc_graphs).print_d_distribution_of_cardinal_of_isotropic_cc();
+
+            }
+            assert((*__cc_graphs).check_data_consistency_and_connectivity());
+        }
+    }
+}
+
+void Agglomerator::_correction_main_triconnected() {
+    (*__cc_graphs).correction_main_triconnected(__min_neighbourhood_correction_step,
+                                                __goal_card,
+                                                __verbose);
+}
+

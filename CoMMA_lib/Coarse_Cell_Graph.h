@@ -15,15 +15,24 @@ public:
                       vector<long> debug_only_fc_to_cc = vector<long>(),
                       forward_list<deque<long> *> *debug_a_anisotropic_lines = NULL);
 
-    inline long get_number_of_fc_agglomerated(){
+    inline long get_number_of_fc_agglomerated() {
         return _nb_of_agglomerated_fc;
 
     }
-    inline long choose_new_seed(){
+
+    inline long choose_new_seed() {
         return (*_fc_graph.seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
     }
 
-    bool is_cc_grid_not_structured(short goal_card=-1);
+    bool is_cc_grid_not_structured(short goal_card = -1);
+
+    void correction_main_triconnected(short min_neighbourhood_correction_step,
+                                      short goal_card,
+                                      int verbose = false);
+
+    unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
+
+    void print_d_distribution_of_cardinal_of_isotropic_cc();
 
 public:
     //Private
@@ -125,16 +134,15 @@ public:
     void correction_make_small_cc_bigger(const unsigned short &min_card,
                                          const unsigned short &goal_card,
                                          const unsigned short &threshold_card,
-                                         bool verbose=false);
+                                         bool verbose = false);
 
     void correction_reduce_too_big_cc(const unsigned short &goal_card,
-                                      const unsigned short & verbose= 0);
+                                      const unsigned short &verbose = 0);
 
     void correction_remove_too_small_cc(const unsigned short &threshold_card);
 
-    void cc_split_non_connected_cc(const long& i_cc);
+    void cc_split_non_connected_cc(const long &i_cc);
 
-    unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
     void cc_remove_deleted_cc(unordered_set<long> set_removed_cc);
 

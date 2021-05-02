@@ -40,6 +40,9 @@ public:
                                                                    bool increase_neighbouring = true  // _correction_split_too_big_cc_in_two(...)
     );
 
+    void _correction_main_basic(const short debug_only_steps = 10);
+
+    void _correction_main_triconnected();
 
 public:
     //to sort public/private
