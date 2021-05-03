@@ -1180,6 +1180,7 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, get_cc_of_size_Box_5x5x5_aniso_MG_1_level) {
     ASSERT_EQ(empty_set, ccg.get_s_isotropic_cc_of_size());
 }
 
+
 TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_1) {
 
     //===================================================================//
@@ -1523,6 +1524,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, split_non_connected_cc_9_Squares_5) {
     ASSERT_EQ(ref_dist, ccg.compute_d_distribution_of_cardinal_of_isotropic_cc());
 
 }
+
 
 TEST_F(Example_One_Dual_Graph, correction_make_small_cc_bigger_case_1_Example_One) {
 
@@ -2279,6 +2281,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_remove_too_small_cc_MGridGen_ext_v
     ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
 }
 
+
 TEST_F(Box_5x5x5_Dual_Graph, is_cc_grid_not_structured_box_5x5x5) {
 
     Coarse_Cell_Graph ccg((*g));
@@ -2306,16 +2309,6 @@ TEST_F(Box_5x5x5_Dual_Graph, is_cc_grid_not_structured_box_5x5x5) {
     s_fc = {42, 43, 46, 47, 58, 59, 62, 63};
     ccg.cc_create_a_cc(s_fc);
 
-//    ccg.cc_create_a_cc({0, 1, 4, 5, 16, 17, 20, 21})
-//    ccg.cc_create_a_cc({10, 11, 14, 15, 26, 27, 30, 31})
-//    ccg.cc_create_a_cc({2, 3, 6, 7, 18, 19, 22, 23})
-//    ccg.cc_create_a_cc({8, 9, 12, 13, 28, 29, 24, 25})
-
-//    ccg.cc_create_a_cc({32, 33, 36, 37, 52, 53, 48, 49})
-//    ccg.cc_create_a_cc({34, 35, 38, 39, 50, 51, 54, 55})
-//    ccg.cc_create_a_cc({40, 41, 44, 45, 56, 57, 60, 61})
-//    ccg.cc_create_a_cc({42, 43, 46, 47, 58, 59, 62, 63})
-
     ASSERT_FALSE(ccg.is_cc_grid_not_structured());
 
     Coarse_Cell_Graph ccg_2((*g));
@@ -2342,18 +2335,99 @@ TEST_F(Box_5x5x5_Dual_Graph, is_cc_grid_not_structured_box_5x5x5) {
 
     s_fc = {42, 43, 46, 47, 58, 59, 62, 63};
     ccg_2.cc_create_a_cc(s_fc);
-    //ccg.cc_create_a_cc({0, 1, 4, 5, 16, 17, 20, 21})
-    //ccg.cc_create_a_cc({10, 14, 15, 26, 27, 30, 31})
-    //ccg.cc_create_a_cc({2, 3, 6, 7, 18, 19, 22, 23, 11})
-    //ccg.cc_create_a_cc({8, 9, 12, 13, 28, 29, 24, 25})
-    //
-    //ccg.cc_create_a_cc({32, 33, 36, 37, 52, 53, 48, 49})
-    //ccg.cc_create_a_cc({34, 35, 38, 39, 50, 51, 54, 55})
-    //ccg.cc_create_a_cc({40, 41, 44, 45, 56, 57, 60, 61})
-    //ccg.cc_create_a_cc({42, 43, 46, 47, 58, 59, 62, 63})
-    //    self.assertTrue(ccg.is_cc_grid_not_structured())
     ASSERT_TRUE(ccg_2.is_cc_grid_not_structured());
 }
+
+
+TEST_F(Example_One_Dual_Graph, correction_swap_leaf_fc_v2_Example_One) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {0, 2};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {4, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {1, 3, 6};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {7, 8};
+    ccg.cc_create_a_cc(s_fc);
+
+    vector<long> ref_fc_2_cc = {0, 2, 0, 2, 1, 1, 2, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.fill_cc_neighbouring();
+    ccg.correction_swap_leaf_fc_v2();
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+
+    ref_fc_2_cc = {0, 0, 0, 3, 1, 1, 1, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_Dual_Graph, correction_swap_leaf_fc_v2_MGridGen_Dual_Graph) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {0, 1, 2, 3, 5, 6};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {4, 7, 8, 9, 12};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 11, 13, 14};
+    ccg.cc_create_a_cc(s_fc);
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 2, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.fill_cc_neighbouring();
+    ccg.correction_swap_leaf_fc_v2();
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+
+    ref_fc_2_cc = {0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 2, 1, 2, 2};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_swap_leaf_fc_v2_MGridGen_ext_v2_Dual_Graph) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {0, 1, 2, 3, 4, 25};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {6, 7, 5};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {10, 11, 12, 13, 24};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {8, 9, 15, 16, 17};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {18, 19, 20, 21, 23};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {14, 22};
+    ccg.cc_create_a_cc(s_fc);
+
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0,
+                                1, 1, 1, 3, 3,
+                                2, 2, 2, 2, 5,
+                                3, 3, 3, 4, 4,
+                                4, 4, 5, 4, 2, 0};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ccg.fill_cc_neighbouring();
+    ccg.correction_swap_leaf_fc_v2();
+    ASSERT_TRUE(ccg.check_data_consistency_and_connectivity());
+
+    //ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 4, 4, 5, 5, 3, 3, 3, 4, 4, 4, 4, 5, 4, 3, 1}; is also correct
+    ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 4, 4, 1, 4, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 

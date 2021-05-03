@@ -152,7 +152,7 @@ public:
 
     unordered_map<long, unordered_set<long>> compute_dict_faces_in_common_faces_with_cc_neighbourhood(long i_fc);
 
-    void correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell_Graph * ccg_l_m_one = NULL, int verbose = 1);
+    void correction_swap_leaf_fc_v2(int nb_iteration = 5, Coarse_Cell_Graph *ccg_l_m_one = NULL, int verbose = 1);
 
     //protected:
     int _verbose;
