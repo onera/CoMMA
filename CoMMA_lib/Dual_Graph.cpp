@@ -1410,10 +1410,10 @@ unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long
     return max_dict;
 }
 
-int Dual_Graph::remove_separating_vertex(long seed,
-                                         unordered_map<long, queue<long> *> d_spanning_tree,
-                                         unordered_set<long> &s_fc,
-                                         long verbose) {
+void Dual_Graph::remove_separating_vertex(long seed,
+                                          unordered_map<long, queue<long> *> d_spanning_tree,
+                                          unordered_set<long> &s_fc,
+                                          long verbose) {
     // TODO Check pertinence of the algorithm. Can we do better???
     //The bipartition of the too big cell is a complex problem.
     //This is a stupid version of a solution.
@@ -1639,7 +1639,7 @@ int Dual_Graph::remove_separating_vertex(long seed,
 
 // TODO Ici on utilise le card...
 // TODO Est-ce qu'utiliser une autre metrique serait pertinent?
-void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
+void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                              unsigned short &nb_of_order_of_neighbourhood,
                                              unordered_map<long, unsigned short> &d_n_of_seed,
                                              const unsigned short max_card,

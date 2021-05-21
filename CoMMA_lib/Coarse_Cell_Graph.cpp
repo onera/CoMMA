@@ -29,7 +29,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
         unordered_map<long, unordered_set<long>> d_cc;
         long i_fc = 0;
         long nb_cc = 0;  //computes the max of i_cc
-        for (const long &i_cc:debug_only_fc_to_cc) {
+        for (const long i_cc:debug_only_fc_to_cc) {
             if (nb_cc < i_cc) {
                 nb_cc = i_cc;
             }
@@ -39,6 +39,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
             } else {
                 d_cc[i_cc] = unordered_set<long>({i_fc});
             }
+            i_fc++;
         }
 
         unordered_set<long> s_anisotropic_cc;
@@ -1688,6 +1689,7 @@ bool compare_size(pair<long, unordered_set<long>> a, pair<long, unordered_set<lo
 
 void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell_Graph *ccg_l_m_one, int verbose) {
 
+    //TODO remove ccg_l_m_one usage: no more MG correction!
     //TODO work only on border fc!!!
     unordered_set<long> set_removed_coarse_cells_l_m_one;
     int iteration(0);

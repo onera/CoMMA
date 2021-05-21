@@ -135,13 +135,13 @@ public :
     unordered_map<long, queue<long> *> find_seed_via_frontal_method(long &max_seed,
                                                                     vector<long> listOfFineCells);
 
-    int remove_separating_vertex(long seed,
-                                 unordered_map<long, queue<long> *> d_spanning_tree,
-                                 unordered_set<long> &s_fc,
-                                 long verbose = 0);
+    void remove_separating_vertex(long seed,
+                                  unordered_map<long, queue<long> *> d_spanning_tree,
+                                  unordered_set<long> &s_fc,
+                                  long verbose = 0);
 
 
-    void compute_neighbourhood_of_cc(const unordered_set<long> &s_seeds,
+    void compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                      unsigned short &nb_of_order_of_neighbourhood,
                                      unordered_map<long, unsigned short> &d_n_of_seed,
                                      const unsigned short max_card,
