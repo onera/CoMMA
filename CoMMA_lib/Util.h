@@ -4,16 +4,21 @@
 
 #ifndef COMMA_PROJECT_UTIL_H
 #define COMMA_PROJECT_UTIL_H
+
 #include <assert.h>
 #include <deque>
+#include <queue>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <list>
 #include <forward_list>
 #include <cmath>
+#include <iostream>
+
 
 using namespace std;
+
 void convert_agglomeration_lines_arrays_to_agglomeration_lines(
         const unsigned long fineAgglomerationLines_array_Idx_size,
         const unsigned long fineAgglomerationLines_array_size,
@@ -51,5 +56,6 @@ inline unordered_set<long> d_keys_to_set(const unordered_map<long, unsigned shor
 return s_neighbours_of_seed;
 }
 
+void print_queue(queue<long> q);
 
 #endif //COMMA_PROJECT_UTIL_H

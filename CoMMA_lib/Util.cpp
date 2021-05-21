@@ -89,3 +89,11 @@ list<unordered_set<long>> parts_list(vector<long> seq, int length) {
     return p;
 }
 
+void print_queue(queue<long> q) {
+    cout << "[";
+    while (!q.empty()) {
+        cout << q.front() << ", ";
+        q.pop();
+    }
+    cout << "]" << endl;
+}
