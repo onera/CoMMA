@@ -1299,19 +1299,16 @@ unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long
             queueOfNewSeed.pop();
             argSeed = dict_inv_listOfFineCells[seed];
 
-            long ind = _m_CRS_Row_Ptr[seed];
-            long ind_p_one = _m_CRS_Row_Ptr[seed + 1];
-            for (long iNCell = ind; iNCell < ind_p_one; ++iNCell) // Process of Neighbours
-            {
-                long indNeighborCell = _m_CRS_Col_Ind[iNCell];
-//                cout<<"\t"<<indNeighborCell<<endl;
-                if ((indNeighborCell != seed) && (setOfFineCells.count(indNeighborCell) == 1)) {
+            for (const long i_fc_n : get_neighbours(seed)) {
 
-                    int arg = dict_inv_listOfFineCells[indNeighborCell];
+//                cout<<"\t"<<i_fc_n<<endl;
+                if ((i_fc_n != seed) && (setOfFineCells.count(i_fc_n) == 1)) {
+
+                    int arg = dict_inv_listOfFineCells[i_fc_n];
 
                     if (colour[arg] == -1) {
                         colour[arg] = colour[argSeed] + 1;
-                        queueOfNewSeed.push(indNeighborCell);
+                        queueOfNewSeed.push(i_fc_n);
                         //cout<<"queueOfNewSeed.front() "<<queueOfNewSeed.front()<<endl;
                         if (maxColour < colour[argSeed] + 1) {
                             maxColour = colour[argSeed] + 1;
@@ -1319,9 +1316,9 @@ unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long
                     }
                     // building of connectivity tree:
                     if (dict_ConnectivityTree.count(seed) == 1) {
-                        (*dict_ConnectivityTree[seed]).push(indNeighborCell);
+                        (*dict_ConnectivityTree[seed]).push(i_fc_n);
                     } else {
-                        dict_ConnectivityTree[seed] = new queue<long>({indNeighborCell});
+                        dict_ConnectivityTree[seed] = new queue<long>({i_fc_n});
                     }
 
                 }
@@ -1345,6 +1342,7 @@ unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long
                 for (auto iPairMD:max_dict) {
                     delete iPairMD.second;
                 }
+                max_dict.clear();
                 for (auto iPairDict:dict_ConnectivityTree) {
                     max_dict[iPairDict.first] = iPairDict.second;
 //                    while(!(*iPair.second).empty())
@@ -1411,7 +1409,7 @@ unordered_map<long, queue<long> *> Dual_Graph::find_seed_via_frontal_method(long
 }
 
 void Dual_Graph::remove_separating_vertex(long seed,
-                                          unordered_map<long, queue<long> *> d_spanning_tree,
+                                          unordered_map<long, queue<long> *> &d_spanning_tree,
                                           unordered_set<long> &s_fc,
                                           long verbose) {
     // TODO Check pertinence of the algorithm. Can we do better???
@@ -1436,6 +1434,7 @@ void Dual_Graph::remove_separating_vertex(long seed,
 
     // If seed is not on a cycle, we move as much as possible until we face a vertex of third degree (Cycle).
     while (d_spanning_tree.count(iter_seed)) {
+
         if ((*d_spanning_tree[iter_seed]).size() == 1) {
             first_cc.insert(iter_seed);
             second_cc.erase(iter_seed);
@@ -1448,17 +1447,18 @@ void Dual_Graph::remove_separating_vertex(long seed,
     if (verbose) {
         cout << "iter_seed " << iter_seed << " d_spanning_tree.count(iter_seed) "
              << d_spanning_tree.count(iter_seed) << endl;
-        cout << "[";
+        cout << "first_cc: [";
         for (auto i : first_cc) {
             cout << i << ", ";
         }
-        cout << "]";
+        cout << "] second_cc:";
         cout << "[";
         for (auto i : second_cc) {
             cout << i << ", ";
         }
         cout << "]" << endl;
     }
+
     if (d_spanning_tree.count(iter_seed) == 1) {
 
         unordered_set<long> s_l({iter_seed});  // = set([iter_seed])
@@ -1468,7 +1468,7 @@ void Dual_Graph::remove_separating_vertex(long seed,
 
 //            print "\ns_l", s_l
             if (verbose) {
-                cout << "\ts_l = [";
+                cout << "\n\ts_l = [";
 
                 for (auto iFineCell: s_l) {
                     cout << iFineCell << ", ";

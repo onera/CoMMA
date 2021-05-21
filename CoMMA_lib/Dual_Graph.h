@@ -136,7 +136,7 @@ public :
                                                                     vector<long> listOfFineCells);
 
     void remove_separating_vertex(long seed,
-                                  unordered_map<long, queue<long> *> d_spanning_tree,
+                                  unordered_map<long, queue<long> *> &d_spanning_tree,
                                   unordered_set<long> &s_fc,
                                   long verbose = 0);
 
