@@ -116,7 +116,9 @@ void Agglomerator::__agglomerate_one_level(
     } else {
 
         // For debug purpose:
-        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs);
+        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs, __verbose, debug_only_fc_to_cc);
+        (*__cc_graphs).fill_cc_neighbouring();
+        __l_nb_of_cells.push_back((*__cc_graphs)._cc_counter);
     }
 }
 
@@ -1120,7 +1122,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
             }
 
             // Swap for every fine cell.
-//            (*__cc_graphs).correction_swap_leaf_fc_v2();
+            (*__cc_graphs).correction_swap_leaf_fc_v2();
 
             if (__verbose) {
 
@@ -1137,7 +1139,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 
             if (__verbose) {
 
-                cout << "\n\t// Step 4: swap leaf" << endl;
+                cout << "\n\t// Step 4: correction_reduce_too_big_cc" << endl;
                 cout << "\t//==============================" << endl;
             }
 
@@ -1163,14 +1165,15 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
         //======================================================
         if (debug_only_steps >= 5) {
 
-            if (__verbose || true) {
+            if (__verbose) {
 
                 cout << "\n\t// Step 5: split_too_big_cc_in_two" << endl;
                 cout << "\t//=================================" << endl;
             }
 
-
-//            _correction_split_too_big_cc_in_two((*__cc_graphs));
+//            cout << "Not yet implemented" << endl;
+//            exit(1);
+            _correction_split_too_big_cc_in_two();
 
             if (__verbose) {
 
@@ -1208,3 +1211,200 @@ void Agglomerator::_correction_main_triconnected() {
                                                 __verbose);
 }
 
+
+// Coarse Graph
+void Agglomerator::_correction_split_too_big_cc_in_two() {
+
+/**
+ *  Can't be transfered to CCG because of the _choose_optimal_cc_and_update_seed_pool call
+ */
+
+    if ((*__cc_graphs).is_agglomeration_done()) {
+
+        unordered_set<long> s_cc = (*__cc_graphs).get_s_isotropic_cc_of_size(__max_card + 1);
+
+        if (__verbose) {
+            cout << "\n\n\n\t\t_correction_split_too_big_cc_in_two max_size" << endl;
+            cout << "\t\t=======================================================\n" << endl;
+            cout << "s_cc: {";
+            for (const long i_cc:s_cc) {
+                cout << i_cc << ", ";
+            }
+            cout << "}" << endl;
+        }
+
+
+        for (const long i_cc :s_cc) {
+
+            unordered_set<long> s_fc = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
+            vector<long> v_fc;
+            for (const long i_fc :s_fc) {
+                v_fc.push_back(i_fc);
+            }
+            long seed = -1;
+            unordered_map<long, queue<long> *> d_spanning_tree = __fc_graphs.find_seed_via_frontal_method(seed, v_fc);
+
+            if (__verbose) {
+                cout << "\nToo Big Cell: " << i_cc << " {";
+                for (const long i_cc:s_fc) {
+                    cout << i_cc << ", ";
+                }
+                cout << "}" << endl;
+
+                cout << "seed " << seed << endl;
+//                print("seed", seed, "d_spanning_tree", d_spanning_tree)
+                for (auto i : d_spanning_tree) {
+                    cout << i.first << ":\t";
+                    print_queue(*d_spanning_tree[i.first]);
+                }
+            }
+
+
+            // We remove from the s_of_fc the cells of degree greater than (or equal to) 3.
+            __fc_graphs.remove_separating_vertex(seed, d_spanning_tree, s_fc);
+            //Rk: s_fc is modified.
+
+            if (__verbose) {
+                cout << "after remove_separating_vertex" << endl;
+                cout << "s_fc: {";
+                for (const long i_fc:s_fc) {
+                    cout << i_fc << ", ";
+                }
+                cout << "}" << endl;
+            }
+
+
+            // Computation of the neighbourhood:
+
+            unordered_set<long> s_seeds = {seed};
+            unsigned short max_order_of_neighbourhood = 3;
+            unordered_map<long, unsigned short> d_neighbours_of_seed = {};
+            __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
+                                                    max_order_of_neighbourhood,
+                                                    d_neighbours_of_seed,
+                                                    __max_card,
+                                                    (*__cc_graphs)._a_is_fc_agglomerated,
+                                                    s_fc);
+
+            if (__verbose) {
+
+                cout << "dict_neighbours_of_seed: {";
+                for (const auto i_k_v:d_neighbours_of_seed) {
+                    cout << i_k_v.first << ":" << i_k_v.second << ", ";
+                }
+                cout << "}" << endl;
+            }
+
+            if (d_neighbours_of_seed.empty()) {
+
+                // If d_neighbours_of_seed is empty
+                // We transfer the seed to one of its coarse neighbour.
+                vector<long> a_fc_neighbours = __fc_graphs.get_neighbours(seed);
+
+                for (const long i_fc_n : a_fc_neighbours) {
+//                    original_s_fc = cc_graph.get_cc(i_cc).get_s_fc();
+                    unordered_set<long> original_s_fc = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
+                    if (i_fc_n != seed && original_s_fc.count(i_fc_n) == 0) {
+                        long i_cc_n = (*__cc_graphs)._fc_2_cc[i_fc_n];
+                        if ((*__cc_graphs).is_isotropic_cc(i_cc_n)) {
+                            unordered_set<long> s_fc_n = (*(*__cc_graphs)._d_isotropic_cc[i_cc_n]).get_s_fc();
+                            if (s_fc_n.size() < __max_card) {
+
+                                unordered_set<long> s_removed_cc = (*__cc_graphs).cc_swap_fc(s_seeds, i_cc, i_cc_n);
+                                assert(s_removed_cc.size() == 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                short compactness = -1;
+                // dict_neighbours_of_seed is not empty:
+                unordered_set<long> s_of_fc_for_current_cc = _choose_optimal_cc_and_update_seed_pool((*__cc_graphs),
+                                                                                                     seed,
+                                                                                                     d_neighbours_of_seed,
+                                                                                                     __min_card,
+                                                                                                     __max_card,
+                                                                                                     __kind_of_agglomerator,
+                                                                                                     compactness,
+                                                                                                     true,
+                                                                                                     false);
+                if (__verbose) {
+                    cout << "s_of_fc_for_current_cc: {";
+                    for (const long i_fc:s_of_fc_for_current_cc) {
+                        cout << i_fc << ", ";
+                    }
+                    cout << "}" << endl;
+                }
+
+                // Creation of an empty coarse cell:
+                unordered_set<long> empty_set = unordered_set<long>({});
+                long ind_of_current_cc = (*__cc_graphs).cc_create_a_cc(empty_set);
+                // ind_of_current_cc is the index of the newly created cc
+
+                // We want that the new cell to be the smallest of the two.
+                short size_original_i_cc = s_fc.size();
+                short size_new_cc = s_of_fc_for_current_cc.size();
+
+                if (size_new_cc > size_original_i_cc - size_new_cc) {
+                    unordered_set<long> s_complementary = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
+
+                    // s_complementary = cc_graph.get_cc(i_cc).get_s_fc() - s_of_fc_for_current_cc
+                    for (const long i_fc :s_of_fc_for_current_cc) {
+                        if (s_complementary.count(i_fc)) {
+                            s_complementary.erase(i_fc);
+                        }
+                    }
+
+                    unordered_set<long> s_removed_cc = (*__cc_graphs).cc_swap_fc(s_complementary, i_cc, ind_of_current_cc);
+                    if (__verbose) {
+                        cout << "Cell 1: {";
+                        for (const long i_fc:s_of_fc_for_current_cc) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "} Cell 2 : {";
+                        for (const long i_fc:s_complementary) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "}" << endl;
+                    }
+                    assert(s_removed_cc.empty());
+
+                } else {
+                    unordered_set<long> s_removed_cc = (*__cc_graphs).cc_swap_fc(s_of_fc_for_current_cc, i_cc, ind_of_current_cc);
+
+                    unordered_set<long> s_complementary = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
+                    // s_complementary = cc_graph.get_cc(i_cc).get_s_fc() - s_of_fc_for_current_cc
+                    for (const long i_fc :s_of_fc_for_current_cc) {
+                        if (s_complementary.count(i_fc)) {
+                            s_complementary.erase(i_fc);
+                        }
+                    }
+                    if (__verbose) {
+                        cout << "Cell 1: {";
+                        for (const long i_fc:s_complementary) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "} Cell 2 : {";
+                        for (const long i_fc:s_of_fc_for_current_cc) {
+                            cout << i_fc << ", ";
+                        }
+                        cout << "}" << endl;
+                    }
+
+                    assert(s_removed_cc.empty());
+                }
+
+
+                assert(__fc_graphs.check_connectivity((*(*__cc_graphs)._d_isotropic_cc[ind_of_current_cc]).get_s_fc()));
+
+            }
+
+            if (__checks) {
+                assert(__fc_graphs.check_connectivity((*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc()));
+            }
+
+        }
+
+    }
+}

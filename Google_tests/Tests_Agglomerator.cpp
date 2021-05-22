@@ -4,8 +4,10 @@
 #include "../CoMMA_lib/Dual_Graph.h"
 #include "../CoMMA_lib/First_Order_Neighbourhood.h"
 #include "MGridGen_Dual_Graph.h"
+#include "MGridGen_ext_v2_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "gtest/gtest.h"
+
 
 TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {
 
@@ -98,7 +100,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     unsigned short min_card = 0;
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
-    string kind_of_agglomerator="basic";
+    string kind_of_agglomerator = "basic";
 
     agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
@@ -439,9 +441,409 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
                                     checks);
 
     agg.agglomerate_one_level(false);
+    ASSERT_EQ(4, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 3, 3, 0, 1, 1, 1, 1, 0, 1, 0, 0};  //no change between step 1 and step 2
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }
 
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_without_correction) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 0;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(4, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 3, 3, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+//    agg.get_agglo_lines
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_1) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 1;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(3, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
+
+    //no change in adding step 2
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 2;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(3, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0}; //no change in adding step 2
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+//    agg.get_agglo_lines
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_3) {
+
+    //no change in adding step 3
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 3;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(3, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 3
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_4) {
+
+    //no change in adding step 4
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 4;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(3, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 4
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+//    agg.get_agglo_lines
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {};
+
+    const short debug_only_steps = 5;
+    agg.agglomerate_one_level(false,
+                              "basic",
+                              -1, -1, -1,
+                              nb_aniso_agglo_lines, anisotropic_lines,
+                              debug_only_fc_to_cc,
+                              debug_only_steps);
+    ASSERT_EQ(4, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};  //no change in adding step 4
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+//    agg.get_agglo_lines
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_ext_v2_MG_1_level) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = false;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short goal_card = -1;
+    short min_card = -1;
+    short max_card = -1;
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0, 4, 1, 1, 3, 5, 5, 4, 4, 4, 2, 3, 3, 5, 5, 2, 2, 2, 2, 5, 5, 1};
+    //    np.array([0, 0, 0, 0, 0, 0])]
+    agg.agglomerate_one_level(is_anisotropic,
+                              kind_of_agglomerator,
+                              goal_card,
+                              min_card,
+                              max_card,
+                              nb_aniso_agglo_lines,
+                              aniso_agglo_lines,
+                              debug_only_fc_to_cc);
+    ASSERT_EQ(debug_only_fc_to_cc, agg.__cc_graphs->_fc_2_cc);
+    unordered_set<long> s_fc = (*(*agg.__cc_graphs)._d_isotropic_cc[5]).get_s_fc();
+    vector<long> v_fc;
+    for (const long i_fc :s_fc) {
+        v_fc.push_back(i_fc);
+    }
+    long seed = -1;
+    unordered_map<long, queue<long> *> dict_ConnectivityTree = (*g).find_seed_via_frontal_method(seed, v_fc);
+
+    EXPECT_EQ(18, seed);   // correct answer 1, 3, 6
+    unordered_map<long, queue<long> *> ref_max_dict;
+    ref_max_dict[9] = new queue<long>({10, 17, 18, 23, 24});
+    ref_max_dict[10] = new queue<long>({9, 23, 24});
+    ref_max_dict[17] = new queue<long>({9, 18, 24});
+    ref_max_dict[18] = new queue<long>({9, 17, 23});
+    ref_max_dict[23] = new queue<long>({9, 10, 18});
+    ref_max_dict[24] = new queue<long>({9, 10, 17});
+
+    for (auto i : dict_ConnectivityTree) {
+
+//        cout<<i.first<<"\t"<< i.second<<"\t"<< (*i.second).size()<<"\t"<<(*dict_ConnectivityTree[i.first]).size()<<endl;
+//        print_queue(*dict_ConnectivityTree[i.first]);
+        ASSERT_EQ(*ref_max_dict[i.first], *dict_ConnectivityTree[i.first]);
+    }
+    agg._correction_split_too_big_cc_in_two();
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 4, 1, 1, 3, 6, 5, 4, 4, 4, 2, 3, 3, 6, 6, 2, 2, 2, 2, 5, 5, 1};
+    ASSERT_EQ(ref_fc_2_cc, agg.__cc_graphs->_fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_ext_v2_MG_1_level_bis) {
+
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = false;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    bool is_anisotropic = false;
+    unsigned short min_card = -1;
+    unsigned short goal_card = -1;
+    unsigned short max_card = -1;
+    string kind_of_agglomerator = "basic";
+
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+    agg.__cc_graphs = new Coarse_Cell_Graph(agg.__fc_graphs);
+
+    //    creer la meme agglo avec la creation des cc a la main.
+//    Je pense que c est un truc pas bien initialise.
+    vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0,
+                                        4, 1, 1, 3, 5,
+                                        5, 4, 4, 4, 2,
+                                        3, 3, 5, 5, 2, 2, 2, 2, 5, 5, 1};
+
+    unordered_set<long> s_fc = {0, 1, 2, 3, 4};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    s_fc = {6, 7, 25};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    s_fc = {14, 19, 20, 21, 22};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    s_fc = {8, 15, 16};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    s_fc = {5, 11, 12, 13};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    s_fc = {9, 10, 17, 18, 23, 24};
+    (*agg.__cc_graphs).cc_create_a_cc(s_fc);
+
+    (*agg.__cc_graphs).fill_cc_neighbouring();
+    //    np.array([0, 0, 0, 0, 0, 0])]
+//    agg.agglomerate_one_level(is_anisotropic,
+//                              kind_of_agglomerator,
+//                              goal_card,
+//                              min_card,
+//                              max_card,
+//                              nb_aniso_agglo_lines,
+//                              aniso_agglo_lines,
+//                              debug_only_fc_to_cc);
+    ASSERT_EQ(debug_only_fc_to_cc, agg.__cc_graphs->_fc_2_cc);
+    agg._correction_split_too_big_cc_in_two();
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 4, 1, 1, 3, 6, 5, 4, 4, 4, 2, 3, 3, 6, 6, 2, 2, 2, 2, 5, 5, 1};
+    ASSERT_EQ(ref_fc_2_cc, agg.__cc_graphs->_fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_ext_v2_MG_1_level_Agglo_2) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = false;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short goal_card = -1;
+    short min_card = -1;
+    short max_card = -1;
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0,
+                                        0, 0, 0, 1, 1,
+                                        1, 2, 2, 2, 2,
+                                        1, 1, 1, 1, 2,
+                                        2, 2, 2, 1, 1,
+                                        0};
+    //    np.array([0, 0, 0, 0, 0, 0])]
+    agg.agglomerate_one_level(is_anisotropic,
+                              kind_of_agglomerator,
+                              goal_card,
+                              min_card,
+                              max_card,
+                              nb_aniso_agglo_lines,
+                              aniso_agglo_lines,
+                              debug_only_fc_to_cc);
+    ASSERT_EQ(debug_only_fc_to_cc, agg.__cc_graphs->_fc_2_cc);
+
+    agg._correction_split_too_big_cc_in_two();
+    vector<long> ref_fc_2_cc = {3, 3, 3, 0, 0, 0, 0, 0, 1, 1, 1, 5, 5, 5, 2, 4, 4, 4, 1, 2, 2, 2,
+                                2, 1, 1, 0};
+    ASSERT_EQ(ref_fc_2_cc, agg.__cc_graphs->_fc_2_cc);
+}
+
+TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_ext_v2_MG_1_level_Agglo_3) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = false;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short goal_card = -1;
+    short min_card = -1;
+    short max_card = -1;
+    unsigned long nb_aniso_agglo_lines = 0;
+    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0,
+                                        0, 1, 1, 3, 2,
+                                        3, 1, 1, 1, 2,
+                                        3, 3, 3, 3, 2,
+                                        2, 2, 1, 2, 3,
+                                        0};
+    //    np.array([0, 0, 0, 0, 0, 0])]
+    agg.agglomerate_one_level(is_anisotropic,
+                              kind_of_agglomerator,
+                              goal_card,
+                              min_card,
+                              max_card,
+                              nb_aniso_agglo_lines,
+                              aniso_agglo_lines,
+                              debug_only_fc_to_cc);
+    ASSERT_EQ(debug_only_fc_to_cc, agg.__cc_graphs->_fc_2_cc);
+
+    agg._correction_split_too_big_cc_in_two();
+    vector<long> ref_fc_2_cc = {4, 4, 4, 0, 0,
+                                0, 1, 1, 3, 2,
+                                3, 6, 6, 1, 7,
+                                5, 5, 5, 5, 2,
+                                7, 7, 1, 2, 3, 0};
+//    {4, 4, 4, 0, 0, 0, 5, 5, 3, 2, 3, 1, 1, 1, 6, 7, 7, 7, 7, 2, 6, 6, 1, 2, 3, 0}; is also correct
+
+    ASSERT_EQ(ref_fc_2_cc, agg.__cc_graphs->_fc_2_cc);
+}
 /////////////////
 /////////////////
 /////////////////

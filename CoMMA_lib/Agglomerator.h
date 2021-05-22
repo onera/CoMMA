@@ -44,6 +44,7 @@ public:
 
     void _correction_main_triconnected();
 
+    void _correction_split_too_big_cc_in_two();
 public:
     //to sort public/private
 
