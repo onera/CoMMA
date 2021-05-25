@@ -693,6 +693,7 @@ bool Coarse_Cell_Graph::_check_consistency() {
 /**
  *  We check that the data are consistant between dict_cc, dict_Card_Coarse_Cells and fc_to_cc
  */
+    assert(is_agglomeration_done());
 
     bool result = true;
 
@@ -778,6 +779,7 @@ bool Coarse_Cell_Graph::_check_consistency() {
             }
             result = result && _d_anisotropic_cc[i_cc].count(i_fc);
         } else {
+            cerr << "Coarse_Cell_Graph::_check_consistency() ";
             cerr << "Unknown i_cc: " << i_cc << " i_fc " << i_cc << endl;
             exit(1);
 
@@ -1477,7 +1479,7 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                                 long i_fc_n = v_neighbours[i_n];
                                 double i_w_fc_n = v_weights[i_n];
 
-                                if ((i_fc_n != i_fc) || i_w_fc_n > max_area) {
+                                if ((i_fc_n != i_fc) && i_w_fc_n > max_area) {
                                     max_area = i_w_fc_n;
                                     arg_fc_max = i_fc_n;
                                 }
@@ -1518,7 +1520,7 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                                 _fc_2_cc[i_fc] = i_aniso_cc;
                                 // print(i_fc, i_aniso_cc)
                                 _d_anisotropic_cc[i_aniso_cc].insert(i_fc);
-                                cout << "Treatment: " << i_fc << " is in anisotropic CC: " << i_aniso_cc << endl;
+//                                cout << "Treatment: " << i_fc << " is in anisotropic CC: " << i_aniso_cc << endl;
                             }
 
                         } else {

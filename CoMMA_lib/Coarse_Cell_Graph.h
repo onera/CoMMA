@@ -34,6 +34,10 @@ public:
 
     void print_d_distribution_of_cardinal_of_isotropic_cc();
 
+    inline long get_nb_of_cc() {
+        return _cc_counter;
+    }
+
 public:
     //Private
 
