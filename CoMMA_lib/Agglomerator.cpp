@@ -218,7 +218,7 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
                                                     d_n_of_seed,
                                                     compactness,
                                                     is_order_primary);
-        cout << "_choose_optimal_cc_and_update_seed_pool_v2 s_current_cc.size() " << s_current_cc.size() << endl;
+//        cout << "_choose_optimal_cc_and_update_seed_pool_v2 s_current_cc.size() " << s_current_cc.size() << endl;
 //        cout<<"Not yet implemented:__choose_optimal_cc_basic_v2(cc_graph, seed,is_order_primary);"<<endl;
 //        exit(1);
     } else if (__kind_of_agglomerator == "triconnected") {
@@ -1040,12 +1040,15 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
 
 
 void Agglomerator::_correction_main_basic(const short debug_only_steps) {
-
+    ;
 
 /**
  * :param debug_only_steps: 0 no correction, 1 first step only, ... 6: all 6 correction steps. 10 (arbitrary strictly greater than 6) all steps
  */
-
+    short dbg_only_steps = debug_only_steps;
+    if (debug_only_steps == -1) {
+        dbg_only_steps = 10.;
+    }
     const short nb_iteration = 4;
 
     if (__verbose) {
@@ -1067,7 +1070,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 
         // Step 1:
         //======================================================
-        if (debug_only_steps >= 1) {
+        if (dbg_only_steps >= 1) {
 
 
             if (__verbose) {
@@ -1091,7 +1094,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 
         // Step 2:
         //======================================================
-        if (debug_only_steps >= 2) {
+        if (dbg_only_steps >= 2) {
 
             if (__verbose) {
                 cout << "\n\t// Step 2: make_small_cc_bigger" << endl;
@@ -1113,9 +1116,9 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 
         // Step 3:
         //======================================================
-        if (debug_only_steps >= 3) {
+        if (dbg_only_steps >= 3) {
 
-            if (__verbose || true) {
+            if (__verbose) {
 
                 cout << "\n\t// Step 3: swap leaf" << endl;
                 cout << "\t//==============================" << endl;
@@ -1135,7 +1138,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
         }
         // Step 4:
         //======================================================
-        if (debug_only_steps >= 4) {
+        if (dbg_only_steps >= 4) {
 
             if (__verbose) {
 
@@ -1163,7 +1166,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 
         // Step 5:
         //======================================================
-        if (debug_only_steps >= 5) {
+        if (dbg_only_steps >= 5) {
 
             if (__verbose) {
 
@@ -1185,7 +1188,7 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
         }
         // Step 6:
         //======================================================
-        if (debug_only_steps >= 6) {
+        if (dbg_only_steps >= 6) {
 
             if (__verbose) {
 
@@ -1224,9 +1227,9 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
         unordered_set<long> s_cc = (*__cc_graphs).get_s_isotropic_cc_of_size(__max_card + 1);
 
         if (__verbose) {
-            cout << "\n\n\n\t\t_correction_split_too_big_cc_in_two max_size" << endl;
+            cout << "\n\n\n\t\t_correction_split_too_big_cc_in_two" << endl;
             cout << "\t\t=======================================================\n" << endl;
-            cout << "s_cc: {";
+            cout << "\t\ts_cc: {";
             for (const long i_cc:s_cc) {
                 cout << i_cc << ", ";
             }
@@ -1245,16 +1248,15 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
             unordered_map<long, queue<long> *> d_spanning_tree = __fc_graphs.find_seed_via_frontal_method(seed, v_fc);
 
             if (__verbose) {
-                cout << "\nToo Big Cell: " << i_cc << " {";
+                cout << "\n\t\tToo Big Cell: " << i_cc << " {";
                 for (const long i_cc:s_fc) {
                     cout << i_cc << ", ";
                 }
                 cout << "}" << endl;
 
-                cout << "seed " << seed << endl;
-//                print("seed", seed, "d_spanning_tree", d_spanning_tree)
+                cout << "\t\t\tSeed " << seed << endl;
                 for (auto i : d_spanning_tree) {
-                    cout << i.first << ":\t";
+                    cout << "\t\t\t" << i.first << ":\t";
                     print_queue(*d_spanning_tree[i.first]);
                 }
             }
@@ -1265,8 +1267,8 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
             //Rk: s_fc is modified.
 
             if (__verbose) {
-                cout << "after remove_separating_vertex" << endl;
-                cout << "s_fc: {";
+                cout << "\t\t\tAfter remove_separating_vertex" << endl;
+                cout << "\t\t\ts_fc: {";
                 for (const long i_fc:s_fc) {
                     cout << i_fc << ", ";
                 }
@@ -1288,7 +1290,7 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
 
             if (__verbose) {
 
-                cout << "dict_neighbours_of_seed: {";
+                cout << "\t\t\tdict_neighbours_of_seed: {";
                 for (const auto i_k_v:d_neighbours_of_seed) {
                     cout << i_k_v.first << ":" << i_k_v.second << ", ";
                 }
@@ -1343,11 +1345,13 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
                 // ind_of_current_cc is the index of the newly created cc
 
                 // We want that the new cell to be the smallest of the two.
-                short size_original_i_cc = s_fc.size();
+                short size_original_i_cc = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc().size();
                 short size_new_cc = s_of_fc_for_current_cc.size();
 
                 if (size_new_cc > size_original_i_cc - size_new_cc) {
+
                     unordered_set<long> s_complementary = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
+                    // s_complementary is the original cc.
 
                     // s_complementary = cc_graph.get_cc(i_cc).get_s_fc() - s_of_fc_for_current_cc
                     for (const long i_fc :s_of_fc_for_current_cc) {
@@ -1358,11 +1362,11 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
 
                     unordered_set<long> s_removed_cc = (*__cc_graphs).cc_swap_fc(s_complementary, i_cc, ind_of_current_cc);
                     if (__verbose) {
-                        cout << "Cell 1: {";
+                        cout << "Cell " << i_cc << ": {";
                         for (const long i_fc:s_of_fc_for_current_cc) {
                             cout << i_fc << ", ";
                         }
-                        cout << "} Cell 2 : {";
+                        cout << "} Cell " << ind_of_current_cc << ": {";
                         for (const long i_fc:s_complementary) {
                             cout << i_fc << ", ";
                         }
@@ -1371,6 +1375,7 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
                     assert(s_removed_cc.empty());
 
                 } else {
+                    // size_new_cc <= size_original_i_cc - size_new_cc
                     unordered_set<long> s_removed_cc = (*__cc_graphs).cc_swap_fc(s_of_fc_for_current_cc, i_cc, ind_of_current_cc);
 
                     unordered_set<long> s_complementary = (*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc();
@@ -1381,11 +1386,12 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
                         }
                     }
                     if (__verbose) {
-                        cout << "Cell 1: {";
+                        cout << "Cell " << i_cc << ": {";
+//                        probleme ici on devrait avoir la cc 3 0,1,2
                         for (const long i_fc:s_complementary) {
                             cout << i_fc << ", ";
                         }
-                        cout << "} Cell 2 : {";
+                        cout << "} Cell " << ind_of_current_cc << " : {";
                         for (const long i_fc:s_of_fc_for_current_cc) {
                             cout << i_fc << ", ";
                         }
@@ -1402,8 +1408,8 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
 
             if (__checks) {
                 assert(__fc_graphs.check_connectivity((*(*__cc_graphs)._d_isotropic_cc[i_cc]).get_s_fc()));
+                assert((*__cc_graphs).check_data_consistency_and_connectivity());
             }
-
         }
 
     }

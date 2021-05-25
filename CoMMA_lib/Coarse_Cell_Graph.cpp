@@ -338,8 +338,8 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
     // if we remove all the fine cells from a cc this cc will be deleted.
     unordered_set<long> set_removed_cc;
 
-    // 1) We remove i_origin_cc
-    //==========================
+    // 1) We remove i_origin_cc and i_destination_cc from _d_card_2_cc and _d_compactness_2_cc
+    //========================================================================================
     __remove_an_isotropic_cc(i_origin_cc);
     __remove_an_isotropic_cc(i_destination_cc);
 
@@ -352,6 +352,7 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
         union_s_fc.insert(i_fc);
     }
     for (const long &i_fc : s_fc) {
+
         // Initialisation of s_fc_to_update_i_fc:
         unordered_set<long> s_fc_to_update_i_fc;
         for (const long &i_fc_n : _fc_graph.get_neighbours(i_fc)) {
@@ -373,7 +374,9 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
         // The cc indexed i_origin_cc disapears.
         set_removed_cc.insert(i_origin_cc);
         _d_isotropic_cc.erase(i_origin_cc);
+
     } else {
+
         if ((*origin_cc).is_connected()) {
             // 3) We add i_origin_cc back with updated infos.
             //===============================================
@@ -446,7 +449,6 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
     assert(set_removed_cc.size() <= 1);
     return set_removed_cc;
 
-//    return unordered_set<long>();
 }
 
 
@@ -818,6 +820,9 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
                     nb_cc = i_fc;
                 }
             }
+        }
+        if (_cc_counter != nb_cc + 1) {
+            cout << "_cc_counter " << _cc_counter << "\tnb_cc + 1: " << nb_cc + 1 << endl;
         }
         assert(_cc_counter == nb_cc + 1);
         bool result = _check_consistency();

@@ -775,7 +775,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, swap_fc_case_MGridGen_ext_v2) {
     };
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
-    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{13, {0, 1}}, {10, {4, 3, 0}}, {11, {4, 0}}, {12, {0, 5}}}},
+    ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{13, {0, 1}}, {10, {4, 3, 0}}, {11, {4}}, {12, {0, 5}}}},
                                                               {2, {{11, {0}},    {12, {4}},       {13, {5}}}},
                                                               {3, {{24, {3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
@@ -826,7 +826,6 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, swap_fc_case_MGridGen_ext_v2) {
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{4, {{23, {2}}}},
-                                                              {3, {{23, {2}}}},
                                                               {1, {{18, {2, 3}}, {19, {5, 2}}}},
                                                               {2, {{20, {5}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
@@ -939,7 +938,7 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{6, {1}}}},
-                                                              {1, {{6, {3, 1}}}}};
+                                                              {1, {{6, {3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     cc = ccg._d_isotropic_cc[4];
@@ -985,7 +984,7 @@ TEST_F(MGridGen_Dual_Graph, swap_fc_deletion_of_cc) {
     ASSERT_EQ(ref__d_i_fc_to_j_cc_neighbourhood_to_j_fc, (*cc).__d_i_fc_to_j_cc_neighbourhood_to_j_fc);
 
     ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{2, {{6, {0}}}},
-                                                              {1, {{6, {2, 0}}}}};
+                                                              {1, {{6, {2}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, (*cc).d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
 
     cc = ccg._d_isotropic_cc[3];

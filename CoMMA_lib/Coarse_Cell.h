@@ -107,7 +107,7 @@ public:
 
     unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
     // The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
-    // i.e. i_fc in self.__icc, j_fc in icc
+    // i.e. i_fc in self.__icc, j_fc in j_cc
 
     // Only fine informations.
     // TODO useful after first fill_cc_neighbourhood?

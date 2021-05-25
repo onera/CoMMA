@@ -706,17 +706,26 @@ void Coarse_Cell::__remove_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neigh
         }
     }
 
-    if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].size() == 0)
+    if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].size() == 0) {
         d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].erase(i_fc);
+        if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].empty()) {
+            d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.erase(nb_fine_edges_wrt_cc);
+        }
+    }
+
 }
 
 
 void Coarse_Cell::__add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc) {
-    // Checks
+
     if (nb_fine_edges_wrt_cc > 0) {
+        // Checks
         assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.find(nb_fine_edges_wrt_cc) != d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.end());
         assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].find(i_fc) != d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].end());
         assert(d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].find(i_cc) != d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].end());
+
+
+        d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].erase(i_cc);
         if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].empty()) {
             d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].erase(i_fc);
             if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].empty())
