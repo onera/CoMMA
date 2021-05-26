@@ -58,4 +58,5 @@ return s_neighbours_of_seed;
 
 void print_queue(queue<long> q);
 
+void clean_agglomeration_lines(forward_list<deque<long> *>);
 #endif //COMMA_PROJECT_UTIL_H

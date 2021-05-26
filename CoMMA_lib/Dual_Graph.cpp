@@ -473,6 +473,342 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
     return isAnisotropicLines;
 }
 
+unordered_map<long, double> Dual_Graph::__compute_d_anisotropic_fc(vector<double> &maxArray) {
+
+    unordered_map<long, double> d_anisotropic_fc;// keys are the ratio Max to average (ratioArray[iCell]) and value
+    //                                                 the (global) index of the cell.
+
+    double min_weight, max_weight, averageWeight, weight;
+
+    // Process of every compliant fine cells:
+    for (const long i_fc : s_anisotropic_compliant_cells) {
+
+        min_weight = numeric_limits<double>::max();
+        max_weight = 0.0;
+        averageWeight = 0.0;
+
+        // computation of min_weight, max_weight and averageWeight for the current cell i_loc_fc
+        // Process of every faces/Neighbours
+        vector<long> v_neighbours = get_neighbours(i_fc);
+        vector<double> v_weights = get_weights(i_fc);
+
+        assert(v_neighbours.size() == v_weights.size());
+        int nb_neighbours = v_neighbours.size();
+        for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+
+            long i_fc_n = v_neighbours[i_n];
+            double i_w_fc_n = v_weights[i_n];
+
+            if (i_fc_n != i_fc) {  // to avoid special case where the boundary value are stored
+//                weight = this->_m_CRS_Values[i_n];
+                if (max_weight < i_w_fc_n) {
+                    max_weight = i_w_fc_n;
+                }
+                if (min_weight > i_w_fc_n) {
+                    min_weight = i_w_fc_n;
+                }
+            } else {
+                nb_neighbours--;
+            }
+
+            averageWeight += i_w_fc_n / (double) (nb_neighbours);
+        }
+        maxArray[i_fc] = max_weight;
+
+        // TODO comprendre la raison d'etre des 2 criteres: present chez Mavriplis et DLR
+        // Anisotropy criteria for the initial sort
+        // if ratioArray[i_loc_fc] >= 2.0:
+        //     d_anisotropic_fc[ratioArray[i_loc_fc]] = i_loc_fc
+        //
+        //     count += 1
+
+        // Anisotropy criteria for the line Admissibility
+        if (max_weight / min_weight >= 4.0) {
+            // if i_loc_fc in setOfAnisotropicCompliantFineCells:
+            // we check if the cell is for lvl 0 hexa or prism
+            // or for lvl >0 if is build from hexa or prism.
+            // isAnisotropic[i_loc_fc] = True
+            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+        }
+    }
+    return d_anisotropic_fc;
+}
+
+forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2() {
+
+    /**
+     * The goal of this function is :
+     * - firstly to look for anisotropic cells
+     * - secondly build anisotropic lines
+     * Rmk: costly function: sort of a dictionary!
+     */
+
+    bool verbose = false;
+
+    long nb_fc = this->number_of_cells;
+
+    vector<double> maxArray = vector<double>(nb_fc, 0.0);
+
+    unordered_map<long, double> d_anisotropic_fc = __compute_d_anisotropic_fc(maxArray);
+
+    int lines_size = 0;
+    forward_list<deque<long> *> lines;
+
+    if (!d_anisotropic_fc.empty()) {
+
+        // There are anisotropic cells.
+        // We sort the dict w.r.t. the ratio  ????
+        // From the biggest "anisotropy" to the smallest
+        // orderedDictAnisotropyCell = OrderedDict(sorted(d_anisotropic_fc.items(), key=lambda t: t[1],
+        //                                                reverse=True))
+        //sortedList_anisotropicCells = sorted(d_anisotropic_fc, key = d_anisotropic_fc.get, reverse = True)
+
+        multimap<double, long> sorted_anisotropicCells = flip_map(d_anisotropic_fc);  // Sorting!
+        multimap<double, long>::reverse_iterator rIt;
+
+        long nb_anisotropic_fc = d_anisotropic_fc.size();
+        vector<long> index_l_to_g = vector<long>(nb_anisotropic_fc);
+        unordered_map<long, long> d_g_to_l;
+
+        // Initialisation of index_l_to_g
+        // To work only on anisotropic cells.
+        long i = 0, index;
+        for (rIt = sorted_anisotropicCells.rbegin(); rIt != sorted_anisotropicCells.rend(); rIt++) {
+            index = rIt->second;
+            index_l_to_g[i] = index;
+            d_g_to_l[index] = i;
+            ++i;
+        }
+
+        // is_anisotropic_local: to check if a cell has already been treated
+        vector<bool> is_anisotropic_local = vector<bool>(nb_anisotropic_fc, true);
+
+        // TODO Think of a more pertinent seed???
+        long i_loc_seed = 0;
+
+        long i_seed = index_l_to_g[i_loc_seed];
+
+
+        long i_current_fc;
+
+        bool searchOppositeDirection = false;
+        long cellAtTheLimitIsoAniso;
+        long previousCurrentCell;
+
+        // We try every possible cell as seed:
+        while (i_loc_seed < nb_anisotropic_fc) {
+
+            i_current_fc = i_seed;
+            deque<long> *dQue;
+            dQue = new deque<long>();
+            (*dQue).push_back(i_seed);
+            deque<long>::iterator iter;
+
+            // Line contains the global numbering of cells
+            searchOppositeDirection = false;
+
+            is_anisotropic_local[i_loc_seed] = false;
+            cellAtTheLimitIsoAniso = -1;
+
+            while (i_current_fc != -1) {
+                // Ca c'est pour verifier si on part ou non d'une extremite d'une ligne.
+                // voir if i_current_fc == previousCurrentCell:
+                previousCurrentCell = i_current_fc;
+//                cout<<"CurrentCell "<<i_current_fc <<endl;
+//                ind = this->_m_CRS_Row_Ptr[i_current_fc];
+//                ind_p_one = this->_m_CRS_Row_Ptr[i_current_fc + 1];
+
+                // Process neighbours of current cell
+//                for (long iN = ind; iN < ind_p_one; ++iN) {
+                vector<long> v_neighbours = get_neighbours(i_current_fc);
+                vector<double> v_weights = get_weights(i_current_fc);
+
+                assert(v_neighbours.size() == v_weights.size());
+                int nb_neighbours = v_neighbours.size();
+                for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+
+                    long i_fc_n = v_neighbours[i_n];
+                    double i_w_fc_n = v_weights[i_n];
+
+//                    i_neighbour_fc = this->_m_CRS_Col_Ind[iN];
+//                    cout<<"i_current_fc "<< i_current_fc<< " i_neighbour_fc "<<i_neighbour_fc<<endl;
+                    if (i_fc_n != i_current_fc) {
+                        // Reminder: if i_neighbour_fc == i_current_fc, we are at the boundary of the domain
+                        if (i_w_fc_n > 0.75 * maxArray[i_current_fc]) {
+                            // Search faces with biggest areas
+//                            cout<<"(adjMatrix_areaValues[iN] > 0.75 * maxArray[i_current_fc])"<<endl;
+                            if (d_g_to_l.count(i_fc_n) == 1 and
+                                is_anisotropic_local[d_g_to_l[i_fc_n]]) {
+
+                                // We find an anisotropic neighbour
+
+                                // On veut que la ligne soit definie de maniere contigue:
+                                // c'est a  dire qu'on parte d'un bout vers l'autre et
+                                // pas du milieu, jusqu'a un bout et puis on repart dans l'autre sens.
+                                // TODO le cas test en ne triant pas initialement devra me permettre de tester ca!
+                                if (!searchOppositeDirection) {
+                                    // General case:
+                                    // Correct direction from wall to farfield
+                                    (*dQue).push_back(i_fc_n);
+                                    i_current_fc = i_fc_n;
+                                } else {
+                                    (*dQue).push_front(i_fc_n);
+                                    i_current_fc = i_fc_n;
+                                }
+                                // TODO Est-ce le bon moyen de marquer les cellules comme visitees????
+                                // isAnisotropic[i_neighbour_fc] = False
+                                is_anisotropic_local[d_g_to_l[i_fc_n]] = false;
+                                break;
+                            } else {
+                                // We find an isotropic neighbour! (and we are not at the boundary
+
+                                // assert cellAtTheLimitIsoAniso ==-1, "Problem cellAtTheLimitIsoAniso
+                                // is overwritten"
+                                bool isInDeque = false;
+                                for (long index: (*dQue)) {
+                                    if (i_fc_n == index) {
+                                        isInDeque = true;
+                                        break;
+                                    }
+                                }
+                                if (!isInDeque) {
+                                    // As isAnisotropic[i_neighbour_fc] is used to mark/color cells already treated
+                                    // we check is the neighbour cell has been treated in the current line
+                                    // TODO what happend if the neighbour is in an another agglomerationLine???
+                                    cellAtTheLimitIsoAniso = i_current_fc;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                // TODO Could it be 3 anisotropic neighbour with area bigger than the criteria?
+                if (i_current_fc == previousCurrentCell) {
+                    // in this case, the seed was not at one end of the line.
+                    // We have done a part of the line and we now try the other direction
+                    if (!searchOppositeDirection) {
+                        //assert(dQue.size() > 1); // "Trouble"
+                        searchOppositeDirection = true;
+                        i_current_fc = i_seed;
+                    } else {
+                        i_current_fc = -1;
+                    }
+                }
+            }
+            //cout<<"Line found: ";
+            //for (iter = (*dQue).begin();iter!=(*dQue).end(); iter++) {
+            //    cout<<*iter<<" ";
+            //}
+            //cout<<endl;
+
+            // The current line contains more cells than the seed.
+            // We keep it
+            // otherwise we rewrite on it.
+            if ((*dQue).size() > 1) {
+//                cout<<"(*dQue).size() > 1"<<endl;
+                //Si on recontre une cellulle isotrope, on inverse l'ordre!
+                if ((*dQue).front() == cellAtTheLimitIsoAniso) {
+                    //lines[lineNumber] = deque(reversed(lines[lineNumber]));
+                    deque<long> *dQ2;
+                    dQ2 = new deque<long>();
+                    for (auto iFC :(*dQue)) {
+//                        cout<<"(*dQue) "<<i<<endl;
+                        (*dQ2).push_front(iFC);
+                    }
+                    assert((*dQ2).front() != cellAtTheLimitIsoAniso);// "Problem both ends are at the limit"
+                    // deletion of dQue which is useless now
+                    delete dQue;
+
+                    // Creation of a new line
+                    lines.push_front(dQ2);
+                    lines_size++;
+                } else {
+                    // Creation of a new line
+                    lines.push_front(dQue);
+                    lines_size++;
+                }
+            } else {
+                delete dQue;
+            }
+
+            // On pourrait prendre directement le suivant i.e. iSeed+=1
+            // Sauf que potentiellement ce suivant pourrait deja appartenir a une ligne.
+            while ((i_loc_seed < nb_anisotropic_fc) && (!is_anisotropic_local[i_loc_seed])) {
+                // while i_loc_seed < nb_anisotropic_fc and not isAnisotropic[index_l_to_g[i_loc_seed]]:
+                i_loc_seed += 1;
+            }
+            if (i_loc_seed == nb_anisotropic_fc) {
+                continue;
+            }
+            i_seed = index_l_to_g[i_loc_seed];
+        }
+//        cout<<"End of While Loop"<<endl;
+//        forward_list<deque<long>*>::iterator fLIter;
+//        for (fLIter = lines.begin(); fLIter!=lines.end(); fLIter++)
+//        {
+//            cout<<(*(*fLIter)).size()<<endl;
+//        }
+//        cout<<"lines.front().size() "<< (*lines.front()).size()<<endl;
+
+        // The last line may be of size 1 and will not be overwritten.
+        if (!lines.empty()) {
+            if ((*lines.front()).size() == 1) {
+
+                if (verbose) {
+                    cout << "lines.pop() " << (*lines.front()).front() << endl;
+                }
+                lines.pop_front();
+            }
+        }
+
+//        cout<<"Conversion of deque to array"<<endl;
+        long numberOfAgglomerationLines = lines_size;
+
+//        if (numberOfAgglomerationLines == 0) {
+////            numberOfAgglomerationLines = 1;
+//            agglomerationLines_Idx[0] = 0;
+//            agglomerationLines_Idx[1] = 0;
+//            agglomerationLines_size = 0;
+//            numberOfAnisotropicLinesPOne_size = 2;
+//        } else {
+//
+//            long numberOfFCellsInAgglomerationLines = 0;
+//
+//            agglomerationLines_Idx[0] = 0;
+//            forward_list<deque<long> *>::iterator fLIt;
+//            long iLines = 1;
+//            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//
+//                agglomerationLines_Idx[iLines] = (*(*fLIt)).size() + numberOfFCellsInAgglomerationLines;
+//                long jCount = 0;
+//
+//                for (auto i :(*(*fLIt))) {
+//                    agglomerationLines[jCount + numberOfFCellsInAgglomerationLines] = i;
+//                    jCount++;
+//                }
+//                numberOfFCellsInAgglomerationLines += (*(*fLIt)).size();
+//                iLines++;
+//            }
+//
+//            // Deletion of pointer to deque:
+//            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//                delete (*fLIt);
+//            }
+//
+//            numberOfAnisotropicLinesPOne_size = iLines;
+//            agglomerationLines_size = numberOfFCellsInAgglomerationLines;
+//            isAnisotropicLines = true;
+//        }
+
+
+//        delete[] index_l_to_g;
+//        delete[] is_anisotropic_local;
+    }
+
+    return lines;
+}
+
 unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::_compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc) {
 
     unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cut_edges;

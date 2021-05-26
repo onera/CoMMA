@@ -20,11 +20,11 @@ public :
     );
 
     ~Agglomerator() {
-        if (__is_anisotropic) {
-            delete __v_lines[0];
-            delete __v_lines[1];
-
-        }
+//        if (__is_anisotropic) {
+//            delete __v_lines[0];
+//            delete __v_lines[1];
+//
+//        }
     };
 
 
@@ -129,7 +129,9 @@ public:
                                    vector<long> debug_only_fc_to_cc = {},
                                    const short debug_only_steps = -1);
 
-        void _agglomerate_one_level_isotropic_part(const short debug_only_steps);
+    void _agglomerate_one_level_anisotropic_part(forward_list<deque<long> *> anisotropic_lines);
+
+    void _agglomerate_one_level_isotropic_part(const short debug_only_steps);
 
 
         //===========================

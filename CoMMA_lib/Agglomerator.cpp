@@ -107,9 +107,7 @@ void Agglomerator::__agglomerate_one_level(
 
         // Is the agglomeration anisotropic?
 //        if(__is_anisotropic){
-//            _agglomerate_one_level_anisotropic_part(i_lvl,
-//                                                                                              ccg,
-//                                                                                              aniso_lines);
+//            _agglomerate_one_level_anisotropic_part(aniso_lines);
 //        }
 
         _agglomerate_one_level_isotropic_part(debug_only_steps);
@@ -884,6 +882,91 @@ void Agglomerator::get_agglo_lines(int level,
                                                       sizes,
                                                       agglo_lines_array_idx,
                                                       agglo_lines_array);
+}
+
+void Agglomerator::_agglomerate_one_level_anisotropic_part(forward_list<deque<long> *> anisotropic_lines) {
+/**
+ * Agglomerate one level of mesh for boundary layer region
+ *       Uses the self.__lines.
+ */
+
+//if (__is_anisotropic){
+//
+//}
+//if(anisotropic_lines is None:
+//// The anisotropic lines are only computed on the original (finest) mesh.
+//self.__lines = graph.compute_anisotropic_line()  // finest level!!!
+//else:
+//if anisotropic_lines is not None:
+//self.__lines = anisotropic_lines
+//
+//// Asserts that self.__lines exists:
+//if not self.__lines:
+//return None
+//
+//if self.__is_visu_data_stored and self.__lines:
+//tmp_backup_lines = self.__lines[:]
+//// if self.__d_visu_anisotropic_agglomeration_lines_to_delete is None:
+////     self.__d_visu_anisotropic_agglomeration_lines_to_delete = dict()
+//            // self.__d_visu_anisotropic_agglomeration_lines_to_delete[i_lvl] = self.__lines[:]
+//
+//        // list of set of hexaedric or prismatic cell number (for level 0)
+//        self.__l_of_s_anisotropic_compliant_fc.append(set())
+//
+//        // Process of every agglomeration lines:
+//        for i_line, line in enumerate(self.__lines):
+//
+//            line_lvl_p_one = deque()
+//            line_size = len(line)
+//            if line_size <= 1:
+//                self.__lines[i_line] = line_lvl_p_one
+//                continue
+//
+//            i_count = 0
+//            while i_count + 2 <= line_size:
+//                s_fc = {line[i_count], line[i_count + 1]}
+//
+//                i_cc = ccg.cc_create_a_cc(s_fc, is_anisotropic=True)
+//                line_lvl_p_one.append(i_cc)
+//
+//                assert line[i_count] in self.__l_of_s_anisotropic_compliant_fc[
+//                    0], "Try to Aniso Agglomerate an isotropic cell"
+//                assert line[i_count + 1] in self.__l_of_s_anisotropic_compliant_fc[
+//                    0], "Try to Aniso Agglomerate an isotropic cell"
+//
+//                self.__l_of_s_anisotropic_compliant_fc[1].add(i_cc)
+//
+//                i_count += 2
+//
+//                // if i_count < len(line): il reste une cellule toute seule!
+//                // i.e. la ligne etait de taile impaire.
+//                // 2 situations: si la cellule abandonnee est contigue a la zone Euler, c'est OK.
+//                //               sinon, c'est la merde!
+//            if i_count < line_size:
+//                // Problematic   Check! it may happen that the line touches the farfield
+//                // This is correct!
+//                // for example: RAE 2D case, Boxes iso_and_aniso
+//                // // check
+//                // ind = matrixAdj_CRS_row_ptr[cell]
+//                // ind_p_one = matrixAdj_CRS_row_ptr[cell + 1]
+//                // isOnBoundary = False
+//                // for i in range(ind, ind_p_one):
+//                //     indNeighbourCell = matrixAdj_CRS_col_ind[i]
+//                //     if indNeighbourCell == cell:
+//                //         isOnBoundary = True
+//                // assert not isOnBoundary, "The left alone anisotropic cell to agglomerate is on boundary"
+//                // // End Check
+//
+//                // We add this fc to the last coarse element (thus of cardinal 3)
+//                ccg.cc_update_cc({line[i_count]}, i_cc)
+//
+//            self.__lines[i_line] = line_lvl_p_one
+//        if self.__is_visu_data_stored and self.__lines:
+//            // return self.__d_visu_anisotropic_agglomeration_lines_to_delete[i_lvl], self.__lines[:]
+//            return tmp_backup_lines, self.__lines[:]
+//        else:
+//            return None, self.__lines[:]
+
 }
 
 

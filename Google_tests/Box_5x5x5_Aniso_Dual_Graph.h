@@ -14,12 +14,13 @@ protected:
 
     Dual_Graph *g;
     int box_5x5x5_number_of_cells;
+    int box_5x5x5_number_of_anisotropic_compliant_fc;
     int box_5x5x5_col_ind_size;
     vector<long> v_box_5x5x5_row_ptr;
     vector<long> v_box_5x5x5_col_ind;
     vector<double> v_box_5x5x5_values;
     vector<double> v_box_5x5x5_volumes;
-
+    unordered_set<long> box_5x5x5_s_anisotropic_compliant_cells;
     virtual void SetUp() {
 
 
@@ -94,12 +95,28 @@ protected:
                                12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5,
                                12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5};
 
-        int box_5x5x5_is_on_bnd[64] = {1, 0, 0, 1, 0, -1, -1, 0, 0, -1, -1, 0, 1, 0, 0, 1, 0,
-                                       -1, -1, 0, -1, -2, -2, -1, -1, -2, -2, -1, 0, -1, -1, 0, 0, -1,
-                                       -1, 0, -1, -2, -2, -1, -1, -2, -2, -1, 0, -1, -1, 0, 1, 0, 0,
-                                       1, 0, -1, -1, 0, 0, -1, -1, 0, 1, 0, 0, 1};
+        int box_5x5x5_is_on_bnd[64] = {3, 2, 2, 3,
+                                       2, 1, 1, 2,
+                                       2, 1, 1, 2,
+                                       3, 2, 2, 3,
+                //
+                                       2, 1, 1, 2,
+                                       1, 0, 0, 1,
+                                       1, 0, 0, 1,
+                                       2, 1, 1, 2,
+                //
+                                       2, 1, 1, 2,
+                                       1, 0, 0, 1,
+                                       1, 0, 0, 1,
+                                       2, 1, 1, 2,
+                //
+                                       3, 2, 2, 3,
+                                       2, 1, 1, 2,
+                                       2, 1, 1, 2,
+                                       3, 2, 2, 3};
 
-        unordered_set<long> Box_5x5x5_s_anisotropic_compliant_cells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        box_5x5x5_number_of_anisotropic_compliant_fc = 64;
+        box_5x5x5_s_anisotropic_compliant_cells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                                                    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
                                                    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
                                                    30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
@@ -121,7 +138,7 @@ protected:
                            empty_set,
                            empty_set,
                            empty_set,
-                           Box_5x5x5_s_anisotropic_compliant_cells);
+                           box_5x5x5_s_anisotropic_compliant_cells);
 
     }
 

@@ -7,6 +7,7 @@
 #include "MGridGen_ext_v2_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "Box_1_prism_Dual_Graph.h"
+#include "Box_5x5x5_Aniso_Dual_Graph.h"
 #include "gtest/gtest.h"
 
 
@@ -1255,6 +1256,43 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }
+
+TEST_F(Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 3;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+
+    agg.agglomerate_one_level(true);
+//    EXPECT_EQ(41, agg.get_nb_cc());
+//    ASSERT_EQ(41, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 38, 38, 37, 36, 36, 33, 33, 21, 28, 28, 28, 32, 32, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
+                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 8, 24, 24, 25, 40, 40, 25, 11, 11, 11,
+                                26, 26, 11, 27, 26, 26, 37, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 21, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 39, 39, 2, 18, 39, 39, 18,
+                                18, 18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 39, 1, 7, 7, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 40,
+                                40, 19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 40, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 39, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 10, 7,
+                                6, 10, 10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9,
+                                9, 35, 35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29,
+                                23, 21, 21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 40, 25, 25};
+//    cout<<endl;
+//    for (auto i:agg.get_fc_2_cc())
+//    {
+//        cout<<i<<", ";
+//    }
+//    cout<<endl;
+
+//    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+//    EXPECT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+    cout << "ADD TESTS Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level" << endl;
+}
+
 /////////////////
 /////////////////
 /////////////////

@@ -15,104 +15,106 @@
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "Box_5x5x5_Dual_Graph.h"
 #include "Box_5x5x5_Aniso_Dual_Graph.h"
+#include "Box_5x5x5_iso_and_Aniso_Dual_Graph.h"
+
 
 #include "gtest/gtest.h"
 
-class box_5x5x5_iso_and_aniso : public ::testing::Test {
-    // filename_ini = "box_1_rect_5_d_F.hdf"
-    // input_directory = os.path.join((*this).cgns_path, os.path.join("0_Inputs", "0_Box"))
-
-protected:
-
-    Dual_Graph *g;
-    int box_5x5x5_number_of_cells;
-    int box_5x5x5_col_ind_size;
-    vector<long> v_box_5x5x5_row_ptr;
-    vector<long> v_box_5x5x5_col_ind;
-    vector<double> v_box_5x5x5_values;
-    vector<double> v_box_5x5x5_volumes;
-
-    virtual void SetUp() {
-        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
-                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
-                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
-                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
-                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
-
-        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
-                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
-                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
-                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
-                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
-                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
-                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
-                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
-                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
-                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
-                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
-                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
-                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
-                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
-                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
-                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
-                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
-                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
-                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
-                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
-                               47, 59, 62, 63};
-
-        v_box_5x5x5_values = {30., 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 30., 2.5, 25., 2.5, 27.5, 2.5,
-                              2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5,
-                              2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 30.,
-                              2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 30., 25., 25., 5., 2.5, 2.5, 25., 25.,
-                              2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                              2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
-                              5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 5., 25., 25., 5.,
-                              2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5,
-                              2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
-                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
-                              2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5,
-                              5., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25.,
-                              50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
-                              75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75.};
-
-        box_5x5x5_number_of_cells = 64;
-        box_5x5x5_col_ind_size = 344;
-
-        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
-                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
-
-        int box_5x5x5_is_on_bnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
-                                       0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
-                                       2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
-
-        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
-        for (int i = 0; i < box_5x5x5_number_of_cells; i++) {
-            box_5x5x5_d_is_on_bnd[i] = box_5x5x5_is_on_bnd[i];
-        }
-
-        g = new Dual_Graph(box_5x5x5_number_of_cells,
-                           v_box_5x5x5_row_ptr,
-                           v_box_5x5x5_col_ind,
-                           v_box_5x5x5_values,
-                           v_box_5x5x5_volumes,
-                           box_5x5x5_d_is_on_bnd);
-
-    }
-
-    virtual void TearDown() {
-        delete g;
-//        delete v_box_5x5x5_row_ptr;
-//        delete v_box_5x5x5_col_ind;
-//        delete v_box_5x5x5_values;
-    }
-};
+//class box_5x5x5_iso_and_aniso : public ::testing::Test {
+//    // filename_ini = "box_1_rect_5_d_F.hdf"
+//    // input_directory = os.path.join((*this).cgns_path, os.path.join("0_Inputs", "0_Box"))
+//
+//protected:
+//
+//    Dual_Graph *g;
+//    int box_5x5x5_number_of_cells;
+//    int box_5x5x5_col_ind_size;
+//    vector<long> v_box_5x5x5_row_ptr;
+//    vector<long> v_box_5x5x5_col_ind;
+//    vector<double> v_box_5x5x5_values;
+//    vector<double> v_box_5x5x5_volumes;
+//
+//    virtual void SetUp() {
+//        v_box_5x5x5_row_ptr = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62,
+//                               66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132,
+//                               138, 144, 150, 155, 161, 167, 172, 177, 183, 189, 194, 200, 206,
+//                               212, 218, 224, 230, 236, 242, 247, 253, 259, 264, 268, 273, 278,
+//                               282, 287, 293, 299, 304, 309, 315, 321, 326, 330, 335, 340, 344};
+//
+//        v_box_5x5x5_col_ind = {0, 1, 4, 16, 0, 1, 2, 5, 17, 1, 2, 3, 6, 18, 2, 3, 7,
+//                               19, 0, 4, 5, 8, 20, 1, 4, 5, 6, 9, 21, 2, 5, 6, 7, 10,
+//                               22, 3, 6, 7, 11, 23, 4, 8, 9, 12, 24, 5, 8, 9, 10, 13, 25,
+//                               6, 9, 10, 11, 14, 26, 7, 10, 11, 15, 27, 8, 12, 13, 28, 9, 12,
+//                               13, 14, 29, 10, 13, 14, 15, 30, 11, 14, 15, 31, 0, 16, 17, 20, 32,
+//                               1, 16, 17, 18, 21, 33, 2, 17, 18, 19, 22, 34, 3, 18, 19, 23, 35,
+//                               4, 16, 20, 21, 24, 36, 5, 17, 20, 22, 25, 37, 6, 18, 21, 23, 26,
+//                               38, 7, 19, 22, 23, 27, 39, 8, 20, 24, 25, 28, 40, 9, 21, 24, 26,
+//                               29, 41, 10, 22, 25, 27, 30, 42, 11, 23, 26, 27, 31, 43, 12, 24, 28,
+//                               29, 44, 13, 25, 28, 29, 30, 45, 14, 26, 29, 30, 31, 46, 15, 27, 30,
+//                               31, 47, 16, 32, 33, 36, 48, 17, 32, 33, 34, 37, 49, 18, 33, 34, 35,
+//                               38, 50, 19, 34, 35, 39, 51, 20, 32, 36, 37, 40, 52, 21, 33, 36, 38,
+//                               41, 53, 22, 34, 37, 39, 42, 54, 23, 35, 38, 39, 43, 55, 24, 36, 40,
+//                               41, 44, 56, 25, 37, 40, 42, 45, 57, 26, 38, 41, 43, 46, 58, 27, 39,
+//                               42, 43, 47, 59, 28, 40, 44, 45, 60, 29, 41, 44, 45, 46, 61, 30, 42,
+//                               45, 46, 47, 62, 31, 43, 46, 47, 63, 32, 48, 49, 52, 33, 48, 49, 50,
+//                               53, 34, 49, 50, 51, 54, 35, 50, 51, 55, 36, 48, 52, 53, 56, 37, 49,
+//                               52, 53, 54, 57, 38, 50, 53, 54, 55, 58, 39, 51, 54, 55, 59, 40, 52,
+//                               56, 57, 60, 41, 53, 56, 57, 58, 61, 42, 54, 57, 58, 59, 62, 43, 55,
+//                               58, 59, 63, 44, 56, 60, 61, 45, 57, 60, 61, 62, 46, 58, 61, 62, 63,
+//                               47, 59, 62, 63};
+//
+//        v_box_5x5x5_values = {30., 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 27.5, 2.5, 2.5, 25., 2.5, 30., 2.5, 25., 2.5, 27.5, 2.5,
+//                              2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 27.5,
+//                              2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 30.,
+//                              2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 27.5, 2.5, 25., 2.5, 2.5, 30., 25., 25., 5., 2.5, 2.5, 25., 25.,
+//                              2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
+//                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
+//                              2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5,
+//                              5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 5., 25., 25., 5.,
+//                              2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5,
+//                              2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25.,
+//                              25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5,
+//                              2.5, 25., 25., 2.5, 5., 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5, 2.5, 2.5, 25., 25., 2.5, 2.5,
+//                              5., 25., 25., 75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75., 25., 25., 25.,
+//                              50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+//                              50., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 25., 50., 25., 25., 25.,
+//                              75., 25., 25., 25., 25., 50., 25., 25., 25., 25., 50., 25., 25., 25., 25., 75.};
+//
+//        box_5x5x5_number_of_cells = 64;
+//        box_5x5x5_col_ind_size = 344;
+//
+//        v_box_5x5x5_volumes = {125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125., 125., 125.,
+//                               125., 125., 125., 125., 125., 125., 125., 125., 125.};
+//
+//        int box_5x5x5_is_on_bnd[64] = {3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 0,
+//                                       0, 1, 1, 0, 0, 1, 2, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 1,
+//                                       2, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, 2, 2, 3};
+//
+//        unordered_map<long, int> box_5x5x5_d_is_on_bnd;
+//        for (int i = 0; i < box_5x5x5_number_of_cells; i++) {
+//            box_5x5x5_d_is_on_bnd[i] = box_5x5x5_is_on_bnd[i];
+//        }
+//
+//        g = new Dual_Graph(box_5x5x5_number_of_cells,
+//                           v_box_5x5x5_row_ptr,
+//                           v_box_5x5x5_col_ind,
+//                           v_box_5x5x5_values,
+//                           v_box_5x5x5_volumes,
+//                           box_5x5x5_d_is_on_bnd);
+//
+//    }
+//
+//    virtual void TearDown() {
+//        delete g;
+////        delete v_box_5x5x5_row_ptr;
+////        delete v_box_5x5x5_col_ind;
+////        delete v_box_5x5x5_values;
+//    }
+//};
 
 class box_2x12 : public ::testing::Test {
 
@@ -120,6 +122,7 @@ protected:
 
     Dual_Graph *g;
     int box_2x12_nb_fc;
+    int box_2x12_number_of_anisotropic_compliant_fc;
     int box_2x12_col_ind_size;
     vector<long> v_box_2x12_row_ptr;
     vector<long> v_box_2x12_col_ind;
@@ -195,12 +198,20 @@ protected:
             box_2x12_d_is_on_bnd[i] = box_2x12_is_on_bnd[i];
         }
 
+        box_2x12_number_of_anisotropic_compliant_fc = 24;
+        unordered_set<long> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                                          19, 20, 21, 22, 23};
+        unordered_set<long> empty_set = unordered_set<long>({});
         g = new Dual_Graph(box_2x12_nb_fc,
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
                            v_box_2x12_volumes,
-                           box_2x12_d_is_on_bnd);
+                           box_2x12_d_is_on_bnd,
+                           empty_set,
+                           empty_set,
+                           empty_set,
+                           s_anisotropic_compliant_fc);
 
     }
 
@@ -293,12 +304,20 @@ protected:
             box_2x12_d_is_on_bnd[i] = box_2x12_is_on_bnd[i];
         }
 
+        unordered_set<long> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                                          19, 20, 21, 22, 23};
+        unordered_set<long> empty_set = unordered_set<long>({});
+
         g = new Dual_Graph(box_2x12_nb_fc,
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
                            v_box_2x12_volumes,
-                           box_2x12_d_is_on_bnd);
+                           box_2x12_d_is_on_bnd,
+                           empty_set,
+                           empty_set,
+                           empty_set,
+                           s_anisotropic_compliant_fc);
 
     }
 
@@ -391,12 +410,22 @@ protected:
             box_2x12_d_is_on_bnd[i] = box_2x12_is_on_bnd[i];
         }
 
+        long numberOfFineAnisotropicCompliantCells = 18;
+
+        unordered_set<long> s_anisotropic_compliant_fc = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                                          19};
+        unordered_set<long> empty_set = unordered_set<long>({});
+
         g = new Dual_Graph(box_2x12_nb_fc,
                            v_box_2x12_row_ptr,
                            v_box_2x12_col_ind,
                            v_box_2x12_values,
                            v_box_2x12_volumes,
-                           box_2x12_d_is_on_bnd);
+                           box_2x12_d_is_on_bnd,
+                           empty_set,
+                           empty_set,
+                           empty_set,
+                           s_anisotropic_compliant_fc);
 
     }
 
@@ -577,6 +606,257 @@ TEST(Dual_Graph_TestSuite, compute_anisotropic_line_1_AnisotropicCell) {
     delete[]agglomerationLines;
 }
 
+TEST(Dual_Graph_TestSuite, compute_anisotropic_line_v2_1_AnisotropicCell) {
+
+    long nb_c = 4;
+    long adjMatrix_col_ind_size = 12;
+
+    const vector<long> v_row_ptr = {0, 3, 6, 9, 12};
+    const vector<long> v_col_ind = {0, 1, 2,
+                                    0, 1, 3,
+                                    0, 2, 3,
+                                    1, 2, 3};
+
+    const vector<double> v_values = {32.5, 2.5, 25,
+                                     2.5, 32.5, 25,
+                                     25, 32.5, 25,
+                                     25, 25, 32.5};
+
+    const vector<double> v_volumes = {1.0, 1.0, 1.0, 1.0};
+
+    unordered_map<long, int> d_is_on_bnd_d;
+    d_is_on_bnd_d[0] = 1;
+    d_is_on_bnd_d[1] = 1;
+    d_is_on_bnd_d[3] = 1;
+    d_is_on_bnd_d[4] = 1;
+
+    unordered_set<long> s_anisotropic_compliant_fc = {0, 1};
+    unordered_set<long> empty_set = {};
+
+    Dual_Graph g = Dual_Graph(nb_c,
+                              v_row_ptr,
+                              v_col_ind,
+                              v_values,
+                              v_volumes,
+                              d_is_on_bnd_d,
+                              empty_set,
+                              empty_set,
+                              empty_set,
+                              s_anisotropic_compliant_fc);
+
+    forward_list<deque<long> *> lines = g.compute_anisotropic_line_v2();
+    ASSERT_TRUE(lines.empty());
+}
+
+TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
+
+    long numberOfFineAnisotropicCompliantCells = 64;
+    long arrayOfFineAnisotropicCompliantCells[64] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                                                     21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                                                     31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+                                                     49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                                                     60, 61, 62, 63};
+
+    long numberOfAnisotropicLinesPOne_size = box_5x5x5_number_of_cells;
+    long agglomerationLines_size = box_5x5x5_number_of_cells;
+
+    long *agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
+    long *agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
+    bool verbose = false;
+
+    long indCoarseCell = 0;
+    long numberOfFineAgglomeratedCells = 0;
+    long arrayOfFineAnisotropicCompliantCells_size = box_5x5x5_number_of_cells;
+    long agglomerationLines_Idx_size = box_5x5x5_number_of_cells;
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    unordered_set<long> ref_s_Box_5x5x5_is_on_valley = unordered_set<long>({57, 54, 45, 43, 40, 36, 27, 53, 24, 23, 39, 10, 20, 33, 18, 34, 5, 46, 17, 30, 6, 9, 58, 29});
+    unordered_set<long> ref_s_Box_5x5x5_is_on_ridge = unordered_set<long>({56, 55, 52, 50, 49, 47, 44, 35, 11, 32, 61, 7, 28, 31, 2, 19, 16, 14, 59, 1, 13, 62, 4, 8});
+
+    ASSERT_EQ(empty_set, (*(*g).seeds_pool).is_on_corner);
+    ASSERT_EQ(ref_s_Box_5x5x5_is_on_ridge, (*(*g).seeds_pool).is_on_ridge);
+    ASSERT_EQ(ref_s_Box_5x5x5_is_on_valley, (*(*g).seeds_pool).is_on_valley);
+
+
+    long sizes[10] = {box_5x5x5_number_of_cells, box_5x5x5_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
+                      box_5x5x5_number_of_cells, agglomerationLines_Idx_size, agglomerationLines_size};
+
+    bool isAggloLines = g->compute_anisotropic_line(sizes,
+                                                    arrayOfFineAnisotropicCompliantCells,
+                                                    agglomerationLines_Idx,
+                                                    agglomerationLines,
+                                                    verbose);
+
+    ASSERT_TRUE(isAggloLines);
+    const long ref_agglo_lines_Idx_size = 17;
+    const long ref_agglo_lines_size = 64;
+
+    ASSERT_EQ(ref_agglo_lines_size, numberOfFineAnisotropicCompliantCells);
+    ASSERT_EQ(ref_agglo_lines_Idx_size, sizes[8]);  // number of anisotropic lines
+    ASSERT_EQ(ref_agglo_lines_size, sizes[9]);  // number of cells in these lines
+
+    long ref_agglo_lines_Idx[ref_agglo_lines_Idx_size] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
+    long ref_agglo_lines[ref_agglo_lines_size] = {48, 32, 16, 0,
+                                                  51, 35, 19, 3,
+                                                  60, 44, 28, 12,
+                                                  63, 47, 31, 15,
+                                                  61, 45, 29, 13,
+                                                  62, 46, 30, 14,
+                                                  50, 34, 18, 2,
+                                                  49, 33, 17, 1,
+                                                  59, 43, 27, 11,
+                                                  56, 40, 24, 8,
+                                                  55, 39, 23, 7,
+                                                  52, 36, 20, 4,
+                                                  9, 25, 41, 57,
+                                                  10, 26, 42, 58,
+                                                  5, 21, 37, 53,
+                                                  6, 22, 38, 54,
+    };
+    for (int i = 0; i < ref_agglo_lines_Idx_size; i++) {
+        ASSERT_EQ(ref_agglo_lines_Idx[i], agglomerationLines_Idx[i]);
+    }
+    for (int i = 0; i < ref_agglo_lines_size; i++) {
+//        cout << agglomerationLines[i] << ", ";
+        ASSERT_EQ(ref_agglo_lines[i], agglomerationLines[i]);
+    }
+    delete[] agglomerationLines_Idx;
+    delete[] agglomerationLines;
+
+}
+
+TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_v2_Box_5x5x5_aniso_MG_1_level) {
+
+    long numberOfAnisotropicLinesPOne_size = box_5x5x5_number_of_cells;
+    long agglomerationLines_size = box_5x5x5_number_of_cells;
+
+    bool verbose = false;
+
+    long indCoarseCell = 0;
+    long numberOfFineAgglomeratedCells = 0;
+    long arrayOfFineAnisotropicCompliantCells_size = box_5x5x5_number_of_cells;
+    long agglomerationLines_Idx_size = box_5x5x5_number_of_cells;
+
+    unordered_set<long> empty_set = unordered_set<long>({});
+    unordered_set<long> ref_s_Box_5x5x5_is_on_valley = unordered_set<long>({57, 54, 45, 43, 40, 36, 27, 53, 24, 23, 39, 10, 20, 33, 18, 34, 5, 46, 17, 30, 6, 9, 58, 29});
+    unordered_set<long> ref_s_Box_5x5x5_is_on_ridge = unordered_set<long>({56, 55, 52, 50, 49, 47, 44, 35, 11, 32, 61, 7, 28, 31, 2, 19, 16, 14, 59, 1, 13, 62, 4, 8});
+
+    ASSERT_EQ(empty_set, (*(*g).seeds_pool).is_on_corner);
+    ASSERT_EQ(ref_s_Box_5x5x5_is_on_ridge, (*(*g).seeds_pool).is_on_ridge);
+    ASSERT_EQ(ref_s_Box_5x5x5_is_on_valley, (*(*g).seeds_pool).is_on_valley);
+
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+    ASSERT_FALSE(lines.empty());
+
+    forward_list<deque<long> *> ref_lines;
+    deque<long> *a = new deque<long>({54, 38, 22, 6,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({53, 37, 21, 5,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({58, 42, 26, 10,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({57, 41, 25, 9,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({59, 43, 27, 11,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({55, 39, 23, 7,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({62, 46, 30, 14});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({61, 45, 29, 13});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({52, 36, 20, 4});
+    ref_lines.push_front(a);
+
+    // 6
+    a = new deque<long>({56, 40, 24, 8});
+    ref_lines.push_front(a);
+
+    // 5
+    a = new deque<long>({49, 33, 17, 1,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({50, 34, 18, 2,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({63, 47, 31, 15});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({51, 35, 19, 3,});
+    ref_lines.push_front(a);
+
+    a = new deque<long>({60, 44, 28, 12,});
+    ref_lines.push_front(a);
+
+    // 0
+    a = new deque<long>({48, 32, 16, 0,});
+    ref_lines.push_front(a);
+
+    forward_list<deque<long> *>::iterator fLIt;
+    forward_list<deque<long> *>::iterator fLIt_bis;
+    fLIt_bis = ref_lines.begin();
+    int count = 0;
+
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//        cout << "count " << count << endl;
+        ASSERT_EQ(**fLIt, **fLIt_bis);
+//        cout << "{";
+//        for (auto i :(*(*fLIt))) {
+//            cout << i << ", ";
+//        }
+//        cout << "}" << endl;
+        count++;
+        fLIt_bis++;
+    }
+    int nb_agglomeration_lines = count;
+
+    long sizes[2] = {0, 0};
+    long a_agglo_lines_idx[box_5x5x5_number_of_cells];  // not initialized
+    long a_agglo_lines[box_5x5x5_number_of_cells];  // not initialized
+
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
+                                                      &lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
+
+    const long ref_agglo_lines_Idx_size = 17;
+    const long ref_agglo_lines_size = 64;
+
+    ASSERT_EQ(ref_agglo_lines_size, box_5x5x5_number_of_cells);
+    ASSERT_EQ(ref_agglo_lines_Idx_size, sizes[0]);  // number of anisotropic lines
+    ASSERT_EQ(ref_agglo_lines_size, sizes[1]);  // number of cells in these lines
+
+    long ref_agglo_lines_Idx[ref_agglo_lines_Idx_size] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
+    long ref_agglo_lines[ref_agglo_lines_size] = {48, 32, 16, 0,
+                                                  60, 44, 28, 12,
+                                                  51, 35, 19, 3,
+                                                  63, 47, 31, 15,
+                                                  50, 34, 18, 2, 49, 33, 17, 1, 56, 40, 24, 8, 52, 36, 20, 4, 61, 45, 29, 13, 62, 46, 30, 14, 55, 39, 23, 7, 59, 43, 27, 11, 57, 41, 25, 9, 58, 42, 26,
+                                                  10, 53, 37, 21, 5, 54, 38, 22, 6,
+    };
+
+    for (int i = 0; i < ref_agglo_lines_Idx_size; i++) {
+//        cout<<"i "<<i<<"\t"<<a_agglo_lines_idx[i]<<endl;
+        ASSERT_EQ(ref_agglo_lines_Idx[i], a_agglo_lines_idx[i]);
+    }
+    for (int i = 0; i < ref_agglo_lines_size; i++) {
+//        cout << a_agglo_lines[i] << ", ";
+        ASSERT_EQ(ref_agglo_lines[i], a_agglo_lines[i]);
+    }
+
+    clean_agglomeration_lines(lines);
+    clean_agglomeration_lines(ref_lines);
+}
+
 TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_Box_5x5x5_iso_and_Aniso_MG_1_level) {
 
     long numberOfFineAnisotropicCompliantCells = 64;
@@ -623,6 +903,58 @@ TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_Box_5x5x5_iso_and_Aniso
     delete[] agglomerationLines;
 }
 
+TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_v2_Box_5x5x5_iso_and_Aniso_MG_1_level) {
+
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+    ASSERT_TRUE(!lines.empty());
+
+    ASSERT_EQ(64, box_5x5x5_number_of_cells);
+
+
+    unsigned long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *>::iterator fLIt;
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+        nb_agglomeration_lines++;
+
+    }
+
+    long sizes[2] = {0, 0};
+    long a_agglo_lines_idx[box_5x5x5_number_of_cells];  // not initialized
+    long a_agglo_lines[box_5x5x5_number_of_cells];  // not initialized
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
+                                                      &lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
+    ASSERT_EQ(17, sizes[0]);
+    ASSERT_EQ(48, sizes[1]);
+    long ref_agglomerationLines_Idx[17] = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48};
+    long ref_agglomerationLines[48] = {0, 16, 32,
+                                       3, 19, 35,
+                                       12, 28, 44,
+                                       15, 31, 47,
+                                       2, 18, 34,
+                                       1, 17, 33,
+                                       4, 20, 36,
+                                       8, 24, 40,
+                                       14, 30, 46,
+                                       13, 29, 45,
+                                       7, 23, 39,
+                                       11, 27, 43,
+                                       6, 22, 38,
+                                       5, 21, 37,
+                                       10, 26, 42,
+                                       9, 25, 41};
+
+    for (int i = 0; i < 17; i++) {
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], a_agglo_lines_idx[i]);
+    }
+
+    for (int i = 0; i < 48; i++) {
+//        cout << a_agglo_lines[i] << ", ";
+        ASSERT_EQ(ref_agglomerationLines[i], a_agglo_lines[i]);
+    }
+}
 
 TEST_F(box_2x12, compute_anisotropic_line_MostAnisotropicCellInTheMiddle) {
 
@@ -670,6 +1002,43 @@ TEST_F(box_2x12, compute_anisotropic_line_MostAnisotropicCellInTheMiddle) {
     delete[] agglomerationLines;
 }
 
+TEST_F(box_2x12, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle) {
+
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+    ASSERT_FALSE(lines.empty());
+
+    unsigned long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *>::iterator fLIt;
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+        nb_agglomeration_lines++;
+    }
+
+    long sizes[2] = {0, 0};
+    long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
+    long a_agglo_lines[box_2x12_nb_fc];  // not initialized
+
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
+                                                      &lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
+
+    ASSERT_EQ(24, box_2x12_nb_fc);
+    ASSERT_EQ(3, sizes[0]);  // number of anisotropic lines
+    ASSERT_EQ(24, sizes[1]);  // number of cells in these lines
+    long ref_agglomerationLines_Idx_size = 3;
+    long ref_agglomerationLines_size = 24;
+    long ref_agglomerationLines_Idx[3] = {0, 12, 24};
+    long ref_agglomerationLines[24] = {22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0, 23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1};
+    for (int i = 0; i < ref_agglomerationLines_Idx_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], a_agglo_lines_idx[i]);
+    }
+
+    for (int i = 0; i < ref_agglomerationLines_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines[i], a_agglo_lines[i]);
+    }
+}
+
 TEST_F(box_2x12_bis, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_2) {
 
     long numberOfFineAnisotropicCompliantCells = 24;
@@ -713,6 +1082,44 @@ TEST_F(box_2x12_bis, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_2) 
     }
     delete[] agglomerationLines_Idx;
     delete[] agglomerationLines;
+}
+
+TEST_F(box_2x12_bis, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_2) {
+
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+    ASSERT_FALSE(lines.empty());
+
+    long sizes[2] = {0, 0};
+    long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
+    long a_agglo_lines[box_2x12_nb_fc];  // not initialized
+
+    unsigned long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *>::iterator fLIt;
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+        nb_agglomeration_lines++;
+    }
+    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
+
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
+                                                      &lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
+    ASSERT_EQ(24, box_2x12_nb_fc);
+    ASSERT_EQ(3, sizes[0]);  // number of anisotropic lines +1
+    ASSERT_EQ(24, sizes[1]);  // number of cells in these lines
+
+    long ref_agglomerationLines_Idx_size = 3;
+    long ref_agglomerationLines_size = 24;
+    long ref_agglomerationLines_Idx[3] = {0, 12, 24};
+    long ref_agglomerationLines[24] = {22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+                                       23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1};
+    for (int i = 0; i < ref_agglomerationLines_Idx_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], a_agglo_lines_idx[i]);
+    }
+    for (int i = 0; i < ref_agglomerationLines_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines[i], a_agglo_lines[i]);
+    }
 }
 
 TEST_F(box_2x12_ter, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_Iso_at_both_ends) {
@@ -760,80 +1167,44 @@ TEST_F(box_2x12_ter, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_Iso
     delete[] agglomerationLines;
 }
 
-TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
+TEST_F(box_2x12_ter, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_Iso_at_both_ends) {
 
-    long numberOfFineAnisotropicCompliantCells = 64;
-    long arrayOfFineAnisotropicCompliantCells[64] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                                                     21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-                                                     31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-                                                     49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                                                     60, 61, 62, 63};
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+    ASSERT_FALSE(lines.empty());
 
-    long numberOfAnisotropicLinesPOne_size = numberOfFineAnisotropicCompliantCells;
-    long agglomerationLines_size = numberOfFineAnisotropicCompliantCells;
+    ASSERT_EQ(18, g->s_anisotropic_compliant_cells.size());
 
-    long *agglomerationLines_Idx = new long[numberOfAnisotropicLinesPOne_size];
-    long *agglomerationLines = new long[numberOfAnisotropicLinesPOne_size];
-    bool verbose = false;
+    long sizes[2] = {0, 0};
+    long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
+    long a_agglo_lines[box_2x12_nb_fc];  // not initialized
 
-    long indCoarseCell = 0;
-    long numberOfFineAgglomeratedCells = 0;
-    long arrayOfFineAnisotropicCompliantCells_size = box_5x5x5_number_of_cells;
-    long agglomerationLines_Idx_size = box_5x5x5_number_of_cells;
-
-    unordered_set<long> empty_set = unordered_set<long>({});
-    unordered_set<long> ref_s_Box_5x5x5_is_on_valley = unordered_set<long>({0, 3, 12, 15, 48, 51, 60, 63});
-
-    ASSERT_EQ(empty_set, (*(*g).seeds_pool).is_on_corner);
-    ASSERT_EQ(empty_set, (*(*g).seeds_pool).is_on_ridge);
-    ASSERT_EQ(ref_s_Box_5x5x5_is_on_valley, (*(*g).seeds_pool).is_on_valley);
-
-
-    long sizes[10] = {box_5x5x5_number_of_cells, box_5x5x5_col_ind_size, indCoarseCell, numberOfFineAgglomeratedCells, 0, 0, 0,
-                      numberOfFineAnisotropicCompliantCells, agglomerationLines_Idx_size, agglomerationLines_size};
-
-    bool isAggloLines = g->compute_anisotropic_line(sizes,
-                                                    arrayOfFineAnisotropicCompliantCells,
-                                                    agglomerationLines_Idx,
-                                                    agglomerationLines,
-                                                    verbose);
-
-    ASSERT_TRUE(isAggloLines);
-    const long ref_agglo_lines_Idx_size = 17;
-    const long ref_agglo_lines_size = 64;
-
-    ASSERT_EQ(ref_agglo_lines_size, numberOfFineAnisotropicCompliantCells);
-    ASSERT_EQ(ref_agglo_lines_Idx_size, sizes[8]);  // number of anisotropic lines
-    ASSERT_EQ(ref_agglo_lines_size, sizes[9]);  // number of cells in these lines
-
-    long ref_agglo_lines_Idx[ref_agglo_lines_Idx_size] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
-    long ref_agglo_lines[ref_agglo_lines_size] = {48, 32, 16, 0,
-                                                  51, 35, 19, 3,
-                                                  60, 44, 28, 12,
-                                                  63, 47, 31, 15,
-                                                  61, 45, 29, 13,
-                                                  62, 46, 30, 14,
-                                                  50, 34, 18, 2,
-                                                  49, 33, 17, 1,
-                                                  59, 43, 27, 11,
-                                                  56, 40, 24, 8,
-                                                  55, 39, 23, 7,
-                                                  52, 36, 20, 4,
-                                                  9, 25, 41, 57,
-                                                  10, 26, 42, 58,
-                                                  5, 21, 37, 53,
-                                                  6, 22, 38, 54,
-    };
-    for (int i = 0; i < ref_agglo_lines_Idx_size; i++) {
-        ASSERT_EQ(ref_agglo_lines_Idx[i], agglomerationLines_Idx[i]);
+    unsigned long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *>::iterator fLIt;
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+        nb_agglomeration_lines++;
     }
-    for (int i = 0; i < ref_agglo_lines_size; i++) {
-//        cout << agglomerationLines[i] << ", ";
-        ASSERT_EQ(ref_agglo_lines[i], agglomerationLines[i]);
-    }
-    delete[] agglomerationLines_Idx;
-    delete[] agglomerationLines;
+    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
 
+    convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
+                                                      &lines,
+                                                      sizes,
+                                                      a_agglo_lines_idx,
+                                                      a_agglo_lines);
+
+    ASSERT_EQ(3, sizes[0]);  // number of anisotropic lines
+    ASSERT_EQ(18, sizes[1]);  // number of cells in these lines
+
+    long ref_agglomerationLines_Idx_size = 3;
+    long ref_agglomerationLines_size = 18;
+    long ref_agglomerationLines_Idx[3] = {0, 9, 18};
+    long ref_agglomerationLines[18] = {2, 4, 6, 8, 10, 12, 14, 16, 18,
+                                       3, 5, 7, 9, 11, 13, 15, 17, 19};
+    for (int i = 0; i < ref_agglomerationLines_Idx_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines_Idx[i], a_agglo_lines_idx[i]);
+    }
+    for (int i = 0; i < ref_agglomerationLines_size; i++) {
+        ASSERT_EQ(ref_agglomerationLines[i], a_agglo_lines[i]);
+    }
 }
 
 TEST_F(MGridGen_Dual_Graph, compute_min_fc_compactness_inside_a_cc_mgridgen) {
@@ -1828,13 +2199,13 @@ TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_0) {
                                      a_is_fc_agglomerated);
 
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  1},
-                                                      {2,  1},
-                                                      {3,  2},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  2},
-                                                      {8,  3},
-                                                      {11, 3}
+                                                                 {2,  1},
+                                                                 {3,  2},
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {8,  3},
+                                                                 {11, 3}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1855,12 +2226,12 @@ TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_1) {
                                      goal_card,
                                      a_is_fc_agglomerated);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{2,  1},
-                                                      {3,  1},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  2},
-                                                      {8,  3},
-                                                      {11, 3}
+                                                                 {3,  1},
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {8,  3},
+                                                                 {11, 3}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1881,13 +2252,13 @@ TEST_F(MGridGen_Dual_Graph, compute_neighbourhood_of_cc_MGridGen_case_2) {
                                      goal_card,
                                      a_is_fc_agglomerated);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{4,  2},
-                                                      {5,  1},
-                                                      {7,  3},
-                                                      {8,  2},
-                                                      {10, 3},
-                                                      {11, 1},
-                                                      {13, 2},
-                                                      {14, 2}
+                                                                 {5,  1},
+                                                                 {7,  3},
+                                                                 {8,  2},
+                                                                 {10, 3},
+                                                                 {11, 1},
+                                                                 {13, 2},
+                                                                 {14, 2}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1909,15 +2280,15 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_case_3_cc_not_connect
                                      a_is_fc_agglomerated
     );
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{2,  1},
-                                                      {3,  1},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  1},
-                                                      {8,  3},
-                                                      {9,  3},
-                                                      {10, 2},
-                                                      {13, 1},
-                                                      {14, 1}
+                                                                 {3,  1},
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  1},
+                                                                 {8,  3},
+                                                                 {9,  3},
+                                                                 {10, 2},
+                                                                 {13, 1},
+                                                                 {14, 1}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1939,13 +2310,13 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints) {
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  1},
-                                                      {2,  1},
-                                                      {3,  2},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  2},
-                                                      {8,  3},
-                                                      {11, 3}
+                                                                 {2,  1},
+                                                                 {3,  2},
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {8,  3},
+                                                                 {11, 3}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1967,12 +2338,12 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_11) {
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1, 1},
-                                                      {2, 1},
-                                                      {3, 2},
-                                                      {4, 3},
-                                                      {5, 2},
-                                                      {6, 2},
-                                                      {8, 3}
+                                                                 {2, 1},
+                                                                 {3, 2},
+                                                                 {4, 3},
+                                                                 {5, 2},
+                                                                 {6, 2},
+                                                                 {8, 3}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(4, number_of_order_of_neighbourhood);
@@ -1994,12 +2365,12 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118) {
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1, 1},
-                                                      {2, 1},
-                                                      {3, 2},
-                                                      {4, 3},
-                                                      {5, 2},
-                                                      {6, 2},
-                                                      {7, 4}
+                                                                 {2, 1},
+                                                                 {3, 2},
+                                                                 {4, 3},
+                                                                 {5, 2},
+                                                                 {6, 2},
+                                                                 {7, 4}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(5, number_of_order_of_neighbourhood);
@@ -2021,15 +2392,15 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_118_max
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  1},
-                                                      {2,  1},
-                                                      {3,  2},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  2},
-                                                      {7,  4},
-                                                      {9,  5},
-                                                      {10, 6},
-                                                      {12, 6}
+                                                                 {2,  1},
+                                                                 {3,  2},
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {7,  4},
+                                                                 {9,  5},
+                                                                 {10, 6},
+                                                                 {12, 6}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(7, number_of_order_of_neighbourhood);
@@ -2051,10 +2422,10 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_1184) {
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1, 1},
-                                                      {2, 1},
-                                                      {3, 2},
-                                                      {5, 2},
-                                                      {6, 2}
+                                                                 {2, 1},
+                                                                 {3, 2},
+                                                                 {5, 2},
+                                                                 {6, 2}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(3, number_of_order_of_neighbourhood);
@@ -2076,15 +2447,15 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_13) {
                                      goal_card,
                                      a_is_fc_agglomerated, s_of_constrained_fc);
     unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{2,  1},
-                                                      {4,  3},
-                                                      {5,  2},
-                                                      {6,  2},
-                                                      {7,  4},
-                                                      {8,  3},
-                                                      {10, 4},
-                                                      {11, 3},
-                                                      {13, 4},
-                                                      {14, 4}
+                                                                 {4,  3},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {7,  4},
+                                                                 {8,  3},
+                                                                 {10, 4},
+                                                                 {11, 3},
+                                                                 {13, 4},
+                                                                 {14, 4}
     };
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
     ASSERT_EQ(5, number_of_order_of_neighbourhood);

@@ -80,6 +80,10 @@ public :
                                   long *agglomerationLines,
                                   bool verbose);
 
+    forward_list<deque<long> *> compute_anisotropic_line_v2();
+
+    unordered_map<long, double> __compute_d_anisotropic_fc(vector<double> &maxArray);
+
     unordered_map<long, unordered_set<pair<long, long>, pair_hash>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
 
     //unordered_map<long, unordered_set<Tuple>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
