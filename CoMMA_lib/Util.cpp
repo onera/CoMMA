@@ -9,7 +9,7 @@ void convert_agglomeration_lines_arrays_to_agglomeration_lines(
         long *fineAgglomerationLines_array_Idx,
         long *fineAgglomerationLines_array,
         long &nb_agglomeration_lines,
-        forward_list<deque<long> *> *agglomeration_lines
+        forward_list<deque<long> *> &agglomeration_lines
 ) {
 
     nb_agglomeration_lines = 0;
@@ -23,14 +23,14 @@ void convert_agglomeration_lines_arrays_to_agglomeration_lines(
             for (long j = ind; j < indPOne; j++) {
                 (*dQue).push_back(fineAgglomerationLines_array[j]);
             }
-            (*agglomeration_lines).push_front(dQue);
+            agglomeration_lines.push_front(dQue);
             nb_agglomeration_lines++;
         }
     }
 }
 
 void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long nb_lines, // because forward_list does not have a size() method.
-                                                       forward_list<deque<long> *> *agglo_lines,
+                                                       forward_list<deque<long> *> const &agglo_lines,
                                                        long *sizes,  // out
                                                        long *agglo_lines_array_idx,// out
                                                        long *agglo_lines_array) {  // out
@@ -47,7 +47,7 @@ void convert_agglo_lines_to_agglomeration_lines_arrays(const unsigned long nb_li
     agglo_lines_array_idx[0] = 0;
 
     long i_l = 0;
-    for (auto &line :(*agglo_lines)) {
+    for (auto &line :(agglo_lines)) {
         long size_of_line = (*line).size();
         agglo_lines_array_idx[i_l + 1] = size_of_line + number_of_fc_in_agglomeration_lines;
 
@@ -98,6 +98,23 @@ void print_queue(queue<long> q) {
     cout << "]" << endl;
 }
 
+void print_agglomeration_lines(forward_list<deque<long> *> lines) {
+
+    int count = 0;
+    forward_list<deque<long> *>::iterator fLIt;
+    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+
+        cout << "<" << count;
+        cout << ": {";
+        for (auto i :(*(*fLIt))) {
+            cout << i << ", ";
+        }
+        cout << "} >" << endl;
+        count++;
+    }
+
+}
+
 void clean_agglomeration_lines(forward_list<deque<long> *> lines) {
 
     forward_list<deque<long> *>::iterator fLIt;
@@ -106,4 +123,47 @@ void clean_agglomeration_lines(forward_list<deque<long> *> lines) {
         delete (*fLIt);
     }
 
+}
+
+forward_list<deque<long> *> copy_agglomeration_lines(forward_list<deque<long> *> agglo_lines) {
+
+    forward_list<deque<long> *> cp_agglo_lines;
+    forward_list<deque<long> *> cp_agglo_lines_tmp;
+
+    forward_list<deque<long> *>::iterator fLIt;
+
+    int count = 0;
+
+    for (fLIt = agglo_lines.begin(); fLIt != agglo_lines.end(); fLIt++) {
+        cp_agglo_lines_tmp.push_front(new deque<long>(**fLIt));
+//        cout << "count " << count;
+//        cout << " {";
+//        for (auto i :(*(*fLIt))) {
+//            cout << i << ", ";
+//        }
+//        cout << "}" << endl;
+        count++;
+    }
+    for (fLIt = cp_agglo_lines_tmp.begin(); fLIt != cp_agglo_lines_tmp.end(); fLIt++) {
+        cp_agglo_lines.push_front(new deque<long>(**fLIt));
+//        cout << "count " << count << endl;
+//        cout << "{";
+//        for (auto i :(*(*fLIt))) {
+//            cout << i << ", ";
+//        }
+//        cout << "}" << endl;
+//        count++;
+    }
+//    for (fLIt = agglo_lines.begin(); fLIt != agglo_lines.end(); fLIt++) {
+//
+//                cout << "count " << count << endl;
+//        cout << "{";
+//        for (auto i :(*(*fLIt))) {
+//            cout << i << ", ";
+//        }
+//        cout << "}" << endl;
+//        count++;
+//    }
+    clean_agglomeration_lines(cp_agglo_lines_tmp);
+    return cp_agglo_lines;
 }

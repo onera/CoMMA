@@ -823,7 +823,7 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_v2_Box_5x5x5_aniso_M
     long a_agglo_lines[box_5x5x5_number_of_cells];  // not initialized
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
-                                                      &lines,
+                                                      lines,
                                                       sizes,
                                                       a_agglo_lines_idx,
                                                       a_agglo_lines);
@@ -922,7 +922,7 @@ TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_v2_Box_5x5x5_iso_and_An
     long a_agglo_lines_idx[box_5x5x5_number_of_cells];  // not initialized
     long a_agglo_lines[box_5x5x5_number_of_cells];  // not initialized
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
-                                                      &lines,
+                                                      lines,
                                                       sizes,
                                                       a_agglo_lines_idx,
                                                       a_agglo_lines);
@@ -1018,7 +1018,7 @@ TEST_F(box_2x12, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle) {
     long a_agglo_lines[box_2x12_nb_fc];  // not initialized
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
-                                                      &lines,
+                                                      lines,
                                                       sizes,
                                                       a_agglo_lines_idx,
                                                       a_agglo_lines);
@@ -1101,7 +1101,7 @@ TEST_F(box_2x12_bis, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_
     ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
-                                                      &lines,
+                                                      lines,
                                                       sizes,
                                                       a_agglo_lines_idx,
                                                       a_agglo_lines);
@@ -1186,7 +1186,7 @@ TEST_F(box_2x12_ter, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_
     ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
-                                                      &lines,
+                                                      lines,
                                                       sizes,
                                                       a_agglo_lines_idx,
                                                       a_agglo_lines);

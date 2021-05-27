@@ -462,7 +462,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_without_correction) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 0;
@@ -493,7 +493,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_1) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 1;
@@ -523,7 +523,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 2;
@@ -555,7 +555,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_3) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 3;
@@ -586,7 +586,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_4) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 4;
@@ -616,7 +616,7 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
                                     dimension,
                                     checks);
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 5;
@@ -652,7 +652,7 @@ TEST_F(Box_1_prism_Dual_Graph, correction_split_too_big_cc_in_two_Box_1_Prism) {
     short min_card = -1;
     short max_card = -1;
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    forward_list<deque<long> *> aniso_agglo_lines = {};
     vector<long> debug_only_fc_to_cc = {53, 53, 53, 24, 24, 24, 43, 47, 47, 4, 4, 4, 19, 19, 19, 9, 12,
                                         12, 6, 9, 9, 2, 2, 2, 26, 26, 33, 13, 13, 20, 16, 44, 44, 1,
                                         16, 16, 25, 25, 25, 12, 12, 48, 9, 9, 45, 2, 2, 2, 19, 26, 26,
@@ -719,7 +719,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_e
     short min_card = -1;
     short max_card = -1;
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    forward_list<deque<long> *> aniso_agglo_lines = {};
     vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0, 4, 1, 1, 3, 5, 5, 4, 4, 4, 2, 3, 3, 5, 5, 2, 2, 2, 2, 5, 5, 1};
     //    np.array([0, 0, 0, 0, 0, 0])]
     agg.agglomerate_one_level(is_anisotropic,
@@ -845,7 +845,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_e
     short min_card = -1;
     short max_card = -1;
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    forward_list<deque<long> *> aniso_agglo_lines = {};
     vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0,
                                         0, 0, 0, 1, 1,
                                         1, 2, 2, 2, 2,
@@ -888,7 +888,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_e
     short min_card = -1;
     short max_card = -1;
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    forward_list<deque<long> *> aniso_agglo_lines = {};
     vector<long> debug_only_fc_to_cc = {0, 0, 0, 0, 0,
                                         0, 1, 1, 3, 2,
                                         3, 1, 1, 1, 2,
@@ -933,7 +933,7 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_e
     short min_card = -1;
     short max_card = -1;
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *aniso_agglo_lines = NULL;
+    forward_list<deque<long> *> aniso_agglo_lines = {};
     vector<long> debug_only_fc_to_cc = {3, 3, 3, 0, 0,
                                         0, 0, 0, 1, 1,
                                         1, 2, 2, 2, 2,
@@ -1004,7 +1004,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_without_correction) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 0;
@@ -1048,7 +1048,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_1) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 1;
@@ -1093,7 +1093,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 2;
@@ -1137,7 +1137,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_3) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 3;
@@ -1181,7 +1181,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_4) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 4;
@@ -1226,7 +1226,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
                                     checks);
 
     unsigned long nb_aniso_agglo_lines = 0;
-    forward_list<deque<long> *> *anisotropic_lines = NULL;
+    forward_list<deque<long> *> anisotropic_lines = {};
     vector<long> debug_only_fc_to_cc = {};
 
     const short debug_only_steps = 5;

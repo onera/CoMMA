@@ -577,7 +577,7 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
     // Part one: from array to forward_list<deque<long> *> *
     //======================================================
     long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *> *agglomeration_lines = new forward_list<deque<long> *>();
+    forward_list<deque<long> *> agglomeration_lines;
 
     convert_agglomeration_lines_arrays_to_agglomeration_lines(fine_agglomeration_lines_array_idx_size,
                                                               fine_agglomeration_lines_array_size,
@@ -606,12 +606,12 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
     };
     ASSERT_EQ(16, nb_agglomeration_lines);
     int i_count = 0;
-    for (auto &line :(*agglomeration_lines)) {
+    for (auto &line :agglomeration_lines) {
         ASSERT_EQ(ref_agglomeration_lines[i_count], (*line));
         i_count++;
     }
 
-    // Part two: from forward_list<deque<long> *> * to array
+    // Part two: from forward_list<deque<long> *> to array
     //======================================================
 
     long sizes[2] = {0, 0};
@@ -634,8 +634,101 @@ TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_line
         ASSERT_EQ(ref_fine_agglomeration_lines_array[i], a_agglo_lines[i]);
     }
     //TODO check this deletion: valgrind???
-    for (auto &line :(*agglomeration_lines)) {
-        delete line;
+    clean_agglomeration_lines(agglomeration_lines);
+}
+
+TEST(Utils_TestSuite, manip_agglo_lines) {
+
+    const long nb_fc = 55;  // This number is arbitrary ! It should only be bigger than fine_agglomeration_lines_array_size;
+
+    const long fine_agglomeration_lines_array_idx_size = 17;
+    const long fine_agglomeration_lines_array_size = 33;
+
+    long ref_fine_agglomeration_lines_array_idx[17] = {0, 3, 4, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33};
+    long ref_fine_agglomeration_lines_array[fine_agglomeration_lines_array_size] = {0, 1, 23, 2, 4, 5, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                                                                                    24, 25, 26, 27, 28, 29, 30, 31};
+
+    // Part one: from array to forward_list<deque<long> *> *
+    //======================================================
+    long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> agglomeration_lines;
+
+    convert_agglomeration_lines_arrays_to_agglomeration_lines(fine_agglomeration_lines_array_idx_size,
+                                                              fine_agglomeration_lines_array_size,
+                                                              ref_fine_agglomeration_lines_array_idx,
+                                                              ref_fine_agglomeration_lines_array,
+                                                              nb_agglomeration_lines,
+                                                              agglomeration_lines);
+    // Checks:
+    //=========
+    vector<deque<long> > ref_agglomeration_lines = {deque<long>({0, 1, 23}),
+                                                    deque<long>({2}),
+                                                    deque<long>({4, 5, 3}),
+                                                    deque<long>({6, 7}),
+                                                    deque<long>({8, 9}),
+                                                    deque<long>({10, 11}),
+                                                    deque<long>({12, 13}),
+                                                    deque<long>({14, 15}),
+                                                    deque<long>({16, 17}),
+                                                    deque<long>({18, 19}),
+                                                    deque<long>({20, 21}),
+                                                    deque<long>({22, 23}),
+                                                    deque<long>({24, 25}),
+                                                    deque<long>({26, 27}),
+                                                    deque<long>({28, 29}),
+                                                    deque<long>({30, 31})
+    };
+    ASSERT_EQ(16, nb_agglomeration_lines);
+    int i_count = 0;
+    for (auto &line :agglomeration_lines) {
+        ASSERT_EQ(ref_agglomeration_lines[i_count], (*line));
+        i_count++;
     }
-    delete agglomeration_lines;
+
+    forward_list<deque<long> *> cp_agglomeration_lines = copy_agglomeration_lines(agglomeration_lines);
+
+    // Checks equality:
+    forward_list<deque<long> *>::iterator fLIt;
+    forward_list<deque<long> *>::iterator fLIt_bis;
+    fLIt_bis = cp_agglomeration_lines.begin();
+    int count = 0;
+
+    for (fLIt = agglomeration_lines.begin(); fLIt != agglomeration_lines.end(); fLIt++) {
+//        cout << "count " << count << endl;
+        ASSERT_EQ(**fLIt, **fLIt_bis);
+//        cout << "{";
+//        for (auto i :(*(*fLIt))) {
+//            cout << i << ", ";
+//        }
+//        cout << "}" << endl;
+        count++;
+        fLIt_bis++;
+    }
+    // change values of the second deque:
+    count = 0;
+    for (fLIt = cp_agglomeration_lines.begin(); fLIt != cp_agglomeration_lines.end(); fLIt++) {
+
+        if (count == 1) {
+            ASSERT_EQ(1, (**fLIt).size());
+            ASSERT_EQ(2, (**fLIt)[0]);
+            (**fLIt).push_back(19);
+            ASSERT_EQ(2, (**fLIt).size());
+            break;
+        }
+        count++;
+    }
+    count = 0;
+    for (fLIt = agglomeration_lines.begin(); fLIt != agglomeration_lines.end(); fLIt++) {
+        if (count == 1) {
+            ASSERT_EQ(1, (**fLIt).size());
+            ASSERT_EQ(2, (**fLIt)[0]);
+            break;
+        }
+        count++;
+    }
+
+    //TODO check this deletion: valgrind???
+    clean_agglomeration_lines(agglomeration_lines);
+    clean_agglomeration_lines(cp_agglomeration_lines);
+
 }
