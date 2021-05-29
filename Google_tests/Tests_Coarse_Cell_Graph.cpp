@@ -3149,9 +3149,6 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_12_Squares_9_isotropicCel
     //Coarse cell 6 is remove.
     //:return:
     //"""
-    cout << "\n\n\n" << endl;
-    cout << "============================>" << endl;
-    cout << "\n\n\n" << endl;
     int nbCells = 12;
 
     long row_ptr[13] = {0, 3, 7, 10, 14, 19, 23, 27, 32, 36, 39, 43, 46};
@@ -3889,7 +3886,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells) {
                                           dict_DistributionOfCardinalOfCoarseElements,
                                           indCoarseCell,
                                           nbCells,
-                                          fineCellIndicesToCoarseCellIndices, true);
+                                          fineCellIndicesToCoarseCellIndices, false);
 
     ASSERT_EQ(3, indCoarseCell);
 
@@ -3975,7 +3972,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                                           dict_DistributionOfCardinalOfCoarseElements,
                                           indCoarseCell,
                                           nbCells,
-                                          fineCellIndicesToCoarseCellIndices, true);
+                                          fineCellIndicesToCoarseCellIndices, false);
 
     ASSERT_EQ(4, indCoarseCell);
 
@@ -4053,7 +4050,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                                           dict_DistributionOfCardinalOfCoarseElements,
                                           indCoarseCell,
                                           nbCells,
-                                          fineCellIndicesToCoarseCellIndices, true);
+                                          fineCellIndicesToCoarseCellIndices, false);
 
     ASSERT_EQ(2, indCoarseCell);
 
@@ -4126,7 +4123,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                                           dict_DistributionOfCardinalOfCoarseElements,
                                           indCoarseCell,
                                           nbCells,
-                                          fineCellIndicesToCoarseCellIndices, true);
+                                          fineCellIndicesToCoarseCellIndices, false);
 
     ASSERT_EQ(4, indCoarseCell);
 
@@ -4202,7 +4199,7 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                                           dict_DistributionOfCardinalOfCoarseElements,
                                           indCoarseCell,
                                           nbCells,
-                                          fineCellIndicesToCoarseCellIndices, true);
+                                          fineCellIndicesToCoarseCellIndices, false);
 
     ASSERT_EQ(3, indCoarseCell);
 

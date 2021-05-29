@@ -432,7 +432,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
 TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
 
-    unsigned short int verbose = 1;
+    unsigned short int verbose = 0;
     bool is_visu_data_stored = true;
     int dimension = 2;
     bool checks = true;
