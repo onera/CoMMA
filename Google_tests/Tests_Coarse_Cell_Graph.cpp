@@ -2633,6 +2633,74 @@ TEST_F(MGridGen_ext_v2_Dual_Graph, correction_swap_leaf_fc_v2_MGridGen_ext_v2_Du
     ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
 }
 
+TEST_F(MGridGen_Dual_Graph, update_cc_case_1) {
+
+    Coarse_Cell_Graph ccg((*g));
+
+    unordered_set<long> s_fc = {3};
+    ccg.cc_create_a_cc(s_fc);
+
+    s_fc = {1, 2, 0};
+    ccg.cc_create_a_cc(s_fc);
+
+    ccg.fill_cc_neighbouring();
+    vector<long> ref_fc_2_cc = {1, 1, 1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+    ASSERT_EQ(2, ccg.get_nb_of_cc());
+    unordered_map<long, unordered_set<long>> ref_d_cc_all = {{0, {3}},
+                                                             {1, {0, 1, 2}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+    unordered_map<unsigned short int, long> ref_d_dist_of_card = {{1, 1},
+                                                                  {3, 1}};
+
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_card_2_cc = {{1, {0}},
+                                                                              {3, {1}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    unordered_map<unsigned short int, unordered_set<long>> ref_d_compactness_2_cc = {{0, {0}},
+                                                                                     {1, {1}},
+    };
+
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+
+    long i_target_cc = 1;
+    unordered_set<long> s_of_fc_to_add = {4};
+
+    ccg.cc_update_cc(s_of_fc_to_add, i_target_cc);
+
+    ASSERT_EQ(2, ccg.get_nb_of_cc());
+    ref_d_cc_all = {{0, {3}},
+                    {1, {0, 1, 2, 4}},
+    };
+    ASSERT_EQ(ref_d_cc_all, ccg.get_d_cc_all());
+
+    ref_d_card_2_cc = {{1, {0}},
+                       {4, {1}},
+    };
+    ASSERT_EQ(ref_d_card_2_cc, ccg._d_card_2_cc);
+
+    ref_d_dist_of_card = {{1, 1},
+                          {4, 1}};
+    ASSERT_EQ(ref_d_dist_of_card, ccg.get_d_distribution_of_cardinal_of_isotropic_cc());
+
+//    ASSERT_EQ({ 0: { 0, 1 }, 1: set() }, ccg._d_compactness_2_cc)
+    ref_d_compactness_2_cc = {{0, {0, 1}},
+    };
+    ASSERT_EQ(ref_d_compactness_2_cc, ccg._d_compactness_2_cc);
+
+    ref_fc_2_cc = {1, 1, 1, 0, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+
+
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef unordered_map<long, unordered_set<long>> unorderedMap;
 

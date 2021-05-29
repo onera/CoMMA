@@ -47,6 +47,8 @@ public:
                         bool is_anisotropic = false,
                         bool is_creation_delayed = false);
 
+    void cc_update_cc(unordered_set<long> set_of_fc_to_add, long i_target_cc);
+
     void fill_cc_neighbouring();
 
     unordered_map<long, unordered_set<long>> get_d_cc_all();

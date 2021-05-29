@@ -20,11 +20,10 @@ public :
     );
 
     ~Agglomerator() {
-//        if (__is_anisotropic) {
-//            delete __v_lines[0];
-//            delete __v_lines[1];
-//
-//        }
+        if (__is_anisotropic) {
+            clean_agglomeration_lines(__v_lines[0]);
+            clean_agglomeration_lines(__v_lines[1]);
+        }
     };
 
 
@@ -121,19 +120,20 @@ public:
                                   double &min_ar_vol);
 
     void agglomerate_one_level(const bool is_anisotropic,
+                               unsigned long nb_aniso_agglo_lines,
+                               forward_list<deque<long> *> &anisotropic_lines,
                                string kind_of_agglomerator = "basic",
                                const short goal_card = -1,
                                const short min_card = -1,
                                const short max_card = -1,
-                               unsigned long nb_aniso_agglo_lines = 0,
-                               forward_list<deque<long> *> anisotropic_lines = {},
                                vector<long> debug_only_fc_to_cc = {},
                                const short debug_only_steps = -1);
 
-    forward_list<deque<long> *> _agglomerate_one_level_anisotropic_part(forward_list<deque<long> *> anisotropic_lines);
+    void _agglomerate_one_level_anisotropic_part();
 
     void _agglomerate_one_level_isotropic_part(const short debug_only_steps);
 
+    void __create_all_anisotropic_cc_wrt_agglomeration_lines();
 
     //===========================
     // Accessors
@@ -174,17 +174,20 @@ public:
 
     vector<long> __l_nb_of_cells;
 
+    // TODO rename __fc_graphs to __fc_graph
     Dual_Graph __fc_graphs;
+
+    // TODO rename __cc_graphs to __cc_graph
     Coarse_Cell_Graph *__cc_graphs;
 
     //======================
     // anisotopic specifics:
     //======================
-    vector<unordered_set<long>> __l_of_s_anisotropic_compliant_fc;
+    vector<unordered_set<long>> __v_of_s_anisotropic_compliant_fc;
 
     // Anisotropic agglomeration lines:
     vector<unsigned long> __v_nb_lines;
-    vector<forward_list<deque<long> *>> __v_lines;
+    vector<forward_list<deque<long> *>> __v_lines;  // We store the current agglomeration_lines and the coarse one for visualization purpose.
 
     //=================
     // Visualization:

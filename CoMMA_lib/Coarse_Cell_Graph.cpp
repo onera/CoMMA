@@ -1628,6 +1628,25 @@ unsigned short int Coarse_Cell_Graph::get_cc_cardinal(long i_cc) {
         return _d_anisotropic_cc[i_cc].size();
 }
 
+void Coarse_Cell_Graph::cc_update_cc(unordered_set<long> set_of_fc_to_add,
+                                     long i_target_cc) {
+
+    /**
+     * Add (not yet agglomerated) fine cells to a already created cc of index i_target_cc.
+     */
+    cc_update_cc_specifics(set_of_fc_to_add, i_target_cc);
+
+    // Update of the associated cc number the output of the current function agglomerate
+    for (const long i_fc:set_of_fc_to_add) {
+
+        assert(!_a_is_fc_agglomerated[i_fc]);
+        _a_is_fc_agglomerated[i_fc] = true;  // Rk: initialized at false in agglomerate(...)
+        _fc_2_cc[i_fc] = i_target_cc;
+    }
+
+    _nb_of_agglomerated_fc += set_of_fc_to_add.size();
+}
+
 void Coarse_Cell_Graph::cc_update_cc_specifics(unordered_set<long> set_of_fc_to_add, long i_target_cc) {
     /*
           Update a cc with some (not yet agglomerated) fine cells.
@@ -1655,6 +1674,9 @@ void Coarse_Cell_Graph::cc_update_cc_specifics(unordered_set<long> set_of_fc_to_
 
         if (_d_compactness_2_cc.size() > 0) {
             _d_compactness_2_cc[old_deg_compactness].erase(i_target_cc);
+            if (_d_compactness_2_cc[old_deg_compactness].empty()) {
+                _d_compactness_2_cc.erase(old_deg_compactness);
+            }
             // TODO peut-etre eviter de recalculer. On l'avait avant dans le choix de la CC.
             unsigned short int deg_compactness = target_cc->__compactness;
             _d_compactness_2_cc[deg_compactness];
