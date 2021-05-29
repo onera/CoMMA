@@ -700,7 +700,7 @@ TEST_F(Box_1_prism_Dual_Graph, correction_split_too_big_cc_in_two_Box_1_Prism) {
 
 TEST_F(MGridGen_ext_v2_Dual_Graph, correction_split_too_big_cc_in_two_MGridGen_ext_v2_MG_1_level) {
 
-    unsigned short int verbose = 1;
+    unsigned short int verbose = 0;
     bool is_visu_data_stored = false;
     int dimension = 2;
     bool checks = true;
@@ -1282,8 +1282,8 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level) {
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
-    print_agglomeration_lines(agg.__v_lines[0]);
-    print_agglomeration_lines(agg.__v_lines[1]);
+//    print_agglomeration_lines(agg.__v_lines[0]);
+//    print_agglomeration_lines(agg.__v_lines[1]);
 
 }
 

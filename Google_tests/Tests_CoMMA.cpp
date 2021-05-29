@@ -242,7 +242,7 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_9) {
 
 
     long checks = 1;
-    long verbose = 1;
+    long verbose = 0;
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[64];
@@ -412,7 +412,7 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Anisotropic) {
 
 
     long checks = 1;
-    long verbose = 1;
+    long verbose = 0;
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[64];
