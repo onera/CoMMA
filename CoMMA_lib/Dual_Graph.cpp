@@ -1979,7 +1979,7 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                              unsigned short &nb_of_order_of_neighbourhood,
                                              unordered_map<long, unsigned short> &d_n_of_seed,
                                              const unsigned short max_card,
-                                             vector<bool> &isFineCellAgglomerated_tmp,
+                                             vector<bool> &is_fc_agglomerated_tmp,
                                              unordered_set<long> s_of_constrained_fc) {
     // cout<<"Call of compute_neighbourhood_of_cc"<<endl;
 
@@ -2018,7 +2018,7 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
             for (const long &i_fc_n : get_neighbours(seed_tmp)) {
 
                 if ((d_n_of_seed.count(i_fc_n) == 0) &&
-                    ((!isFineCellAgglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
+                    ((!is_fc_agglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
                     if (d_n_of_order_o.count(i_fc_n) == 0) {
                         if (!(s_of_constrained_fc).empty()) {
                             if ((s_of_constrained_fc).count(i_fc_n)) {

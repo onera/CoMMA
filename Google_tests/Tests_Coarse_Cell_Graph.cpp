@@ -2720,10 +2720,8 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_3_isotropicCell
     bool isFineCellAgglomerated[9] = {true, true, true, true, true, true, true, true, true};
     long fineCellIndicesToCoarseCellIndices[9] = {1, 0, 3, 1, 2, 3, 1, 3, 3};
 
-
     int thresholdCard = 2;  // wrong value in 2D but for test!
     long indCoarseCell = 4;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
 
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[1] = unordered_set<long>({0, 3, 6});
@@ -2791,10 +2789,8 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_3_isotropicCell
 
     long fineCellIndicesToCoarseCellIndices[9] = {1, 2, 4, 1, 0, 4, 1, 3, 4};
 
-
     int thresholdCard = 4;  // wrong valu in 2D but for test!
     long indCoarseCell = 4;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
 
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[0] = unordered_set<long>({4});
@@ -2846,7 +2842,6 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_Case_3) {
 
     int thresholdCard = 2;  // wrong valu in 2D but for test!
     long indCoarseCell = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
 
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[0] = unordered_set<long>({1, 4});
@@ -2901,10 +2896,8 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_Too_small_Cell_
     double values[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     long fineCellIndicesToCoarseCellIndices[9] = {1, 0, 2, 1, 0, 2, 1, 2, 2};
 
-
     int thresholdCard = 2;  // wrong valu in 2D but for test!
     long indCoarseCell = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
 
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[0] = unordered_set<long>({1, 4});
@@ -2969,10 +2962,8 @@ TEST(CoarseCellGraph_TestSuite, remove_Too_Small_Cells_9_Squares_Too_small_Cell_
     double values[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     long fineCellIndicesToCoarseCellIndices[9] = {2, 1, 0, 2, 1, 0, 2, 0, 0};
 
-
     int thresholdCard = 2;  // wrong valu in 2D but for test!
     long indCoarseCell = 3;
-    long numberOfFineAgglomeratedCells = 9; // TODO usefull ???
 
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[1] = unordered_set<long>({1, 4});
@@ -3236,7 +3227,6 @@ TEST(CoarseCellGraph_TestSuite, makeSmallCellBigger_12_Squares_12_isotropic_Cell
                          0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 0.1, 1., 0.1, 1., 0.1,
                          1.,};
 
-
     bool *isFineCellAgglomerated = new bool[nbCells];
     for (int i = 0; i < nbCells; i++) {
         isFineCellAgglomerated[i] = true;
@@ -3343,17 +3333,11 @@ TEST(CoarseCellGraph_TestSuite, makeSmallCellBigger_12_Squares_12_isotropic_Cell
 
     long numberOfFineAgglomeratedCells = 12;
 
-//    dict_Coarse_Cells = {0: [0, 1, 3], 1: [6, 7, 9, 10], 2: [2, 4, 5, 8, 11]}
-//    dict_Card_Coarse_Cells = {3: {0}, 4: {1}, 5: {2}}
-//    dict_DistributionOfCardinalOfCoarseElements = {3: 1, 4: 1, 5: 1}
-
-
     unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
     dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 3});
     dict_Coarse_Cells[1] = unordered_set<long>({6, 9, 10});
     dict_Coarse_Cells[2] = unordered_set<long>({2, 4, 5});
     dict_Coarse_Cells[3] = unordered_set<long>({7, 8, 11});
-
 
     unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
 
@@ -3412,7 +3396,7 @@ TEST(CoarseCellGraph_TestSuite, makeSmallCellBigger_12_Squares_12_isotropic_Cell
     //12 squares (4*3)
     //"""
 
-    int nbCells = 12;
+    int nb_c = 12;
 
     long row_ptr[13] = {0, 3, 7, 10, 14, 19, 23, 27, 32, 36, 39, 43, 46};
     long col_ind[46] = {0, 1, 3, 0, 1, 2, 4, 1, 2, 5, 0, 3, 4, 6, 1, 3, 4, 5, 7, 2, 4, 5, 8, 3, 6,
@@ -3423,83 +3407,83 @@ TEST(CoarseCellGraph_TestSuite, makeSmallCellBigger_12_Squares_12_isotropic_Cell
                          1.,};
 
 
-    bool *isFineCellAgglomerated = new bool[nbCells];
-    for (int i = 0; i < nbCells; i++) {
+    bool *isFineCellAgglomerated = new bool[nb_c];
+    for (int i = 0; i < nb_c; i++) {
         isFineCellAgglomerated[i] = true;
     }
-    long fineCellIndicesToCoarseCellIndices[12] = {0, 0, 2,
-                                                   0, 2, 2,
-                                                   2, 2, 1,
-                                                   1, 1, 1};
+    long fc_to_cc[12] = {0, 0, 2,
+                         0, 2, 2,
+                         2, 2, 1,
+                         1, 1, 1};
     // The coarse cell 0 is considered to be anisotropic.
     int thresholdCard = 2;  // wrong value in 2D but for test!
-    int minCard = 4;  // wrong value in 2D but for test!
-    int goalCard = 4;  // wrong value in 2D but for test!
-    long indCoarseCell = 3;
+    int min_card = 4;  // wrong value in 2D but for test!
+    int goal_card = 4;  // wrong value in 2D but for test!
+    long ind_cc = 3;
 
-    long numberOfFineAgglomeratedCells = 12;
+    long nb_of_agglomerated_fc = 12;
 
-//    dict_Coarse_Cells = {0: [0, 1, 3], 1: [8, 9, 10, 11], 2: [2, 4, 5, 6, 7]}
-//    dict_Card_Coarse_Cells = {3: {0}, 4: {1}, 5: {2}}
+//    d_cc = {0: [0, 1, 3], 1: [8, 9, 10, 11], 2: [2, 4, 5, 6, 7]}
+//    dict_card_cc = {3: {0}, 4: {1}, 5: {2}}
 //    dict_DistributionOfCardinalOfCoarseElements = {3: 1, 4: 1, 5: 1}
 
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 3});
-    dict_Coarse_Cells[1] = unordered_set<long>({8, 9, 10, 11});
-    dict_Coarse_Cells[2] = unordered_set<long>({2, 4, 5, 6, 7});
+    unordered_map<long, unordered_set<long>> d_cc;
+    d_cc[0] = unordered_set<long>({0, 1, 3});
+    d_cc[1] = unordered_set<long>({8, 9, 10, 11});
+    d_cc[2] = unordered_set<long>({2, 4, 5, 6, 7});
 
 
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
+    unordered_map<int, unordered_set<long>> dict_card_cc;
 
-    dict_Card_Coarse_Cells[3] = unordered_set<long>({0});
-    dict_Card_Coarse_Cells[4] = unordered_set<long>({1});
-    dict_Card_Coarse_Cells[5] = unordered_set<long>({2});
+    dict_card_cc[3] = unordered_set<long>({0});
+    dict_card_cc[4] = unordered_set<long>({1});
+    dict_card_cc[5] = unordered_set<long>({2});
 
     unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
     dict_DistributionOfCardinalOfCoarseElements[3] = 1;
     dict_DistributionOfCardinalOfCoarseElements[4] = 1;
     dict_DistributionOfCardinalOfCoarseElements[5] = 1;
 
-    makeSmallCellBigger(dict_Coarse_Cells,
-                        dict_Card_Coarse_Cells,
+    makeSmallCellBigger(d_cc,
+                        dict_card_cc,
                         row_ptr,
                         col_ind,
                         dict_DistributionOfCardinalOfCoarseElements,
-                        indCoarseCell,
-                        numberOfFineAgglomeratedCells,
+                        ind_cc,
+                        nb_of_agglomerated_fc,
                         isFineCellAgglomerated,
-                        fineCellIndicesToCoarseCellIndices,
-                        minCard,
-                        goalCard, thresholdCard,
+                        fc_to_cc,
+                        min_card,
+                        goal_card, thresholdCard,
                         false);
-//    cout<<"dict_Coarse_Cells[0]: [";
-//    for(auto i :dict_Coarse_Cells[0]){
+//    cout<<"d_cc[0]: [";
+//    for(auto i :d_cc[0]){
 //        cout<<i<<", ";
 //    }
 //    cout<<"]"<<endl;
-//    cout<<"dict_Coarse_Cells[1]: [";
-//    for(auto i :dict_Coarse_Cells[1]){
+//    cout<<"d_cc[1]: [";
+//    for(auto i :d_cc[1]){
 //        cout<<i<<", ";
 //    }
 //    cout<<"]"<<endl;
-//    cout<<"dict_Coarse_Cells[2]: [";
-//    for(auto i :dict_Coarse_Cells[2]){
+//    cout<<"d_cc[2]: [";
+//    for(auto i :d_cc[2]){
 //        cout<<i<<", ";
 //    }
 //    cout<<"]"<<endl;
 
-    ASSERT_EQ(3, indCoarseCell);
-    ASSERT_EQ(12, numberOfFineAgglomeratedCells);
+    ASSERT_EQ(3, ind_cc);
+    ASSERT_EQ(12, nb_of_agglomerated_fc);
 
     unordered_map<long, unordered_set<long>> ref_dict_Coarse_Cells;
     ref_dict_Coarse_Cells[0] = unordered_set<long>({0, 1, 2, 3});
     ref_dict_Coarse_Cells[1] = unordered_set<long>({8, 9, 10, 11});
     ref_dict_Coarse_Cells[2] = unordered_set<long>({4, 5, 6, 7});
-    ASSERT_EQ(ref_dict_Coarse_Cells, dict_Coarse_Cells);
+    ASSERT_EQ(ref_dict_Coarse_Cells, d_cc);
 
     unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
     ref_dict_Card_Coarse_Cells[4] = unordered_set<long>({0, 1, 2});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
+    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_card_cc);
 
     unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
     ref_dict_DistributionOfCardinalOfCoarseElements[4] = 3;
@@ -3510,7 +3494,7 @@ TEST(CoarseCellGraph_TestSuite, makeSmallCellBigger_12_Squares_12_isotropic_Cell
     for (int i = 0; i < 12; i++) {
 
         ASSERT_EQ(ref_isFineCellAgglomerated_tmp[i], isFineCellAgglomerated[i]);
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fineCellIndicesToCoarseCellIndices[i]);
+        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fc_to_cc[i]);
     }
 }
 
@@ -3929,7 +3913,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                          0.1, 1., 1., 0.1, 1., 1., 1., 1., 0.1, 1., 0.1, 1., 0.1, 1., 0.1,
                          1.,};
 
-
     bool *isFineCellAgglomerated = new bool[nbCells];
     for (int i = 0; i < nbCells; i++) {
         isFineCellAgglomerated[i] = true;
@@ -3938,12 +3921,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
                                                    0, 2, 2,
                                                    1, 3, 3,
                                                    1, 1, 3};
-
-
-
-//            dict_Coarse_Cells = {0: [0, 1, 3], 1: [6, 9, 10], 2: [2, 4, 5], 3: [7, 8, 11]}
-//            dict_Card_Coarse_Cells = {3: {0, 1, 2, 3}}
-//            dict_DistributionOfCardinalOfCoarseElements = {3: 4}
 
 //    dict_Coarse_Cells = {0: [0, 1, 3], 1: [6, 7, 9, 10], 2: [2, 4, 5, 8, 11]}
 //    dict_Card_Coarse_Cells = {3: {0}, 4: {1}, 5: {2}}
@@ -3956,7 +3933,6 @@ TEST(CoarseCellGraph_TestSuite, Correction_Swap_12_Squares_12_isotropic_Cells_Ca
     dict_Coarse_Cells[1] = unordered_set<long>({6, 9, 10});
     dict_Coarse_Cells[2] = unordered_set<long>({2, 4, 5});
     dict_Coarse_Cells[3] = unordered_set<long>({7, 8, 11});
-
 
     unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
 

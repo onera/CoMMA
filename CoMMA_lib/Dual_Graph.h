@@ -149,7 +149,7 @@ public :
                                      unsigned short &nb_of_order_of_neighbourhood,
                                      unordered_map<long, unsigned short> &d_n_of_seed,
                                      const unsigned short max_card,
-                                     vector<bool> &isFineCellAgglomerated_tmp,
+                                     vector<bool> &is_fc_agglomerated_tmp,
                                      unordered_set<long> s_of_constrained_fc = {});
 };
 
