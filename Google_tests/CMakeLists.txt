@@ -14,6 +14,8 @@ add_executable(Google_Tests_run
         Tests_Dual_Graph.cpp
         Tests_Seeds_Pool.cpp
         Tests_CoMMA.cpp
+        Tests_Edge.cpp
+        Tests_Triconnected_graph.cpp
         Tests_First_Order_Neighbourhood.cpp)
 
 target_link_libraries(Google_Tests_run CoMMA_lib)

@@ -12,7 +12,7 @@ set(HEADER_FILES
         Agglomerator.h
         Coarse_Cell_Graph.h
         Util.h
-        First_Order_Neighbourhood.h)
+        First_Order_Neighbourhood.h Edge.cpp Edge.h CompStruct.cpp CompStruct.h Triconnected_graph.cpp Triconnected_graph.h)
 
 set(SOURCE_FILES
         Agglomerator_anisotropic.cpp
@@ -23,7 +23,7 @@ set(SOURCE_FILES
         Agglomerator.cpp
         Coarse_Cell_Graph.cpp
         Util.cpp
-        First_Order_Neighbourhood.cpp)
+        First_Order_Neighbourhood.cpp Edge.cpp Edge.h CompStruct.cpp CompStruct.h Triconnected_graph.cpp Triconnected_graph.h)
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})

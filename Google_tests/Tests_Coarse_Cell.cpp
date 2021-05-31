@@ -40,7 +40,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen) {
 
     v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
 
-    // i_cc 0 has two coarse neighbours i_cc 1 and i_cc 3 and in each case the edge cut is 1.
+    // i_cc 0 has two coarse neighbours i_cc 1 and i_cc 3 and in each case the Edge cut is 1.
     // the inner fine cell at the interface is i_fc=3
     unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{3, {1, 3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
@@ -201,7 +201,7 @@ TEST_F(MGridGen_Dual_Graph, Coarse_Cell_init_Case_1_MGridGen_v2) {
 
     v_cc[i_cc].fill_cc_neighbouring(ref_fc_2_cc);
 
-    // i_cc 0 has two coarse neighbours i_cc 1 and i_cc 3 and in each case the edge cut is 1.
+    // i_cc 0 has two coarse neighbours i_cc 1 and i_cc 3 and in each case the Edge cut is 1.
     // the inner fine cell at the interface is i_fc=3
     unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour = {{1, {{3, {1, 3}}}}};
     ASSERT_EQ(ref_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour, v_cc[i_cc].d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour);
