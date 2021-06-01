@@ -1,5 +1,6 @@
 #include "../CoMMA_lib/Triconnected_graph.h"
-
+#include "Triconnected_graph_A.h"
+#include "Triconnected_graph_MGridGen.h"
 #include "gtest/gtest.h"
 
 
@@ -34,3 +35,46 @@ TEST(Triconnected_graph_TestSuite, Constructor) {
 
 }
 
+TEST_F(Triconnected_graph_A, is_connected) {
+    ASSERT_EQ(15, (*g).nb_of_nodes);
+    ASSERT_EQ(22, (*g).nb_of_edges);
+
+    ASSERT_TRUE((*g).is_connected());
+
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_TRUE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_TRUE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+}
+
+TEST_F(Triconnected_graph_MGridGen, is_connected) {
+    ASSERT_EQ(15, (*g).nb_of_nodes);
+    ASSERT_EQ(18, (*g).nb_of_edges);
+
+    ASSERT_TRUE((*g).is_connected());
+
+    vector<long> v_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_TRUE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_TRUE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+
+    v_fc = {0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14};
+    ASSERT_FALSE((*g).is_connected(v_fc));
+}

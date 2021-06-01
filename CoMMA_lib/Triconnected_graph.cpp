@@ -90,3 +90,73 @@ void Triconnected_graph::__creation_of_edges() {
         }
     }
 }
+
+bool Triconnected_graph::is_connected(vector<long> v_fc) {
+
+    /**
+     * Checks connectivity of a graph
+     */
+    // TODO optimisation a prevoir dans le cas d'un test de connectivite pour un maillage complet.
+    // TODO remplacer le dictionnaire par un numpy array
+
+    if (v_fc.empty()) {
+        v_fc = vector<long>(nb_of_nodes);
+        for (long i = 0; i < nb_of_nodes; i++) {
+            v_fc[i] = i;
+        }
+    }
+    long size = v_fc.size();
+    if (size <= 1) {
+        return true;
+    }
+    vector<bool> is_already_connected = vector<bool>(size, false);
+
+    is_already_connected[0] = true;
+    unordered_set<long> s_next = {v_fc[0]};
+
+    long nbConnectedCells = 1;
+    unordered_map<long, long> dict_GlobalToLocal;
+    for (long indFineCell = 0; indFineCell < size; indFineCell++) {
+        dict_GlobalToLocal[v_fc[indFineCell]] = indFineCell;
+    }
+
+
+    while (nbConnectedCells < size) {
+        if (!s_next.empty()) {
+
+            long i_fc = *s_next.begin();  // s_next.pop();
+            s_next.erase(s_next.begin());     // s_next.pop( );
+
+            long ind = row_ptr[i_fc];
+            long ind_p_one = row_ptr[i_fc + 1];  // Usefull to find neighbours of seed
+            for (long ind_fc = ind; ind_fc < ind_p_one; ind_fc++) {
+                long iFCellNeighbour = col_ind[ind_fc];
+                if (dict_GlobalToLocal.count(iFCellNeighbour)) {
+                    if (iFCellNeighbour != i_fc && !is_already_connected[dict_GlobalToLocal[iFCellNeighbour]]) {
+                        s_next.insert(iFCellNeighbour);
+                        nbConnectedCells++;
+                        is_already_connected[dict_GlobalToLocal[iFCellNeighbour]] = true;
+                    }
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
+    if (verbose && nbConnectedCells != size) {
+        cout << "v_fc: {";
+        for (long iFC: v_fc) {
+            cout << iFC << ", ";
+        }
+        cout << "}\t";
+        cout << "is_already_connected: {";
+        for (bool iFC: is_already_connected) {
+            cout << iFC << ", ";
+        }
+        cout << "}" << endl;
+        cout << "nbConnectedCells " << nbConnectedCells << "\tsize " << size << endl;
+    }
+    return nbConnectedCells == size;
+
+}

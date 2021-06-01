@@ -12,7 +12,7 @@
 #include <unordered_set>
 #include <cassert>
 #include "Edge.h"
-
+#include <iostream>
 using namespace std;
 
 class Triconnected_graph {
@@ -44,6 +44,8 @@ public:
     );
 
     void __creation_of_edges();
+
+    bool is_connected(vector<long> v_fc = {});
 };
 
 
