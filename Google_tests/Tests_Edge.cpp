@@ -37,3 +37,22 @@ TEST(Edge_TestSuite, Constructor) {
 //    ASSERT_FALSE(agg.__is_anisotropic);
 }
 
+TEST(Edge_TestSuite, Operator_eq) {
+
+    Edge e_1 = Edge(0, 1, 0, 1);
+    Edge e_2 = Edge(2, 0, 1, 2);
+    ASSERT_NE(e_1.index, e_2.index);
+    ASSERT_EQ(e_1.start, e_2.start);
+    ASSERT_NE(e_1.type, e_2.type);
+    ASSERT_TRUE(e_1 != e_2);
+    e_1 = e_2;
+    ASSERT_TRUE(e_1 == e_2);
+    ASSERT_FALSE(e_1 != e_2);
+    ASSERT_EQ(e_1.source, e_2.source);
+    ASSERT_EQ(e_1.target, e_2.target);
+    ASSERT_EQ(e_1.index, e_2.index);
+    ASSERT_EQ(e_1.start, e_2.start);
+    ASSERT_EQ(e_1.type, e_2.type);
+
+
+}

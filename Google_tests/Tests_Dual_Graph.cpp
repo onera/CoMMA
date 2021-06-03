@@ -2464,8 +2464,6 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_13) {
 TEST_F(Graphs_biconnected, compute_Local_CRS_Subgraph_From_Global) {
 
     unordered_set<long> s_of_node = {0, 1, 2, 3, 4, 5, 6, 7};
-
-
     vector<long> row_ptr_l;
     vector<long> col_ind_l;
     vector<double> values_l;
