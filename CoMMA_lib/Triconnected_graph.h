@@ -35,8 +35,8 @@ public:
     long count = 0;
 
     //triconnectivity datas:
-    vector<Edge> edges;
-    vector<list<Edge>> adj_edges;
+    vector<Edge *> edges;  // pointer on the edge to avoid copy...
+    vector<list<Edge *>> adj_edges;  // pointer on the edge to avoid copy...
 
 //    m_estack
     vector<int> m_number_dfs;      // NodeArray < int > ! < (first) dfs-number of v
@@ -47,10 +47,10 @@ public:
     vector<int> m_NumberOfDescendants;  // NodeArray < int >  // ! < number of descendants in palm tree
     int m_numCount = 0;  // int:  counter for dfs - traversal
     vector<long> m_FATHER;  // NodeArray < node >  // < father of v in palm tree
-    vector<Edge> m_TREE_ARC;  // NodeArray < edge > : tree arc entering v
+    vector<Edge *> m_TREE_ARC;  // NodeArray < edge > : tree arc entering v  // pointer on the edge to avoid copy...
 
     // m_NODEAT = None  // Array < node >  ! < node with number i
-    vector<list<Edge>> m_A;  // NodeArray < List < edge > >//  adjacency list of v
+    vector<list<Edge *>> m_A;  // NodeArray < List < edge > >//  adjacency list of v  // pointer on the edge to avoid copy...
     vector<long> m_NEWNUM; // NodeArray < int > // ! < (second)dfs-number of v
     vector<long> m_ORIGINAL;  // NodeArray < int > // ! < (second)dfs-number of v
 
@@ -70,11 +70,8 @@ public:
     vector<CompStruct> m_component; // array of components
 
 public:
-    Triconnected_graph(vector<long> row_ptr,
-                       vector<long> col_ind,
-                       vector<double> values,
-                       short verbose = 0
-    );
+
+    Triconnected_graph(vector<long> row_ptr, vector<long> col_ind, vector<double> values, short verbose = 0);
 
     void __creation_of_edges();
 

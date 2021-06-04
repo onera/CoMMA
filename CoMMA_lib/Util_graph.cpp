@@ -78,8 +78,8 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
                             parent[iW] = iV;
                             number_Of_Children += 1;
 
-                            pair<long, long> edge(iV, iW);
-                            stack_Of_BCC.push_back(edge);  // store the edge in stack
+                            pair<long, long> e(iV, iW);
+                            stack_Of_BCC.push_back(e);  // store the e in stack
 
                             vector<long> backup_point = {number_Of_Children, iNeighbour, iU, iV};
                             stack.push_back(backup_point);  // Backup point
@@ -89,10 +89,10 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
                             iV = iW;
                             break;
                         } else if (iW != iU and low[iV] > dfs_Number[iW]) {
-                            // update low number - ignore reverse of edge leading to i_v
+                            // update low number - ignore reverse of e leading to i_v
                             low[iV] = min(low[iV], dfs_Number[iW]);
-                            pair<long, long> edge(iV, iW);
-                            stack_Of_BCC.push_back(edge);  // store the edge in stack
+                            pair<long, long> e(iV, iW);
+                            stack_Of_BCC.push_back(e);  // store the e in stack
 
                         }
                     }
@@ -105,8 +105,8 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
                         pair<long, long> w;
                         unordered_set<long> s;
 
-                        pair<long, long> edge(iV, iW);
-                        while (w != edge) {
+                        pair<long, long> e(iV, iW);
+                        while (w != e) {
 
                             w = stack_Of_BCC.back();  //2 steps pop(...)
                             stack_Of_BCC.pop_back();
@@ -139,8 +139,8 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
                         pair<long, long> w;
                         unordered_set<long> s;
 
-                        pair<long, long> edge(iV, iW);
-                        while (w != edge) {
+                        pair<long, long> e(iV, iW);
+                        while (w != e) {
                             w = stack_Of_BCC.back();  //2 steps pop(...)
                             stack_Of_BCC.pop_back();
 
@@ -159,8 +159,8 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
                             parent[iW] = iV;
                             number_Of_Children += 1;
 
-                            pair<long, long> edge(iV, iW);
-                            stack_Of_BCC.push_back(edge); // store the edge in stack
+                            pair<long, long> e(iV, iW);
+                            stack_Of_BCC.push_back(e); // store the edge in stack
 
                             vector<long> backup_point = {number_Of_Children, iNeighbour, iU, iV};
                             stack.push_back(backup_point);  // Backup point   // DFS (G, v, w)???
@@ -173,8 +173,8 @@ bool BCC_NR(const Triconnected_graph &graph, list<unordered_set<long>> &componen
 
                             // update low number - ignore reverse of edge leading to i_v
                             low[iV] = min(low[iV], dfs_Number[iW]);
-                            pair<long, long> edge(iV, iW);
-                            stack_Of_BCC.push_back(edge);  // store the edge in stack
+                            pair<long, long> e(iV, iW);
+                            stack_Of_BCC.push_back(e);  // store the edge in stack
                         }
                         iNeighbour += 1;
                     }

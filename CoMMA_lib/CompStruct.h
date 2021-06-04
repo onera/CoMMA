@@ -29,7 +29,7 @@ public:
 
     CompStruct(short compType = -1);
 
-    void add(Edge);
+    void add(Edge *);
 };
 
 

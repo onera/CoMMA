@@ -43,7 +43,7 @@ Triconnected_graph::Triconnected_graph(vector<long> row_ptr,
     assert(nb_edges % 2 == 0);
     nb_of_edges = int(nb_edges / 2);
 
-    adj_edges = vector<list<Edge>>(nb_of_nodes);
+    adj_edges = vector<list<Edge *>>(nb_of_nodes);
 
     __creation_of_edges();
 
@@ -83,7 +83,7 @@ void Triconnected_graph::__creation_of_edges() {
             } else {
                 continue;
             }
-            Edge e = Edge(i_v, i_w, i_count);
+            Edge *e = new Edge(i_v, i_w, i_count);
 
             adj_edges[i_v].push_back(e);
             adj_edges[i_w].push_back(e);
@@ -269,11 +269,11 @@ The algorithm is applied to the graph whose nodes were pushed to the ArrayBuffer
                     // Non-root v is a cut vertex if low_pt[w] >= number_dfs[v].
                     if (parent[v] != -1 and low_pt[w] >= number_dfs[v]) {
 
-                        // Suggest to add an edge between w and v's parent.
+                        // Suggest to add an e between w and v's parent.
                         cutVertices.push_back(v);
 
-                        pair<long, long> edge(w, parent[v]);
-                        addEdges.push_back(edge);
+                        pair<long, long> e(w, parent[v]);
+                        addEdges.push_back(e);
 
                         if (only_one) {
                             return true;
@@ -282,10 +282,10 @@ The algorithm is applied to the graph whose nodes were pushed to the ArrayBuffer
                     // Root v is a cut vertex if v has two or more children.
                     if (parent[v] == -1 && w != first_child) {
 
-                        // Suggest to add an edge between those children.
+                        // Suggest to add an e between those children.
                         cutVertices.push_back(v);
-                        pair<long, long> edge(w, first_child);
-                        addEdges.push_back(edge);
+                        pair<long, long> e(w, first_child);
+                        addEdges.push_back(e);
                         if (only_one) {
                             return true;
                         }
@@ -381,21 +381,21 @@ void Triconnected_graph::__DFS1(const long nodeV, const long nodeU) {
     m_NumberOfDescendants[nodeV] = 1;
     long nodeW;
 
-    for (Edge &adj_edge : adj_edges[nodeV]) {
+    for (Edge *adj_edge : adj_edges[nodeV]) {
 
-        if (nodeV == adj_edge.source) {
-            nodeW = adj_edge.target;
+        if (nodeV == (*adj_edge).source) {
+            nodeW = (*adj_edge).target;
         } else {
-            nodeW = adj_edge.source;
+            nodeW = (*adj_edge).source;
         }
 
-        if (adj_edge.type != edge_type_2_int["unseen"]) {
-            // if self.m_TYPE[adj_edge.index] != self.edge_type_2_int["unseen"]:
+        if ((*adj_edge).type != edge_type_2_int["unseen"]) {
+            // if self.m_TYPE[(*adj_edge).index] != self.edge_type_2_int["unseen"]:
             continue;
         }
         if (m_number_dfs[nodeW] == -1) {
-            adj_edge.type = edge_type_2_int["tree"];
-            // self.m_TYPE[adj_edge.index] = self.edge_type_2_int["tree"];
+            (*adj_edge).type = edge_type_2_int["tree"];
+            // self.m_TYPE[(*adj_edge).index] = self.edge_type_2_int["tree"];
 
             m_TREE_ARC[nodeW] = adj_edge;
 
@@ -417,8 +417,8 @@ void Triconnected_graph::__DFS1(const long nodeV, const long nodeU) {
             m_NumberOfDescendants[nodeV] += m_NumberOfDescendants[nodeW];
         } else {
 
-            adj_edge.type = edge_type_2_int["frond"];
-            // m_TYPE[adj_edge.index] = edge_type_2_int["frond"]
+            (*adj_edge).type = edge_type_2_int["frond"];
+            // m_TYPE[(*adj_edge).index] = edge_type_2_int["frond"]
 
             if (m_number_dfs[nodeW] < m_low_pt_1[nodeV]) {
 
@@ -461,7 +461,7 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
         CompStruct component = CompStruct();
 
         // Process of edges
-        for (Edge edge: edges) {
+        for (Edge *edge: edges) {
             component.add(edge);
         }
 
@@ -478,7 +478,7 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
     m_FATHER = vector<long>(nb_of_nodes, -1);
     m_NumberOfDescendants = vector<int>(nb_of_nodes, 0);
 
-    m_TREE_ARC = vector<Edge>(nb_of_nodes);// Node index to Edge
+    m_TREE_ARC = vector<Edge *>(nb_of_nodes);// Node index to Edge
 
     // self.m_NODEAT = Array < node > (1, n);
     m_start = first_node();
@@ -489,58 +489,53 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
         return 1;
     }
 
+    for (Edge *edge : edges) {
 
-//    for (Edge &edge : edges) {
-//
-//        // print( "edge", edge
-////        i_e = edge.index
-//        long i_v = edge.source;
-//        long i_w = edge.target;
-//        bool up = (m_number_dfs[i_w] - m_number_dfs[i_v]) > 0;
-//
-//        if ((up && edge.type == edge_type_2_int["frond"]) || (!up && edge.type == edge_type_2_int["tree"])) {
-//            // if (up and self.m_TYPE[i_e] == self.edge_type_2_int["frond"]) or (not up and self.m_TYPE[i_e] == self.edge_type_2_int["tree"]):
-//            edge.reverse();
-//        }
-//    }
-//    if (verbose) {
-//        cout << "\nnode\tNUMBER\tFATHER\tLOWPT1\tLOWPT2\tND" << endl;
-//
-//
-//        for (long i_v = 0; i_v < nb_of_nodes; i_v++) {
-//            cout << i_v << ":  \t" << m_number_dfs[i_v] << "   \t";
-//
-//
-//            if (m_FATHER[i_v] == -1) {
-//                cout << "nil \t";
-//            } else {
-//                cout << m_FATHER[i_v] << "   \t";
-//            }
-//
-//
-//            cout << m_low_pt_1[i_v] << "   \t" << m_low_pt_2[i_v] << "   \t" << m_NumberOfDescendants[i_v] << endl;
-//        }
-//    }
-//    m_A = vector<list<Edge>>(nb_of_nodes); // adjacency list of v
+        long i_v = (*edge).source;
+        long i_w = (*edge).target;
+        bool up = (m_number_dfs[i_w] - m_number_dfs[i_v]) > 0;
+
+        if ((up && ((*edge).type == edge_type_2_int["frond"])) || (!up && ((*edge).type == edge_type_2_int["tree"]))) {
+            // if (up and self.m_TYPE[i_e] == self.edge_type_2_int["frond"]) or (not up and self.m_TYPE[i_e] == self.edge_type_2_int["tree"]):
+            (*edge).reverse();
+        }
+    }
+    if (verbose) {
+        cout << "\nnode\tNUMBER\tFATHER\tLOWPT1\tLOWPT2\tND" << endl;
+
+
+        for (long i_v = 0; i_v < nb_of_nodes; i_v++) {
+            cout << i_v << ":  \t" << m_number_dfs[i_v] << "   \t";
+
+
+            if (m_FATHER[i_v] == -1) {
+                cout << "nil \t";
+            } else {
+                cout << m_FATHER[i_v] << "   \t";
+            }
+
+
+            cout << m_low_pt_1[i_v] << "   \t" << m_low_pt_2[i_v] << "   \t" << m_NumberOfDescendants[i_v] << endl;
+        }
+    }
+    m_A = vector<list<Edge *>>(nb_of_nodes); // adjacency list of v
 //    m_IN_ADJ = [[];  //self.number_of_edges)]  // dict()  // .init(GC, nullptr); // pointer to element in adjacency list containing e
-//    __buildAcceptableAdjStruct()
-//
-//    if self.verbose:
-//    print("\nadjacency lists:")
-//    for
-//    i_v
-//            in
-//    range(self.number_of_nodes):
-//    print(i_v, "\t", end = "")
-//    for
-//    ei
-//            in
-//    self.m_A[i_v]:
-//    print(ei, end = "")
-//    print('')
-//
-//    if partialTest == 2:
-//    return None
+    __buildAcceptableAdjStruct();
+
+    if (verbose) {
+        cout << "\nadjacency lists:" << endl;
+
+        for (long i_v = 0; i_v < nb_of_nodes; i_v++) {
+            cout << i_v << "\t";
+            for (Edge *ei :m_A[i_v]) {
+                (*ei).print();
+            }
+        }
+    }
+    if (partialTest == 2) {
+        return 2;
+    }
+
 //
 //    self.__DFS2()
 //
@@ -756,20 +751,20 @@ void Triconnected_graph::__buildAcceptableAdjStruct() {
 
 
     long maximum = 3 * nb_of_nodes + 2;
-    unordered_map<long, list<Edge>> BUCKET; // (1, maximum)
+    unordered_map<long, list<Edge *>> BUCKET; // (1, maximum)
 
     long phi = -1;
 
-    for (Edge &edge :edges) {
+    for (Edge *edge :edges) {
 
-        long nodeV = edge.source;
-        long nodeW = edge.target;
+        long nodeV = (*edge).source;
+        long nodeW = (*edge).target;
 
-        unsigned short t = edge.type;  // t = self.m_TYPE[iEdge]
+        unsigned short t = (*edge).type;  // t = self.m_TYPE[iEdge]
 
         if (t == edge_type_2_int["removed"]) {
             if (verbose) {
-                cout << "edge removed: (" << edge.source << ", " << edge.target << endl;
+                cout << "edge removed: (" << (*edge).source << ", " << (*edge).target << endl;
             }
             continue;
         }
@@ -786,8 +781,8 @@ void Triconnected_graph::__buildAcceptableAdjStruct() {
 
     for (long i = 0; i < maximum + 1; i++) {
         if (BUCKET.count(i)) {
-            for (Edge &e :BUCKET[i]) {
-                m_A[e.source].push_back(e);
+            for (Edge *e :BUCKET[i]) {
+                m_A[(*e).source].push_back(e);
                 // self.m_IN_ADJ[e.index].append((e.source, len(self.m_A[e.source]) - 1))
             }
         }

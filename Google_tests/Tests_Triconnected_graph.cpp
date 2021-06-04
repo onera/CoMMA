@@ -1,8 +1,51 @@
-#include "../CoMMA_lib/Triconnected_graph.h"
-#include "Triconnected_graph_A.h"
-#include "Triconnected_graph_H.h"
-#include "Triconnected_graph_MGridGen.h"
-#include "gtest/gtest.h"
+#include "Tests_Triconnected_graph.h"
+
+void check_edge(const Edge *e, const Edge ref) {
+    ASSERT_EQ(ref.source, (*e).source);
+    ASSERT_EQ(ref.target, (*e).target);
+    ASSERT_EQ(ref.type, (*e).type);
+    ASSERT_EQ(ref.index, (*e).index);
+
+}
+
+void check_m_TREE_ARC(const Triconnected_graph g, vector<Edge> v_ref) {
+    ASSERT_EQ(g.nb_of_nodes, v_ref.size());
+    for (int i = 1; i < g.nb_of_nodes; i++) {
+        check_edge(g.m_TREE_ARC[i], v_ref[i]);
+    }
+}
+
+void check_edges(const Triconnected_graph g, vector<Edge> v_ref) {
+    ASSERT_EQ(g.nb_of_edges, v_ref.size());
+    for (int i = 0; i < g.nb_of_nodes; i++) {
+        check_edge(g.edges[i], v_ref[i]);
+    }
+}
+
+void check_m_A(const Triconnected_graph g, vector<list<Edge>> v_ref) {
+    bool verbose = false;
+    ASSERT_EQ(g.nb_of_nodes, v_ref.size());
+    for (int i = 0; i < g.nb_of_nodes; i++) {
+        if (verbose) {
+            cout << "i=" << i << endl;
+        }
+
+        ASSERT_EQ(g.m_A[i].size(), v_ref[i].size());
+        list<Edge>::iterator it_ref = v_ref[i].begin();
+        int count = 0;
+        for (list<Edge *>::const_iterator it = g.m_A[i].begin(); it != g.m_A[i].end(); ++it) {
+            if (verbose) {
+                cout << "\tj=" << count;
+            }
+            check_edge(*it, *it_ref);
+            it_ref++;
+            count++;
+        }
+        if (verbose) {
+            cout << endl;
+        }
+    }
+}
 
 
 TEST(Triconnected_graph_TestSuite, Constructor) {
@@ -22,17 +65,19 @@ TEST(Triconnected_graph_TestSuite, Constructor) {
     vector<unsigned int> ref_m_degree = {1, 1};
     ASSERT_EQ(ref_m_degree, graph.m_degree);
 
-    // edgeadj, 0
-    ASSERT_EQ(0, graph.adj_edges[0].front().source);
-    ASSERT_EQ(1, graph.adj_edges[0].front().target);
-    ASSERT_EQ(false, graph.adj_edges[0].front().start);
-    ASSERT_EQ(0, graph.adj_edges[0].front().index);
+    Edge *e_0 = graph.adj_edges[0].front();
+    Edge *e_1 = graph.adj_edges[1].front();
+
+    ASSERT_EQ(0, (*e_0).source);
+    ASSERT_EQ(1, (*e_0).target);
+    ASSERT_EQ(false, (*e_0).start);
+    ASSERT_EQ(0, (*e_0).index);
 
     // edge_adj 1
-    ASSERT_EQ(0, graph.adj_edges[1].front().source);
-    ASSERT_EQ(1, graph.adj_edges[1].front().target);
-    ASSERT_EQ(false, graph.adj_edges[1].front().start);
-    ASSERT_EQ(0, graph.adj_edges[1].front().index);
+    ASSERT_EQ(0, (*e_1).source);
+    ASSERT_EQ(1, (*e_1).target);
+    ASSERT_EQ(false, (*e_1).start);
+    ASSERT_EQ(0, (*e_1).index);
 
 }
 
@@ -145,6 +190,7 @@ TEST_F(Triconnected_graph_H, computeTriconnectivity_partial_test_1) {
     ASSERT_EQ(12, (*g).nb_of_edges);
 
     (*g).computeTriconnectivity(1);
+
     vector<int> ref_m_number_dfs = {0, 1, 2, 3, 5, 6, 7, 4};
     ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
 
@@ -160,39 +206,99 @@ TEST_F(Triconnected_graph_H, computeTriconnectivity_partial_test_1) {
     vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 3, 2, 1, 4};
     ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
 
-    Edge ref_e_1(0, 1, 0, 3);
-    ASSERT_EQ(ref_e_1, (*g).m_TREE_ARC[1]);
-    ASSERT_EQ(ref_e_1.type, (*g).m_TREE_ARC[1].type);
-    ASSERT_EQ(ref_e_1.index, (*g).m_TREE_ARC[1].index);
+    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+    ref_m_TREE_ARC[3] = Edge(2, 3, 5, 3);
+    ref_m_TREE_ARC[4] = Edge(4, 7, 9, 3);
+    ref_m_TREE_ARC[5] = Edge(4, 5, 8, 3);
+    ref_m_TREE_ARC[6] = Edge(5, 6, 10, 3);
+    ref_m_TREE_ARC[7] = Edge(3, 7, 7, 3);
 
-    Edge ref_e_2(1, 2, 3, 3);
-    ASSERT_EQ(ref_e_2, (*g).m_TREE_ARC[2]);
-    ASSERT_EQ(ref_e_2.type, (*g).m_TREE_ARC[2].type);
-    ASSERT_EQ(ref_e_2.index, (*g).m_TREE_ARC[2].index);
+    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
 
 
-    Edge ref_e_3(2, 3, 5, 3);
-    ASSERT_EQ(ref_e_3, (*g).m_TREE_ARC[3]);
-    ASSERT_EQ(ref_e_3.type, (*g).m_TREE_ARC[3].type);
-    ASSERT_EQ(ref_e_3.index, (*g).m_TREE_ARC[3].index);
+    vector<Edge> ref_edges(nb_edges);
+    ref_edges[0] = Edge(0, 1, 0, 3);
+    ref_edges[1] = Edge(0, 3, 1, 1);
+    ref_edges[2] = Edge(0, 4, 2, 1);
+    ref_edges[3] = Edge(1, 2, 3, 3);
+    ref_edges[4] = Edge(1, 5, 4, 1);
+    ref_edges[5] = Edge(2, 3, 5, 3);
+    ref_edges[6] = Edge(2, 6, 6, 1);
+    ref_edges[7] = Edge(3, 7, 7, 3);
+    ref_edges[8] = Edge(4, 5, 8, 3);
+    ref_edges[9] = Edge(4, 7, 9, 3);
+    ref_edges[10] = Edge(5, 6, 10, 3);
+    ref_edges[11] = Edge(6, 7, 11, 1);
 
-    Edge ref_e_4(4, 7, 9, 3);
-    ASSERT_EQ(ref_e_4, (*g).m_TREE_ARC[4]);
-    ASSERT_EQ(ref_e_4.type, (*g).m_TREE_ARC[4].type);
-    ASSERT_EQ(ref_e_4.index, (*g).m_TREE_ARC[4].index);
+    check_edges((*g), ref_edges);
 
-    Edge ref_e_5(4, 5, 8, 3);
-    ASSERT_EQ(ref_e_5, (*g).m_TREE_ARC[5]);
-    ASSERT_EQ(ref_e_5.type, (*g).m_TREE_ARC[5].type);
-    ASSERT_EQ(ref_e_5.index, (*g).m_TREE_ARC[5].index);
+}
 
-    Edge ref_e_6(5, 6, 10, 3);
-    ASSERT_EQ(ref_e_6, (*g).m_TREE_ARC[6]);
-    ASSERT_EQ(ref_e_6.type, (*g).m_TREE_ARC[6].type);
-    ASSERT_EQ(ref_e_6.index, (*g).m_TREE_ARC[6].index);
+TEST_F(Triconnected_graph_H, computeTriconnectivity_partial_test_2) {
 
-    Edge ref_e_7(3, 7, 7, 3);
-    ASSERT_EQ(ref_e_7, (*g).m_TREE_ARC[7]);
-    ASSERT_EQ(ref_e_7.type, (*g).m_TREE_ARC[7].type);
-    ASSERT_EQ(ref_e_7.index, (*g).m_TREE_ARC[7].index);
+    ASSERT_EQ(8, (*g).nb_of_nodes);
+    ASSERT_EQ(12, (*g).nb_of_edges);
+
+    (*g).computeTriconnectivity(2);
+    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 5, 6, 7, 4};
+    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+
+    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 1, 2, 0};
+    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+
+    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 2, 4, 1};
+    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+
+    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 7, 4, 5, 3};
+    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+
+    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 3, 2, 1, 4};
+    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+
+    Edge *e = NULL;
+
+    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+    ref_m_TREE_ARC[3] = Edge(2, 3, 5, 3);
+    ref_m_TREE_ARC[4] = Edge(7, 4, 9, 3);
+    ref_m_TREE_ARC[5] = Edge(4, 5, 8, 3);
+    ref_m_TREE_ARC[6] = Edge(5, 6, 10, 3);
+    ref_m_TREE_ARC[7] = Edge(3, 7, 7, 3);
+
+    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+
+    vector<list<Edge>> ref_m_A(nb_nodes);
+    ref_m_A[0] = {Edge(0, 1, 0, 3)};
+    ref_m_A[1] = {Edge(1, 2, 3, 3)};
+    ref_m_A[2] = {Edge(2, 3, 5, 3)};
+    ref_m_A[3] = {Edge(3, 7, 7, 3), Edge(3, 0, 1, 1)};
+    ref_m_A[4] = {Edge(4, 0, 2, 1), Edge(4, 5, 8, 3)};
+    ref_m_A[5] = {Edge(5, 1, 4, 1), Edge(5, 6, 10, 3)};
+    ref_m_A[6] = {Edge(6, 2, 6, 1), Edge(6, 7, 11, 1)};
+    ref_m_A[7] = {Edge(7, 4, 9, 3)};
+    check_m_A(*g, ref_m_A);
+
+//    for (Edge* e: (*g).edges) {
+//        (*e).print();
+//        cout << endl;
+//    }
+    vector<Edge> ref_edges(nb_edges);
+    ref_edges[0] = Edge(0, 1, 0, 3);
+    ref_edges[1] = Edge(3, 0, 1, 1);
+    ref_edges[2] = Edge(4, 0, 2, 1);
+    ref_edges[3] = Edge(1, 2, 3, 3);
+    ref_edges[4] = Edge(5, 1, 4, 1);
+    ref_edges[5] = Edge(2, 3, 5, 3);
+    ref_edges[6] = Edge(6, 2, 6, 1);
+    ref_edges[7] = Edge(3, 7, 7, 3);
+    ref_edges[8] = Edge(4, 5, 8, 3);
+    ref_edges[9] = Edge(7, 4, 9, 3);
+    ref_edges[10] = Edge(5, 6, 10, 3);
+    ref_edges[11] = Edge(6, 7, 11, 1);
+
+    check_edges((*g), ref_edges);
+
 }

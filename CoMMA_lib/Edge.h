@@ -7,7 +7,7 @@
 
 #include <unordered_set>
 #include <string>
-
+#include <iostream>
 using namespace std;
 
 class Edge {
@@ -50,6 +50,8 @@ public:
     }
 
     Edge &operator=(Edge const &e);
+
+    void print() const;
 };
 
 //struct edge_hash {

@@ -8,6 +8,7 @@ CompStruct::CompStruct(short compType) {
     m_type = compType;
 }
 
-void CompStruct::add(Edge e) {
+void CompStruct::add(Edge *e) {
 //    m_edges.insert()
+    cout << "Do nothing!" << endl;
 }
