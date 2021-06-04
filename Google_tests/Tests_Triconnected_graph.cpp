@@ -302,3 +302,104 @@ TEST_F(Triconnected_graph_H, computeTriconnectivity_partial_test_2) {
     check_edges((*g), ref_edges);
 
 }
+
+TEST_F(Triconnected_graph_H, computeTriconnectivity_partial_test_3) {
+
+    ASSERT_EQ(8, (*g).nb_of_nodes);
+    ASSERT_EQ(12, (*g).nb_of_edges);
+
+    (*g).computeTriconnectivity(3);
+    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 5, 6, 7, 4};
+    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+
+    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 1, 2, 0};
+    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+
+    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 2, 4, 1};
+    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+
+    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 7, 4, 5, 3};
+    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+
+    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 3, 2, 1, 4};
+    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+
+    Edge *e = NULL;
+
+    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+    ref_m_TREE_ARC[3] = Edge(2, 3, 5, 3);
+    ref_m_TREE_ARC[4] = Edge(7, 4, 9, 3);
+    ref_m_TREE_ARC[5] = Edge(4, 5, 8, 3);
+    ref_m_TREE_ARC[6] = Edge(5, 6, 10, 3);
+    ref_m_TREE_ARC[7] = Edge(3, 7, 7, 3);
+
+    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+
+    vector<list<Edge>> ref_m_A(nb_nodes);
+    ref_m_A[0] = {Edge(0, 1, 0, 3)};
+    ref_m_A[1] = {Edge(1, 2, 3, 3)};
+    ref_m_A[2] = {Edge(2, 3, 5, 3)};
+    ref_m_A[3] = {Edge(3, 7, 7, 3), Edge(3, 0, 1, 1)};
+    ref_m_A[4] = {Edge(4, 0, 2, 1), Edge(4, 5, 8, 3)};
+    ref_m_A[5] = {Edge(5, 1, 4, 1), Edge(5, 6, 10, 3)};
+    ref_m_A[6] = {Edge(6, 2, 6, 1), Edge(6, 7, 11, 1)};
+    ref_m_A[7] = {Edge(7, 4, 9, 3)};
+    check_m_A(*g, ref_m_A);
+
+//    for (Edge* e: (*g).edges) {
+//        (*e).print();
+//        cout << endl;
+//    }
+    vector<Edge> ref_edges(nb_edges);
+    ref_edges[0] = Edge(0, 1, 0, 3);
+    ref_edges[1] = Edge(3, 0, 1, 1);
+    ref_edges[2] = Edge(4, 0, 2, 1);
+    ref_edges[3] = Edge(1, 2, 3, 3);
+    ref_edges[4] = Edge(5, 1, 4, 1);
+    ref_edges[5] = Edge(2, 3, 5, 3);
+    ref_edges[6] = Edge(6, 2, 6, 1);
+    ref_edges[7] = Edge(3, 7, 7, 3);
+    ref_edges[8] = Edge(4, 5, 8, 3);
+    ref_edges[9] = Edge(7, 4, 9, 3);
+    ref_edges[10] = Edge(5, 6, 10, 3);
+    ref_edges[11] = Edge(6, 7, 11, 1);
+
+    check_edges((*g), ref_edges);
+
+    vector<long> ref_m_NEWNUM = {0, 1, 2, 3, 5, 6, 7, 4};
+    ASSERT_EQ(ref_m_NEWNUM, (*g).m_NEWNUM);
+
+    vector<long> ref_m_ORIGINAL = {0, 1, 2, 3, 7, 4, 5, 6};
+    ASSERT_EQ(ref_m_ORIGINAL, (*g).m_ORIGINAL);
+
+    vector<list<long>> ref_HIGHTPT = {list<long>({5, 3}),
+                                      list<long>({6}),
+                                      list<long>({7}),
+                                      list<long>({}),
+                                      list<long>({}),
+                                      list<long>({}),
+                                      list<long>({}),
+                                      list<long>({7})};
+    ASSERT_EQ(ref_HIGHTPT, (*g).m_HIGHPT);
+    vector<list<pair<long, long>>> ref_m_IN_HIGH = {list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({pair<long, long>(0, 1)}),
+                                                    list<pair<long, long>>({{pair<long, long>(0, 0)}}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({{pair<long, long>(1, 0)}}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({{pair<long, long>(2, 0)}}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({{pair<long, long>(7, 0)}})
+    };
+//    ref_m_IN_HIGH = [[], [(0, 1)], [(0, 0)], [], [(1, 0)], [], [(2, 0)], [], [], [], [], [(7, 0)]]
+//    self.assertEqual(ref_m_IN_HIGH, graph.m_HIGHPT)
+    ASSERT_EQ(ref_m_IN_HIGH, (*g).m_IN_HIGH);
+    ASSERT_EQ(1, (*g).m_numCount);
+
+
+}

@@ -431,6 +431,43 @@ void Triconnected_graph::__DFS1(const long nodeV, const long nodeU) {
     }
 }
 
+void Triconnected_graph::__DFS2() {
+
+/**
+ * A different numbering of the vertices are needed.
+* During a second execution of DFS, the vertices of P are numbered from |V| to 1 in order they are last examined, that is,
+* they are numbered according to the inverse post-order numbering.
+
+ */
+    m_NEWNUM = vector<long>(nb_of_nodes, 0);
+    m_ORIGINAL = vector<long>(nb_of_nodes, 0);
+    m_HIGHPT = vector<list<long>>(nb_of_nodes);
+
+    m_IN_HIGH = vector<list<pair<long, long>>>(nb_of_edges);
+
+    // self.m_START = np.zeros(self.number_of_edges, dtype=bool)  // .init(G, false);
+
+    m_numCount = nb_of_nodes;
+    m_newPath = true;
+
+    __pathFinder(m_start);
+
+    vector<long> old2new = vector<long>(nb_of_nodes, 0);
+
+    for (long iV = 0; iV < nb_of_nodes; iV++) {
+        old2new[m_number_dfs[iV]] = m_NEWNUM[iV];
+        m_ORIGINAL[m_NEWNUM[iV]] = iV;
+    }
+
+    for (long iV = 0; iV < nb_of_nodes; iV++) {
+
+        // self.m_NODEAT[self.m_NEWNUM[i_v]] = i_v
+        m_low_pt_1[iV] = old2new[m_low_pt_1[iV]];
+        m_low_pt_2[iV] = old2new[m_low_pt_2[iV]];
+    }
+}
+
+
 short Triconnected_graph::computeTriconnectivity(short partialTest) {
 
     // m_pGC = new GraphCopySimple(G);
@@ -536,8 +573,8 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
         return 2;
     }
 
-//
-//    self.__DFS2()
+
+    __DFS2();
 //
 //    if self.verbose:
 //    print("\nnode\tNEWNUM\tLOWPT1\tLOWPT2\tHIGHPT")
@@ -563,8 +600,10 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
 //    // if self.m_START[i_e]:
 //    print(self.edges[i_e], end = "")
 //
-//    if partialTest == 3:
-//    return None
+    if (partialTest == 3) {
+        return 3;
+    }
+
 //
 //    if self.verbose:
 //    print("")
@@ -788,4 +827,46 @@ void Triconnected_graph::__buildAcceptableAdjStruct() {
         }
     }
     // print( "__buildAcceptableAdjStruct self.m_A", self.m_A
+}
+
+void Triconnected_graph::__pathFinder(long iV) {
+
+
+    /**
+      * The second dfs-search
+      */
+
+    m_NEWNUM[iV] = m_numCount - m_NumberOfDescendants[iV];
+
+    for (Edge *edge : m_A[iV]) {
+
+        long iEdge = (*edge).index;
+        long iW;
+        // TODO Definir fonction opposite(i_v) pour une arete
+        if ((*edge).source == iV) {
+            iW = (*edge).target;
+        } else {
+            iW = (*edge).source;
+        }
+
+        if (m_newPath) {
+
+            m_newPath = false;
+            (*edge).start = true;
+            // self.m_START[iEdge] = True
+        }
+        if ((*edge).type == edge_type_2_int["tree"]) {
+
+            // if self.m_TYPE[iEdge] == self.edge_type_2_int["tree"]:
+            __pathFinder(iW);
+            m_numCount -= 1;
+        } else {
+
+            long pos = m_HIGHPT[iW].size();
+            m_HIGHPT[iW].push_back(m_NEWNUM[iV]);
+            pair<long, long> p(iW, pos);
+            m_IN_HIGH[iEdge].push_back(p); // self.m_HIGHPT[i_w].pushBack(self.m_NEWNUM[i_v]);
+            m_newPath = true;
+        }
+    }
 }

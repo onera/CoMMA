@@ -57,10 +57,10 @@ public:
     //self.m_START = None  # EdgeArray < bool > edge starts a path
     vector<list<long>> m_HIGHPT;  // NodeArray < List < int > > : list of fronds entering v in the order they are visited
 //    m_IN_ADJ = None  // EdgeArray < ListIterator<edge>>:  pointer to element in adjacency list containing e
-//    m_IN_HIGH = None  // EdgeArray < ListIterator < int > > : pointer to element in HIGHPT list containing e
+    vector<list<pair<long, long>>> m_IN_HIGH;  // EdgeArray < ListIterator < int > > : pointer to element in HIGHPT list containing e
 
     long m_start = -1;  // Node: start node of dfs traversal
-//    m_newPath = None  // Boolean:  true iff we start a new path
+    bool m_newPath = false;  // Boolean:  true iff we start a new path
 
     vector<long> m_TSTACK_h;  // stack of triples
     vector<long> m_TSTACK_a;  // stack of triples
@@ -87,6 +87,8 @@ public:
 
     void __DFS1(const long nodeV, const long nodeU);
 
+    void __DFS2();
+
     void __splitMultiEdges();
 
     inline long first_node() {
@@ -96,6 +98,8 @@ public:
     void __buildAcceptableAdjStruct();
 
     short computeTriconnectivity(short partialTest = 0);
+
+    void __pathFinder(long iV);
 };
 
 

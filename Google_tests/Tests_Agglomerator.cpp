@@ -982,7 +982,7 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level) {
 
 TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_without_correction) {
 
-    unsigned short int verbose = 1;
+    unsigned short int verbose = 0;
     bool is_visu_data_stored = true;
     int dimension = 3;
     bool checks = true;
