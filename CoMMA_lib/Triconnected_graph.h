@@ -40,7 +40,7 @@ public:
 
 //    m_estack
     vector<int> m_number_dfs;      // NodeArray < int > ! < (first) dfs-number of v
-    list<pair<long, long>> m_estack;  // ArrayBuffer<edge> : stack of currently active  edges : size m
+    list<Edge *> m_estack;  // ArrayBuffer<edge> : stack of currently active  edges : size m
 
     vector<long> m_low_pt_1;  // NodeArray < int >
     vector<long> m_low_pt_2;  // NodeArray < int >
@@ -67,7 +67,8 @@ public:
     vector<long> m_TSTACK_b;  // stack of triples
     long m_top = -1;  // length of triples stacks.
 
-    vector<CompStruct> m_component; // array of components
+    vector<CompStruct *> m_component; // array of components
+    list<pair<long, long>> separation_pair;
 
 public:
 
@@ -97,9 +98,39 @@ public:
 
     void __buildAcceptableAdjStruct();
 
-    short computeTriconnectivity(short partialTest = 0);
+    short computeTriconnectivity(list<unordered_set<long>> &triconnectedComponents, short partialTest = 0);
 
     void __pathFinder(long iV);
+
+    void __pathSearch(long iV);
+
+    void TSTACK_push(long h, long a, long b);
+
+    void TSTACK_pushEOS();
+
+    bool TSTACK_notEOS();
+
+    CompStruct *__newComp(short compType);
+
+    void __delHigh(Edge *edge);
+
+    Edge *path_search_sub_type_2_1(long iV, long i_w);
+
+    long __high(long iV);
+
+    void __assembleTriconnectedComponents();
+
+    void print_m_HIGHPT();
+
+    void print_verbose_creation_poly_or_triconnected(CompStruct *C);
+
+    void print_m_A(long i_v);
+
+    void print_l_edges(list<Edge *> l_e);
+
+    void print_s_edges(unordered_set<Edge *> s_e);
+
+    bool is_found_v_edges(Edge *e, vector<Edge *> v_e);
 };
 
 

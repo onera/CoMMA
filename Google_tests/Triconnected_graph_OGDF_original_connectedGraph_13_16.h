@@ -2,13 +2,13 @@
 // Created by Nicolas Lantos on 03/04/2021.
 //
 
-#ifndef COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_THIRTEEN_H
-#define COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_THIRTEEN_H
+#ifndef COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_ORIGINAL_CONNECTED_THIRTEEN_H
+#define COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_ORIGINAL_CONNECTED_THIRTEEN_H
 
 #include "gtest/gtest.h"
 #include "../CoMMA_lib/Dual_Graph.h"
 
-class Triconnected_graph_OGDF_13_16 : public ::testing::Test {
+class Triconnected_graph_OGDF_original_connectedGraph_13_16 : public ::testing::Test {
 
 protected:
 
@@ -42,4 +42,4 @@ protected:
     }
 };
 
-#endif //COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_THIRTEEN_H
+#endif //COMMA_PROJECT_TRICONNECTED_GRAPH_OGDF_ORIGINAL_CONNECTED_THIRTEEN_H

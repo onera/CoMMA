@@ -52,6 +52,8 @@ public:
     Edge &operator=(Edge const &e);
 
     void print() const;
+
+    void print_endl() const;
 };
 
 //struct edge_hash {

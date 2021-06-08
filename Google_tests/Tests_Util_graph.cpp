@@ -6,7 +6,7 @@
 #include "Triconnected_graph_E.h"
 #include "Triconnected_graph_F.h"
 #include "Triconnected_graph_G.h"
-#include "Triconnected_graph_OGDF_13_16.h"
+#include "Triconnected_graph_OGDF_original_connectedGraph_13_16.h"
 #include "Triconnected_graph_OGDF_100_200.h"
 #include "Triconnected_graph_connected_hexahedra.h"
 #include "Triconnected_graph_MGridGen_biconnected.h"
@@ -137,7 +137,7 @@ TEST_F(Triconnected_graph_G, BCC_NR) {
 
 }
 
-TEST_F(Triconnected_graph_OGDF_13_16, BCC_NR) {
+TEST_F(Triconnected_graph_OGDF_original_connectedGraph_13_16, BCC_NR) {
 
     ASSERT_EQ(13, (*g).nb_of_nodes);
     ASSERT_EQ(16, (*g).nb_of_edges);

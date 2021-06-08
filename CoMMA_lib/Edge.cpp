@@ -52,3 +52,7 @@ Edge &Edge::operator=(Edge const &e) {
 void Edge::print() const {
     cout << "<" << source << ", " << target << "> " << "[" << index << "] ";
 }
+
+void Edge::print_endl() const {
+    cout << "<" << source << ", " << target << "> " << "[" << index << "]" << endl;
+}

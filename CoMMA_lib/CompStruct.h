@@ -22,15 +22,16 @@ public:
                                                                {"triconnected", 2}};
     vector<string> Int2ComponentType = {"bond", "polygon", "triconnected"};
 
-    list<Edge> m_edges;
+    list<Edge *> m_edges;
     short m_type;
 
 public:
 
     CompStruct(short compType = -1);
 
-    void add(Edge *);
-};
+    void add(Edge *e);
 
+    void finishTricOrPoly(Edge *edge);
+};
 
 #endif //COMMA_PROJECT_COMPSTRUCT_H

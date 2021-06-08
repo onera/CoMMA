@@ -330,7 +330,9 @@ The number of root is firstNr, the number of unvisited nodes is 0.
 
         long node_v = stack_list.back();
         stack_list.pop_back();
-
+        if (verbose) {
+            cout << "node_v " << node_v << endl;
+        }
         // Ignore nodes that were already visited.
         if (number_dfs[node_v] != -1) {
             continue;
@@ -341,10 +343,15 @@ The number of root is firstNr, the number of unvisited nodes is 0.
         // Set correct discovery time for node_v
         number_dfs[node_v] = num_count;
         num_count += 1;
-
+        if (verbose) {
+            cout << "-> [";
+        }
         // For all adjacent nodes w of v:
         for (long i_neighbour = row_ptr[node_v]; i_neighbour < row_ptr[node_v + 1]; i_neighbour++) {
             long node_w = col_ind[i_neighbour];
+            if (verbose) {
+                cout << node_w << ", ";
+            }
             if (node_w != node_v) {
                 // If w has not been visited yet:
                 // Push it on the stack, remember its parent and number of children.
@@ -359,6 +366,9 @@ The number of root is firstNr, the number of unvisited nodes is 0.
                     childNr[node_v] += 1;
                 }
             }
+        }
+        if (verbose) {
+            cout << "]" << endl;
         }
     }
     return num_count - first_nr;
@@ -468,7 +478,7 @@ void Triconnected_graph::__DFS2() {
 }
 
 
-short Triconnected_graph::computeTriconnectivity(short partialTest) {
+short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &triconnectedComponents, short partialTest) {
 
     // m_pGC = new GraphCopySimple(G);
     // GraphCopySimple & GC = *m_pGC;
@@ -495,14 +505,14 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
     if (nb_of_nodes <= 2) {
 
         assert (nb_of_edges >= 3);
-        CompStruct component = CompStruct();
+        CompStruct *component = new CompStruct();
 
         // Process of edges
         for (Edge *edge: edges) {
-            component.add(edge);
+            (*component).add(edge);
         }
 
-        component.m_type = component.ComponentType2Int["bond"];
+        (*component).m_type = (*component).ComponentType2Int["bond"];
         m_component.push_back(component);
         return 0;
     }
@@ -575,198 +585,204 @@ short Triconnected_graph::computeTriconnectivity(short partialTest) {
 
 
     __DFS2();
-//
-//    if self.verbose:
-//    print("\nnode\tNEWNUM\tLOWPT1\tLOWPT2\tHIGHPT")
-//    for
-//    i_v
-//            in
-//    range(self.number_of_nodes):
-//    print(i_v, ":  \t", self.m_NEWNUM[i_v], "   \t", end = "")
-//    print(self.m_low_pt_1[i_v], "   \t", self.m_low_pt_2[i_v], "   \t", end = "")
-//    for
-//    i
-//            in
-//    self.m_HIGHPT[i_v]:
-//    print(i, " ", end = "")
-//    print("")
-//
-//    print("\nedges starting a path:")
-//    for
-//    i_e
-//            in
-//    range(self.number_of_edges):
-//    if self.edges[i_e].start:
-//    // if self.m_START[i_e]:
-//    print(self.edges[i_e], end = "")
-//
+
+    if (verbose) {
+        cout << "\nnode\tNEWNUM\tLOWPT1\tLOWPT2\tHIGHPT" << endl;
+        for (int i_v = 0; i_v < nb_of_nodes; i_v++) {
+            cout << i_v << ":  \t" << m_NEWNUM[i_v] << "   \t";
+            cout << m_low_pt_1[i_v] << "   \t" << m_low_pt_2[i_v] << "   \t";
+            for (long i:m_HIGHPT[i_v]) {
+                cout << i << ", ";
+            }
+            cout << endl;
+        }
+        cout << "\nedges starting a path:" << endl;
+        for (long i_e = 0; i_e < nb_of_edges; i_e++) {
+            if (edges[i_e]->start) {
+                cout << edges[i_e] << ", ";
+            }
+        }
+        cout << endl;
+
+    }
+
     if (partialTest == 3) {
         return 3;
     }
 
-//
-//    if self.verbose:
-//    print("")
-//
-//    self.m_TSTACK_h = np.zeros((2 * self.number_of_edges + 1,), dtype = int)
-//    self.m_TSTACK_a = np.zeros((2 * self.number_of_edges + 1,), dtype = int)
-//    self.m_TSTACK_b = np.zeros((2 * self.number_of_edges + 1,), dtype = int)
-//    self.m_top = 0
-//    self.m_TSTACK_a[self.m_top] = -1  // start with EOS
-//
-//    self.__pathSearch(self.m_start)
-//
-//    // last split component
-//    if len(self.m_estack) > 4:
-//    cType = CompStruct.ComponentType2Int["triconnected"]
-//    else:
-//    cType = CompStruct.ComponentType2Int["polygon"]
-//
-//    C = self.__newComp(compType = cType)
-//    while self.m_estack:
-//    C.add(self.m_estack.pop())
-//
-//    if self.verbose:
-//    if C.m_type == 1:
-//    print("Creation Polygon", len(self.m_component), ": ", end = "\t")
-//    else:
-//    print("Creation triconnected", len(self.m_component), ": ", end = "\t")
-//    for
-//    ed
-//            in
-//    C.m_edges:
-//    print(ed, end = "")
-//    print("")
-//
-//    if self.verbose:
-//    self.__printStacks()
-//
-//    self.m_TSTACK_h = None
-//    self.m_TSTACK_a = None
-//    self.m_TSTACK_b = None
-//
-//    self.__assembleTriconnectedComponents()
-//
-//            // Caution: checkComp() assumes that the graph is simple!
-//            assert (self.__check_comp())
-//
-//    if self.verbose:
-//    print("\n\nTriconnected components:\n")
-//
-//    for
-//    iC, component
-//    in
-//    enumerate(self.m_component):
-//
-//    if len(component.m_edges) == 0:
-//    continue
-//
-//    print("[", iC, "] ", end = "")
-//    print(CompStruct.Int2ComponentType[component.m_type], end = "")
-//    for
-//    edge
-//            in
-//    component.m_edges:
-//    print(edge, end = "")
-//    print("")
-//
-//    // Compute a simpler way to express triconnectivity:
-//    triconnectedComponents = []
-//    for
-//    iC, component
-//    in
-//    enumerate(self.m_component):
-//
-//    if len(component.m_edges) == 0:
-//    continue
-//
-//    if component.m_type == 2:
-//
-//    vertices = set()
-//    degree = dict()
-//    for
-//    edge
-//            in
-//    component.m_edges:
-//    if edge.index != -1 or edge
-//    in
-//    self.edges:  // virtual edges or real edge
-//    if edge.source
-//    in
-//    degree:
-//
-//    degree[edge.source] += 1
-//    else:
-//    degree[edge.source] = 1
-//    if edge.target
-//    in
-//    degree:
-//
-//    degree[edge.target] += 1
-//    else:
-//    degree[edge.target] = 1
-//    vertices.add(edge.source)
-//    vertices.add(edge.target)
-//    // print( "vertices", vertices, degree
-//    isVertexRemoved = False
-//    for
-//    i_v
-//            in
-//    degree:
-//    if degree[i_v] < 3:
-//    // print( "i_v", i_v
-//    vertices.remove(i_v)
-//    isVertexRemoved = True
-//    for
-//    edge_tmp
-//            in
-//    component.m_edges:
-//    if edge_tmp.index != -1 or edge_tmp
-//    in
-//    self.edges:  // virtual edges or real edge
-//    if i_v == edge_tmp.source or i_v == edge_tmp.target:
-//
-//    if edge_tmp.source == i_v:
-//    opposite = edge_tmp.target
-//    else:
-//    opposite = edge_tmp.source
-//    if opposite
-//                in
-//        vertices:
-//        degree[opposite] -= 1
-//
-//    // print( "vertices", vertices,  degree
-//    while
-//        isVertexRemoved:
-//        isVertexRemoved = False
-//    for
-//    i_v
-//            in
-//    set(vertices):  // copy
-//    if degree[i_v] < 3:
-//    vertices.remove(i_v)
-//    isVertexRemoved = True
-//    for
-//    edge_tmp
-//            in
-//    component.m_edges:
-//    if edge_tmp.index != -1 or edge_tmp
-//    in
-//    self.edges:  // virtual edges or real edge
-//    if i_v == edge_tmp.source or i_v == edge_tmp.target:
-//
-//    if edge_tmp.source == i_v:
-//    opposite = edge_tmp.target
-//    else:
-//    opposite = edge_tmp.source
-//    if opposite
-//                in
-//        vertices:
-//        degree[opposite] -= 1
-//    if (vertices) {
-//        triconnectedComponents.append(vertices);
+
+    if (verbose) {
+        cout << endl;
+    }
+    m_TSTACK_h = vector<long>(2 * nb_of_edges + 1, 0);
+    m_TSTACK_a = vector<long>(2 * nb_of_edges + 1, 0);
+    m_TSTACK_b = vector<long>(2 * nb_of_edges + 1, 0);
+    m_top = 0;
+    m_TSTACK_a[m_top] = -1; // start with EOS
+
+    __pathSearch(m_start);
+    if (partialTest == 4) {
+        return 4;
+    }
+
+    short cType;
+//    ComponentType2Int = {"bond": 0, "polygon": 1, "triconnected": 2}
+    // last split component
+    if (m_estack.size() > 4) {
+        cType = 2; //CompStruct.ComponentType2Int["triconnected"];
+    } else {
+        cType = 1;  //CompStruct.ComponentType2Int["polygon"]
+    }
+    CompStruct *C = __newComp(cType);
+    while (!m_estack.empty()) {
+        (*C).add(m_estack.back()); //pop()
+        m_estack.pop_back();
+    }
+
+
+    if (verbose) {
+        if ((*C).m_type == 1) {
+            cout << "Creation Polygon " << m_component.size() << ": \t";
+        } else {
+            cout << "Creation triconnected " << m_component.size() << ": \t";
+        }
+
+
+        for (Edge *ed: (*C).m_edges) {
+            (*ed).print();
+        }
+        cout << endl;
+    }
+
+//    if (verbose){
+//        __printStacks();
 //    }
-//    return triconnectedComponents
+
+
+    m_TSTACK_h = {};
+    m_TSTACK_a = {};
+    m_TSTACK_b = {};
+
+    __assembleTriconnectedComponents();
+
+    // Caution: checkComp() assumes that the graph is simple!
+    //    assert (__check_comp());
+
+    if (verbose) {
+        cout << "\n\nTriconnected components:\n" << endl;
+
+        for (int iC = 0; iC < m_component.size(); iC++) {
+            CompStruct *component = m_component[iC];
+
+            if ((*component).m_edges.size() == 0) {
+                continue;
+            }
+            cout << "[" << iC << "] ";
+
+            cout << (*component).Int2ComponentType[(*component).m_type];
+            for (Edge *edge: (*component).m_edges) {
+                (*edge).print();
+                cout << ", ";
+            }
+            cout << endl;
+        }
+    }
+
+    // Compute a simpler way to express triconnectivity:
+//    list<unordered_set<long>> triconnectedComponents = {};
+
+    //    for iC, component in enumerate(self.m_component):
+
+    for (int iC = 0; iC < m_component.size(); iC++) {
+        CompStruct *component = m_component[iC];
+
+        if ((*component).m_edges.size() == 0) {
+            continue;
+        }
+
+        if ((*component).m_type == 2) {
+
+            unordered_set<long> vertices;
+            unordered_map<long, long> degree;
+            for (Edge *edge: (*component).m_edges) {
+
+                if ((*edge).index != -1 || is_found_v_edges(edge, edges)) {// virtual edges or real edge
+                    if (degree.count((*edge).source)) {
+                        degree[(*edge).source] += 1;
+                    } else {
+                        degree[(*edge).source] = 1;
+                    }
+
+                    if (degree.count((*edge).target)) {
+                        degree[(*edge).target] += 1;
+                    } else {
+                        degree[(*edge).target] = 1;
+                    }
+                    vertices.insert((*edge).source);
+                    vertices.insert((*edge).target);
+                }
+            }
+
+            // print( "vertices", vertices, degree
+            bool isVertexRemoved = false;
+            for (const auto i_k_v : degree) {
+                if (i_k_v.second < 3) {
+                    long i_v = i_k_v.first;
+                    vertices.erase(i_v);
+                    bool isVertexRemoved = true;
+                    for (Edge *tmp_edge: (*component).m_edges) {
+                        if ((*tmp_edge).index != -1 || is_found_v_edges(tmp_edge, edges)) {// virtual edges or real edge
+                            if (i_v == (*tmp_edge).source || i_v == (*tmp_edge).target) {
+                                long opposite = -1;
+                                if (i_v == (*tmp_edge).source) {
+                                    opposite = (*tmp_edge).target;
+                                } else {
+                                    opposite = (*tmp_edge).source;
+                                }
+                                if (vertices.count(opposite)) {
+                                    degree[opposite] -= 1;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            // print( "vertices", vertices,  degree
+            while (isVertexRemoved) {
+
+                isVertexRemoved = false;
+                unordered_set<long> cpy_vertices(vertices);
+                for (long i_v :cpy_vertices) {
+                    if (degree[i_v] < 3) {
+                        vertices.erase(i_v);
+                        isVertexRemoved = true;
+                        for (Edge *tmp_edge: (*component).m_edges) {
+                            if ((*tmp_edge).index != -1 || is_found_v_edges(tmp_edge, edges)) {// virtual edges or real edge
+                                if (i_v == (*tmp_edge).source || i_v == (*tmp_edge).target) {
+                                    long opposite = -1;
+                                    if (i_v == (*tmp_edge).source) {
+                                        opposite = (*tmp_edge).target;
+                                    } else {
+                                        opposite = (*tmp_edge).source;
+                                    }
+                                    if (vertices.count(opposite)) {
+                                        degree[opposite] -= 1;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if (!vertices.empty()) {
+                triconnectedComponents.push_back(vertices);
+            }
+        }
+    }
+    return 5;
 
 
 }
@@ -869,4 +885,1055 @@ void Triconnected_graph::__pathFinder(long iV) {
             m_newPath = true;
         }
     }
+}
+
+void Triconnected_graph::__pathSearch(long iV) {
+
+    /**
+     * recognition of split components
+     */
+    if (verbose) {
+        cout << "\n\tCall of __pathSearch " << iV << " m_top " << m_top << endl;
+        cout << "m_HIGHPT [";
+        print_m_HIGHPT();
+        cout << endl;
+
+        cout << "m_estack [";
+        for (Edge *e: m_estack) {
+            (*e).print();
+            cout << ", ";
+        }
+        cout << "]" << endl;
+    }
+//     print( "m_estack", m_estack
+//     print( "m_TSTACK_a", m_TSTACK_a
+//    cout << "m_TSTACK_a [";
+//    for (long e: m_TSTACK_a) {
+//        cout << e << ", ";
+//    }
+//    cout << "]" << endl;
+
+    long v_num = m_NEWNUM[iV];
+
+    list<Edge *> adj = m_A[iV];
+    // print( "adj", adj
+    long out_v = adj.size();
+
+    for (Edge *pit : adj) {
+        if (verbose) {
+            cout << "pit ";
+            (*pit).print();
+            cout << "\ti_v: " << iV;
+//            cout << "\tm_A[i_v]\t" << m_A[iV] << endl;
+            cout << endl;
+        }
+
+
+        Edge *edge = pit;
+
+        long i_w = (*edge).target;
+        long w_num = m_NEWNUM[i_w];
+
+        if ((*edge).type == edge_type_2_int["tree"]) {
+
+
+            if (verbose) {
+                cout << "\t\tIn\t" << iV << ", " << i_w << " Tree " << "m_top " << m_top << endl;
+            }
+            if ((*edge).start) {
+
+                long y = 0;
+                if (m_TSTACK_a[m_top] > m_low_pt_1[i_w]) {
+                    long b;
+                    while (m_TSTACK_a[m_top] > m_low_pt_1[i_w]) {
+                        y = max(y, m_TSTACK_h[m_top]);  // New
+                        b = m_TSTACK_b[m_top];
+                        m_top -= 1;
+                    }
+                    // do {
+                    //     y = max(y,m_TSTACK_h[m_top])
+                    //     b = m_TSTACK_b[m_top]
+                    // m_top -= 1
+                    // } while (m_TSTACK_a[m_top] > m_low_pt_1[i_w])
+                    TSTACK_push(y, m_low_pt_1[i_w], b);  // New
+                } else {
+                    TSTACK_push(w_num + m_NumberOfDescendants[i_w] - 1, m_low_pt_1[i_w], v_num); // New
+                }
+                TSTACK_pushEOS();
+            }
+            __pathSearch(i_w);
+
+            m_estack.push_back(m_TREE_ARC[i_w]);  // add (v,w) to ESTACK (can differ from e!)
+
+            // node x
+            if (verbose) {
+                cout << "\t\tOut\t" << iV << ", " << i_w << " Tree " << "m_top " << m_top << endl;
+            }
+
+            // print( "m_HIGHPT", m_HIGHPT
+            // print( "m_estack", m_estack
+            // print( "m_TSTACK_a", m_TSTACK_h
+            // print( "m_TSTACK_a", m_TSTACK_a
+            // print( "m_TSTACK_a", m_TSTACK_b
+            // print( "m_NEWNUM", m_NEWNUM
+            // print( "i_v", i_v, "v_num", v_num, "i_w", i_w, "w_num", w_num, "m_top", m_top, "m_A[i_w][0].target", m_A[i_w][0].target
+            // print( "\nv_num != 0", v_num != 0
+            // print( "(m_TSTACK_a[m_top] == v_num)", (m_TSTACK_a[m_top] == v_num)
+            // print( "m_degree[i_w] == 2", m_degree[i_w] == 2
+            // print( "i_w", i_w, "m_A[i_w]", m_A[i_w]
+            // print( "m_A[i_w][0].target", m_A[i_w][0].target
+            // print( "m_NEWNUM[m_A[i_w][0].target] > w_num", m_NEWNUM[m_A[i_w][0].target] > w_num
+
+            while (v_num != 0 && ((m_TSTACK_a[m_top] == v_num) ||
+                                  (m_degree[i_w] == 2 && m_NEWNUM[(*m_A[i_w].front()).target] > w_num))) {
+
+
+                long i_v_a = m_TSTACK_a[m_top];  // New
+                long i_v_b = m_TSTACK_b[m_top];  // New
+                if (verbose) {
+                    cout << "\n\t\ta " << i_v_a << " b " << i_v_b << " wnum " << w_num << " m_FATHER[m_NODEAT[b]] " << m_NEWNUM[m_FATHER[m_ORIGINAL[i_v_b]]] << endl;
+                }
+
+                // edge e_virt
+
+                if (i_v_a == v_num and m_NEWNUM[m_FATHER[m_ORIGINAL[i_v_b]]] == i_v_a) {// New
+                    // if a == v_num and m_FATHER[m_NODEAT[b]] == m_NODEAT[a] :
+                    m_top -= 1;
+                } else {
+                    long i_x = -1;
+                    Edge *e_ab = NULL;  // edge
+                    Edge *e_virt = NULL;
+                    if (m_degree[i_w] == 2 && m_NEWNUM[(*m_A[i_w].front()).target] > w_num) {
+
+                        e_virt = path_search_sub_type_2_1(iV, i_w);
+
+                    } else {
+
+                        if (verbose) {
+                            // print( "\nfound type-2 separation pair ", m_pGC->original(m_NODEAT[a]), ", ", m_pGC->original(m_NODEAT[b])
+                            cout << endl;
+                            cout << "\nfound type-2 separation pair [else] " << m_ORIGINAL[i_v_a] << ", " << m_ORIGINAL[i_v_b] << endl;
+                        }
+
+                        // Storage of separation pair
+                        long i_v_0 = m_ORIGINAL[i_v_a];
+                        long i_v_1 = m_ORIGINAL[i_v_b];
+
+                        if (i_v_0 > i_v_1) {
+                            separation_pair.push_back(pair<long, long>(i_v_1, i_v_0));
+                        } else {
+                            separation_pair.push_back(pair<long, long>(i_v_0, i_v_1));
+                        }
+
+                        long h = m_TSTACK_h[m_top];
+                        m_top -= 1;
+
+                        CompStruct *C = __newComp(-1);
+                        while (true) {
+                            Edge *xy = m_estack.back(); // .top()  //return edge...
+                            i_x = (*xy).source;
+                            long xyTarget = (*xy).target;
+
+                            if (!(i_v_a <= m_NEWNUM[i_x] <= h && (i_v_a <= m_NEWNUM[xyTarget] && m_NEWNUM[xyTarget] <= h))) {
+                                break;
+                            }
+
+                            if ((m_NEWNUM[i_x] == i_v_a && m_NEWNUM[xyTarget] == i_v_b) || \
+                                        (m_NEWNUM[xyTarget] == i_v_a && m_NEWNUM[i_x] == i_v_b)) {
+
+                                e_ab = m_estack.back();  //pop()
+                                m_estack.pop_back();
+                                // print( "m_A[e_ab.source]",  m_A[e_ab.source], e_ab
+                                m_A[(*e_ab).source].remove(e_ab);
+                                if (verbose) {
+                                    cout << "\tAFTER m_A[e_ab.source].remove(e_ab) ";
+//                                    for (list<Edge *>::const_iterator it = m_A[(*e_ab).source].begin(); it != m_A[(*e_ab).source].end(); ++it) {
+//                                        cout << "\t";
+//                                        (**it).print();
+//                                        cout << endl;
+//                                    }
+//                                    cout << "]" << endl;
+                                    print_m_A((*e_ab).source);
+                                }
+                                // print( "__delHigh(e_ab) 2)"
+                                __delHigh(e_ab);
+                            } else {
+
+                                Edge *eh = m_estack.back();  //pop()
+                                m_estack.pop_back();
+
+                                if ((*pit) != (*eh)) {  // m_IN_ADJ[eh.index]:
+                                    //TODO is it correct: it was: if (pit != eh){ in python...
+
+                                    m_A[(*eh).source].remove(eh);
+                                    if (verbose) {
+                                        cout << "\tAFTER m_A[eh.source].remove(eh): ";
+//                                        for (list<Edge *>::const_iterator it = m_A[(*eh).source].begin(); it != m_A[(*eh).source].end(); ++it) {
+//                                            cout << "\t";
+//                                            (**it).print();
+//                                            cout << endl;
+//                                        }
+//                                        cout << "]" << endl;
+                                        print_m_A((*eh).source);
+                                        // print( "__delHigh(eh)"
+                                    }
+                                    __delHigh(eh);
+                                }
+                                (*C).add(eh);
+                                m_degree[i_x] -= 1;
+                                m_degree[xyTarget] -= 1;
+                            }
+                        }
+                        // TODO delete pointer on edge!
+                        e_virt = new Edge(m_ORIGINAL[i_v_a], m_ORIGINAL[i_v_b]);
+                        (*C).finishTricOrPoly(e_virt);
+                        if (verbose) {
+                            print_verbose_creation_poly_or_triconnected(C);
+
+//                            if ((*C).m_type == 1) {
+//                                cout << "Creation Polygon " << m_component.size() << ": ";
+//                            } else {
+//                                cout << "Creation triconnected " << m_component.size() << ": ";
+//                            }
+//
+//                            for (Edge *ed : (*C).m_edges) {
+//                                (*ed).print();
+//                                cout << ", ";
+//                            }
+//                            cout << endl;
+                        }
+                        i_x = m_ORIGINAL[i_v_b];
+                    }
+                    if (e_ab != NULL) {
+
+                        CompStruct *C = __newComp(0); // "bond"
+                        (*C).add(e_ab);
+                        (*C).add(e_virt);
+                        if (verbose) {
+                            cout << "Creation Bond " << m_component.size() << ": ";
+                            (*e_ab).print();
+                            cout << "\t";
+                            (*e_virt).print();
+                        }
+                        e_virt = new Edge(iV, i_x);
+                        (*C).add(e_virt);
+                        if (verbose) {
+                            (*e_virt).print();
+                            cout << endl;
+                        }
+                        m_degree[i_x] -= 1;
+                        m_degree[iV] -= 1;
+                    }
+                    m_estack.push_back(e_virt);
+
+                    // edge = e_virt
+                    // m_IN_ADJ[e_virt] = it
+                    // Remplacement de edge par e_virt
+                    if (verbose) {
+                        cout << "pit";
+                        (*pit).print();
+                        cout << "\te_virt\t";
+                        (*e_virt).print();
+                        cout << "\tm_A[pit.source]\t";
+//                        for (list<Edge *>::const_iterator it = m_A[(*pit).source].begin(); it != m_A[(*pit).source].end(); ++it) {
+//                            cout << "\t";
+//                            (**it).print();
+//                            cout << endl;
+//                        }
+//                        cout << "]" << endl;
+                        print_m_A((*pit).source);
+                    }
+                    //if pit in m_A[(*pit).source]:
+                    bool is_found = false;
+                    for (Edge *e :m_A[(*pit).source]) {
+                        if ((*pit) == (*e)) {
+                            is_found = true;
+                            e = e_virt;  //verifier cela, je ne sais pas si ca va marcher...
+                            break;
+                        }
+                    }
+                    if (is_found) {
+
+//                        pos = m_A[(*pit).source]).index(pit);
+//                        m_A[(*pit).source][pos] = e_virt;
+                    } else {
+                        m_A[(*pit).source].push_back(e_virt);
+                    }
+                    if (verbose) {
+                        cout << "\telse: AFTER m_A[pit.source][pos] = e_virt ";
+//                        for (list<Edge *>::const_iterator it = m_A[(*pit).source].begin(); it != m_A[(*pit).source].end(); ++it) {
+//                            cout << "\t";
+//                            (**it).print();
+//                            cout << endl;
+//                        }
+//
+//                        cout << "]" << endl;
+                        print_m_A((*pit).source);
+                    }
+                    pit = e_virt;
+                    m_degree[i_x] += 1;
+                    m_degree[iV] += 1;
+                    m_FATHER[i_x] = iV;
+                    m_TREE_ARC[i_x] = e_virt;
+                    (*e_virt).type = edge_type_2_int["tree"];
+                    // m_TYPE[e_virt] = edge_type_2_int("tree")
+
+                    i_w = i_x;
+                    w_num = m_NEWNUM[i_w];
+                }
+                // print( "output"
+                // print( "v_num != 0", v_num != 0
+                // print( "(m_TSTACK_a[m_top] == v_num)", (m_TSTACK_a[m_top] == v_num)
+                // print( "m_degree[i_w] == 2", m_degree[i_w] == 2
+                // print( "m_NEWNUM[m_A[i_w][0].target] > w_num", m_NEWNUM[m_A[i_w][0].target] > w_num
+
+            }
+            // print( ""
+            // print( "i_v", i_v, "v_num", v_num, "out_v",out_v
+            // print( "i_w", i_w, "m_low_pt_1[i_w]", m_low_pt_1[i_w], "original", m_ORIGINAL[m_low_pt_1[i_w]]
+            // print( "m_low_pt_1", m_low_pt_1
+            // print( "m_low_pt_2", m_low_pt_2
+            // print( "m_FATHER", m_FATHER
+            if ((m_low_pt_1[i_w] < v_num && v_num <= m_low_pt_2[i_w]) &&
+                (m_FATHER[iV] != m_start || out_v >= 2)) {
+
+                if (verbose) {
+                    cout << "\nfound type-1 separation pair " << m_ORIGINAL[m_low_pt_1[i_w]] << ", " << iV << " m_top " << m_top << endl;
+                    // print( "\nfound type-1 separation pair ", m_pGC->original(m_NODEAT[m_low_pt_1[i_w]]), ", ", m_pGC->original(v)
+                }
+
+                // Storage of separation pair
+                long i_v_0 = m_ORIGINAL[m_low_pt_1[i_w]];
+                long i_v_1 = iV;
+                if (i_v_0 > i_v_1) {
+                    separation_pair.push_back(pair<long, long>(i_v_1, i_v_0));
+                } else {
+                    separation_pair.push_back(pair<long, long>(i_v_0, i_v_1));
+                }
+                CompStruct *C = __newComp(-1);
+                long xx;
+                long y;
+                assert (!m_estack.empty());  // otherwise undefined behavior since i_x is not initialized
+                while (!m_estack.empty()) {
+
+                    Edge *xy = m_estack.back();  // .top()
+                    xx = m_NEWNUM[(*xy).source];
+                    y = m_NEWNUM[(*xy).target];
+
+                    // if (!  ((wnum <= xx & & xx < wnum+m_ND[w]) | | (wnum <= y & & y < wnum + m_ND[w])))
+                    if (!((w_num <= xx && xx < w_num + m_NumberOfDescendants[i_w]) || (
+                            w_num <= y && y < w_num + m_NumberOfDescendants[i_w]))) {
+
+                        if (verbose) {
+                            cout << "BREAK!" << endl;
+                        }
+                        break;
+                    }
+                    (*C).add(m_estack.back());
+                    m_estack.pop_back();
+
+                    if (verbose) {
+                        cout << "\t\t__delHigh(xy)";
+                        (*xy).print();
+                        cout << " (" << xx << ", " << y << ") " << "m_top " << m_top << endl;
+                    }
+                    __delHigh(xy);
+                    m_degree[(*xy).source] -= 1;
+                    m_degree[(*xy).target] -= 1;
+                }
+
+                // print( "m_HIGHPT", m_HIGHPT
+                Edge *e_virt = new Edge(iV, m_ORIGINAL[m_low_pt_1[i_w]]);
+                (*C).finishTricOrPoly(e_virt);
+                if (verbose) {
+                    print_verbose_creation_poly_or_triconnected(C);
+
+                    cout << "\t\te_virt ";
+                    (*e_virt).print();
+                    cout << "xx: " << xx << " v_num: " << v_num << " y " << y << " i_w " << i_w << " m_low_pt_1[i_w] " << m_low_pt_1[i_w] << " m_FATHER[i_v] " << m_NEWNUM[m_FATHER[iV]] << endl;
+                }
+
+                if ((xx == v_num && y == m_low_pt_1[i_w]) || (y == v_num and xx == m_low_pt_1[i_w])) {
+
+                    if (verbose) {
+                        cout << "\t\tcompBond eh " << "m_top " << m_top << endl;
+                    }
+                    CompStruct *compBond = __newComp(0);  // "bond"
+
+                    Edge *eh = m_estack.back();
+                    m_estack.pop_back();
+
+                    // if m_IN_ADJ[eh] != edge :
+                    if (verbose) {
+                        cout << "\t\teh ";
+                        (*eh).print();
+                        cout << " pit ";
+                        (*pit).print();
+                        cout << " eh.source " << (*eh).source << "m_A[eh.source]";
+                        print_m_A((*eh).source);
+                    }
+                    if ((*eh) != (*pit)) {
+                        m_A[(*eh).source].remove(eh);
+                        if (verbose) {
+                            cout << "\tAFTER m_A[eh.source].remove(eh)";
+                            print_m_A((*eh).source);
+                        }
+                    }
+
+                    (*compBond).add(eh);
+                    (*compBond).add(e_virt);
+                    if (verbose) {
+                        cout << "Creation Bond " << m_component.size() << " : ";
+                        (*eh).print();
+                        cout << "\t";
+                        (*e_virt).print();
+                        cout << endl;
+                    }
+                    e_virt = new Edge(iV, m_ORIGINAL[m_low_pt_1[i_w]]);
+                    if (verbose) {
+                        (*e_virt).print();
+                        cout << endl;
+                    }
+
+                    (*compBond).add(e_virt);
+
+                    // m_IN_HIGH[e_virt] = m_IN_HIGH[eh]
+                    m_degree[iV] -= 1;
+                    m_degree[m_ORIGINAL[m_low_pt_1[i_w]]] -= 1;
+                }
+                if (m_low_pt_1[i_w] != m_NEWNUM[m_FATHER[iV]]) {
+
+                    if (verbose) {
+                        cout << "\n\t\tm_low_pt_1[i_w] != m_FATHER[i_v]" << endl;
+                        cout << "\t\t\tedge";
+                        (*edge).print();
+                        cout << " pit ";
+                        (*pit).print();
+                        cout << " e_virt ";
+                        (*e_virt).print();
+                        cout << " v_num " << v_num << " m_low_pt_1[i_w] " << m_low_pt_1[i_w] << " m_top " << m_top << endl;
+                    }
+
+                    m_estack.push_back(e_virt);
+
+                    if (verbose) {
+                        cout << "\t\t\tm_A:" << (*e_virt).source;
+                        print_m_A((*e_virt).source);
+                    }
+
+                    // Remplacement de edge par e_virt
+//                    if pit in m_A[pit.source]:  // Call of Edge.__eq__
+                    for (Edge *e :m_A[(*pit).source]) {
+                        if ((*pit) == (*e)) {
+                            cout << "TODO Check this!" << endl;
+                            e = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+                            break;
+                        }
+                    }
+//                    pos = m_A[pit.source].index(pit)
+//                    m_A[pit.source][pos] = e_virt
+                    if (verbose) {
+                        cout << "\tAFTER m_A[pit.source][pos] = e_virt";
+                        print_m_A((*pit).source);
+                    }
+                    // *it = e_virt
+                    pit = e_virt;
+
+                    // m_IN_ADJ[e_virt] = it
+                    bool is_found = false;
+                    for (long i : m_HIGHPT[m_ORIGINAL[m_low_pt_1[i_w]]]) {
+                        if (i == m_NEWNUM[iV]) {
+                            is_found = true;
+                            break;
+                        }
+                    }
+//                    if m_NEWNUM[iV]
+//                    not in
+//                    m_HIGHPT[
+//                            m_ORIGINAL[m_low_pt_1[i_w]]] and __high(
+//                            m_ORIGINAL[
+//                                    m_low_pt_1[i_w]]) < v_num:
+                    if ((!is_found) && (__high(m_ORIGINAL[m_low_pt_1[i_w]]) < v_num)) {
+
+                        // cout<<'\tiV not in m_HIGHPT[m_low_pt_1[i_w]] and __high(m_low_pt_1[i_w]) < v_num:'
+                        // if not m_IN_HIGH[e_virt] and __high(m_low_pt_1[i_w]) < v_num:
+                        m_HIGHPT[m_ORIGINAL[m_low_pt_1[i_w]]].push_front(v_num);  // pushFront(v_num)
+                        // m_IN_HIGH[e_virt] = m_HIGHPT[m_low_pt_1[i_w]].appendleft(v_num)  // pushFront(v_num)
+                        // cout<< "m_HIGHPT", m_HIGHPT
+                    }
+                    if (verbose) {
+                        cout << "\t\t\tm_A:" << (*e_virt).source;
+                        print_m_A((*e_virt).source);
+                    }
+                    m_degree[iV] += 1;
+                    // m_degree[v]+=1m_degree[v]+=1m_degree[v]+=1
+                    m_degree[m_ORIGINAL[m_low_pt_1[i_w]]] += 1;
+                } else {
+
+                    if (verbose) {
+                        cout << "\t\tm_low_pt_1[i_w] == m_FATHER[i_v]" << "m_top" << m_top << endl;
+                        cout << "\t\t\te_virt";
+                        (*e_virt).print();
+                    }
+                    m_A[iV].remove(pit);
+                    if (verbose) {
+                        cout << "\tAFTER m_A[i_v].remove(pit)";
+                        print_m_A(iV);
+                    }
+                    // adj.remove(pit)
+                    CompStruct *compBond = __newComp(0);  // "bond"
+                    (*compBond).add(e_virt);
+                    if (verbose) {
+                        cout << "Creation Bond " << m_component.size() << ": ";
+                        (*e_virt).print();
+                    }
+                    e_virt = new Edge(m_ORIGINAL[m_low_pt_1[i_w]], iV);
+                    (*compBond).add(e_virt);
+                    if (verbose) {
+                        cout << " ";
+                        (*e_virt).print();
+                    }
+                    Edge *eh = m_TREE_ARC[iV];
+
+                    (*compBond).add(m_TREE_ARC[iV]);
+                    if (verbose) {
+                        (*m_TREE_ARC[iV]).print();
+                    }
+                    m_TREE_ARC[iV] = e_virt;
+
+                    (*e_virt).type = edge_type_2_int["tree"];
+                    // m_TYPE[e_virt.index] = edge_type_2_int("tree")
+
+                    // m_IN_ADJ[e_virt] = m_IN_ADJ[eh]
+                    // m_IN_ADJ[eh] = e_virt
+                    if (verbose) {
+                        cout << "\t\t\tRemplacement dans m_A[" << (*eh).source << "] de ";
+                        (*eh).print();
+                        cout << " par ";
+                        (*e_virt).print();
+                    }
+//                    pos = m_A[eh.source].index(eh)
+//                        m_A[eh.source][pos] = e_virt
+//                        if (verbose) {
+//                            cout << "\tAFTER m_A[eh.source][pos] = e_virt", m_A[eh.source]);
+//                        }
+//                    }
+                    for (Edge *e :m_A[(*eh).source]) {
+                        if ((*pit) == (*eh)) {
+                            cout << "TODO Check this!" << endl;
+                            eh = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+                            break;
+                        }
+                    }
+                }
+            }
+            // cout<< "\t\tedge",edge
+            // cout<< "\t\tbefore edge.start", "m_top", m_top
+            if ((*edge).start) {
+
+                // cout<< "\t\tInside edge.start", "m_top", m_top
+                // if m_START[edge]:
+                while (TSTACK_notEOS()) {
+                    m_top -= 1;
+                }
+                // cout<< "\t\tInside edge.start", "m_top", m_top
+                m_top -= 1;
+            }
+            // cout<< "\t\tduring edge.start", "m_top", m_top
+            // cout<< "\t\tTSTACK_notEOS()", TSTACK_notEOS(), "m_TSTACK_b[m_top]", m_TSTACK_b[m_top], "v_num", v_num, "i_v", i_v, \
+            //     "__high(i_v)",     __high(i_v), "m_TSTACK_h[m_top]", m_TSTACK_h[m_top]
+            while ((TSTACK_notEOS()) && (m_TSTACK_b[m_top] != v_num) && (__high(iV) > m_TSTACK_h[m_top])) {
+                m_top -= 1;
+            }
+            out_v -= 1;
+            // cout<< "\t\tafter edge.start", "m_top", m_top, "out_v", out_v
+        } else {
+
+            // frond arc
+            if (verbose) {
+                cout << "\t\t" << iV << " " << i_w << " " << "Frond" << " " << "m_top" << " " << m_top << endl;
+            }
+
+            if ((*edge).start) {
+                // if m_START[edge]:
+                long y = 0;
+                if (m_TSTACK_a[m_top] > w_num) {
+                    long b;
+                    while (m_TSTACK_a[m_top] > w_num) {
+
+                        y = max(y, m_TSTACK_h[m_top]);
+                        b = m_TSTACK_b[m_top];
+                        m_top -= 1;
+                    }
+                    TSTACK_push(y, w_num, b);
+                } else {
+                    TSTACK_push(v_num, w_num, v_num);
+                }
+            }
+            m_estack.push_back(edge);  // add (v,i_w) to ESTACK
+        }
+    }
+}
+
+void Triconnected_graph::TSTACK_push(long h, long a, long b) {
+    m_top += 1;
+    m_TSTACK_h[m_top] = h;
+    m_TSTACK_a[m_top] = a;
+    m_TSTACK_b[m_top] = b;
+}
+
+void Triconnected_graph::TSTACK_pushEOS() {
+    m_top += 1;
+    m_TSTACK_a[m_top] = -1;
+}
+
+bool Triconnected_graph::TSTACK_notEOS() {
+    return m_TSTACK_a[m_top] != -1;
+}
+
+
+CompStruct *Triconnected_graph::__newComp(short compType) {
+
+    m_component.push_back(new CompStruct(compType));
+    return m_component.back();
+}
+
+void Triconnected_graph::__delHigh(Edge *edge) {
+
+    // ListIterator < int > it = m_IN_HIGH[edge];
+    // if (it.valid()) {
+    // (i_w, pos) = self.m_IN_HIGH[edge.index]
+    // i_v = edge.target
+    bool is_found = false;
+    for (long i :m_HIGHPT[(*edge).target]) {
+        if (i == m_NEWNUM[(*edge).source]) {
+            is_found = true;
+            break;
+        }
+    }
+    if (is_found) {
+
+        if (verbose) {
+            cout << "\t\t\tCall of __delHigh m_HIGHPT ";
+            print_m_HIGHPT();
+            (*edge).print();
+            cout << " m_top= " << m_top << endl;
+        }
+
+        m_HIGHPT[(*edge).target].remove(m_NEWNUM[(*edge).source]);
+        if (verbose) {
+            cout << "\t\t\tAfter of __delHigh m_HIGHPT ";
+            print_m_HIGHPT();
+            cout << "\t" << m_NEWNUM[(*edge).source] << "\t" << m_NEWNUM[(*edge).target] << "\t" << (*edge).index << endl;
+        }
+    }
+}
+
+void Triconnected_graph::print_m_HIGHPT() {
+    cout << "[ ";
+    for (long i = 0; i < nb_of_nodes; i++) {
+        cout << "[";
+        for (list<long>::iterator it = m_HIGHPT[i].begin(); it != m_HIGHPT[i].end(); ++it) {
+            cout << *it << ", ";
+        }
+        cout << "], ";
+    }
+    cout << "]";
+}
+
+
+Edge *Triconnected_graph::path_search_sub_type_2_1(long iV, long i_w) {
+
+    Edge *e_ab = NULL;  // edge
+    if (verbose) {
+        cout << endl;
+        cout << "\nfound type-2 separation pair [if] " << iV << ", " << (*m_A[i_w].front()).target << endl;
+    }
+
+// Storage of separation pair
+    long i_v_0 = iV;
+    long i_v_1 = (*m_A[i_w].front()).target;
+    if (i_v_0 > i_v_1) {
+        separation_pair.push_back(pair<long, long>(i_v_1, i_v_0));
+    } else {
+        separation_pair.push_back(pair<long, long>(i_v_0, i_v_1));
+    }
+
+
+    Edge *e1 = m_estack.back();  //.pop()  // edge popRet()
+    m_estack.pop_back();
+
+    Edge *e2 = m_estack.back();//m_estack.pop()  // edge
+    m_estack.pop_back();
+
+    m_A[i_w].remove(e2);  // on veut supprimer l'arete e2 de la liste!
+
+    if (verbose) {
+        cout << "\tAFTER m_A[i_w].remove(e2) : ";
+        print_m_A(i_w);
+    }
+    long i_x = (*e2).target;
+
+    Edge *e_virt = new Edge(iV, i_x);  // m_pGC->newEdge(v,i_x)
+    m_degree[i_x] -= 1;
+    m_degree[iV] -= 1;
+
+    assert ((*e2).source == i_w);
+    CompStruct *component = __newComp(1);  // Polygon
+    (*component).add(e1);
+    (*component).add(e2);
+    (*component).add(e_virt);
+    if (verbose) {
+        cout << "Creation Polygon" << m_component.size() << ": " << e1 << ", " << e2 << ", " << e_virt << endl;
+    }
+    if (!m_estack.empty()) {  // !m_estack.empty():
+        e1 = m_estack.back();  // .top()
+        if ((*e1).source == i_x && (*e1).target == iV) {
+            e_ab = m_estack.back();  //pop()
+            m_estack.pop_back();
+            m_A[i_x].remove(e_ab);  // TODO: remove n'est pas forcement le mieux car on parcourt j'imagine toute la liste
+            if (verbose) {
+                cout << "\tAFTER m_A[i_x].remove(e_ab): ";
+//                for (list<Edge *>::const_iterator it = m_A[i_x].begin(); it != m_A[i_x].end(); ++it) {
+//                    cout << "\t";
+//                    (**it).print();
+//                    cout << endl;
+//                }
+//                cout << "]" << endl;
+                print_m_A(i_x);
+            }
+// pour supprimer l'element
+// cout<< "__delHigh(e_ab) 1)"
+            __delHigh(e_ab);
+        }
+    }
+    return e_virt;
+}
+
+void Triconnected_graph::print_verbose_creation_poly_or_triconnected(CompStruct *C) {
+    if ((*C).m_type == 1) {
+        cout << "Creation Polygon " << m_component.size() << ": ";
+    } else {
+        cout << "Creation triconnected " << m_component.size() << ": ";
+    }
+
+    for (Edge *ed : (*C).m_edges) {
+        (*ed).print();
+        cout << ", ";
+    }
+    cout << endl;
+}
+
+void Triconnected_graph::print_l_edges(list<Edge *> l_e) {
+    cout << "[";
+    for (list<Edge *>::const_iterator it = l_e.begin(); it != l_e.end(); ++it) {
+        cout << "\t";
+        (**it).print();
+        cout << ",";
+    }
+    cout << "]";
+}
+
+void Triconnected_graph::print_s_edges(unordered_set<Edge *> s_e) {
+    cout << "{";
+    for (Edge *e : s_e) {
+        (*e).print();
+        cout << ", ";
+    }
+    cout << "}";
+}
+
+//void Triconnected_graph::print_map_map(list<Edge*> l_e) {
+//    cout << "{";
+//
+//    for (list<Edge *>::const_iterator it = l_e.begin(); it != l_e.end(); ++it) {
+//        cout << "\t";
+//        (**it).print();
+//        cout << ",";
+//    }
+//    cout << "]";
+//}
+
+void Triconnected_graph::print_m_A(long i_v) {
+    cout << "[";
+    for (list<Edge *>::const_iterator it = m_A[i_v].begin(); it != m_A[i_v].end(); ++it) {
+        cout << "\t";
+        (**it).print();
+        cout << ",";
+    }
+    cout << "]" << endl;
+}
+
+long Triconnected_graph::__high(long iV) {
+
+    if (!m_HIGHPT[iV].empty()) {
+        return m_HIGHPT[iV].front();  // .front()
+    } else {
+        return 0;
+    }
+}
+
+
+void Triconnected_graph::__assembleTriconnectedComponents() {
+
+    /**
+     * joins bonds and polygons with common virtual edge in
+     * order to build the triconnected components.
+     */
+    // GraphCopySimple & GC = *m_pGC;
+    unordered_map<long, unordered_map<long, long> > comp1;
+    unordered_map<long, unordered_map<long, long> > comp2;
+    // EdgeArray < int > comp1(GC), comp2(GC);
+    // EdgeArray < ListIterator < edge > > item1(GC, ListIterator < edge > ());
+    // EdgeArray < ListIterator < edge > > item2(GC);
+    unordered_map<long, unordered_map<long, Edge * >> item1;
+    unordered_map<long, unordered_map<long, Edge * >> item2;
+
+    // bool * visited = new bool[m_numComp];
+    vector<bool> visited(m_component.size(), 0);// = np.zeros((len(self.m_component),), dtype=bool)
+    // int i;
+    // for (i = 0; i < m_numComp; i++) {
+    //     visited[i] = false;
+
+    // List < edge > & L = m_component[i].m_edges;
+
+//    for iComp, comp in enumerate(m_component):
+    for (int iComp = 0; iComp < m_component.size(); iComp++) {
+        CompStruct *comp = m_component[iComp];
+
+
+        if (verbose) {
+            cout << "iComp " << iComp << "\tcomp " << (*comp).m_type << ":";
+            print_l_edges((*comp).m_edges);
+            cout << endl;
+        }
+
+        // L = comp.m_edges
+        // ListIterator < edge > it;
+        // for (it = L.begin(); it.valid(); ++it) :
+        for (Edge *edge:(*comp).m_edges) {
+
+            // if not valid? .valid() Returns true iff the iterator points to an element. On mettra dans item1 la
+            // premiere fois. La deuxieme, on ira dans else:
+            if (comp1.count((*edge).source) == 0) {
+
+                comp1[(*edge).source] = unordered_map<long, long>();
+                comp1[(*edge).source][(*edge).target] = iComp;
+
+                item1[(*edge).source] = unordered_map<long, Edge *>();
+                item1[(*edge).source][(*edge).target] = edge;
+            } else {
+                // edge.source in comp1:
+
+                if (comp1[(*edge).source].count((*edge).target) == 0) {
+                    comp1[(*edge).source][(*edge).target] = iComp;
+                    item1[(*edge).source][(*edge).target] = edge;
+
+                } else {  // les doublons?
+                    // not in comp2
+                    if (comp2.count((*edge).source) == 0) {
+
+                        comp2[(*edge).source] = unordered_map<long, long>();
+                        comp2[(*edge).source][(*edge).target] = iComp;
+
+                        item2[(*edge).source] = unordered_map<long, Edge *>();
+                        item2[(*edge).source][(*edge).target] = edge;
+                    } else {
+                        comp2[(*edge).source][(*edge).target] = iComp;
+                        item2[(*edge).source][(*edge).target] = edge;
+                    }
+                }
+            }
+
+        }
+    }
+    if (verbose) {
+        cout << "TODO outputs" << endl;
+//        cout<<"\ncomp1", comp1
+//        cout<<"item1", item1)
+//        cout<<"comp2", comp2)
+//        cout<<"item2", item2)
+    }
+
+    for (int iComp = 0; iComp < m_component.size(); iComp++) {
+
+        //        for iComp, comp in enumerate(self.m_component):
+        CompStruct *comp = m_component[iComp];
+        // for (i = 0; i < m_numComp; i++) {
+
+        if (verbose) {
+            cout << "\n\tICOMP" << iComp;
+        }
+        // for edge in comp.m_edges:
+        // CompStruct & C1 = m_component[i];
+        // List < edge > & L1 = C1.m_edges;
+        visited[iComp] = true;
+        // cout<< "visited", visited
+        if ((*comp).m_edges.size() == 0) {
+            continue;  // si L1 est vide on passe
+        }
+        if ((*comp).m_type == 1 or (*comp).m_type == 0) {
+
+
+            // ListIterator < edge > it, itNext;
+            // for (it = L1.begin(); it.valid(); it = itNext) {
+            //     itNext = it.succ();
+            //     edge e  = * it;
+
+            unordered_set<Edge *> setOfEdgesToAdd;
+            unordered_set<Edge *> setOfEdgesToDelete;
+            bool isFirst = true;
+            vector<long> componentsToDelete;
+            while ((!setOfEdgesToAdd.empty()) || isFirst) {
+
+                if (verbose) {
+                    cout << "\n\n\t\tisFirst " << isFirst << " setOfEdgesToAdd ";
+                    print_s_edges(setOfEdgesToAdd);
+                    cout << endl;
+                }
+                list<Edge *> L1;
+                if (isFirst) {
+                    L1 = list<Edge *>((*comp).m_edges);
+                    isFirst = false;
+                } else {
+//                    L1 = list<Edge *>(setOfEdgesToAdd);
+                    for (Edge *tmp_e: setOfEdgesToAdd) {
+                        L1.push_back(tmp_e);
+                    }
+                }
+
+                if (verbose) {
+                    cout << "\t\t\tL1";
+                    print_l_edges(L1);
+                    cout << endl;
+                }
+                setOfEdgesToAdd = {};
+                setOfEdgesToDelete = {};
+
+                for (Edge *edge : L1) {
+
+                    if (verbose) {
+                        cout << "\t\t\tedge ";
+                        (*edge).print_endl();
+                    }
+                    if (((*edge).index != -1) || (setOfEdgesToDelete.count(edge))) {
+                        continue;  // on ne  travaille ici que sur les aretes virtuelles
+                    }
+                    // if (GC.original(e) != nullptr)
+                    //     continue;
+                    // cout<< "edge", edge
+                    long jComp = comp1[(*edge).source][(*edge).target];
+                    if (verbose) {
+                        cout << "\t\t\tBEFORE jComp " << jComp << " " << visited[jComp] << endl;
+                    }
+                    Edge *it2;
+                    // ListIterator < edge > it2;
+                    if (visited[jComp]) {
+
+                        jComp = comp2[(*edge).source][(*edge).target];
+                        if (visited[jComp]) {
+                            continue;
+                        }
+                        it2 = item2[(*edge).source][(*edge).target];
+                    } else {
+                        it2 = item1[(*edge).source][(*edge).target];
+                    }
+
+                    if (verbose) {
+                        cout << "\t\t\tAFTER  jComp" << jComp << " " << visited[jComp] << endl;
+                    }
+
+                    CompStruct *C2 = m_component[jComp];
+                    if ((*C2).m_type != (*comp).m_type) {
+                        continue;
+                    }
+
+                    visited[jComp] = true;
+
+                    if (verbose) {
+                        cout << "\t\t\t" << jComp << " C2.m_edges ";
+                        print_l_edges((*C2).m_edges);
+                        cout << " it2 ";
+                        (*it2).print_endl();
+                    }
+                    (*C2).m_edges.remove(it2);  // on efface le doublon (arete virtuelle) de L2
+
+                    if (verbose) {
+                        cout << "\t\t\t" << jComp << " C2.m_edges ";
+                        print_l_edges((*C2).m_edges);
+                    }
+
+                    // (*comp).m_edges.extend(C2.m_edges)
+                    for (Edge *edge : (*C2).m_edges) {
+                        (*comp).m_edges.push_back(edge);
+                    }
+
+                    setOfEdgesToDelete.insert(edge);
+
+                    for (Edge *e2 : (*C2).m_edges) {
+                        setOfEdgesToAdd.insert(e2);
+                    }
+
+                    // C2.m_edges = []
+                    componentsToDelete.push_back(jComp);
+                }
+                if (verbose) {
+                    cout << "\t\t\t(*comp).m_edges init ";
+                    print_l_edges((*comp).m_edges);
+                    cout << endl;
+                    cout << "\t\t\tsetOfEdgesToDelete ";
+                    print_s_edges(setOfEdgesToDelete);
+                    cout << endl;
+                }
+
+                for (Edge *e : setOfEdgesToDelete) {
+                    (*comp).m_edges.remove(e);
+//                    if (Edgee :(*comp).m_edges){ //TODO:strange: we remove the same edge from the same set???
+//                        (*comp).m_edges.remove(e);
+//                    }
+                }
+
+                if (verbose) {
+                    cout << "\t\t\t(*comp).m_edges after remove ";
+                    print_l_edges((*comp).m_edges);
+                    cout << endl;
+                    cout << "\t\t\tsetOfEdgesToAdd ";
+                    print_s_edges(setOfEdgesToAdd);
+                    cout << endl;
+                }
+                for (Edge *e : setOfEdgesToAdd) {
+                    bool is_found = false;
+                    for (Edge *tmp_e :(*comp).m_edges) {
+                        if ((*tmp_e) == (*e)) {
+                            is_found = true;
+                            break;
+                        }
+                    }
+                    if (!is_found) {
+                        (*comp).m_edges.push_back(e);
+                    }
+                }
+                if (verbose) {
+                    cout << "\t\t\t(*comp).m_edges after remove and add ";
+                    print_l_edges((*comp).m_edges);
+                    cout << endl;
+                }
+                // L1.del (it); // on efface le doublon (arete virtuelle) de L2
+
+                // GC.delEdge(e);
+            }
+            for (long iC : componentsToDelete) {
+                (*m_component[iC]).m_edges = {};
+            }
+        }
+    }
+}
+
+bool Triconnected_graph::is_found_v_edges(Edge *e, vector<Edge *> v_e) {
+    for (Edge *tmp_e :v_e) {
+        if ((*tmp_e) == (*e)) {
+            return true;
+        }
+    }
+    return false;
 }
