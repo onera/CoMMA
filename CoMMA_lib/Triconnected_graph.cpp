@@ -1135,7 +1135,9 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                            cout << endl;
                         }
                         i_x = m_ORIGINAL[i_v_b];
-                        cout << "i_x " << i_x << " i_v_b " << i_v_b << endl;
+                        if (verbose) {
+                            cout << "i_x " << i_x << " i_v_b " << i_v_b << endl;
+                        }
                     }
                     if (e_ab != NULL) {
 
@@ -1223,12 +1225,14 @@ void Triconnected_graph::__pathSearch(long iV) {
                     m_degree[i_x] += 1;
                     m_degree[iV] += 1;
                     m_FATHER[i_x] = iV;
-                    cout << "\t\t\t__pathSearch(self, iV): iV " << iV << " i_x " << i_x << " m_FATHER [";
-                    for (long i :m_FATHER) {
-                        cout << i << ", ";
-                    }
-                    cout << "]" << endl;
+                    if (verbose) {
+                        cout << "\t\t\t__pathSearch(self, iV): iV " << iV << " i_x " << i_x << " m_FATHER [";
 
+                        for (long i :m_FATHER) {
+                            cout << i << ", ";
+                        }
+                        cout << "]" << endl;
+                    }
                     m_TREE_ARC[i_x] = e_virt;
                     (*e_virt).type = edge_type_2_int["tree"];
                     // m_TYPE[e_virt] = edge_type_2_int("tree")
@@ -1669,7 +1673,9 @@ Edge *Triconnected_graph::__pathSearch_sub_type_2_1(long iV, long i_w, long &i_x
         cout << endl;
     }
     i_x = (*e2).target;
-    cout << "__pathSearch_sub_type_2_1: (" << iV << ", " << i_w << ") i_x " << i_x << endl;
+    if (verbose) {
+        cout << "__pathSearch_sub_type_2_1: (" << iV << ", " << i_w << ") i_x " << i_x << endl;
+    }
     Edge *e_virt = new Edge(iV, i_x);  // m_pGC->newEdge(v,i_x)
     m_degree[i_x] -= 1;
     m_degree[iV] -= 1;

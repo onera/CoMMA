@@ -1262,3 +1262,136 @@ TEST_F(Triconnected_graph_bug_cube, computeTriconnectivity) {
     ASSERT_EQ(ref_triconnectedComponents_g, Triconnected_Component_G_cpp);
 
 }
+
+TEST_F(Triconnected_graph_bug_cube_v3_bis, computeTriconnectivity) {
+
+    bool verbose = false;
+
+    ASSERT_EQ(12, (*g).nb_of_nodes);
+    ASSERT_EQ(16, (*g).nb_of_edges);
+
+    ASSERT_TRUE((*g).is_connected());
+
+    list<unordered_set<long>> l_component;
+    bool isBiconnected = BCC_NR((*g), l_component);
+    ASSERT_TRUE(isBiconnected);
+    ASSERT_EQ(12, l_component.front().size());
+
+    list<unordered_set<long>> triconnected_components;
+    (*g).computeTriconnectivity(triconnected_components);
+
+    list<unordered_set<long>> ref_triconnectedComponents = {};
+    if (verbose) {
+        cout << "triconnected_components= {";
+        for (long i_v:triconnected_components.front()) {
+            cout << i_v << ", ";
+        }
+        cout << "}" << endl;
+    }
+    ASSERT_EQ(ref_triconnectedComponents, triconnected_components);
+
+
+}
+
+TEST_F(Triconnected_graph_box_5x5x5, computeTriconnectivity) {
+
+    bool verbose = false;
+
+    ASSERT_EQ(64, (*g).nb_of_nodes);
+    ASSERT_EQ(144, (*g).nb_of_edges);
+
+    ASSERT_TRUE((*g).is_connected());
+
+    list<unordered_set<long>> l_component;
+    bool isBiconnected = BCC_NR((*g), l_component);
+    ASSERT_TRUE(isBiconnected);
+
+    // We build a subgraph to have the 3-neighbouring cells of seed 0.
+    vector<long> list_Of_Node = {0, 1, 2, 3, 4, 5, 6, 8, 9, 12, 16, 17, 18, 20, 21, 24, 32, 33, 36, 48};
+    unordered_set<long> s_Of_Node = {0, 1, 2, 3, 4, 5, 6, 8, 9, 12, 16, 17, 18, 20, 21, 24, 32, 33, 36, 48};
+
+    vector<long> row_ptr_l;
+    vector<long> col_ind_l;
+    vector<double> values_l;
+    vector<long> g_to_l;
+    vector<long> l_to_g;
+
+    (*dg).compute_local_crs_subgraph_from_global_crs(s_Of_Node,
+                                                     row_ptr_l,
+                                                     col_ind_l,
+                                                     values_l,
+                                                     g_to_l,
+                                                     l_to_g
+    );
+
+    Triconnected_graph tg_l = Triconnected_graph(row_ptr_l, col_ind_l, values_l);
+
+    l_component.clear();
+    isBiconnected = BCC_NR((tg_l), l_component);
+
+    list<unordered_set<long>> ref_component_l = {unordered_set<long>({1, 17, 10, 9, 3, 16, 0, 13, 6, 19, 8, 18, 5, 12, 4, 11, 2})};
+    ASSERT_FALSE(isBiconnected);
+    ASSERT_EQ(ref_component_l, l_component);
+
+
+    list<unordered_set<long>> component_G;
+    for (auto compo :l_component) {
+        unordered_set<long> compo_G = {};
+        for (long iL : compo) {
+            compo_G.insert(l_to_g[iL]);
+        }
+        component_G.push_back(compo_G);
+    }
+
+    list<unordered_set<long>> ref_component_G = {unordered_set<long>({0, 1, 2, 4, 5, 6, 32, 8, 9, 16, 17, 18, 20, 21, 24, 36, 33})};
+    ASSERT_FALSE(isBiconnected);
+    ASSERT_EQ(ref_component_G, component_G);
+
+    // We build biconnected component.
+    //================================
+    s_Of_Node = component_G.front();
+
+    (*dg).compute_local_crs_subgraph_from_global_crs(s_Of_Node,
+                                                     row_ptr_l,
+                                                     col_ind_l,
+                                                     values_l,
+                                                     g_to_l,
+                                                     l_to_g);
+
+    tg_l = Triconnected_graph(row_ptr_l, col_ind_l, values_l);
+    list<unordered_set<long>> triconnected_components_l;
+    tg_l.computeTriconnectivity(triconnected_components_l);
+
+    list<unordered_set<long>> ref_triconnectedComponents_l = {unordered_set<long>({14, 16, 3, 11, 12, 4, 13, 0})};
+    if (verbose) {
+        cout << "triconnected_components_l= {";
+        for (long i_v:triconnected_components_l.front()) {
+            cout << i_v << ", ";
+        }
+        cout << "}" << endl;
+    }
+    ASSERT_EQ(ref_triconnectedComponents_l, triconnected_components_l);
+
+    list<unordered_set<long>> Triconnected_Component_G_cpp;
+
+    list<unordered_set<long>>::const_iterator it;
+    for (it = triconnected_components_l.begin(); it != triconnected_components_l.end(); ++it) {
+        unordered_set<long> compo_G;
+        for (long iL : (*it)) {
+            compo_G.insert(l_to_g[iL]);
+        }
+        Triconnected_Component_G_cpp.push_back(compo_G);
+    }
+
+    if (verbose) {
+        cout << "triconnectedComponents_g= {";
+        for (long i_v:Triconnected_Component_G_cpp.front()) {
+            cout << i_v << ", ";
+        }
+        cout << "}" << endl;
+    }
+    list<unordered_set<long>> ref_triconnectedComponents_g = {unordered_set<long>({0, 1, 4, 5, 16, 17, 20, 21})};
+    ASSERT_EQ(ref_triconnectedComponents_g, Triconnected_Component_G_cpp);
+
+}
+
