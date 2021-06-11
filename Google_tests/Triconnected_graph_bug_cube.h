@@ -11,7 +11,7 @@
 class Triconnected_graph_bug_cube : public ::testing::Test {
 
 protected:
-
+    Dual_Graph *dg;
     Triconnected_graph *g;
     int nb_nodes;
     int nb_edges;
@@ -92,10 +92,20 @@ protected:
                                    v_col_ind,
                                    v_values);
 
+        vector<double> v_volumes(nb_nodes, 1.0);
+        unordered_map<long, int> d_is_on_bnd = {};
+        dg = new Dual_Graph(nb_nodes,
+                            v_row_ptr,
+                            v_col_ind,
+                            v_values,
+                            v_volumes,
+                            d_is_on_bnd
+        );
     }
 
     virtual void TearDown() {
         delete g;
+        delete dg;
     }
 };
 

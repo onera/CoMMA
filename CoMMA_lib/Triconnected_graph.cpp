@@ -482,6 +482,7 @@ short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &tric
 
     // m_pGC = new GraphCopySimple(G);
     // GraphCopySimple & GC = *m_pGC;
+    verbose = false;
     if (verbose) {
         cout << "Call of Triconnectivity::Triconnectivity nb Edges= " << nb_of_edges << " nb nodes " << nb_of_nodes << endl;
     }
@@ -576,7 +577,9 @@ short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &tric
             cout << i_v << "\t";
             for (Edge *ei :m_A[i_v]) {
                 (*ei).print();
+                cout << ", ";
             }
+            cout << endl;
         }
     }
     if (partialTest == 2) {
@@ -599,7 +602,8 @@ short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &tric
         cout << "\nedges starting a path:" << endl;
         for (long i_e = 0; i_e < nb_of_edges; i_e++) {
             if (edges[i_e]->start) {
-                cout << edges[i_e] << ", ";
+                (*edges[i_e]).print();
+                cout << ", ";
             }
         }
         cout << endl;
@@ -692,7 +696,7 @@ short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &tric
 //    list<unordered_set<long>> triconnectedComponents = {};
 
     //    for iC, component in enumerate(self.m_component):
-
+//    cout<<"toto"<<endl;
     for (int iC = 0; iC < m_component.size(); iC++) {
         CompStruct *component = m_component[iC];
 
@@ -720,16 +724,40 @@ short Triconnected_graph::computeTriconnectivity(list<unordered_set<long>> &tric
                     }
                     vertices.insert((*edge).source);
                     vertices.insert((*edge).target);
+//                    if(verbose){
+//                        (*edge).print();
+//                        cout<<endl;
+//                        cout<<"insert "<<(*edge).source <<" and "<<(*edge).target<<" and vertices={";
+//                        for (long tmp: vertices)
+//                        {
+//                            cout<<tmp<<", ";
+//                        }
+//                        cout<<endl;
+//                    }
+
                 }
             }
+            if (verbose) {
+                cout << endl;
+                cout << "vertices={";
+                for (long tmp: vertices) {
+                    cout << tmp << ", ";
+                }
+                cout << "}" << endl;
+                cout << "degree={";
+                for (auto i_k_v: degree) {
+                    cout << "{" << i_k_v.first << ", " << i_k_v.second << "}, ";
+                }
+                cout << "}" << endl;
 
+            }
             // print( "vertices", vertices, degree
             bool isVertexRemoved = false;
             for (const auto i_k_v : degree) {
                 if (i_k_v.second < 3) {
                     long i_v = i_k_v.first;
                     vertices.erase(i_v);
-                    bool isVertexRemoved = true;
+                    isVertexRemoved = true;
                     for (Edge *tmp_edge: (*component).m_edges) {
                         if ((*tmp_edge).index != -1 || is_found_v_edges(tmp_edge, edges)) {// virtual edges or real edge
                             if (i_v == (*tmp_edge).source || i_v == (*tmp_edge).target) {
@@ -892,26 +920,26 @@ void Triconnected_graph::__pathSearch(long iV) {
     /**
      * recognition of split components
      */
+//     verbose=true;
     if (verbose) {
         cout << "\n\tCall of __pathSearch " << iV << " m_top " << m_top << endl;
-        cout << "m_HIGHPT [";
+        cout << "\t\tm_HIGHPT ";
         print_m_HIGHPT();
         cout << endl;
 
-        cout << "m_estack [";
+        cout << "\t\tm_estack [";
         for (Edge *e: m_estack) {
             (*e).print();
             cout << ", ";
         }
         cout << "]" << endl;
+
+        cout << "\t\tm_TSTACK_a [";
+        for (long e: m_TSTACK_a) {
+            cout << e << ", ";
+        }
+        cout << "]" << endl;
     }
-//     print( "m_estack", m_estack
-//     print( "m_TSTACK_a", m_TSTACK_a
-//    cout << "m_TSTACK_a [";
-//    for (long e: m_TSTACK_a) {
-//        cout << e << ", ";
-//    }
-//    cout << "]" << endl;
 
     long v_num = m_NEWNUM[iV];
 
@@ -921,9 +949,11 @@ void Triconnected_graph::__pathSearch(long iV) {
 
     for (Edge *pit : adj) {
         if (verbose) {
-            cout << "pit ";
+            cout << "\t\t\tpit ";
             (*pit).print();
             cout << "\ti_v: " << iV;
+            cout << "\t m_A[i_v] ";
+            print_m_A(iV);
 //            cout << "\tm_A[i_v]\t" << m_A[iV] << endl;
             cout << endl;
         }
@@ -936,9 +966,8 @@ void Triconnected_graph::__pathSearch(long iV) {
 
         if ((*edge).type == edge_type_2_int["tree"]) {
 
-
             if (verbose) {
-                cout << "\t\tIn\t" << iV << ", " << i_w << " Tree " << "m_top " << m_top << endl;
+                cout << "\t\t\tIn\t" << iV << ", " << i_w << " Tree " << "m_top " << m_top << endl;
             }
             if ((*edge).start) {
 
@@ -991,7 +1020,8 @@ void Triconnected_graph::__pathSearch(long iV) {
                 long i_v_a = m_TSTACK_a[m_top];  // New
                 long i_v_b = m_TSTACK_b[m_top];  // New
                 if (verbose) {
-                    cout << "\n\t\ta " << i_v_a << " b " << i_v_b << " wnum " << w_num << " m_FATHER[m_NODEAT[b]] " << m_NEWNUM[m_FATHER[m_ORIGINAL[i_v_b]]] << endl;
+                    cout << "\n\t\ta " << i_v_a << " b " << i_v_b << " wnum " << w_num << " m_FATHER[m_NODEAT[b]] " << m_NEWNUM[m_FATHER[m_ORIGINAL[i_v_b]]] << " m_ORIGINAL[i_v_b] "
+                         << m_ORIGINAL[i_v_b] << " m_FATHER[m_ORIGINAL[i_v_b]] " << m_FATHER[m_ORIGINAL[i_v_b]] << endl;
                 }
 
                 // edge e_virt
@@ -1005,7 +1035,7 @@ void Triconnected_graph::__pathSearch(long iV) {
                     Edge *e_virt = NULL;
                     if (m_degree[i_w] == 2 && m_NEWNUM[(*m_A[i_w].front()).target] > w_num) {
 
-                        e_virt = path_search_sub_type_2_1(iV, i_w);
+                        e_virt = __pathSearch_sub_type_2_1(iV, i_w, i_x);
 
                     } else {
 
@@ -1054,6 +1084,7 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                                    }
 //                                    cout << "]" << endl;
                                     print_m_A((*e_ab).source);
+                                    cout << endl;
                                 }
                                 // print( "__delHigh(e_ab) 2)"
                                 __delHigh(e_ab);
@@ -1076,6 +1107,7 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                                        cout << "]" << endl;
                                         print_m_A((*eh).source);
                                         // print( "__delHigh(eh)"
+                                        cout << endl;
                                     }
                                     __delHigh(eh);
                                 }
@@ -1103,6 +1135,7 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                            cout << endl;
                         }
                         i_x = m_ORIGINAL[i_v_b];
+                        cout << "i_x " << i_x << " i_v_b " << i_v_b << endl;
                     }
                     if (e_ab != NULL) {
 
@@ -1142,18 +1175,33 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                        }
 //                        cout << "]" << endl;
                         print_m_A((*pit).source);
+                        cout << endl;
                     }
                     //if pit in m_A[(*pit).source]:
                     bool is_found = false;
-                    for (Edge *e :m_A[(*pit).source]) {
-                        if ((*pit) == (*e)) {
+
+//                        for (Edge *e :m_A[(*pit).source]) {
+//                        if ((*pit) == (*e)) {
+//                            is_found = true;
+//                            e = e_virt;  //verifier cela, je ne sais pas si ca va marcher...
+//                            break;
+//                        }
+//                    }
+
+                    long size_list = m_A[(*pit).source].size();
+                    list<Edge *>::iterator it;
+                    for (it = m_A[(*pit).source].begin(); it != m_A[(*pit).source].end(); ++it) {
+                        if ((*pit) == (**it)) {
                             is_found = true;
-                            e = e_virt;  //verifier cela, je ne sais pas si ca va marcher...
                             break;
                         }
                     }
                     if (is_found) {
+                        it = m_A[(*pit).source].erase(it);
+                        m_A[(*pit).source].insert(it, e_virt);
 
+
+                        assert(size_list == m_A[(*pit).source].size());
 //                        pos = m_A[(*pit).source]).index(pit);
 //                        m_A[(*pit).source][pos] = e_virt;
                     } else {
@@ -1169,11 +1217,18 @@ void Triconnected_graph::__pathSearch(long iV) {
 //
 //                        cout << "]" << endl;
                         print_m_A((*pit).source);
+                        cout << endl;
                     }
                     pit = e_virt;
                     m_degree[i_x] += 1;
                     m_degree[iV] += 1;
                     m_FATHER[i_x] = iV;
+                    cout << "\t\t\t__pathSearch(self, iV): iV " << iV << " i_x " << i_x << " m_FATHER [";
+                    for (long i :m_FATHER) {
+                        cout << i << ", ";
+                    }
+                    cout << "]" << endl;
+
                     m_TREE_ARC[i_x] = e_virt;
                     (*e_virt).type = edge_type_2_int["tree"];
                     // m_TYPE[e_virt] = edge_type_2_int("tree")
@@ -1323,13 +1378,36 @@ void Triconnected_graph::__pathSearch(long iV) {
 
                     // Remplacement de edge par e_virt
 //                    if pit in m_A[pit.source]:  // Call of Edge.__eq__
-                    for (Edge *e :m_A[(*pit).source]) {
-                        if ((*pit) == (*e)) {
-                            cout << "TODO Check this!" << endl;
-                            e = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+//                    for (Edge *e :m_A[(*pit).source]) {
+//                        if ((*pit) == (*e)) {
+//                            cout << "TODO Check this!" << endl;
+//                            e = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+//                            break;
+//                        }
+//                    }
+
+                    bool is_found = false;
+                    long size_list = m_A[(*pit).source].size();
+
+                    list<Edge *>::iterator it;
+                    for (it = m_A[(*pit).source].begin(); it != m_A[(*pit).source].end(); ++it) {
+                        if ((*pit) == (**it)) {
+                            is_found = true;
                             break;
                         }
                     }
+                    if (is_found) {
+
+                        it = m_A[(*pit).source].erase(it);
+                        m_A[(*pit).source].insert(it, e_virt);
+
+                        assert(size_list == m_A[(*pit).source].size());
+//                        pos = m_A[(*pit).source]).index(pit);
+//                        m_A[(*pit).source][pos] = e_virt;
+                    }
+                    // End Remplacement de edge par e_virt
+
+
 //                    pos = m_A[pit.source].index(pit)
 //                    m_A[pit.source][pos] = e_virt
                     if (verbose) {
@@ -1340,7 +1418,7 @@ void Triconnected_graph::__pathSearch(long iV) {
                     pit = e_virt;
 
                     // m_IN_ADJ[e_virt] = it
-                    bool is_found = false;
+                    is_found = false;
                     for (long i : m_HIGHPT[m_ORIGINAL[m_low_pt_1[i_w]]]) {
                         if (i == m_NEWNUM[iV]) {
                             is_found = true;
@@ -1418,13 +1496,30 @@ void Triconnected_graph::__pathSearch(long iV) {
 //                            cout << "\tAFTER m_A[eh.source][pos] = e_virt", m_A[eh.source]);
 //                        }
 //                    }
-                    for (Edge *e :m_A[(*eh).source]) {
-                        if ((*pit) == (*eh)) {
-                            cout << "TODO Check this!" << endl;
-                            eh = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+                    //remplacement de eh par e_virt
+//                    for (Edge *e :m_A[(*eh).source]) {
+//                        if ((*pit) == (*eh)) {
+//                            cout << "TODO Check this!" << endl;
+//                            eh = e_virt;  //TODO verifier cela, je ne sais pas si ca va marcher...
+//                            break;
+//                        }
+//                    }
+                    bool is_found = false;
+                    long size_list = m_A[(*eh).source].size();
+
+                    list<Edge *>::iterator it;
+                    for (it = m_A[(*eh).source].begin(); it != m_A[(*eh).source].end(); ++it) {
+                        if ((*eh) == (**it)) {
+                            is_found = true;
                             break;
                         }
                     }
+                    if (is_found) {
+                        it = m_A[(*eh).source].erase(it);
+                        m_A[(*eh).source].insert(it, e_virt);
+                        assert(size_list == m_A[(*eh).source].size());
+                    }
+                    // End Remplacement de edge par e_virt
                 }
             }
             // cout<< "\t\tedge",edge
@@ -1542,7 +1637,7 @@ void Triconnected_graph::print_m_HIGHPT() {
 }
 
 
-Edge *Triconnected_graph::path_search_sub_type_2_1(long iV, long i_w) {
+Edge *Triconnected_graph::__pathSearch_sub_type_2_1(long iV, long i_w, long &i_x) {
 
     Edge *e_ab = NULL;  // edge
     if (verbose) {
@@ -1571,9 +1666,10 @@ Edge *Triconnected_graph::path_search_sub_type_2_1(long iV, long i_w) {
     if (verbose) {
         cout << "\tAFTER m_A[i_w].remove(e2) : ";
         print_m_A(i_w);
+        cout << endl;
     }
-    long i_x = (*e2).target;
-
+    i_x = (*e2).target;
+    cout << "__pathSearch_sub_type_2_1: (" << iV << ", " << i_w << ") i_x " << i_x << endl;
     Edge *e_virt = new Edge(iV, i_x);  // m_pGC->newEdge(v,i_x)
     m_degree[i_x] -= 1;
     m_degree[iV] -= 1;
@@ -1584,7 +1680,13 @@ Edge *Triconnected_graph::path_search_sub_type_2_1(long iV, long i_w) {
     (*component).add(e2);
     (*component).add(e_virt);
     if (verbose) {
-        cout << "Creation Polygon" << m_component.size() << ": " << e1 << ", " << e2 << ", " << e_virt << endl;
+        cout << "Creation Polygon " << m_component.size() << ": ";
+        (*e1).print();
+        cout << ", ";
+        (*e2).print();
+        cout << ", ";
+        (*e_virt).print();
+        cout << endl;
     }
     if (!m_estack.empty()) {  // !m_estack.empty():
         e1 = m_estack.back();  // .top()
@@ -1657,11 +1759,11 @@ void Triconnected_graph::print_s_edges(unordered_set<Edge *> s_e) {
 void Triconnected_graph::print_m_A(long i_v) {
     cout << "[";
     for (list<Edge *>::const_iterator it = m_A[i_v].begin(); it != m_A[i_v].end(); ++it) {
-        cout << "\t";
+        cout << "";
         (**it).print();
         cout << ",";
     }
-    cout << "]" << endl;
+    cout << "]";
 }
 
 long Triconnected_graph::__high(long iV) {

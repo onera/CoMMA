@@ -2463,81 +2463,116 @@ TEST_F(MGridGen_Dual_Graph, compute_of_neighbourhood_of_cc_w_constraints_13) {
 
 TEST_F(Graphs_biconnected, compute_Local_CRS_Subgraph_From_Global) {
 
+    // Test 1
+    //=======
+
     unordered_set<long> s_of_node = {0, 1, 2, 3, 4, 5, 6, 7};
     vector<long> row_ptr_l;
     vector<long> col_ind_l;
     vector<double> values_l;
     vector<long> g_to_l;
+    vector<long> l_to_g;
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l,
+                                                    l_to_g);
     vector<long> ref_col_ind_l = {1, 4, 5, 0, 2, 4, 5, 1, 3, 6, 7, 2, 6, 7, 0, 1, 5, 0, 1, 4, 6, 2, 3, 5, 7, 2, 3, 6};
     vector<double> ref_values_l = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     vector<long> ref_g_to_l = {7, 6, 5, 4, 3, 2, 1, 0};
+    vector<long> ref_l_to_g = {7, 6, 5, 4, 3, 2, 1, 0};
+
     ASSERT_EQ((*g)._m_CRS_Row_Ptr, row_ptr_l);
     ASSERT_EQ(ref_col_ind_l, col_ind_l);
     ASSERT_EQ(ref_values_l, values_l);
     ASSERT_EQ(ref_g_to_l, g_to_l);
+    ASSERT_EQ(ref_l_to_g, l_to_g);
 
+    // Test 2
+    //=======
     s_of_node = {0, 1, 2, 3};
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l,
+                                                    l_to_g
+    );
     vector<long> ref_row_ptr_l = {0, 1, 3, 5, 6};
     ref_col_ind_l = {1, 0, 2, 1, 3, 2};
     ref_values_l = {1, 1, 1, 1, 1, 1};
     ref_g_to_l = {3, 2, 1, 0, -1, -1, -1, -1};
-
+    ref_l_to_g = {3, 2, 1, 0};
+    for (int i = 0; i < s_of_node.size(); i++) {
+        ASSERT_EQ(i, g_to_l[l_to_g[i]]);
+    }
     ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
     ASSERT_EQ(ref_col_ind_l, col_ind_l);
     ASSERT_EQ(ref_values_l, values_l);
     ASSERT_EQ(ref_g_to_l, g_to_l);
+    ASSERT_EQ(ref_l_to_g, l_to_g);
+
+    // Test 3
+    //=======
 
     s_of_node = {0, 1, 4, 5};
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l, l_to_g);
     ref_row_ptr_l = {0, 3, 6, 9, 12};
     ref_col_ind_l = {1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2};
     ref_values_l = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
     ref_g_to_l = {3, 2, -1, -1, 1, 0, -1, -1};
+    ref_l_to_g = {5, 4, 1, 0};
 
     ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
     ASSERT_EQ(ref_col_ind_l, col_ind_l);
     ASSERT_EQ(ref_values_l, values_l);
     ASSERT_EQ(ref_g_to_l, g_to_l);
+    ASSERT_EQ(ref_l_to_g, l_to_g);
+    for (int i = 0; i < s_of_node.size(); i++) {
+        ASSERT_EQ(i, g_to_l[l_to_g[i]]);
+    }
 
+    // Test 4
+    //=======
     s_of_node = {7, 6, 2, 3};
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l,
+                                                    l_to_g);
     ref_row_ptr_l = {0, 3, 6, 9, 12};
     ref_col_ind_l = {3, 2, 1, 3, 2, 0, 3, 0, 1, 2, 0, 1};
     ref_values_l = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
     ref_g_to_l = {-1, -1, 1, 0, -1, -1, 2, 3};
+    ref_l_to_g = {3, 2, 6, 7};
 
     ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
     ASSERT_EQ(ref_col_ind_l, col_ind_l);
     ASSERT_EQ(ref_values_l, values_l);
     ASSERT_EQ(ref_g_to_l, g_to_l);
-
-
+    ASSERT_EQ(ref_l_to_g, l_to_g);
+    for (int i = 0; i < s_of_node.size(); i++) {
+        ASSERT_EQ(i, g_to_l[l_to_g[i]]);
+    }
+    // Test 5
+    //=======
     s_of_node = {7};
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node, row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l,
+                                                    l_to_g);
     ref_row_ptr_l = {0, 1};
     ref_col_ind_l = {};
     ref_values_l = {};
     ref_g_to_l = {-1, -1, -1, -1, -1, -1, -1, 0};
+    ref_l_to_g = {7};
 
     ASSERT_EQ(ref_row_ptr_l, row_ptr_l);
     ASSERT_EQ(ref_col_ind_l, col_ind_l);
     ASSERT_EQ(ref_values_l, values_l);
     ASSERT_EQ(ref_g_to_l, g_to_l);
+    ASSERT_EQ(ref_l_to_g, l_to_g);
 }

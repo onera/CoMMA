@@ -130,7 +130,8 @@ public :
 
     unsigned short int compute_degree_of_node(int i_fc, bool (*test_function)(int) = nullptr);
 
-    void compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l);
+    void
+    compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l, vector<long> &l_to_g);
 
     unordered_set<long> compute_s_leaves(unordered_set<long> s_fc);
 

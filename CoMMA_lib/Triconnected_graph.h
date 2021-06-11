@@ -114,7 +114,7 @@ public:
 
     void __delHigh(Edge *edge);
 
-    Edge *path_search_sub_type_2_1(long iV, long i_w);
+    Edge *__pathSearch_sub_type_2_1(long iV, long i_w, long &i_x);
 
     long __high(long iV);
 

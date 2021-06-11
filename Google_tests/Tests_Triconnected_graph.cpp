@@ -11,6 +11,7 @@ void check_edge(const Edge *e, const Edge ref) {
 void check_m_TREE_ARC(const Triconnected_graph g, vector<Edge> v_ref) {
     ASSERT_EQ(g.nb_of_nodes, v_ref.size());
     for (int i = 1; i < g.nb_of_nodes; i++) {
+//        cout<<i<<"\t"<<(*g.m_TREE_ARC[i]).source<<", "<<(*g.m_TREE_ARC[i]).target<<endl;
         check_edge(g.m_TREE_ARC[i], v_ref[i]);
     }
 }
@@ -24,7 +25,7 @@ void check_edges(const Triconnected_graph g, vector<Edge> v_ref) {
 }
 
 void check_m_A(const Triconnected_graph g, vector<list<Edge>> v_ref) {
-    bool verbose = true;
+    bool verbose = false;
     ASSERT_EQ(g.nb_of_nodes, v_ref.size());
     for (int i = 0; i < g.nb_of_nodes; i++) {
         if (verbose) {
@@ -586,58 +587,58 @@ TEST_F(Triconnected_graph_H, computeTriconnectivity) {
     ASSERT_EQ(ref_triconnectedComponents, triconnectedComponents);
 }
 
-TEST_F(Triconnected_graph_Biconnected_Hexahedron, computeTriconnectivity_partial_test_1) {
-
-    ASSERT_EQ(17, (*g).nb_of_nodes);
-    ASSERT_EQ(27, (*g).nb_of_edges);
-
-    list<unordered_set<long>> triconnectedComponents;
-    (*g).computeTriconnectivity(triconnectedComponents, 1);
-
-    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 5, 6, 7, 4};
-    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
-
-    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 1, 2, 0};
-    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
-
-    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 2, 4, 1};
-    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
-
-    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 7, 4, 5, 3};
-    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
-
-    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 3, 2, 1, 4};
-    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
-
-    vector<Edge> ref_m_TREE_ARC(nb_nodes);
-    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
-    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
-    ref_m_TREE_ARC[3] = Edge(2, 3, 5, 3);
-    ref_m_TREE_ARC[4] = Edge(4, 7, 9, 3);
-    ref_m_TREE_ARC[5] = Edge(4, 5, 8, 3);
-    ref_m_TREE_ARC[6] = Edge(5, 6, 10, 3);
-    ref_m_TREE_ARC[7] = Edge(3, 7, 7, 3);
-
-    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
-
-
-    vector<Edge> ref_edges(nb_edges);
-    ref_edges[0] = Edge(0, 1, 0, 3);
-    ref_edges[1] = Edge(0, 3, 1, 1);
-    ref_edges[2] = Edge(0, 4, 2, 1);
-    ref_edges[3] = Edge(1, 2, 3, 3);
-    ref_edges[4] = Edge(1, 5, 4, 1);
-    ref_edges[5] = Edge(2, 3, 5, 3);
-    ref_edges[6] = Edge(2, 6, 6, 1);
-    ref_edges[7] = Edge(3, 7, 7, 3);
-    ref_edges[8] = Edge(4, 5, 8, 3);
-    ref_edges[9] = Edge(4, 7, 9, 3);
-    ref_edges[10] = Edge(5, 6, 10, 3);
-    ref_edges[11] = Edge(6, 7, 11, 1);
-
-    check_edges((*g), ref_edges);
-
-}
+//TEST_F(Triconnected_graph_Biconnected_Hexahedron, computeTriconnectivity_partial_test_1) {
+//
+//    ASSERT_EQ(17, (*g).nb_of_nodes);
+//    ASSERT_EQ(27, (*g).nb_of_edges);
+//
+//    list<unordered_set<long>> triconnectedComponents;
+//    (*g).computeTriconnectivity(triconnectedComponents, 1);
+//
+//    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 5, 6, 7, 4};
+//    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+//
+//    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 1, 2, 0};
+//    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+//
+//    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 2, 4, 1};
+//    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+//
+//    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 7, 4, 5, 3};
+//    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+//
+//    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 3, 2, 1, 4};
+//    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+//
+//    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+//    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+//    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+//    ref_m_TREE_ARC[3] = Edge(2, 3, 5, 3);
+//    ref_m_TREE_ARC[4] = Edge(4, 7, 9, 3);
+//    ref_m_TREE_ARC[5] = Edge(4, 5, 8, 3);
+//    ref_m_TREE_ARC[6] = Edge(5, 6, 10, 3);
+//    ref_m_TREE_ARC[7] = Edge(3, 7, 7, 3);
+//
+//    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+//
+//
+//    vector<Edge> ref_edges(nb_edges);
+//    ref_edges[0] = Edge(0, 1, 0, 3);
+//    ref_edges[1] = Edge(0, 3, 1, 1);
+//    ref_edges[2] = Edge(0, 4, 2, 1);
+//    ref_edges[3] = Edge(1, 2, 3, 3);
+//    ref_edges[4] = Edge(1, 5, 4, 1);
+//    ref_edges[5] = Edge(2, 3, 5, 3);
+//    ref_edges[6] = Edge(2, 6, 6, 1);
+//    ref_edges[7] = Edge(3, 7, 7, 3);
+//    ref_edges[8] = Edge(4, 5, 8, 3);
+//    ref_edges[9] = Edge(4, 7, 9, 3);
+//    ref_edges[10] = Edge(5, 6, 10, 3);
+//    ref_edges[11] = Edge(6, 7, 11, 1);
+//
+//    check_edges((*g), ref_edges);
+//
+//}
 
 TEST_F(Triconnected_graph_Biconnected_Hexahedron, computeTriconnectivity) {
 
@@ -859,4 +860,405 @@ TEST_F(Triconnected_graph_2_Graphs_Biconnected_n_8_m_14, computeTriconnectivity)
 //    }
 //    cout << "}" << endl;
     ASSERT_EQ(ref_triconnectedComponents, triconnectedComponents);
+}
+
+TEST_F(Triconnected_graph_2_Graphs_Biconnected_n_8_m_14, computeTriconnectivity_partial_2) {
+
+    ASSERT_EQ(8, (*g).nb_of_nodes);
+    ASSERT_EQ(14, (*g).nb_of_edges);
+
+    list<unordered_set<long>> triconnectedComponents;
+    (*g).computeTriconnectivity(triconnectedComponents, 2);
+    list<unordered_set<long>> ref_triconnectedComponents = {unordered_set<long>({2, 3, 6, 7}),
+                                                            unordered_set<long>({0, 1, 4, 5})
+    };
+    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 6, 5, 4, 7};
+    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+
+    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 0, 0, 2};
+    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+
+    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 1, 1, 3};
+    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+
+    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 5, 6, 3, 6};
+    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+
+    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 1, 2, 4, 1};
+    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+
+    cout << "1" << endl;
+    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+    ref_m_TREE_ARC[3] = Edge(2, 3, 6, 3);
+    ref_m_TREE_ARC[4] = Edge(5, 4, 11, 3);
+    ref_m_TREE_ARC[5] = Edge(6, 5, 12, 3);
+    ref_m_TREE_ARC[6] = Edge(3, 6, 9, 3);
+    ref_m_TREE_ARC[7] = Edge(6, 7, 13, 3);
+
+
+    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+    cout << "2" << endl;
+
+    vector<list<Edge>> ref_m_A(nb_nodes);
+    ref_m_A[0] = {Edge(0, 1, 0, 3)};
+    ref_m_A[1] = {Edge(1, 2, 3, 3)};
+    ref_m_A[2] = {Edge(2, 3, 6, 3)};
+    ref_m_A[3] = {Edge(3, 6, 9, 3)};
+    ref_m_A[4] = {Edge(4, 0, 1, 1), Edge(4, 1, 4, 1)};
+    ref_m_A[5] = {Edge(5, 4, 11, 3), Edge(5, 0, 2, 1), Edge(5, 1, 5, 1)};
+    ref_m_A[6] = {Edge(6, 5, 12, 3), Edge(6, 7, 13, 3), Edge(6, 2, 7, 1)};
+    ref_m_A[7] = {Edge(7, 2, 8, 1), Edge(7, 3, 10, 1)};
+
+    check_m_A(*g, ref_m_A);
+    cout << "3" << endl;
+//    for (Edge* e: (*g).edges) {
+//        (*e).print();
+//        cout << endl;
+//    }
+    vector<Edge> ref_edges(nb_edges);
+    ref_edges[0] = Edge(0, 1, 0, 3);
+    ref_edges[1] = Edge(4, 0, 1, 1);
+    ref_edges[2] = Edge(5, 0, 2, 1);
+    ref_edges[3] = Edge(1, 2, 3, 3);
+    ref_edges[4] = Edge(4, 1, 4, 1);
+    ref_edges[5] = Edge(5, 1, 5, 1);
+    ref_edges[6] = Edge(2, 3, 6, 3);
+    ref_edges[7] = Edge(6, 2, 7, 1);
+    ref_edges[8] = Edge(7, 2, 8, 1);
+    ref_edges[9] = Edge(3, 6, 9, 3);
+    ref_edges[10] = Edge(7, 3, 10, 1);
+    ref_edges[11] = Edge(5, 4, 11, 3);
+    ref_edges[12] = Edge(6, 5, 12, 3);
+    ref_edges[13] = Edge(6, 7, 13, 3);
+
+    check_edges((*g), ref_edges);
+
+
+//    cout << "triconnectedComponents= {";
+//    for (long i_v:triconnectedComponents.front()) {
+//        cout << i_v << ", ";
+//    }
+//    cout << "}" << endl;
+//    ASSERT_EQ(ref_triconnectedComponents, triconnectedComponents);
+}
+
+TEST_F(Triconnected_graph_2_Graphs_Biconnected_n_8_m_14, computeTriconnectivity_partial_3) {
+
+    ASSERT_EQ(8, (*g).nb_of_nodes);
+    ASSERT_EQ(14, (*g).nb_of_edges);
+
+    list<unordered_set<long>> triconnectedComponents;
+    (*g).computeTriconnectivity(triconnectedComponents, 3);
+    list<unordered_set<long>> ref_triconnectedComponents = {unordered_set<long>({2, 3, 6, 7}),
+                                                            unordered_set<long>({0, 1, 4, 5})
+    };
+    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 6, 5, 4, 7};
+    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+
+    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 0, 0, 2};
+    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+
+    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 1, 1, 3};
+    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+
+    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 5, 6, 3, 6};
+    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+
+    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 1, 2, 4, 1};
+    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+
+    cout << "1" << endl;
+    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+    ref_m_TREE_ARC[3] = Edge(2, 3, 6, 3);
+    ref_m_TREE_ARC[4] = Edge(5, 4, 11, 3);
+    ref_m_TREE_ARC[5] = Edge(6, 5, 12, 3);
+    ref_m_TREE_ARC[6] = Edge(3, 6, 9, 3);
+    ref_m_TREE_ARC[7] = Edge(6, 7, 13, 3);
+
+
+    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+    cout << "2" << endl;
+
+    vector<list<Edge>> ref_m_A(nb_nodes);
+    ref_m_A[0] = {Edge(0, 1, 0, 3)};
+    ref_m_A[1] = {Edge(1, 2, 3, 3)};
+    ref_m_A[2] = {Edge(2, 3, 6, 3)};
+    ref_m_A[3] = {Edge(3, 6, 9, 3)};
+    ref_m_A[4] = {Edge(4, 0, 1, 1), Edge(4, 1, 4, 1)};
+    ref_m_A[5] = {Edge(5, 4, 11, 3), Edge(5, 0, 2, 1), Edge(5, 1, 5, 1)};
+    ref_m_A[6] = {Edge(6, 5, 12, 3), Edge(6, 7, 13, 3), Edge(6, 2, 7, 1)};
+    ref_m_A[7] = {Edge(7, 2, 8, 1), Edge(7, 3, 10, 1)};
+
+    check_m_A(*g, ref_m_A);
+    cout << "3" << endl;
+//    for (Edge* e: (*g).edges) {
+//        (*e).print();
+//        cout << endl;
+//    }
+    vector<Edge> ref_edges(nb_edges);
+    ref_edges[0] = Edge(0, 1, 0, 3);
+    ref_edges[1] = Edge(4, 0, 1, 1);
+    ref_edges[2] = Edge(5, 0, 2, 1);
+    ref_edges[3] = Edge(1, 2, 3, 3);
+    ref_edges[4] = Edge(4, 1, 4, 1);
+    ref_edges[5] = Edge(5, 1, 5, 1);
+    ref_edges[6] = Edge(2, 3, 6, 3);
+    ref_edges[7] = Edge(6, 2, 7, 1);
+    ref_edges[8] = Edge(7, 2, 8, 1);
+    ref_edges[9] = Edge(3, 6, 9, 3);
+    ref_edges[10] = Edge(7, 3, 10, 1);
+    ref_edges[11] = Edge(5, 4, 11, 3);
+    ref_edges[12] = Edge(6, 5, 12, 3);
+    ref_edges[13] = Edge(6, 7, 13, 3);
+
+    check_edges((*g), ref_edges);
+
+
+    ////
+    vector<long> ref_m_NEWNUM = {0, 1, 2, 3, 7, 6, 4, 5};
+    ASSERT_EQ(ref_m_NEWNUM, (*g).m_NEWNUM);
+
+    vector<long> ref_m_ORIGINAL = {0, 1, 2, 3, 6, 7, 5, 4};
+    ASSERT_EQ(ref_m_ORIGINAL, (*g).m_ORIGINAL);
+
+    vector<list<long>> ref_HIGHTPT = {list<long>({7, 6}),
+                                      list<long>({7, 6}),
+                                      list<long>({5, 4}),
+                                      list<long>({5}),
+                                      list<long>({}),
+                                      list<long>({}),
+                                      list<long>({}),
+                                      list<long>({})};
+    ASSERT_EQ(ref_HIGHTPT, (*g).m_HIGHPT);
+
+    vector<list<pair<long, long>>> ref_m_IN_HIGH = {list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({pair<long, long>(0, 0)}),
+                                                    list<pair<long, long>>({pair<long, long>(0, 1)}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({pair<long, long>(1, 0)}),
+                                                    list<pair<long, long>>({pair<long, long>(1, 1)}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({pair<long, long>(2, 1)}),
+                                                    list<pair<long, long>>({pair<long, long>(2, 0)}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({pair<long, long>(3, 0)}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({}),
+                                                    list<pair<long, long>>({})
+    };
+    ASSERT_EQ(ref_m_IN_HIGH, (*g).m_IN_HIGH);
+    ASSERT_EQ(1, (*g).m_numCount);
+}
+
+//TEST_F(Triconnected_graph_2_Graphs_Biconnected_n_8_m_14, computeTriconnectivity_partial_4) {
+//
+//    ASSERT_EQ(8, (*g).nb_of_nodes);
+//    ASSERT_EQ(14, (*g).nb_of_edges);
+//
+//    list<unordered_set<long>> triconnectedComponents;
+//    (*g).computeTriconnectivity(triconnectedComponents, 4);
+//    list<unordered_set<long>> ref_triconnectedComponents = {unordered_set<long>({2, 3, 6, 7}),
+//                                                            unordered_set<long>({0, 1, 4, 5})
+//    };
+//    vector<int> ref_m_number_dfs = {0, 1, 2, 3, 6, 5, 4, 7};
+//    ASSERT_EQ(ref_m_number_dfs, (*g).m_number_dfs);
+//
+//    vector<long> ref_m_low_pt_1 = {0, 0, 0, 0, 0, 0, 0, 2};
+//    ASSERT_EQ(ref_m_low_pt_1, (*g).m_low_pt_1);
+//
+//    vector<long> ref_m_low_pt_2 = {0, 1, 1, 1, 1, 1, 1, 3};
+//    ASSERT_EQ(ref_m_low_pt_2, (*g).m_low_pt_2);
+//
+//    vector<long> ref_m_FATHER = {-1, 0, 1, 2, 5, 1, 2, 6};
+//    ASSERT_EQ(ref_m_FATHER, (*g).m_FATHER);
+//
+//    vector<int> ref_m_NumberOfDescendants = {8, 7, 6, 5, 1, 2, 4, 1};
+//    ASSERT_EQ(ref_m_NumberOfDescendants, (*g).m_NumberOfDescendants);
+//
+//    cout << "1" << endl;
+//    vector<Edge> ref_m_TREE_ARC(nb_nodes);
+//    ref_m_TREE_ARC[1] = Edge(0, 1, 0, 3);
+//    ref_m_TREE_ARC[2] = Edge(1, 2, 3, 3);
+//    ref_m_TREE_ARC[3] = Edge(2, 3, 6, 3);
+//    ref_m_TREE_ARC[4] = Edge(5, 4, 11, 3);
+//    ref_m_TREE_ARC[5] = Edge(6, 5, 12, 3);
+//    ref_m_TREE_ARC[6] = Edge(3, 6, 9, 3);
+//    ref_m_TREE_ARC[7] = Edge(6, 7, 13, 3);
+//
+//
+//    check_m_TREE_ARC((*g), ref_m_TREE_ARC);
+//    cout << "2" << endl;
+//
+//    vector<list<Edge>> ref_m_A(nb_nodes);
+//    ref_m_A[0] = {Edge(0, 1, 0, 3)};
+//    ref_m_A[1] = {Edge(1, 2, 3, 3)};
+//    ref_m_A[2] = {Edge(2, 3, 6, 3)};
+//    ref_m_A[3] = {Edge(3, 6, 9, 3)};
+//    ref_m_A[4] = {Edge(4, 0, 1, 1), Edge(4, 1, 4, 1)};
+//    ref_m_A[5] = {Edge(5, 4, 11, 3),Edge(5, 0, 2, 1), Edge(5, 1, 5, 1)};
+//    ref_m_A[6] = {Edge(6, 5, 12, 3),Edge(6, 7, 13, 3), Edge(6, 2, 7, 1)};
+//    ref_m_A[7] = {Edge(7, 2, 8, 1), Edge(7, 3, 10, 1)};
+//
+//    check_m_A(*g, ref_m_A);
+//    cout << "3" << endl;
+////    for (Edge* e: (*g).edges) {
+////        (*e).print();
+////        cout << endl;
+////    }
+//    vector<Edge> ref_edges(nb_edges);
+//    ref_edges[0] = Edge(0, 1, 0, 3);
+//    ref_edges[1] = Edge(4, 0, 1, 1);
+//    ref_edges[2] = Edge(5, 0, 2, 1);
+//    ref_edges[3] = Edge(1, 2, 3, 3);
+//    ref_edges[4] = Edge(4, 1, 4, 1);
+//    ref_edges[5] = Edge(5, 1, 5, 1);
+//    ref_edges[6] = Edge(2, 3, 6, 3);
+//    ref_edges[7] = Edge(6, 2, 7, 1);
+//    ref_edges[8] = Edge(7, 2, 8, 1);
+//    ref_edges[9] = Edge(3, 6, 9, 3);
+//    ref_edges[10] =Edge(7, 3, 10, 1);
+//    ref_edges[11] =Edge(5, 4, 11, 3);
+//    ref_edges[12] =Edge(6, 5, 12, 3);
+//    ref_edges[13] =Edge(6, 7, 13, 3);
+//
+//    check_edges((*g), ref_edges);
+//
+//
+//    ////
+//    vector<long> ref_m_NEWNUM = {0, 1, 2, 3, 7, 6, 4, 5};
+//    ASSERT_EQ(ref_m_NEWNUM, (*g).m_NEWNUM);
+//
+//    vector<long> ref_m_ORIGINAL = {0, 1, 2, 3, 6, 7, 5, 4};
+//    ASSERT_EQ(ref_m_ORIGINAL, (*g).m_ORIGINAL);
+//
+//    vector<list<long>> ref_HIGHTPT = {list<long>({7, 6}),
+//                                      list<long>({7}),
+//                                      list<long>({}),
+//                                      list<long>({}),
+//                                      list<long>({}),
+//                                      list<long>({}),
+//                                      list<long>({}),
+//                                      list<long>({})};
+//    ASSERT_EQ(ref_HIGHTPT, (*g).m_HIGHPT);
+//
+//    vector<list<pair<long, long>>> ref_m_IN_HIGH = {list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({pair<long, long>(0, 0)}),
+//                                                    list<pair<long, long>>({pair<long, long>(0, 1)}),
+//                                                    list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({pair<long, long>(1, 0)}),
+//                                                    list<pair<long, long>>({pair<long, long>(1, 1)}),
+//                                                    list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({pair<long, long>(2, 1)}),
+//                                                    list<pair<long, long>>({pair<long, long>(2, 0)}),
+//                                                    list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({pair<long, long>(3, 0)}),
+//                                                    list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({}),
+//                                                    list<pair<long, long>>({})
+//    };
+//    ASSERT_EQ(ref_m_IN_HIGH, (*g).m_IN_HIGH);
+//    ASSERT_EQ(1, (*g).m_numCount);
+//
+//    // Partial test 4:
+//    ASSERT_EQ(1, (*g).m_top);
+//
+//    vector<long> ref_m_TSTACK_h = {0, 7, 0, 7, 0, 7, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//    ASSERT_EQ(ref_m_TSTACK_h, (*g).m_TSTACK_h);
+//
+//    vector<long> ref_m_TSTACK_a = {-1, 0, -1, 0, -1, 2, -1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//    ASSERT_EQ(ref_m_TSTACK_a, (*g).m_TSTACK_a);
+//
+//    vector<long> ref_m_TSTACK_b = {0, 0, 0, 5, 0, 6, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//    ASSERT_EQ(ref_m_TSTACK_b, (*g).m_TSTACK_b);
+//
+//    vector<Edge> ref_m_estack(nb_edges);
+//    ref_m_estack[0] = Edge(4, 0, 2, 1);
+//    ref_m_estack[1] = Edge(5, 1, 4, 1);
+//    ref_m_estack[2] = Edge(6, 2, 6, 1);
+//    ref_m_estack[3] = Edge(6, 7, 11, 1);
+//    ref_m_estack[4] = Edge(5, 6, 10, 3);
+//    ref_m_estack[5] = Edge(4, 5, 8, 3);
+//    ref_m_estack[6] = Edge(7, 4, 9, 3);
+//    ref_m_estack[7] = Edge(3, 7, 7, 3);
+//    ref_m_estack[8] = Edge(3, 0, 1, 1);
+//    ref_m_estack[9] = Edge(2, 3, 5, 3);
+//    ref_m_estack[10] = Edge(1, 2, 3, 3);
+//    ref_m_estack[11] = Edge(0, 1, 0, 3);
+//
+//    check_edges((*g), ref_edges);
+//}
+
+TEST_F(Triconnected_graph_bug_cube, computeTriconnectivity) {
+
+    bool verbose = false;
+
+    ASSERT_EQ(39, (*g).nb_of_nodes);
+    ASSERT_EQ(60, (*g).nb_of_edges);
+
+    ASSERT_TRUE((*g).is_connected());
+    list<unordered_set<long>> l_component;
+
+    bool isBiconnected = BCC_NR((*g), l_component);
+    ASSERT_FALSE(isBiconnected);
+
+    //    cout << "l_component " << l_component.size() << endl;
+    //    cout << "l_component[0] " << l_component.front().size() << endl;
+
+    vector<long> row_ptr_l;
+    vector<long> col_ind_l;
+    vector<double> values_l;
+    vector<long> g_to_l;
+    vector<long> l_to_g;
+
+    (*dg).compute_local_crs_subgraph_from_global_crs(l_component.front(),
+                                                     row_ptr_l,
+                                                     col_ind_l,
+                                                     values_l,
+                                                     g_to_l,
+                                                     l_to_g
+    );
+
+    Triconnected_graph tg_l = Triconnected_graph(row_ptr_l, col_ind_l, values_l);
+    list<unordered_set<long>> triconnected_components_l;
+    tg_l.computeTriconnectivity(triconnected_components_l);
+
+    list<unordered_set<long>> ref_triconnectedComponents_l = {unordered_set<long>({7, 6, 8, 14, 10, 9, 26, 27, 19, 24, 28})};
+    if (verbose) {
+        cout << "triconnected_components_l= {";
+        for (long i_v:triconnected_components_l.front()) {
+            cout << i_v << ", ";
+        }
+        cout << "}" << endl;
+    }
+    ASSERT_EQ(ref_triconnectedComponents_l, triconnected_components_l);
+
+    list<unordered_set<long>> Triconnected_Component_G_cpp;
+
+//    for (list<Edge *>::const_iterator it = l_e.begin(); it != l_e.end(); ++it) {
+//        cout << "\t";
+//        (**it).print();
+//        cout << ",";
+//    }
+    list<unordered_set<long>>::const_iterator it;
+    for (it = triconnected_components_l.begin(); it != triconnected_components_l.end(); ++it) {
+        unordered_set<long> compo_G;
+        for (long iL : (*it)) {
+            compo_G.insert(l_to_g[iL]);
+        }
+        Triconnected_Component_G_cpp.push_back(compo_G);
+    }
+    if (verbose) {
+        cout << "triconnectedComponents_g= {";
+        for (long i_v:Triconnected_Component_G_cpp.front()) {
+            cout << i_v << ", ";
+        }
+        cout << "}" << endl;
+    }
+    list<unordered_set<long>> ref_triconnectedComponents_g = {unordered_set<long>({2, 7, 17, 22, 24, 25, 28, 29, 30, 31, 38})};
+    ASSERT_EQ(ref_triconnectedComponents_g, Triconnected_Component_G_cpp);
+
 }

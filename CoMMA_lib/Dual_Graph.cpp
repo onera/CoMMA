@@ -1476,7 +1476,8 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
                                                             vector<long> &row_ptr_l,
                                                             vector<long> &col_ind_l,
                                                             vector<double> &values_l,
-                                                            vector<long> &g_to_l) {
+                                                            vector<long> &g_to_l,
+                                                            vector<long> &l_to_g) {
     unsigned short int number_Of_Nodes_L = set_of_node.size();
     unsigned short int number_of_nodes_g = number_of_cells;
     assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
@@ -1486,11 +1487,13 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
     int count(0), i_c(0);
 
     g_to_l.resize(number_of_nodes_g);
+    l_to_g.resize(number_Of_Nodes_L);
     for (int i = 0; i < number_of_nodes_g; i++)
         g_to_l[i] = -1;
 
     for (auto iV : set_of_node) {
         g_to_l[iV] = i_c;
+        l_to_g[i_c] = iV;
         i_c++;
     }
 

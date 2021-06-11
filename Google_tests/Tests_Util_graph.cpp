@@ -198,12 +198,14 @@ TEST_F(Box_5x5x5_Dual_Graph, BCC_NR_on_subgraph) {
     vector<long> col_ind_l;
     vector<double> values_l;
     vector<long> g_to_l;
+    vector<long> l_to_g;
 
     (*g).compute_local_crs_subgraph_from_global_crs(s_of_node,
                                                     row_ptr_l,
                                                     col_ind_l,
                                                     values_l,
-                                                    g_to_l);
+                                                    g_to_l,
+                                                    l_to_g);
 
     Triconnected_graph tri_g(row_ptr_l,
                              col_ind_l,

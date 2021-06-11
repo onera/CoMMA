@@ -1,3 +1,4 @@
+#include "../CoMMA_lib/Util_graph.h"
 #include "../CoMMA_lib/Triconnected_graph.h"
 #include "Triconnected_graph_A.h"
 #include "Triconnected_graph_H.h"
@@ -11,6 +12,7 @@
 #include "Triconnected_graph_biconnected_OGDF_v3_n_10_m_19.h"
 #include "Triconnected_graph_biconnected_OGDF_n_15_m_30.h"
 #include "Triconnected_graph_2_graphs_biconnected_n_8_m_14.h"
+#include "Triconnected_graph_bug_cube.h"
 #include "gtest/gtest.h"
 
 void check_edge(const Edge *e, const Edge ref);
