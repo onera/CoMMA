@@ -89,7 +89,7 @@ public :
     //unordered_map<long, unordered_set<Tuple>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
     long _compute_subgraph_root(unordered_set<long> s_fc);
 
-    void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, long> &d_neighbours_of_seed);
+    void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed);
 
     unsigned short int compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc);
 
@@ -129,6 +129,8 @@ public :
     unordered_map<long, unordered_set<pair<long, long>, pair_hash>> compute_d_cc_edges(vector<long> fc_2_cc);
 
     unsigned short int compute_degree_of_node(int i_fc, bool (*test_function)(int) = nullptr);
+
+    short compute_degree_of_node_not_a(const long &i_fc, vector<bool> a);
 
     void
     compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l, vector<long> &l_to_g);

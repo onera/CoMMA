@@ -167,3 +167,16 @@ forward_list<deque<long> *> copy_agglomeration_lines(forward_list<deque<long> *>
     clean_agglomeration_lines(cp_agglo_lines_tmp);
     return cp_agglo_lines;
 }
+
+bool compare_maps_keys(const unordered_map<long, unsigned short> &m_1, const unordered_map<long, unsigned short> &m_2) {
+
+    if (m_1.size() != m_2.size()) {
+        return false;
+    }
+    for (const auto i_k_v : m_1) {
+        if (m_2.count(i_k_v.first) == 0) {
+            return false;
+        }
+    }
+    return true;
+}

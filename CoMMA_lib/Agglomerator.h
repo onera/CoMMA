@@ -88,15 +88,27 @@ public:
                                       const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                       unordered_set<long> s_current_cc);
 
-    unordered_set<long> __choose_optimal_cc_triconnected(
-            Coarse_Cell_Graph cc_graph,
-            const long &seed,
-            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-            const unsigned short goal_card,
-            const unsigned short max_card,
-            unsigned short &compactness,
-            bool increase_neighbouring,
-            unordered_set<long> s_of_fc_for_current_cc);
+//    unordered_set<long> __choose_optimal_cc_triconnected(
+//            Coarse_Cell_Graph cc_graph,
+//            const long &seed,
+//            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+//            const unsigned short goal_card,
+//            const unsigned short max_card,
+//            short &compactness,
+//            bool increase_neighbouring,
+//            unordered_set<long> s_of_fc_for_current_cc);
+
+    unordered_set<long> __choose_optimal_cc_triconnected_v2(long seed,
+                                                            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                            unsigned short &compactness,
+                                                            const bool increase_neighbouring,
+                                                            short min_neighbourhood = -1);
+
+    unordered_set<long> __choose_optimal_cc_triconnected_2D(long seed,
+                                                            unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                                            unsigned short &compactness,
+                                                            const bool increase_neighbouring,
+                                                            short min_neighbourhood);
 
     void initialize_l_cc_graphs_for_tests_only(Coarse_Cell_Graph *value);
 

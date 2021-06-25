@@ -869,7 +869,8 @@ long Dual_Graph::_compute_subgraph_root(unordered_set<long> s_fc) {
 }
 
 
-void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, long> &d_neighbours_of_seed) {
+void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed) {
+
     /* Cleaning of d_neighbours_of_seed:
        We remove fc which belongs to the selected cc s_fc_for_cc*/
     for (auto i_fc : s_fc) {
@@ -889,11 +890,11 @@ void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_
         unordered_set<long> s_n(neighbours.begin(), neighbours.end());
         vector<long> result;
         set_intersection(s_n.begin(), s_n.end(), s_fc.begin(), s_fc.end(), result.begin());
-        if (result.size() > 0)
+        if (result.size() > 0) {
             d_neighbours_of_seed.erase(i_fc);
-        else
+        } else {
             d_neighbours_of_seed[i_fc] = 2;
-
+        }
     }
 }
 
@@ -1456,7 +1457,7 @@ unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::comp
 }
 
 unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_function)(int)) {
-    // TODO Cythonize This
+
     if (test_function == nullptr) {
         unsigned short int deg(0);
         for (auto i_fc_n : get_neighbours(i_fc))
@@ -1471,6 +1472,19 @@ unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_func
         return deg;
     }
 }
+
+short Dual_Graph::compute_degree_of_node_not_a(const long &i_fc, vector<bool> a) {
+    /**
+     * we compute the degree of nodes such that a[i_fc_n] is false
+     */
+    unsigned short int deg(0);
+    for (auto i_fc_n : get_neighbours(i_fc))
+        if (i_fc_n != i_fc && !a[i_fc_n])
+            deg += 1;
+    return deg;
+
+}
+
 
 void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node,
                                                             vector<long> &row_ptr_l,

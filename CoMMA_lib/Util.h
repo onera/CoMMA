@@ -64,4 +64,6 @@ forward_list<deque<long> *> copy_agglomeration_lines(forward_list<deque<long> *>
 
 void clean_agglomeration_lines(forward_list<deque<long> *>);
 
+bool compare_maps_keys(const unordered_map<long, unsigned short> &m_1, const unordered_map<long, unsigned short> &m_2);
+
 #endif //COMMA_PROJECT_UTIL_H

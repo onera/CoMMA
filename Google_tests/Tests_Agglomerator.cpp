@@ -239,6 +239,49 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
                                                                     {7, 3}};
 }
 
+//TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_9_Squares_isOrderPrimary_False) {
+//
+//    Agglomerator agg((*g), 0, 1, 2, true);
+//
+//    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+//    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+//
+//    bool is_anisotropic = false;
+//    string kind_of_agglomerator = "triconnected";
+//    short min_card = -1;
+//    short goal_card = 4;
+//    short max_card = 6;
+//    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+//
+//    long seed = 0;
+//    unsigned short compactness = 0;
+//    bool is_order_primary = false;
+//    bool increase_neighbouring = true;
+//    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+//                                                                                             compactness,
+//                                                                                             is_order_primary,
+//                                                                                             increase_neighbouring);
+//
+//    unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
+//    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+//    ASSERT_EQ(2, compactness);
+//
+//    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+//    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+//
+//    vector<deque<long>> ref_l_deque_of_seeds(4);
+//    for (int i = 0; i < 4; i++) {
+//        ref_l_deque_of_seeds[i] = deque<long>();
+//    }
+//    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 2, 6});
+//    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+//
+//    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
+//                                                                    {5, 3},
+//                                                                    {6, 2},
+//                                                                    {7, 3}};
+//}
+
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
