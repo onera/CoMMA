@@ -135,7 +135,7 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
                                                                           const unsigned short goal_card,
                                                                           const unsigned short max_card,
                                                                           string kind_of_agglomerator,
-                                                                          short &compactness,
+                                                                          unsigned short &compactness,
                                                                           bool is_order_primary,
 // _correction_split_too_big_cc_in_two(...)
                                                                           bool increase_neighbouring,
@@ -219,11 +219,11 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
     unordered_set<long> s_current_cc = {};
     unordered_map<long, unsigned short> d_n_of_seed;
     if (__kind_of_agglomerator == "basic") {
-        short compactness = -1;
         s_current_cc = __choose_optimal_cc_basic_v2(seed,
                                                     d_n_of_seed,
                                                     compactness,
                                                     is_order_primary);
+
 //        cout << "_choose_optimal_cc_and_update_seed_pool_v2 s_current_cc.size() " << s_current_cc.size() << endl;
 //        cout<<"Not yet implemented:__choose_optimal_cc_basic_v2(cc_graph, seed,is_order_primary);"<<endl;
 //        exit(1);
@@ -258,7 +258,7 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
 unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2_sub(
         const long seed,
         unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-        short &compactness,
+        unsigned short &compactness,
         const bool is_order_primary) {
 
     // Number of fine cells constituting the current coarse cell in construction.
@@ -560,7 +560,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected(
         unordered_map<long, unsigned short> &dict_neighbours_of_seed,
         const unsigned short goal_card,
         const unsigned short max_card,
-        short &compactness,
+        unsigned short &compactness,
         bool increase_neighbouring,
         unordered_set<long> s_of_fc_for_current_cc) {
 
@@ -686,7 +686,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected(
 //                            break
 //                    if is_ok and seed in set_compo_g:
 //                        set_biconnected_component_g = set_compo_g
-//
+    //
 //            if set_biconnected_component_g and deg_seed >= 3:
 //
 //                # we have a biconnected component containing seed.
@@ -773,6 +773,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected(
     unordered_set<long> empty_set = {};
     return empty_set;
 }
+
 
 void Agglomerator::initialize_l_cc_graphs_for_tests_only(Coarse_Cell_Graph *ccg) {
 //    __l_cc_graphs.push_back(ccg);
@@ -1091,10 +1092,11 @@ void Agglomerator::_create_optimal_cc_v2(const long seed) {
 
 unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
                                                                unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-                                                               short &compactness,
+                                                               unsigned short &compactness,
                                                                const bool is_order_primary) {
-
-//    cout << "Call of __choose_optimal_cc_basic_v2" << endl;
+    if (__verbose) {
+        cout << "Call of __choose_optimal_cc_basic_v2" << endl;
+    }
 
     // Number of fine cells constituting the current coarse cell in construction.
     unsigned short size_current_cc = 1; // CC contains only one cell: the seed
@@ -1432,7 +1434,7 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
                     }
                 }
             } else {
-                short compactness = -1;
+                unsigned short compactness;
                 // dict_neighbours_of_seed is not empty:
                 unordered_set<long> s_of_fc_for_current_cc = _choose_optimal_cc_and_update_seed_pool((*__cc_graphs),
                                                                                                      seed,

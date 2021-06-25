@@ -66,7 +66,7 @@ public:
                                                                 const unsigned short goal_card,
                                                                 const unsigned short max_card,
                                                                 string kind_of_agglomerator,
-                                                                short &compactness,
+                                                                unsigned short &compactness,
                                                                 bool is_order_primary = false,
                                                                 bool increase_neighbouring = true,
                                                                 unordered_set<long> set_of_fc_for_current_cc = {});
@@ -74,12 +74,12 @@ public:
     unordered_set<long> __choose_optimal_cc_basic_v2_sub(
             const long seed,
             unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-            short &compactness,
+            unsigned short &compactness,
             const bool is_order_primary = false);
 
     unordered_set<long> __choose_optimal_cc_basic_v2(const long seed,
                                                      unordered_map<long, unsigned short> &dict_neighbours_of_seed,
-                                                     short &compactness,
+                                                     unsigned short &compactness,
                                                      const bool is_order_primary = false);
 
 
@@ -94,7 +94,7 @@ public:
             unordered_map<long, unsigned short> &dict_neighbours_of_seed,
             const unsigned short goal_card,
             const unsigned short max_card,
-            short &compactness,
+            unsigned short &compactness,
             bool increase_neighbouring,
             unordered_set<long> s_of_fc_for_current_cc);
 

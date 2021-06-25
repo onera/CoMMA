@@ -3,6 +3,7 @@
 #include "../CoMMA_lib/Agglomerator.h"
 #include "../CoMMA_lib/First_Order_Neighbourhood.h"
 #include "MGridGen_Dual_Graph.h"
+#include "MGridGen_ext_Dual_Graph.h"
 #include "MGridGen_ext_v2_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "Box_1_prism_Dual_Graph.h"
@@ -111,7 +112,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
     agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
 
     long seed = 0;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -155,7 +156,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -177,6 +178,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
+
     vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
     ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
 
@@ -194,6 +196,49 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9_Squares_isOrderPrimary_False) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = false;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 2, 6});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
+                                                                    {5, 3},
+                                                                    {6, 2},
+                                                                    {7, 3}};
+}
+
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
@@ -204,7 +249,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -244,6 +289,49 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9_Squares_isOrderPrimary_True) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = true;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(1, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({4});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 6});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{4, 2},
+                                                                    {5, 3},
+                                                                    {6, 2},
+                                                                    {7, 3}};
+}
+
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_False_GoalCard_8) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
@@ -254,7 +342,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -288,6 +376,46 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {};
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9_Squares_isOrderPrimary_False_GoalCard_8) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 8;
+    short max_card = 8;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = false;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {};
+
 }
 
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True_GoalCard_8) {
@@ -300,7 +428,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -336,6 +464,67 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_v2_pool_9_Squares_isOrderPrimary_True_GoalCard_8) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 8;
+    short max_card = 8;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = true;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+//    long seed = 0;
+//    unsigned short goal_card = 8;
+//    unsigned short max_card = 8;
+//    unsigned short compactness = 0;
+//    unordered_map<long, unsigned short> d_neighbours_of_seed;
+//    d_neighbours_of_seed[1] = 1;
+//    d_neighbours_of_seed[2] = 2;
+//    d_neighbours_of_seed[3] = 1;
+//    d_neighbours_of_seed[4] = 2;
+//    d_neighbours_of_seed[5] = 3;
+//    d_neighbours_of_seed[6] = 2;
+//    d_neighbours_of_seed[7] = 3;
+//
+//    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+//                                                                                          seed,
+//                                                                                          d_neighbours_of_seed,
+//                                                                                          goal_card,
+//                                                                                          max_card,
+//                                                                                          "basic",
+//                                                                                          compactness,
+//                                                                                          true);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {};
+}
+
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
@@ -346,7 +535,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -383,6 +572,47 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
 }
 
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9_Squares_isOrderPrimary_False_GoalCard_8_neighbours_4) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    agg.__min_neighbourhood = 4;
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 8;
+    short max_card = 8;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = false;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{8, 4}};
+}
+
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
@@ -393,7 +623,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     long seed = 0;
     unsigned short goal_card = 8;
     unsigned short max_card = 8;
-    short compactness = 0;
+    unsigned short compactness = 0;
     unordered_map<long, unsigned short> d_neighbours_of_seed;
     d_neighbours_of_seed[1] = 1;
     d_neighbours_of_seed[2] = 2;
@@ -428,6 +658,71 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{8, 4}};
     ASSERT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9_Squares_isOrderPrimary_True_GoalCard_8_neighbours_4) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    agg.__min_neighbourhood = 4;
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 8;
+    short max_card = 8;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    bool is_order_primary = true;
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+//    long seed = 0;
+//    unsigned short goal_card = 8;
+//    unsigned short max_card = 8;
+//    unsigned short compactness = 0;
+//    unordered_map<long, unsigned short> d_neighbours_of_seed;
+//    d_neighbours_of_seed[1] = 1;
+//    d_neighbours_of_seed[2] = 2;
+//    d_neighbours_of_seed[3] = 1;
+//    d_neighbours_of_seed[4] = 2;
+//    d_neighbours_of_seed[5] = 3;
+//    d_neighbours_of_seed[6] = 2;
+//    d_neighbours_of_seed[7] = 3;
+//    d_neighbours_of_seed[8] = 4;
+//
+//    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+//                                                                                          seed,
+//                                                                                          d_neighbours_of_seed,
+//                                                                                          goal_card,
+//                                                                                          max_card,
+//                                                                                          "basic",
+//                                                                                          compactness,
+//                                                                                          true);
+
+    unordered_set<long> ref_s_of_fc({7, 6, 5, 3, 0, 1, 4, 2});  //0,1, 3, 6 is also correct!
+    ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    ASSERT_EQ(2, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    ASSERT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 8});
+    ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{8, 4}};
+
 }
 
 TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
@@ -630,6 +925,49 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
 
 //    agg.get_agglo_lines
 }
+
+TEST_F(MGridGen_ext_Dual_Graph, agglomerate_one_level) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    forward_list<deque<long> *> anisotropic_lines = {};
+    agg.agglomerate_one_level(false, 0, anisotropic_lines);
+    ASSERT_EQ(5, agg.get_nb_cc());
+//    1, 1, 1, 1, 1, 4, 4, 4, 2, 2, 0, 0, 0, 4, 3, 2, 2, 2, 3, 3, 3, 3
+    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 0, 0, 0, 2, 4, 3, 3, 3, 4, 4, 4, 4};
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+}
+
+//TEST_F(MGridGen_ext_Dual_Graph, agglomerate_one_level_tric) {
+//
+//    unsigned short int verbose = 0;
+//    bool is_visu_data_stored = true;
+//    int dimension = 2;
+//    bool checks = true;
+//
+//    Agglomerator agg = Agglomerator((*g),
+//                                    verbose,
+//                                    is_visu_data_stored,
+//                                    dimension,
+//                                    checks);
+//    forward_list<deque<long> *> anisotropic_lines = {};
+//    string kind_of_agglomerator="triconnected";
+//    agg.agglomerate_one_level(false, 0, anisotropic_lines, kind_of_agglomerator);
+//    ASSERT_EQ(5, agg.get_nb_cc());
+////    1, 1, 1, 1, 1, 4, 4, 4, 2, 2, 0, 0, 0, 4, 3, 2, 2, 2, 3, 3, 3, 3
+//    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 4, 4, 4, 1, 3, 2, 2, 2, 3, 3, 3, 3};
+//    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+//
+//}
 
 TEST_F(Box_1_prism_Dual_Graph, correction_split_too_big_cc_in_two_Box_1_Prism) {
 
@@ -961,14 +1299,14 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level) {
     forward_list<deque<long> *> anisotropic_lines = {};
     agg.agglomerate_one_level(false, 0, anisotropic_lines);
     ASSERT_EQ(41, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 38, 38, 37, 36, 36, 33, 33, 21, 28, 28, 28, 32, 32, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 8, 24, 24, 25, 40, 40, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 37, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 21, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 39, 39, 2, 18, 39, 39, 18,
-                                18, 18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 39, 1, 7, 7, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 40,
-                                40, 19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 40, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 39, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 10, 7,
-                                6, 10, 10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9,
-                                9, 35, 35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29,
-                                23, 21, 21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 40, 25, 25};
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 38, 38, 0, 37, 37, 34, 34, 22, 29, 29, 29, 33, 33, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36, 31,
+                                31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 37, 31, 9, 9, 9, 21, 21, 9, 25, 25, 26, 40, 40, 26, 12, 12, 12,
+                                27, 27, 12, 28, 27, 27, 0, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 22, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 39, 39, 3, 19, 39, 39, 19, 19,
+                                19, 2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 39, 2, 8, 8, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 40, 40,
+                                20, 3, 3, 3, 6, 6, 3, 19, 19, 6, 40, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 39, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 11, 8, 7,
+                                11, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10,
+                                10, 36, 36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30,
+                                24, 22, 22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 40, 26, 26,};
 //    cout<<endl;
 //    for (auto i:agg.get_fc_2_cc())
 //    {
@@ -1006,20 +1344,20 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_without_correction) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(53, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 42, 9, 9, 41, 41, 10, 40, 15, 15, 47, 48, 40, 47, 43, 47, 45, 45, 45, 40, 23, 23, 50, 34, 34, 39, 47, 39, 46, 45, 51, 15, 15, 15, 43, 44, 24, 43, 37,
-                                37, 45, 45, 43, 40, 40, 40, 47, 40, 40, 47, 47, 47, 46, 46, 45, 25, 13, 13, 37, 24, 24, 37, 37, 37, 45, 45, 52, 8, 8, 8, 22, 22, 22, 28, 28, 29, 32, 38, 29, 11, 11, 11,
-                                31, 31, 33, 32, 31, 31, 32, 32, 32, 11, 11, 8, 31, 11, 11, 31, 31, 31, 32, 32, 32, 23, 23, 11, 34, 34, 23, 39, 39, 34, 46, 38, 38, 2, 2, 2, 5, 5, 2, 19, 5, 5, 19, 19,
-                                19, 1, 1, 1, 3, 3, 1, 7, 7, 3, 27, 7, 7, 12, 12, 12, 28, 22, 22, 28, 28, 28, 38, 38, 38, 1, 1, 1, 3, 5, 1, 7, 19, 3, 27, 27, 7, 4, 4, 4, 16, 21, 5, 20, 26, 16, 27, 29,
-                                20, 2, 2, 2, 5, 5, 2, 19, 19, 5, 30, 19, 19, 14, 14, 14, 18, 14, 14, 18, 18, 18, 35, 35, 35, 4, 4, 4, 16, 16, 5, 20, 20, 16, 27, 27, 20, 0, 0, 0, 6, 3, 3, 7, 7, 6, 36,
-                                10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 17, 41, 41, 9, 41, 41, 41, 13, 13, 13, 18, 16, 16, 18, 18, 18, 35, 35, 35, 15, 15, 15, 43, 9, 9, 43,
-                                43, 43, 45, 41, 41, 12, 12, 4, 16, 16, 16, 20, 20, 20, 35, 27, 27, 13, 13, 13, 24, 24, 24, 37, 37, 28, 49, 35, 35, 12, 12, 12, 24, 24, 22, 28, 28, 28, 38, 35, 38, 23,
-                                23, 23, 34, 34, 34, 39, 39, 39, 46, 46, 39, 8, 8, 4, 22, 8, 8, 29, 29, 22, 29, 29, 29,
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 43, 10, 10, 42, 42, 11, 41, 16, 16, 47, 48, 41, 47, 44, 47, 46, 46, 46, 41, 24, 24, 50, 35, 35, 40, 47, 40, 0, 46, 51, 16, 16, 16, 44, 45, 25, 44,
+                                38, 38, 46, 46, 44, 41, 41, 41, 47, 41, 41, 47, 47, 47, 0, 0, 46, 26, 14, 14, 38, 25, 25, 38, 38, 38, 46, 46, 52, 9, 9, 9, 23, 23, 23, 29, 29, 30, 33, 39, 30, 12, 12,
+                                12, 32, 32, 34, 33, 32, 32, 33, 33, 33, 12, 12, 9, 32, 12, 12, 32, 32, 32, 33, 33, 33, 24, 24, 12, 35, 35, 24, 40, 40, 35, 0, 39, 39, 3, 3, 3, 6, 6, 3, 20, 6, 6, 20,
+                                20, 20, 2, 2, 2, 4, 4, 2, 8, 8, 4, 28, 8, 8, 13, 13, 13, 29, 23, 23, 29, 29, 29, 39, 39, 39, 2, 2, 2, 4, 6, 2, 8, 20, 4, 28, 28, 8, 5, 5, 5, 17, 22, 6, 21, 27, 17, 28,
+                                30, 21, 3, 3, 3, 6, 6, 3, 20, 20, 6, 31, 20, 20, 15, 15, 15, 19, 15, 15, 19, 19, 19, 36, 36, 36, 5, 5, 5, 17, 17, 6, 21, 21, 17, 28, 28, 21, 1, 1, 1, 7, 4, 4, 8, 8, 7,
+                                37, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 18, 42, 42, 10, 42, 42, 42, 14, 14, 14, 19, 17, 17, 19, 19, 19, 36, 36, 36, 16, 16, 16, 44, 10,
+                                10, 44, 44, 44, 46, 42, 42, 13, 13, 5, 17, 17, 17, 21, 21, 21, 36, 28, 28, 14, 14, 14, 25, 25, 25, 38, 38, 29, 49, 36, 36, 13, 13, 13, 25, 25, 23, 29, 29, 29, 39, 36,
+                                39, 24, 24, 24, 35, 35, 35, 40, 40, 40, 0, 0, 40, 9, 9, 5, 23, 9, 9, 30, 30, 23, 30, 30, 30,
     };
-    cout << endl;
-    for (auto i:agg.get_fc_2_cc()) {
-        cout << i << ", ";
-    }
-    cout << endl;
+//    cout << endl;
+//    for (auto i:agg.get_fc_2_cc()) {
+//        cout << i << ", ";
+//    }
+//    cout << endl;
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 }
@@ -1050,14 +1388,14 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_1) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(39, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 35, 38, 36, 36, 36, 33, 21, 21, 28, 28, 28, 32, 38, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 20, 24, 24, 25, 27, 31, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 27, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 11, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 5, 5, 2, 18, 5, 5, 18, 18,
-                                18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 5, 1, 7, 18, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 23, 25,
-                                19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 25, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 5, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 7, 7, 6, 10,
-                                10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9, 9, 35,
-                                35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29, 31, 21,
-                                21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 25, 25, 25};
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 36, 38, 37, 37, 37, 34, 22, 22, 29, 29, 29, 33, 38, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36,
+                                31, 31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 37, 31, 9, 9, 9, 21, 21, 21, 25, 25, 26, 28, 32, 26, 12, 12,
+                                12, 27, 27, 12, 28, 27, 27, 28, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 12, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 6, 6, 3, 19, 6, 6, 19,
+                                19, 19, 2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 6, 2, 8, 19, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 24,
+                                26, 20, 3, 3, 3, 6, 6, 3, 19, 19, 6, 26, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 6, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 8, 8, 7,
+                                11, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10,
+                                10, 36, 36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30,
+                                32, 22, 22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 26, 26, 26,};
 //    cout<<endl;
 //    for (auto i:agg.get_fc_2_cc())
 //    {
@@ -1095,19 +1433,19 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(39, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 35, 38, 36, 36, 36, 33, 21, 21, 28, 28, 28, 32, 38, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 20, 24, 24, 25, 27, 31, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 27, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 11, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 5, 5, 2, 18, 5, 5, 18, 18,
-                                18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 5, 1, 7, 18, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 23, 25,
-                                19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 25, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 5, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 7, 7, 6, 10,
-                                10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9, 9, 35,
-                                35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29, 31, 21,
-                                21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 25, 25, 25};
-    cout << endl;
-    for (auto i:agg.get_fc_2_cc()) {
-        cout << i << ", ";
-    }
-    cout << endl;
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 36, 38, 37, 37, 37, 34, 22, 22, 29, 29, 29, 33, 38, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36,
+                                31, 31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 37, 31, 9, 9, 9, 21, 21, 21, 25, 25, 26, 28, 32, 26, 12, 12,
+                                12, 27, 27, 12, 28, 27, 27, 28, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 12, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 6, 6, 3, 19, 6, 6, 19,
+                                19, 19, 2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 6, 2, 8, 19, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 24,
+                                26, 20, 3, 3, 3, 6, 6, 3, 19, 19, 6, 26, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 6, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 8, 8, 7,
+                                11, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10,
+                                10, 36, 36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30,
+                                32, 22, 22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 26, 26, 26,};
+//    cout << endl;
+//    for (auto i:agg.get_fc_2_cc()) {
+//        cout << i << ", ";
+//    }
+//    cout << endl;
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
@@ -1139,19 +1477,19 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_3) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(39, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 38, 38, 36, 36, 36, 33, 33, 21, 28, 28, 28, 32, 32, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 8, 24, 24, 25, 27, 25, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 27, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 11, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 5, 5, 2, 18, 5, 5, 18, 18,
-                                18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 5, 1, 7, 18, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 25, 25,
-                                19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 25, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 5, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 10, 7, 6, 10,
-                                10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9, 9, 35,
-                                35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29, 31, 21,
-                                21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 25, 25, 25};
-    cout << endl;
-    for (auto i:agg.get_fc_2_cc()) {
-        cout << i << ", ";
-    }
-    cout << endl;
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 38, 38, 37, 37, 37, 34, 34, 22, 29, 29, 29, 33, 33, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36,
+                                31, 31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 37, 31, 9, 9, 9, 21, 21, 9, 25, 25, 26, 28, 26, 26, 12, 12,
+                                12, 27, 27, 12, 28, 27, 27, 28, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 12, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 6, 6, 3, 19, 6, 6, 19,
+                                19, 19, 2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 6, 2, 8, 19, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 26,
+                                26, 20, 3, 3, 3, 6, 6, 3, 19, 19, 6, 26, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 6, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 11, 8, 7,
+                                11, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10,
+                                10, 36, 36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30,
+                                32, 22, 22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 26, 26, 26,};
+//    cout << endl;
+//    for (auto i:agg.get_fc_2_cc()) {
+//        cout << i << ", ";
+//    }
+//    cout << endl;
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
@@ -1183,14 +1521,14 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_4) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(39, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 38, 38, 37, 36, 36, 33, 33, 21, 28, 28, 28, 32, 32, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 8, 24, 24, 25, 27, 25, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 27, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 21, 28, 28, 20, 32, 32, 28, 37, 31, 31, 2, 2, 2, 5, 5, 2, 18, 5, 5, 18, 18,
-                                18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 23, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 5, 1, 7, 7, 3, 23, 7, 7, 4, 4, 4, 16, 5, 5, 19, 19, 16, 25, 25,
-                                19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 25, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 5, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 10, 7, 6, 10,
-                                10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9, 9, 35,
-                                35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 23, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29, 31, 21,
-                                21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 25, 25, 25};
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 38, 38, 0, 37, 37, 34, 34, 22, 29, 29, 29, 33, 33, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36, 31,
+                                31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 32, 31, 9, 9, 9, 21, 21, 9, 25, 25, 26, 28, 26, 26, 12, 12, 12,
+                                27, 27, 12, 28, 27, 27, 0, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 22, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 6, 6, 3, 19, 6, 6, 19, 19, 19,
+                                2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 6, 2, 8, 8, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 26, 26, 20, 3,
+                                3, 3, 6, 6, 3, 19, 19, 6, 26, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 6, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 11, 8, 7, 11, 11,
+                                11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10, 10, 36,
+                                36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30, 24, 22,
+                                22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 26, 26, 26,};
 //    cout<<endl;
 //    for (auto i:agg.get_fc_2_cc())
 //    {
@@ -1228,14 +1566,14 @@ TEST_F(Box_1_prism_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(41, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {6, 0, 0, 9, 6, 6, 9, 9, 9, 34, 34, 10, 33, 15, 15, 38, 35, 33, 38, 38, 38, 37, 36, 36, 33, 33, 21, 28, 28, 28, 32, 32, 32, 37, 36, 32, 15, 15, 15, 35, 33, 22, 35, 30,
-                                30, 36, 36, 35, 33, 33, 33, 38, 33, 33, 38, 38, 38, 37, 37, 36, 22, 13, 13, 30, 22, 22, 30, 30, 30, 36, 36, 30, 8, 8, 8, 20, 20, 8, 24, 24, 25, 40, 40, 25, 11, 11, 11,
-                                26, 26, 11, 27, 26, 26, 37, 27, 27, 11, 11, 8, 26, 11, 11, 26, 26, 26, 27, 27, 27, 21, 21, 21, 28, 28, 21, 32, 32, 28, 37, 31, 31, 2, 2, 2, 39, 39, 2, 18, 39, 39, 18,
-                                18, 18, 1, 1, 1, 3, 3, 1, 7, 7, 3, 23, 7, 7, 12, 12, 12, 24, 20, 20, 24, 24, 24, 31, 31, 31, 1, 1, 1, 3, 39, 1, 7, 7, 3, 23, 23, 7, 4, 4, 4, 16, 5, 5, 19, 20, 16, 40,
-                                40, 19, 2, 2, 2, 5, 5, 2, 18, 18, 5, 40, 18, 18, 14, 14, 14, 17, 14, 14, 17, 17, 17, 29, 29, 29, 4, 4, 4, 16, 16, 39, 19, 19, 16, 23, 23, 19, 0, 0, 0, 6, 3, 3, 10, 7,
-                                6, 10, 10, 10, 0, 0, 0, 6, 6, 3, 10, 10, 6, 10, 10, 10, 14, 14, 14, 9, 9, 14, 34, 34, 9, 34, 34, 34, 13, 13, 13, 17, 16, 16, 17, 17, 17, 29, 29, 29, 15, 15, 15, 35, 9,
-                                9, 35, 35, 35, 36, 34, 34, 12, 12, 4, 16, 16, 16, 19, 19, 19, 29, 23, 23, 13, 13, 13, 22, 22, 22, 30, 30, 24, 31, 29, 29, 12, 12, 12, 22, 22, 20, 24, 24, 24, 31, 29,
-                                23, 21, 21, 21, 28, 28, 28, 32, 32, 32, 37, 37, 32, 8, 8, 4, 20, 8, 8, 25, 25, 20, 40, 25, 25};
+    vector<long> ref_fc_2_cc = {7, 1, 1, 10, 7, 7, 10, 10, 10, 35, 35, 11, 34, 16, 16, 38, 36, 34, 38, 38, 38, 0, 37, 37, 34, 34, 22, 29, 29, 29, 33, 33, 33, 0, 37, 33, 16, 16, 16, 36, 34, 23, 36, 31,
+                                31, 37, 37, 36, 34, 34, 34, 38, 34, 34, 38, 38, 38, 0, 0, 37, 23, 14, 14, 31, 23, 23, 31, 31, 31, 37, 37, 31, 9, 9, 9, 21, 21, 9, 25, 25, 26, 40, 40, 26, 12, 12, 12,
+                                27, 27, 12, 28, 27, 27, 0, 28, 28, 12, 12, 9, 27, 12, 12, 27, 27, 27, 28, 28, 28, 22, 22, 22, 29, 29, 22, 33, 33, 29, 0, 32, 32, 3, 3, 3, 39, 39, 3, 19, 39, 39, 19, 19,
+                                19, 2, 2, 2, 4, 4, 2, 8, 8, 4, 24, 8, 8, 13, 13, 13, 25, 21, 21, 25, 25, 25, 32, 32, 32, 2, 2, 2, 4, 39, 2, 8, 8, 4, 24, 24, 8, 5, 5, 5, 17, 6, 6, 20, 21, 17, 40, 40,
+                                20, 3, 3, 3, 6, 6, 3, 19, 19, 6, 40, 19, 19, 15, 15, 15, 18, 15, 15, 18, 18, 18, 30, 30, 30, 5, 5, 5, 17, 17, 39, 20, 20, 17, 24, 24, 20, 1, 1, 1, 7, 4, 4, 11, 8, 7,
+                                11, 11, 11, 1, 1, 1, 7, 7, 4, 11, 11, 7, 11, 11, 11, 15, 15, 15, 10, 10, 15, 35, 35, 10, 35, 35, 35, 14, 14, 14, 18, 17, 17, 18, 18, 18, 30, 30, 30, 16, 16, 16, 36, 10,
+                                10, 36, 36, 36, 37, 35, 35, 13, 13, 5, 17, 17, 17, 20, 20, 20, 30, 24, 24, 14, 14, 14, 23, 23, 23, 31, 31, 25, 32, 30, 30, 13, 13, 13, 23, 23, 21, 25, 25, 25, 32, 30,
+                                24, 22, 22, 22, 29, 29, 29, 33, 33, 33, 0, 0, 33, 9, 9, 5, 21, 9, 9, 26, 26, 21, 40, 26, 26,};
 //    cout<<endl;
 //    for (auto i:agg.get_fc_2_cc())
 //    {
