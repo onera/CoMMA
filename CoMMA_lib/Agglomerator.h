@@ -8,6 +8,9 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell_Graph.h"
 #include "Util.h"
+#include "First_Order_Neighbourhood.h"
+#include "Triconnected_graph.h"
+#include "Util_graph.h"
 
 class Agglomerator {
 
@@ -44,6 +47,14 @@ public:
     void _correction_main_triconnected();
 
     void _correction_split_too_big_cc_in_two();
+
+    Triconnected_graph *__generate_triconnected_graph(const unordered_set<long> &set_biconnected_component_g,
+                                                      vector<long> &l_to_g) const;
+
+    unordered_set<long> __compute_bic_components_from_s_connected_vertices_containing_seed(long seed,
+                                                                                           const list<long> &l_of_fc,
+                                                                                           bool is_correction_step,
+                                                                                           unordered_set<long> s_of_fc_for_current_cc);
 
 public:
     //to sort public/private

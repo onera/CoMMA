@@ -132,8 +132,8 @@ public :
 
     short compute_degree_of_node_not_a(const long &i_fc, vector<bool> a);
 
-    void
-    compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l, vector<long> &l_to_g);
+    void compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l,
+                                                    vector<long> &l_to_g) const;
 
     unordered_set<long> compute_s_leaves(unordered_set<long> s_fc);
 
