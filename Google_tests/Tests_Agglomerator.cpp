@@ -273,7 +273,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric
     for (int i = 0; i < 4; i++) {
         ref_l_deque_of_seeds[i] = deque<long>();
     }
-    ref_l_deque_of_seeds[2] = deque<long>({8, 2, 6, 0});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
     ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
     unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
@@ -293,14 +293,14 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     unsigned short goal_card = 4;
     unsigned short max_card = 6;
     unsigned short compactness = 0;
-    unordered_map<long, unsigned short> d_neighbours_of_seed;
-    d_neighbours_of_seed[1] = 1;
-    d_neighbours_of_seed[2] = 2;
-    d_neighbours_of_seed[3] = 1;
-    d_neighbours_of_seed[4] = 2;
-    d_neighbours_of_seed[5] = 3;
-    d_neighbours_of_seed[6] = 2;
-    d_neighbours_of_seed[7] = 3;
+    unordered_map<long, unsigned short> d_neighbours_of_seed = {{1, 1},
+                                                                {2, 2},
+                                                                {3, 1},
+                                                                {4, 2},
+                                                                {5, 3},
+                                                                {6, 2},
+                                                                {7, 3},
+    };
 
     unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
                                                                                           seed,
