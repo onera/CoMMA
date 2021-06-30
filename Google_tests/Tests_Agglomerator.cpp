@@ -230,7 +230,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
     for (int i = 0; i < 4; i++) {
         ref_l_deque_of_seeds[i] = deque<long>();
     }
-    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 2, 6});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 6, 2});
     ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
     unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
@@ -239,7 +239,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
                                                                     {7, 3}};
 }
 
-TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_9_Squares_isOrderPrimary_False) {
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_0) {
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
@@ -254,15 +254,15 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric
     agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
     long seed = 0;
-    unsigned short compactness = 0;
-    bool is_order_primary = false;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
     bool increase_neighbouring = true;
     unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
                                                                                              compactness,
                                                                                              is_order_primary,
                                                                                              increase_neighbouring);
 
-    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4, 5, 6, 7});
+    unordered_set<long> ref_s_of_fc({0, 1, 3, 4});
     ASSERT_EQ(ref_s_of_fc, s_fc_for_current_cc);
     ASSERT_EQ(2, compactness);
 
@@ -273,13 +273,342 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric
     for (int i = 0; i < 4; i++) {
         ref_l_deque_of_seeds[i] = deque<long>();
     }
-    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 2, 6});
     ASSERT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+}
+
+TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_1) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 1;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4, 5});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[1] = deque<long>({7});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 2, 6, 8, 6, 8});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 
     unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{2, 2},
                                                                     {5, 3},
                                                                     {6, 2},
                                                                     {7, 3}};
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_0) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "basic";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(1, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+//    ref_l_deque_of_seeds[0] = deque<long>({10});
+//    ref_l_deque_of_seeds[1] = deque<long>({5});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+
+}
+
+
+TEST_F(MGridGen_ext_Dual_Graph, __choose_optimal_cc_basic_v2_sub) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+    bool is_anisotropic = false;
+    unsigned short min_card = 0;
+    unsigned short goal_card = 4;
+    unsigned short max_card = 6;
+    string kind_of_agglomerator = "basic";
+
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    long seed = 0;
+    unsigned short compactness = 0;
+    unordered_map<long, unsigned short> d_neighbours_of_seed = {{1,  1},
+                                                                {2,  2},
+                                                                {3,  2},
+                                                                {5,  3},
+                                                                {4,  3},
+                                                                {10, 3}};
+    unordered_set<long> s_fc_for_current_cc = agg.__choose_optimal_cc_basic_v2_sub(seed,
+                                                                                   d_neighbours_of_seed,
+                                                                                   compactness,
+                                                                                   false);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(1, compactness);
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+    unordered_map<long, unsigned short> ref_d_neighbours_of_seed = {{5,  3},
+                                                                    {10, 3}};
+    EXPECT_EQ(ref_d_neighbours_of_seed, d_neighbours_of_seed);
+}
+
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_0) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 0;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({0, 1, 2, 3, 4});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({10});
+    ref_l_deque_of_seeds[1] = deque<long>({5});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+
+
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_7) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 7;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({5, 3, 4, 11, 12, 13, 6, 19, 7, 20, 14});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({1});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_21) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 21;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({12, 13, 14, 19, 20, 21});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[1] = deque<long>({18});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_15) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 15;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({16, 17, 8, 9, 15});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({10});
+    ref_l_deque_of_seeds[1] = deque<long>({18});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_seed_12) {
+
+    Agglomerator agg((*g), 0, 1, 2, true);
+
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+
+    bool is_anisotropic = false;
+    string kind_of_agglomerator = "triconnected";
+    short min_card = -1;
+    short goal_card = 4;
+    short max_card = 6;
+    agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+
+    long seed = 12;
+    unsigned short compactness = 0;  // output
+    bool is_order_primary = false;  // useless for triconnected agglomeration
+    bool increase_neighbouring = true;
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool_v2(seed,
+                                                                                             compactness,
+                                                                                             is_order_primary,
+                                                                                             increase_neighbouring);
+
+    unordered_set<long> ref_s_of_fc({12, 13, 14, 19, 20});
+    EXPECT_EQ(ref_s_of_fc, s_fc_for_current_cc);
+    EXPECT_EQ(2, compactness);
+
+    vector<long> ref_fc_2_cc((*g).number_of_cells, -1);
+    EXPECT_EQ(ref_fc_2_cc, (*agg.__cc_graphs)._fc_2_cc);
+
+    vector<deque<long>> ref_l_deque_of_seeds(4);
+    for (int i = 0; i < 4; i++) {
+        ref_l_deque_of_seeds[i] = deque<long>();
+    }
+    ref_l_deque_of_seeds[0] = deque<long>({11, 6});
+    ref_l_deque_of_seeds[1] = deque<long>({18});
+    ref_l_deque_of_seeds[2] = deque<long>({0, 7, 15, 21, 21});
+    EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 }
 
 TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Squares_isOrderPrimary_True) {
@@ -783,7 +1112,8 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
     forward_list<deque<long> *> anisotropic_lines = {};
     agg.agglomerate_one_level(false, 0, anisotropic_lines);
     ASSERT_EQ(4, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};
+//    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 2, 2, 0, 2, 2, 3, 3, 1, 3, 1, 1};
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }
@@ -812,7 +1142,8 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_without_correction) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(4, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 3, 3, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+//    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 3, 3, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+    vector<long> ref_fc_2_cc = {0, 0, 3, 0, 3, 3, 1, 2, 3, 2, 2, 1, 2, 1, 1};
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 }
@@ -840,9 +1171,10 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_1) {
                               -1, -1, -1,
                               debug_only_fc_to_cc,
                               debug_only_steps);
-    ASSERT_EQ(3, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0};
-    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+    EXPECT_EQ(4, agg.get_nb_cc());
+//    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0};
+    vector<long> ref_fc_2_cc = {0, 0, 3, 0, 3, 3, 1, 2, 3, 2, 2, 1, 2, 1, 1};
+    EXPECT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 }
 
 TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
@@ -870,8 +1202,9 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_2) {
                               -1, -1, -1,
                               debug_only_fc_to_cc,
                               debug_only_steps);
-    ASSERT_EQ(3, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0}; //no change in adding step 2
+    ASSERT_EQ(4, agg.get_nb_cc());
+//    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 2, 0, 1, 1, 1, 1, 0, 1, 0, 0}; //no change in adding step 2
+    vector<long> ref_fc_2_cc = {0, 0, 3, 0, 3, 3, 1, 2, 3, 2, 2, 1, 2, 1, 1}; //no change in adding step 2
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 //    agg.get_agglo_lines
@@ -902,9 +1235,10 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_3) {
                               -1, -1, -1,
                               debug_only_fc_to_cc,
                               debug_only_steps);
-    ASSERT_EQ(3, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 3
-    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+    EXPECT_EQ(4, agg.get_nb_cc());
+//    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 3
+    vector<long> ref_fc_2_cc = {0, 0, 3, 0, 3, 3, 1, 3, 3, 2, 2, 1, 2, 1, 1};  //no change in adding step 3
+    EXPECT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }
 
@@ -934,7 +1268,8 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_4) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(3, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 4
+//    vector<long> ref_fc_2_cc = {2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 0, 1, 0, 0};  //no change in adding step 4
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 2, 2, 0, 2, 2, 1, 1, 1, 1, 1, 1};  //no change in adding step 4
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }
@@ -963,7 +1298,8 @@ TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_with_correction_step_5) {
                               debug_only_fc_to_cc,
                               debug_only_steps);
     ASSERT_EQ(4, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};  //no change in adding step 4
+//    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};  //no change in adding step 4
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 2, 2, 0, 2, 2, 3, 3, 1, 3, 1, 1};  //no change in adding step 4
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 //    agg.get_agglo_lines
@@ -984,8 +1320,29 @@ TEST_F(MGridGen_ext_Dual_Graph, agglomerate_one_level) {
     forward_list<deque<long> *> anisotropic_lines = {};
     agg.agglomerate_one_level(false, 0, anisotropic_lines);
     ASSERT_EQ(5, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {0, 0, 4, 0, 4, 0, 1, 1, 2, 2, 4, 4, 4, 1, 1, 2, 2, 2, 3, 3, 3, 3};
+    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
+
+}
+
+TEST_F(MGridGen_ext_Dual_Graph, agglomerate_one_level_tric) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    forward_list<deque<long> *> anisotropic_lines = {};
+    agg.agglomerate_one_level(false, 0, anisotropic_lines);
+    ASSERT_EQ(5, agg.get_nb_cc());
 //    1, 1, 1, 1, 1, 4, 4, 4, 2, 2, 0, 0, 0, 4, 3, 2, 2, 2, 3, 3, 3, 3
-    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 0, 0, 0, 2, 4, 3, 3, 3, 4, 4, 4, 4};
+//    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 0, 0, 0, 2, 4, 3, 3, 3, 4, 4, 4, 4};
+    vector<long> ref_fc_2_cc = {0, 0, 4, 0, 4, 0, 1, 1, 2, 2, 4, 4, 4, 1, 1, 2, 2, 2, 3, 3, 3, 3};
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
 }

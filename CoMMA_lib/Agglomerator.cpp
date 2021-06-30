@@ -16,11 +16,11 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
         assert(((*this).__dimension == 2) || ((*this).__dimension == 3));
     }
-//    if ((*this).__dimension == 2) {
-//        __min_neighbourhood = 2;
-//    } else {
-//        __min_neighbourhood = 3;
-//    }
+    if ((*this).__dimension == 2) {
+        __min_neighbourhood = 2;
+    } else {
+        __min_neighbourhood = 3;
+    }
 
 
 // for every defined level (1 by default), contains the number of cells
@@ -244,14 +244,11 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
     } else {
         exit(1);
     }
+    // Remark: chosen CC may not be exactly of size self.__goal_card
 
-
-// Remark: chosen CC may not be exactly of size self.__goal_card
-
-//====================================
-// Create of l_of_new_seeds:
-//====================================
-
+    //====================================
+    // Create of l_of_new_seeds:
+    //====================================
     list<long> l_of_new_seeds = __create_list_of_seeds(*__cc_graphs, seed, d_n_of_seed, s_current_cc);
 
     //====================================
@@ -571,9 +568,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
     }
 
     // set of fc for current cc:
-    unordered_set<long> s_fc_for_current_cc = {
-            seed
-    };
+    unordered_set<long> s_fc_for_current_cc = {seed};
 
 //    graph = cc_graph._fc_graph
 //    test_func = cc_graph.is_fc_not_already_agglomerated
@@ -660,14 +655,14 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 // A neighbourhood is found but it is too small!
     if (dict_neighbours_of_seed.size() + s_fc_for_current_cc.size() < __goal_card) {
 
-// Not enough available neighbours: creation of a (too small) coarse cell.
+        // Not enough available neighbours: creation of a (too small) coarse cell.
 
-// s_fc_for_current_cc.update(d_n_of_seed)
+        // s_fc_for_current_cc.update(d_n_of_seed)
         for (const auto i_k_v: dict_neighbours_of_seed) {
             s_fc_for_current_cc.insert(i_k_v.first);
         }
 
-// s_fc_for_current_cc.update(s_old_seed)
+        // s_fc_for_current_cc.update(s_old_seed)
         for (const long i_fc: s_old_seed) {
             s_fc_for_current_cc.insert(i_fc);
         }
@@ -678,7 +673,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
             compactness = 0;
             return s_fc_for_current_cc;
         } else {
-// TODO clean this: only one return!!!
+            // TODO clean this: only one return!!!
             dict_neighbours_of_seed.clear();
             compactness = __dimension;
             return s_fc_for_current_cc;
@@ -687,6 +682,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 // TODO deal with that?
 // return s_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc)
     }
+
     if (__dimension == 2) {
 //        s_fc_for_current_cc, compactness, d_n_of_seed = self.__choose_optimal_cc_triconnected_2D(graph,
 //                                                                                                 cc_graph,
@@ -1021,6 +1017,7 @@ void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
 
         _create_optimal_cc_v2(seed);
         // print("\n",cc_graph._cc_counter-1, seed, cc_graph._d_isotropic_cc[cc_graph._cc_counter-1].get_s_fc())
+
     }
 }
 
@@ -1047,6 +1044,14 @@ void Agglomerator::_create_optimal_cc_v2(const long seed) {
     //====================================
     bool is_anistropic = false;
     bool is_creation_delayed = compactness < __dimension;
+    if (__verbose) {
+        cout << "seed = " << seed << "\t{";
+
+        for (long i_fc:set_current_cc) {
+            cout << i_fc << ", ";
+        }
+        cout << "}" << endl;
+    }
     (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
 }
 
@@ -1531,7 +1536,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
     cout << "check a copy is done!" << endl;
 // TODO: change type to unordered_map<long, short>?
-    unordered_map<long, unsigned short> d_neighbours_of_seed;
+    unordered_map<long, unsigned short> d_neighbours_of_seed = dict_neighbours_of_seed;
     unordered_map<long, unsigned short> d_neighbours_of_seed_n_minus_one = dict_neighbours_of_seed;
 
     if (increase_neighbouring) {
@@ -1572,7 +1577,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
             // if it is not the first step (because the neighbourhood has already been computed)
             if (!is_correction_step) {
-
+                cout << "Increase Neighbourhood " << i_neighbour << endl;
                 unsigned short max_order_of_neighbourhood = i_neighbour;
                 unordered_set<long> s_seed = {seed};
                 d_neighbours_of_seed.clear();
@@ -1629,24 +1634,21 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
             // we have a biconnected component containing seed and deg_seed >= 3
             // i.e. may be it belongs to a tric-component: we have to check:
 
-            is_cc_found = false;
-            s_fc_for_cc = {};
-            compactness_of_cc = -1;
-//                    is_cc_found, s_fc_for_cc, compactness_of_cc = __compute_tric_components_from_s_bic_vertices(
-//                            s_bic_component_g,
-//                            graph,
-//                    is_correction_step,
-//                    seed,
-//                    s_of_fc_for_current_cc)
+            s_fc_for_cc = __compute_tric_components_from_s_bic_vertices(s_bic_component_g,
+                                                                        is_correction_step,
+                                                                        seed,
+                                                                        compactness,
+                                                                        s_of_fc_for_current_cc);
 
-            if (is_cc_found) {
+            if (!s_fc_for_cc.empty()) {
                 // Exit from while loop
                 break;
             }
 
             // if not is_triconnected_component_found...
             // backup biconnected CC
-            d_biconnected[i_neighbour] = s_bic_component_g;
+            d_biconnected[i_neighbour] = s_bic_component_g;  //copy...
+
         } else if ((!s_bic_component_g.empty()) && deg_seed < 3) {
 
             // Deg of seed in the subgraph is lower than 3. We cannot found any triconnected component:
@@ -1666,7 +1668,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
             // print "\tdict_biconnected", dict_biconnected
             // We choose the biconnected CC, if any, with the smallest cardinal
             for (short i_n = i_neighbourhood_min; i_n < i_neighbourhood_max; i_n++) {
-                if ((d_biconnected.count(i_n) && d_biconnected[i_n].size()) >= __min_card) {
+                if (d_biconnected.count(i_n) > 0 && (d_biconnected[i_n].size() >= __min_card)) {
 
                     is_cc_found = true;
                     s_fc_for_cc = d_biconnected[i_n];  //copy!
@@ -1700,7 +1702,11 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
     // print("__choose_optimal_cc_triconnected_2D:", s_fc_for_cc, " d_n_of_seed", d_neighbours_of_seed)
     compactness = compactness_of_cc;
-    dict_neighbours_of_seed = d_neighbours_of_seed;
+//    dict_neighbours_of_seed = d_neighbours_of_seed;
+    dict_neighbours_of_seed.clear();
+    for (auto i_kv : d_neighbours_of_seed) {
+        dict_neighbours_of_seed[i_kv.first] = i_kv.second;
+    }
     return s_fc_for_cc;
 }
 
@@ -1768,6 +1774,61 @@ unordered_set<long> Agglomerator::__compute_bic_components_from_s_connected_vert
     return s_biconnected_component_g;
 }
 
+unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(unordered_set<long> s_bic_component_g,
+                                                                                bool is_correction_step,
+                                                                                long seed,
+                                                                                unsigned short &compactness,
+                                                                                unordered_set<long> s_of_fc_for_current_cc) {
+
+    vector<long> l_of_biconnected_node(s_bic_component_g.size());  // indices from local to global
+    int i_count = 0;
+    for (long i_fc : s_bic_component_g) {
+        l_of_biconnected_node[i_count] = i_fc;
+    }
+    Triconnected_graph *tric_graph = __generate_triconnected_graph(s_bic_component_g, l_of_biconnected_node);
+
+    list<unordered_set<long>> l_tric_components_local = {};
+    (*tric_graph).computeTriconnectivity(l_tric_components_local);
+
+    // Global numbering
+    list<unordered_set<long>> l_tric_component_global = {};
+    for (auto compo : l_tric_components_local) {
+        unordered_set<long> s_compo;
+        for (long i_l : compo) {
+            s_compo.insert(l_of_biconnected_node[i_l]);
+        }
+        l_tric_component_global.push_back(s_compo);
+    }
+
+    // print "\tTriconnected Graph_triconnected", l_tric_component_global
+    unordered_set<long> s_fc_for_cc;
+    compactness = 0;
+    for (auto set_comp:l_tric_component_global) {
+
+        if (!is_correction_step) {
+            if (set_comp.count(seed)) {
+                // we have found a triconnected component containing seed
+                // print "Triconnected", len(set_comp)
+                // print "\t\tiNeigh", i_neighbour, "size CC", len(set_comp), ", size Neigh", len(l_of_fc)
+                // return set_comp, 3
+                compactness = 3;
+            }
+        } else {
+            bool is_ok = true;
+            for (long i_fc:s_of_fc_for_current_cc) {
+                if (set_comp.count(i_fc) == 0) {
+                    is_ok = false;
+                    break;
+                }
+            }
+            if (is_ok && set_comp.count(seed)) {
+                compactness = 3;
+                return set_comp;
+            }
+        }
+    }
+    return s_fc_for_cc;
+}
 
 Triconnected_graph *Agglomerator::__generate_triconnected_graph(const unordered_set<long> &set_biconnected_component_g,
                                                                 vector<long> &l_to_g) const {

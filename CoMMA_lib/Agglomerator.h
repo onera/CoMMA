@@ -56,6 +56,13 @@ public:
                                                                                            bool is_correction_step,
                                                                                            unordered_set<long> s_of_fc_for_current_cc);
 
+    unordered_set<long> __compute_tric_components_from_s_bic_vertices(unordered_set<long> s_bic_component_g,
+                                                                      bool is_correction_step,
+                                                                      long seed,
+                                                                      unsigned short &compactness,
+                                                                      unordered_set<long> s_of_fc_for_current_cc);
+
+
 public:
     //to sort public/private
 

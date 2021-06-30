@@ -550,7 +550,7 @@ void Coarse_Cell::add_fc(unordered_set<long> s_fc_to_add,
             if ((*this).__d_def.count(i_fc) > 0) {
                 compactness = (*this).__d_def[i_fc].size();
             }
-            if ((*this).__d_compactness_to_s_fc.count(compactness)) {
+            if ((*this).__d_compactness_to_s_fc.count(compactness) > 0) {
                 (*this).__d_compactness_to_s_fc[compactness].insert(i_fc);
             } else {
                 (*this).__d_compactness_to_s_fc[compactness] = unordered_set<long>({i_fc});
@@ -913,7 +913,7 @@ void Coarse_Cell::update_cc_neighbour_renumbering(unordered_map<long, long> dict
         sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
 
         for (const long &i_cc_old :l_i_cc_sorted) {
-            if (dict_old_cc_to_new_cc.count(i_cc_old)) {
+            if (dict_old_cc_to_new_cc.count(i_cc_old) > 0) {
                 long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
                 __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_new] = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][i_cc_old];
                 __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc].erase(i_cc_old);
@@ -932,7 +932,7 @@ void Coarse_Cell::update_cc_neighbour_renumbering(unordered_map<long, long> dict
             }
             sort(l_i_cc_sorted.begin(), l_i_cc_sorted.end());
             for(const long& i_cc_old : l_i_cc_sorted){
-                if (dict_old_cc_to_new_cc.count(i_cc_old)){
+                if (dict_old_cc_to_new_cc.count(i_cc_old) > 0) {
                     long i_cc_new = dict_old_cc_to_new_cc[i_cc_old];
                     d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].erase(i_cc_old);
                     d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[i_degree][i_fc].insert(i_cc_new);

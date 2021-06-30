@@ -1029,10 +1029,10 @@ int removeSeparatingVertex(long seed, unordered_map<long, queue<long> *> dict_Co
                         }
                         for (auto iCell : iSubList) {
 
-                            if (tmp_SetL.count(iCell)) {
+                            if (tmp_SetL.count(iCell) > 0) {
                                 tmp_SetL.erase(iCell);
                             }
-                            if (setOfFineCells.count(iCell)) {
+                            if (setOfFineCells.count(iCell) > 0) {
                                 setLCellsToRemove.insert(iCell);
                             }
                         }
@@ -1334,7 +1334,7 @@ unordered_set<long> swapFineCell(long iFineCell, long iOrigineCoarseCell, long i
     assert(dict_Card_Coarse_Cells.count(size) == 1);
     assert(dict_DistributionOfCardinalOfCoarseElements.count(size));
 
-    assert(dict_Card_Coarse_Cells[size].count(iOrigineCoarseCell));
+    assert(dict_Card_Coarse_Cells[size].count(iOrigineCoarseCell) > 0);
 
     dict_Card_Coarse_Cells[size].erase(iOrigineCoarseCell);
     if (dict_Card_Coarse_Cells[size].empty()) {
@@ -1643,7 +1643,7 @@ void createCoarseCell(unordered_set<long> l,
             // Update of dict_Card_Coarse_Cells:
             int card = l.size();
             // TODO Change dict_Card_Coarse_Cells[card] from list to set!
-            if (dict_Card_Coarse_Cells.count(card)) {
+            if (dict_Card_Coarse_Cells.count(card) > 0) {
 
                 dict_Card_Coarse_Cells[card].insert(indCoarseElement);
 
@@ -1669,7 +1669,7 @@ void createCoarseCell(unordered_set<long> l,
 
         // Computation the distribution of cardinal cells (remove the old one and add the new one)
         int tmp_size = l.size();
-        if (dict_DistributionOfCardinalOfCoarseElements.count(tmp_size)) {
+        if (dict_DistributionOfCardinalOfCoarseElements.count(tmp_size) > 0) {
             dict_DistributionOfCardinalOfCoarseElements[tmp_size] += 1;
         } else {
             dict_DistributionOfCardinalOfCoarseElements[tmp_size] = 1;
@@ -1711,7 +1711,7 @@ void createADelayedCoarseCell(unordered_set<long> l,
     // Update of dict_Card_Coarse_Cells:
     int card = l.size();
     // TODO Change dict_Card_Coarse_Cells[card] from list to set!
-    if (dict_Card_Coarse_Cells.count(card)) {
+    if (dict_Card_Coarse_Cells.count(card) > 0) {
         dict_Card_Coarse_Cells[card].insert(indCoarseElement);
     } else {
         dict_Card_Coarse_Cells[card] = {indCoarseElement};
@@ -1744,7 +1744,7 @@ void remove_Too_Small_Cells_v2(int thresholdCard,
     // 1<= card(CoarseCell) <= thresholdCard
     for (int iSize = 1; iSize < thresholdCard + 1; iSize++) {
 //        cout<<"iSize "<<iSize<<endl;
-        if (dict_Card_Coarse_Cells.count(iSize)) {
+        if (dict_Card_Coarse_Cells.count(iSize) > 0) {
 
             unordered_set<long> temporarySet;
             //        = dict_Card_Coarse_Cells[iSize].copy()

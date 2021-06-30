@@ -869,35 +869,42 @@ long Dual_Graph::_compute_subgraph_root(unordered_set<long> s_fc) {
 }
 
 
-void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed) {
+void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc,
+                                            unordered_map<long, unsigned short> &d_neighbours_of_seed) {
 
-    /* Cleaning of d_neighbours_of_seed:
-       We remove fc which belongs to the selected cc s_fc_for_cc*/
-    for (auto i_fc : s_fc) {
+    // Cleaning of d_neighbours_of_seed:
+    //   we remove fc which belongs to the selected cc: s_fc_for_cc
+    for (const long i_fc : s_fc) {
         if (d_neighbours_of_seed.count(i_fc) > 0) {
             d_neighbours_of_seed.erase(i_fc);
         }
     }
-    /* To do improve this if possible?
-       we remove from d_neighbours_of_seed fc that are not in a first order neighbouhood of the selected set of fc*/
+
+    // To do improve this if possible?
+    //   we remove from d_neighbours_of_seed fc that are not in a first order neighbouhood of the selected set of fc
 
     vector<long> l_neighbours_of_seed;
-    for (auto dnos_k_v : d_neighbours_of_seed)
+    for (auto dnos_k_v : d_neighbours_of_seed) {
         l_neighbours_of_seed.push_back(dnos_k_v.first);
+    }
 
-    for (auto i_fc : l_neighbours_of_seed) {
+    for (long i_fc : l_neighbours_of_seed) {
         vector<long> neighbours = get_neighbours(i_fc);
-        unordered_set<long> s_n(neighbours.begin(), neighbours.end());
-        vector<long> result;
-        set_intersection(s_n.begin(), s_n.end(), s_fc.begin(), s_fc.end(), result.begin());
-        if (result.size() > 0) {
-            d_neighbours_of_seed.erase(i_fc);
-        } else {
+
+        bool is_intersection = false;
+        for (long i : neighbours) {
+            if (s_fc.count(i) > 0) {
+                is_intersection = true;
+            }
+        }
+
+        if (is_intersection) {
             d_neighbours_of_seed[i_fc] = 2;
+        } else {
+            d_neighbours_of_seed.erase(i_fc);
         }
     }
 }
-
 
 vector<double> Dual_Graph::compute_aspect_ratio() {
     /*
@@ -1214,8 +1221,8 @@ unordered_map<long, unsigned short int> Dual_Graph::compute_fc_compactness_insid
 
             vector<long> v_neighbours = get_neighbours(i_fc);
             for (const long &i_fc_n : v_neighbours) {
-                if ((s_fc.count(i_fc_n)) && (i_fc != i_fc_n)) {
-                    if (dict_fc_compactness.count(i_fc)) {
+                if ((s_fc.count(i_fc_n) > 0) && (i_fc != i_fc_n)) {
+                    if (dict_fc_compactness.count(i_fc) > 0) {
                         dict_fc_compactness[i_fc]++;
                     } else {
                         dict_fc_compactness[i_fc] = 1;
@@ -1268,7 +1275,7 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
             const long i_fc = *s_next.begin(); // equiv. i_fc = s_next.pop()
             s_next.erase(s_next.begin()); // equiv. i_fc = s_next.pop()
             for (const long &i_fc_n : get_neighbours(i_fc)) {
-                if (dict_global_to_local.count(i_fc_n)) {
+                if (dict_global_to_local.count(i_fc_n) > 0) {
                     if ((i_fc_n != i_fc) && (!is_already_connected[dict_global_to_local[i_fc_n]])) {
                         s_next.insert(i_fc_n);
                         nb_connected_fc++;

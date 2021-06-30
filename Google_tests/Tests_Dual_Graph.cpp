@@ -2576,3 +2576,71 @@ TEST_F(Graphs_biconnected, compute_Local_CRS_Subgraph_From_Global) {
     ASSERT_EQ(ref_g_to_l, g_to_l);
     ASSERT_EQ(ref_l_to_g, l_to_g);
 }
+
+TEST_F(MGridGen_Dual_Graph, clean_d_neighbours_of_seed_case_0) {
+    // Case 0: seed =0
+    // and s_fc =  {0, 1, 2, 5}
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_map<long, unsigned short> d_neighbours_of_seed = {};
+    (*g).compute_neighbourhood_of_cc(s_seeds,
+                                     number_of_order_of_neighbourhood,
+                                     d_neighbours_of_seed,
+                                     goal_card,
+                                     a_is_fc_agglomerated);
+
+    unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  1},
+                                                                 {2,  1},
+                                                                 {3,  2},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {4,  3},
+                                                                 {8,  3},
+                                                                 {11, 3}};
+    ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
+    unordered_set<long> s_fc = {0, 1, 2, 5};
+    (*g).clean_d_neighbours_of_seed(s_fc, d_neighbours_of_seed);
+
+    ref_dict_fc_n_of_seed = {{3, 2},
+                             {6, 2},
+                             {4, 2},
+                             {8, 2}};
+    ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
+
+}
+
+TEST_F(MGridGen_Dual_Graph, clean_d_neighbours_of_seed_case_1) {
+    // Case 1: seed =0
+    // and s_fc =  {0, 1, 2, 3, 6}
+    vector<bool> a_is_fc_agglomerated(15, false);
+
+    unsigned short goal_card = 8;
+    unsigned short number_of_order_of_neighbourhood = 3;
+    unordered_set<long> s_seeds = {0};
+    unordered_map<long, unsigned short> d_neighbours_of_seed = {};
+    (*g).compute_neighbourhood_of_cc(s_seeds,
+                                     number_of_order_of_neighbourhood,
+                                     d_neighbours_of_seed,
+                                     goal_card,
+                                     a_is_fc_agglomerated);
+
+    unordered_map<long, unsigned short> ref_dict_fc_n_of_seed = {{1,  1},
+                                                                 {2,  1},
+                                                                 {3,  2},
+                                                                 {5,  2},
+                                                                 {6,  2},
+                                                                 {4,  3},
+                                                                 {8,  3},
+                                                                 {11, 3}};
+    ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
+    unordered_set<long> s_fc = {0, 1, 2, 3, 6};
+    (*g).clean_d_neighbours_of_seed(s_fc, d_neighbours_of_seed);
+
+    ref_dict_fc_n_of_seed = {{5,  2},
+                             {11, 2}};
+    ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
+
+}
