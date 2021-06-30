@@ -614,7 +614,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
                 return s_fc_for_current_cc;
 
             } else {
-                cout << "attention diff there was a s_fc_for_current_cc.pop()" << endl;
+//                cout << "attention diff there was a s_fc_for_current_cc.pop()" << endl;
                 s_fc_for_current_cc.erase(old_seed);  // pop the old_seed
                 s_fc_for_current_cc.insert(seed);  // add new_seed
             }
@@ -1072,13 +1072,15 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2(const long seed,
 
     unordered_set<long> s_seeds = {seed};
 
+    //TODO: refactor compute_neighbourhood_of_cc with  Agglomerator::__choose_optimal_cc_triconnected
+
     // Compute self.__min_neighbourhood order neighbourhood:
     //======================================================
     unsigned short max_order_of_neighbourhood = __min_neighbourhood;
     __fc_graphs.compute_neighbourhood_of_cc(s_seeds,
                                             max_order_of_neighbourhood,   //in and out
                                             dict_neighbours_of_seed,
-                                            __goal_card,
+                                            __max_card,
                                             (*__cc_graphs)._a_is_fc_agglomerated);
 
 
@@ -1577,7 +1579,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
             // if it is not the first step (because the neighbourhood has already been computed)
             if (!is_correction_step) {
-                cout << "Increase Neighbourhood " << i_neighbour << endl;
+//                cout << "Increase Neighbourhood " << i_neighbour << endl;
                 unsigned short max_order_of_neighbourhood = i_neighbour;
                 unordered_set<long> s_seed = {seed};
                 d_neighbours_of_seed.clear();
