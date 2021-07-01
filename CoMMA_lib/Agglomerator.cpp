@@ -239,8 +239,6 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool_v2(con
                                                            d_n_of_seed,
                                                            compactness,
                                                            increase_neighbouring);
-//        cout << "Not yet implemented:__choose_optimal_cc_triconnected_v2(...);" << endl;
-//        exit(1);
     } else {
         exit(1);
     }
@@ -703,7 +701,12 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 //                                                                                                 d_n_of_seed,
 //                                                                                                 increase_neighbouring,
 //                                                                                                 s_fc_for_current_cc)
-        cout << "triconnected_3D is not yet implemented!" << endl;
+//        cout << "triconnected_3D is not yet implemented!" << endl;
+        s_fc_for_current_cc = __choose_optimal_cc_triconnected_2D(seed,
+                                                                  dict_neighbours_of_seed,
+                                                                  compactness,
+                                                                  increase_neighbouring,
+                                                                  min_neighbourhood);
     }
     if (__verbose) {
         cout << "__choose_optimal_cc_triconnected_v2 seed= " << seed << "d_n_of_seed: {";
@@ -1562,7 +1565,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     bool inc_neighbouring = true;
 
     unordered_set<long> s_fc_for_cc;
-    short compactness_of_cc = -1;
+//    unsigned short compactness_of_cc = 0;
     bool is_cc_found = false;
 
     bool is_correction_step = false;
@@ -1571,7 +1574,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     while (i_neighbour < i_neighbourhood_max && inc_neighbouring && (!is_cc_found)) {
 
         // We increase the neighbourhood while we have not found a biconnected component.
-        // print "\t\ti_neighbour", i_neighbour,
+//        cout<< "\t\ti_neighbour "<< i_neighbour<<endl;
         inc_neighbouring = increase_neighbouring;
 
         // Increase neighbourhood:
@@ -1644,6 +1647,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
             if (!s_fc_for_cc.empty()) {
                 // Exit from while loop
+                is_cc_found = true;
                 break;
             }
 
@@ -1656,7 +1660,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
             // Deg of seed in the subgraph is lower than 3. We cannot found any triconnected component:
             is_cc_found = true;
             s_fc_for_cc = s_bic_component_g;
-            compactness_of_cc = 2;
+            compactness = 2;
         }
         i_neighbour += 1;
         d_neighbours_of_seed_n_minus_one = d_neighbours_of_seed;
@@ -1674,14 +1678,14 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
                     is_cc_found = true;
                     s_fc_for_cc = d_biconnected[i_n];  //copy!
-                    compactness_of_cc = 2;
+                    compactness = 2;
                     break;
                 }
             }
         }
         if (!is_cc_found) {
             s_fc_for_cc = d_connected[i_neighbourhood_min];
-            compactness_of_cc = 1;
+            compactness = 1;
         }
     }
     // // Cleaning of d_neighbours_of_seed:
@@ -1703,7 +1707,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     __fc_graphs.clean_d_neighbours_of_seed(s_fc_for_cc, d_neighbours_of_seed);
 
     // print("__choose_optimal_cc_triconnected_2D:", s_fc_for_cc, " d_n_of_seed", d_neighbours_of_seed)
-    compactness = compactness_of_cc;
+//    compactness = compactness_of_cc;
 //    dict_neighbours_of_seed = d_neighbours_of_seed;
     dict_neighbours_of_seed.clear();
     for (auto i_kv : d_neighbours_of_seed) {
@@ -1783,10 +1787,11 @@ unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(
                                                                                 unordered_set<long> s_of_fc_for_current_cc) {
 
     vector<long> l_of_biconnected_node(s_bic_component_g.size());  // indices from local to global
-    int i_count = 0;
-    for (long i_fc : s_bic_component_g) {
-        l_of_biconnected_node[i_count] = i_fc;
-    }
+//    int i_count = 0;
+//    for (long i_fc : s_bic_component_g) {
+//        l_of_biconnected_node[i_count] = i_fc;
+//        i_count++;
+//    }
     Triconnected_graph *tric_graph = __generate_triconnected_graph(s_bic_component_g, l_of_biconnected_node);
 
     list<unordered_set<long>> l_tric_components_local = {};
@@ -1814,6 +1819,7 @@ unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(
                 // print "\t\tiNeigh", i_neighbour, "size CC", len(set_comp), ", size Neigh", len(l_of_fc)
                 // return set_comp, 3
                 compactness = 3;
+                return set_comp;
             }
         } else {
             bool is_ok = true;

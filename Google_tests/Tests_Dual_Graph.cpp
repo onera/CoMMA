@@ -2606,8 +2606,8 @@ TEST_F(MGridGen_Dual_Graph, clean_d_neighbours_of_seed_case_0) {
 
     ref_dict_fc_n_of_seed = {{3, 2},
                              {6, 2},
-                             {4, 2},
-                             {8, 2}};
+                             {4, 3},
+                             {8, 3}};
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
 
 }
@@ -2640,7 +2640,7 @@ TEST_F(MGridGen_Dual_Graph, clean_d_neighbours_of_seed_case_1) {
     (*g).clean_d_neighbours_of_seed(s_fc, d_neighbours_of_seed);
 
     ref_dict_fc_n_of_seed = {{5,  2},
-                             {11, 2}};
+                             {11, 3}};
     ASSERT_EQ(ref_dict_fc_n_of_seed, d_neighbours_of_seed);
 
 }

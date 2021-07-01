@@ -2398,17 +2398,17 @@ TEST_F(MGridGen_Dual_Graph, correction_remove_too_small_cc_MGridGen) {
     unsigned short threshold_card = 3;  // wrong value in 2D but for test!
     ccg.correction_remove_too_small_cc(threshold_card);
     ref_fc_2_cc = {1, 1, 1, 1, 3, 3, 1, 3, 3, 2, 2, 2, 2, 2, 2};
-    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+    EXPECT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
 
     unordered_set<long> ref_s_cc_to_remove = {5, 0, 4};
-    ASSERT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
+    EXPECT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
     ccg.cc_renumber();
 
     ccg.correction_remove_too_small_cc(5);
     ref_s_cc_to_remove = {2};
-    ASSERT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
+    EXPECT_EQ(ref_s_cc_to_remove, ccg._s_cc_to_remove);
     ref_fc_2_cc = {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
-    ASSERT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
+    EXPECT_EQ(ref_fc_2_cc, ccg._fc_2_cc);
 
     ccg.cc_renumber();
 

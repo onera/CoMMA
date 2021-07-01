@@ -898,11 +898,12 @@ void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc,
             }
         }
 
-        if (is_intersection) {
-            d_neighbours_of_seed[i_fc] = 2;
-        } else {
+        if (!is_intersection) {
             d_neighbours_of_seed.erase(i_fc);
         }
+//        else {
+//            d_neighbours_of_seed[i_fc] = 2;
+//        }
     }
 }
 

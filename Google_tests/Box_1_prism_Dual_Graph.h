@@ -2,8 +2,8 @@
 // Created by Nicolas Lantos on 03/04/2021.
 //
 
-#ifndef COMMA_PROJECT_BOX_FIVEXFIVEXFIVE_DUAL_GRAPH_H
-#define COMMA_PROJECT_BOX_FIVEXFIVEXFIVE_DUAL_GRAPH_H
+#ifndef COMMA_PROJECT_BOX_ONE_PRISM_DUAL_GRAPH_H
+#define COMMA_PROJECT_BOX_ONE_PRISM_DUAL_GRAPH_H
 
 #include "gtest/gtest.h"
 #include "../CoMMA_lib/Dual_graph.h"
@@ -536,4 +536,4 @@ protected:
     }
 };
 
-#endif //COMMA_PROJECT_BOX_FIVEXFIVEXFIVE_DUAL_GRAPH_H
+#endif //COMMA_PROJECT_BOX_ONE_PRISM_DUAL_GRAPH_H
