@@ -24,7 +24,7 @@ void agglomerate_one_level(long *sizes,
                            long isFirstAgglomeration,
                            long is_anisotropic_long,
 
-                           long *fineCellToCoarseCell,
+                           long *fc_to_cc,
 
                            long *agglomerationLines_Idx,
                            long *agglomerationLines,

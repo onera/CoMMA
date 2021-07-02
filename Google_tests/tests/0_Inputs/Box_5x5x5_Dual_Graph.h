@@ -107,8 +107,13 @@ protected:
 
         unordered_map<long, int> box_5x5x5_d_is_on_bnd;
         int i(0);
-        for (int value : box_5x5x5_is_on_bnd)
-            box_5x5x5_d_is_on_bnd[i++] = value;
+        for (int value : box_5x5x5_is_on_bnd) {
+            if (value > 0) {
+                box_5x5x5_d_is_on_bnd[i] = value;
+            }
+            i++;
+        }
+
 
         g = new Dual_Graph(box_5x5x5_number_of_cells,
                            v_box_5x5x5_row_ptr,

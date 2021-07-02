@@ -353,7 +353,7 @@ TEST_F(Box_5x5x5_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_0_t
     }
 
     ref_l_deque_of_seeds[2] = deque<long>({32, 8, 2});
-    ref_l_deque_of_seeds[3] = deque<long>({48, 51, 12, 3, 0, 15, 60, 63});
+    ref_l_deque_of_seeds[3] = deque<long>({15, 0, 60, 3, 63, 48, 12, 51});
     EXPECT_EQ(ref_l_deque_of_seeds, (*(*g).seeds_pool).l_deque_of_seeds);
 }
 
@@ -377,31 +377,13 @@ TEST_F(Box_5x5x5_Dual_Graph, agglomerate_one_level_tric_aniso) {
     agg.agglomerate_one_level(true, 0, anisotropic_lines, kind_of_agglomerator);
 
     ASSERT_EQ(8, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {4, 4, 3, 3,
-                                4, 4, 3, 3,
-                                2, 2, 5, 5,
-                                2, 2, 5, 5,
-            //
-                                4, 4, 3, 3,
-                                4, 4, 3, 3,
-                                2, 2, 5, 5,
-                                2, 2, 5, 5,
-            //
-                                0, 0, 1, 1,
-                                0, 0, 1, 1,
-                                6, 6, 7, 7,
-                                6, 6, 7, 7,
-            //
-                                0, 0, 1, 1,
-                                0, 0, 1, 1,
-                                6, 6, 7, 7,
-                                6, 6, 7, 7};
-//    cout<<endl;
-//    for (auto i:agg.get_fc_2_cc())
-//    {
-//        cout<<i<<", ";
-//    }
-//    cout<<endl;
+    vector<long> ref_fc_2_cc = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7,
+                                2, 2, 4, 4, 2, 2, 4, 4};
+    cout << endl;
+    for (auto i:agg.get_fc_2_cc()) {
+        cout << i << ", ";
+    }
+    cout << endl;
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
@@ -425,31 +407,22 @@ TEST_F(Box_5x5x5_Dual_Graph, agglomerate_one_level_tric_iso) {
     agg.agglomerate_one_level(false, 0, anisotropic_lines, kind_of_agglomerator);
 
     ASSERT_EQ(8, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {4, 4, 3, 3,
-                                4, 4, 3, 3,
-                                2, 2, 5, 5,
-                                2, 2, 5, 5,
+    vector<long> ref_fc_2_cc = {1, 1, 3, 3,
+                                1, 1, 3, 3,
+                                6, 6, 0, 0,
+                                6, 6, 0, 0,
             //
-                                4, 4, 3, 3,
-                                4, 4, 3, 3,
-                                2, 2, 5, 5,
-                                2, 2, 5, 5,
+                                1, 1, 3, 3,
+                                1, 1, 3, 3,
+                                6, 6, 0, 0,
+                                6, 6, 0, 0,
             //
-                                0, 0, 1, 1,
-                                0, 0, 1, 1,
-                                6, 6, 7, 7,
-                                6, 6, 7, 7,
-            //
-                                0, 0, 1, 1,
-                                0, 0, 1, 1,
-                                6, 6, 7, 7,
-                                6, 6, 7, 7};
-//    cout<<endl;
-//    for (auto i:agg.get_fc_2_cc())
-//    {
-//        cout<<i<<", ";
-//    }
-//    cout<<endl;
+                                5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+    cout << endl;
+    for (auto i:agg.get_fc_2_cc()) {
+        cout << i << ", ";
+    }
+    cout << endl;
 
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
