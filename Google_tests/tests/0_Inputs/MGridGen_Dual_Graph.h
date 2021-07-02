@@ -42,8 +42,7 @@ protected:
 
         MGridGen_nb_c = 15;
         MGridGen_col_ind_size = 51;
-        v_MGridGen_volumes = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3.,
-                              3., 1.5};
+        v_MGridGen_volumes = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3., 3., 1.5};
 
         unordered_map<long, int> MGridGen_d_is_on_bnd{{0,  1},
                                                       {1,  1},

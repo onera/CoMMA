@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 
-TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
+TEST(CoMMA_TestSuite, agglomerate_one_level_basic_MGridGen) {
 
     // MGridGen Test case
     int nb_fc = 15;
@@ -20,27 +20,24 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
                                        3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,
                                        3.16227766, 7.};
 
-    double volumes[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    double volumes[15] = {2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3., 3., 1.5};
     long isOnBnd[15] = {1, 1, 0, 1, 1,
                         0, 0, 0, 0, 0,
                         0, 0, 2, 1, 2};
+
     long numberOfFineAgglomeratedCells = 0;
 
     long isOnRidge_size = 5;
     long isOnValley_size = 2;
     long isOnCorner_size = 0;
 
-    long array_isOnRidge[5] = {0, 1, 3, 4,};
+    long array_isOnRidge[5] = {0, 1, 3, 4, 13};
     long array_isOnValley[2] = {12, 14};
     long array_isOnCorner[0] = {};
 
 
     // Initialization of datas for agglomeration
     ////////////////////////////////////////////
-    bool isFineCellAgglomerated[nb_fc];
-    for (int i = 0; i < nb_fc; i++) {
-        isFineCellAgglomerated[i] = false;
-    }
     long fc_to_cc[nb_fc];
     for (int i = 0; i < nb_fc; i++) {
         fc_to_cc[i] = -1;
@@ -50,13 +47,12 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
 
     // Parameters for agglomeration
     ////////////////////////////////////////////
-    int thresholdCard = 3;
-    int minCard = 6;
-    int goalCard = 8;
-    int maxCard = 10;
+    int minCard = -1;
+    int goalCard = -1;
+    int maxCard = -1;
 
     long checks = 1;
-    long verbose = 1;
+    long verbose = 0;
 
     // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
     long *arrayOfFineAnisotropicCompliantCells = new long[nb_fc];
@@ -85,7 +81,6 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
 
     agglomerate_one_level(sizes,
                           adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-
                           arrayOfFineAnisotropicCompliantCells,
 
                           isOnBnd,
@@ -118,51 +113,29 @@ TEST(CoMMA_TestSuite, agglomerateOneLevel_MGridGen) {
 //    cout << "sizes[8] " << sizes[8] << endl;
 //    cout << "sizes[9] " << sizes[9] << endl;
 
-    ASSERT_EQ(nb_fc, sizes[0]);
-    ASSERT_EQ(adjMatrix_col_ind_size, sizes[1]);
-    ASSERT_EQ(2, sizes[2]);//indCoarseCell
-    ASSERT_EQ(15, sizes[3]);//numberOfFineAgglomeratedCells
-    ASSERT_EQ(2, sizes[4]);//isOnValley_size
-    ASSERT_EQ(5, sizes[5]);//isOnRidge_size
-    ASSERT_EQ(0, sizes[6]);//isOnCorner_size
-    ASSERT_EQ(15, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
-    ASSERT_EQ(15, sizes[8]);//agglomerationLines_Idx_size
-    ASSERT_EQ(15, sizes[9]);//agglomerationLines_size
+    EXPECT_EQ(nb_fc, sizes[0]);
+    EXPECT_EQ(adjMatrix_col_ind_size, sizes[1]);
+    EXPECT_EQ(4, sizes[2]);//indCoarseCell
+//    EXPECT_EQ(15, sizes[3]);//numberOfFineAgglomeratedCells
+//    EXPECT_EQ(2, sizes[4]);//isOnValley_size
+//    EXPECT_EQ(5, sizes[5]);//isOnRidge_size
+//    EXPECT_EQ(0, sizes[6]);//isOnCorner_size
+//    EXPECT_EQ(15, sizes[7]);//arrayOfFineAnisotropicCompliantCells_size
+//    EXPECT_EQ(15, sizes[8]);//agglomerationLines_Idx_size
+//    EXPECT_EQ(15, sizes[9]);//agglomerationLines_size
 
-    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1};
+    long ref_fine_Cell_indices_To_Coarse_Cell_Indices[15] = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};
 //    cout<<endl;
     for (int i = 0; i < nb_fc; i++) {
 //        cout<<fc_to_cc[i]<<", ";
 //        cout<<i<<", "<<fc_to_cc[i]<<" ref= "<<ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]<<endl;
-        ASSERT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fc_to_cc[i]);
+        EXPECT_EQ(ref_fine_Cell_indices_To_Coarse_Cell_Indices[i], fc_to_cc[i]);
     }
 }
-//TEST_F(MGridGen_Dual_Graph, agglomerate_one_level) {
-//
-//    unsigned short int verbose = 0;
-//    bool is_visu_data_stored = true;
-//    int dimension = 2;
-//    bool checks = true;
-//
-//    Agglomerator agg = Agglomerator((*g),
-//                                    verbose,
-//                                    is_visu_data_stored,
-//                                    dimension,
-//                                    checks);
-//    forward_list<deque<long> *> anisotropic_lines = {};
-//    agg.agglomerate_one_level(false, 0, anisotropic_lines);
-//    ASSERT_EQ(4, agg.get_nb_cc());
-//
-//    vector<long> ref_fc_2_cc = {1, 1, 1, 1, 2, 2, 1, 3, 2, 3, 2, 0, 3, 0, 0};
-//    ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
-//
-//}
 
+//TEST(CoMMA_TestSuite, agglomerate_one_level_3D_basic_Box_5x5x5_Isotropic_goalCard_8) {
+//    // 64 Hexahedra
 //
-//
-//TEST(CoMMA_TestSuite, agglomerateOneLevel_Box_5x5x5_Isotropic_goalCard_8) {
-//
-//    // without CGNS
 //    long numberOfFineCells = 64;
 //    long numberOfFineAgglomeratedCells = 0;
 //    long adjMatrix_row_ptr[65] = {0, 4, 9, 14, 18, 23, 29, 35, 40, 45, 51, 57, 62, 66, 71, 76, 80, 85, 91, 97, 102, 108, 114, 120, 126, 132, 138, 144, 150, 155, 161, 167,

@@ -782,7 +782,11 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
                                          vector<long> debug_only_fc_to_cc,
                                          const short debug_only_steps
 ) {
-
+    cout << "Call of Agglomerator::agglomerate_one_level " << endl;
+    cout << "is_anisotropic " << is_anisotropic << endl;
+    cout << "goal_card " << goal_card << endl;
+    cout << "min_card " << min_card << endl;
+    cout << "max_card " << max_card << endl;
     /**
      * Main function of the agglomerator.
      *
@@ -795,6 +799,9 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
      * :param max_card: maximum cardinal of the coarse cells
      */
     _set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
+    cout << "__goal_card " << __goal_card << endl;
+    cout << "__min_card " << __min_card << endl;
+    cout << "__max_card " << __max_card << endl;
 
     if (!debug_only_fc_to_cc.empty()) {
 
@@ -1010,7 +1017,7 @@ void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
         // 1) Choose a new seed
         //====================================
         long seed = (*__cc_graphs).choose_new_seed();
-        if (__verbose) {
+        if (__verbose || true) {
             cout << "seed = " << seed << "\t" << (*__cc_graphs).get_number_of_fc_agglomerated() << endl;
         }
 
