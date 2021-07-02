@@ -16,7 +16,8 @@ set(HEADER_FILES
         Edge.h
         CompStruct.h
         Triconnected_graph.h
-        Util_graph.h)
+        Util_graph.h
+        CoMMA.h)
 
 set(SOURCE_FILES
         Agglomerator_anisotropic.cpp
@@ -31,7 +32,8 @@ set(SOURCE_FILES
         Edge.cpp
         CompStruct.cpp
         Triconnected_graph.cpp
-        Util_graph.cpp)
+        Util_graph.cpp
+        CoMMA.cpp)
 
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})
