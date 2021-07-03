@@ -80,7 +80,7 @@ public :
                                   long *agglomerationLines,
                                   bool verbose);
 
-    forward_list<deque<long> *> compute_anisotropic_line_v2();
+    forward_list<deque<long> *> compute_anisotropic_line_v2(long &nb_agglomeration_lines);
 
     unordered_map<long, double> __compute_d_anisotropic_fc(vector<double> &maxArray);
 

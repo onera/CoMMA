@@ -643,9 +643,10 @@ TEST(Dual_Graph_TestSuite, compute_anisotropic_line_v2_1_AnisotropicCell) {
                               empty_set,
                               empty_set,
                               s_anisotropic_compliant_fc);
-
-    forward_list<deque<long> *> lines = g.compute_anisotropic_line_v2();
-    ASSERT_TRUE(lines.empty());
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g.compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_TRUE(lines.empty());
+    EXPECT_EQ(0, nb_agglomeration_lines);
 }
 
 TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_Box_5x5x5_aniso_MG_1_level) {
@@ -745,8 +746,10 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_v2_Box_5x5x5_aniso_M
     ASSERT_EQ(ref_s_Box_5x5x5_is_on_ridge, (*(*g).seeds_pool).is_on_ridge);
     ASSERT_EQ(ref_s_Box_5x5x5_is_on_valley, (*(*g).seeds_pool).is_on_valley);
 
-    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
-    ASSERT_FALSE(lines.empty());
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_FALSE(lines.empty());
+    EXPECT_EQ(16, nb_agglomeration_lines);
 
     forward_list<deque<long> *> ref_lines;
     deque<long> *a = new deque<long>({54, 38, 22, 6,});
@@ -816,7 +819,6 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, compute_anisotropic_line_v2_Box_5x5x5_aniso_M
         count++;
         fLIt_bis++;
     }
-    int nb_agglomeration_lines = count;
 
     long sizes[2] = {0, 0};
     long a_agglo_lines_idx[box_5x5x5_number_of_cells];  // not initialized
@@ -905,18 +907,18 @@ TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_Box_5x5x5_iso_and_Aniso
 
 TEST_F(box_5x5x5_iso_and_aniso, compute_anisotropic_line_v2_Box_5x5x5_iso_and_Aniso_MG_1_level) {
 
-    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
-    ASSERT_TRUE(!lines.empty());
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_FALSE(lines.empty());
+    EXPECT_EQ(16, nb_agglomeration_lines);
 
-    ASSERT_EQ(64, box_5x5x5_number_of_cells);
-
-
-    unsigned long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *>::iterator fLIt;
-    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-        nb_agglomeration_lines++;
-
-    }
+    EXPECT_EQ(64, box_5x5x5_number_of_cells);
+//    Remark: as forward_list does not have a size method we can compute the number of lines like that:
+//    unsigned long nb_agglomeration_lines = 0;
+//    forward_list<deque<long> *>::iterator fLIt;
+//    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//        nb_agglomeration_lines++;
+//    }
 
     long sizes[2] = {0, 0};
     long a_agglo_lines_idx[box_5x5x5_number_of_cells];  // not initialized
@@ -1004,14 +1006,16 @@ TEST_F(box_2x12, compute_anisotropic_line_MostAnisotropicCellInTheMiddle) {
 
 TEST_F(box_2x12, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle) {
 
-    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
-    ASSERT_FALSE(lines.empty());
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_FALSE(lines.empty());
+    EXPECT_EQ(2, nb_agglomeration_lines);
 
-    unsigned long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *>::iterator fLIt;
-    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-        nb_agglomeration_lines++;
-    }
+//    unsigned long nb_agglomeration_lines = 0;
+//    forward_list<deque<long> *>::iterator fLIt;
+//    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//        nb_agglomeration_lines++;
+//    }
 
     long sizes[2] = {0, 0};
     long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
@@ -1086,19 +1090,22 @@ TEST_F(box_2x12_bis, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_2) 
 
 TEST_F(box_2x12_bis, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_2) {
 
-    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
-    ASSERT_FALSE(lines.empty());
+
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_FALSE(lines.empty());
+    EXPECT_EQ(2, nb_agglomeration_lines);
 
     long sizes[2] = {0, 0};
     long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
     long a_agglo_lines[box_2x12_nb_fc];  // not initialized
 
-    unsigned long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *>::iterator fLIt;
-    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-        nb_agglomeration_lines++;
-    }
-    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
+
+//    forward_list<deque<long> *>::iterator fLIt;
+//    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//        nb_agglomeration_lines++;
+//    }
+//    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
                                                       lines,
@@ -1169,8 +1176,13 @@ TEST_F(box_2x12_ter, compute_anisotropic_line_MostAnisotropicCellInTheMiddle_Iso
 
 TEST_F(box_2x12_ter, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_Iso_at_both_ends) {
 
-    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
-    ASSERT_FALSE(lines.empty());
+    long nb_agglomeration_lines(0);
+    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2(nb_agglomeration_lines);
+    EXPECT_FALSE(lines.empty());
+    EXPECT_EQ(2, nb_agglomeration_lines);
+
+//    forward_list<deque<long> *> lines = g->compute_anisotropic_line_v2();
+//    ASSERT_FALSE(lines.empty());
 
     ASSERT_EQ(18, g->s_anisotropic_compliant_cells.size());
 
@@ -1178,12 +1190,12 @@ TEST_F(box_2x12_ter, compute_anisotropic_line_v2_MostAnisotropicCellInTheMiddle_
     long a_agglo_lines_idx[box_2x12_nb_fc];  // not initialized
     long a_agglo_lines[box_2x12_nb_fc];  // not initialized
 
-    unsigned long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *>::iterator fLIt;
-    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-        nb_agglomeration_lines++;
-    }
-    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
+//    unsigned long nb_agglomeration_lines = 0;
+//    forward_list<deque<long> *>::iterator fLIt;
+//    for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
+//        nb_agglomeration_lines++;
+//    }
+//    ASSERT_EQ(2, nb_agglomeration_lines);  // number of anisotropic lines
 
     convert_agglo_lines_to_agglomeration_lines_arrays(nb_agglomeration_lines,
                                                       lines,

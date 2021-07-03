@@ -782,7 +782,7 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
                                          vector<long> debug_only_fc_to_cc,
                                          const short debug_only_steps
 ) {
-    cout << "Call of Agglomerator::agglomerate_one_level " << endl;
+    cout << "\nCall of Agglomerator::agglomerate_one_level " << endl;
     cout << "is_anisotropic " << is_anisotropic << endl;
     cout << "goal_card " << goal_card << endl;
     cout << "min_card " << min_card << endl;
@@ -853,10 +853,15 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
 //                   agglo_lines_l_array_idx, agglo_lines_l_array;
 }
 
-void Agglomerator::get_agglo_lines(int level,
+bool Agglomerator::is_agglomeration_anisotropic() {
+    return __cc_graphs->is_agglomeration_anisotropic();
+}
+
+void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                    long *sizes,
                                    long *agglo_lines_array_idx,
                                    long *agglo_lines_array) {
+    //remark: sizes[2]={nb_agglomeration_lines +1, nb_fc_in_agglomeration_lines}
     assert(__cc_graphs->is_agglomeration_anisotropic());
     assert(level == 0 || level == 1);
 
@@ -872,6 +877,7 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
      * process along all agglomeration_lines to create every anisotropic cc.
      * Generate also the coarse agglomeration lines and the set of compliant anisotropic cc
      */
+    //TODO Comprendre quand est-ce qu'on supprime une ligne d'agglomeration?
 
     // list of set of hexaedric or prismatic cell number (for level 0)
     __v_of_s_anisotropic_compliant_fc[1] = {};
@@ -982,14 +988,16 @@ void Agglomerator::_agglomerate_one_level_anisotropic_part() {
     if (__v_lines[0].empty()) {
 
         // The anisotropic lines are only computed on the original (finest) mesh.
-        __v_lines[0] = __fc_graphs.compute_anisotropic_line_v2();  // finest level!!!
-
+        long nb_agglomeration_lines(0);
+        __v_lines[0] = __fc_graphs.compute_anisotropic_line_v2(nb_agglomeration_lines);  // finest level!!!
+        __v_nb_lines[0] = nb_agglomeration_lines;
     }
     // This is not the first generation of a coarse level.
     // The anisotropic lines are given as input.
 
     // Copy of the current agglomeration_lines as a backup for visualization purpose.
     __v_lines[1] = copy_agglomeration_lines(__v_lines[0]);
+    __v_nb_lines[1] = __v_nb_lines[0];
 
     // Asserts that __v_lines[1] exists:
     if (!__v_lines[1].empty()) {

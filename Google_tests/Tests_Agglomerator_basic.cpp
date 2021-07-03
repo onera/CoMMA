@@ -1338,16 +1338,11 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level_aniso) {
                                     checks);
     forward_list<deque<long> *> anisotropic_lines = {};
     agg.agglomerate_one_level(true, 0, anisotropic_lines);
-//    EXPECT_EQ(41, agg.get_nb_cc());
-    ASSERT_EQ(32, agg.get_nb_cc());
-    vector<long> ref_fc_2_cc = {1, 11, 9, 5,
-                                15, 29, 31, 21,
-                                13, 25, 27, 23,
-                                3, 17, 19, 7,
-                                1, 11, 9, 5,
-                                15, 29, 31, 21,
-                                13, 25, 27, 23,
-                                3, 17, 19, 7,
+
+    EXPECT_EQ(32, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {1, 11, 9, 5, 15, 29, 31, 21, 13, 25, 27, 23, 3, 17, 19, 7,
+                                1, 11, 9, 5, 15, 29, 31, 21, 13, 25, 27, 23, 3, 17, 19, 7,
+            //
                                 0, 10, 8, 4, 14, 28, 30, 20, 12, 24, 26, 22, 2, 16, 18, 6,
                                 0, 10, 8, 4, 14, 28, 30, 20, 12, 24, 26, 22, 2, 16, 18, 6};
 //    cout<<endl;
@@ -1362,6 +1357,113 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level_aniso) {
 //    print_agglomeration_lines(agg.__v_lines[0]);
 //    print_agglomeration_lines(agg.__v_lines[1]);
 
+    // Check agglomeration lines for level 0
+    //======================================
+    int i_level = 0;
+    long sizes[2] = {0, 0};
+    const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
+
+    agg.get_agglo_lines(i_level,
+                        sizes,
+                        agglo_lines_array_idx,
+                        agglo_lines_array);
+//    cout<<"sizes: "<<sizes[0]<<", "<<sizes[1]<<endl;
+    EXPECT_EQ(17, sizes[0]);
+    EXPECT_EQ(64, sizes[1]);
+
+    long ref_agglo_lines_array_idx[17] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64};
+    long ref_agglo_lines_array[64] = {48, 32, 16, 0,
+                                      60, 44, 28, 12,
+                                      51, 35, 19, 3,
+                                      63, 47, 31, 15,
+                                      50, 34, 18, 2,
+                                      49, 33, 17, 1,
+                                      56, 40, 24, 8,
+                                      52, 36, 20, 4,
+                                      61, 45, 29, 13,
+                                      62, 46, 30, 14,
+                                      55, 39, 23, 7,
+                                      59, 43, 27, 11,
+                                      57, 41, 25, 9,
+                                      58, 42, 26, 10,
+                                      53, 37, 21, 5,
+                                      54, 38, 22, 6};
+
+//    cout<<endl;
+//    for (long i_fc=0; i_fc<sizes[0]; i_fc++)
+//    {
+//        cout<<agglo_lines_array_idx[i_fc]<<", ";
+//    }
+//    cout<<endl;
+//    for (long i_fc=0; i_fc<sizes[1]; i_fc++)
+//    {
+//        cout<<agglo_lines_array[i_fc]<<", ";
+//    }
+//    cout<<endl;
+    for (int i = 0; i < sizes[0]; i++) {
+        EXPECT_EQ(ref_agglo_lines_array_idx[i], agglo_lines_array_idx[i]);
+    }
+
+    for (int i = 0; i < sizes[1]; i++) {
+        EXPECT_EQ(ref_agglo_lines_array[i], agglo_lines_array[i]);
+    }
+
+    // Check agglomeration lines for level 1
+    //======================================
+    i_level = 1;
+    sizes[0] = -1;
+    sizes[1] = -1;
+    for (int i = 0; i < nb_fc; i++) {
+        agglo_lines_array_idx[i] = 0;
+        agglo_lines_array[i] = 0;
+    }
+
+    agg.get_agglo_lines(i_level,
+                        sizes,
+                        agglo_lines_array_idx,
+                        agglo_lines_array);
+//    cout<<"sizes: "<<sizes[0]<<", "<<sizes[1]<<endl;
+    EXPECT_EQ(17, sizes[0]);
+    EXPECT_EQ(32, sizes[1]);
+
+    long ref_agglo_lines_array_idx_1[17] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
+    long ref_agglo_lines_array_1[64] = {0, 1,
+                                        2, 3,
+                                        4, 5,
+                                        6, 7,
+                                        8, 9,
+                                        10, 11,
+                                        12, 13,
+                                        14, 15,
+                                        16, 17,
+                                        18, 19,
+                                        20, 21,
+                                        22, 23,
+                                        24, 25,
+                                        26, 27,
+                                        28, 29,
+                                        30, 31};
+
+//    cout<<endl;
+//    for (long i_fc=0; i_fc<sizes[0]; i_fc++)
+//    {
+//        cout<<agglo_lines_array_idx[i_fc]<<", ";
+//    }
+//    cout<<endl;
+//    for (long i_fc=0; i_fc<sizes[1]; i_fc++)
+//    {
+//        cout<<agglo_lines_array[i_fc]<<", ";
+//    }
+//    cout<<endl;
+    for (int i = 0; i < sizes[0]; i++) {
+        EXPECT_EQ(ref_agglo_lines_array_idx_1[i], agglo_lines_array_idx[i]);
+    }
+
+    for (int i = 0; i < sizes[1]; i++) {
+        EXPECT_EQ(ref_agglo_lines_array_1[i], agglo_lines_array[i]);
+    }
 }
 
 TEST_F(Box_5x5x5_Aniso_lvl_2_Dual_Graph, agglomerate_one_level_aniso_without_agglomeration_lines) {

@@ -534,8 +534,8 @@ unordered_map<long, double> Dual_Graph::__compute_d_anisotropic_fc(vector<double
     return d_anisotropic_fc;
 }
 
-forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2() {
-
+forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agglomeration_lines) {
+    //TODO rename this to remove v2...
     /**
      * The goal of this function is :
      * - firstly to look for anisotropic cells
@@ -763,10 +763,10 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2() {
         }
 
 //        cout<<"Conversion of deque to array"<<endl;
-        long numberOfAgglomerationLines = lines_size;
+        nb_agglomeration_lines = (long) lines_size;
 
-//        if (numberOfAgglomerationLines == 0) {
-////            numberOfAgglomerationLines = 1;
+//        if (nb_agglomeration_lines == 0) {
+////            nb_agglomeration_lines = 1;
 //            agglomerationLines_Idx[0] = 0;
 //            agglomerationLines_Idx[1] = 0;
 //            agglomerationLines_size = 0;

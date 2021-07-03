@@ -19,21 +19,21 @@ void agglomerateOneLevel(long *sizes,
                          long *arrayOfFineAnisotropicCompliantCells,
 
                          long *isOnFineBnd_l,
-                         long *array_isOnValley,
-                         long *array_isOnRidge,
-                         long *array_isOnCorner,
-                         long isFirstAgglomeration_long,
-                         long isAnisotropic_long,
+                         long *array_isOnValley,  // in
+                         long *array_isOnRidge,  // in
+                         long *array_isOnCorner,  // in
+                         long isFirstAgglomeration_long,  // in
+                         long isAnisotropic_long,  // in
 
-                         long *fineCellToCoarseCell,
+                         long *fineCellToCoarseCell,  // out
 
-                         long *agglomerationLines_Idx,
-                         long *agglomerationLines,
+                         long *agglomerationLines_Idx,  // in & out
+                         long *agglomerationLines,  // in & out
 
-                         long dimension,
-                         long goalCard,
-                         long minCard,
-                         long maxCard,
+                         long dimension,  // in
+                         long goalCard,  // in
+                         long minCard,  // in
+                         long maxCard,  // in
                          long checks_long,
                          long verbose_long) {
     //"""

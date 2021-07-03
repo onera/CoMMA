@@ -100,7 +100,7 @@ void agglomerate_one_level(long *sizes,
     //======================================
     long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
     unordered_set<long> s_anisotropic_compliant_fc;
-    for (long i_a_c_fc = 0; i_a_c_fc < is_on_corner_size; i_a_c_fc++) {
+    for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
 
@@ -168,6 +168,7 @@ void agglomerate_one_level(long *sizes,
     short min_card_s = short(min_card);
     short max_card_s = short(max_card);
 
+    cout << "is_anisotropic_agglomeration " << is_anisotropic << endl;
     // Compute the agglomeration:
     //======================================
     agg.agglomerate_one_level(is_anisotropic,
@@ -321,5 +322,19 @@ void agglomerate_one_level(long *sizes,
         fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
     }
 
+    // get agglomeration lines:
+    //======================================
+    if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
 
+        int i_level = 1;
+        long Agg_lines_sizes[2] = {0, 0};
+
+        agg.get_agglo_lines(i_level,
+                            Agg_lines_sizes,
+                            agglomerationLines_Idx,
+                            agglomerationLines);
+
+        sizes[8] = Agg_lines_sizes[0];
+        sizes[9] = Agg_lines_sizes[1];
+    }
 }

@@ -28,7 +28,7 @@ public :
             clean_agglomeration_lines(__v_lines[1]);
         }
     };
-
+    bool is_agglomeration_anisotropic();
 
 public:
     //    private part
