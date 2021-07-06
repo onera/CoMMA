@@ -103,6 +103,11 @@ void agglomerate_one_level(long *sizes,
     for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
+    // We add the following lines because the following sets can be rebuilt in the constructor.
+    // it introduce some randomness compare to the direct agglomerator call see Test_Agglomerator_basic.cpp
+    s_is_on_corner.clear();
+    s_is_on_ridge.clear();
+    s_is_on_valley.clear();
 
     // DUAL GRAPH
     //======================================
@@ -158,21 +163,31 @@ void agglomerate_one_level(long *sizes,
 
     // ANISOTROPIC LINES
     //======================================
-    long agglomerationLines_Idx_size = sizes[8];
-    long agglomerationLines_size = sizes[9];
+    long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> agglomeration_lines;
 
-    unsigned long nb_aniso_agglo_lines = 0;  //TODO plug this with previous anisotropic lines!
-    forward_list<deque<long> *> anisotropic_lines = {};
+    if (is_anisotropic && !isFirstAgglomeration_long) {
+        long agglomerationLines_Idx_size = sizes[8];
+        long agglomerationLines_size = sizes[9];
+
+        convert_agglomeration_lines_arrays_to_agglomeration_lines(agglomerationLines_Idx_size,
+                                                                  agglomerationLines_size,
+                                                                  agglomerationLines_Idx,
+                                                                  agglomerationLines,
+                                                                  nb_agglomeration_lines,
+                                                                  agglomeration_lines);
+    }
+
 
     short goal_card_s = short(goal_card);
     short min_card_s = short(min_card);
     short max_card_s = short(max_card);
 
-    cout << "is_anisotropic_agglomeration " << is_anisotropic << endl;
+
     // Compute the agglomeration:
     //======================================
     agg.agglomerate_one_level(is_anisotropic,
-                              0, anisotropic_lines,
+                              nb_agglomeration_lines, agglomeration_lines,
                               kind_of_agglomerator,
                               goal_card_s,
                               min_card_s,

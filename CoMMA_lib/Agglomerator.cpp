@@ -896,6 +896,7 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
         }
 
         long i_count = 0;
+//        cout<<"Agglo_Line seed "<<(**fLIt)[i_count]<<endl;
         bool is_anisotropic = true;
         long i_cc;
         while (i_count + 2 <= line_size) {

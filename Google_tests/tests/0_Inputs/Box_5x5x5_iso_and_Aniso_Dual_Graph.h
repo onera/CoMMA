@@ -84,7 +84,9 @@ protected:
 
         unordered_map<long, int> box_5x5x5_d_is_on_bnd;
         for (int i = 0; i < box_5x5x5_number_of_cells; i++) {
-            box_5x5x5_d_is_on_bnd[i] = box_5x5x5_is_on_bnd[i];
+            if (box_5x5x5_is_on_bnd[i] > 0) {
+                box_5x5x5_d_is_on_bnd[i] = box_5x5x5_is_on_bnd[i];
+            }
         }
 
         g = new Dual_Graph(box_5x5x5_number_of_cells,
