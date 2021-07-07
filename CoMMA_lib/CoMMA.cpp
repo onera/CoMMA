@@ -16,14 +16,20 @@ void agglomerate_one_level(long *sizes,
                            long *array_is_on_valley,
                            long *array_is_on_ridge,
                            long *array_is_on_corner,
+
+        // Agglomeration argument
                            long isFirstAgglomeration_long,
                            long is_anisotropic_long,
 
-                           long *fc_to_cc,
 
-                           long *agglomerationLines_Idx,
-                           long *agglomerationLines,
+        // Outputs
+                           long *fc_to_cc,  // Out
 
+                           long *agglomerationLines_Idx,  // In & out
+                           long *agglomerationLines,  // In & out
+
+        //Args with default value
+                           long is_basic_or_triconnected,
                            long dimension,
                            long goal_card,
                            long min_card,
@@ -130,7 +136,12 @@ void agglomerate_one_level(long *sizes,
     bool checks = checks_long == 1;
 
     bool is_visu_data_stored = true;  //TODO get this via argument:
-    string kind_of_agglomerator = "basic";  //TODO get this via argument:
+    string kind_of_agglomerator;
+    if (is_basic_or_triconnected == 0) {
+        kind_of_agglomerator = "basic";
+    } else if (is_basic_or_triconnected == 1) {
+        kind_of_agglomerator = "triconnected";
+    }
 
     Agglomerator agg = Agglomerator(fc_graph,
                                     verbose_long,

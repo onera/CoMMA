@@ -29,6 +29,7 @@ void agglomerate_one_level(long *sizes,
                            long *agglomerationLines_Idx,
                            long *agglomerationLines,
 
+                           long is_basic_or_triconnected = 0,
                            long dimension = 3,
                            long goal_card = -1,
                            long min_card = -1,

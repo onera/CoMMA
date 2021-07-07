@@ -1,6 +1,7 @@
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
 
+#include "MGridGen_Dual_Graph.h"
 #include "MGridGen_ext_Dual_Graph.h"
 #include "Nine_squares_3x3_Dual_Graph.h"
 #include "Box_5x5x5_Dual_Graph.h"
@@ -311,6 +312,27 @@ TEST_F(MGridGen_ext_Dual_Graph, agglomerate_one_level_tric) {
     vector<long> ref_fc_2_cc = {0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3};
     ASSERT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 
+}
+
+TEST_F(MGridGen_Dual_Graph, agglomerate_one_level_tric) {
+
+    unsigned short int verbose = 0;
+    bool is_visu_data_stored = true;
+    int dimension = 2;
+    bool checks = true;
+
+    Agglomerator agg = Agglomerator((*g),
+                                    verbose,
+                                    is_visu_data_stored,
+                                    dimension,
+                                    checks);
+    forward_list<deque<long> *> anisotropic_lines = {};
+    string kind_of_agglomerator = "triconnected";
+    agg.agglomerate_one_level(false, 0, anisotropic_lines,
+                              kind_of_agglomerator);
+    EXPECT_EQ(2, agg.get_nb_cc());
+    vector<long> ref_fc_2_cc = {0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0};
+    EXPECT_EQ(ref_fc_2_cc, agg.get_fc_2_cc());
 }
 
 TEST_F(Box_5x5x5_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_0_tric) {
