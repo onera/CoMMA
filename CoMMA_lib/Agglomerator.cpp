@@ -403,7 +403,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_basic_v2_sub(
 }
 
 
-list<long> Agglomerator::__create_list_of_seeds(Coarse_Cell_Graph cc_graph,
+list<long> Agglomerator::__create_list_of_seeds(const Coarse_Cell_Graph &cc_graph,
                                                 const long &seed,
                                                 const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                                 unordered_set<long> s_current_cc) {
@@ -1026,7 +1026,7 @@ void Agglomerator::_agglomerate_sub_sub_isotropic_first_step() {
         // 1) Choose a new seed
         //====================================
         long seed = (*__cc_graphs).choose_new_seed();
-        if (__verbose || true) {
+        if (__verbose) {
             cout << "seed = " << seed << "\t" << (*__cc_graphs).get_number_of_fc_agglomerated() << endl;
         }
 
@@ -1555,7 +1555,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
 
     short deg_seed = __fc_graphs.compute_degree_of_node_in_subgraph(seed, s_of_fc);
 
-    cout << "check a copy is done!" << endl;
+//    cout << "check a copy is done!" << endl;
 // TODO: change type to unordered_map<long, short>?
     unordered_map<long, unsigned short> d_neighbours_of_seed = dict_neighbours_of_seed;
     unordered_map<long, unsigned short> d_neighbours_of_seed_n_minus_one = dict_neighbours_of_seed;
@@ -1569,7 +1569,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     unordered_map<short, unordered_set<long>> d_biconnected;
 
     // The first neighbourhood is connected
-    cout << "check a copy is done!" << endl;
+//    cout << "check a copy is done!" << endl;
     d_connected[i_neighbourhood_min] = s_of_fc_for_current_cc;  // copy needed
     d_connected[i_neighbourhood_min].insert(seed);
 

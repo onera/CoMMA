@@ -27,6 +27,7 @@ public :
             clean_agglomeration_lines(__v_lines[0]);
             clean_agglomeration_lines(__v_lines[1]);
         }
+
     };
     bool is_agglomeration_anisotropic();
 
@@ -101,7 +102,7 @@ public:
                                                      const bool is_order_primary = false);
 
 
-    list<long> __create_list_of_seeds(Coarse_Cell_Graph cc_graph,
+    list<long> __create_list_of_seeds(const Coarse_Cell_Graph &cc_graph,
                                       const long &seed,
                                       const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                       unordered_set<long> s_current_cc);

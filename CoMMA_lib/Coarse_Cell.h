@@ -16,6 +16,10 @@ public:
                 bool is_delayed = false
     );
 
+    ~Coarse_Cell() {
+        cout << "Delete Coarse_Cell" << endl;
+    };
+
     bool is_connected();
 
     unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
