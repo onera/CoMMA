@@ -135,7 +135,7 @@ void Agglomerator::__agglomerate_one_level(
 }
 
 
-unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph cc_graph,
+unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph &cc_graph,
                                                                           const long &seed,
                                                                           unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                                                           const unsigned short goal_card,

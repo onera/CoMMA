@@ -79,7 +79,7 @@ public:
             short int debug_only_steps = -1  // arbitrary value greater than 7
     );
 
-    unordered_set<long> _choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph cc_graph,
+    unordered_set<long> _choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph &cc_graph,
                                                                 const long &seed,
                                                                 unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                                                 const unsigned short goal_card,

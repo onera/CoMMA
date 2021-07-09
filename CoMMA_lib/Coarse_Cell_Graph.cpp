@@ -71,7 +71,7 @@ Coarse_Cell_Graph::~Coarse_Cell_Graph() {
             delete i_kv.second;
         }
     }
-
+    cout << "End Delete CCG" << endl;
 }
 
 long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
