@@ -363,4 +363,5 @@ void agglomerate_one_level(long *sizes,
         sizes[8] = Agg_lines_sizes[0];
         sizes[9] = Agg_lines_sizes[1];
     }
+//    delete agg;
 }

@@ -1367,6 +1367,10 @@ void Agglomerator::_correction_split_too_big_cc_in_two() {
             __fc_graphs.remove_separating_vertex(seed, d_spanning_tree, s_fc);
             //Rk: s_fc is modified.
 
+            for (auto iPairDict:d_spanning_tree) {
+                delete iPairDict.second;
+            }
+
             if (__verbose) {
                 cout << "\t\t\tAfter remove_separating_vertex" << endl;
                 cout << "\t\t\ts_fc: {";

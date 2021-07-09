@@ -23,10 +23,12 @@ public :
     );
 
     ~Agglomerator() {
+        cout << "Delete Agglomerator" << endl;
         if (__is_anisotropic) {
             clean_agglomeration_lines(__v_lines[0]);
             clean_agglomeration_lines(__v_lines[1]);
         }
+        delete __cc_graphs;
 
     };
     bool is_agglomeration_anisotropic();
