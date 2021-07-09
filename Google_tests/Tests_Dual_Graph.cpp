@@ -1,3 +1,5 @@
+#include "gtest/gtest.h"
+
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Dual_Graph.h"
@@ -18,7 +20,7 @@
 #include "Box_5x5x5_iso_and_Aniso_Dual_Graph.h"
 
 
-#include "gtest/gtest.h"
+
 
 //class box_5x5x5_iso_and_aniso : public ::testing::Test {
 //    // filename_ini = "box_1_rect_5_d_F.hdf"

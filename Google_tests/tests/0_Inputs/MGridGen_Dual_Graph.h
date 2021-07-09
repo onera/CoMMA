@@ -5,7 +5,6 @@
 #ifndef COMMA_PROJECT_MGRIDGEN_DUAL_GRAPH_H
 #define COMMA_PROJECT_MGRIDGEN_DUAL_GRAPH_H
 
-#include "gtest/gtest.h"
 #include"../../../CoMMA_lib/Dual_Graph.h"
 
 class MGridGen_Dual_Graph : public ::testing::Test {
