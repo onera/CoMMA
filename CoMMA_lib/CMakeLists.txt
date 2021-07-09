@@ -35,15 +35,9 @@ set(SOURCE_FILES
         Util_graph.cpp
         CoMMA.cpp)
 
+#set(CMAKE_BUILD_TYPE Debug)
+
 add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 #add_executable(toto ${SOURCE_FILES})
 #add_executable(untitled ${SOURCE_FILES} ${gtest_SOURCE_DIR})
 #target_link_libraries(untitled gtest gtest_main)
-
-
-
-
-
-
-
-

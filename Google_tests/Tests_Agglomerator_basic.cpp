@@ -1,3 +1,5 @@
+#include "gtest/gtest.h"
+
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
 
@@ -11,7 +13,7 @@
 #include "Box_5x5x5_Aniso_lvl_2_Dual_Graph.h"
 #include "Box_5x5x5_iso_and_Aniso_Dual_Graph.h"
 
-#include "gtest/gtest.h"
+
 
 TEST_F(Nine_squares_3x3_Dual_Graph, __compute_best_fc_to_add_9_Squares_isOrderPrimary_False) {
 

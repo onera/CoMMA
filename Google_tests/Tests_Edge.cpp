@@ -1,8 +1,10 @@
+#include "gtest/gtest.h"
+
 #include "../CoMMA_lib/Edge.h"
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Util.h"
 
-#include "gtest/gtest.h"
+
 
 TEST(Utils_TestSuite, PartsList_tmp) {
 

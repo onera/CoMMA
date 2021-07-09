@@ -1,3 +1,5 @@
+#include "gtest/gtest.h"
+
 #include "../CoMMA_lib/Agglomerator_Isotropic.h"
 #include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
@@ -10,7 +12,7 @@
 #include "Box_5x5x5_Aniso_Dual_Graph.h"
 #include "Box_5x5x5_Aniso_lvl_2_Dual_Graph.h"
 #include "Box_5x5x5_iso_and_Aniso_Dual_Graph.h"
-#include "gtest/gtest.h"
+
 
 
 TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {

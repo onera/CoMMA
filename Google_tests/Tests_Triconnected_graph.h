@@ -6,7 +6,7 @@
 #include "Triconnected_graph_MGridGen_biconnected.h"
 #include "Triconnected_graph_biconnected_hexahedra.h"
 #include "Triconnected_graph_OGDF_original_connectedGraph_13_16.h"
-#include "Triconnected_graph_Biconnected_n_13_m_16.h"
+#include "Triconnected_graph_biconnected_n_13_m_16.h"
 #include "Triconnected_graph_biconnected_OGDF_n_10_m_19.h"
 #include "Triconnected_graph_biconnected_OGDF_v2_n_10_m_19.h"
 #include "Triconnected_graph_biconnected_OGDF_v3_n_10_m_19.h"
