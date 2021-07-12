@@ -16,8 +16,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -55,8 +55,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -99,8 +99,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -141,8 +141,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -180,8 +180,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -219,8 +219,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -258,8 +258,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_tric_v2_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";
@@ -345,8 +345,8 @@ TEST_F(Box_5x5x5_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_0_t
 
     Agglomerator agg((*g), verbose, is_visu_data_stored, dimension, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "triconnected";

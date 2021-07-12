@@ -19,8 +19,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __compute_best_fc_to_add_9_Squares_isOrderPr
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -91,8 +91,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, __choose_optimal_cc_basic_9_Squares_isOrderP
 
     agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short compactness = 0;
@@ -133,8 +133,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -149,7 +149,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     d_neighbours_of_seed[6] = 2;
     d_neighbours_of_seed[7] = 3;
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -183,8 +183,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";
@@ -226,8 +226,8 @@ TEST_F(MGridGen_ext_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";
@@ -275,8 +275,8 @@ TEST_F(MGridGen_ext_Dual_Graph, __choose_optimal_cc_basic_v2_sub) {
 
     agg._set_agglomeration_parameter(is_anisotropic, kind_of_agglomerator, goal_card, min_card, max_card);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short compactness = 0;
@@ -313,8 +313,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 4;
@@ -329,7 +329,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
                                                                 {7, 3},
     };
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -363,8 +363,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";
@@ -406,8 +406,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -422,7 +422,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     d_neighbours_of_seed[6] = 2;
     d_neighbours_of_seed[7] = 3;
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -452,8 +452,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";
@@ -492,8 +492,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -508,7 +508,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     d_neighbours_of_seed[6] = 2;
     d_neighbours_of_seed[7] = 3;
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -538,8 +538,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_v2_pool_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";
@@ -599,8 +599,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -616,7 +616,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     d_neighbours_of_seed[7] = 3;
     d_neighbours_of_seed[8] = 4;
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -646,8 +646,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     agg.__min_neighbourhood = 4;
 
@@ -687,8 +687,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     long seed = 0;
     unsigned short goal_card = 8;
@@ -704,7 +704,7 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_9_Sq
     d_neighbours_of_seed[7] = 3;
     d_neighbours_of_seed[8] = 4;
 
-    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(cc_graph,
+    unordered_set<long> s_fc_for_current_cc = agg._choose_optimal_cc_and_update_seed_pool(*cc_graph,
                                                                                           seed,
                                                                                           d_neighbours_of_seed,
                                                                                           goal_card,
@@ -734,8 +734,8 @@ TEST_F(Nine_squares_3x3_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_9
 
     Agglomerator agg((*g), 0, 1, 2, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     agg.__min_neighbourhood = 4;
 
@@ -2098,8 +2098,8 @@ TEST_F(Box_5x5x5_Dual_Graph, _choose_optimal_cc_and_update_seed_pool_v2_seed_0_b
 
     Agglomerator agg((*g), verbose, is_visu_data_stored, dimension, true);
 
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph((*g));
-    agg.initialize_l_cc_graphs_for_tests_only(&cc_graph);
+    Coarse_Cell_Graph *cc_graph = new Coarse_Cell_Graph((*g));
+    agg.initialize_l_cc_graphs_for_tests_only(cc_graph);
 
     bool is_anisotropic = false;
     string kind_of_agglomerator = "basic";

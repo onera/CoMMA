@@ -558,10 +558,12 @@ void Coarse_Cell_Graph::cc_renumber() {
 
             new_i_cc = min_cc;
             for (long i_cc = min_cc + 1; i_cc < _cc_counter; i_cc++) {
-                if (_d_isotropic_cc.count(i_cc)) {
+                if (_d_isotropic_cc.count(i_cc) > 0) {
                     // deal with _d_isotropic_cc
                     assert(_s_cc_to_remove.count(i_cc) == 0);
                     dict_old_cc_to_new_cc[i_cc] = new_i_cc;
+
+                    delete _d_isotropic_cc[new_i_cc];
 
                     _d_isotropic_cc[new_i_cc] = _d_isotropic_cc[i_cc];
                     Coarse_Cell *new_cc = _d_isotropic_cc[new_i_cc];
