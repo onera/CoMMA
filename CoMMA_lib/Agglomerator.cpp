@@ -1723,7 +1723,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     //     else:
     //         // Little trick to keep the current behaviour of basic agglomerator
     //         d_neighbours_of_seed[i_fc] = 2
-    __fc_graphs.clean_d_neighbours_of_seed(s_fc_for_cc, d_neighbours_of_seed);
+    __fc_graphs.clean_d_neighbours_of_seed(s_fc_for_cc, d_neighbours_of_seed);@
 
     // print("__choose_optimal_cc_triconnected_2D:", s_fc_for_cc, " d_n_of_seed", d_neighbours_of_seed)
 //    compactness = compactness_of_cc;
@@ -1755,7 +1755,7 @@ unordered_set<long> Agglomerator::__compute_bic_components_from_s_connected_vert
 
     list<unordered_set<long>> l_biconnected_component;
     bool is_biconnected = BCC_NR((*tric_graph_l_connected), l_biconnected_component);
-
+    delete tric_graph_l_connected;
     unordered_set<long> s_biconnected_component_g;
 
     // We select the biconnected component containing seed or s_of_fc_for_current_cc if any
@@ -1771,7 +1771,6 @@ unordered_set<long> Agglomerator::__compute_bic_components_from_s_connected_vert
                 // We select the Biconnected Component containing the seed:
 //                s_biconnected_component_g = s_compo;
 //                break;
-                delete tric_graph_l_connected;
                 return s_compo;
             }
         } else {
@@ -1784,18 +1783,16 @@ unordered_set<long> Agglomerator::__compute_bic_components_from_s_connected_vert
                 }
             }
             if (is_ok && s_compo.count(seed)) {
-                delete tric_graph_l_connected;
                 return s_compo;
             } else {
                 // no biconnected component...
                 // We return an empty set.
-                delete tric_graph_l_connected;
                 return s_biconnected_component_g;
             }
         }
 
     }
-    delete tric_graph_l_connected;
+
     return s_biconnected_component_g;
 }
 
@@ -1815,6 +1812,7 @@ unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(
 
     list<unordered_set<long>> l_tric_components_local = {};
     (*tric_graph).computeTriconnectivity(l_tric_components_local);
+    delete tric_graph;
 
     // Global numbering
     list<unordered_set<long>> l_tric_component_global = {};
@@ -1854,7 +1852,7 @@ unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(
             }
         }
     }
-    delete tric_graph;
+
     return s_fc_for_cc;
 }
 
