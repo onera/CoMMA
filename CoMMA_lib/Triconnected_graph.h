@@ -75,6 +75,9 @@ public:
     Triconnected_graph(vector<long> row_ptr, vector<long> col_ind, vector<double> values, short verbose = 0);
 
     ~Triconnected_graph() {
+        for (auto comp : m_component) {
+            delete comp;
+        }
         for (auto e : edges) {
             delete e;
         }
