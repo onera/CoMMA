@@ -1723,7 +1723,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     //     else:
     //         // Little trick to keep the current behaviour of basic agglomerator
     //         d_neighbours_of_seed[i_fc] = 2
-    __fc_graphs.clean_d_neighbours_of_seed(s_fc_for_cc, d_neighbours_of_seed);@
+    __fc_graphs.clean_d_neighbours_of_seed(s_fc_for_cc, d_neighbours_of_seed);
 
     // print("__choose_optimal_cc_triconnected_2D:", s_fc_for_cc, " d_n_of_seed", d_neighbours_of_seed)
 //    compactness = compactness_of_cc;
