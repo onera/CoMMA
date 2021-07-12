@@ -331,6 +331,7 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
         }
         cout << "} " << i_origin_cc << " " << i_destination_cc << endl;
     }
+
     // print("cc_swap_fc ", s_fc, i_origin_cc, i_destination_cc)
     if (!is_isotropic_cc(i_origin_cc) or !(is_isotropic_cc(i_destination_cc))) {
         cerr << "Swap with non isotropic CC: {";
@@ -385,6 +386,7 @@ unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
     if ((*origin_cc).__card == 0) {
 
         // The cc indexed i_origin_cc disapears.
+        delete _d_isotropic_cc[i_origin_cc];
         set_removed_cc.insert(i_origin_cc);
         _d_isotropic_cc.erase(i_origin_cc);
 
