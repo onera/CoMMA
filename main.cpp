@@ -279,7 +279,7 @@ int main() {
                                     dimension,
                                     checks);
     forward_list<deque<long> *> anisotropic_lines = {};
-    agg.agglomerate_one_level(false, 0, anisotropic_lines);
+    agg.agglomerate_one_level(false, 0, anisotropic_lines, "triconnected");
     //ASSERT_EQ(4, agg.get_nb_cc());
     cout << "agg.get_nb_cc() " << agg.get_nb_cc() << endl;
 
