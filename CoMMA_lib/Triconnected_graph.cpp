@@ -1118,6 +1118,9 @@ void Triconnected_graph::__pathSearch(long iV) {
                         }
                         // TODO delete pointer on edge!
                         e_virt = new Edge(m_ORIGINAL[i_v_a], m_ORIGINAL[i_v_b]);
+
+                        virt_edges.push_back(e_virt);
+
                         (*C).finishTricOrPoly(e_virt);
                         if (verbose) {
                             print_verbose_creation_poly_or_triconnected(C);
@@ -1151,6 +1154,7 @@ void Triconnected_graph::__pathSearch(long iV) {
                             (*e_virt).print();
                         }
                         e_virt = new Edge(iV, i_x);
+                        virt_edges.push_back(e_virt);
                         (*C).add(e_virt);
                         if (verbose) {
                             (*e_virt).print();
@@ -1303,6 +1307,7 @@ void Triconnected_graph::__pathSearch(long iV) {
 
                 // print( "m_HIGHPT", m_HIGHPT
                 Edge *e_virt = new Edge(iV, m_ORIGINAL[m_low_pt_1[i_w]]);
+                virt_edges.push_back(e_virt);
                 (*C).finishTricOrPoly(e_virt);
                 if (verbose) {
                     print_verbose_creation_poly_or_triconnected(C);
@@ -1349,6 +1354,7 @@ void Triconnected_graph::__pathSearch(long iV) {
                         cout << endl;
                     }
                     e_virt = new Edge(iV, m_ORIGINAL[m_low_pt_1[i_w]]);
+                    virt_edges.push_back(e_virt);
                     if (verbose) {
                         (*e_virt).print();
                         cout << endl;
@@ -1470,6 +1476,7 @@ void Triconnected_graph::__pathSearch(long iV) {
                         (*e_virt).print();
                     }
                     e_virt = new Edge(m_ORIGINAL[m_low_pt_1[i_w]], iV);
+                    virt_edges.push_back(e_virt);
                     (*compBond).add(e_virt);
                     if (verbose) {
                         cout << " ";
@@ -1677,6 +1684,7 @@ Edge *Triconnected_graph::__pathSearch_sub_type_2_1(long iV, long i_w, long &i_x
         cout << "__pathSearch_sub_type_2_1: (" << iV << ", " << i_w << ") i_x " << i_x << endl;
     }
     Edge *e_virt = new Edge(iV, i_x);  // m_pGC->newEdge(v,i_x)
+    virt_edges.push_back(e_virt);
     m_degree[i_x] -= 1;
     m_degree[iV] -= 1;
 

@@ -38,6 +38,8 @@ public:
     vector<Edge *> edges;  // pointer on the edge to avoid copy...
     vector<list<Edge *>> adj_edges;  // pointer on the edge to avoid copy...
 
+    vector<Edge *> virt_edges;  // pointer on the edge to avoid copy...
+
 //    m_estack
     vector<int> m_number_dfs;      // NodeArray < int > ! < (first) dfs-number of v
     list<Edge *> m_estack;  // ArrayBuffer<edge> : stack of currently active  edges : size m
@@ -79,6 +81,9 @@ public:
             delete comp;
         }
         for (auto e : edges) {
+            delete e;
+        }
+        for (auto e : virt_edges) {
             delete e;
         }
     }
