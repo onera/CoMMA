@@ -28,6 +28,7 @@ public :
             clean_agglomeration_lines(__v_lines[0]);
             clean_agglomeration_lines(__v_lines[1]);
         }
+        delete __cc_graphs->_fc_graph.seeds_pool;
         delete __cc_graphs;
 
     };

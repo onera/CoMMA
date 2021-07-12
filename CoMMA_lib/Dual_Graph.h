@@ -49,6 +49,11 @@ public :
                int dim = 3
     );
 
+    ~Dual_Graph() {
+        cout << "Delete Dual_Graph" << endl;
+//        delete seeds_pool;
+    }
+
     // Attributes
     int number_of_cells;
     int _dimension;

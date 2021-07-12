@@ -415,7 +415,6 @@ list<long> Agglomerator::__create_list_of_seeds(const Coarse_Cell_Graph &cc_grap
     //===========================
     //   a) with dict_neighbours_of_seed or
     //   b) by computing the neighbourhood of the current CC.
-    Dual_Graph graph = cc_graph._fc_graph;
 
     list<long> l_of_new_seed;
     if (!dict_neighbours_of_seed.empty()) {
@@ -444,7 +443,7 @@ list<long> Agglomerator::__create_list_of_seeds(const Coarse_Cell_Graph &cc_grap
     } else {
         // else dict_neighbours_of_seed is empty: we used every neighbour!
         // if list_of_seeds is empty, we look for new seeds to add to the list_of_seeds.
-        if ((*graph.seeds_pool).is_empty()) {
+        if ((*cc_graph._fc_graph.seeds_pool).is_empty()) {
             // if list_of_seeds is empty
             // we look if there is some neighbour to the current fc:
             // s_fc_neighbours_of_cc = set()
@@ -454,7 +453,7 @@ list<long> Agglomerator::__create_list_of_seeds(const Coarse_Cell_Graph &cc_grap
 
             // We add to s_fc_neighbours_of_cc all the neighbours of FC included in s_fc_for_current_cc without seed
             for (auto &i_fc: tmp_set) {
-                vector<long> a_neighbours = graph.get_neighbours(i_fc);
+                vector<long> a_neighbours = cc_graph._fc_graph.get_neighbours(i_fc);
                 for (const long &i_fc_n: a_neighbours) {
                     if (cc_graph.is_fc_not_already_agglomerated(i_fc_n)) {
                         // _a_is_fc_agglomerated is up-to-date.
