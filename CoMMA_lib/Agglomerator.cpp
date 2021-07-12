@@ -1854,6 +1854,7 @@ unordered_set<long> Agglomerator::__compute_tric_components_from_s_bic_vertices(
             }
         }
     }
+    delete tric_graph;
     return s_fc_for_cc;
 }
 
