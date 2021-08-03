@@ -1,5 +1,5 @@
-#include "../CoMMA_lib/Agglomerator_Isotropic.h"
-#include "../CoMMA_lib/Agglomerator_anisotropic.h"
+//#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+//#include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Coarse_Cell.h"
 #include "gtest/gtest.h"
 #include "MGridGen_Dual_Graph.h"

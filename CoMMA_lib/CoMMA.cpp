@@ -150,23 +150,23 @@ void agglomerate_one_level(long *sizes,
                                     checks);
 
     bool is_anisotropic = is_anisotropic_long == 1;
-//    if (false) {
-//        store_agglomeration_datas(sizes,
-//                                  adjMatrix_row_ptr,
-//                                  adjMatrix_col_ind,
-//                                  adjMatrix_areaValues,
-//                                  volumes,
-//
-//                                  arrayOfFineAnisotropicCompliantCells,
-//
-//                                  isOnFineBnd_l,
-//                                  array_is_on_valley,
-//                                  array_is_on_ridge,
-//                                  array_is_on_corner,
-//                                  isFirstAgglomeration_long, is_anisotropic_long, fc_to_cc,
-//                                  agglomerationLines_Idx,
-//                                  agglomerationLines, dimension, goal_card, min_card, max_card, checks_long, verbose_long);
-//    }
+    if (true) {
+        store_agglomeration_datas(sizes,
+                                  adjMatrix_row_ptr,
+                                  adjMatrix_col_ind,
+                                  adjMatrix_areaValues,
+                                  volumes,
+
+                                  arrayOfFineAnisotropicCompliantCells,
+
+                                  isOnFineBnd_l,
+                                  array_is_on_valley,
+                                  array_is_on_ridge,
+                                  array_is_on_corner,
+                                  isFirstAgglomeration_long, is_anisotropic_long, fc_to_cc,
+                                  agglomerationLines_Idx,
+                                  agglomerationLines, dimension, goal_card, min_card, max_card, checks_long, verbose_long);
+    }
 
     assert(goal_card < USHRT_MAX);
     assert(min_card < USHRT_MAX);

@@ -1,7 +1,8 @@
-#include "../CoMMA_lib/Agglomerator_Isotropic.h"
-#include "../CoMMA_lib/Agglomerator_anisotropic.h"
+//#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+//#include "../CoMMA_lib/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Util.h"
 #include "gtest/gtest.h"
+#include "../CoMMA_lib/CoMMA.h"
 
 
 TEST(Utils_TestSuite, PartsList) {
@@ -426,32 +427,34 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
         long checks = 1;
         long verbose = 0;
 
+        long is_basic_or_triconnected = 0;
         // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
 
-        agglomerateOneLevel(sizes,
-                            adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+        agglomerate_one_level(sizes,
+                              adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
 
-                            arrayOfFineAnisotropicCompliantCells,
+                              arrayOfFineAnisotropicCompliantCells,
 
-                            isOnFineBnd_l,
-                            array_isOnValley,
-                            array_isOnRidge,
-                            array_isOnCorner,
+                              isOnFineBnd_l,
+                              array_isOnValley,
+                              array_isOnRidge,
+                              array_isOnCorner,
 
-                            isFirstAgglomeration_long[0],
-                            isAnisotropic_long[0],
+                              isFirstAgglomeration_long[0],
+                              isAnisotropic_long[0],
 
-                            fineCellIndicesToCoarseCellIndices,
+                              fineCellIndicesToCoarseCellIndices,
 
-                            agglomerationLines_Idx,
-                            agglomerationLines,
+                              agglomerationLines_Idx,
+                              agglomerationLines,
 
-                            dimension[0],
-                            goalCard[0],
-                            minCard[0],
-                            maxCard[0],
-                            checks,
-                            verbose);
+                              is_basic_or_triconnected,
+                              dimension[0],
+                              goalCard[0],
+                              minCard[0],
+                              maxCard[0],
+                              checks,
+                              verbose);
 
 //        cout << "\tsizes[0] " << sizes[0] << endl;
         cout << "\tsizes[1] " << sizes[1];
@@ -486,80 +489,6 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
         //        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
         //    }
     }
-}
-
-
-TEST(Utils_TestSuite, compute_Dicts_From_FineCellIndicesToCoarseCellIndices) {
-    //"""
-    //12 squares (4*3)
-    //"""
-
-    int nbCells = 12;
-
-    bool *isFineCellAgglomerated = new bool[nbCells];
-    for (int i = 0; i < nbCells; i++) {
-        isFineCellAgglomerated[i] = true;
-    }
-    long fineCellIndicesToCoarseCellIndices[12] = {0, 0, 1,
-                                                   0, 1, 1,
-                                                   1, 1, 1,
-                                                   2, 2, 1};
-
-    unordered_map<long, unordered_set<long>> dict_Coarse_Cells;
-    unordered_map<int, unordered_set<long>> dict_Card_Coarse_Cells;
-    unordered_map<int, long> dict_DistributionOfCardinalOfCoarseElements;
-
-    compute_Dicts_From_FineCellIndicesToCoarseCellIndices(nbCells, fineCellIndicesToCoarseCellIndices, dict_Coarse_Cells, dict_Card_Coarse_Cells, dict_DistributionOfCardinalOfCoarseElements);
-
-//
-//    self.assertEqual({0: [0, 1, 3], 1: [2, 4, 5, 6, 7, 8, 11], 2: [9, 10]}, dict_Coarse_Cells)
-//    self.assertEqual({3: set([0]), 2: {2}, 7: {1}}, dict_Card_Coarse_Cells)
-//    self.assertEqual({2: 1, 3: 1, 7: 1}, dict_DistributionOfCardinalOfCoarseElements)
-    unordered_map<long, unordered_set<long>> ref_dict_Coarse_Elem;
-    ref_dict_Coarse_Elem[0] = unordered_set<long>({0, 1, 3});
-    ref_dict_Coarse_Elem[1] = unordered_set<long>({2, 4, 5, 6, 7, 8, 11});
-    ref_dict_Coarse_Elem[2] = unordered_set<long>({9, 10});
-    ASSERT_EQ(ref_dict_Coarse_Elem, dict_Coarse_Cells);
-
-    unordered_map<int, unordered_set<long>> ref_dict_Card_Coarse_Cells;
-    ref_dict_Card_Coarse_Cells[2] = unordered_set<long>({2});
-    ref_dict_Card_Coarse_Cells[3] = unordered_set<long>({0});
-    ref_dict_Card_Coarse_Cells[7] = unordered_set<long>({1});
-    ASSERT_EQ(ref_dict_Card_Coarse_Cells, dict_Card_Coarse_Cells);
-
-    unordered_map<int, long> ref_dict_DistributionOfCardinalOfCoarseElements;
-    ref_dict_DistributionOfCardinalOfCoarseElements[2] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[3] = 1;
-    ref_dict_DistributionOfCardinalOfCoarseElements[7] = 1;
-    ASSERT_EQ(ref_dict_DistributionOfCardinalOfCoarseElements, dict_DistributionOfCardinalOfCoarseElements);
-
-//    assert(!dict_Coarse_Cells.empty());
-//    assert(dict_Coarse_Cells.size() == 3);
-//    assert(dict_Coarse_Cells[0].count(0) == 1);
-//    assert(dict_Coarse_Cells[0].count(1) == 1);
-//    assert(dict_Coarse_Cells[0].count(3) == 1);
-//
-//    assert(dict_Coarse_Cells[1].count(2) == 1);
-//    assert(dict_Coarse_Cells[1].count(4) == 1);
-//    assert(dict_Coarse_Cells[1].count(5) == 1);
-//    assert(dict_Coarse_Cells[1].count(6) == 1);
-//    assert(dict_Coarse_Cells[1].count(7) == 1);
-//    assert(dict_Coarse_Cells[1].count(8) == 1);
-//    assert(dict_Coarse_Cells[1].count(11) == 1);
-//
-//    assert(dict_Coarse_Cells[2].count(9) == 1);
-//    assert(dict_Coarse_Cells[2].count(10) == 1);
-
-//    assert(!dict_Card_Coarse_Cells.empty());
-//    assert(dict_Card_Coarse_Cells.size() == 3);
-//    assert(dict_Card_Coarse_Cells[3].count(0) == 1);
-//    assert(dict_Card_Coarse_Cells[2].count(2) == 1);
-//    assert(dict_Card_Coarse_Cells[7].count(1) == 1);
-
-//    assert(!dict_DistributionOfCardinalOfCoarseElements.empty());
-//    assert(dict_DistributionOfCardinalOfCoarseElements[2] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[3] == 1);
-//    assert(dict_DistributionOfCardinalOfCoarseElements[7] == 1);
 }
 
 TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_lines_arrays) {

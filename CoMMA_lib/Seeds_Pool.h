@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <cassert>
 #include <deque>
+#include <queue>
 #include <vector>
 #include <list>
 

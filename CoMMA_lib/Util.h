@@ -15,6 +15,9 @@
 #include <forward_list>
 #include <cmath>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <algorithm>
 
 
 using namespace std;
@@ -65,5 +68,74 @@ forward_list<deque<long> *> copy_agglomeration_lines(forward_list<deque<long> *>
 void clean_agglomeration_lines(forward_list<deque<long> *>);
 
 bool compare_maps_keys(const unordered_map<long, unsigned short> &m_1, const unordered_map<long, unsigned short> &m_2);
+
+list<unordered_set<long>> partsList(vector<long> seq, int length = 0);
+
+bool checkConnectivity_w_set(unordered_set<long> listFineCells, long *matrixAdj_CRS_row_ptr, long *matrixAdj_CRS_col_ind, int verbose = 0);
+
+int computeNumberOfCommonFaces(long iFine, long iCoarse,
+                               long *matrixAdj_CRS_row_ptr,
+                               long *matrixAdj_CRS_col_ind,
+                               long *fine_Cell_indices_To_Coarse_Cell_Indices);
+
+void store_agglomeration_datas(long *sizes,
+
+                               long *adjMatrix_row_ptr,
+                               long *adjMatrix_col_ind,
+                               double *adjMatrix_areaValues,
+                               double *volumes,
+
+                               long *arrayOfFineAnisotropicCompliantCells,
+
+                               long *isOnFineBnd_l,
+                               long *array_isOnValley,
+                               long *array_isOnRidge,
+                               long *array_isOnCorner,
+                               long isFirstAgglomeration_long,
+                               long isAnisotropic_long,
+
+                               long *fineCellToCoarseCell,
+
+                               long *agglomerationLines_Idx,
+                               long *agglomerationLines,
+
+                               long dimension,
+                               long goalCard,
+                               long minCard,
+                               long maxCard,
+                               long checks_long,
+                               long verbose_long);
+
+void read_agglomeration_datas_from_file(std::string filename,
+                                        long *sizes,
+                                        long *&adjMatrix_row_ptr,
+                                        long *&adjMatrix_col_ind,
+                                        double *&adjMatrix_areaValues,
+                                        double *&volumes,
+
+                                        long *&arrayOfFineAnisotropicCompliantCells,
+
+                                        long *&isOnFineBnd_l,
+                                        long *&array_isOnValley,
+                                        long *&array_isOnRidge,
+                                        long *&array_isOnCorner,
+                                        long *isFirstAgglomeration_long,
+                                        long *isAnisotropic_long,
+
+                                        long *&agglomerationLines_Idx,
+                                        long *&agglomerationLines,
+
+                                        long *dimension,
+                                        long *goalCard,
+                                        long *minCard,
+                                        long *maxCard
+);
+
+long read_long_array(std::fstream &stream, long *&array);
+
+long read_double_array(std::fstream &stream,
+                       double *&array);
+
+long read_long(std::fstream &stream);
 
 #endif //COMMA_PROJECT_UTIL_H

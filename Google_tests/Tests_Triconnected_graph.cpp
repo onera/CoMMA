@@ -20,7 +20,7 @@ void check_m_TREE_ARC(const Triconnected_graph &g, vector<Edge> v_ref) {
 void check_edges(const Triconnected_graph &g, vector<Edge> v_ref) {
     ASSERT_EQ(g.nb_of_edges, v_ref.size());
     for (int i = 0; i < g.nb_of_edges; i++) {
-//        cout << "i=" << i << "\t" << (*g.edges[i]).source << " " << (*g.edges[i]).target << " " << v_ref[i].source << " " << v_ref[i].target << endl;
+        cout << "i=" << i << "\t" << (*g.edges[i]).source << " " << (*g.edges[i]).target << " " << v_ref[i].source << " " << v_ref[i].target << endl;
         check_edge(g.edges[i], v_ref[i]);
     }
 }
