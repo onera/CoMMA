@@ -8,7 +8,8 @@ void check_edge(const Edge *e, const Edge ref) {
 
 }
 
-void check_m_TREE_ARC(const Triconnected_graph g, vector<Edge> v_ref) {
+void check_m_TREE_ARC(const Triconnected_graph &g, vector<Edge> v_ref) {
+
     ASSERT_EQ(g.nb_of_nodes, v_ref.size());
     for (int i = 1; i < g.nb_of_nodes; i++) {
 //        cout<<i<<"\t"<<(*g.m_TREE_ARC[i]).source<<", "<<(*g.m_TREE_ARC[i]).target<<endl;
@@ -16,15 +17,15 @@ void check_m_TREE_ARC(const Triconnected_graph g, vector<Edge> v_ref) {
     }
 }
 
-void check_edges(const Triconnected_graph g, vector<Edge> v_ref) {
+void check_edges(const Triconnected_graph &g, vector<Edge> v_ref) {
     ASSERT_EQ(g.nb_of_edges, v_ref.size());
     for (int i = 0; i < g.nb_of_edges; i++) {
-        cout << "i=" << i << "\t" << (*g.edges[i]).source << " " << (*g.edges[i]).target << " " << v_ref[i].source << " " << v_ref[i].target << endl;
+//        cout << "i=" << i << "\t" << (*g.edges[i]).source << " " << (*g.edges[i]).target << " " << v_ref[i].source << " " << v_ref[i].target << endl;
         check_edge(g.edges[i], v_ref[i]);
     }
 }
 
-void check_m_A(const Triconnected_graph g, vector<list<Edge>> v_ref) {
+void check_m_A(const Triconnected_graph &g, vector<list<Edge>> v_ref) {
     bool verbose = false;
     ASSERT_EQ(g.nb_of_nodes, v_ref.size());
     for (int i = 0; i < g.nb_of_nodes; i++) {
@@ -1358,9 +1359,9 @@ TEST_F(Triconnected_graph_box_5x5x5, computeTriconnectivity) {
                                                      g_to_l,
                                                      l_to_g);
 
-    tg_l = Triconnected_graph(row_ptr_l, col_ind_l, values_l);
+    Triconnected_graph tg_l_2 = Triconnected_graph(row_ptr_l, col_ind_l, values_l);
     list<unordered_set<long>> triconnected_components_l;
-    tg_l.computeTriconnectivity(triconnected_components_l);
+    tg_l_2.computeTriconnectivity(triconnected_components_l);
 
     list<unordered_set<long>> ref_triconnectedComponents_l = {unordered_set<long>({14, 16, 3, 11, 12, 4, 13, 0})};
     if (verbose) {
