@@ -476,12 +476,16 @@ void Coarse_Cell::add_fc(unordered_set<long> s_fc_to_add,
             assert(v_neighbours.size() == v_weights.size());
 
             (*this).volume += (*(*this).__fc_graph)._volumes[i_fc];
-
+            //TODO remove this!
+            unordered_set<long> s_tmp;
             for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
 
                 long i_fc_n = v_neighbours[i_n];
                 double i_w_fc_n = v_weights[i_n];
-
+                //TODO remove this!
+                if (s_tmp.count(i_fc_n) != 0) {
+                    continue;
+                }
                 if (((*this).__s_fc.count(i_fc_n) > 0)) {
                     // if i_fc_n in s_def:
                     // i_fc_n are fc already in current cc.
@@ -540,6 +544,8 @@ void Coarse_Cell::add_fc(unordered_set<long> s_fc_to_add,
                     (*this).__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, j_cc_n, i_fc_n,
                                                                            i_w_fc_n);
                 }
+                //TODO remove this!
+                s_tmp.insert(i_fc_n);
             }
         }
 
@@ -798,10 +804,16 @@ void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_
         assert(v_neighbours.size() == v_weights.size());
 
         (*this).volume -= (*(*this).__fc_graph)._volumes[i_fc];
+        //TODO remove this!
+        unordered_set<long> s_tmp;
         for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
 
             long i_fc_n = v_neighbours[i_n];
             double i_w_fc_n = v_weights[i_n];
+            //TODO remove this!
+            if (s_tmp.count(i_fc_n) != 0) {
+                continue;
+            }
 
             if ((*this).__s_fc.count(i_fc_n) > 0) {
                 /* i_fc_n are fc already in current cc.
@@ -850,6 +862,8 @@ void Coarse_Cell::remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_
                 __delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(i_fc, j_cc_n, i_fc_n);
                 (*this).__delete_and_propagate_deletion__tmp_fc_fine_cut_edges(i_fc, i_fc_n);
             }
+            //TODO remove this!
+            s_tmp.insert(i_fc_n);
         }
         __d_def.erase(i_fc);
         __s_fc.erase(i_fc);

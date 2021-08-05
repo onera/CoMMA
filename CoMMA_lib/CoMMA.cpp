@@ -150,7 +150,7 @@ void agglomerate_one_level(long *sizes,
                                     checks);
 
     bool is_anisotropic = is_anisotropic_long == 1;
-    if (true) {
+    if (false) {
         store_agglomeration_datas(sizes,
                                   adjMatrix_row_ptr,
                                   adjMatrix_col_ind,
