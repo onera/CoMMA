@@ -491,6 +491,163 @@ TEST(Utils_TestSuite, DISABLED_read_agglomeration_datas_from_file_and_agglomerat
     }
 }
 
+TEST(Utils_TestSuite, read_agglomeration_datas_from_file_and_agglomerate_RAE2822) {
+
+    // Datas from test_agglomerate.test_agglomerateOneLevel_disconnected(...)
+    //    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Outputs/Datas_Agglomeration_10_24.txt";
+    string input_folder = "/Users/lantos/CLionProjects/CoMMA/Google_tests/tests/0_Inputs/";
+//    string filename = "/Users/lantos/CLionProjects/CoMMA_lib/0_Inputs/Agglo_datas/Datas_Agglomeration_51410_295612.txt";
+    const int nb_domain = 64;
+//    std::string casename="RAE2822_multigrid_DG_22842_fcs.txt";  //lvl_0
+    std::string casename = "RAE2822_multigrid_DG_lvl_1_basic_6328_fcs.txt";  // lvl_1 basic
+
+//        std::cout << "\nDomain " << i << " " << a_filenames[i] << "\n";
+    string filename = input_folder + casename;
+    long sizes[10];
+    long *adjMatrix_row_ptr = NULL;
+    long *adjMatrix_col_ind = NULL;
+    double *adjMatrix_areaValues = NULL;
+    double *volumes = NULL;
+    long *arrayOfFineAnisotropicCompliantCells = NULL;
+    long *isOnFineBnd_l = NULL;
+    long *array_isOnValley = NULL;
+    long *array_isOnRidge = NULL;
+    long *array_isOnCorner = NULL;
+
+    long *isFirstAgglomeration_long = new long[1];
+    long *isAnisotropic_long = new long[1];
+    long *agglomerationLines_Idx = NULL;
+    long *agglomerationLines = NULL;
+
+    long *dimension = new long[1];
+    long *goalCard = new long[1];
+    long *minCard = new long[1];
+    long *maxCard = new long[1];
+
+    read_agglomeration_datas_from_file(filename,
+                                       sizes,
+                                       adjMatrix_row_ptr,
+                                       adjMatrix_col_ind,
+                                       adjMatrix_areaValues,
+                                       volumes,
+
+                                       arrayOfFineAnisotropicCompliantCells,
+
+                                       isOnFineBnd_l,
+                                       array_isOnValley,
+                                       array_isOnRidge,
+                                       array_isOnCorner,
+                                       isFirstAgglomeration_long,
+                                       isAnisotropic_long,
+                                       agglomerationLines_Idx,
+                                       agglomerationLines,
+                                       dimension, goalCard, minCard, maxCard
+    );
+
+    cout << "\tnb_fc: " << sizes[0] << endl;
+    cout << "\tnb_edges: " << sizes[1] << endl;
+    cout << "\tnb_cc: " << sizes[2] << endl;
+    cout << "\tnumberOfFineAgglomeratedCells " << sizes[3] << endl;
+    cout << "\tnb_fc_On_Valley " << sizes[4] << endl;
+    cout << "\tnb_fc_On_Ridge " << sizes[5] << endl;
+    cout << "\tnb_fc_On_Corner " << sizes[6] << endl;
+    cout << "\tnb anisotropic compliant fc " << sizes[7] << endl;
+    cout << "\tlen agglomeration_lines_index " << sizes[8] << endl;
+    cout << "\tlen agglomeration_lines " << sizes[9] << endl;
+
+
+    long numberOfFineCells = sizes[0];
+    long adjMatrix_row_ptr_size = numberOfFineCells + 1;
+    long adjMatrix_col_ind_size = sizes[1];
+    long adjMatrix_areaValues_size = sizes[1];
+
+    // Rmk: sizes[2] ==indCoarseCell
+    long numberOfFineAgglomeratedCells = sizes[3];
+    long isOnValley_size = sizes[4];
+    long isOnRidge_size = sizes[5];
+    long isOnCorner_size = sizes[6];
+    long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
+    long agglomerationLines_Idx_size = sizes[8];
+    long agglomerationLines_size = sizes[9];
+
+    bool isFineCellAgglomerated[numberOfFineCells];
+    for (int i = 0; i < numberOfFineCells; i++) {
+        isFineCellAgglomerated[i] = false;
+    }
+    long fineCellIndicesToCoarseCellIndices[numberOfFineCells];
+    for (int i = 0; i < numberOfFineCells; i++) {
+        fineCellIndicesToCoarseCellIndices[i] = -1;
+    }
+
+    long indCoarseCell = 0;
+
+    long checks = 1;
+    long verbose = 0;
+
+    long is_basic_or_triconnected = 0;
+    // initialization of arrayOfFineAnisotropicCompliantCells: prismatic and hexaedric cells
+
+    agglomerate_one_level(sizes,
+                          adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+
+                          arrayOfFineAnisotropicCompliantCells,
+
+                          isOnFineBnd_l,
+                          array_isOnValley,
+                          array_isOnRidge,
+                          array_isOnCorner,
+
+                          isFirstAgglomeration_long[0],
+                          isAnisotropic_long[0],
+
+                          fineCellIndicesToCoarseCellIndices,
+
+                          agglomerationLines_Idx,
+                          agglomerationLines,
+
+                          is_basic_or_triconnected,
+                          dimension[0],
+                          goalCard[0],
+                          minCard[0],
+                          maxCard[0],
+                          checks,
+                          verbose);
+
+    cout << "nb_fc: " << sizes[0] << endl;
+    cout << "nb_edges: " << sizes[1] << endl;
+    cout << "nb_cc: " << sizes[2] << endl;
+    cout << "numberOfFineAgglomeratedCells: " << sizes[3] << endl;
+    cout << "nb_fc_On_Valley " << sizes[4] << endl;
+    cout << "nb_fc_On_Ridge " << sizes[5] << endl;
+    cout << "nb_fc_On_Corner " << sizes[6] << endl;
+    cout << "nb anisotropic compliant fc " << sizes[7] << endl;
+    cout << "len agglomeration_lines_index " << sizes[8] << endl;
+    cout << "len agglomeration_lines " << sizes[9] << endl;
+
+    //    assert(sizes[0] == 64);
+    //    assert(sizes[1] == 344);
+    //    assert(sizes[2] == 8);//indCoarseCell
+    //    assert(sizes[3] == 64);//numberOfFineAgglomeratedCells
+    //    assert(sizes[4] == 24);//isOnValley_size
+    //    assert(sizes[5] == 24);//isOnRidge_size
+    //    assert(sizes[6] == 8);//isOnCorner_size
+    //    assert(sizes[7] == 64);//arrayOfFineAnisotropicCompliantCells_size
+    //    assert(sizes[8] == 64);//agglomerationLines_Idx_size
+    //    assert(sizes[9] == 64);//agglomerationLines_size
+
+//        cout << "\nfineCellIndicesToCoarseCellIndices: [";
+    for (auto i:fineCellIndicesToCoarseCellIndices) {
+        ASSERT_TRUE(i < sizes[2]);
+    }
+//        cout << "]" << endl;
+
+    //    for (int i = 0; i < 64; i++) {
+    //
+    //        assert(fineCellIndicesToCoarseCellIndices[i] == ref_fine_Cell_indices_To_Coarse_Cell_Indices[i]);
+    //    }
+
+}
+
 TEST(Utils_TestSuite, convert_fine_agglomeration_lines_tofine_agglomeration_lines_arrays) {
 
     const long nb_fc = 55;  // This number is arbitrary ! It should only be bigger than fine_agglomeration_lines_array_size;

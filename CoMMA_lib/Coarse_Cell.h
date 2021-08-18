@@ -17,7 +17,7 @@ public:
     );
 
     ~Coarse_Cell() {
-        cout << "Delete Coarse_Cell" << endl;
+//        cout << "Delete Coarse_Cell" << endl;
     };
 
     bool is_connected();

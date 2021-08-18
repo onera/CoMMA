@@ -64,14 +64,14 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
 
 Coarse_Cell_Graph::~Coarse_Cell_Graph() {
 
-    cout << "\nDelete CCG" << endl;
+//    cout << "\nDelete CCG" << endl;
     if (!_d_isotropic_cc.empty()) {
         for (auto i_kv:_d_isotropic_cc) {
-            cout << "i_fc " << i_kv.first << endl;
+//            cout << "i_fc " << i_kv.first << endl;
             delete i_kv.second;
         }
     }
-    cout << "End Delete CCG" << endl;
+//    cout << "End Delete CCG" << endl;
 }
 
 long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
