@@ -151,6 +151,7 @@ void agglomerate_one_level(long *sizes,
 
     bool is_anisotropic = is_anisotropic_long == 1;
     if (false) {
+        cout << "Storing"<< endl;
         store_agglomeration_datas(sizes,
                                   adjMatrix_row_ptr,
                                   adjMatrix_col_ind,
