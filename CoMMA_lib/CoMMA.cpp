@@ -125,7 +125,7 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
-    //It is built the dual graph structure.
+    //It is built the dual graph structure. To see it look at DualGraph.hpp and DualGraph.cpp
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
@@ -152,6 +152,7 @@ void agglomerate_one_level(long *sizes,
         kind_of_agglomerator = "triconnected";
     }
 
+    // Initialization of Agglomerator class from Agglomerator.hpp
     Agglomerator agg = Agglomerator(fc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
@@ -185,12 +186,14 @@ void agglomerate_one_level(long *sizes,
     // ANISOTROPIC LINES
     //======================================
     long nb_agglomeration_lines = 0;
+    // We use forward_list, more efficient in memory management than a list and deque that allows an easier 
+    // manipulation with respect to vectors
     forward_list<deque<long> *> agglomeration_lines;
 
     if (is_anisotropic && !isFirstAgglomeration_long) {
         long agglomerationLines_Idx_size = sizes[8];
         long agglomerationLines_size = sizes[9];
-
+        // Function from Util
         convert_agglomeration_lines_arrays_to_agglomeration_lines(agglomerationLines_Idx_size,
                                                                   agglomerationLines_size,
                                                                   agglomerationLines_Idx,
@@ -215,7 +218,51 @@ void agglomerate_one_level(long *sizes,
                               max_card_s
     );
 
-//
+    sizes[2] = agg.get_nb_cc();  //indCoarseCell
+    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+        fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
+    }
+
+    // get agglomeration lines:
+    //======================================
+    if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
+
+        int i_level = 1;
+        long Agg_lines_sizes[2] = {0, 0};
+
+        agg.get_agglo_lines(i_level,
+                            Agg_lines_sizes,
+                            agglomerationLines_Idx,
+                            agglomerationLines);
+
+        sizes[8] = Agg_lines_sizes[0];
+        sizes[9] = Agg_lines_sizes[1];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+////
 //    long numberOfFineAnisotropicCompliantCells = arrayOfFineAnisotropicCompliantCells_size;
 //
 //    // Keep track of agglomerated fine cell
@@ -349,29 +396,12 @@ void agglomerate_one_level(long *sizes,
 ////           agglomerationLines,  \
 ////           arrayOfCoarseAnisotropicCompliantCells
 //    delete[] isFineCellAgglomerated;
-    sizes[2] = agg.get_nb_cc();  //indCoarseCell
+
+
+
+
 //    sizes[3] = agg.;  //numberOfFineAgglomeratedCells
 ////    sizes[7] = arrayOfFineAnisotropicCompliantCells_size;
 ////    sizes[8] = arrayOfFineAnisotropicCompliantCells_size;
 ////    sizes[9] = arrayOfFineAnisotropicCompliantCells_size;
-    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-        fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
-    }
 
-    // get agglomeration lines:
-    //======================================
-    if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
-
-        int i_level = 1;
-        long Agg_lines_sizes[2] = {0, 0};
-
-        agg.get_agglo_lines(i_level,
-                            Agg_lines_sizes,
-                            agglomerationLines_Idx,
-                            agglomerationLines);
-
-        sizes[8] = Agg_lines_sizes[0];
-        sizes[9] = Agg_lines_sizes[1];
-    }
-//    delete agg;
-}
