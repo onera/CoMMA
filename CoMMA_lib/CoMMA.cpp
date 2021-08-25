@@ -61,12 +61,16 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
-
+    // number of faces
     long nb_fc = sizes[0];
+    // Length of the offset vector of the CSR representation. it should be long as the number of faces
+    //  augmented of 1
     long adj_matrix_row_ptr_size = nb_fc + 1;
+    // Length of the esges vector of the CSR representation, representing the adjacency
     long adj_matrix_col_ind_size = sizes[1];
+    // Length of the weigth of the CSR representation. In this kind of representation it is the same
     long adj_matrix_areas_size = sizes[1];
-
+    // Initialization vector v for the dual graph structure, it is an initialization in which we copy exactly the vector passed in input to the function.
     vector<long> v_row_ptr(adjMatrix_row_ptr, adjMatrix_row_ptr + adj_matrix_row_ptr_size);
     vector<long> v_col_ind(adjMatrix_col_ind, adjMatrix_col_ind + adj_matrix_col_ind_size);
     vector<double> v_values(adjMatrix_areaValues, adjMatrix_areaValues + adj_matrix_areas_size);
@@ -76,7 +80,8 @@ void agglomerate_one_level(long *sizes,
     // BOUNDARIES
     //======================================
 
-    //initialization of map d_is_on_bnd
+    //initialization of map d_is_on_bnd.
+    // We create the list of the faces on boundary
     unordered_map<long, int> d_is_on_bnd;
     for (int i = 0; i < nb_fc; i++) {
         if (isOnFineBnd_l[i] > 0) {
@@ -104,6 +109,9 @@ void agglomerate_one_level(long *sizes,
 
     // ANISOTROPIC COMPLIANT FC
     //======================================
+    // Elements that is checked if they are anisotropic. 
+    // e.g : in case of CODA software are passed all the children, and hence all the source elements of the 
+    // previous agglomeration process.
     long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
     unordered_set<long> s_anisotropic_compliant_fc;
     for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
@@ -117,6 +125,7 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
+    //It is built the dual graph structure.
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
