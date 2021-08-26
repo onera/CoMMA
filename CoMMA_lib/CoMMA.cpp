@@ -125,7 +125,7 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
-    //It is built the dual graph structure. To see it look at DualGraph.hpp and DualGraph.cpp
+    //It is built the dual graph class through the constructor. To see it look at DualGraph.hpp and DualGraph.cpp
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,

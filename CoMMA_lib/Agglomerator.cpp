@@ -12,11 +12,11 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
                            bool checks
 ) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph) {
 
-    if (((*this).__dimension != 2) && ((*this).__dimension != 3)) {
+    if ((__dimension != 2) && (__dimension != 3)) {
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
-        assert(((*this).__dimension == 2) || ((*this).__dimension == 3));
+        assert((__dimension == 2) || (__dimension == 3));
     }
-    if ((*this).__dimension == 2) {
+    if (__dimension == 2) {
         __min_neighbourhood = 2;
     } else {
         __min_neighbourhood = 3;
