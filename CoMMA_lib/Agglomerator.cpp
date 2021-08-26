@@ -4,14 +4,24 @@
 
 #include "Agglomerator.h"
 
-
+ //"""
+    // Main Class of the CoMMA library, containing the methods to operate the agglomeration
+    // process. It is constructed and the methods are prevalently called from the function agglomerate_one_level in
+    // CoMMA.cpp. The constructor require the following parameters:
+    //:param Dual_Graph: the struct Dual Graph 
+    //:param verbose: [boolean]
+    //:param is_visu_data_stored: parameter to store visualization data
+    //:param dimension: dimension of the problem
+    //:param checks: helper for the checks 
+    //"""
+// Constructor definition with list initialization
 Agglomerator::Agglomerator(Dual_Graph &graph,
                            unsigned short int verbose,
                            bool is_visu_data_stored,
                            int dimension,
                            bool checks
 ) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph) {
-
+// Definition of the dimensionality of the problem
     if ((__dimension != 2) && (__dimension != 3)) {
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
         assert((__dimension == 2) || (__dimension == 3));
@@ -21,30 +31,25 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
     } else {
         __min_neighbourhood = 3;
     }
-
-
 // for every defined level (1 by default), contains the number of cells
-// e.g. (*this).__l_nb_of_cells[0]= number of cells on finest level
-//      (*this).__l_nb_of_cells[1]= number of cells on the first coarse level
-    (*this).__l_nb_of_cells.push_back(graph.number_of_cells);
+// e.g. __l_nb_of_cells[0]= number of cells on finest level
+//      __l_nb_of_cells[1]= number of cells on the first coarse level
+    __l_nb_of_cells.push_back(graph.number_of_cells);
 
     __cc_graphs = NULL;
 
-    // Anisotropic agglomeration datas:
-    // For every level, we have a set containing the admissible cells for anisotropy cell number:
-    // For level 0, it is the cell number of prism or hexahedron ...
+// Anisotropic agglomeration datas:
+// For every level, we have a set containing the admissible cells for anisotropy cell number:
+// For level 0, it is the cell number of prism or hexahedron ...
     __v_of_s_anisotropic_compliant_fc = {};
     __v_nb_lines = {};
     __v_lines = {};
-
-    //=================
-    // Visualization:
-    //=================
-    (*this).__is_visu_data_stored = is_visu_data_stored;
+// Visualization:
+    __is_visu_data_stored = is_visu_data_stored;
 
 }
 
-
+// Set the agglomerator paras in the member variables
 void Agglomerator::_set_agglomeration_parameter(
         bool is_anisotropic,
         string kind_of_agglomerator,
@@ -71,29 +76,29 @@ void Agglomerator::_set_agglomeration_parameter(
     unordered_map<unsigned short int, unsigned short int> d_default_threshold_card = {{2, 2},
                                                                                       {3, 3}};
 
-    // Definition of (*this).__min_card
+    // Definition of __min_card
     if (min_card == -1) {
-        (*this).__min_card = d_default_min_card[(*this).__dimension];
+        __min_card = d_default_min_card[__dimension];
     } else {
-        (*this).__min_card = min_card;
+        __min_card = min_card;
     }
 
     // Definition of (*this).__max_card
     if (max_card == -1) {
-        (*this).__max_card = d_default_max_card[(*this).__dimension];
+        __max_card = d_default_max_card[__dimension];
     } else {
-        (*this).__max_card = max_card;
+        __max_card = max_card;
     }
 
     // Definition of (*this).__goal_card
     if (goal_card == -1) {
-        __goal_card = d_default_goal_card[(*this).__dimension];
+        __goal_card = d_default_goal_card[__dimension];
     } else {
         __goal_card = goal_card;
     }
 
     // Definition of (*this).__threshold_card
-    (*this).__threshold_card = d_default_threshold_card[(*this).__dimension];
+    __threshold_card = d_default_threshold_card[__dimension];
 }
 
 

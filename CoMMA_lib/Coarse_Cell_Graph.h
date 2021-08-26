@@ -8,7 +8,10 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
 
+//* Create a Coarse Cell Graph and contains the methods to do it takes as parameters the fc to cc
+
 class Coarse_Cell_Graph {
+
 public:
     Coarse_Cell_Graph(Dual_Graph &fc_graph,
                       int verbose = 0,
@@ -40,11 +43,6 @@ public:
         return _cc_counter;
     }
 
-public:
-    //Private
-
-public:
-    //TODO to categorize: public private etc...
     long cc_create_a_cc(const unordered_set<long> &s_fc,
                         bool is_anisotropic = false,
                         bool is_creation_delayed = false);
@@ -107,24 +105,10 @@ public:
     }
 
 
-    void __remove_an_isotropic_cc(const long &i_cc);
-
-    void _cc_update_neighbours(const long &i_fc,
-                               const unordered_set<long> &s_fc,
-                               const long &i_origin_cc,
-                               const long &i_dest_cc);
-
-    void __add_a_cc(const long &i_cc);
-
     void cc_renumber();
 
-    void _update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc);
 
     bool check_cc_consistency();
-
-    bool _check_consistency();
-
-    bool __check_s_cc_to_remove_are_isotropic();
 
     bool check_data_consistency_and_connectivity();
 
@@ -162,18 +146,55 @@ public:
 
     void correction_swap_leaf_fc_v2(int nb_iteration = 5, Coarse_Cell_Graph *ccg_l_m_one = NULL, int verbose = 1);
 
-    //protected:
+
+    // Dual Graph
+    // Coarse cells building
+    // Currently not mutualized with anisotropic agglomeration!!!!
+    //
+    Dual_Graph _fc_graph;
+    // TODO mutualized Anisotropic with isotropic.
+
+    unordered_map<long, Coarse_Cell *> _d_isotropic_cc;
+
+    // Temporary datas
+    vector<bool> _a_is_fc_agglomerated;
+
+    long _cc_counter = 0;  // Counter of cc (even the ones deleted)
+
+    // Output datas
+
+    vector<long> _fc_2_cc;
+//    = -1 * np.ones(((*this)._fc_graph.number_of_cells,), dtype = np.
+//    int)
+
+
+
+
+protected :
+
+    void __remove_an_isotropic_cc(const long &i_cc);
+
+    void _cc_update_neighbours(const long &i_fc,
+                               const unordered_set<long> &s_fc,
+                               const long &i_origin_cc,
+                               const long &i_dest_cc);
+
+    void __add_a_cc(const long &i_cc);
+
+
+
+    void _update_cc_neighbour(long min_cc, unordered_map<long, long> dict_old_cc_to_new_cc);
+
+    bool _check_consistency();
+
+    bool __check_s_cc_to_remove_are_isotropic();
+
     int _verbose;
 
-    Dual_Graph _fc_graph;
-
-    //==================
     // Temporary datas
-    //==================
     unordered_set<long> _s_cc_to_remove;
 
     long _nb_of_agglomerated_fc = 0;  // number of (already) agglomerated fine cells
-    vector<bool> _a_is_fc_agglomerated;
 
     vector<unordered_set<long>> _delayed_cc; // list of set of fc for too small cells. There are build at the end
     // because they will be the first to be deleted.
@@ -182,18 +203,9 @@ public:
     //    unordered_map<long, Coarse_Cell> dict_Coarse_Cells;
 
 
-    //==================
     // Coarse Graph:
-    //==================
 
-    // Coarse cells building
-    // Currently not mutualized with anisotropic agglomeration!!!!
 
-    long _cc_counter = 0;  // Counter of cc (even the ones deleted)
-
-    // TODO mutualized Anisotropic with isotropic.
-
-    unordered_map<long, Coarse_Cell *> _d_isotropic_cc;
     // Contains the CC index: list of FC, that can be modified (not anisotropic CC, and not "boundary" CC!
 
     unordered_map<long, unordered_set<long>> _d_anisotropic_cc; // Dict of indices of anisotropic CC
@@ -204,14 +216,6 @@ public:
 
     unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; // Contains for every degree of compactness the list of
     // CC of this type i.e. {deg_Of_compactness: set of CC of compactness deg_Of_compactness}
-
-    //==================
-    // Output datas
-    //==================
-    vector<long> _fc_2_cc;
-//    = -1 * np.ones(((*this)._fc_graph.number_of_cells,), dtype = np.
-//    int)
-
 
 
 };
