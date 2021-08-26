@@ -20,7 +20,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
                            bool is_visu_data_stored,
                            int dimension,
                            bool checks
-) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph) {
+) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph), __cc_graphs(new Coarse_Cell_Graph(graph)) {
 // Definition of the dimensionality of the problem
     if ((__dimension != 2) && (__dimension != 3)) {
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
@@ -36,7 +36,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 //      __l_nb_of_cells[1]= number of cells on the first coarse level
     __l_nb_of_cells.push_back(graph.number_of_cells);
 
-    __cc_graphs = NULL;
+//    __cc_graphs = NULL;
 
 // Anisotropic agglomeration datas:
 // For every level, we have a set containing the admissible cells for anisotropy cell number:
@@ -116,14 +116,6 @@ void Agglomerator::__agglomerate_one_level(
     }
     Coarse_Cell_Graph *ccg;
     if (debug_only_fc_to_cc.empty()) {
-
-        // General case
-        // Creation of the CCG
-        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs);
-
-
-        // TODO On pourrait ne l'allouer qu'une seule fois!
-
         // Is the agglomeration anisotropic?
         if (__is_anisotropic) {
             _agglomerate_one_level_anisotropic_part();
@@ -131,7 +123,6 @@ void Agglomerator::__agglomerate_one_level(
 
         _agglomerate_one_level_isotropic_part(debug_only_steps);
     } else {
-
         // For debug purpose:
         __cc_graphs = new Coarse_Cell_Graph(__fc_graphs, __verbose, debug_only_fc_to_cc);
         (*__cc_graphs).fill_cc_neighbouring();

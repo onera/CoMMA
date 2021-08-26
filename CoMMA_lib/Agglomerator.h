@@ -187,7 +187,7 @@ protected:
     Dual_Graph __fc_graphs;
 
     // TODO rename __cc_graphs to __cc_graph
-    Coarse_Cell_Graph *__cc_graphs;
+    Coarse_Cell_Graph *__cc_graphs; 
 
     //======================
     // anisotopic specifics:
