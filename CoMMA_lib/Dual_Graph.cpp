@@ -249,7 +249,7 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
         // TODO Think of a more pertinent seed???
         long i_loc_seed = 0;
 
-        long i_seed = index_l_to_g[i_loc_seed];
+        long i_seed = index_l_to_g[i_loc_seed]; //iterator ease the iteration on the multimap
 
         int lines_size = 0;
         forward_list<deque<long> *> lines;
@@ -259,44 +259,39 @@ bool Dual_Graph::compute_anisotropic_line(long *sizes,
         bool searchOppositeDirection = false;
         long cellAtTheLimitIsoAniso;
         long previousCurrentCell;
-
+      //  deque<long>::iterator iter;
         // We try every possible cell as seed:
         while (i_loc_seed < nb_anisotropic_fc) {
 
             i_current_fc = i_seed;
             deque<long> *dQue;
             dQue = new deque<long>();
-            (*dQue).push_back(i_seed);
-            deque<long>::iterator iter;
+            (*dQue).push_back(i_seed); 
 
             // Line contains the global numbering of cells
+            // Initialization of the parameters for the cycle
             searchOppositeDirection = false;
-
             is_anisotropic_local[i_loc_seed] = false;
             cellAtTheLimitIsoAniso = -1;
 
             while (i_current_fc != -1) {
-                // Ca c'est pour verifier si on part ou non d'une extremite d'une ligne.
-                // voir if i_current_fc == previousCurrentCell:
+                // To verify if we start from one extremity or not of the line
+                // see if i_current_fc == previousCurrentCell:
                 previousCurrentCell = i_current_fc;
-//                cout<<"CurrentCell "<<i_current_fc <<endl;
                 ind = this->_m_CRS_Row_Ptr[i_current_fc];
                 ind_p_one = this->_m_CRS_Row_Ptr[i_current_fc + 1];
 
                 // Process neighbours of current cell
                 for (long iN = ind; iN < ind_p_one; ++iN) {
                     i_neighbour_fc = this->_m_CRS_Col_Ind[iN];
-//                    cout<<"i_current_fc "<< i_current_fc<< " i_neighbour_fc "<<i_neighbour_fc<<endl;
                     if (i_neighbour_fc != i_current_fc) {
                         // Reminder: if i_neighbour_fc == i_current_fc, we are at the boundary of the domain
                         if (this->_m_CRS_Values[iN] > 0.75 * maxArray[i_current_fc]) {
                             // Search faces with biggest areas
-//                            cout<<"(adjMatrix_areaValues[iN] > 0.75 * maxArray[i_current_fc])"<<endl;
                             if (dictGlobalToLocal.count(i_neighbour_fc) == 1 and
                                 is_anisotropic_local[dictGlobalToLocal[i_neighbour_fc]]) {
 
                                 // We find an anisotropic neighbour
-
                                 // On veut que la ligne soit definie de maniere contigue:
                                 // c'est a  dire qu'on parte d'un bout vers l'autre et
                                 // pas du milieu, jusqu'a un bout et puis on repart dans l'autre sens.
@@ -538,16 +533,16 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
     //TODO rename this to remove v2...
     /**
      * The goal of this function is :
-     * - firstly to look for anisotropic cells
+     * - firstly to look for anisotropic cells through the use of d_anisotropic_fc
      * - secondly build anisotropic lines
      * Rmk: costly function: sort of a dictionary!
      */
 
     bool verbose = false;
 
-    long nb_fc = this->number_of_cells;
+    long nb_fc = number_of_cells; // Number of cells is a member variable //TODO change the name
 
-    vector<double> maxArray = vector<double>(nb_fc, 0.0);
+    vector<double> maxArray(nb_fc, 0.0);
 
     unordered_map<long, double> d_anisotropic_fc = __compute_d_anisotropic_fc(maxArray);
 
@@ -567,7 +562,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
         multimap<double, long>::reverse_iterator rIt;
 
         long nb_anisotropic_fc = d_anisotropic_fc.size();
-        vector<long> index_l_to_g = vector<long>(nb_anisotropic_fc);
+        vector<long> index_l_to_g(nb_anisotropic_fc);
         unordered_map<long, long> d_g_to_l;
 
         // Initialisation of index_l_to_g

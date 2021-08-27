@@ -120,7 +120,6 @@ void Agglomerator::__agglomerate_one_level(
         if (__is_anisotropic) {
             _agglomerate_one_level_anisotropic_part();
         }
-
         _agglomerate_one_level_isotropic_part(debug_only_steps);
     } else {
         // For debug purpose:
