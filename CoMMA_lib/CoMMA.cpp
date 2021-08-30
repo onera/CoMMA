@@ -160,6 +160,10 @@ void agglomerate_one_level(long *sizes,
                                     checks);
 
     bool is_anisotropic = is_anisotropic_long == 1;
+    // To be changed if we want the visu data stored. The routine to do it is
+    // in Util. 
+    // In the PostProcessing folder it is possible to find the python tool to
+    // parse and to draw the graph from the data saved
     if (false) {
         cout << "Storing"<< endl;
         store_agglomeration_datas(sizes,

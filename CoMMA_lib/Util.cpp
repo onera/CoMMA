@@ -339,7 +339,7 @@ void store_agglomeration_datas(long *sizes,
     bool isFirstAgglomeration = isFirstAgglomeration_long == 1;
     bool isAnisotropic = isAnisotropic_long == 1;
     //string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_";
-    string filename = "/stck/nlantos/0_CODA/Tests/Agglo_datas/Datas_Agglomeration_";
+    string filename = "/stck/aremigi/aggl_data/";
     ofstream myfile;
     myfile.open(filename + to_string(numberOfFineCells) + "_" + to_string(adjMatrix_col_ind_size) + ".txt");
 
