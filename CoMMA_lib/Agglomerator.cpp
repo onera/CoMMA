@@ -847,10 +847,14 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
 //                   agglo_lines_l_array_idx, agglo_lines_l_array;
 }
 
+
+// Helper
 bool Agglomerator::is_agglomeration_anisotropic() {
     return __cc_graphs->is_agglomeration_anisotropic();
 }
 
+
+// Function to retrive the Agglomeration lines
 void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                    long *sizes,
                                    long *agglo_lines_array_idx,
@@ -865,6 +869,10 @@ void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                                       agglo_lines_array_idx,
                                                       agglo_lines_array);
 }
+
+
+// Function to agglomerate the anisotropic cells
+
 
 void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
     /**
@@ -881,13 +889,14 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
     for (fLIt = __v_lines[1].begin(); fLIt != __v_lines[1].end(); fLIt++) {
     // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
     // level 0.
-    // We create a pointer to an empty deque 
+    // We create a pointer to an empty deque for the line + 1, and hence for the next level of agglomeration 
         deque<long> *line_lvl_p_one = new deque<long>();
         // We check the line size for the pointed line by the iterator
         long line_size = (**fLIt).size();
         if (line_size <= 1) {
             // the agglomeration_line is empty and hence the iterator points again to the
-            // empty deque (each time we iterate on the line, a new deque line_lvl_p_one is defined)
+            // empty deque, updating what is pointed by it and hence __v_lines[1]
+            // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
             *fLIt = line_lvl_p_one;
             // we pass to the next line
             continue;
@@ -896,17 +905,19 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
         long i_count = 0;
         bool is_anisotropic = true;
         long i_cc;
+        // we agglomerate cells along the agglomeration line, hence we have to
+        // go through the faces and agglomerate two faces together, getting to cardinal 2
         while (i_count + 2 <= line_size) {
             const long i_fc = (**fLIt)[i_count];
             const long i_fc_p_one = (**fLIt)[i_count + 1];
 
             unordered_set<long> s_fc = {i_fc, i_fc_p_one};
+            // We create the course cell
             i_cc = (*__cc_graphs).cc_create_a_cc(s_fc, is_anisotropic);
             line_lvl_p_one->push_back(i_cc);
             // Checks that the agglomerated fc is indeed an anisotropic fc".
             assert(__v_of_s_anisotropic_compliant_fc[0].count(i_fc));
             assert(__v_of_s_anisotropic_compliant_fc[0].count(i_fc_p_one));
-
             // the new cc is anisotropic compliant:
             __v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
             i_count += 2;
@@ -930,11 +941,12 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
             //         isOnBoundary = True
             // assert not isOnBoundary, "The left alone anisotropic cell to agglomerate is on boundary"
             // // End Check
+
             // We add this fc to the last coarse element (thus of cardinal 3)
             (*__cc_graphs).cc_update_cc({(**fLIt)[i_count]}, i_cc);
         }
-//        self.__lines[i_line] = line_lvl_p_one
         delete *fLIt;
+        // We update __v_lines[1]
         *fLIt = line_lvl_p_one;
     }
 }

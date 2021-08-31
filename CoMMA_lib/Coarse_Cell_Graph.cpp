@@ -74,6 +74,9 @@ Coarse_Cell_Graph::~Coarse_Cell_Graph() {
 //    cout << "End Delete CCG" << endl;
 }
 
+
+// Create a course cell from the fine cells and update the fc_2_cc tree.
+
 long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
