@@ -540,8 +540,9 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
 
     bool verbose = false;
 
-    long nb_fc = number_of_cells; // Number of cells is a member variable //TODO change the name
-
+    long nb_fc = number_of_cells; // Number of cells is a member variable initialized through nb_c in the 
+    // constructor 
+    //TODO change the name
     vector<double> maxArray(nb_fc, 0.0);
 
     unordered_map<long, double> d_anisotropic_fc = __compute_d_anisotropic_fc(maxArray);

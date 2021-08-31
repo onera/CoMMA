@@ -196,7 +196,13 @@ protected:
 
     // Anisotropic agglomeration lines:
     vector<unsigned long> __v_nb_lines;
-    vector<forward_list<deque<long> *>> __v_lines;  // We store the current agglomeration_lines and the coarse one for visualization purpose.
+    // __v_lines : Agglomeration lines structure:
+    // vector : level
+    // forward list : identifier of the line
+    // deque : line cells
+    // e.g __v_lines[0] --> agglomeration lines at the finest level
+    vector<forward_list<deque<long> *>> __v_lines;  
+    // We store the current agglomeration_lines and the coarse one for visualization purpose.
 
     //=================
     // Visualization:

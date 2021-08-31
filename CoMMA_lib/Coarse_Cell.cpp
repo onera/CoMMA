@@ -245,6 +245,7 @@ void Coarse_Cell::fill_cc_neighbouring(vector<long> &fc_2_cc) {
 
 }
 
+// Method to add to the map
 void Coarse_Cell::__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area) {
 //    if(j_cc not in (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]){
 //        (*this).__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc] = dict()

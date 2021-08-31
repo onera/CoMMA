@@ -879,18 +879,21 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
     // Process of every agglomeration lines:
     forward_list<deque<long> *>::iterator fLIt;
     for (fLIt = __v_lines[1].begin(); fLIt != __v_lines[1].end(); fLIt++) {
-
+    // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
+    // level 0.
+    // We create a pointer to an empty deque 
         deque<long> *line_lvl_p_one = new deque<long>();
+        // We check the line size for the pointed line by the iterator
         long line_size = (**fLIt).size();
         if (line_size <= 1) {
-
-            // the agglomeration_line is empty.
+            // the agglomeration_line is empty and hence the iterator points again to the
+            // empty deque (each time we iterate on the line, a new deque line_lvl_p_one is defined)
             *fLIt = line_lvl_p_one;
+            // we pass to the next line
             continue;
         }
 
         long i_count = 0;
-//        cout<<"Agglo_Line seed "<<(**fLIt)[i_count]<<endl;
         bool is_anisotropic = true;
         long i_cc;
         while (i_count + 2 <= line_size) {
@@ -979,7 +982,8 @@ void Agglomerator::_agglomerate_one_level_anisotropic_part() {
  * Agglomerate one level of mesh for boundary layer region/ anisotropic part of the mesh.
  *       Uses the self.__lines.
  */
-
+// if the finest agglomeration line is not computed, hence compute it (REMEMBER! We compute the agglomeration lines 
+// only on the finest level, the other one are stored only for visualization purpose
     if (__v_lines[0].empty()) {
 
         // The anisotropic lines are only computed on the original (finest) mesh.
