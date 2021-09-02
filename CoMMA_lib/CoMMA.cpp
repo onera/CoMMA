@@ -227,6 +227,27 @@ void agglomerate_one_level(long *sizes,
         fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
     }
 
+    // check if there are single parents
+    // =============================================
+    // Parents counter
+    int counter = 0;
+    // Flag to understand if there are double elements in fc_to_cc
+    int flag = 0;
+    // We loop over faces of the children
+    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+        flag=0;
+        for (long j_fc = 0; j_fc < nb_fc; j_fc++) {
+             // If we have a double the flag = 1
+             if (fc_to_cc[i_fc]==fc_to_cc[j_fc] && i_fc!=j_fc) {
+                flag = 1;}
+        }
+        // If flag is still 0 we can print value of parent and child
+        if (flag == 0){
+           counter++;
+           cout << "parent = " << i_fc << "child =" << fc_to_cc[i_fc]  << endl;
+        }	
+    }
+    cout << "m. single parents = " << counter << endl;
     // get agglomeration lines:
     //======================================
     if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
@@ -243,169 +264,3 @@ void agglomerate_one_level(long *sizes,
         sizes[9] = Agg_lines_sizes[1];
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-////
-//    long numberOfFineAnisotropicCompliantCells = arrayOfFineAnisotropicCompliantCells_size;
-//
-//    // Keep track of agglomerated fine cell
-//    long indCoarseCell = 0;
-//    // Rmk: sizes[2] ==indCoarseCell
-//
-//    long numberOfFineAgglomeratedCells = sizes[3];  //out
-//    numberOfFineAgglomeratedCells = 0;  // number of fine (already) agglomerated cells
-//
-//    bool *isFineCellAgglomerated = new bool[nb_fc];
-//    for (long i = 0; i < nb_fc; i++) {
-//        isFineCellAgglomerated[i] = false;
-//    }
-//// TODO On pourrait ne l'allouer qu'une seule fois!
-//    // fineAgglomerationLines = None
-//    // fineAgglomerationLines_for_visu = None
-//
-//    //fineAgglomerationLines_array_Idx = None
-//    //fineAgglomerationLines_array = None
-//
-//    long *fineAgglomerationLines_for_visu_array_Idx = NULL;
-//    long *fineAgglomerationLines_for_visu_array = NULL;
-//
-////    long* arrayOfCoarseAnisotropicCompliantCells = NULL;
-////    long numberOfAnisotropicLinesPOne_size = 0;
-////    long agglomerationLines_size = 0;
-////    bool isAnisotropicLines = false;
-//    bool isAnisotropicLines = is_anisotropic && !isFirstAgglomeration;
-//    if (is_anisotropic) {
-//        if (isFirstAgglomeration) {
-////            numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
-//            agglomerationLines_size = agglomerationLines_size;
-//            isAnisotropicLines = computeAnisotropicLine(sizes,
-//                                                        adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-//                                                        arrayOfFineAnisotropicCompliantCells,
-//                                                        agglomerationLines_Idx,
-//                                                        agglomerationLines,
-//                                                        verbose_long > 0);
-//
-////            numberOfAnisotropicLinesPOne_size = sizes[3];  // number of agglomeration lines +1
-////            agglomerationLines_size = sizes[4];
-////            numberOfAnisotropicLinesPOne_size = sizes[8];
-//            agglomerationLines_size = sizes[9];
-////            cout << "numberOfAnisotropicLinesPOne_size " << numberOfAnisotropicLinesPOne_size << endl;
-////            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
-////          Pas de resize, c'est pas possible avec un tableau
-////            agglomerationLines_Idx.resize((numberOfAnisotropicLinesPOne_size,), refcheck = False)
-////            agglomerationLines.resize((agglomerationLines_size,), refcheck = False)
-//
-//            // For Visu only:
-////            fineAgglomerationLines_for_visu_array_Idx = np.copy(agglomerationLines_Idx);
-////            fineAgglomerationLines_for_visu_array = np.copy(agglomerationLines);
-//        }
-//        if (isAnisotropicLines) {
-//
-////            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
-////            long arrayOfCoarseAnisotropicCompliantCells_size = agglomerationLines_size; //np.shape(arrayOfFineAnisotropicCompliantCells)[0]
-////            arrayOfCoarseAnisotropicCompliantCells = np.zeros((arrayOfCoarseAnisotropicCompliantCells_size,), dtype = int)
-//            agglomerationLines_Idx_size = sizes[8];
-////            cout << "sizes[0]= " << sizes[0] << endl;
-////            cout << "sizes[1]= " << sizes[1] << endl;
-////            cout << "sizes[2]= " << sizes[2] << endl;
-////            cout << "sizes[3]= " << sizes[3] << endl;
-////            cout << "sizes[4]= " << sizes[4] << endl;
-////            cout << "sizes[5]= " << sizes[5] << endl;
-////            cout << "sizes[6]= " << sizes[6] << endl;
-////            cout << "sizes[7]= " << sizes[7] << endl;
-////            cout << "sizes[8]= " << sizes[8] << endl;
-////            cout << "sizes[9]= " << sizes[9] << endl;
-//
-//            long sizes_aniso[5] = {agglomerationLines_Idx_size, nb_fc, numberOfFineAgglomeratedCells, indCoarseCell, -1};
-//
-//            agglomerate_Anisotropic_One_Level_without_list_lines(sizes_aniso,
-//                                                                 agglomerationLines_Idx,
-//                                                                 agglomerationLines,
-//                                                                 fc_to_cc, isFineCellAgglomerated, arrayOfFineAnisotropicCompliantCells);//arrayOfCoarseAnisotropicCompliantCells);
-//
-////            agglomerationLines_Idx_size = sizes_aniso[0];
-////            nb_fc = sizes_aniso[1];
-////            numberOfFineAgglomeratedCells = sizes_aniso[2];
-////            indCoarseCell = sizes_aniso[3];
-////            long arrayOfCoarseAnisotropicCompliantCells_size = sizes_aniso[4];
-////            long nb_fc = sizes[0];
-////            long adj_matrix_row_ptr_size = nb_fc + 1;
-////            long adj_matrix_col_ind_size = sizes[1];
-////            long adj_matrix_areas_size = sizes[1];
-////
-////            // Rmk: sizes[2] ==indCoarseCell
-////            long numberOfFineAgglomeratedCells = sizes[3];
-////            long is_on_valley_size = sizes[4];
-////            long is_on_ridge_size = sizes[5];
-////            long is_on_corner_size = sizes[6];
-////            long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
-////            long agglomerationLines_Idx_size = sizes[8];
-////            long agglomerationLines_size = sizes[9];
-//            sizes[2] = sizes_aniso[3];
-//            sizes[3] = sizes_aniso[2];
-//            sizes[7] = sizes_aniso[4];
-//            sizes[8] = sizes_aniso[0];
-////            sizes[9] = sizes[8] - 1;
-//            sizes[9] = agglomerationLines_Idx[sizes[8] - 1];
-//
-////            if (agglomerationLines_Idx_size>0){
-////
-////            agglomerationLines_Idx.resize((agglomerationLines_Idx_size,), refcheck = False)
-////            agglomerationLines.resize((agglomerationLines_Idx[agglomerationLines_Idx_size - 1],), refcheck = False)
-//
-////            if
-////                arrayOfCoarseAnisotropicCompliantCells
-////                        is
-////                not None:
-////            arrayOfCoarseAnisotropicCompliantCells.resize((arrayOfCoarseAnisotropicCompliantCells_size,), refcheck = False)
-//        }
-//    }
-//
-//    // Rmk: sizes[2] ==indCoarseCell
-////    long numberOfFineAgglomeratedCells = sizes[3];
-////    long is_on_valley_size = sizes[4];
-////    long is_on_ridge_size = sizes[5];
-////    long is_on_corner_size = sizes[6];
-////    long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
-////    long agglomerationLines_Idx_size = s    izes[8];
-////    long agglomerationLines_size = sizes[9];
-//
-////    sizes[2] = sizes_iso[2];  //indCoarseCell
-////    sizes[3] = sizes_iso[3];  //numberOfFineAgglomeratedCells
-////    sizes[7] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[8] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[9] = arrayOfFineAnisotropicCompliantCells_size;
-////    return indCoarseCell, fineAgglomerationLines_for_visu_array_Idx, fineAgglomerationLines_for_visu_array, agglomerationLines_Idx, \
-////           agglomerationLines,  \
-////           arrayOfCoarseAnisotropicCompliantCells
-//    delete[] isFineCellAgglomerated;
-
-
-
-
-//    sizes[3] = agg.;  //numberOfFineAgglomeratedCells
-////    sizes[7] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[8] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[9] = arrayOfFineAnisotropicCompliantCells_size;
-

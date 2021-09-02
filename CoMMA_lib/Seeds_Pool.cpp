@@ -99,7 +99,7 @@ long Seeds_Pool::choose_new_seed(const vector<bool> a_is_fc_agglomerated) {
 //
 //We choose preferably the corners, then the ridges, then the valley, and finally interior cells:
 // see NIA (Mavriplis uses Wall and farfield only)
-
+// Exactly the inverse of the order of the list. For this reason we proceed with l--
     long seed = -1;
     for (int i_l = 3; i_l > -1; i_l--) {
         if (!(this->l_deque_of_seeds[i_l]).empty()) {

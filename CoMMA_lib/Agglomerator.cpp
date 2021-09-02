@@ -639,6 +639,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 
 // dict_neighbours_of_seed is empty, i.e: the cc is not complete
 // and no neighbour are available!
+//        cout << "\n\nException" << endl;
         compactness = 0;
         return s_fc_for_current_cc;
     }
@@ -647,6 +648,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 // A neighbourhood is found but it is too small!
     if (dict_neighbours_of_seed.size() + s_fc_for_current_cc.size() < __goal_card) {
 
+        cout << "\n\nToo coarse" << endl;
         // Not enough available neighbours: creation of a (too small) coarse cell.
 
         // s_fc_for_current_cc.update(d_n_of_seed)
@@ -676,6 +678,8 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
     }
 
     if (__dimension == 2) {
+
+//        cout << "\n\nEnter" << endl;
 //        s_fc_for_current_cc, compactness, d_n_of_seed = self.__choose_optimal_cc_triconnected_2D(graph,
 //                                                                                                 cc_graph,
 //                                                                                                 seed,
@@ -1551,7 +1555,9 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
         s_of_fc.insert(i_k_v.first);  //s_of_fc: Set[int] = set(l_of_fc)
 
     }
+    // Set of fine cells for course cell (we start with the seed)
     unordered_set<long> s_of_fc_for_current_cc = {seed};
+    // We define the parameters.
     short i_neighbourhood_min;
     if (min_neighbourhood == -1) {
 
@@ -1566,7 +1572,8 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     short i_neighbourhood_max = __max_neighbourhood;
 
     short i_neighbour = i_neighbourhood_min;  // Initial size
-
+    
+    // We compute the degree : number of the neighborhoods in the subset, hence number of connections
     short deg_seed = __fc_graphs.compute_degree_of_node_in_subgraph(seed, s_of_fc);
 
 //    cout << "check a copy is done!" << endl;
@@ -1593,7 +1600,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     }
 
     bool inc_neighbouring = true;
-
+    //Set of fine cells for course cells 
     unordered_set<long> s_fc_for_cc;
 //    unsigned short compactness_of_cc = 0;
     bool is_cc_found = false;

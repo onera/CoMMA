@@ -836,6 +836,8 @@ unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unor
 
     unsigned short int deg(0);
     for (const long &i_fc_n : get_neighbours(i_fc)) {
+        // the count method computes the number of occurence of the neighborhood and
+        // hence it guarantees that is in the subset
         if (i_fc_n != i_fc && s_of_fc.count(i_fc_n) > 0) {
             deg++;
         }
