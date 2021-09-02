@@ -648,7 +648,6 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 // A neighbourhood is found but it is too small!
     if (dict_neighbours_of_seed.size() + s_fc_for_current_cc.size() < __goal_card) {
 
-        cout << "\n\nToo coarse" << endl;
         // Not enough available neighbours: creation of a (too small) coarse cell.
 
         // s_fc_for_current_cc.update(d_n_of_seed)
@@ -665,14 +664,13 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
         if (is_creation_delayed) {
             dict_neighbours_of_seed.clear();
             compactness = 0;
-            return s_fc_for_current_cc;
         } else {
             // TODO clean this: only one return!!!
             dict_neighbours_of_seed.clear();
             compactness = __dimension;
-            return s_fc_for_current_cc;
         }
 
+       return s_fc_for_current_cc;
 // TODO deal with that?
 // return s_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc)
     }
