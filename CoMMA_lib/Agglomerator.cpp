@@ -162,28 +162,11 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
     // l_fc_added with chronological order
 // remark: does not contain seed
 
-
-    if (kind_of_agglomerator == "basic") {
-
-        s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
+     s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
                                                         dict_neighbours_of_seed,
                                                         compactness,
                                                         is_order_primary);
-    } else if (kind_of_agglomerator == "triconnected") {
-//        s_current_cc = __choose_optimal_cc_triconnected(cc_graph,
-//                                                        seed,
-//                                                        dict_neighbours_of_seed,
-//                                                        goal_card,
-//                                                        max_card,
-//                                                        compactness,
-//                                                        increase_neighbouring,
-//                                                        set_of_fc_for_current_cc);
-        cout << " Not yet implemented!" << endl;
-        exit(1);
-    } else {
-        exit(1);
-    }
-// Remark: chosen CC may not be exactly of size self.__goal_card
+/ Remark: chosen CC may not be exactly of size self.__goal_card
 //
 //===========================
 // Create of list_of_seeds:
