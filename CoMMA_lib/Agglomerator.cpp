@@ -4,47 +4,52 @@
 
 #include "Agglomerator.h"
 
-
+ //"""
+    // Main Class of the CoMMA library, containing the methods to operate the agglomeration
+    // process. It is constructed and the methods are prevalently called from the function agglomerate_one_level in
+    // CoMMA.cpp. The constructor require the following parameters:
+    //:param Dual_Graph: the struct Dual Graph 
+    //:param verbose: [boolean]
+    //:param is_visu_data_stored: parameter to store visualization data
+    //:param dimension: dimension of the problem
+    //:param checks: helper for the checks 
+    //"""
+// Constructor definition with list initialization
 Agglomerator::Agglomerator(Dual_Graph &graph,
                            unsigned short int verbose,
                            bool is_visu_data_stored,
                            int dimension,
                            bool checks
-) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph) {
-
-    if (((*this).__dimension != 2) && ((*this).__dimension != 3)) {
+) : __verbose(verbose), __checks(checks), __dimension(dimension), __fc_graphs(graph), __cc_graphs(new Coarse_Cell_Graph(graph)) {
+// Definition of the dimensionality of the problem
+    if ((__dimension != 2) && (__dimension != 3)) {
         cerr << "Wrong definition of dimension !=2 and !=3" << endl;
-        assert(((*this).__dimension == 2) || ((*this).__dimension == 3));
+        assert((__dimension == 2) || (__dimension == 3));
     }
-    if ((*this).__dimension == 2) {
+    if (__dimension == 2) {
         __min_neighbourhood = 2;
     } else {
         __min_neighbourhood = 3;
     }
-
-
 // for every defined level (1 by default), contains the number of cells
-// e.g. (*this).__l_nb_of_cells[0]= number of cells on finest level
-//      (*this).__l_nb_of_cells[1]= number of cells on the first coarse level
-    (*this).__l_nb_of_cells.push_back(graph.number_of_cells);
+// e.g. __l_nb_of_cells[0]= number of cells on finest level
+//      __l_nb_of_cells[1]= number of cells on the first coarse level
+    __l_nb_of_cells.push_back(graph.number_of_cells);
 
-    __cc_graphs = NULL;
+//    __cc_graphs = NULL;
 
-    // Anisotropic agglomeration datas:
-    // For every level, we have a set containing the admissible cells for anisotropy cell number:
-    // For level 0, it is the cell number of prism or hexahedron ...
+// Anisotropic agglomeration datas:
+// For every level, we have a set containing the admissible cells for anisotropy cell number:
+// For level 0, it is the cell number of prism or hexahedron ...
     __v_of_s_anisotropic_compliant_fc = {};
     __v_nb_lines = {};
     __v_lines = {};
-
-    //=================
-    // Visualization:
-    //=================
-    (*this).__is_visu_data_stored = is_visu_data_stored;
+// Visualization:
+    __is_visu_data_stored = is_visu_data_stored;
 
 }
 
-
+// Set the agglomerator paras in the member variables
 void Agglomerator::_set_agglomeration_parameter(
         bool is_anisotropic,
         string kind_of_agglomerator,
@@ -71,29 +76,29 @@ void Agglomerator::_set_agglomeration_parameter(
     unordered_map<unsigned short int, unsigned short int> d_default_threshold_card = {{2, 2},
                                                                                       {3, 3}};
 
-    // Definition of (*this).__min_card
+    // Definition of __min_card
     if (min_card == -1) {
-        (*this).__min_card = d_default_min_card[(*this).__dimension];
+        __min_card = d_default_min_card[__dimension];
     } else {
-        (*this).__min_card = min_card;
+        __min_card = min_card;
     }
 
     // Definition of (*this).__max_card
     if (max_card == -1) {
-        (*this).__max_card = d_default_max_card[(*this).__dimension];
+        __max_card = d_default_max_card[__dimension];
     } else {
-        (*this).__max_card = max_card;
+        __max_card = max_card;
     }
 
     // Definition of (*this).__goal_card
     if (goal_card == -1) {
-        __goal_card = d_default_goal_card[(*this).__dimension];
+        __goal_card = d_default_goal_card[__dimension];
     } else {
         __goal_card = goal_card;
     }
 
     // Definition of (*this).__threshold_card
-    (*this).__threshold_card = d_default_threshold_card[(*this).__dimension];
+    __threshold_card = d_default_threshold_card[__dimension];
 }
 
 
@@ -111,22 +116,12 @@ void Agglomerator::__agglomerate_one_level(
     }
     Coarse_Cell_Graph *ccg;
     if (debug_only_fc_to_cc.empty()) {
-
-        // General case
-        // Creation of the CCG
-        __cc_graphs = new Coarse_Cell_Graph(__fc_graphs);
-
-
-        // TODO On pourrait ne l'allouer qu'une seule fois!
-
         // Is the agglomeration anisotropic?
         if (__is_anisotropic) {
             _agglomerate_one_level_anisotropic_part();
         }
-
         _agglomerate_one_level_isotropic_part(debug_only_steps);
     } else {
-
         // For debug purpose:
         __cc_graphs = new Coarse_Cell_Graph(__fc_graphs, __verbose, debug_only_fc_to_cc);
         (*__cc_graphs).fill_cc_neighbouring();
@@ -167,27 +162,10 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
     // l_fc_added with chronological order
 // remark: does not contain seed
 
-
-    if (kind_of_agglomerator == "basic") {
-
-        s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
+     s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
                                                         dict_neighbours_of_seed,
                                                         compactness,
                                                         is_order_primary);
-    } else if (kind_of_agglomerator == "triconnected") {
-//        s_current_cc = __choose_optimal_cc_triconnected(cc_graph,
-//                                                        seed,
-//                                                        dict_neighbours_of_seed,
-//                                                        goal_card,
-//                                                        max_card,
-//                                                        compactness,
-//                                                        increase_neighbouring,
-//                                                        set_of_fc_for_current_cc);
-        cout << " Not yet implemented!" << endl;
-        exit(1);
-    } else {
-        exit(1);
-    }
 // Remark: chosen CC may not be exactly of size self.__goal_card
 //
 //===========================
@@ -644,6 +622,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
 
 // dict_neighbours_of_seed is empty, i.e: the cc is not complete
 // and no neighbour are available!
+//        cout << "\n\nException" << endl;
         compactness = 0;
         return s_fc_for_current_cc;
     }
@@ -668,19 +647,20 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_v2(long seed,
         if (is_creation_delayed) {
             dict_neighbours_of_seed.clear();
             compactness = 0;
-            return s_fc_for_current_cc;
         } else {
             // TODO clean this: only one return!!!
             dict_neighbours_of_seed.clear();
             compactness = __dimension;
-            return s_fc_for_current_cc;
         }
 
+       return s_fc_for_current_cc;
 // TODO deal with that?
 // return s_fc_for_current_cc, graph.compute_min_fc_compactness_inside_a_cc(s_fc_for_current_cc)
     }
 
     if (__dimension == 2) {
+
+//        cout << "\n\nEnter" << endl;
 //        s_fc_for_current_cc, compactness, d_n_of_seed = self.__choose_optimal_cc_triconnected_2D(graph,
 //                                                                                                 cc_graph,
 //                                                                                                 seed,
@@ -852,10 +832,14 @@ void Agglomerator::agglomerate_one_level(const bool is_anisotropic,
 //                   agglo_lines_l_array_idx, agglo_lines_l_array;
 }
 
+
+// Helper
 bool Agglomerator::is_agglomeration_anisotropic() {
     return __cc_graphs->is_agglomeration_anisotropic();
 }
 
+
+// Function to retrive the Agglomeration lines
 void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                    long *sizes,
                                    long *agglo_lines_array_idx,
@@ -871,6 +855,10 @@ void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                                       agglo_lines_array);
 }
 
+
+// Function to agglomerate the anisotropic cells
+
+
 void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
     /**
      * process along all agglomeration_lines to create every anisotropic cc.
@@ -884,31 +872,37 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
     // Process of every agglomeration lines:
     forward_list<deque<long> *>::iterator fLIt;
     for (fLIt = __v_lines[1].begin(); fLIt != __v_lines[1].end(); fLIt++) {
-
+    // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
+    // level 0.
+    // We create a pointer to an empty deque for the line + 1, and hence for the next level of agglomeration 
         deque<long> *line_lvl_p_one = new deque<long>();
+        // We check the line size for the pointed line by the iterator
         long line_size = (**fLIt).size();
         if (line_size <= 1) {
-
-            // the agglomeration_line is empty.
+            // the agglomeration_line is empty and hence the iterator points again to the
+            // empty deque, updating what is pointed by it and hence __v_lines[1]
+            // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
             *fLIt = line_lvl_p_one;
+            // we pass to the next line
             continue;
         }
 
         long i_count = 0;
-//        cout<<"Agglo_Line seed "<<(**fLIt)[i_count]<<endl;
         bool is_anisotropic = true;
         long i_cc;
+        // we agglomerate cells along the agglomeration line, hence we have to
+        // go through the faces and agglomerate two faces together, getting to cardinal 2
         while (i_count + 2 <= line_size) {
             const long i_fc = (**fLIt)[i_count];
             const long i_fc_p_one = (**fLIt)[i_count + 1];
 
             unordered_set<long> s_fc = {i_fc, i_fc_p_one};
+            // We create the course cell
             i_cc = (*__cc_graphs).cc_create_a_cc(s_fc, is_anisotropic);
             line_lvl_p_one->push_back(i_cc);
             // Checks that the agglomerated fc is indeed an anisotropic fc".
             assert(__v_of_s_anisotropic_compliant_fc[0].count(i_fc));
             assert(__v_of_s_anisotropic_compliant_fc[0].count(i_fc_p_one));
-
             // the new cc is anisotropic compliant:
             __v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
             i_count += 2;
@@ -932,11 +926,12 @@ void Agglomerator::__create_all_anisotropic_cc_wrt_agglomeration_lines() {
             //         isOnBoundary = True
             // assert not isOnBoundary, "The left alone anisotropic cell to agglomerate is on boundary"
             // // End Check
+
             // We add this fc to the last coarse element (thus of cardinal 3)
             (*__cc_graphs).cc_update_cc({(**fLIt)[i_count]}, i_cc);
         }
-//        self.__lines[i_line] = line_lvl_p_one
         delete *fLIt;
+        // We update __v_lines[1]
         *fLIt = line_lvl_p_one;
     }
 }
@@ -951,12 +946,13 @@ void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_
     //====================================
     _agglomerate_sub_sub_isotropic_first_step();
 
-    if ((*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+// TO BE IMPLEMENTED
+//    if ((*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
 
 //        cout<<"Not yet implemented:_correction_main_triconnected(*__cc_graphs);"<<endl;
 //        exit(1);
-        _correction_main_triconnected();
-    }
+  //      _correction_main_triconnected();
+//    }
 
     (*__cc_graphs).cc_create_all_delayed_cc();
     (*__cc_graphs).fill_cc_neighbouring();
@@ -965,13 +961,18 @@ void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_
     // TODO ATTENTION AU CHANGEMENT DE LISTE AVEC LE DELETE!
     // TODO voir TP python. Peut etre faire une boucle tant que non vide...
     // II) Correction: treatment of incomplete cells!
+
+    if (__kind_of_agglomerator == "triconnected" && (*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+    // Delete standalone cells
+    _correction_main_basic(1);
+}
+
     if (__kind_of_agglomerator == "basic" && (*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
         if (__verbose) {
             cout << "Call of self._correction_main_basic(...)" << endl;
         }
         _correction_main_basic(debug_only_steps);
     }
-
     (*__cc_graphs).cc_renumber();
     __l_nb_of_cells.push_back((*__cc_graphs)._cc_counter);
     assert((*__cc_graphs).check_data_consistency_and_connectivity());
@@ -984,7 +985,8 @@ void Agglomerator::_agglomerate_one_level_anisotropic_part() {
  * Agglomerate one level of mesh for boundary layer region/ anisotropic part of the mesh.
  *       Uses the self.__lines.
  */
-
+// if the finest agglomeration line is not computed, hence compute it (REMEMBER! We compute the agglomeration lines 
+// only on the finest level, the other one are stored only for visualization purpose
     if (__v_lines[0].empty()) {
 
         // The anisotropic lines are only computed on the original (finest) mesh.
@@ -1309,11 +1311,12 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 }
 
 void Agglomerator::_correction_main_triconnected() {
-    (*__cc_graphs).correction_main_triconnected(__min_neighbourhood_correction_step,
-                                                __goal_card,
-                                                __verbose);
-}
+  //  (*__cc_graphs).correction_main_triconnected(__min_neighbourhood_correction_step,
+    //                                            __goal_card,
+    //                                            __verbose);
 
+      (*__cc_graphs).correction_remove_too_small_cc(__threshold_card);
+}
 
 // Coarse Graph
 void Agglomerator::_correction_split_too_big_cc_in_two() {
@@ -1540,7 +1543,9 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
         s_of_fc.insert(i_k_v.first);  //s_of_fc: Set[int] = set(l_of_fc)
 
     }
+    // Set of fine cells for course cell (we start with the seed)
     unordered_set<long> s_of_fc_for_current_cc = {seed};
+    // We define the parameters.
     short i_neighbourhood_min;
     if (min_neighbourhood == -1) {
 
@@ -1555,7 +1560,8 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     short i_neighbourhood_max = __max_neighbourhood;
 
     short i_neighbour = i_neighbourhood_min;  // Initial size
-
+    
+    // We compute the degree : number of the neighborhoods in the subset, hence number of connections
     short deg_seed = __fc_graphs.compute_degree_of_node_in_subgraph(seed, s_of_fc);
 
 //    cout << "check a copy is done!" << endl;
@@ -1582,7 +1588,7 @@ unordered_set<long> Agglomerator::__choose_optimal_cc_triconnected_2D(long seed,
     }
 
     bool inc_neighbouring = true;
-
+    //Set of fine cells for course cells 
     unordered_set<long> s_fc_for_cc;
 //    unsigned short compactness_of_cc = 0;
     bool is_cc_found = false;

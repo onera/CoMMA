@@ -11,17 +11,27 @@
 #include "First_Order_Neighbourhood.h"
 #include "Triconnected_graph.h"
 #include "Util_graph.h"
-
+    //"""
+    // Main Class of the CoMMA library, containing the methods to operate the agglomeration
+    // process. It is constructed and the methods are prevalently called from the function agglomerate_one_level in
+    // CoMMA.cpp. The constructor require the following parameters:
+    //:param Dual_Graph: the struct Dual Graph 
+    //:param verbose: [boolean]
+    //:param is_visu_data_stored: parameter to store visualization data
+    //:param dimension: dimension of the problem
+    //:param checks: helper for the checks 
+    //"""
 class Agglomerator {
 
-public :
-    Agglomerator(Dual_Graph &graph,
+public:
+   // Constructor 
+   Agglomerator(Dual_Graph &graph,
                  unsigned short int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3,
                  bool checks = false
     );
-
+    // Destructor
     ~Agglomerator() {
         cout << "Delete Agglomerator" << endl;
         if (__is_anisotropic) {
@@ -34,55 +44,43 @@ public :
         }
 
     };
+    // Function to understand if the agglomeration is anisotropic
     bool is_agglomeration_anisotropic();
 
-public:
-    //    private part
-    void _agglomerate_sub_sub_isotropic_first_step();
 
-    void _create_optimal_cc_v2(const long seed);
+    // Main function that creates the agglomeration 
+    void agglomerate_one_level(const bool is_anisotropic,
+                               unsigned long nb_aniso_agglo_lines,
+                               forward_list<deque<long> *> &anisotropic_lines,
+                               string kind_of_agglomerator = "basic",
+                               const short goal_card = -1,
+                               const short min_card = -1,
+                               const short max_card = -1,
+                               vector<long> debug_only_fc_to_cc = {},
+                               const short debug_only_steps = -1);
 
-    unordered_set<long> _choose_optimal_cc_and_update_seed_pool_v2(const long seed,
-                                                                   unsigned short &compactness,
-                                                                   bool is_order_primary = false,  // _correction_split_too_big_cc_in_two(...)
-                                                                   bool increase_neighbouring = true  // _correction_split_too_big_cc_in_two(...)
-    );
+    // Accessors
+    inline long get_nb_cc() {
+        return (*__cc_graphs)._cc_counter;
+    };
 
-    void _correction_main_basic(const short debug_only_steps = 10);
+    void get_agglo_lines(int level,
+                         long *sizes,
+                         long *agglo_lines_array_idx,
+                         long *agglo_lines_array);
 
-    void _correction_main_triconnected();
+    inline vector<long> get_fc_2_cc() {
+        return (*__cc_graphs)._fc_2_cc;
+    }
 
-    void _correction_split_too_big_cc_in_two();
-
-    Triconnected_graph *__generate_triconnected_graph(const unordered_set<long> &set_biconnected_component_g,
-                                                      vector<long> &l_to_g) const;
-
-    unordered_set<long> __compute_bic_components_from_s_connected_vertices_containing_seed(long seed,
-                                                                                           const list<long> &l_of_fc,
-                                                                                           bool is_correction_step,
-                                                                                           unordered_set<long> s_of_fc_for_current_cc);
-
-    unordered_set<long> __compute_tric_components_from_s_bic_vertices(unordered_set<long> s_bic_component_g,
-                                                                      bool is_correction_step,
-                                                                      long seed,
-                                                                      unsigned short &compactness,
-                                                                      unordered_set<long> s_of_fc_for_current_cc);
-
-
-public:
-    //to sort public/private
-
+protected:
+    // Initialize the main parameters of the Agglomeration process
     void _set_agglomeration_parameter(
             bool is_anisotropic,
             string kind_of_agglomerator = "basic",
             short goal_card = -1,
             short min_card = -1,
             short max_card = -1);
-
-    void __agglomerate_one_level(
-            vector<long> debug_only_fc_to_cc,
-            short int debug_only_steps = -1  // arbitrary value greater than 7
-    );
 
     unordered_set<long> _choose_optimal_cc_and_update_seed_pool(Coarse_Cell_Graph &cc_graph,
                                                                 const long &seed,
@@ -105,6 +103,11 @@ public:
                                                      unordered_map<long, unsigned short> &dict_neighbours_of_seed,
                                                      unsigned short &compactness,
                                                      const bool is_order_primary = false);
+    void __agglomerate_one_level(
+            vector<long> debug_only_fc_to_cc,
+            short int debug_only_steps = -1  // arbitrary value greater than 7
+    );
+
 
 
     list<long> __create_list_of_seeds(const Coarse_Cell_Graph &cc_graph,
@@ -155,44 +158,14 @@ public:
                                   double &min_ar_surf,
                                   double &min_ar_vol);
 
-    void agglomerate_one_level(const bool is_anisotropic,
-                               unsigned long nb_aniso_agglo_lines,
-                               forward_list<deque<long> *> &anisotropic_lines,
-                               string kind_of_agglomerator = "basic",
-                               const short goal_card = -1,
-                               const short min_card = -1,
-                               const short max_card = -1,
-                               vector<long> debug_only_fc_to_cc = {},
-                               const short debug_only_steps = -1);
-
     void _agglomerate_one_level_anisotropic_part();
 
     void _agglomerate_one_level_isotropic_part(const short debug_only_steps);
 
     void __create_all_anisotropic_cc_wrt_agglomeration_lines();
 
-    //===========================
-    // Accessors
-    //===========================
-    inline long get_nb_cc() {
-        return (*__cc_graphs)._cc_counter;
-    };
 
-    void get_agglo_lines(int level,
-                         long *sizes,
-                         long *agglo_lines_array_idx,
-                         long *agglo_lines_array);
-
-    inline vector<long> get_fc_2_cc() {
-        return (*__cc_graphs)._fc_2_cc;
-    }
-
-public:
-    //private fields
-    int __verbose;
-    bool __checks;
-
-    // Agglomerator parameters:
+      // Agglomerator parameters:
     //=========================
     int __dimension;
     bool __is_anisotropic = false;  // TODO is it useful?  Is agglomeration anisotropic of isotropic
@@ -214,7 +187,7 @@ public:
     Dual_Graph __fc_graphs;
 
     // TODO rename __cc_graphs to __cc_graph
-    Coarse_Cell_Graph *__cc_graphs;
+    Coarse_Cell_Graph *__cc_graphs; 
 
     //======================
     // anisotopic specifics:
@@ -223,12 +196,54 @@ public:
 
     // Anisotropic agglomeration lines:
     vector<unsigned long> __v_nb_lines;
-    vector<forward_list<deque<long> *>> __v_lines;  // We store the current agglomeration_lines and the coarse one for visualization purpose.
+    // __v_lines : Agglomeration lines structure:
+    // vector : level
+    // forward list : identifier of the line
+    // deque : line cells
+    // e.g __v_lines[0] --> agglomeration lines at the finest level
+    vector<forward_list<deque<long> *>> __v_lines;  
+    // We store the current agglomeration_lines and the coarse one for visualization purpose.
 
     //=================
     // Visualization:
     //=================
     bool __is_visu_data_stored;
+
+  //private fields
+    int __verbose;
+    bool __checks;
+    //    private part
+    void _agglomerate_sub_sub_isotropic_first_step();
+
+    void _create_optimal_cc_v2(const long seed);
+
+    unordered_set<long> _choose_optimal_cc_and_update_seed_pool_v2(const long seed,
+                                                                   unsigned short &compactness,
+                                                                   bool is_order_primary = false,  // _correction_split_too_big_cc_in_two(...)
+                                                                   bool increase_neighbouring = true  // _correction_split_too_big_cc_in_two(...)
+    );
+
+    void _correction_main_basic(const short debug_only_steps = 10);
+
+    void _correction_main_triconnected();
+
+    void _correction_split_too_big_cc_in_two();
+
+    Triconnected_graph *__generate_triconnected_graph(const unordered_set<long> &set_biconnected_component_g,
+                                                      vector<long> &l_to_g) const;
+
+    unordered_set<long> __compute_bic_components_from_s_connected_vertices_containing_seed(long seed,
+                                                                                           const list<long> &l_of_fc,
+                                                                                           bool is_correction_step,
+                                                                                           unordered_set<long> s_of_fc_for_current_cc);
+
+    unordered_set<long> __compute_tric_components_from_s_bic_vertices(unordered_set<long> s_bic_component_g,
+                                                                      bool is_correction_step,
+                                                                      long seed,
+                                                                      unsigned short &compactness,
+                                                                      unordered_set<long> s_of_fc_for_current_cc);
+
+
 };
 
 

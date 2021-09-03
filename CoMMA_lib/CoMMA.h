@@ -8,6 +8,7 @@
 #include "Agglomerator.h"
 #include <climits>
 
+// We define the pointer type but not the structure
 void agglomerate_one_level(long *sizes,
                            long *adjMatrix_row_ptr,
                            long *adjMatrix_col_ind,

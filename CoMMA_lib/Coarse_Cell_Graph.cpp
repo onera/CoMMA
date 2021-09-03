@@ -74,6 +74,9 @@ Coarse_Cell_Graph::~Coarse_Cell_Graph() {
 //    cout << "End Delete CCG" << endl;
 }
 
+
+// Create a course cell from the fine cells and update the fc_2_cc tree.
+
 long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
@@ -1322,12 +1325,10 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
      */
 
     // TODO move this function inside ccg_v1 calls of self._d_card_2_cc and self._d_isotropic_cc
-    assert(check_data_consistency_and_connectivity());
-    if (_verbose) {
-        cerr << "\t\tCall of correction_remove_too_small_cc" << endl;
-        cerr << "\t\tfc_2_cc" << endl;
+   // assert(check_data_consistency_and_connectivity());
+        cout << "\t\tCall of correction_remove_too_small_cc" << endl;
+        cout << "\t\tfc_2_cc" << endl;
 //        print("\t\t", self.fc_2_cc.__repr__())
-    }
 
     // TODO REMOVE THIS
     unordered_set<long> set_removed_cc = {};

@@ -61,12 +61,16 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
-
+    // number of faces
     long nb_fc = sizes[0];
+    // Length of the offset vector of the CSR representation. it should be long as the number of faces
+    //  augmented of 1
     long adj_matrix_row_ptr_size = nb_fc + 1;
+    // Length of the esges vector of the CSR representation, representing the adjacency
     long adj_matrix_col_ind_size = sizes[1];
+    // Length of the weigth of the CSR representation. In this kind of representation it is the same
     long adj_matrix_areas_size = sizes[1];
-
+    // Initialization vector v for the dual graph structure, it is an initialization in which we copy exactly the vector passed in input to the function.
     vector<long> v_row_ptr(adjMatrix_row_ptr, adjMatrix_row_ptr + adj_matrix_row_ptr_size);
     vector<long> v_col_ind(adjMatrix_col_ind, adjMatrix_col_ind + adj_matrix_col_ind_size);
     vector<double> v_values(adjMatrix_areaValues, adjMatrix_areaValues + adj_matrix_areas_size);
@@ -76,7 +80,8 @@ void agglomerate_one_level(long *sizes,
     // BOUNDARIES
     //======================================
 
-    //initialization of map d_is_on_bnd
+    //initialization of map d_is_on_bnd.
+    // We create the list of the faces on boundary
     unordered_map<long, int> d_is_on_bnd;
     for (int i = 0; i < nb_fc; i++) {
         if (isOnFineBnd_l[i] > 0) {
@@ -104,6 +109,9 @@ void agglomerate_one_level(long *sizes,
 
     // ANISOTROPIC COMPLIANT FC
     //======================================
+    // Elements that is checked if they are anisotropic. 
+    // e.g : in case of CODA software are passed all the children, and hence all the source elements of the 
+    // previous agglomeration process.
     long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
     unordered_set<long> s_anisotropic_compliant_fc;
     for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
@@ -117,6 +125,7 @@ void agglomerate_one_level(long *sizes,
 
     // DUAL GRAPH
     //======================================
+    //It is built the dual graph class through the constructor. To see it look at DualGraph.hpp and DualGraph.cpp
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
@@ -143,6 +152,7 @@ void agglomerate_one_level(long *sizes,
         kind_of_agglomerator = "triconnected";
     }
 
+    // Initialization of Agglomerator class from Agglomerator.hpp
     Agglomerator agg = Agglomerator(fc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
@@ -150,7 +160,12 @@ void agglomerate_one_level(long *sizes,
                                     checks);
 
     bool is_anisotropic = is_anisotropic_long == 1;
+    // To be changed if we want the visu data stored. The routine to do it is
+    // in Util. 
+    // In the PostProcessing folder it is possible to find the python tool to
+    // parse and to draw the graph from the data saved
     if (false) {
+        cout << "Storing"<< endl;
         store_agglomeration_datas(sizes,
                                   adjMatrix_row_ptr,
                                   adjMatrix_col_ind,
@@ -175,12 +190,14 @@ void agglomerate_one_level(long *sizes,
     // ANISOTROPIC LINES
     //======================================
     long nb_agglomeration_lines = 0;
+    // We use forward_list, more efficient in memory management than a list and deque that allows an easier 
+    // manipulation with respect to vectors
     forward_list<deque<long> *> agglomeration_lines;
 
     if (is_anisotropic && !isFirstAgglomeration_long) {
         long agglomerationLines_Idx_size = sizes[8];
         long agglomerationLines_size = sizes[9];
-
+        // Function from Util
         convert_agglomeration_lines_arrays_to_agglomeration_lines(agglomerationLines_Idx_size,
                                                                   agglomerationLines_size,
                                                                   agglomerationLines_Idx,
@@ -205,148 +222,42 @@ void agglomerate_one_level(long *sizes,
                               max_card_s
     );
 
-//
-//    long numberOfFineAnisotropicCompliantCells = arrayOfFineAnisotropicCompliantCells_size;
-//
-//    // Keep track of agglomerated fine cell
-//    long indCoarseCell = 0;
-//    // Rmk: sizes[2] ==indCoarseCell
-//
-//    long numberOfFineAgglomeratedCells = sizes[3];  //out
-//    numberOfFineAgglomeratedCells = 0;  // number of fine (already) agglomerated cells
-//
-//    bool *isFineCellAgglomerated = new bool[nb_fc];
-//    for (long i = 0; i < nb_fc; i++) {
-//        isFineCellAgglomerated[i] = false;
-//    }
-//// TODO On pourrait ne l'allouer qu'une seule fois!
-//    // fineAgglomerationLines = None
-//    // fineAgglomerationLines_for_visu = None
-//
-//    //fineAgglomerationLines_array_Idx = None
-//    //fineAgglomerationLines_array = None
-//
-//    long *fineAgglomerationLines_for_visu_array_Idx = NULL;
-//    long *fineAgglomerationLines_for_visu_array = NULL;
-//
-////    long* arrayOfCoarseAnisotropicCompliantCells = NULL;
-////    long numberOfAnisotropicLinesPOne_size = 0;
-////    long agglomerationLines_size = 0;
-////    bool isAnisotropicLines = false;
-//    bool isAnisotropicLines = is_anisotropic && !isFirstAgglomeration;
-//    if (is_anisotropic) {
-//        if (isFirstAgglomeration) {
-////            numberOfAnisotropicLinesPOne_size = agglomerationLines_Idx_size;
-//            agglomerationLines_size = agglomerationLines_size;
-//            isAnisotropicLines = computeAnisotropicLine(sizes,
-//                                                        adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-//                                                        arrayOfFineAnisotropicCompliantCells,
-//                                                        agglomerationLines_Idx,
-//                                                        agglomerationLines,
-//                                                        verbose_long > 0);
-//
-////            numberOfAnisotropicLinesPOne_size = sizes[3];  // number of agglomeration lines +1
-////            agglomerationLines_size = sizes[4];
-////            numberOfAnisotropicLinesPOne_size = sizes[8];
-//            agglomerationLines_size = sizes[9];
-////            cout << "numberOfAnisotropicLinesPOne_size " << numberOfAnisotropicLinesPOne_size << endl;
-////            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
-////          Pas de resize, c'est pas possible avec un tableau
-////            agglomerationLines_Idx.resize((numberOfAnisotropicLinesPOne_size,), refcheck = False)
-////            agglomerationLines.resize((agglomerationLines_size,), refcheck = False)
-//
-//            // For Visu only:
-////            fineAgglomerationLines_for_visu_array_Idx = np.copy(agglomerationLines_Idx);
-////            fineAgglomerationLines_for_visu_array = np.copy(agglomerationLines);
-//        }
-//        if (isAnisotropicLines) {
-//
-////            cout << "agglomerationLines_size " << agglomerationLines_size << endl;
-////            long arrayOfCoarseAnisotropicCompliantCells_size = agglomerationLines_size; //np.shape(arrayOfFineAnisotropicCompliantCells)[0]
-////            arrayOfCoarseAnisotropicCompliantCells = np.zeros((arrayOfCoarseAnisotropicCompliantCells_size,), dtype = int)
-//            agglomerationLines_Idx_size = sizes[8];
-////            cout << "sizes[0]= " << sizes[0] << endl;
-////            cout << "sizes[1]= " << sizes[1] << endl;
-////            cout << "sizes[2]= " << sizes[2] << endl;
-////            cout << "sizes[3]= " << sizes[3] << endl;
-////            cout << "sizes[4]= " << sizes[4] << endl;
-////            cout << "sizes[5]= " << sizes[5] << endl;
-////            cout << "sizes[6]= " << sizes[6] << endl;
-////            cout << "sizes[7]= " << sizes[7] << endl;
-////            cout << "sizes[8]= " << sizes[8] << endl;
-////            cout << "sizes[9]= " << sizes[9] << endl;
-//
-//            long sizes_aniso[5] = {agglomerationLines_Idx_size, nb_fc, numberOfFineAgglomeratedCells, indCoarseCell, -1};
-//
-//            agglomerate_Anisotropic_One_Level_without_list_lines(sizes_aniso,
-//                                                                 agglomerationLines_Idx,
-//                                                                 agglomerationLines,
-//                                                                 fc_to_cc, isFineCellAgglomerated, arrayOfFineAnisotropicCompliantCells);//arrayOfCoarseAnisotropicCompliantCells);
-//
-////            agglomerationLines_Idx_size = sizes_aniso[0];
-////            nb_fc = sizes_aniso[1];
-////            numberOfFineAgglomeratedCells = sizes_aniso[2];
-////            indCoarseCell = sizes_aniso[3];
-////            long arrayOfCoarseAnisotropicCompliantCells_size = sizes_aniso[4];
-////            long nb_fc = sizes[0];
-////            long adj_matrix_row_ptr_size = nb_fc + 1;
-////            long adj_matrix_col_ind_size = sizes[1];
-////            long adj_matrix_areas_size = sizes[1];
-////
-////            // Rmk: sizes[2] ==indCoarseCell
-////            long numberOfFineAgglomeratedCells = sizes[3];
-////            long is_on_valley_size = sizes[4];
-////            long is_on_ridge_size = sizes[5];
-////            long is_on_corner_size = sizes[6];
-////            long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
-////            long agglomerationLines_Idx_size = sizes[8];
-////            long agglomerationLines_size = sizes[9];
-//            sizes[2] = sizes_aniso[3];
-//            sizes[3] = sizes_aniso[2];
-//            sizes[7] = sizes_aniso[4];
-//            sizes[8] = sizes_aniso[0];
-////            sizes[9] = sizes[8] - 1;
-//            sizes[9] = agglomerationLines_Idx[sizes[8] - 1];
-//
-////            if (agglomerationLines_Idx_size>0){
-////
-////            agglomerationLines_Idx.resize((agglomerationLines_Idx_size,), refcheck = False)
-////            agglomerationLines.resize((agglomerationLines_Idx[agglomerationLines_Idx_size - 1],), refcheck = False)
-//
-////            if
-////                arrayOfCoarseAnisotropicCompliantCells
-////                        is
-////                not None:
-////            arrayOfCoarseAnisotropicCompliantCells.resize((arrayOfCoarseAnisotropicCompliantCells_size,), refcheck = False)
-//        }
-//    }
-//
-//    // Rmk: sizes[2] ==indCoarseCell
-////    long numberOfFineAgglomeratedCells = sizes[3];
-////    long is_on_valley_size = sizes[4];
-////    long is_on_ridge_size = sizes[5];
-////    long is_on_corner_size = sizes[6];
-////    long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
-////    long agglomerationLines_Idx_size = s    izes[8];
-////    long agglomerationLines_size = sizes[9];
-//
-////    sizes[2] = sizes_iso[2];  //indCoarseCell
-////    sizes[3] = sizes_iso[3];  //numberOfFineAgglomeratedCells
-////    sizes[7] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[8] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[9] = arrayOfFineAnisotropicCompliantCells_size;
-////    return indCoarseCell, fineAgglomerationLines_for_visu_array_Idx, fineAgglomerationLines_for_visu_array, agglomerationLines_Idx, \
-////           agglomerationLines,  \
-////           arrayOfCoarseAnisotropicCompliantCells
-//    delete[] isFineCellAgglomerated;
     sizes[2] = agg.get_nb_cc();  //indCoarseCell
-//    sizes[3] = agg.;  //numberOfFineAgglomeratedCells
-////    sizes[7] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[8] = arrayOfFineAnisotropicCompliantCells_size;
-////    sizes[9] = arrayOfFineAnisotropicCompliantCells_size;
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
     }
+
+    // check if there are single parents
+    // =============================================
+    // Parents counter
+    // To keep track
+    vector<long> course(nb_fc,1);
+    int counter = 0;
+    // Flag to understand if there are double elements in fc_to_cc
+    int flag = 0;
+    // We loop over faces of the children
+    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+        flag=0;
+        for (long j_fc = 0; j_fc < nb_fc; j_fc++) {
+             // If we have a double the flag = 1
+             if (fc_to_cc[i_fc]==fc_to_cc[j_fc] && i_fc!=j_fc) {
+                flag = 1;}
+        }
+        // If flag is still 0 we can print value of parent and child
+        if (flag == 0){
+           course[i_fc]=0;
+           long k_fc=i_fc;
+//           while (course[k_fc]==0){
+//                cout << "index = " << k_fc  << endl;
+//        	fc_to_cc[i_fc]=fc_to_cc[k_fc-1];
+//                k_fc--;
+//		}
+           counter++;
+           cout << "parent = " << i_fc << "child =" << fc_to_cc[i_fc]  << endl;
+        }	
+    }
+    cout << "m. single parents = " << counter << endl;
+
 
     // get agglomeration lines:
     //======================================
@@ -363,5 +274,4 @@ void agglomerate_one_level(long *sizes,
         sizes[8] = Agg_lines_sizes[0];
         sizes[9] = Agg_lines_sizes[1];
     }
-//    delete agg;
 }

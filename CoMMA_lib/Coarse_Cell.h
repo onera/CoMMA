@@ -101,9 +101,10 @@ public:
 
     unsigned short int __card;
     unsigned short int __compactness;
-
-    unordered_set<long> __s_fc; // if cc is of size 1, the __d_def map will not work
-    unordered_map<long, unordered_map<long, double>> __d_def;  // subgraph describing the cc
+    // if cc is of size 1, the __d_def map will not work
+    unordered_set<long> __s_fc; 
+    // subgraph describing the cc
+    unordered_map<long, unordered_map<long, double>> __d_def;      
     unordered_map<unsigned short int, unordered_set<long>> __d_compactness_to_s_fc; // TODO ordered dict????
 
     // TODO useful?
