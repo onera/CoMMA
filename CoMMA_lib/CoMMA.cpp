@@ -259,32 +259,6 @@ void agglomerate_one_level(long *sizes,
     cout << "m. single parents = " << counter << endl;
 
 
-    // check if there are single parents
-    // =============================================
-    // Parents counter
-    // To keep track
-    counter = 0;
-    // Flag to understand if there are double elements in fc_to_cc
-    flag = 0;
-    // We loop over faces of the children
-    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-        flag=0;
-        for (long j_fc = 0; j_fc < nb_fc; j_fc++) {
-             // If we have a double the flag = 1
-             if (fc_to_cc[i_fc]==fc_to_cc[j_fc] && i_fc!=j_fc) {
-                flag = 1;}
-        }
-        // If flag is still 0 we can print value of parent and child
-        if (flag == 0){
-           course[i_fc]=0;
-           counter++;
-           cout << "parent = " << i_fc << "child =" << fc_to_cc[i_fc]  << endl;
-        }	
-    }
-    cout << "m. single parents = " << counter << endl;
- 
-
-
     // get agglomeration lines:
     //======================================
     if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
