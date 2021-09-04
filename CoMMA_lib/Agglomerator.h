@@ -73,7 +73,7 @@ public:
         return (*__cc_graphs)._fc_2_cc;
     }
 
-protected:
+//protected:
     // Initialize the main parameters of the Agglomeration process
     void _set_agglomeration_parameter(
             bool is_anisotropic,
