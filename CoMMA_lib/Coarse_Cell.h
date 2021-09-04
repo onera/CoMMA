@@ -24,10 +24,8 @@ public:
 
     unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
 
-public:
     //protected
     bool _is_finalized = false;
-public:
     //Private methods:
     bool __check_connectivity(int verbose = 0);
 
@@ -46,7 +44,6 @@ public:
 
     void __add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc);
 
-public:
     //Public methods:
     void fill_cc_neighbouring(vector<long> &fc_2_cc);
 
@@ -88,7 +85,6 @@ public:
     void update_icc(long new_i_cc);
 
     void update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc);
-public:
     //private Fields
     Dual_Graph *__fc_graph;
     short int __dim;

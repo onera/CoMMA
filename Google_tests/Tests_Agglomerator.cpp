@@ -1,6 +1,10 @@
 #include "gtest/gtest.h"
 
+<<<<<<< HEAD
 //#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+=======
+#define protected public
+>>>>>>> Alberto_fix
 #include "../CoMMA_v1/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
 
@@ -12,7 +16,6 @@
 #include "Box_5x5x5_Aniso_Dual_Graph.h"
 #include "Box_5x5x5_Aniso_lvl_2_Dual_Graph.h"
 #include "Box_5x5x5_iso_and_Aniso_Dual_Graph.h"
-
 
 
 TEST_F(MGridGen_Dual_Graph, Agglomerator_Constructor) {

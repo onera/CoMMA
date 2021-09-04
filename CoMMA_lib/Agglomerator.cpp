@@ -162,27 +162,10 @@ unordered_set<long> Agglomerator::_choose_optimal_cc_and_update_seed_pool(Coarse
     // l_fc_added with chronological order
 // remark: does not contain seed
 
-
-    if (kind_of_agglomerator == "basic") {
-
-        s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
+     s_current_cc = __choose_optimal_cc_basic_v2_sub(seed,
                                                         dict_neighbours_of_seed,
                                                         compactness,
                                                         is_order_primary);
-    } else if (kind_of_agglomerator == "triconnected") {
-//        s_current_cc = __choose_optimal_cc_triconnected(cc_graph,
-//                                                        seed,
-//                                                        dict_neighbours_of_seed,
-//                                                        goal_card,
-//                                                        max_card,
-//                                                        compactness,
-//                                                        increase_neighbouring,
-//                                                        set_of_fc_for_current_cc);
-        cout << " Not yet implemented!" << endl;
-        exit(1);
-    } else {
-        exit(1);
-    }
 // Remark: chosen CC may not be exactly of size self.__goal_card
 //
 //===========================
@@ -963,12 +946,13 @@ void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_
     //====================================
     _agglomerate_sub_sub_isotropic_first_step();
 
-    if ((*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+// TO BE IMPLEMENTED
+//    if ((*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
 
 //        cout<<"Not yet implemented:_correction_main_triconnected(*__cc_graphs);"<<endl;
 //        exit(1);
-        _correction_main_triconnected();
-    }
+  //      _correction_main_triconnected();
+//    }
 
     (*__cc_graphs).cc_create_all_delayed_cc();
     (*__cc_graphs).fill_cc_neighbouring();
@@ -977,13 +961,18 @@ void Agglomerator::_agglomerate_one_level_isotropic_part(const short debug_only_
     // TODO ATTENTION AU CHANGEMENT DE LISTE AVEC LE DELETE!
     // TODO voir TP python. Peut etre faire une boucle tant que non vide...
     // II) Correction: treatment of incomplete cells!
+
+    if (__kind_of_agglomerator == "triconnected" && (*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
+    // Delete standalone cells
+    _correction_main_basic(1);
+}
+
     if (__kind_of_agglomerator == "basic" && (*__cc_graphs).is_cc_grid_not_structured(__goal_card)) {
         if (__verbose) {
             cout << "Call of self._correction_main_basic(...)" << endl;
         }
         _correction_main_basic(debug_only_steps);
     }
-
     (*__cc_graphs).cc_renumber();
     __l_nb_of_cells.push_back((*__cc_graphs)._cc_counter);
     assert((*__cc_graphs).check_data_consistency_and_connectivity());
@@ -1322,11 +1311,12 @@ void Agglomerator::_correction_main_basic(const short debug_only_steps) {
 }
 
 void Agglomerator::_correction_main_triconnected() {
-    (*__cc_graphs).correction_main_triconnected(__min_neighbourhood_correction_step,
-                                                __goal_card,
-                                                __verbose);
-}
+  //  (*__cc_graphs).correction_main_triconnected(__min_neighbourhood_correction_step,
+    //                                            __goal_card,
+    //                                            __verbose);
 
+      (*__cc_graphs).correction_remove_too_small_cc(__threshold_card);
+}
 
 // Coarse Graph
 void Agglomerator::_correction_split_too_big_cc_in_two() {
