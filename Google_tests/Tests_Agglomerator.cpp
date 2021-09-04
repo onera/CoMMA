@@ -1,10 +1,6 @@
 #include "gtest/gtest.h"
 
-<<<<<<< HEAD
-//#include "../CoMMA_lib/Agglomerator_Isotropic.h"
-=======
 #define protected public
->>>>>>> Alberto_fix
 #include "../CoMMA_v1/Agglomerator_anisotropic.h"
 #include "../CoMMA_lib/Agglomerator.h"
 
