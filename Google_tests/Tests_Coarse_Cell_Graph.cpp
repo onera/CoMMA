@@ -1,4 +1,6 @@
-//#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+#include "gtest/gtest.h"
+
+#define protected public
 #include "../CoMMA_lib/Dual_Graph.h"
 #include "../CoMMA_lib/Coarse_Cell_Graph.h"
 
@@ -12,7 +14,6 @@
 #include "Twelve_squares_4x3_v2_Dual_Graph.h"
 #include "Fifteen_squares_5x3_Dual_Graph.h"
 
-#include "gtest/gtest.h"
 
 TEST_F(Box_5x5x5_Dual_Graph, constructor_box_5x5x5) {
     Coarse_Cell_Graph ccg((*g));
