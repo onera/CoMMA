@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
-//#include "../CoMMA_lib/Agglomerator_Isotropic.h"
+
+#define protected public
 #include "../CoMMA_lib/Agglomerator.h"
 
 #include "MGridGen_Dual_Graph.h"
