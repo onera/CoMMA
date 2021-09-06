@@ -1,7 +1,7 @@
 
 #include "CoMMA.h"
 
-void agglomerate_one_level(vector<long> &sizes,
+void agglomerate_one_level(long *sizes,
         // Dual graph:
                            vector<long> &adjMatrix_row_ptr,
                            vector<long> &adjMatrix_col_ind,
@@ -9,10 +9,10 @@ void agglomerate_one_level(vector<long> &sizes,
                            vector<double> &volumes,
 
         // Indices of compliant cc
-                           vector<long> arrayOfFineAnisotropicCompliantCells,
+                           vector<long> &arrayOfFineAnisotropicCompliantCells,
 
         // boundaries
-                           vector<long> &isOnFineBnd_l,
+                           vector<long> &isOnFineBnd,
                            vector<long> &array_is_on_valley,
                            vector<long> &array_is_on_ridge,
                            vector<long> &array_is_on_corner,
@@ -80,8 +80,8 @@ void agglomerate_one_level(vector<long> &sizes,
     // We create the list of the faces on boundary
     unordered_map<long, int> d_is_on_bnd;
     for (int i = 0; i < nb_fc; i++) {
-        if (isOnFineBnd_l[i] > 0) {
-            d_is_on_bnd[i] = isOnFineBnd_l[i];
+        if (isOnFineBnd[i] > 0) {
+            d_is_on_bnd[i] = isOnFineBnd[i];
         }
     }
 
@@ -127,7 +127,7 @@ void agglomerate_one_level(vector<long> &sizes,
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
                                      adjMatrix_row_ptr,
                                      adjMatrix_col_ind,
-                                     adjMatrix_areaValue,
+                                     adjMatrix_areaValues,
                                      volumes,
                                      d_is_on_bnd,
                                      s_is_on_corner,
@@ -170,7 +170,7 @@ void agglomerate_one_level(vector<long> &sizes,
 
                                   arrayOfFineAnisotropicCompliantCells,
 
-                                  isOnFineBnd_l,
+                                  isOnFineBnd,
                                   array_is_on_valley,
                                   array_is_on_ridge,
                                   array_is_on_corner,

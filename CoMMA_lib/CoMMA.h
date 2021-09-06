@@ -10,25 +10,25 @@
 
 // We define the pointer type but not the structure
 void agglomerate_one_level(long *sizes,
-                           long *adjMatrix_row_ptr,
-                           long *adjMatrix_col_ind,
-                           double *adjMatrix_areaValues,
-                           double *volumes,
+                          vector<long> &adjMatrix_row_ptr,
+                          vector<long> &adjMatrix_col_ind,
+                          vector<double> adjMatrix_areaValues,
+                          vector<double> &volumes,
 
-                           long *arrayOfFineAnisotropicCompliantCells,
+                           vector<long> &arrayOfFineAnisotropicCompliantCells,
 
-                           long *isOnFineBnd,
-                           long *array_is_on_valley,
-                           long *array_is_on_ridge,
-                           long *array_is_on_corner,
+                           vector<long> &isOnFineBnd,
+                           vector<long> &array_is_on_valley,
+                           vector<long> &array_is_on_ridge,
+                           vector<long> &array_is_on_corner,
 
                            long isFirstAgglomeration,
                            long is_anisotropic_long,
 
-                           long *fc_to_cc,
+                           vector<long> &fc_to_cc,
 
-                           long *agglomerationLines_Idx,
-                           long *agglomerationLines,
+                           vector<long> &agglomerationLines_Idx,
+                           vector<long> &agglomerationLines,
 
                            long is_basic_or_triconnected = 0,
                            long dimension = 3,

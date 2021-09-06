@@ -66,8 +66,8 @@ public:
 
     void get_agglo_lines(int level,
                          long *sizes,
-                         long *agglo_lines_array_idx,
-                         long *agglo_lines_array);
+                         vector<long> &agglo_lines_array_idx,
+                         vector<long> &agglo_lines_array);
 
     inline vector<long> get_fc_2_cc() {
         return (*__cc_graphs)._fc_2_cc;
