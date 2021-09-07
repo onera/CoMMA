@@ -3,16 +3,16 @@
 
 void agglomerate_one_level(long *sizes,
         // Dual graph:
-                           vector<long> &adjMatrix_row_ptr,
-                           vector<long> &adjMatrix_col_ind,
-                           vector<double> &adjMatrix_areaValues,
-                           vector<double> &volumes,
+                           const vector<long> &adjMatrix_row_ptr,
+                           const vector<long> &adjMatrix_col_ind,
+                           const vector<double> &adjMatrix_areaValues,
+                           const vector<double> &volumes,
 
         // Indices of compliant cc
                            vector<long> &arrayOfFineAnisotropicCompliantCells,
 
         // boundaries
-                           vector<long> &isOnFineBnd,
+                           const vector<long> &isOnFineBnd,
                            vector<long> &array_is_on_valley,
                            vector<long> &array_is_on_ridge,
                            vector<long> &array_is_on_corner,
