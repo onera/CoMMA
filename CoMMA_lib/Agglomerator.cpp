@@ -842,8 +842,8 @@ bool Agglomerator::is_agglomeration_anisotropic() {
 // Function to retrive the Agglomeration lines
 void Agglomerator::get_agglo_lines(int level,  //TODO Change to short
                                    long *sizes,
-                                   long *agglo_lines_array_idx,
-                                   long *agglo_lines_array) {
+                                   vector<long> &agglo_lines_array_idx,
+                                   vector<long> &agglo_lines_array) {
     //remark: sizes[2]={nb_agglomeration_lines +1, nb_fc_in_agglomeration_lines}
     assert(__cc_graphs->is_agglomeration_anisotropic());
     assert(level == 0 || level == 1);

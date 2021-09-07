@@ -1,21 +1,21 @@
 
 #include "CoMMA.h"
 
-void agglomerate_one_level(long *sizes,
+void agglomerate_one_level(long (&sizes)[10],
         // Dual graph:
-                           long *adjMatrix_row_ptr,
-                           long *adjMatrix_col_ind,
-                           double *adjMatrix_areaValues,
-                           double *volumes,
+                           const vector<long> &adjMatrix_row_ptr,
+                           const vector<long> &adjMatrix_col_ind,
+                           const vector<double> &adjMatrix_areaValues,
+                           const vector<double> &volumes,
 
         // Indices of compliant cc
-                           long *arrayOfFineAnisotropicCompliantCells,
+                           vector<long> &arrayOfFineAnisotropicCompliantCells,
 
         // boundaries
-                           long *isOnFineBnd_l,
-                           long *array_is_on_valley,
-                           long *array_is_on_ridge,
-                           long *array_is_on_corner,
+                           const vector<long> &isOnFineBnd,
+                           vector<long> &array_is_on_valley,
+                           vector<long> &array_is_on_ridge,
+                           vector<long> &array_is_on_corner,
 
         // Agglomeration argument
                            long isFirstAgglomeration_long,
@@ -23,10 +23,10 @@ void agglomerate_one_level(long *sizes,
 
 
         // Outputs
-                           long *fc_to_cc,  // Out
+                           vector<long> &fc_to_cc,  // Out
 
-                           long *agglomerationLines_Idx,  // In & out
-                           long *agglomerationLines,  // In & out
+                           vector<long> &agglomerationLines_Idx,  // In & out
+                           vector<long> &agglomerationLines,  // In & out
 
         //Args with default value
                            long is_basic_or_triconnected,
@@ -71,10 +71,6 @@ void agglomerate_one_level(long *sizes,
     // Length of the weigth of the CSR representation. In this kind of representation it is the same
     long adj_matrix_areas_size = sizes[1];
     // Initialization vector v for the dual graph structure, it is an initialization in which we copy exactly the vector passed in input to the function.
-    vector<long> v_row_ptr(adjMatrix_row_ptr, adjMatrix_row_ptr + adj_matrix_row_ptr_size);
-    vector<long> v_col_ind(adjMatrix_col_ind, adjMatrix_col_ind + adj_matrix_col_ind_size);
-    vector<double> v_values(adjMatrix_areaValues, adjMatrix_areaValues + adj_matrix_areas_size);
-    vector<double> v_volumes(volumes, volumes + nb_fc);
 
 
     // BOUNDARIES
@@ -84,8 +80,8 @@ void agglomerate_one_level(long *sizes,
     // We create the list of the faces on boundary
     unordered_map<long, int> d_is_on_bnd;
     for (int i = 0; i < nb_fc; i++) {
-        if (isOnFineBnd_l[i] > 0) {
-            d_is_on_bnd[i] = isOnFineBnd_l[i];
+        if (isOnFineBnd[i] > 0) {
+            d_is_on_bnd[i] = isOnFineBnd[i];
         }
     }
 
@@ -129,10 +125,10 @@ void agglomerate_one_level(long *sizes,
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
-                                     v_row_ptr,
-                                     v_col_ind,
-                                     v_values,
-                                     v_volumes,
+                                     adjMatrix_row_ptr,
+                                     adjMatrix_col_ind,
+                                     adjMatrix_areaValues,
+                                     volumes,
                                      d_is_on_bnd,
                                      s_is_on_corner,
                                      s_is_on_ridge,
@@ -174,7 +170,7 @@ void agglomerate_one_level(long *sizes,
 
                                   arrayOfFineAnisotropicCompliantCells,
 
-                                  isOnFineBnd_l,
+                                  isOnFineBnd,
                                   array_is_on_valley,
                                   array_is_on_ridge,
                                   array_is_on_corner,
@@ -275,3 +271,10 @@ void agglomerate_one_level(long *sizes,
         sizes[9] = Agg_lines_sizes[1];
     }
 }
+
+
+//PYBIND11_MODULE(example, m) {
+//    m.doc() = "pybind11 example plugin"; // optional module docstring
+//
+//    m.def("add", &add, "A function which adds two numbers");
+//}
