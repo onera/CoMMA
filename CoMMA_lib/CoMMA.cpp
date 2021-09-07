@@ -1,7 +1,7 @@
 
 #include "CoMMA.h"
 
-void agglomerate_one_level(long *sizes,
+void agglomerate_one_level(long (&sizes)[10],
         // Dual graph:
                            const vector<long> &adjMatrix_row_ptr,
                            const vector<long> &adjMatrix_col_ind,

@@ -9,7 +9,7 @@
 #include <climits>
 
 // We define the pointer type but not the structure
-void agglomerate_one_level(long *sizes,
+void agglomerate_one_level(long (&sizes)[10],
                           const vector<long> &adjMatrix_row_ptr,
                           const vector<long> &adjMatrix_col_ind,
                           const vector<double> &adjMatrix_areaValues,

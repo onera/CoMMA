@@ -78,7 +78,7 @@ int computeNumberOfCommonFaces(long iFine, long iCoarse,
                                long *matrixAdj_CRS_col_ind,
                                long *fine_Cell_indices_To_Coarse_Cell_Indices);
 
-void store_agglomeration_datas(long *sizes,
+void store_agglomeration_datas(long (&sizes)[10],
         // Dual graph:
                            const vector<long> &adjMatrix_row_ptr,
                            const vector<long> &adjMatrix_col_ind,

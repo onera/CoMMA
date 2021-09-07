@@ -293,7 +293,7 @@ int computeNumberOfCommonFaces(long iFine, long iCoarse,
 }
 
 
-void store_agglomeration_datas(long *sizes,
+void store_agglomeration_datas(long (&sizes)[10],
         // Dual graph:
                            const vector<long> &adjMatrix_row_ptr,
                            const vector<long> &adjMatrix_col_ind,
