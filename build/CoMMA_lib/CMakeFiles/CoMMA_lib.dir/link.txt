@@ -1,2 +1,0 @@
-/usr/bin/ar qc libCoMMA_lib.a CMakeFiles/CoMMA_lib.dir/Seeds_Pool.cpp.o CMakeFiles/CoMMA_lib.dir/Dual_Graph.cpp.o CMakeFiles/CoMMA_lib.dir/Coarse_Cell.cpp.o CMakeFiles/CoMMA_lib.dir/Agglomerator.cpp.o CMakeFiles/CoMMA_lib.dir/Coarse_Cell_Graph.cpp.o CMakeFiles/CoMMA_lib.dir/Util.cpp.o CMakeFiles/CoMMA_lib.dir/First_Order_Neighbourhood.cpp.o CMakeFiles/CoMMA_lib.dir/Edge.cpp.o CMakeFiles/CoMMA_lib.dir/CompStruct.cpp.o CMakeFiles/CoMMA_lib.dir/Triconnected_graph.cpp.o CMakeFiles/CoMMA_lib.dir/Util_graph.cpp.o CMakeFiles/CoMMA_lib.dir/CoMMA.cpp.o
-/usr/bin/ranlib libCoMMA_lib.a
