@@ -30,6 +30,14 @@ cmake ..
 CMake should be able to find the simple dependencies by itself if they're
 installed in standard location. 
 
+In order to update the submodules do:
+
+```
+git submodule init
+git submodule update
+```
+
+
 
 The file `CODA_transfer.sh` help for the installation in the CODA-CFD library.
 
