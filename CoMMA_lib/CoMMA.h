@@ -4,7 +4,6 @@
 
 #ifndef COMMA_PROJECT_COMMA_H
 #define COMMA_PROJECT_COMMA_H
-
 #include "Agglomerator.h"
 #include <climits>
 

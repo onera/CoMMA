@@ -1,0 +1,1 @@
+/opt/tools/gcc-8.3/bin/g++ -g CMakeFiles/CoMMA_run.dir/main.cpp.o -o CoMMA_run  CoMMA_lib/libCoMMA_lib.a 

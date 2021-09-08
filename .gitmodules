@@ -1,0 +1,3 @@
+[submodule "CoMMA_lib/pybind11"]
+	path = CoMMA_lib/pybind11
+	url = git@github.com:pybind/pybind11.git

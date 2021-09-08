@@ -1,8 +1,10 @@
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "CoMMA.h"
+namespace py = pybind11;
 
-void agglomerate_one_level(long (&sizes)[10],
-        // Dual graph:
+
+void agglomerate_one_level( // Dual graph:
                            const vector<long> &adjMatrix_row_ptr,
                            const vector<long> &adjMatrix_col_ind,
                            const vector<double> &adjMatrix_areaValues,
@@ -58,6 +60,17 @@ void agglomerate_one_level(long (&sizes)[10],
     //                      agglomerationLines_Idx_size, agglomerationLines_size};
 
     cout << "\n\nCall of agglomerate_one_level" << endl;
+long sizes[10] = {adjMatrix_row_ptr.size()-1, 
+                 adjMatrix_col_ind.size(),
+                 0,  // OUT
+                 0, // OUT
+                array_is_on_valley.size(),
+                array_is_on_ridge.size(), 
+                array_is_on_corner.size(),
+                arrayOfFineAnisotropicCompliantCells.size(),
+                agglomerationLines_Idx.size(),
+                agglomerationLines.size()};
+
 
     // DUAL GRAPH
     //======================================
@@ -278,3 +291,43 @@ void agglomerate_one_level(long (&sizes)[10],
 //
 //    m.def("add", &add, "A function which adds two numbers");
 //}
+PYBIND11_MODULE(CoMMA, module_handle) {
+  module_handle.doc() = "CoMMA is an agglomeration library";
+  module_handle.def("agglomerate_one_level",
+  [](const vector<long> adjMatrix_row_ptr,
+                           const vector<long> adjMatrix_col_ind,
+                           const vector<double> adjMatrix_areaValues,
+                           const vector<double> &volumes,
+
+        // Indices of compliant cc
+                           vector<long> arrayOfFineAnisotropicCompliantCells,
+
+        // boundaries
+                           const vector<long> isOnFineBnd,
+                           vector<long> array_is_on_valley,
+                           vector<long> array_is_on_ridge,
+                           vector<long> array_is_on_corner,
+
+        // Agglomeration argument
+                           long isFirstAgglomeration_long,
+                           long is_anisotropic_long,
+
+
+        // Outputs
+                           vector<long> fc_to_cc,  // Out
+
+                           vector<long> agglomerationLines_Idx,  // In & out
+                           vector<long> agglomerationLines,  // In & out
+
+        //Args with default value
+                           long is_basic_or_triconnected,
+                           long dimension,
+                           long goal_card,
+                           long min_card,
+                           long max_card,
+                           long checks_long,
+                           long verbose_long)
+      {
+          agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnFineBnd,array_is_on_valley,array_is_on_ridge,array_is_on_corner,isFirstAgglomeration_long,is_anisotropic_long,fc_to_cc, agglomerationLines_Idx, agglomerationLines,is_basic_or_triconnected,dimension,goal_card,min_card,max_card,checks_long,verbose_long);
+      });
+}

@@ -1,0 +1,480 @@
+The system is: Linux - 3.10.0-514.26.2.el7.x86_64 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /opt/tools/gcc-8.3/bin/gcc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/stck/aremigi/CoMMA/build/CMakeFiles/3.19.0-rc3/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /opt/tools/gcc-8.3/bin/g++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/stck/aremigi/CoMMA/build/CMakeFiles/3.19.0-rc3/CompilerIdCXX/a.out"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_388eb/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_388eb.dir/build.make CMakeFiles/cmTC_388eb.dir/build
+gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o
+/opt/tools/gcc-8.3/bin/gcc   -v -o CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -c /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/opt/tools/gcc-8.3/bin/gcc
+Target: x86_64-pc-linux-gnu
+Configured with: ./configure --prefix=/opt/tools/gcc-8.3
+Thread model: posix
+gcc version 8.3.0 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/cc1 -quiet -v /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -version -o /tmp/cc3togqs.s
+GNU C17 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.3.0, GMP version 6.0.0, MPFR version 3.1.1, MPC version 1.0.1, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../x86_64-pc-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include
+ /usr/local/include
+ /opt/tools/gcc-8.3/include
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed
+ /usr/include
+End of search list.
+GNU C17 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.3.0, GMP version 6.0.0, MPFR version 3.1.1, MPC version 1.0.1, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 61cd58fe8eddcbcdf1bddaed293d6bad
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o /tmp/cc3togqs.s
+GNU assembler version 2.25.1 (x86_64-redhat-linux) using BFD version version 2.25.1-22.base.el7 
+COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/
+LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_388eb
+/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_388eb.dir/link.txt --verbose=1
+/opt/tools/gcc-8.3/bin/gcc  -v CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -o cmTC_388eb 
+Using built-in specs.
+COLLECT_GCC=/opt/tools/gcc-8.3/bin/gcc
+COLLECT_LTO_WRAPPER=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: ./configure --prefix=/opt/tools/gcc-8.3
+Thread model: posix
+gcc version 8.3.0 (GCC) 
+COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/
+LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_388eb' '-mtune=generic' '-march=x86-64'
+ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2 -plugin /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so -plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccnkFmVx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_388eb /lib/../lib64/crt1.o /lib/../lib64/crti.o /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../.. CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_388eb' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+    add: [/usr/local/include]
+    add: [/opt/tools/gcc-8.3/include]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/opt/tools/gcc-8.3/include] ==> [/opt/tools/gcc-8.3/include]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include;/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include;/usr/local/include;/opt/tools/gcc-8.3/include;/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed;/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_388eb/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_388eb.dir/build.make CMakeFiles/cmTC_388eb.dir/build]
+  ignore line: [gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/opt/tools/gcc-8.3/bin/gcc   -v -o CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -c /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/opt/tools/gcc-8.3/bin/gcc]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: ./configure --prefix=/opt/tools/gcc-8.3]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.3.0 (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/cc1 -quiet -v /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -version -o /tmp/cc3togqs.s]
+  ignore line: [GNU C17 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.3.0  GMP version 6.0.0  MPFR version 3.1.1  MPC version 1.0.1  isl version none]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /opt/tools/gcc-8.3/include]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C17 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.3.0  GMP version 6.0.0  MPFR version 3.1.1  MPC version 1.0.1  isl version none]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 61cd58fe8eddcbcdf1bddaed293d6bad]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o /tmp/cc3togqs.s]
+  ignore line: [GNU assembler version 2.25.1 (x86_64-redhat-linux) using BFD version version 2.25.1-22.base.el7 ]
+  ignore line: [COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_388eb]
+  ignore line: [/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_388eb.dir/link.txt --verbose=1]
+  ignore line: [/opt/tools/gcc-8.3/bin/gcc  -v CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -o cmTC_388eb ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/opt/tools/gcc-8.3/bin/gcc]
+  ignore line: [COLLECT_LTO_WRAPPER=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: ./configure --prefix=/opt/tools/gcc-8.3]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.3.0 (GCC) ]
+  ignore line: [COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_388eb' '-mtune=generic' '-march=x86-64']
+  link line: [ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2 -plugin /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so -plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccnkFmVx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_388eb /lib/../lib64/crt1.o /lib/../lib64/crti.o /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../.. CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o /lib/../lib64/crtn.o]
+    arg [/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccnkFmVx.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_388eb] ==> ignore
+    arg [/lib/../lib64/crt1.o] ==> ignore
+    arg [/lib/../lib64/crti.o] ==> ignore
+    arg [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o] ==> ignore
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0]
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4]
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..]
+    arg [CMakeFiles/cmTC_388eb.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o] ==> ignore
+    arg [/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0]
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64] ==> [/opt/tools/gcc-8.3/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64_lin/gcc4.4]
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..] ==> [/opt/tools/gcc-8.3/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit dirs: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0;/opt/tools/gcc-8.3/lib64;/lib64;/usr/lib64;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64_lin/gcc4.4;/opt/tools/gcc-8.3/lib]
+  implicit fwks: []
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_2892f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2892f.dir/build.make CMakeFiles/cmTC_2892f.dir/build
+gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o
+/opt/tools/gcc-8.3/bin/g++   -v -o CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -c /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/opt/tools/gcc-8.3/bin/g++
+Target: x86_64-pc-linux-gnu
+Configured with: ./configure --prefix=/opt/tools/gcc-8.3
+Thread model: posix
+gcc version 8.3.0 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus -quiet -v -D_GNU_SOURCE /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccYU1ooJ.s
+GNU C++14 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.3.0, GMP version 6.0.0, MPFR version 3.1.1, MPC version 1.0.1, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../x86_64-pc-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include
+ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/x86_64-pc-linux-gnu
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/backward
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include
+ /usr/local/include
+ /opt/tools/gcc-8.3/include
+ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed
+ /usr/include
+End of search list.
+GNU C++14 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.3.0, GMP version 6.0.0, MPFR version 3.1.1, MPC version 1.0.1, isl version none
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: d1461152f306b8e8f08532551bb63225
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccYU1ooJ.s
+GNU assembler version 2.25.1 (x86_64-redhat-linux) using BFD version version 2.25.1-22.base.el7 
+COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/
+LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_2892f
+/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2892f.dir/link.txt --verbose=1
+/opt/tools/gcc-8.3/bin/g++  -v CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_2892f 
+Using built-in specs.
+COLLECT_GCC=/opt/tools/gcc-8.3/bin/g++
+COLLECT_LTO_WRAPPER=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: ./configure --prefix=/opt/tools/gcc-8.3
+Thread model: posix
+gcc version 8.3.0 (GCC) 
+COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/
+LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2892f' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2 -plugin /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so -plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvdKeBR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_2892f /lib/../lib64/crt1.o /lib/../lib64/crti.o /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../.. CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2892f' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+    add: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/x86_64-pc-linux-gnu]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/backward]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+    add: [/usr/local/include]
+    add: [/opt/tools/gcc-8.3/include]
+    add: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+  collapse include dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0] ==> [/opt/tools/gcc-8.3/include/c++/8.3.0]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/x86_64-pc-linux-gnu] ==> [/opt/tools/gcc-8.3/include/c++/8.3.0/x86_64-pc-linux-gnu]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/backward] ==> [/opt/tools/gcc-8.3/include/c++/8.3.0/backward]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/opt/tools/gcc-8.3/include] ==> [/opt/tools/gcc-8.3/include]
+  collapse include dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include;/opt/tools/gcc-8.3/include/c++/8.3.0;/opt/tools/gcc-8.3/include/c++/8.3.0/x86_64-pc-linux-gnu;/opt/tools/gcc-8.3/include/c++/8.3.0/backward;/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include;/usr/local/include;/opt/tools/gcc-8.3/include;/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed;/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_2892f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2892f.dir/build.make CMakeFiles/cmTC_2892f.dir/build]
+  ignore line: [gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/opt/tools/gcc-8.3/bin/g++   -v -o CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -c /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/opt/tools/gcc-8.3/bin/g++]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: ./configure --prefix=/opt/tools/gcc-8.3]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.3.0 (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus -quiet -v -D_GNU_SOURCE /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccYU1ooJ.s]
+  ignore line: [GNU C++14 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.3.0  GMP version 6.0.0  MPFR version 3.1.1  MPC version 1.0.1  isl version none]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/include]
+  ignore line: [ /opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/include]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/x86_64-pc-linux-gnu]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../include/c++/8.3.0/backward]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /opt/tools/gcc-8.3/include]
+  ignore line: [ /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++14 (GCC) version 8.3.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.3.0  GMP version 6.0.0  MPFR version 3.1.1  MPC version 1.0.1  isl version none]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: d1461152f306b8e8f08532551bb63225]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccYU1ooJ.s]
+  ignore line: [GNU assembler version 2.25.1 (x86_64-redhat-linux) using BFD version version 2.25.1-22.base.el7 ]
+  ignore line: [COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_2892f]
+  ignore line: [/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2892f.dir/link.txt --verbose=1]
+  ignore line: [/opt/tools/gcc-8.3/bin/g++  -v CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_2892f ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/opt/tools/gcc-8.3/bin/g++]
+  ignore line: [COLLECT_LTO_WRAPPER=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: ./configure --prefix=/opt/tools/gcc-8.3]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.3.0 (GCC) ]
+  ignore line: [COMPILER_PATH=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin/:/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4/:/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2892f' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2 -plugin /opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so -plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvdKeBR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_2892f /lib/../lib64/crt1.o /lib/../lib64/crti.o /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4 -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin -L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4 -L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../.. CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o /lib/../lib64/crtn.o]
+    arg [/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/opt/tools/gcc-8.3/libexec/gcc/x86_64-pc-linux-gnu/8.3.0/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccvdKeBR.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_2892f] ==> ignore
+    arg [/lib/../lib64/crt1.o] ==> ignore
+    arg [/lib/../lib64/crti.o] ==> ignore
+    arg [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtbegin.o] ==> ignore
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0]
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin]
+    arg [-L/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4] ==> dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4]
+    arg [-L/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..] ==> dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..]
+    arg [CMakeFiles/cmTC_2892f.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/crtend.o] ==> ignore
+    arg [/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0] ==> [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0]
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib64] ==> [/opt/tools/gcc-8.3/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin]
+  collapse library dir [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/../tbb/lib/intel64_lin/gcc4.4] ==> [/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64_lin/gcc4.4]
+  collapse library dir [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../..] ==> [/opt/tools/gcc-8.3/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit dirs: [/opt/tools/gcc-8.3/lib/gcc/x86_64-pc-linux-gnu/8.3.0;/opt/tools/gcc-8.3/lib64;/lib64;/usr/lib64;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/ipp/lib/intel64;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/compiler/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/mkl/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64/gcc4.4;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/daal/lib/intel64_lin;/opt/tools/intel/studio/2017/compilers_and_libraries_2017.4.196/linux/tbb/lib/intel64_lin/gcc4.4;/opt/tools/gcc-8.3/lib]
+  implicit fwks: []
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_b5474/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b5474.dir/build.make CMakeFiles/cmTC_b5474.dir/build
+gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b5474.dir/CheckIncludeFile.c.o
+/opt/tools/gcc-8.3/bin/gcc    -o CMakeFiles/cmTC_b5474.dir/CheckIncludeFile.c.o -c /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_b5474
+/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b5474.dir/link.txt --verbose=1
+/opt/tools/gcc-8.3/bin/gcc -rdynamic CMakeFiles/cmTC_b5474.dir/CheckIncludeFile.c.o -o cmTC_b5474 
+gmake[1]: Leaving directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_bdb72/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_bdb72.dir/build.make CMakeFiles/cmTC_bdb72.dir/build
+gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_bdb72.dir/CheckFunctionExists.c.o
+/opt/tools/gcc-8.3/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_bdb72.dir/CheckFunctionExists.c.o -c /opt/tools/cmake3.19-gnu/share/cmake-3.19/Modules/CheckFunctionExists.c
+Linking C executable cmTC_bdb72
+/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bdb72.dir/link.txt --verbose=1
+/opt/tools/gcc-8.3/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create -rdynamic CMakeFiles/cmTC_bdb72.dir/CheckFunctionExists.c.o -o cmTC_bdb72  -lpthread 
+gmake[1]: Leaving directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test HAS_FLTO succeeded with the following output:
+Change Dir: /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_e95e5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_e95e5.dir/build.make CMakeFiles/cmTC_e95e5.dir/build
+gmake[1]: Entering directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_e95e5.dir/src.cxx.o
+/opt/tools/gcc-8.3/bin/g++ -DHAS_FLTO  -flto -fno-fat-lto-objects -o CMakeFiles/cmTC_e95e5.dir/src.cxx.o -c /stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_e95e5
+/opt/tools/cmake3.19-gnu/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e95e5.dir/link.txt --verbose=1
+/opt/tools/gcc-8.3/bin/g++ -rdynamic CMakeFiles/cmTC_e95e5.dir/src.cxx.o -o cmTC_e95e5  -flto 
+gmake[1]: Leaving directory `/stck/aremigi/CoMMA/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
