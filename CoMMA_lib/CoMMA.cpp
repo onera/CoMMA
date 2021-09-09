@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include "CoMMA.h"
 namespace py = pybind11;
 
@@ -60,16 +61,16 @@ void agglomerate_one_level( // Dual graph:
     //                      agglomerationLines_Idx_size, agglomerationLines_size};
 
     cout << "\n\nCall of agglomerate_one_level" << endl;
-long sizes[10] = {adjMatrix_row_ptr.size()-1, 
-                 adjMatrix_col_ind.size(),
+long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1), 
+                 static_cast<long>(adjMatrix_col_ind.size()),
                  0,  // OUT
                  0, // OUT
-                array_is_on_valley.size(),
-                array_is_on_ridge.size(), 
-                array_is_on_corner.size(),
-                arrayOfFineAnisotropicCompliantCells.size(),
-                agglomerationLines_Idx.size(),
-                agglomerationLines.size()};
+                static_cast<long>(array_is_on_valley.size()),
+                static_cast<long>(array_is_on_ridge.size()), 
+                static_cast<long>(array_is_on_corner.size()),
+                static_cast<long>(arrayOfFineAnisotropicCompliantCells.size()),
+                static_cast<long>(agglomerationLines_Idx.size()),
+                static_cast<long>(agglomerationLines.size())};
 
 
     // DUAL GRAPH
@@ -283,6 +284,11 @@ long sizes[10] = {adjMatrix_row_ptr.size()-1,
         sizes[8] = Agg_lines_sizes[0];
         sizes[9] = Agg_lines_sizes[1];
     }
+   for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+       cout << fc_to_cc[i_fc] << endl;
+    }
+
+
 }
 
 
@@ -329,5 +335,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
                            long verbose_long)
       {
           agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnFineBnd,array_is_on_valley,array_is_on_ridge,array_is_on_corner,isFirstAgglomeration_long,is_anisotropic_long,fc_to_cc, agglomerationLines_Idx, agglomerationLines,is_basic_or_triconnected,dimension,goal_card,min_card,max_card,checks_long,verbose_long);
+      return std::make_tuple(fc_to_cc, agglomerationLines_Idx, agglomerationLines); 
       });
 }
