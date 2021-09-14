@@ -6,8 +6,8 @@
 void convert_agglomeration_lines_arrays_to_agglomeration_lines(
         const unsigned long fineAgglomerationLines_array_Idx_size,
         const unsigned long fineAgglomerationLines_array_size,
-        vector<long> &fineAgglomerationLines_array_Idx,
-        vector<long> &fineAgglomerationLines_array,
+        long *fineAgglomerationLines_array_Idx,
+        long *fineAgglomerationLines_array,
         long &nb_agglomeration_lines,
         forward_list<deque<long> *> &agglomeration_lines
 ) {
@@ -32,8 +32,8 @@ void convert_agglomeration_lines_arrays_to_agglomeration_lines(
 void convert_agglo_lines_to_agglomeration_lines_arrays(const long nb_lines, // because forward_list does not have a size() method.
                                                        forward_list<deque<long> *> const &agglo_lines,
                                                        long *sizes,  // out
-                                                       vector<long> &agglo_lines_array_idx,// out
-                                                       vector<long> &agglo_lines_array) {  // out
+                                                       long *agglo_lines_array_idx,// out
+                                                       long *agglo_lines_array) {  // out
     // arrays agglo_lines_array_idx and agglo_lines_array are already allocated.
     // As we agglomerate cells, the number of agglo lines does not vary a priori, but they are getting smaller and smaller.
 
@@ -293,33 +293,26 @@ int computeNumberOfCommonFaces(long iFine, long iCoarse,
 }
 
 
-void store_agglomeration_datas(long (&sizes)[10],
-        // Dual graph:
-                           const vector<long> &adjMatrix_row_ptr,
-                           const vector<long> &adjMatrix_col_ind,
-                           const vector<double> &adjMatrix_areaValues,
-                           const vector<double> &volumes,
+void store_agglomeration_datas(long *sizes,
 
+                               long *adjMatrix_row_ptr,
+                               long *adjMatrix_col_ind,
+                               double *adjMatrix_areaValues,
+                               double *volumes,
 
-                           vector<long> &arrayOfFineAnisotropicCompliantCells,
+                               long *arrayOfFineAnisotropicCompliantCells,
 
-                           const vector<long> &isOnFineBnd,
-                           vector<long> &array_is_on_valley,
-                           vector<long> &array_is_on_ridge,
-                           vector<long> &array_is_on_corner,
+                               long *isOnFineBnd_l,
+                               long *array_isOnValley,
+                               long *array_isOnRidge,
+                               long *array_isOnCorner,
+                               long isFirstAgglomeration_long,
+                               long isAnisotropic_long,
 
-        // Agglomeration argument
-                           long isFirstAgglomeration_long,
+                               long *fineCellToCoarseCell,
 
-                           long is_anisotropic_long,
-
-
-                           vector<long> fineCellToCoarseCell,
-                       
-                           vector<long> &agglomerationLines_Idx,  // In & out
-                           vector<long> &agglomerationLines,  // In & out
-
-
+                               long *agglomerationLines_Idx,
+                               long *agglomerationLines,
 
                                long dimension,
                                long goalCard,
@@ -344,7 +337,7 @@ void store_agglomeration_datas(long (&sizes)[10],
     long agglomerationLines_size = sizes[9];
 
     bool isFirstAgglomeration = isFirstAgglomeration_long == 1;
-    bool isAnisotropic = is_anisotropic_long == 1;
+    bool isAnisotropic = isAnisotropic_long == 1;
     //string filename = "/Users/lantos/CLionProjects/CoMMA/0_Outputs/Datas_Agglomeration_";
     string filename = "/stck/aremigi/aggl_data/";
     ofstream myfile;
@@ -385,31 +378,31 @@ void store_agglomeration_datas(long (&sizes)[10],
     myfile << endl;
 
 
-    myfile << "isOnFineBnd; ";
+    myfile << "isOnFineBnd_l; ";
     myfile << to_string(numberOfFineCells) + "; ";
     for (int i = 0; i < numberOfFineCells; i++) {
-        myfile << to_string(isOnFineBnd[i]) << "; ";
+        myfile << to_string(isOnFineBnd_l[i]) << "; ";
     }
     myfile << endl;
 
-    myfile << "array_is_on_valley; ";
+    myfile << "array_isOnValley; ";
     myfile << to_string(isOnValley_size) + "; ";
     for (int i = 0; i < isOnValley_size; i++) {
-        myfile << to_string(array_is_on_valley[i]) << "; ";
+        myfile << to_string(array_isOnValley[i]) << "; ";
     }
     myfile << endl;
 
-    myfile << "array_is_on_ridge; ";
+    myfile << "array_isOnRidge; ";
     myfile << to_string(isOnRidge_size) + "; ";
     for (int i = 0; i < isOnRidge_size; i++) {
-        myfile << to_string(array_is_on_ridge[i]) << "; ";
+        myfile << to_string(array_isOnRidge[i]) << "; ";
     }
     myfile << endl;
 
-    myfile << "array_is_on_corner; ";
+    myfile << "array_isOnCorner; ";
     myfile << to_string(isOnCorner_size) + "; ";
     for (int i = 0; i < isOnCorner_size; i++) {
-        myfile << to_string(array_is_on_corner[i]) << "; ";
+        myfile << to_string(array_isOnCorner[i]) << "; ";
     }
     myfile << endl;
 
@@ -420,7 +413,7 @@ void store_agglomeration_datas(long (&sizes)[10],
 
     myfile << "isAnisotropic_long; ";
     myfile << "1; ";
-    myfile << to_string(is_anisotropic_long) + "; ";
+    myfile << to_string(isAnisotropic_long) + "; ";
     myfile << endl;
 
     myfile << "agglomerationLines_Idx; ";

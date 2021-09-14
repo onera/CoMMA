@@ -1365,8 +1365,8 @@ TEST_F(Box_5x5x5_Aniso_Dual_Graph, agglomerate_one_level_aniso) {
     int i_level = 0;
     long sizes[2] = {0, 0};
     const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
-    vector<long> agglo_lines_array_idx(nb_fc);
-    vector<long> agglo_lines_array(nb_fc);
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
 
     agg.get_agglo_lines(i_level,
                         sizes,
@@ -1515,8 +1515,8 @@ TEST_F(Box_5x5x5_Aniso_lvl_2_Dual_Graph, agglomerate_one_level_aniso_without_agg
     int i_level = 0;
     long sizes[2] = {0, 0};
     const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
-    vector<long> agglo_lines_array_idx(nb_fc);
-    vector<long> agglo_lines_array(nb_fc);
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
 
     agg.get_agglo_lines(i_level,
                         sizes,
@@ -1710,8 +1710,8 @@ TEST_F(Box_5x5x5_Aniso_lvl_2_Dual_Graph, agglomerate_one_level_aniso) {
     int i_level = 0;
     long sizes[2] = {0, 0};
     const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
-    vector<long> agglo_lines_array_idx(nb_fc);
-    vector<long> agglo_lines_array(nb_fc);
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
 
     agg.get_agglo_lines(i_level,
                         sizes,
@@ -1902,8 +1902,8 @@ TEST_F(Box_5x5x5_Aniso_lvl_2_Dual_Graph, agglomerate_one_level_aniso_case_2) {
     int i_level = 0;
     long sizes[2] = {0, 0};
     const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
-    vector<long> agglo_lines_array_idx(nb_fc);
-    vector<long> agglo_lines_array(nb_fc);
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
 
     agg.get_agglo_lines(i_level,
                         sizes,
@@ -2014,8 +2014,8 @@ TEST_F(box_5x5x5_iso_and_aniso, agglomerate_one_level_basic_aniso) {
     int i_level = 0;
     long sizes[2] = {0, 0};
     const long nb_fc = (*g).number_of_cells; //TODO change number_of_cells -> nb_cells ou nb_fc?
-    vector<long> agglo_lines_array_idx(nb_fc);
-    vector<long> agglo_lines_array(nb_fc);
+    long agglo_lines_array_idx[nb_fc];
+    long agglo_lines_array[nb_fc];
 
     agg.get_agglo_lines(i_level,
                         sizes,
