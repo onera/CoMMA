@@ -97,4 +97,22 @@ is_basic_or_triconnected = 1
 
 fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard,checks,verbose)
 
-print(fc_to_cc_res)
+
+fine_cells_triangle = []
+fine_cells = []
+
+for j in range(len(fc_to_cc_res)):
+    if len(Mesh1.cells[j])==3:
+        fine_cells_triangle.append(np.float64(fc_to_cc_res[j]))
+    else:
+        fine_cells.append(np.float64(fc_to_cc_res[j]))
+print(len(fine_cells_triangle))
+meshOUT = meshio.Mesh(
+    points,
+    cells,
+    # Optionally provide extra data on points, cells, etc.
+    # Each item in cell data must match the cells array
+    cell_data = {"agglomerate":[fine_cells_triangle,fine_cells] },
+)
+meshOUT.write("out.vtk")
+
