@@ -52,57 +52,39 @@ void agglomerate_one_level( // Dual graph:
     //:param verbose: [boolean]
     //"""
 
-    // Reminder:
-    //    long sizes[10] = {nb_fc, adj_matrix_col_ind_size,
-    //                      indCoarseCell,  // OUT
-    //                      numberOfFineAgglomeratedCells, // OUT
-    //                      is_on_valley_size, is_on_ridge_size, is_on_corner_size,
-    //                      arrayOfFineAnisotropicCompliantCells_size,
-    //                      agglomerationLines_Idx_size, agglomerationLines_size};
 
     cout << "\n\nCall of agglomerate_one_level" << endl;
-long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1), 
-                 static_cast<long>(adjMatrix_col_ind.size()),
-                 0,  // OUT
-                 0, // OUT
-                static_cast<long>(array_is_on_valley.size()),
-                static_cast<long>(array_is_on_ridge.size()), 
-                static_cast<long>(array_is_on_corner.size()),
-                static_cast<long>(arrayOfFineAnisotropicCompliantCells.size()),
-                static_cast<long>(agglomerationLines_Idx.size()),
-                static_cast<long>(agglomerationLines.size())};
-
-
     // DUAL GRAPH
     //======================================
     // number of faces
-    long nb_fc = sizes[0];
+    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
     // Length of the offset vector of the CSR representation. it should be long as the number of faces
     //  augmented of 1
     long adj_matrix_row_ptr_size = nb_fc + 1;
     // Length of the esges vector of the CSR representation, representing the adjacency
-    long adj_matrix_col_ind_size = sizes[1];
+    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
     // Length of the weigth of the CSR representation. In this kind of representation it is the same
-    long adj_matrix_areas_size = sizes[1];
-    // Initialization vector v for the dual graph structure, it is an initialization in which we copy exactly the vector passed in input to the function.
-
+    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
+    // Initialization of sets: s_is_on_valley, s_is_on_ridge, s_is_on_corner;
+    long is_on_valley_size = static_cast<long>(array_is_on_valley.size());
+    long is_on_ridge_size = static_cast<long>(array_is_on_ridge.size());
+    long is_on_corner_size = static_cast<long>(array_is_on_corner.size());
+    // Initialize anisotropic compliant
+    long arrayOfFineAnisotropicCompliantCells_size = static_cast<long>(arrayOfFineAnisotropicCompliantCells.size());
 
     // BOUNDARIES
     //======================================
 
     //initialization of map d_is_on_bnd.
-    // We create the list of the faces on boundary
+    // We create a dictionary of the faces on boundary
+    // In particular starting from the vector we pass we store in a map
+    // the key relative to the cell analysed and the relative face on the boundary
     unordered_map<long, int> d_is_on_bnd;
     for (int i = 0; i < nb_fc; i++) {
         if (isOnFineBnd[i] > 0) {
             d_is_on_bnd[i] = isOnFineBnd[i];
         }
     }
-
-    // Initialization of sets: s_is_on_valley, s_is_on_ridge, s_is_on_corner;
-    long is_on_valley_size = sizes[4];
-    long is_on_ridge_size = sizes[5];
-    long is_on_corner_size = sizes[6];
 
     unordered_set<long> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     for (long i_o_v = 0; i_o_v < is_on_valley_size; i_o_v++) {
@@ -122,11 +104,11 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
     // Elements that is checked if they are anisotropic. 
     // e.g : in case of CODA software are passed all the children, and hence all the source elements of the 
     // previous agglomeration process.
-    long arrayOfFineAnisotropicCompliantCells_size = sizes[7];
     unordered_set<long> s_anisotropic_compliant_fc;
     for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
+
     // We add the following lines because the following sets can be rebuilt in the constructor.
     // it introduce some randomness compare to the direct agglomerator call see Test_Agglomerator_basic.cpp
     s_is_on_corner.clear();
@@ -170,28 +152,8 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
                                     checks);
 
     bool is_anisotropic = is_anisotropic_long == 1;
-    // To be changed if we want the visu data stored. The routine to do it is
-    // in Util. 
-    // In the PostProcessing folder it is possible to find the python tool to
-    // parse and to draw the graph from the data saved
-    if (false) {
-        cout << "Storing"<< endl;
-        store_agglomeration_datas(sizes,
-                                  adjMatrix_row_ptr,
-                                  adjMatrix_col_ind,
-                                  adjMatrix_areaValues,
-                                  volumes,
 
-                                  arrayOfFineAnisotropicCompliantCells,
-
-                                  isOnFineBnd,
-                                  array_is_on_valley,
-                                  array_is_on_ridge,
-                                  array_is_on_corner,
-                                  isFirstAgglomeration_long, is_anisotropic_long, fc_to_cc,
-                                  agglomerationLines_Idx,
-                                  agglomerationLines, dimension, goal_card, min_card, max_card, checks_long, verbose_long);
-    }
+    // TODO VISU DATA STORED
 
     assert(goal_card < USHRT_MAX);
     assert(min_card < USHRT_MAX);
@@ -205,8 +167,10 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
     forward_list<deque<long> *> agglomeration_lines;
 
     if (is_anisotropic && !isFirstAgglomeration_long) {
-        long agglomerationLines_Idx_size = sizes[8];
-        long agglomerationLines_size = sizes[9];
+
+
+        long agglomerationLines_Idx_size = static_cast<long>(agglomerationLines_Idx.size());
+        long agglomerationLines_size =static_cast<long>(agglomerationLines.size());
         // Function from Util
         convert_agglomeration_lines_arrays_to_agglomeration_lines(agglomerationLines_Idx_size,
                                                                   agglomerationLines_size,
@@ -232,7 +196,7 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
                               max_card_s
     );
 
-    sizes[2] = agg.get_nb_cc();  //indCoarseCell
+    //sizes[2] = agg.get_nb_cc();  //indCoarseCell
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
     }
@@ -281,8 +245,6 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
                             agglomerationLines_Idx,
                             agglomerationLines);
 
-        sizes[8] = Agg_lines_sizes[0];
-        sizes[9] = Agg_lines_sizes[1];
     }
    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
        cout << fc_to_cc[i_fc] << endl;
@@ -292,11 +254,6 @@ long sizes[10] = {static_cast<long>(adjMatrix_row_ptr.size()-1),
 }
 
 
-//PYBIND11_MODULE(example, m) {
-//    m.doc() = "pybind11 example plugin"; // optional module docstring
-//
-//    m.def("add", &add, "A function which adds two numbers");
-//}
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() = "CoMMA is an agglomeration library";
   module_handle.def("agglomerate_one_level",
