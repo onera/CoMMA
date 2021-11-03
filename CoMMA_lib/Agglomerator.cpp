@@ -991,7 +991,7 @@ void Agglomerator::_agglomerate_one_level_anisotropic_part() {
 
         // The anisotropic lines are only computed on the original (finest) mesh.
         long nb_agglomeration_lines(0);
-        __v_lines[0] = __fc_graphs.compute_anisotropic_line_v2(nb_agglomeration_lines);  // finest level!!!
+        __v_lines[0] = __fc_graphs.compute_anisotropic_line(nb_agglomeration_lines);  // finest level!!!
         __v_nb_lines[0] = nb_agglomeration_lines;
     }
     // This is not the first generation of a coarse level.

@@ -1,7 +1,7 @@
 //
 // Created by Nicolas Lantos on 31/03/2021.
 //
-
+// fc : fine cells
 #include "Dual_Graph.h"
 
 template<typename A, typename B>
@@ -9,6 +9,8 @@ std::pair<B, A> flip_pair(const pair<A, B> &p) {
     return pair<B, A>(p.second, p.first);
 };
 
+
+// Reference : https://stackoverflow.com/questions/8321316/flip-map-key-value-pair
 template<typename A, typename B, template<class, class, class...> class M, class... Args>
 multimap<B, A> flip_map(const M<A, B, Args...> &src) {
     multimap<B, A> dst;
@@ -16,10 +18,12 @@ multimap<B, A> flip_map(const M<A, B, Args...> &src) {
     return dst;
 };
 
+// Constructor : initialization of variables by :. The variables are recorded in member functions
+
 Dual_Graph::Dual_Graph(long nb_c,
                        const vector<long> &m_crs_row_ptr,
                        const vector<long> &m_crs_col_ind,
-                       const vector<double> &m_crs_values,
+                       const vector<double> &m_crs_values, // In our case they will be the value of the area of the faces.
                        const vector<double> &volumes,
                        unordered_map<long, int> &d_is_on_bnd,
                        unordered_set<long> is_on_corner,
@@ -31,7 +35,7 @@ Dual_Graph::Dual_Graph(long nb_c,
 ) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes) {
     this->number_of_cells = nb_c;
     this->_dimension = dim;
-
+    // We check that effectively in the dictionary we have recorded cells with boundaries and we define the seed pool depending on the dimension of the problem. (2D or 3D)
     if (d_is_on_bnd.size() != 0) {
         int init_bnd_level = -1;
         if (this->_dimension == 2) {
@@ -41,7 +45,7 @@ Dual_Graph::Dual_Graph(long nb_c,
         } else {
             assert(false);
         }
-
+       // In the constructor is built the seed pool
         this->seeds_pool = new Seeds_Pool(this->number_of_cells,
                                           d_is_on_bnd,
                                           is_on_corner,
@@ -62,16 +66,22 @@ Dual_Graph::Dual_Graph(long nb_c,
 }
 
 vector<long> Dual_Graph::get_neighbours(const long &i_c) const {
+    // given the index of a cell refurn the neighborhoods of this cell
     long ind = this->_m_CRS_Row_Ptr[i_c];
     long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
+    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
+    // connected areai (and hence to the faces)
     vector<long> result(this->_m_CRS_Col_Ind.begin() + ind, this->_m_CRS_Col_Ind.begin() + ind_p_one);
     return result;
 
 }
 
 vector<double> Dual_Graph::get_weights(const long &i_c) const {
+    // Given the index of a cell, return the value of the faces connected
     long ind = this->_m_CRS_Row_Ptr[i_c];
     long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
+    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
+    // connected areai (and hence to the faces)
     vector<double> result(this->_m_CRS_Values.begin() + ind, this->_m_CRS_Values.begin() + ind_p_one);
     return result;
 
@@ -138,358 +148,36 @@ bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
 }
 
 unsigned short Dual_Graph::get_nb_of_neighbours(long i_c) {
-    return this->_m_CRS_Row_Ptr[i_c + 1] - this->_m_CRS_Row_Ptr[i_c];
+// Return the number of neightbohurs of the ith cell
+    	return this->_m_CRS_Row_Ptr[i_c + 1] - this->_m_CRS_Row_Ptr[i_c];
 }
 
 
-bool Dual_Graph::compute_anisotropic_line(long *sizes,
-                                          long *array_of_anisotropic_compliant_fc,
-                                          long *agglomerationLines_Idx,
-                                          long *agglomerationLines,
-                                          bool verbose) {
-
-    // Rmk: costly function: sort of a dictionary!
-    long nb_fc = this->number_of_cells;
-
-    long nb_anisotropic_compliant_fc = sizes[7];
-    long numberOfAnisotropicLinesPOne_size = sizes[8];  // nb_anisotropic_compliant_fc at the  beginning
-    long agglomerationLines_size = sizes[9];            // nb_anisotropic_compliant_fc at the  beginning
-
-    bool isAnisotropicLines = false;
-    // self._listOfSetAnisotropicCompliant[iLevel] contains the set of anisotropic compliant cells (i.e. Hexa and
-    //                                                                                                prism)
-
-    // TODO Au lieu de faire un tableau avec toutes les cellules, les Hexa et les prismes sont suffisants!
-    double *maxArray = new double[nb_fc];
-    unordered_map<long, double> d_anisotropic_fc;// keys are the ratio Max to average (ratioArray[iCell]) and value
-    //                                                 the (global) index of the cell.
-
-    // Process of every compliant fine cells:
-    long i_fc;
-    long ind, ind_p_one, i_neighbour_fc;
-    double min_weight, max_weight, averageWeight, weight;
-
-    for (int i_loc_fc = 0; i_loc_fc < nb_anisotropic_compliant_fc; ++i_loc_fc) {
-
-        i_fc = array_of_anisotropic_compliant_fc[i_loc_fc];
-        ind = this->_m_CRS_Row_Ptr[i_fc];
-        ind_p_one = this->_m_CRS_Row_Ptr[i_fc + 1];
-
-        min_weight = numeric_limits<double>::max();
-        max_weight = 0.0;
-        averageWeight = 0.0;
-
-        // computation of min_weight, max_weight and averageWeight for the current cell i_loc_fc
-        // Process of every faces/Neighbours
-        for (long i_n = ind; i_n < ind_p_one; ++i_n) {
-            i_neighbour_fc = this->_m_CRS_Col_Ind[i_n];
-            if (i_neighbour_fc != i_fc) {  // to avoid special case where the boundary value are stored
-                weight = this->_m_CRS_Values[i_n];
-                if (max_weight < weight) {
-                    max_weight = weight;
-                }
-                if (min_weight > weight) {
-                    min_weight = weight;
-                }
-            }
-
-            averageWeight += this->_m_CRS_Values[i_n] / (double) (ind_p_one - ind);
-        }
-        maxArray[i_fc] = max_weight;
-
-        // TODO comprendre la raison d'etre des 2 criteres: present chez Mavriplis et DLR
-        // Anisotropy criteria for the initial sort
-        // if ratioArray[i_loc_fc] >= 2.0:
-        //     d_anisotropic_fc[ratioArray[i_loc_fc]] = i_loc_fc
-        //
-        //     count += 1
-
-        // Anisotropy criteria for the line Admissibility
-        if (max_weight / min_weight >= 4.0) {
-            // if i_loc_fc in setOfAnisotropicCompliantFineCells:
-            // we check if the cell is for lvl 0 hexa or prism
-            // or for lvl >0 if is build from hexa or prism.
-            // isAnisotropic[i_loc_fc] = True
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
-        }
-    }
-
-    if (!d_anisotropic_fc.empty()) {
-
-        // There are anisotropic cells
-        // We sort the dict w.r.t. the ratio  ????
-        // From the biggest "anisotropy" to the smallest
-        // orderedDictAnisotropyCell = OrderedDict(sorted(d_anisotropic_fc.items(), key=lambda t: t[1],
-        //                                                reverse=True))
-        //sortedList_anisotropicCells = sorted(d_anisotropic_fc, key = d_anisotropic_fc.get, reverse = True)
-
-        multimap<double, long> sorted_anisotropicCells = flip_map(d_anisotropic_fc);  // Sorting!
-        multimap<double, long>::reverse_iterator rIt;
-
-        long nb_anisotropic_fc = d_anisotropic_fc.size();
-        long *index_l_to_g = new long[nb_anisotropic_fc];
-        unordered_map<long, long> dictGlobalToLocal;
-
-        // Initialisation of index_l_to_g
-        // To work only on anisotropic cells.
-        long i = 0, index;
-        for (rIt = sorted_anisotropicCells.rbegin(); rIt != sorted_anisotropicCells.rend(); rIt++) {
-            index = rIt->second;
-            index_l_to_g[i] = index;
-            dictGlobalToLocal[index] = i;
-            ++i;
-        }
-
-        // is_anisotropic_local: to check if a cell has already been treated
-        bool *is_anisotropic_local = new bool[nb_anisotropic_fc];
-        for (long iLoc = 0; iLoc < nb_anisotropic_fc; iLoc++) {
-            is_anisotropic_local[iLoc] = true;
-        }
-
-        // TODO Think of a more pertinent seed???
-        long i_loc_seed = 0;
-
-        long i_seed = index_l_to_g[i_loc_seed]; //iterator ease the iteration on the multimap
-
-        int lines_size = 0;
-        forward_list<deque<long> *> lines;
-
-        long i_current_fc;
-
-        bool searchOppositeDirection = false;
-        long cellAtTheLimitIsoAniso;
-        long previousCurrentCell;
-      //  deque<long>::iterator iter;
-        // We try every possible cell as seed:
-        while (i_loc_seed < nb_anisotropic_fc) {
-
-            i_current_fc = i_seed;
-            deque<long> *dQue;
-            dQue = new deque<long>();
-            (*dQue).push_back(i_seed); 
-
-            // Line contains the global numbering of cells
-            // Initialization of the parameters for the cycle
-            searchOppositeDirection = false;
-            is_anisotropic_local[i_loc_seed] = false;
-            cellAtTheLimitIsoAniso = -1;
-
-            while (i_current_fc != -1) {
-                // To verify if we start from one extremity or not of the line
-                // see if i_current_fc == previousCurrentCell:
-                previousCurrentCell = i_current_fc;
-                ind = this->_m_CRS_Row_Ptr[i_current_fc];
-                ind_p_one = this->_m_CRS_Row_Ptr[i_current_fc + 1];
-
-                // Process neighbours of current cell
-                for (long iN = ind; iN < ind_p_one; ++iN) {
-                    i_neighbour_fc = this->_m_CRS_Col_Ind[iN];
-                    if (i_neighbour_fc != i_current_fc) {
-                        // Reminder: if i_neighbour_fc == i_current_fc, we are at the boundary of the domain
-                        if (this->_m_CRS_Values[iN] > 0.75 * maxArray[i_current_fc]) {
-                            // Search faces with biggest areas
-                            if (dictGlobalToLocal.count(i_neighbour_fc) == 1 and
-                                is_anisotropic_local[dictGlobalToLocal[i_neighbour_fc]]) {
-
-                                // We find an anisotropic neighbour
-                                // On veut que la ligne soit definie de maniere contigue:
-                                // c'est a  dire qu'on parte d'un bout vers l'autre et
-                                // pas du milieu, jusqu'a un bout et puis on repart dans l'autre sens.
-                                // TODO le cas test en ne triant pas initialement devra me permettre de tester ca!
-                                if (!searchOppositeDirection) {
-                                    // General case:
-                                    // Correct direction from wall to farfield
-                                    (*dQue).push_back(i_neighbour_fc);
-                                    i_current_fc = i_neighbour_fc;
-                                } else {
-                                    (*dQue).push_front(i_neighbour_fc);
-                                    i_current_fc = i_neighbour_fc;
-                                }
-                                // TODO Est-ce le bon moyen de marquer les cellules comme visitees????
-                                // isAnisotropic[i_neighbour_fc] = False
-                                is_anisotropic_local[dictGlobalToLocal[i_neighbour_fc]] = false;
-                                break;
-                            } else {
-                                // We find an isotropic neighbour! (and we are not at the boundary
-
-                                // assert cellAtTheLimitIsoAniso ==-1, "Problem cellAtTheLimitIsoAniso
-                                // is overwritten"
-                                bool isInDeque = false;
-                                for (long index: (*dQue)) {
-                                    if (i_neighbour_fc == index) {
-                                        isInDeque = true;
-                                        break;
-                                    }
-                                }
-                                if (!isInDeque) {
-                                    // As isAnisotropic[i_neighbour_fc] is used to mark/color cells already treated
-                                    // we check is the neighbour cell has been treated in the current line
-                                    // TODO what happend if the neighbour is in an another agglomerationLine???
-                                    cellAtTheLimitIsoAniso = i_current_fc;
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                // TODO Could it be 3 anisotropic neighbour with area bigger than the criteria?
-                if (i_current_fc == previousCurrentCell) {
-                    // in this case, the seed was not at one end of the line.
-                    // We have done a part of the line and we now try the other direction
-                    if (!searchOppositeDirection) {
-                        //assert(dQue.size() > 1); // "Trouble"
-                        searchOppositeDirection = true;
-                        i_current_fc = i_seed;
-                    } else {
-                        i_current_fc = -1;
-                    }
-                }
-            }
-            //cout<<"Line found: ";
-            //for (iter = (*dQue).begin();iter!=(*dQue).end(); iter++) {
-            //    cout<<*iter<<" ";
-            //}
-            //cout<<endl;
-
-            // The current line contains more cells than the seed.
-            // We keep it
-            // otherwise we rewrite on it.
-            if ((*dQue).size() > 1) {
-//                cout<<"(*dQue).size() > 1"<<endl;
-                //Si on recontre une cellulle isotrope, on inverse l'ordre!
-                if ((*dQue).front() == cellAtTheLimitIsoAniso) {
-                    //lines[lineNumber] = deque(reversed(lines[lineNumber]));
-                    deque<long> *dQ2;
-                    dQ2 = new deque<long>();
-                    for (auto iFC :(*dQue)) {
-//                        cout<<"(*dQue) "<<i<<endl;
-                        (*dQ2).push_front(iFC);
-                    }
-                    assert((*dQ2).front() != cellAtTheLimitIsoAniso);// "Problem both ends are at the limit"
-                    // deletion of dQue which is useless now
-                    delete dQue;
-
-                    // Creation of a new line
-                    lines.push_front(dQ2);
-                    lines_size++;
-                } else {
-                    // Creation of a new line
-                    lines.push_front(dQue);
-                    lines_size++;
-                }
-            } else {
-                delete dQue;
-            }
-
-            // On pourrait prendre directement le suivant i.e. iSeed+=1
-            // Sauf que potentiellement ce suivant pourrait deja appartenir a une ligne.
-            while ((i_loc_seed < nb_anisotropic_fc) && (!is_anisotropic_local[i_loc_seed])) {
-                // while i_loc_seed < nb_anisotropic_fc and not isAnisotropic[index_l_to_g[i_loc_seed]]:
-                i_loc_seed += 1;
-            }
-            if (i_loc_seed == nb_anisotropic_fc) {
-                continue;
-            }
-            i_seed = index_l_to_g[i_loc_seed];
-        }
-//        cout<<"End of While Loop"<<endl;
-//        forward_list<deque<long>*>::iterator fLIter;
-//        for (fLIter = lines.begin(); fLIter!=lines.end(); fLIter++)
-//        {
-//            cout<<(*(*fLIter)).size()<<endl;
-//        }
-//        cout<<"lines.front().size() "<< (*lines.front()).size()<<endl;
-
-        // The last line may be of size 1 and will not be overwritten.
-        if (!lines.empty()) {
-            if ((*lines.front()).size() == 1) {
-
-                if (verbose) {
-                    cout << "lines.pop() " << (*lines.front()).front() << endl;
-                }
-                lines.pop_front();
-            }
-        }
-//        cout<<"Conversion of deque to array"<<endl;
-        long numberOfAgglomerationLines = lines_size;
-
-        if (numberOfAgglomerationLines == 0) {
-//            numberOfAgglomerationLines = 1;
-            agglomerationLines_Idx[0] = 0;
-            agglomerationLines_Idx[1] = 0;
-            agglomerationLines_size = 0;
-            numberOfAnisotropicLinesPOne_size = 2;
-        } else {
-
-            long numberOfFCellsInAgglomerationLines = 0;
-
-            agglomerationLines_Idx[0] = 0;
-            forward_list<deque<long> *>::iterator fLIt;
-            long iLines = 1;
-            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-
-                agglomerationLines_Idx[iLines] = (*(*fLIt)).size() + numberOfFCellsInAgglomerationLines;
-                long jCount = 0;
-
-                for (auto i :(*(*fLIt))) {
-                    agglomerationLines[jCount + numberOfFCellsInAgglomerationLines] = i;
-                    jCount++;
-                }
-                numberOfFCellsInAgglomerationLines += (*(*fLIt)).size();
-                iLines++;
-            }
-
-            // Deletion of pointer to deque:
-            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-                delete (*fLIt);
-            }
-
-            numberOfAnisotropicLinesPOne_size = iLines;
-            agglomerationLines_size = numberOfFCellsInAgglomerationLines;
-            isAnisotropicLines = true;
-        }
-
-
-        delete[] index_l_to_g;
-        delete[] is_anisotropic_local;
-    } else {
-        agglomerationLines_Idx[0] = 0;
-        agglomerationLines_Idx[1] = 0;
-        agglomerationLines_size = 0;
-        numberOfAnisotropicLinesPOne_size = 2;
-
-    }
-
-    sizes[8] = numberOfAnisotropicLinesPOne_size;
-    sizes[9] = agglomerationLines_size;
-
-    delete[] maxArray;
-    return isAnisotropicLines;
-}
-
+// Return the dictionary of anisotropic faces. The values are the ratio of the area by definition
+// while the keys are the global index of the faces
 unordered_map<long, double> Dual_Graph::__compute_d_anisotropic_fc(vector<double> &maxArray) {
-
-    unordered_map<long, double> d_anisotropic_fc;// keys are the ratio Max to average (ratioArray[iCell]) and value
-    //                                                 the (global) index of the cell.
-
+    // values are the ratio Max to average (ratioArray[iCell]) and keys
+    // the (global) index of the cell. d_anisotropic_fc[ifc]= max_weight/min_weight
+    unordered_map<long, double> d_anisotropic_fc;
     double min_weight, max_weight, averageWeight, weight;
 
-    // Process of every compliant fine cells:
-    for (const long i_fc : s_anisotropic_compliant_cells) {
+    // Process of every compliant fine cells (it is a member variable, so it is not passed to the function):
+    for (const long i_fc : this->s_anisotropic_compliant_cells) {
 
         min_weight = numeric_limits<double>::max();
         max_weight = 0.0;
         averageWeight = 0.0;
 
         // computation of min_weight, max_weight and averageWeight for the current cell i_loc_fc
-        // Process of every faces/Neighbours
+        // Process of every faces/Neighboursi and compute for the current cell the neighborhood and the
+	// area associated with the neighborhood cells
         vector<long> v_neighbours = get_neighbours(i_fc);
         vector<double> v_weights = get_weights(i_fc);
 
         assert(v_neighbours.size() == v_weights.size());
         int nb_neighbours = v_neighbours.size();
-        for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+
+	for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
 
             long i_fc_n = v_neighbours[i_n];
             double i_w_fc_n = v_weights[i_n];
@@ -523,14 +211,17 @@ unordered_map<long, double> Dual_Graph::__compute_d_anisotropic_fc(vector<double
             // we check if the cell is for lvl 0 hexa or prism
             // or for lvl >0 if is build from hexa or prism.
             // isAnisotropic[i_loc_fc] = True
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+            // we add in the stack all the faces that are anisotropic (reordered by level of anisotropicity)
+	    d_anisotropic_fc[i_fc] = max_weight / averageWeight;
         }
     }
     return d_anisotropic_fc;
 }
 
-forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agglomeration_lines) {
-    //TODO rename this to remove v2...
+
+
+
+forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeration_lines) {
     /**
      * The goal of this function is :
      * - firstly to look for anisotropic cells through the use of d_anisotropic_fc
@@ -540,16 +231,16 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
 
     bool verbose = false;
 
-    long nb_fc = number_of_cells; // Number of cells is a member variable initialized through nb_c in the 
-    // constructor 
-    //TODO change the name
+    long nb_fc = number_of_cells; // Number of cells is a member variable initialized through nb_fc in the 
+    // it is computed in d_anisotropic_fc as rhe max_weight
     vector<double> maxArray(nb_fc, 0.0);
 
     unordered_map<long, double> d_anisotropic_fc = __compute_d_anisotropic_fc(maxArray);
 
     int lines_size = 0;
     forward_list<deque<long> *> lines;
-
+     
+    // If it is empty there are no anisotropic cells
     if (!d_anisotropic_fc.empty()) {
 
         // There are anisotropic cells.
@@ -558,30 +249,39 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
         // orderedDictAnisotropyCell = OrderedDict(sorted(d_anisotropic_fc.items(), key=lambda t: t[1],
         //                                                reverse=True))
         //sortedList_anisotropicCells = sorted(d_anisotropic_fc, key = d_anisotropic_fc.get, reverse = True)
-
-        multimap<double, long> sorted_anisotropicCells = flip_map(d_anisotropic_fc);  // Sorting!
+         
+        multimap<double, long> sorted_anisotropicCells = flip_map(d_anisotropic_fc);  
+	// Sorting! flip map is defined in the template at the beginning, it flips value and key
+	// and reorder the map. We pass from an unordered map (each cell had only one value) to a multimap, where each
+	// anisotropicity value can correspond to different cells.
         multimap<double, long>::reverse_iterator rIt;
-
+        // Number of anisotropic Fine cells is given by the size of the dictionary
         long nb_anisotropic_fc = d_anisotropic_fc.size();
+	// local to global, where local is the anisotropic cell part and global is the global numbering of cells
         vector<long> index_l_to_g(nb_anisotropic_fc);
         unordered_map<long, long> d_g_to_l;
 
-        // Initialisation of index_l_to_g
+        // Initialisation of index_l_to_g (local to global)
         // To work only on anisotropic cells.
         long i = 0, index;
         for (rIt = sorted_anisotropicCells.rbegin(); rIt != sorted_anisotropicCells.rend(); rIt++) {
+	    // with the second statement I am pointing to the secons element of the pair and hence to the 
+	    // global index of the cell https://stackoverflow.com/questions/15451287/what-does-iterator-second-mean
             index = rIt->second;
+	    // I am bounding the local index (position in the vector) to the global index
             index_l_to_g[i] = index;
+	    // Here I am doing the opposite using the dictionary
             d_g_to_l[index] = i;
+	    // I advance my local marker
             ++i;
         }
 
         // is_anisotropic_local: to check if a cell has already been treated
         vector<bool> is_anisotropic_local = vector<bool>(nb_anisotropic_fc, true);
 
-        // TODO Think of a more pertinent seed???
-        long i_loc_seed = 0;
-
+        // I start from local seed 0
+	long i_loc_seed = 0;
+        // with i_seed I point to the global numbering cof the cells
         long i_seed = index_l_to_g[i_loc_seed];
 
 
@@ -607,15 +307,9 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
             cellAtTheLimitIsoAniso = -1;
 
             while (i_current_fc != -1) {
-                // Ca c'est pour verifier si on part ou non d'une extremite d'une ligne.
-                // voir if i_current_fc == previousCurrentCell:
-                previousCurrentCell = i_current_fc;
-//                cout<<"CurrentCell "<<i_current_fc <<endl;
-//                ind = this->_m_CRS_Row_Ptr[i_current_fc];
-//                ind_p_one = this->_m_CRS_Row_Ptr[i_current_fc + 1];
-
+                // while I am not at the boudary (where i_current_fc would be -1)
+		previousCurrentCell = i_current_fc;
                 // Process neighbours of current cell
-//                for (long iN = ind; iN < ind_p_one; ++iN) {
                 vector<long> v_neighbours = get_neighbours(i_current_fc);
                 vector<double> v_weights = get_weights(i_current_fc);
 
@@ -757,49 +451,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line_v2(long &nb_agg
                 lines.pop_front();
             }
         }
-
-//        cout<<"Conversion of deque to array"<<endl;
         nb_agglomeration_lines = (long) lines_size;
-
-//        if (nb_agglomeration_lines == 0) {
-////            nb_agglomeration_lines = 1;
-//            agglomerationLines_Idx[0] = 0;
-//            agglomerationLines_Idx[1] = 0;
-//            agglomerationLines_size = 0;
-//            numberOfAnisotropicLinesPOne_size = 2;
-//        } else {
-//
-//            long numberOfFCellsInAgglomerationLines = 0;
-//
-//            agglomerationLines_Idx[0] = 0;
-//            forward_list<deque<long> *>::iterator fLIt;
-//            long iLines = 1;
-//            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-//
-//                agglomerationLines_Idx[iLines] = (*(*fLIt)).size() + numberOfFCellsInAgglomerationLines;
-//                long jCount = 0;
-//
-//                for (auto i :(*(*fLIt))) {
-//                    agglomerationLines[jCount + numberOfFCellsInAgglomerationLines] = i;
-//                    jCount++;
-//                }
-//                numberOfFCellsInAgglomerationLines += (*(*fLIt)).size();
-//                iLines++;
-//            }
-//
-//            // Deletion of pointer to deque:
-//            for (fLIt = lines.begin(); fLIt != lines.end(); fLIt++) {
-//                delete (*fLIt);
-//            }
-//
-//            numberOfAnisotropicLinesPOne_size = iLines;
-//            agglomerationLines_size = numberOfFCellsInAgglomerationLines;
-//            isAnisotropicLines = true;
-//        }
-
-
-//        delete[] index_l_to_g;
-//        delete[] is_anisotropic_local;
     }
 
     return lines;
@@ -954,18 +606,8 @@ vector<double> Dual_Graph::compute_aspect_ratio_and_characteristics(double &min,
       :return:
     */
 
-    vector<double> aspect_ratio;
-    for (int i_fc = 0; i_fc < number_of_cells; i_fc++) {
-        double surface = 0.;
-        for (auto i_w_n : get_weights(i_fc)) {
-            /* we directly use j_cell because we don't need the real index of the neighbouring cell.
-           only the index for matrixAdj_CRS_surface_values_lvl_l */
-            surface += i_w_n;
-        }
-
-        double tmp = pow(surface, 1.5) / _volumes[i_fc];
-        aspect_ratio.push_back(tmp);
-    }
+ 
+    vector<double> aspect_ratio = compute_aspect_ratio();
 
     compute_characteristics_utility(aspect_ratio, min, max, mean, sd, median);
 
@@ -1010,19 +652,6 @@ void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, 
     }
 }
 
-
-double Dual_Graph::compute_average_fc_compactness_inside_a_cc(unordered_set<long> set_of_fc) {
-    // TODO Delete unused???
-    if (set_of_fc.size() > 1) {
-        unordered_map<long, unsigned short int> dict_fc_compactness = compute_fc_compactness_inside_a_cc(set_of_fc);
-        vector<double> values;
-        for (auto i_k_v : dict_fc_compactness)
-            values.push_back(i_k_v.second);
-        double sum = accumulate(values.begin(), values.end(), 0);
-        return sum / dict_fc_compactness.size();
-    } else
-        return 0;
-}
 
 
 void Dual_Graph::compute_breadth_first_search(unordered_set<long> set_of_fc, long current_seed, unordered_map<long, long> dict_inv_list_of_fc, vector<long> color, long &max_color,
@@ -1096,7 +725,7 @@ void Dual_Graph::compute_breadth_first_search(unordered_set<long> set_of_fc, lon
 void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> &predecessor, long &i_depth, unordered_map<long, vector<long> > &d_spanning_tree) {
     assert(set_of_fc.size() == number_of_cells);
     //unordered_map<long, vector<long> > d_spanning_tree;
-
+   // https://en.wikipedia.org/wiki/Breadth-first_search
     unordered_set<long> s_fc_visited;
     unordered_map<long, vector<long> > d_fringe;
     d_fringe[0];
@@ -1146,50 +775,6 @@ void Dual_Graph::compute_breadth_first_search_v2(unordered_set<long> set_of_fc, 
     }
     i_depth--;
 }
-
-/*
-    def compute_breadth_first_search_v2(self,
-                                        set_of_fc,
-                                        current_seed: int,
-                                        predecessor: np.ndarray = None):
-
-        while i_depth < len(d_fringe):
-
-            for i_current_seed in d_fringe[i_depth]:
-
-                # TODO For reproduction testing: to remove hazard in set iteration (from != python version and much more!)
-                # print("BFS_v2 remove this!!!!!! Useless when stabilized")
-                # print("As I had the sorting of initial Dictionary for dynamic graph, this should be useless!!!!")
-
-                # Add to insure independence w.r.t. data structure
-                # l_sorted_neighbours = list(self.get_neighbours(i_current_seed))
-                # l_sorted_neighbours.sort()
-                for i_fc_neighbour in self.get_neighbours(i_current_seed):
-                    # for i_fc_neighbour in self.get_neighbours(i_current_seed):
-
-                    if i_fc_neighbour != i_current_seed and i_fc_neighbour in set_of_fc:
-                        if i_fc_neighbour not in s_fc_visited:
-
-                            if i_depth + 1 in d_fringe:
-                                d_fringe[i_depth + 1].append(i_fc_neighbour)
-                            else:
-                                d_fringe[i_depth + 1] = [i_fc_neighbour]
-                            if predecessor is not None:
-                                predecessor[i_fc_neighbour] = i_current_seed
-                            if i_current_seed in d_spanning_tree:
-                                d_spanning_tree[i_current_seed].append(i_fc_neighbour)
-                            else:
-                                d_spanning_tree[i_current_seed] = [i_fc_neighbour]
-                            s_fc_visited.add(i_fc_neighbour)
-            i_depth += 1
-        # print(d_fringe)
-        if predecessor is not None:
-            return i_depth - 1, d_fringe, d_spanning_tree, predecessor
-        else:
-            return i_depth - 1, d_fringe, d_spanning_tree
-*/
-
-
 
 unsigned short int Dual_Graph::compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc) {
     // Compute Compactness of a cc

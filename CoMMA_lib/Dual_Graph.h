@@ -79,13 +79,7 @@ public :
 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
-    bool compute_anisotropic_line(long *sizes,
-                                  long *arrayOfFineAnisotropicCompliantCells,
-                                  long *agglomerationLines_Idx,
-                                  long *agglomerationLines,
-                                  bool verbose);
-
-    forward_list<deque<long> *> compute_anisotropic_line_v2(long &nb_agglomeration_lines);
+    forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
 
     unordered_map<long, double> __compute_d_anisotropic_fc(vector<double> &maxArray);
 
@@ -104,8 +98,6 @@ public :
 
     void compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso,
                                               double &median_aniso);
-
-    double compute_average_fc_compactness_inside_a_cc(unordered_set<long> set_of_fc);
 
     void compute_breadth_first_search(unordered_set<long> set_of_fc, long current_seed, unordered_map<long, long> dict_inv_list_of_fc, vector<long> color, long &max_color,
                                       unordered_set<long> &s_fc_max_color, unordered_map<long, vector<long>> &d_spanning_tree);
