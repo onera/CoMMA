@@ -20,8 +20,11 @@
     //:param is_visu_data_stored: parameter to store visualization data
     //:param dimension: dimension of the problem
     //"""
-class Agglomerator {
+// forward definition to keep the agglomerators in one file
+class Agglomerator_Anisotropic;
+class Agglomerator_Isotropic;
 
+class Agglomerator {
    public:
    // Constructor 
    Agglomerator(Dual_Graph &graph,
@@ -30,14 +33,13 @@ class Agglomerator {
                  int dimension = 3);
     // Destructor
     ~Agglomerator() {
-        if (_cc_graphs != NULL) {
-            delete _cc_graphs->_fc_graph.seeds_pool;
-            delete _cc_graphs;
+        if (_cc_graph != NULL) {
+            delete _cc_graph->_fc_graph.seeds_pool;
+            delete _cc_graph;
         }
     };
     // Set the agglomerator parameters
-    virtual void _set_agglomeration_parameter(
-            bool is_anisotropic,
+    virtual void set_agglomeration_parameter(
             string kind_of_agglomerator = "basic",
             short goal_card = -1,
             short min_card = -1,
@@ -80,30 +82,24 @@ class Agglomerator {
     bool _is_visu_data_stored;
     // flag for the verbose mode
     int _verbose;
-}
+};
 
 class Agglomerator_Anisotropic : public Agglomerator{
    // Constructor 
    public:
-   Agglomerator_Anisotropic(Dual_Graph &graph,
-                 unsigned short int verbose = 0,
-                 bool is_visu_data_stored = false,
-                 int dimension = 3);
+   Agglomerator_Anisotropic(Dual_Graph &graph,unsigned short int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
     // Destructor
-    ~Agglomerator_Anisotropic() {
-        clean_agglomeration_lines(_v_lines[0]);
-        clean_agglomeration_lines(_v_lines[1]);
-        }
-    };
+    ~Agglomerator_Anisotropic();
+    //    clean_agglomeration_lines(_v_lines[0]);
+    //    clean_agglomeration_lines(_v_lines[1]);
     // Specialization of the pure virtual method in the base class to fill
     // the parameter space
 
-    void _set_agglomeration_parameter(
-         bool is_anisotropic,
+    void set_agglomeration_parameter(
          string kind_of_agglomerator = "basic",
          short goal_card = -1,
          short min_card = -1,
-         short max_card = -1);
+         short max_card = -1) override;
 
     protected:
     // Vector of set of the anisotropic compliant of fine cells
@@ -116,21 +112,23 @@ class Agglomerator_Anisotropic : public Agglomerator{
     // deque : line cells
     // e.g _v_lines[0] --> agglomeration lines at the finest level
     vector<forward_list<deque<long> *>> _v_lines;  
-}
+};
 
 class Agglomerator_Isotropic : Agglomerator{
    // Constructor 
    public:
-   Agglomerator_Anisotropic (Dual_Graph &graph,
+   Agglomerator_Isotropic (Dual_Graph &graph,
                  unsigned short int verbose = 0,
                  bool is_visu_data_stored = false,
-                 int dimension = 3);
+                 int dimension = 3); 
     // Destructor
-    ~Agglomerator_Anisotropic() {
-        clean_agglomeration_lines(_v_lines[0]);
-        clean_agglomeration_lines(_v_lines[1]);
-        }
-    };
-}
+    ~Agglomerator_Isotropic();
+
+   void set_agglomeration_parameter(
+         string kind_of_agglomerator = "basic",
+         short goal_card = -1,
+         short min_card = -1,
+         short max_card = -1) override;
+};
 
 #endif //COMMA_PROJECT_AGGLOMERATOR_H

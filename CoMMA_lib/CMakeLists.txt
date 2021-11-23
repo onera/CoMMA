@@ -16,7 +16,6 @@ set(HEADER_FILES
         Util_graph.h
         CoMMATypes.h
 	templateHelpers.h
-	Utils_Agglomerator_Anisotropic.h
 	CoMMA.h
 	)
 
@@ -32,7 +31,6 @@ set(SOURCE_FILES
         CompStruct.cpp
         Triconnected_graph.cpp
         Util_graph.cpp
-	Utils_Agglomerator_Anisotropic.cpp
         CoMMA.cpp
 	)
 

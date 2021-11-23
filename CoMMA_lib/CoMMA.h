@@ -1,7 +1,7 @@
 #ifndef COMMA_PROJECT_COMMA_H
 #define COMMA_PROJECT_COMMA_H
 
-#include "Utils_Agglomerator_Anisotropic.h"
+//#include "Utils_Agglomerator_Anisotropic.h"
 #include "Agglomerator.h"
 #include "templateHelpers.h"
 
@@ -146,110 +146,10 @@ void agglomerate_one_level( // Dual graph:
     }
 
     // Initialization of Agglomerator class from Agglomerator.hpp
-    Agglomerator agg = Agglomerator(fc_graph,
+    Agglomerator* agg = new Agglomerator_Anisotropic(fc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension);
-
-    bool is_anisotropic = is_anisotropic_long == 1;
-
-    // TODO VISU DATA STORED
-
-    assert(goal_card < USHRT_MAX);
-    assert(min_card < USHRT_MAX);
-    assert(max_card < USHRT_MAX);
-
-    // ANISOTROPIC LINES
-    //======================================
-    long nb_agglomeration_lines = 0;
-    // We use forward_list, more efficient in memory management than a list and deque that allows an easier 
-    // manipulation with respect to vectors
-    forward_list<deque<long> *> agglomeration_lines;
-
-    if (is_anisotropic && !isFirstAgglomeration_long) {
-
-
-        long agglomerationLines_Idx_size = static_cast<long>(agglomerationLines_Idx.size());
-        long agglomerationLines_size =static_cast<long>(agglomerationLines.size());
-        // Function from Util
-        convert_agglomeration_lines_arrays_to_agglomeration_lines(agglomerationLines_Idx_size,
-                                                                  agglomerationLines_size,
-                                                                  agglomerationLines_Idx,
-                                                                  agglomerationLines,
-                                                                  nb_agglomeration_lines,
-                                                                  agglomeration_lines);
-    }
-
-
-    short goal_card_s = short(goal_card);
-    short min_card_s = short(min_card);
-    short max_card_s = short(max_card);
-
-
-    // Compute the agglomeration:
-    //======================================
-    agg.agglomerate_one_level(is_anisotropic,
-                              nb_agglomeration_lines, agglomeration_lines,
-                              kind_of_agglomerator,
-                              goal_card_s,
-                              min_card_s,
-                              max_card_s
-    );
-
-    //sizes[2] = agg.get_nb_cc();  //indCoarseCell
-    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-        fc_to_cc[i_fc] = agg.get_fc_2_cc()[i_fc];
-    }
-
-    // check if there are single parents
-    // =============================================
-    // Parents counter
-    // To keep track
-    vector<long> course(nb_fc,1);
-    int counter = 0;
-    // Flag to understand if there are double elements in fc_to_cc
-    int flag = 0;
-    // We loop over faces of the children
-    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-        flag=0;
-        for (long j_fc = 0; j_fc < nb_fc; j_fc++) {
-             // If we have a double the flag = 1
-             if (fc_to_cc[i_fc]==fc_to_cc[j_fc] && i_fc!=j_fc) {
-                flag = 1;}
-        }
-        // If flag is still 0 we can print value of parent and child
-        if (flag == 0){
-           course[i_fc]=0;
-           long k_fc=i_fc;
-//           while (course[k_fc]==0){
-//                cout << "index = " << k_fc  << endl;
-//        	fc_to_cc[i_fc]=fc_to_cc[k_fc-1];
-//                k_fc--;
-//		}
-           counter++;
-           cout << "parent = " << i_fc << "child =" << fc_to_cc[i_fc]  << endl;
-        }	
-    }
-    cout << "m. single parents = " << counter << endl;
-
-
-    // get agglomeration lines:
-    //======================================
-    if (is_anisotropic && agg.is_agglomeration_anisotropic()) {
-
-        int i_level = 1;
-        long Agg_lines_sizes[2] = {0, 0};
-        // From Utils_Agglomerator_Anisotropic
-        get_agglo_lines(agg,
-			i_level,
-                        Agg_lines_sizes,
-                        agglomerationLines_Idx,
-                        agglomerationLines);
-
-    }
-   for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-       cout << fc_to_cc[i_fc] << endl;
-    }
 
 }
 #endif
