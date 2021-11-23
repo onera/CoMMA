@@ -13,15 +13,13 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
     // Input datas
     //==================
     vector<bool> tmp(fc_graph.number_of_cells, false);
-    (*this)._a_is_fc_agglomerated = tmp;
+    this->_a_is_fc_agglomerated = tmp;
 
     //==================
     // temporary fields
     //==================
-    (*this)._fc_2_cc = vector<long>(fc_graph.number_of_cells, -1);
+    this->_fc_2_cc = vector<long>(fc_graph.number_of_cells, -1);
     if (!debug_only_fc_to_cc.empty()) {
-
-
         if (((*this)._verbose > 0) && (debug_only_fc_to_cc.size() != (*this)._fc_2_cc.size())) {
             cerr << "mismatched sizes of debug_only_fc_to_cc " << debug_only_fc_to_cc.size() << " and of (*this)._fc_2_cc " << (*this)._fc_2_cc.size() << endl;
         }
@@ -63,24 +61,20 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
 }
 
 Coarse_Cell_Graph::~Coarse_Cell_Graph() {
-
-//    cout << "\nDelete CCG" << endl;
     if (!_d_isotropic_cc.empty()) {
         for (auto i_kv:_d_isotropic_cc) {
-//            cout << "i_fc " << i_kv.first << endl;
             delete i_kv.second;
         }
     }
-//    cout << "End Delete CCG" << endl;
 }
 
 
-// Create a course cell from the fine cells and update the fc_2_cc tree.
 
 long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
                                        bool is_anisotropic,
                                        bool is_creation_delayed) {
 
+// Create a course cell from the fine cells and update the fc_2_cc tree.
     if (false) {
         cout << "\ncc_create_a_cc:" << " is_creation_delayed " << is_creation_delayed << endl;
         cout << "s_fc: [";

@@ -84,7 +84,6 @@ indCoarseCell = 0
 minCard = -1
 goalCard = -1
 maxCard = -1
-checks = 1
 verbose = 0
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
 agglomerationLines_Idx = np.zeros(nb_fc,dtype='long')
@@ -95,7 +94,7 @@ dimension = 2
 is_basic_or_triconnected = 1
 
 
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard,checks,verbose)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard,verbose)
 
 
 fine_cells_triangle = []

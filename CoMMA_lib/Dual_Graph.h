@@ -83,9 +83,6 @@ public :
 
     unordered_map<long, double> __compute_d_anisotropic_fc(vector<double> &maxArray);
 
-    unordered_map<long, unordered_set<pair<long, long>, pair_hash>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
-
-    //unordered_map<long, unordered_set<Tuple>> _compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc);
     long _compute_subgraph_root(unordered_set<long> s_fc);
 
     void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed);
@@ -109,21 +106,6 @@ public :
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
 
     vector<unordered_set<long>> compute_connected_components(const unordered_set<long> &s_initial_cc);
-
-    vector<double> compute_a_visualization_data(Available_Datas data_type);
-
-    vector<double> compute_cells_color(vector<double> a_cells_color);
-
-    void compute_mesh_characteristics(int &nb_cells, int &nb_iso, int &nb_aniso);
-
-    void compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso,
-                                 double &sd_aniso, double &median_aniso, int &nb_cells, int &nb_iso, int &nb_aniso);
-
-    vector<long> get_vertices_iterable();
-
-    unordered_map<long, vector<long> > compute_d_cc(vector<long> fc_2_cc);
-
-    unordered_map<long, unordered_set<pair<long, long>, pair_hash>> compute_d_cc_edges(vector<long> fc_2_cc);
 
     unsigned short int compute_degree_of_node(int i_fc, bool (*test_function)(int) = nullptr);
 

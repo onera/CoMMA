@@ -457,33 +457,6 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
     return lines;
 }
 
-unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::_compute_d_cut_edges(unordered_map<long, unordered_set<long>> d_cc) {
-
-    unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cut_edges;
-
-    for (auto &d_cc_k_v : d_cc) {
-        long i_cc = d_cc_k_v.first;
-        for (auto &i_fc : d_cc[i_cc]) {
-            auto i_fc_n_ptr = get_neighbours(i_fc).begin();
-            auto i_w_n_fc_ptr = get_weights(i_fc).begin();
-            for (; i_fc_n_ptr != get_neighbours(i_fc).end() && i_w_n_fc_ptr != get_weights(i_fc).end(); i_w_n_fc_ptr++, i_fc_n_ptr++) {
-                long i_fc_n = *i_fc_n_ptr;
-                long i_w_n_fc = *i_w_n_fc_ptr;
-                if (d_cc[i_cc].count(i_fc_n) == 0 || i_fc == i_fc_n) {
-                    if (d_cut_edges.count(i_cc) > 0) {
-                        pair<long, long> tmp(i_fc, i_fc_n);
-                        d_cut_edges[i_cc].insert(tmp);
-                    } else {
-                        d_cut_edges[i_cc];
-                        d_cut_edges[i_cc].insert(make_pair(i_fc, i_fc_n));
-                    }
-                }
-            }
-        }
-    }
-    return d_cut_edges;
-}
-
 unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc) {
 
     unsigned short int deg(0);
@@ -895,157 +868,7 @@ vector<unordered_set<long>> Dual_Graph::compute_connected_components(const unord
 
 }
 
-vector<double> Dual_Graph::compute_cells_color(vector<double> a_cells_color) {
-    /*
-      We first compute the maximum degree of the graph to approx the maximum number of color
-      This is not an optimal coloring.
-      :param a_cells_color: an np.ndarray initialized to -1
-      :return: an  of colors
-    */
 
-    int max_number_of_neighbours(0);
-
-    // Process cells/vertices
-
-    for (int i_cell = 0; i_cell < number_of_cells; i_cell++) {
-        unordered_set<long> s;
-        vector<long> a_neighbours = get_neighbours(i_cell);
-        int i(0);
-        for (auto ind_neighbor_cell : a_neighbours) {
-            i++;
-            if (ind_neighbor_cell != i_cell) // if the cell is on boundary, it is defined in the row_ptr table
-                s.insert(ind_neighbor_cell);
-        }
-        if (s.size() > max_number_of_neighbours)
-            max_number_of_neighbours = s.size();
-    }
-
-    for (int i_cell = 0; i_cell < number_of_cells; i_cell++) {
-        if (a_cells_color[i_cell] == -1) {
-            unordered_set<long> available_colour;
-            for (int i = 0; i < max_number_of_neighbours + 2; i++) // plus 2 est au pif!!!
-                available_colour.insert(i);
-
-            vector<long> a_neighbours = get_neighbours(i_cell);
-            int i(0);
-            for (auto ind_neighbor_cell : a_neighbours) {
-                i++;
-                if (ind_neighbor_cell != i_cell) { //if the cell is on boundary, it is defined in the row=ptr table
-                    long c = a_cells_color[ind_neighbor_cell];
-                    if (c != -1 && available_colour.count(c) > 0)
-                        available_colour.erase(c);
-                }
-            }
-            a_cells_color[i_cell] = *available_colour.begin();
-            available_colour.erase(*available_colour.begin());
-        }
-    }
-
-    return a_cells_color;
-
-}
-
-vector<double> Dual_Graph::compute_a_visualization_data(Available_Datas data_type) {
-    if (data_type == Available_Datas::COMPACTNESS)
-        return vector<double>(number_of_cells, 0.);
-    else if (data_type == Available_Datas::CARD)
-        return vector<double>(number_of_cells, 1.);
-    else if (data_type == Available_Datas::ASPECT_RATIO) {
-        double min(0), max(0), mean(0), sd(0), median(0);
-        return compute_aspect_ratio_and_characteristics(min, max, mean, sd, median);
-    } else if (data_type == Available_Datas::CELL_INDEX) {
-        vector<double> tmp;
-        for (int i = 0; i < number_of_cells; i++)
-            tmp.push_back(i);
-    } else if (data_type == Available_Datas::CELL_COLOR)
-        return compute_cells_color(vector<double>(number_of_cells, -1.));
-    else if (data_type == Available_Datas::CELLS_ON_BND) {
-        assert(!seeds_pool->is_empty());
-        vector<double> a_is_on_bnd(number_of_cells, 0.);
-        for (auto i_k_v : seeds_pool->d_is_on_bnd) {
-            long i = i_k_v.first;
-            a_is_on_bnd[i] = i_k_v.second;
-        }
-        return a_is_on_bnd;
-    } else {
-        // throw exception;
-    }
-}
-
-void Dual_Graph::compute_mesh_characteristics(int &nb_cells, int &nb_iso, int &nb_aniso) {
-    nb_cells = number_of_cells;
-    nb_aniso = s_anisotropic_compliant_cells.size();
-    nb_iso = number_of_cells - nb_aniso;
-}
-
-void Dual_Graph::compute_characteristics(Available_Characteristic characteristic, double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso,
-                                         double &mean_aniso, double &sd_aniso, double &median_aniso, int &nb_cells, int &nb_iso, int &nb_aniso) {
-    Available_Characteristic c = Available_Characteristic::COMPACTNESS_DIST | Available_Characteristic::COMPACTNESS;
-    c = c | Available_Characteristic::CARD;
-    c = c | Available_Characteristic::CARD_DIST;
-
-    if ((c & characteristic) != Available_Characteristic::NONE)
-        return;
-    else if (characteristic == Available_Characteristic::MESH)
-        compute_mesh_characteristics(nb_cells, nb_iso, nb_aniso);
-    else if (characteristic == Available_Characteristic::ASPECT_RATIO)
-        compute_aspect_ratio_characteristics(min, max, mean, sd, median, min_aniso, max_aniso, mean_aniso, sd_aniso, median_aniso);
-}
-
-vector<long> Dual_Graph::get_vertices_iterable() {
-    vector<long> tmp;
-    for (int i = 0; i < number_of_cells; i++)
-        tmp.push_back(i);
-    return tmp;
-}
-
-unordered_map<long, vector<long> > Dual_Graph::compute_d_cc(vector<long> fc_2_cc) {
-    assert(fc_2_cc.size() == number_of_cells);
-    unordered_map<long, vector<long>> d_cc;
-    for (auto i_fc : get_vertices_iterable()) {
-        long i_cc = fc_2_cc[i_fc];
-        if (d_cc.count(i_cc) > 0)
-            d_cc[i_cc].push_back(i_fc);
-        else {
-            d_cc[i_cc];
-            d_cc[i_cc].push_back(i_fc);
-        }
-    }
-    return d_cc;
-}
-
-unordered_map<long, unordered_set<pair<long, long>, pair_hash>> Dual_Graph::compute_d_cc_edges(vector<long> fc_2_cc) {
-    unordered_map<long, unordered_set<pair<long, long>, pair_hash>> d_cc_edges;
-
-    for (int i_v = 0; i_v < number_of_cells; i_v++) {
-        for (int i = _m_CRS_Row_Ptr[i_v]; i < _m_CRS_Row_Ptr[i_v + 1]; i++) {
-            long i_w = _m_CRS_Col_Ind[i];
-            long i_cc = fc_2_cc[i_v];
-            pair<long, long> edge;
-            if (i_v < i_w) {
-                edge.first = i_v;
-                edge.second = i_w;
-            } else {
-                edge.first = i_w;
-                edge.second = i_v;
-            }
-
-            if (i_v != i_w) {
-                if (i_cc == fc_2_cc[i_w]) {
-                    if (d_cc_edges.count(i_cc) == 0)
-                        d_cc_edges[i_cc];
-                    d_cc_edges.insert(edge);
-                } else {
-                    i_cc = -1;
-                    if (d_cc_edges.count(i_cc) == 0)
-                        d_cc_edges[i_cc];
-                    d_cc_edges.insert(edge);
-                }
-            }
-        }
-    }
-    return d_cc_edges;
-}
 
 unsigned short int Dual_Graph::compute_degree_of_node(int i_fc, bool (*test_function)(int)) {
 
@@ -1083,6 +906,8 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
                                                             vector<double> &values_l,
                                                             vector<long> &g_to_l,
                                                             vector<long> &l_to_g) const {
+// Given a set of nodes, it compute the csr subgraph starting from the global. We need to consider the 
+// vector passing from global to local and from local to global.
     unsigned short int number_Of_Nodes_L = set_of_node.size();
     unsigned short int number_of_nodes_g = number_of_cells;
     assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
@@ -1581,28 +1406,24 @@ void Dual_Graph::remove_separating_vertex(long seed,
     }
 }
 
-// TODO Ici on utilise le card...
-// TODO Est-ce qu'utiliser une autre metrique serait pertinent?
+// To chose if the metric of cardinality is pertinent
 void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                              unsigned short &nb_of_order_of_neighbourhood,
-                                             unordered_map<long, unsigned short> &d_n_of_seed,
+                                             unordered_map<long, unsigned short> &d_n_of_seed, // defined also as d_of_neighborhood, output
                                              const unsigned short max_card,
                                              vector<bool> &is_fc_agglomerated_tmp,
                                              unordered_set<long> s_of_constrained_fc) {
-    // cout<<"Call of compute_neighbourhood_of_cc"<<endl;
-
     // Basic checks
     assert(max_card != -1);
-    // TODO resoudre le probleme suivant: si l'ordre n'est pas assez grand,
-    // c'est a dire que le nombre de voisin trouve n'est pas suffisant pour constituer une cellule grossiere entiere,
-    // il faut peut-etre faire une boucle while pour aller le plus loin possible!
-
+    // TODO : If the fine cells foud are not sufficient to build a course cell of given cardinality, maybe define a wile to reach this 
+    // goal and go the furthest possible.    
     // This function computes the neighbourhood of a seed passed as argument.
     // It looks in the neighbourhood of order at least nb_of_order_of_neighbourhood, but if the size of the set of neighbour
     // is too small (<max_card), we look in higher order neighbourhood.
     //
 //    unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
     unordered_map<long, int> d_n_of_order_o_m_one;  // dict of FC with the order of neighbouring from seed
+    // we initialize for seeds where order is 0
     for (const long &i_fc : s_seeds) {
         d_n_of_order_o_m_one[i_fc] = 0;
     }
@@ -1615,7 +1436,6 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
 
         unordered_map<long, int> d_n_of_order_o;
 
-        //d_n_of_seed.update(d_n_of_order_o_m_one)
         for (auto id_M_one:d_n_of_order_o_m_one) {
             d_n_of_seed[id_M_one.first] = id_M_one.second;
         }

@@ -14,7 +14,11 @@ set(HEADER_FILES
         CompStruct.h
         Triconnected_graph.h
         Util_graph.h
-        CoMMA.h)
+        CoMMATypes.h
+	templateHelpers.h
+	Utils_Agglomerator_Anisotropic.h
+	CoMMA.h
+	)
 
 set(SOURCE_FILES
         Seeds_Pool.cpp
@@ -28,7 +32,9 @@ set(SOURCE_FILES
         CompStruct.cpp
         Triconnected_graph.cpp
         Util_graph.cpp
-        CoMMA.cpp)
+	Utils_Agglomerator_Anisotropic.cpp
+        CoMMA.cpp
+	)
 
 
 #set(CMAKE_BUILD_TYPE Debug)
