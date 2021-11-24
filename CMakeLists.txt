@@ -1,9 +1,16 @@
+# built from the following example:
+# https://github.com/benjaminjack/python_cpp_example/blob/master/CMakeLists.txt
+
 cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_BUILD_TYPE Debug)  # Debug version
 
 
 set(CMAKE_CXX_STANDARD 17)
+
+# for linker in MAC 
+# https://stackoverflow.com/questions/27508451/cmake-error-undefined-symbols-for-x86-64
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -c")
 
 project(CoMMA_Project)
