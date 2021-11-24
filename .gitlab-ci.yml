@@ -1,15 +1,11 @@
-# Use the official gcc image
 image: gcc
-
+# Use the official gcc image
 stages:
-    - CoMMA
-    - Test
-
-    # Build the application
+    - build
+    - test_structure
 CoMMA:
-stage: build
+    stage: build
     before_script:
-    # Install build dependencies
     - apt-get update && apt-get -y install cmake
     script:
         - mkdir build
@@ -20,7 +16,8 @@ stage: build
         paths:
         - build/
 Test:
-stage: test_structure
+ 
+    stage: test_structure
     script:
       - cd build
       - ./Comma_test
