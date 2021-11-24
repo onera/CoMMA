@@ -2,10 +2,11 @@
 image: gcc
 
 stages:
-    - build
-    - test
+    - CoMMA
+    - Test
 
     # Build the application
+CoMMA:
 stage: build
     before_script:
     # Install build dependencies
@@ -18,7 +19,8 @@ stage: build
     artifacts:
         paths:
         - build/
-stage: test
+Test:
+stage: test_structure
     script:
       - cd build
       - ./Comma_test
