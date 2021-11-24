@@ -1,6 +1,3 @@
-[submodule "CoMMA_lib/dualGPy"]
-	path = CoMMA_lib/dualGPy
-	url = git@github.com:albiremo/dualGPy.git
 [submodule "Catch2"]
 	path = Catch2
 	url = https://github.com/catchorg/Catch2
