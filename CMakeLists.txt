@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 # for linker in MAC 
 # https://stackoverflow.com/questions/27508451/cmake-error-undefined-symbols-for-x86-64
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -c")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -c")
 
 project(CoMMA_Project)
 
@@ -62,7 +62,10 @@ SET(TESTING_FILES
 set(TESTS ${IMPLEMENTATION}
 	${TESTING_FILES})
 
-add_executable("${PROJECT_NAME}_test" ${TESTS})
+# Generate a test executable
+include_directories(Catch2/single_include/Catch2)
+
+add_executable("Comma_test" ${TESTS})
 
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${SOURCE_FILES})
