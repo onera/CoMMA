@@ -1,0 +1,6 @@
+/Users/alberto/Documents/gitlab/CoMMA/build/CMakeFiles/rebuild_cache.dir
+/Users/alberto/Documents/gitlab/CoMMA/build/CMakeFiles/edit_cache.dir
+/Users/alberto/Documents/gitlab/CoMMA/build/CMakeFiles/CoMMA.dir
+/Users/alberto/Documents/gitlab/CoMMA/build/CMakeFiles/CoMMA_Project_test.dir
+/Users/alberto/Documents/gitlab/CoMMA/build/pybind11/CMakeFiles/rebuild_cache.dir
+/Users/alberto/Documents/gitlab/CoMMA/build/pybind11/CMakeFiles/edit_cache.dir
