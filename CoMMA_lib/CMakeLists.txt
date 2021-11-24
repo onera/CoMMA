@@ -1,37 +1,33 @@
-cmake_minimum_required(VERSION 3.14)
-project(CoMMA_lib)
-set(CMAKE_CXX_STANDARD 11)
-
 set(HEADER_FILES
-        Seeds_Pool.h
-        Dual_Graph.h
-        Coarse_Cell.h
-        Agglomerator.h
-        Coarse_Cell_Graph.h
-        Util.h
-        First_Order_Neighbourhood.h
-        Edge.h
-        CompStruct.h
-        Triconnected_graph.h
-        Util_graph.h
-        CoMMATypes.h
-	templateHelpers.h
-	CoMMA.h
+	CoMMA_lib/Seeds_Pool.h
+        CoMMA_lib/Dual_Graph.h
+        CoMMA_lib/Coarse_Cell.h
+        CoMMA_lib/Agglomerator.h
+        CoMMA_lib/Coarse_Cell_Graph.h
+        CoMMA_lib/Util.h
+        CoMMA_lib/First_Order_Neighbourhood.h
+        CoMMA_lib/Edge.h
+        CoMMA_lib/CompStruct.h
+        CoMMA_lib/Triconnected_graph.h
+        CoMMA_lib/Util_graph.h
+        CoMMA_lib/CoMMATypes.h
+	CoMMA_lib/templateHelpers.h
+	CoMMA_lib/CoMMA.h
 	)
 
 set(SOURCE_FILES
-        Seeds_Pool.cpp
-        Dual_Graph.cpp
-        Coarse_Cell.cpp
-        Agglomerator.cpp
-        Coarse_Cell_Graph.cpp
-        Util.cpp
-        First_Order_Neighbourhood.cpp
-        Edge.cpp
-        CompStruct.cpp
-        Triconnected_graph.cpp
-        Util_graph.cpp
-        CoMMA.cpp
+	CoMMA_lib/Seeds_Pool.cpp
+        CoMMA_lib/Dual_Graph.cpp
+        CoMMA_lib/Coarse_Cell.cpp
+        CoMMA_lib/Agglomerator.cpp
+        CoMMA_lib/Coarse_Cell_Graph.cpp
+        CoMMA_lib/Util.cpp
+        CoMMA_lib/First_Order_Neighbourhood.cpp
+        CoMMA_lib/Edge.cpp
+        CoMMA_lib/CompStruct.cpp
+        CoMMA_lib/Triconnected_graph.cpp
+        CoMMA_lib/Util_graph.cpp
+        CoMMA_lib/CoMMA.cpp
 	)
 
 
