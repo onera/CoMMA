@@ -36,8 +36,6 @@ set(SOURCE_FILES
 
 
 #set(CMAKE_BUILD_TYPE Debug)
-add_subdirectory(pybind11)
-pybind11_add_module(CoMMA ${SOURCE_FILES} ${HEADER_FILES})
 
 #add_library(CoMMA_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
