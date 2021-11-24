@@ -1,4 +1,7 @@
 image: gcc
+variables:
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
 # Use the official gcc image
 stages:
     - build
