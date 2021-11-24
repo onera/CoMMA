@@ -1,0 +1,24 @@
+# Use the official gcc image
+image: gcc
+
+stages:
+    - build
+    - test
+
+    # Build the application
+stage: build
+    before_script:
+    # Install build dependencies
+    - apt-get update && apt-get -y install cmake
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make
+    artifacts:
+        paths:
+        - build/
+stage: test
+    script:
+      - cd build
+      - ./Comma_test
