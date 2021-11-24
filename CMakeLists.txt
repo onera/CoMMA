@@ -1,6 +1,9 @@
 # built from the following example:
 # https://github.com/benjaminjack/python_cpp_example/blob/master/CMakeLists.txt
 
+###############################   CMAKE VERSION and FLAFS ##########################
+
+
 cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_BUILD_TYPE Debug)  # Debug version
@@ -8,16 +11,18 @@ set(CMAKE_BUILD_TYPE Debug)  # Debug version
 
 set(CMAKE_CXX_STANDARD 17)
 
-# for linker in MAC 
-# https://stackoverflow.com/questions/27508451/cmake-error-undefined-symbols-for-x86-64
+# for linker in MAC read: 
+# https://github.com/catchorg/Catch2/issues/1204
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -c")
-
+###################################  PROJECT #################################
 project(CoMMA_Project)
 
 # Effective library
+
 SET(SOURCE_DIR "CoMMA_lib")
+
 # headers are in source dir
+
 include_directories(${SOURCE_DIR})
 set(IMPLEMENTATION
 	${SOURCE_DIR}/CoMMA.h
@@ -52,7 +57,8 @@ set(SOURCE_FILES
         ${SOURCE_DIR}/Util_graph.cpp
 	)
 
-
+############################  TEST with CATCH2 BUILDING #########################
+# Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
 SET(TEST_DIR "tests")
 
@@ -67,6 +73,7 @@ include_directories(Catch2/single_include/Catch2)
 
 add_executable("Comma_test" ${TESTS})
 
+######################## Pybind11 bindings ####################################
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${SOURCE_FILES})
 
