@@ -9,7 +9,6 @@ CoMMA:
     stage: build
     before_script:
      - git submodule sync --recursive
-     - git submodule update --init --remote --recursive
      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
         - mkdir build
