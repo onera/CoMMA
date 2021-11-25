@@ -67,10 +67,25 @@ TEST_CASE("Structure test","[structure]")
                                      0,
                                      2
     );
-    Agglomerator* agg = new Agglomerator_Anisotropic(fc_graph,
+
+    // To test member variables I use a child class
+    class test : public Agglomerator_Anisotropic{
+	    public:
+		 test(Dual_Graph &graph,
+                              unsigned short int verbose,
+                              bool is_visu_data_stored,
+                              int dimension) : Agglomerator_Anisotropic(graph,verbose,is_visu_data_stored,dimension){};
+
+		    bool test_variable(){
+                       return(_is_visu_data_stored); 
+		    };
+    };
+    test* agg = new test(fc_graph,
                                     0,
                                     is_visu_data_stored,
                                     2);
+    bool testing = agg->test_variable();
+    REQUIRE(testing == true);
     REQUIRE (adj_matrix_row_ptr_size == (nb_fc + 1));
     REQUIRE(nb_fc == (adjMatrix_row_ptr.size()-1));
 }
