@@ -236,4 +236,63 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
     _threshold_card = d_default_threshold_card[_dimension];
 }
 
+Agglomerator_Biconnected::Agglomerator_Biconnected (Dual_Graph &graph,
+                 unsigned short int verbose,
+                 bool is_visu_data_stored,
+		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
+	//no particular constructor
+};
+Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
+                 unsigned short int verbose,
+                 bool is_visu_data_stored,
+		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
+	//no particular constructor
+};
+
 void Agglomerator_Isotropic::agglomerate_one_level(){}
+
+void Agglomerator_Biconnected::agglomerate_one_level(){
+//    long nb_of_fc = _l_nb_of_cells[0];
+//    // We define a while for which we control the number of agglomerated cells
+//    while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
+//
+//        // 1) Choose a new seed
+//        //====================================
+//        long seed = (*_cc_graph).choose_new_seed();
+//	unsigned short compactness = 0;
+//        unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,
+//                                                                                     compactness);
+//
+//        // Creation of cc:
+//        //====================================
+//         bool is_anistropic = false; // needed the create_cc of the coarse cell class
+//         bool is_creation_delayed = compactness < _dimension;
+//         (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
+//
+//    }
+}
+
+void Agglomerator_Triconnected::agglomerate_one_level(){
+//    long nb_of_fc = _l_nb_of_cells[0];
+//    // We define a while for which we control the number of agglomerated cells
+//    while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
+//
+//        // 1) Choose a new seed
+//        //====================================
+//        long seed = (*_cc_graph).choose_new_seed();
+//	unsigned short compactness = 0;
+//        unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,
+//                                                                                     compactness);
+//
+//        // Creation of cc:
+//        //====================================
+//         bool is_anistropic = false; // needed the create_cc of the coarse cell class
+//         bool is_creation_delayed = compactness < _dimension;
+//         (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
+//
+//    }
+}
+
+
+
+

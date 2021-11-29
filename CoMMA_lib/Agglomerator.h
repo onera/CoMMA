@@ -18,6 +18,8 @@
 
 class Agglomerator_Anisotropic;
 class Agglomerator_Isotropic;
+class Agglomerator_Biconnected;
+class Agglomerator_Triconnected;
 
 /** @brief A class responsible to do the interface between the different kinds of
  * agglomerator
@@ -181,7 +183,28 @@ class Agglomerator_Isotropic : Agglomerator{
    /** @brief Specialization of the pure virtual function to the class Agglomerator_Isotropic.
        * We add the override key as a guard to possible mistakes:
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
-    void agglomerate_one_level() override;
+    virtual void agglomerate_one_level() override;
 };
 
+
+class Agglomerator_Biconnected : Agglomerator_Isotropic{
+    public: 	
+    Agglomerator_Biconnected (Dual_Graph &graph,
+                 unsigned short int verbose = 0,
+                 bool is_visu_data_stored = false,
+                 int dimension = 3); 
+    /** @brief Destructor*/
+    ~Agglomerator_Biconnected();
+    void agglomerate_one_level();
+};
+
+class Agglomerator_Triconnected : Agglomerator_Isotropic{
+    public:	
+    Agglomerator_Triconnected (Dual_Graph &graph,
+                 unsigned short int verbose = 0,
+                 bool is_visu_data_stored = false,
+                 int dimension = 3); 
+    ~Agglomerator_Triconnected();
+    void agglomerate_one_level();
+};
 #endif //COMMA_PROJECT_AGGLOMERATOR_H
