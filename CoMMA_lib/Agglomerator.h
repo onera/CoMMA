@@ -62,8 +62,10 @@ class Agglomerator {
             short goal_card = -1,
             short min_card = -1,
             short max_card = -1) = 0;
-
-
+    /** @brief Pure virtual function which implementation is specified in the related child classes
+     * and that defines the agglomeration of one level
+     */
+    virtual void agglomerate_one_level() = 0;
     protected :
     
     /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3 -> 3D)*/
@@ -119,7 +121,14 @@ class Agglomerator_Anisotropic : public Agglomerator{
          short goal_card = -1,
          short min_card = -1,
          short max_card = -1) override;
+    /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic.
+       * We add the override key as a guard to possible mistakes:
+       * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
+    void agglomerate_one_level() override;
+
     protected:
+    /** @brief Function that for the current agglomerator, it creates the  */
+    void create_all_anisotropic_cc_wrt_agglomeration_lines();
     /** @brief Vector of set of the anisotropic compliant of fine cells*/
     vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
     /** @brief Vector of number of Anisotropic agglomeration lines*/
@@ -169,6 +178,10 @@ class Agglomerator_Isotropic : Agglomerator{
          short goal_card = -1,
          short min_card = -1,
          short max_card = -1) override;
+   /** @brief Specialization of the pure virtual function to the class Agglomerator_Isotropic.
+       * We add the override key as a guard to possible mistakes:
+       * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
+    void agglomerate_one_level() override;
 };
 
 #endif //COMMA_PROJECT_AGGLOMERATOR_H
