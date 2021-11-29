@@ -40,6 +40,11 @@ class Agglomerator {
             delete _cc_graph;
         }
     };
+    /** @brief Accessor to retrive the fine cells to coarse cells from the coarse cell graphs class
+     */
+    vector<long> get_fc_2_cc() {
+        return _cc_graph->_fc_2_cc;
+    }
     /** @brief Pure virtual function where the implementation is specified in the 
      * child classes. The task of the pure virtual function is to set the parameters of
      * dermine the cardinality limits with respect to the parameters passed
@@ -114,7 +119,6 @@ class Agglomerator_Anisotropic : public Agglomerator{
          short goal_card = -1,
          short min_card = -1,
          short max_card = -1) override;
-
     protected:
     /** @brief Vector of set of the anisotropic compliant of fine cells*/
     vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;

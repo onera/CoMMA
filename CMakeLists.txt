@@ -63,10 +63,12 @@ set(SOURCE_FILES
 SET(TEST_DIR "tests")
 
 SET(TESTING_FILES
-	${TEST_DIR}/test_structure.cpp)
+	${TEST_DIR}/test_structure.cpp
+	)
 
 set(TESTS ${IMPLEMENTATION}
         ${SOURCE_FILES}
+	${TEST_DIR}/input/DualGPy.h
 	${TESTING_FILES})
 
 # Generate a test executable
