@@ -256,22 +256,17 @@ void Agglomerator_Isotropic::agglomerate_one_level(){
     while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
         long seed = (*_cc_graph).choose_new_seed();
-        unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,compactness);
-//        // 1) Choose a new seed
-//        //====================================
-//	unsigned short compactness = 0;
-//
-//        // Creation of cc:
-//        //====================================
-//         bool is_anistropic = false; // needed the create_cc of the coarse cell class
-//         bool is_creation_delayed = compactness < _dimension;
-//         (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
-//
-//    }
-
-
+        // 2) Choose the set of Coarse Cells with the specification of the algorithm
+	// in the children class (triconnected or biconnected)
+	unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,compactness);
+        // 3)  Creation of cc:
+         bool is_anistropic = false; // needed the create_cc of the coarse cell class
+         // Check if delay the agglomeration based on compactness written during
+	 // the optimal cc choice process
+    	 bool is_creation_delayed = compactness < _dimension;
+         (*_cc_graph).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
     }
-
+    // When we exit from this process all the cell are agglomerated
 }
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
