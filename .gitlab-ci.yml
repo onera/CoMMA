@@ -9,11 +9,10 @@ stages:
 CoMMA:
     stage: build
     before_script:
-    - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
-   script:
+        - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
         - cd Catch2
         - ls
-        - cd .. 
+   script:
         - mkdir build
         - cd build
         - cmake ..
