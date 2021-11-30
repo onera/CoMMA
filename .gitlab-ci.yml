@@ -11,9 +11,6 @@ CoMMA:
     before_script:
         - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
-        - cd Catch2
-        - ls
-        - cd ..
         - mkdir build
         - cd build
         - cmake ..
