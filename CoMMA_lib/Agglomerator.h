@@ -22,7 +22,7 @@ class Agglomerator_Biconnected;
 class Agglomerator_Triconnected;
 
 /** @brief A class responsible to do the interface between the different kinds of
- * agglomerator
+ *  agglomerator
  *  @author Alberto Remigi and Nicolas Lantos
  */
 class Agglomerator {
