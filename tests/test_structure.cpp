@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN 
-#include "catch.hpp"
+#include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library

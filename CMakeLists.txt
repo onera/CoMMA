@@ -72,7 +72,7 @@ set(TESTS ${IMPLEMENTATION}
 	${TESTING_FILES})
 
 # Generate a test executable
-include_directories(Catch2/single_include/Catch2)
+include_directories(Catch2/single_include)
 #include_directories(Catch2/include)
 
 add_executable("Comma_test" ${TESTS})
