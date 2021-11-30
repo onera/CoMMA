@@ -162,7 +162,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator class
  * that specializes the implementation to the case of Isotropic agglomeration.*/
-class Agglomerator_Isotropic : Agglomerator{
+class Agglomerator_Isotropic : public Agglomerator{
    public:
     /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
@@ -184,27 +184,52 @@ class Agglomerator_Isotropic : Agglomerator{
        * We add the override key as a guard to possible mistakes:
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
     virtual void agglomerate_one_level() override;
+   /** @brief Pure virtual function that must be implemented in child classes to define the optimal coarse cell 
+    *  @param[in] seed the seed cell to start cumulate the other cells
+    *  @param[in] compactness the compactness is defined as the minimum number of neighbour of a fine cell inside
+    *  a coarse cell
+    */ 
+    virtual unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
+                                                                   unsigned short &compactness) = 0;
 };
 
-
-class Agglomerator_Biconnected : Agglomerator_Isotropic{
+/** @brief Child class of Agglomerator Isotropic where is implemented a specific
+ * biconnected algorithm for the agglomeration.
+ */
+class Agglomerator_Biconnected : public Agglomerator_Isotropic{
     public: 	
+/** @brief Constructor of the class. No specific implementation, it instantiates the
+ * base class Agglomerator_Isotropic */
     Agglomerator_Biconnected (Dual_Graph &graph,
                  unsigned short int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Biconnected();
-    void agglomerate_one_level();
+    void agglomerate_one_level() override;
+    unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
+                                                                   unsigned short &compactness) override;
 };
 
-class Agglomerator_Triconnected : Agglomerator_Isotropic{
+
+
+/** @brief Child class of Agglomerator Isotropic where is implemented a specific
+ * triconnected algorithm for the agglomeration.
+ */
+
+class Agglomerator_Triconnected : public Agglomerator_Isotropic{
     public:	
+/** @brief Constructor of the class. No specific implementation, it instantiates the
+ * base class Agglomerator_Isotropic */
     Agglomerator_Triconnected (Dual_Graph &graph,
                  unsigned short int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
+    /** @brief Destructor*/
     ~Agglomerator_Triconnected();
-    void agglomerate_one_level();
+    void agglomerate_one_level() override;
+    unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
+                                                                   unsigned short &compactness) override;
+
 };
 #endif //COMMA_PROJECT_AGGLOMERATOR_H
