@@ -1,6 +1,7 @@
 image: gcc
 variables:
   GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
 # Use the official gcc image
 stages:
     - build
@@ -8,7 +9,6 @@ stages:
 CoMMA:
     stage: build
     before_script:
-     - git submodule sync --recursive
      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
         - mkdir build
