@@ -182,8 +182,13 @@ class Agglomerator_Isotropic : public Agglomerator{
          short max_card = -1) override;
    /** @brief Specialization of the pure virtual function to the class Agglomerator_Isotropic.
        * We add the override key as a guard to possible mistakes:
-       * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
-    virtual void agglomerate_one_level() override;
+       * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
+       * The function must be called later by the derived class Agglomerator_Biconnected and Agglomerator Triconnected in order to 
+       * specialize the implementation of the choose optimal_cc. For further information
+       * about the structure, have a look at :
+       * http://www.cplusplus.com/forum/general/31851/
+       * */
+    void agglomerate_one_level() override;
    /** @brief Pure virtual function that must be implemented in child classes to define the optimal coarse cell 
     *  @param[in] seed the seed cell to start cumulate the other cells
     *  @param[in] compactness the compactness is defined as the minimum number of neighbour of a fine cell inside
@@ -206,7 +211,8 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Biconnected();
-    void agglomerate_one_level() override;
+    /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
+     * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    unsigned short &compactness) override;
 };
@@ -227,7 +233,8 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Triconnected();
-    void agglomerate_one_level() override;
+    /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
+     * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    unsigned short &compactness) override;
 

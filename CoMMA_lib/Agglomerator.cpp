@@ -250,17 +250,13 @@ Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
 };
 
 void Agglomerator_Isotropic::agglomerate_one_level(){
-}
-
-void Agglomerator_Biconnected::agglomerate_one_level(){
-//    // We define a while for which we control the number of agglomerated cells
+    // We define a while for which we control the number of agglomerated cells
     unsigned short compactness = 0;
     long nb_of_fc = _l_nb_of_cells[0];
     while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
         long seed = (*_cc_graph).choose_new_seed();
         unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,compactness);
-    }
 //        // 1) Choose a new seed
 //        //====================================
 //	unsigned short compactness = 0;
@@ -272,7 +268,12 @@ void Agglomerator_Biconnected::agglomerate_one_level(){
 //         (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
 //
 //    }
+
+
+    }
+
 }
+
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
 		unsigned short &compactness){
 
@@ -280,26 +281,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
   bool increase_neighbouring = true; }
 
 
-void Agglomerator_Triconnected::agglomerate_one_level(){
-//    long nb_of_fc = _l_nb_of_cells[0];
-//    // We define a while for which we control the number of agglomerated cells
-//    while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
-//
-//        // 1) Choose a new seed
-//        //====================================
-//        long seed = (*_cc_graph).choose_new_seed();
-//	unsigned short compactness = 0;
-//        unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,
-//                                                                                     compactness);
-//
-//        // Creation of cc:
-//        //====================================
-//         bool is_anistropic = false; // needed the create_cc of the coarse cell class
-//         bool is_creation_delayed = compactness < _dimension;
-//         (*__cc_graphs).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
-//
-//    }
-}
+
 
 unordered_set<long> Agglomerator_Triconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    unsigned short &compactness){ 
