@@ -497,7 +497,95 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
                                             short &max_faces_in_common,
                                             double &min_ar_surf,
 					    double &min_ar_vol){
-//Nothing
+// Called in __choose_optimal_cc_basic_v2_sub, this function defines the best fine cells to add to create the coarse
+// cell for the current coarse cell considered
+    double min_ar = numeric_limits<double>::max();
+    long arg_max_faces_in_common = -1;
+
+    // For every fc in the neighbourhood:
+    // we update the new aspect ratio
+    // verifier que fon est un sous ensemble de dict_neighbours_of_seed
+    // assert fon.issubset(dict_neighbours_of_seed.keys())
+    for (const long &i_fc: fon) {  // we test every possible new cells to chose the one that locally
+
+        // minimizes the Aspect Ratio at the first fine cell of the fon.
+        if (arg_max_faces_in_common == -1) {
+            arg_max_faces_in_common = i_fc;
+        }
+
+        // update of the vol
+        double new_ar_vol = vol_cc + graph._volumes[i_fc];
+
+        short number_faces_in_common = 0;
+        bool is_fc_adjacent_to_any_cell_of_the_cc = false;
+        double new_ar_surf = cc_surf;
+        // New Aspect Ratio of the tested neighborhood
+        vector<long> v_neighbours = graph.get_neighbours(i_fc);
+        vector<double> v_weights = graph.get_weights(i_fc);
+        assert(v_neighbours.size() == v_weights.size());
+
+    for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
+
+        long i_fc_n = v_neighbours[i_n];
+        double i_w_fc_n = v_weights[i_n];
+
+        if (i_fc_n == i_fc) {  // Boundary surface
+            new_ar_surf += i_w_fc_n;
+        } else if (s_of_fc_for_current_cc.count(i_fc_n) == 0) {
+            new_ar_surf += i_w_fc_n;
+        } else {
+            is_fc_adjacent_to_any_cell_of_the_cc = true;
+            new_ar_surf -= i_w_fc_n;
+            number_faces_in_common++;
+        }
+    }
+       // end new AR
+
+        double new_ar = pow(new_ar_surf, 1.5) / new_ar_vol;
+
+        const short &order = d_n_of_seed.at(i_fc); // [i_fc] is not const the method at returns the reference to the value of the key i_fc.
+
+// TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
+// TODO also need to remove the list of min_ar, argmin_ar, etc.
+        if (number_faces_in_common >= max_faces_in_common or is_order_primary) {  // if is_order_primary is True the order of
+// neighbourhood is primary
+            if (number_faces_in_common == max_faces_in_common or is_order_primary) {
+
+                if (order <= d_n_of_seed.at(arg_max_faces_in_common)) {  // [arg_max_faces_in_common] is not const.
+                    if (order == d_n_of_seed.at(arg_max_faces_in_common)) {
+                        if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
+// The second condition asserts the connectivity of the coarse element.
+                            min_ar = new_ar;
+                            argmin_ar = i_fc;
+                            min_ar_surf = new_ar_surf;
+                            min_ar_vol = new_ar_vol;
+
+                            arg_max_faces_in_common = i_fc;
+// The number of face in common is the same no need to touch it
+                        }
+                    } else {
+// Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
+                        arg_max_faces_in_common = i_fc;
+                        min_ar = new_ar;
+                        argmin_ar = i_fc;
+                        min_ar_surf = new_ar_surf;
+                        min_ar_vol = new_ar_vol;
+// The number of face in common is the same no need to touch it
+                    }
+                }
+            } else {
+// Case :number_faces_in_common > max_faces_in_common:
+                max_faces_in_common = number_faces_in_common;
+                arg_max_faces_in_common = i_fc;
+                min_ar = new_ar;
+                argmin_ar = i_fc;
+                min_ar_surf = new_ar_surf;
+                min_ar_vol = new_ar_vol;
+            }
+        }
+    }
+
+
 }
 
 
