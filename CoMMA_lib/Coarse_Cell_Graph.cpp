@@ -1028,7 +1028,7 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
         // From this cell (seed) we try to add extra fine cells!
         // Building of the neighbourhood:
         // Watch out: different of Dual_graph.compute_neighbourhood(...) in the selection of neighbours
-        unsigned short nb_of_order_of_neighbourhood = 3;
+        short nb_of_order_of_neighbourhood = 3;
         vector<bool> v_is_fc_agglomerated_in_isotropic_cc(_fc_graph.number_of_cells, false);  // Attention, there is a "!"/not in compute_neighbourhood_of_cc(...)
         for (const auto &i_k_v:_d_anisotropic_cc) {
             for (const long &i_fc:i_k_v.second) {
@@ -1036,7 +1036,7 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
             }
         }
         unordered_set<long> s_seed = {seed};
-        unordered_map<long, unsigned short> d_neighbours_of_seed = {};
+        unordered_map<long, short> d_neighbours_of_seed = {};
         _fc_graph.compute_neighbourhood_of_cc(s_seed,
                                               nb_of_order_of_neighbourhood,
                                               d_neighbours_of_seed,

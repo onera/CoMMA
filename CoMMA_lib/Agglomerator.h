@@ -32,7 +32,7 @@ class Agglomerator {
     *  @param[in] verbose  a boolean to determine if to store the visualization data
     *  @param[in] dimension the dimension of the problem*/
    Agglomerator(Dual_Graph &graph,
-                 unsigned short int verbose = 0,
+                  int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3);
     /** @brief The destructor of the class */ 
@@ -112,7 +112,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
    public:
    /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
-   Agglomerator_Anisotropic(Dual_Graph &graph,unsigned short int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
+   Agglomerator_Anisotropic(Dual_Graph &graph, int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
    /** @brief Destructor*/
     ~Agglomerator_Anisotropic();
    /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic. 
@@ -134,7 +134,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
     /** @brief Vector of set of the anisotropic compliant of fine cells*/
     vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
     /** @brief Vector of number of Anisotropic agglomeration lines*/
-    vector<unsigned long> _v_nb_lines;
+    vector<long> _v_nb_lines;
     /** @brief _v_lines : Agglomeration lines structure:
     * vector : level
     * forward list : identifier of the line
@@ -167,7 +167,7 @@ class Agglomerator_Isotropic : public Agglomerator{
     /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
     Agglomerator_Isotropic (Dual_Graph &graph,
-                 unsigned short int verbose = 0,
+                  int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
@@ -187,6 +187,11 @@ class Agglomerator_Isotropic : public Agglomerator{
        * specialize the implementation of the choose optimal_cc. For further information
        * about the structure, have a look at :
        * http://www.cplusplus.com/forum/general/31851/
+       * The pseudo-code considers the while function and the agglomeration process is not completed until all the cells are not 
+       * agglomerated. Hence:
+       * - we choose a new seed
+       * - we check with a specific algorithm the neighbouring cells to agglomerate to the seed
+       * - we create a new coarse cell (using the apposite method in cc_graph)
        * */
     void agglomerate_one_level() override;
    /** @brief Pure virtual function that must be implemented in child classes to define the optimal coarse cell 
@@ -195,7 +200,7 @@ class Agglomerator_Isotropic : public Agglomerator{
     *  a coarse cell
     */ 
     virtual unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                   unsigned short &compactness) = 0;
+                                                                   short &compactness) = 0;
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
@@ -206,7 +211,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
 /** @brief Constructor of the class. No specific implementation, it instantiates the
  * base class Agglomerator_Isotropic */
     Agglomerator_Biconnected (Dual_Graph &graph,
-                 unsigned short int verbose = 0,
+                 int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
@@ -214,7 +219,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
     /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
      * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                   unsigned short &compactness) override;
+                                                               short &compactness) override;
 
 
     protected:
@@ -223,13 +228,13 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
      */    
     void  compute_best_fc_to_add(Dual_Graph &graph,
                                   unordered_set<long> fon,
-                                  const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                  const unordered_map<long, short> &dict_neighbours_of_seed,
                                   const bool &is_order_primary,
                                   const double &cc_surf,
                                   const double &vol_cc,
                                   const unordered_set<long> &s_of_fc_for_current_cc,
                                   long &argmin_ar,
-                                  unsigned short &max_faces_in_common,
+                                  short &max_faces_in_common,
                                   double &min_ar_surf,
                                   double &min_ar_vol);
 };
@@ -245,7 +250,7 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
 /** @brief Constructor of the class. No specific implementation, it instantiates the
  * base class Agglomerator_Isotropic */
     Agglomerator_Triconnected (Dual_Graph &graph,
-                 unsigned short int verbose = 0,
+                 int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
@@ -253,7 +258,7 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
     /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
      * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                   unsigned short &compactness) override;
+                                                                    short &compactness) override;
 
 };
 #endif //COMMA_PROJECT_AGGLOMERATOR_H

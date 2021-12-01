@@ -21,7 +21,7 @@
 
 
 Agglomerator::Agglomerator(Dual_Graph &graph,
-                 unsigned short int verbose,
+                 int verbose,
                  bool is_visu_data_stored,
                  int dimension):
                  _fc_graph(graph), _verbose(verbose), _dimension(dimension), _is_visu_data_stored(is_visu_data_stored), _cc_graph(new Coarse_Cell_Graph(graph))
@@ -40,7 +40,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 // Anisotropic constructor
 // =======================
 Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
-                 unsigned short int verbose,
+                 int verbose,
                  bool is_visu_data_stored,
                  int dimension) : Agglomerator(graph,verbose,is_visu_data_stored,dimension)
 {
@@ -62,7 +62,7 @@ void Agglomerator_Anisotropic::set_agglomeration_parameter(
         short max_card) {
      _v_of_s_anisotropic_compliant_fc = vector<unordered_set<long>>(2);
      _v_of_s_anisotropic_compliant_fc[0] = _fc_graph.s_anisotropic_compliant_cells;
-     _v_nb_lines = vector<unsigned long>(2);
+     _v_nb_lines = vector<long>(2);
      _v_lines = vector<forward_list<deque<long> *> >(2);
 };
 
@@ -189,7 +189,7 @@ void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines
 // Isotropic Constructor
 // ======================
 Agglomerator_Isotropic::Agglomerator_Isotropic (Dual_Graph &graph,
-                 unsigned short int verbose,
+                 int verbose,
                  bool is_visu_data_stored,
 		 int dimension) : Agglomerator(graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
@@ -203,13 +203,13 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
 	){
     _kind_of_agglomerator = kind_of_agglomerator;
     // print("Call of agglomerator {}".format((*this)._kind_of_agglomerator))
-    unordered_map<unsigned short int, unsigned short int> d_default_min_card = {{2, 3},
+    unordered_map<int, int> d_default_min_card = {{2, 3},
                                                                                 {3, 6}};
-    unordered_map<unsigned short int, unsigned short int> d_default_max_card = {{2, 5},
+    unordered_map<int, int> d_default_max_card = {{2, 5},
                                                                                 {3, 10}};
-    unordered_map<unsigned short int, unsigned short int> d_default_goal_card = {{2, 4},
+    unordered_map<int, int> d_default_goal_card = {{2, 4},
                                                                                  {3, 8}};
-    unordered_map<unsigned short int, unsigned short int> d_default_threshold_card = {{2, 2},
+    unordered_map<int, int> d_default_threshold_card = {{2, 2},
                                                                                       {3, 3}};
 
     // Definition of _min_card
@@ -237,13 +237,13 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
 }
 
 Agglomerator_Biconnected::Agglomerator_Biconnected (Dual_Graph &graph,
-                 unsigned short int verbose,
+                 int verbose,
                  bool is_visu_data_stored,
 		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
 };
 Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
-                 unsigned short int verbose,
+                  int verbose,
                  bool is_visu_data_stored,
 		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
@@ -251,7 +251,7 @@ Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
 
 void Agglomerator_Isotropic::agglomerate_one_level(){
     // We define a while for which we control the number of agglomerated cells
-    unsigned short compactness = 0;
+    short compactness = 0;
     long nb_of_fc = _l_nb_of_cells[0];
     while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
@@ -270,33 +270,29 @@ void Agglomerator_Isotropic::agglomerate_one_level(){
 }
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
-		unsigned short &compactness){
-                bool is_order_primary = false;
-                bool increase_neighbouring = true; 
+		short &compactness){
+    bool is_order_primary = false;
+    bool increase_neighbouring = true; 
     //  The goal of this function is to choose from a pool of neighbour the better one to build a compact coarse cell
     assert(_goal_card != -1);  // _goal_card has been initialized
-    // Definition of the current cc
-    // remark: does contain seed
+    // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<long> s_current_cc = {seed};
-    unordered_map<long, unsigned short> d_n_of_seed;
+    // Dictionary of the neighborhood of the seed, the key is the global index of the cell and the value
+    // the order of distance from the seed (1 order direct neighborhood, 2 order etc.)
+    unordered_map<long, short> d_n_of_seed;
    // Number of fine cells constituting the current coarse cell in construction.
-    unsigned short size_current_cc = 1; // CC contains only one cell: the seed
-
-    // set of fc for current cc:
-
-    unordered_set<long> s_seeds = {seed};
-
-    // Compute _min_neighbourhood order neighbourhood:
-    //=====================================================
-    unsigned short max_order_of_neighbourhood = _min_neighbourhood;
-    _fc_graph.compute_neighbourhood_of_cc(s_seeds,
+    short size_current_cc = 1; // CC contains only one cell: the seed
+    short max_order_of_neighbourhood = _min_neighbourhood;
+    // We fill the d_n_of_seeds considerng the initial seed passed
+    _fc_graph.compute_neighbourhood_of_cc(s_current_cc,
                                             max_order_of_neighbourhood,   //in and out
                                             d_n_of_seed, //output
                                             _max_card,
-                                            (*_cc_graph)._a_is_fc_agglomerated);
-
-    unsigned short nb_neighbours = _fc_graph.get_nb_of_neighbours(seed);
-    vector<double> a_neighbours_weights = _fc_graph.get_weights(seed);
+                                            (*_cc_graph)._a_is_fc_agglomerated); // anisotropic cells agglomerated (not to take into account in the process)
+    // We get the number of neighborhoods
+    short nb_neighbours = _fc_graph.get_nb_of_neighbours(seed);
+    // return the area of the face connected to the seed
+    vector<double> neighbours_weights = _fc_graph.get_weights(seed);
 
     // If no neighbour is found for seed: this case happened only when isotropic cell is surrounded
     // by anisotropic cells.
@@ -328,41 +324,43 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     }
     else{
      // If  we passed the two previous checks, the minimum size is the goal cardinality required TODO : CHECK THAT, if the goal is 2, the minimum size would be 3?
-     unsigned short min_size = _goal_card;
+     short min_size = _goal_card;
     // Computation of the initial aspect ratio: we need cc_surf: i.e. the external area (perimeter in 2D and sum of external faces in 3D) and volume
     double cc_surf = 0.0;
    // the weights are the area of the neightborhood faces of a cell
-    for (const double &w:a_neighbours_weights) {
+    for (const double &w:neighbours_weights) {
         cc_surf += w;
     }
     // volume of cc is at first the volume of the seed.
     double vol_cc = _fc_graph._volumes[seed];
     // This dictionary is used to store the eligible cc: i.e. its size is inside the permitted range.
     // This is useful to track back our step if needed.
-    // [size of the current, [cell set, [arg_min_ar, n.neigh of seed]]
-    unordered_map<unsigned short, pair<unordered_set<long>, unordered_map<long, int>>> dict_cc_in_creation;
+    // [size of the current, [cell set, [arg_min_ar, d_n_of seed]]
+    unordered_map<short, pair<unordered_set<long>, unordered_map<long, int>>> dict_cc_in_creation;
     double min_external_faces = numeric_limits<double>::max();
-    unsigned short arg_min_external_faces = min_size;
+    short arg_min_external_faces = min_size;
     // Here we define the exact dimension of the coarse cell as the min between the max cardinality and the dictionary of the boundary cells
-    unsigned short max_ind = min(_max_card, (short) (d_n_of_seed.size() + 1));
+    short max_ind = min(_max_card, (short) (d_n_of_seed.size() + 1));
     int number_of_external_faces_current_cc = nb_neighbours + (*_fc_graph.seeds_pool).boundary_value(seed) - 1;
     // d_keys_to_set from Util.h
     unordered_set<long> s_neighbours_of_seed = d_keys_to_set(d_n_of_seed);
-
+    // Build the class first order neighborhood
     First_Order_Neighbourhood f_o_neighbourhood = First_Order_Neighbourhood(s_neighbours_of_seed);
-
+    // Retrives the neighborhood of the seed
     vector<long> v = _fc_graph.get_neighbours(seed);
     unordered_set<long> s_up(v.begin(), v.end());
-
+     
     unordered_set<long> fon = f_o_neighbourhood.update(seed, s_up);
 
     // Choice of the fine cells to agglomerate
+    // we enter in a while, we store anyways all the possible coarse cells 
+    // (not only the max dimension one)
     while (size_current_cc < max_ind) {
 
         long argmin_ar = -1;
         double min_ar_surf = numeric_limits<double>::max();
         double min_ar_vol = numeric_limits<double>::max();
-        unsigned short max_faces_in_common = 0;
+        short max_faces_in_common = 0;
 
         compute_best_fc_to_add(_fc_graph,
                                fon,
@@ -378,7 +376,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
 
         number_of_external_faces_current_cc += _fc_graph.get_nb_of_neighbours(argmin_ar)
                                                + (*_fc_graph.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
-
+        // we increase the cc 
         size_current_cc++;
         s_current_cc.insert(argmin_ar);
 
@@ -395,12 +393,11 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
                 arg_min_external_faces = size_current_cc;
             }
 
+            // We update the dictionary of eligible coarse cells
             unordered_map<long, int> new_dict;
             new_dict[argmin_ar] = d_n_of_seed[argmin_ar];
-
             pair<unordered_set<long>, unordered_map<long, int>> p = make_pair(s_current_cc, new_dict);
             dict_cc_in_creation[size_current_cc] = p;
-
         }
 
         // Update of cc_surf and vol_cc with the new fc added
@@ -414,6 +411,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
         unordered_set<long> s_up(v.begin(), v.end());
         fon = f_o_neighbourhood.update(argmin_ar, s_up);
     }
+   
     s_current_cc = dict_cc_in_creation[arg_min_external_faces].first;
 
     // If we do not chose the biggest cc, we put the useless fc back to the pool
@@ -438,7 +436,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     list<long> l_of_new_seed;
     if (!d_n_of_seed.empty()) {
 
-        unsigned short size = d_n_of_seed.size();
+        short size = d_n_of_seed.size();
         // l_of_new_seed.resize(size);
         // if d_n_of_seed is not empty
         // Reminder: d_n_of_seed is here the pool of cell neighbouring the previous seed!
@@ -448,7 +446,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
             }
         }
         // if list of new seeds is still empty we go to order 3
-        unsigned short i_k = 3;
+        short i_k = 3;
         while (l_of_new_seed.empty()) {
             // We put FC in the l_of_new_seed according to its order of neighbouring of previous seed.
             // order 1 or 2 then 3, then 4 and so on.
@@ -490,13 +488,13 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
 
 void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
                                             unordered_set<long> fon,  //First order neighborhood
-                                            const unordered_map<long, unsigned short> &d_n_of_seed,
+                                            const unordered_map<long, short> &d_n_of_seed,
                                             const bool &is_order_primary,
                                             const double &cc_surf,
                                             const double &vol_cc,
                                             const unordered_set<long> &s_of_fc_for_current_cc,
                                             long &argmin_ar,
-                                            unsigned short &max_faces_in_common,
+                                            short &max_faces_in_common,
                                             double &min_ar_surf,
 					    double &min_ar_vol){
 //Nothing
@@ -505,7 +503,7 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
 
 unordered_set<long> Agglomerator_Triconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                   unsigned short &compactness){ 
+                                                                   short &compactness){ 
                                                                    bool is_order_primary = false; 
                                                                    bool increase_neighbouring = true; }
 
