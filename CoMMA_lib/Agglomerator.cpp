@@ -433,7 +433,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     assert(arg_min_external_faces == s_current_cc.size());
     // Computes the actual compactness of the coarse cell
     compactness = _fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
-    }
+    } //end else
     // Create of l_of_new_seeds:
 //    list<long> l_of_new_seeds //= create_list_of_seeds(*_cc_graphs, seed, d_n_of_seed, s_current_cc);
     // Update of list_of_seeds:
