@@ -215,6 +215,23 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
      * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    unsigned short &compactness) override;
+
+
+    protected:
+    /** @brief Method that inside the biconnected algorith, checked in the choose_optimal_cc_and_update_seed_pool
+     * function all the possible exception, computes the best fine cells to add to the coarse cell.
+     */    
+    void  compute_best_fc_to_add(Dual_Graph &graph,
+                                  unordered_set<long> fon,
+                                  const unordered_map<long, unsigned short> &dict_neighbours_of_seed,
+                                  const bool &is_order_primary,
+                                  const double &cc_surf,
+                                  const double &vol_cc,
+                                  const unordered_set<long> &s_of_fc_for_current_cc,
+                                  long &argmin_ar,
+                                  unsigned short &max_faces_in_common,
+                                  double &min_ar_surf,
+                                  double &min_ar_vol);
 };
 
 
