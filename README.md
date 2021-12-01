@@ -43,5 +43,6 @@ The file `CODA_transfer.sh` help for the installation in the CODA-CFD library.
 
 ## TO BE DONE
 
-- Python interface for testing the algorithm with [PyBind11](https://github.com/pybind/pybind11). The interface should read a mesh in a given format and provide the [CSR](https://en.wikipedia.org/wiki/Sparse_matrix) representation of the dual graph with all the arguments required by CoMMA itself.
 - Proper [Doxigen](https://www.doxygen.nl/index.html) documentation.
+- Possible ML implementation of the algorithm
+- Better coverage of the code
