@@ -79,5 +79,5 @@ add_executable("Comma_test" ${TESTS})
 
 ######################## Pybind11 bindings ####################################
 add_subdirectory(pybind11)
-pybind11_add_module(CoMMA ${IMPLEMENTATION} ${SOURCE_FILES})
+pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
 
