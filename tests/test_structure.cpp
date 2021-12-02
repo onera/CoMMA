@@ -78,3 +78,11 @@ TEST_CASE("Agglomerator Isotropic","[Isotropic]")
     Agglomerator* test = new Agglomerator_Biconnected(fc_graph,0,Data.is_visu_data_stored,2);
     test->agglomerate_one_level(2,2,2);
 }
+
+TEST_CASE("CoMMA","[CoMMA]")
+{
+    // DualGPy class constructor loads the configuration
+    // with the graph and all the variables required
+    // TODO: maybe change to pointer for omogenity
+    DualGPy Data = DualGPy();
+}

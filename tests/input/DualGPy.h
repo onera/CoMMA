@@ -1,5 +1,6 @@
 #include "CoMMATypes.h"
 #include "Agglomerator.h"
+#include "CoMMA.h"
 #include "templateHelpers.h"
 
 class DualGPy {

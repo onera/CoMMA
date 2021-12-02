@@ -133,23 +133,23 @@ void agglomerate_one_level( // Dual graph:
                                      s_is_on_valley,
                                      s_anisotropic_compliant_fc,
                                      verbose_long,
-                                     dimension
-    );
+                                     dimension);
 
 
     bool is_visu_data_stored = true;  //TODO get this via argument:
-    string kind_of_agglomerator;
-    if (is_basic_or_triconnected == 0) {
-        kind_of_agglomerator = "basic";
-    } else if (is_basic_or_triconnected == 1) {
-        kind_of_agglomerator = "triconnected";
-    }
-
     // Initialization of Agglomerator class from Agglomerator.hpp
-    Agglomerator* agg = new Agglomerator_Anisotropic(fc_graph,
+    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension);
-
+    agg1->agglomerate_one_level(min_card,goal_card,max_card); 
+    Agglomerator* agg = new Agglomerator_Biconnected(fc_graph,
+                                    verbose_long,
+                                    is_visu_data_stored,
+                                    dimension = dimension); 
+    agg->agglomerate_one_level(min_card,goal_card,max_card);
+    for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+        fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
+    } 
 }
 #endif
