@@ -34,6 +34,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
   } else {
         _min_neighbourhood = 3;
   }
+  _l_nb_of_cells.push_back(graph.number_of_cells);
 }
 
 
@@ -50,20 +51,12 @@ Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
     _l_nb_of_cells.push_back(graph.number_of_cells);
 // For every level, we have a set containing the admissible cells for anisotropy cell number:
 // For level 0, it is the cell number of prism or hexahedron ...
-    _v_of_s_anisotropic_compliant_fc = {};
-    _v_nb_lines = {};
-    _v_lines = {};
-};
-
-void Agglomerator_Anisotropic::set_agglomeration_parameter(
-        string kind_of_agglomerator,
-        short goal_card,
-        short min_card,
-        short max_card) {
      _v_of_s_anisotropic_compliant_fc = vector<unordered_set<long>>(2);
      _v_of_s_anisotropic_compliant_fc[0] = _fc_graph.s_anisotropic_compliant_cells;
      _v_nb_lines = vector<long>(2);
      _v_lines = vector<forward_list<deque<long> *> >(2);
+
+
 };
 
 /** @todo maybe delete the aggl_lines_sizes here. Not so sure that is useful.
@@ -104,16 +97,24 @@ void Agglomerator_Anisotropic::get_agglo_lines(int level,
     aggl_lines_sizes[1] = number_of_fc_in_agglomeration_lines;
 };
 
+void Agglomerator_Anisotropic::set_agglo_lines(long nb_aniso_agglo_lines,
+                                         forward_list<deque<long> *> anisotropic_lines){
+// To call it before the Agglomerator_Anisotropic agglomerate one level
+     _v_nb_lines[0] = nb_aniso_agglo_lines;
+     _v_lines[0] = anisotropic_lines;
+}
 
-void Agglomerator_Anisotropic::agglomerate_one_level(){
+void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
+                                         const short min_card,
+                                         const short max_card){
 // if the finest agglomeration line is not computed, hence compute it (REMEMBER! We compute the agglomeration lines 
 // only on the finest level, the other one are stored only for visualization purpose
-    if (_v_lines[0].empty()) {
+     if (_v_lines[0].empty()) {
         // The anisotropic lines are only computed on the original (finest) mesh.
         long nb_agglomeration_lines(0);
         _v_lines[0] = _fc_graph.compute_anisotropic_line(nb_agglomeration_lines);  // finest level!!!
         _v_nb_lines[0] = nb_agglomeration_lines;
-    }
+     }
 // In case the if is not realized, this is not the first generation of a coarse level.
 // The anisotropic lines are given as input.
 
@@ -196,12 +197,10 @@ Agglomerator_Isotropic::Agglomerator_Isotropic (Dual_Graph &graph,
 };
 
 void Agglomerator_Isotropic::set_agglomeration_parameter(
-        string kind_of_agglomerator,
         short goal_card,
         short min_card,
         short max_card
 	){
-    _kind_of_agglomerator = kind_of_agglomerator;
     // print("Call of agglomerator {}".format((*this)._kind_of_agglomerator))
     unordered_map<int, int> d_default_min_card = {{2, 3},
                                                                                 {3, 6}};
@@ -249,9 +248,13 @@ Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
 	//no particular constructor
 };
 
-void Agglomerator_Isotropic::agglomerate_one_level(){
+void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
+                                         const short min_card,
+                                         const short max_card){
+    set_agglomeration_parameter(goal_card,min_card,max_card);
     // We define a while for which we control the number of agglomerated cells
-    short compactness = 0;
+    cout<<"Entering in Agglomerate_one_level Isotropic\n";
+    short compactness = 0; 
     long nb_of_fc = _l_nb_of_cells[0];
     while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
@@ -271,6 +274,7 @@ void Agglomerator_Isotropic::agglomerate_one_level(){
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
 		short &compactness){
+    cout<<" Entering in Biconnected choose optimal cc\n";
     bool is_order_primary = false;
     bool increase_neighbouring = true; 
     //  The goal of this function is to choose from a pool of neighbour the better one to build a compact coarse cell

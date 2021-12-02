@@ -47,27 +47,15 @@ class Agglomerator {
     vector<long> get_fc_2_cc() {
         return _cc_graph->_fc_2_cc;
     }
-    /** @brief Pure virtual function where the implementation is specified in the 
-     * child classes. The task of the pure virtual function is to set the parameters of
-     * dermine the cardinality limits with respect to the parameters passed
-     * @param[in] kind_of_agglomeration Parameter that determine the type of agglomeration algorithm used
-     * for the *Isotropic* agglomeration algorithm. The choices are between: - basic; -triconnected. Set
-     * as default to basic.
-     * @param[in] goal_card goal cardinality of the coarse cell (set as default to -1 indicating in our case
-     * the maximum value)
-     * @param[in] min_card minimum cardinality of the coarse cell(set as default to -1 indicating in our case
-     * the maximum value)
-     * @param[in] max_card maximum cardinality of the coarse cell(set as default to -1 indicating in our case
-     * the maximum value)*/    
-    virtual void set_agglomeration_parameter(
-            string kind_of_agglomerator = "basic",
-            short goal_card = -1,
-            short min_card = -1,
-            short max_card = -1) = 0;
-    /** @brief Pure virtual function which implementation is specified in the related child classes
-     * and that defines the agglomeration of one level
+  /** @brief Pure virtual function which implementation is specified in the related child classes
+     * and that defines the agglomeration of one level.
+     * param[in] goal_card goal cardinality of the coarse cell
+     * param[in] min_card minimum cardinality of the coarse cell
+     * param[in] max_card maximum cardinality of the coarse cell
      */
-    virtual void agglomerate_one_level() = 0;
+    virtual void agglomerate_one_level(const short goal_card,
+                                         const short min_card,
+                                         const short max_card) = 0;
     protected :
     
     /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3 -> 3D)*/
@@ -115,33 +103,16 @@ class Agglomerator_Anisotropic : public Agglomerator{
    Agglomerator_Anisotropic(Dual_Graph &graph, int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
    /** @brief Destructor*/
     ~Agglomerator_Anisotropic();
-   /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic. 
-    * We add the override key as a guard to possible mistakes:
-    * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
-    void set_agglomeration_parameter(
-         string kind_of_agglomerator = "basic",
-         short goal_card = -1,
-         short min_card = -1,
-         short max_card = -1) override;
+
     /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic.
        * We add the override key as a guard to possible mistakes:
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
-    void agglomerate_one_level() override;
-
-    protected:
-    /** @brief Function that for the current agglomerator, it creates the  */
-    void create_all_anisotropic_cc_wrt_agglomeration_lines();
-    /** @brief Vector of set of the anisotropic compliant of fine cells*/
-    vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
-    /** @brief Vector of number of Anisotropic agglomeration lines*/
-    vector<long> _v_nb_lines;
-    /** @brief _v_lines : Agglomeration lines structure:
-    * vector : level
-    * forward list : identifier of the line
-    * deque : line cells
-    * e.g _v_lines[0] --> agglomeration lines at the finest level*/
-    vector<forward_list<deque<long> *>> _v_lines;  
-    /** @brief Function that returns the vector of agglomeration lines
+    void agglomerate_one_level(const short goal_card,
+                               const short min_card,
+                               const short max_card) override;
+    
+    /** @brief Accessor (for this reason it is public) 
+     *  Function that returns the vector of agglomeration lines
      *  @param[in] level of the agglomeration process into the Multigrid algorithm
      *  @param[in] *aggl_line_sizes pointer to the vector of sizes for the agglomeration
      *  lines. 
@@ -158,6 +129,25 @@ class Agglomerator_Anisotropic : public Agglomerator{
                          vector<long> &agglo_lines_array_idx,
                          vector<long> &agglo_lines_array);
 
+    protected:
+    /** @brief Function that for the current agglomerator, it creates the  */
+    void create_all_anisotropic_cc_wrt_agglomeration_lines();
+    /** @brief Vector of set of the anisotropic compliant of fine cells*/
+    vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
+    /** @brief Vector of number of Anisotropic agglomeration lines*/
+    vector<long> _v_nb_lines;
+    /** @brief _v_lines : Agglomeration lines structure:
+    * vector : level
+    * forward list : identifier of the line
+    * deque : line cells
+    * e.g _v_lines[0] --> agglomeration lines at the finest level*/
+    vector<forward_list<deque<long> *>> _v_lines;  
+        /** @brief set the anisotropic line values to the member function (to avoid changing the general structure of
+      * agglomerate one level that is a virtual function of the base class Agglomerator) 
+      * param[in] nb_aniso_agglo_lines number of anisotropic agglomeration lines
+      * param[in] anisotropic lines forward list*/
+     void set_agglo_lines(long nb_aniso_agglo_lines,
+                                         forward_list<deque<long> *> anisotropic_lines);
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator class
@@ -172,14 +162,21 @@ class Agglomerator_Isotropic : public Agglomerator{
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Isotropic();
-   /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic. 
-    * We add the override key as a guard to possible mistakes:
-    * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
+    /** @brief The task of the function is to set the parameters of
+     * dermine the cardinality limits with respect to the parameters passed
+     * @param[in] kind_of_agglomeration Parameter that determine the type of agglomeration algorithm used
+     * for the *Isotropic* agglomeration algorithm. The choices are between: - basic; -triconnected. Set
+     * as default to basic.
+     * @param[in] goal_card goal cardinality of the coarse cell (set as default to -1 indicating in our case
+     * the maximum value)
+     * @param[in] min_card minimum cardinality of the coarse cell(set as default to -1 indicating in our case
+     * the maximum value)
+     * @param[in] max_card maximum cardinality of the coarse cell(set as default to -1 indicating in our case
+     * the maximum value)*/     
     void set_agglomeration_parameter(
-         string kind_of_agglomerator = "basic",
          short goal_card = -1,
          short min_card = -1,
-         short max_card = -1) override;
+         short max_card = -1);
    /** @brief Specialization of the pure virtual function to the class Agglomerator_Isotropic.
        * We add the override key as a guard to possible mistakes:
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
@@ -193,7 +190,9 @@ class Agglomerator_Isotropic : public Agglomerator{
        * - we check with a specific algorithm the neighbouring cells to agglomerate to the seed
        * - we create a new coarse cell (using the apposite method in cc_graph)
        * */
-    void agglomerate_one_level() override;
+    void agglomerate_one_level(const short goal_card,
+                               const short min_card,
+                               const short max_card) override;
    /** @brief Pure virtual function that must be implemented in child classes to define the optimal coarse cell 
     *  @param[in] seed the seed cell to start cumulate the other cells
     *  @param[in] compactness the compactness is defined as the minimum number of neighbour of a fine cell inside
