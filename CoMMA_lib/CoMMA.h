@@ -1,16 +1,18 @@
 #ifndef COMMA_PROJECT_COMMA_H
 #define COMMA_PROJECT_COMMA_H
 
-//#include "Utils_Agglomerator_Anisotropic.h"
 #include "Agglomerator.h"
 #include "templateHelpers.h"
-
+/** @brief Main function of the agglomerator, it is used as an interface
+ * to build up all the agglomeration process. The result will be the definition
+ * of the agglomerated cells fc2cc.  
+ * */
 template<typename CoMMAIndexType, typename CoMMAWeightType>
 void agglomerate_one_level( // Dual graph:
                            const vector<CoMMAIndexType> adjMatrix_row_ptr,
-                           const vector<CoMMAIndexType> &adjMatrix_col_ind,
-                           const vector<CoMMAWeightType> &adjMatrix_areaValues,
-                           const vector<CoMMAWeightType> &volumes,
+                           const vector<CoMMAIndexType> adjMatrix_col_ind,
+                           const vector<CoMMAWeightType> adjMatrix_areaValues,
+                           const vector<CoMMAWeightType> volumes,
 
         // Indices of compliant cc
                            vector<CoMMAIndexType> &arrayOfFineAnisotropicCompliantCells,
@@ -41,20 +43,8 @@ void agglomerate_one_level( // Dual graph:
                            long verbose_long)
 
 {
-    //"""
-    // Main function of the agglomerator.
-    // It agglomerates one MG level.
-    //:param is_anisotropic:  [boolean], do we want an anisotropic agglomeration (True) or an isotropic (False)?
-    //:param goal_card: [int] goal cardinal of the coarse cells
-    //:param min_card: [int] minimum cardinal of the coarse cells
-    //:param max_card: [int] maximum cardinal of the coarse cells
-    //:param checks: [boolean]
-    //:param verbose: [boolean]
-    //"""
 
-
-    cout << "\n\nCall of agglomerate_one_level" << endl;
-    // DUAL GRAPH
+    // GENERAL DESCRIPTION PARAMETERS
     //======================================
     // number of faces
     long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
@@ -74,7 +64,6 @@ void agglomerate_one_level( // Dual graph:
 
     // BOUNDARIES
     //======================================
-
     //initialization of map d_is_on_bnd.
     // We create a dictionary of the faces on boundary
     // In particular starting from the vector we pass we store in a map
@@ -137,7 +126,7 @@ void agglomerate_one_level( // Dual graph:
 
 
     bool is_visu_data_stored = true;  //TODO get this via argument:
-    // Initialization of Agglomerator class from Agglomerator.hpp
+    // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
@@ -148,6 +137,7 @@ void agglomerate_one_level( // Dual graph:
                                     is_visu_data_stored,
                                     dimension = dimension); 
     agg->agglomerate_one_level(min_card,goal_card,max_card);
+    // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
     } 
