@@ -123,16 +123,18 @@ void agglomerate_one_level( // Dual graph:
                                      s_anisotropic_compliant_fc,
                                      verbose_long,
                                      dimension);
-
-
+    
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph); 
     bool is_visu_data_stored = true;  //TODO get this via argument:
     // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-                                    verbose_long,
+                                    cc_graph,
+		                    verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension);
     agg1->agglomerate_one_level(min_card,goal_card,max_card); 
     Agglomerator* agg = new Agglomerator_Biconnected(fc_graph,
+		                    cc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension); 

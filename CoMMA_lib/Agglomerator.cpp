@@ -21,10 +21,11 @@
 
 
 Agglomerator::Agglomerator(Dual_Graph &graph,
-                 int verbose,
+                 Coarse_Cell_Graph &cc_graph,
+        	 int verbose,
                  bool is_visu_data_stored,
                  int dimension):
-                 _fc_graph(graph), _verbose(verbose), _dimension(dimension), _is_visu_data_stored(is_visu_data_stored), _cc_graph(new Coarse_Cell_Graph(graph))
+                 _fc_graph(graph), _verbose(verbose), _dimension(dimension), _is_visu_data_stored(is_visu_data_stored), _cc_graph(&cc_graph)
 {
   if((_dimension != 2) && (_dimension != 3)) {
     throw range_error("dimension can only be 2 or 3");
@@ -41,9 +42,10 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 // Anisotropic constructor
 // =======================
 Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
+		 Coarse_Cell_Graph &cc_graph,
                  int verbose,
                  bool is_visu_data_stored,
-                 int dimension) : Agglomerator(graph,verbose,is_visu_data_stored,dimension)
+                 int dimension) : Agglomerator(graph,cc_graph,verbose,is_visu_data_stored,dimension)
 {
 // for every defined level (1 by default), contains the number of cells
 // e.g. _l_nb_of_cells[0]= number of cells on finest level
@@ -190,9 +192,10 @@ void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines
 // Isotropic Constructor
 // ======================
 Agglomerator_Isotropic::Agglomerator_Isotropic (Dual_Graph &graph,
+		 Coarse_Cell_Graph &cc_graph,
                  int verbose,
                  bool is_visu_data_stored,
-		 int dimension) : Agglomerator(graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator(graph,cc_graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
 };
 
@@ -236,15 +239,17 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
 }
 
 Agglomerator_Biconnected::Agglomerator_Biconnected (Dual_Graph &graph,
+		 Coarse_Cell_Graph &cc_graph,
                  int verbose,
                  bool is_visu_data_stored,
-		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
 };
 Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
+		Coarse_Cell_Graph &cc_graph,
                   int verbose,
                  bool is_visu_data_stored,
-		 int dimension) : Agglomerator_Isotropic(graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){
 	//no particular constructor
 };
 

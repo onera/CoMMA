@@ -25,6 +25,7 @@ TEST_CASE("Structure test","[structure]")
                                      0,
                                      2
     );   
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
     // Check the effective length
     REQUIRE (Data.adj_matrix_row_ptr_size == (Data.nb_fc + 1));
     REQUIRE(Data.nb_fc == ((Data.adjMatrix_row_ptr).size()-1));
@@ -33,15 +34,17 @@ TEST_CASE("Structure test","[structure]")
     class test : public Agglomerator_Anisotropic{
 	    public:
 		 test(Dual_Graph &graph,
-                              int verbose,
-                              bool is_visu_data_stored,
-                              int dimension) : Agglomerator_Anisotropic(graph,verbose,is_visu_data_stored,dimension){};
+			Coarse_Cell_Graph &cc_graph,
+                        int verbose,
+                        bool is_visu_data_stored,
+                        int dimension) : Agglomerator_Anisotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){};
 
 		    bool test_variable(){
                        return(_is_visu_data_stored); 
 		    };
     };
     test* agg = new test(fc_graph,
+		         cc_graph,
                                     0,
                                     Data.is_visu_data_stored,
                                     2);
@@ -72,10 +75,11 @@ TEST_CASE("Agglomerator Isotropic","[Isotropic]")
                                      0,
                                      2
     );   
-    // Check the effective length
+    // Check the effective lengt 
+    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
     REQUIRE (Data.adj_matrix_row_ptr_size == (Data.nb_fc + 1));
     REQUIRE(Data.nb_fc == ((Data.adjMatrix_row_ptr).size()-1));
-    Agglomerator* test = new Agglomerator_Biconnected(fc_graph,0,Data.is_visu_data_stored,2);
+    Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,0,Data.is_visu_data_stored,2);
     test->agglomerate_one_level(2,2,2);
 }
 

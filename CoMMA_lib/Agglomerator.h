@@ -32,16 +32,13 @@ class Agglomerator {
     *  @param[in] verbose  a boolean to determine if to store the visualization data
     *  @param[in] dimension the dimension of the problem*/
    Agglomerator(Dual_Graph &graph,
-                  int verbose = 0,
+                Coarse_Cell_Graph &cc_graph,
+ 		 int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3);
     /** @brief The destructor of the class */ 
     ~Agglomerator() {
-        if (_cc_graph != NULL) {
-            delete _cc_graph->_fc_graph.seeds_pool;
-            delete _cc_graph;
         }
-    };
     /** @brief Accessor to retrive the fine cells to coarse cells from the coarse cell graphs class
      */
     vector<long> get_fc_2_cc() {
@@ -100,7 +97,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
    public:
    /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
-   Agglomerator_Anisotropic(Dual_Graph &graph, int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
+   Agglomerator_Anisotropic(Dual_Graph &graph,Coarse_Cell_Graph &cc_graph, int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
    /** @brief Destructor*/
     ~Agglomerator_Anisotropic();
 
@@ -157,6 +154,7 @@ class Agglomerator_Isotropic : public Agglomerator{
     /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
     Agglomerator_Isotropic (Dual_Graph &graph,
+		   Coarse_Cell_Graph &cc_graph,
                   int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
@@ -210,6 +208,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
 /** @brief Constructor of the class. No specific implementation, it instantiates the
  * base class Agglomerator_Isotropic */
     Agglomerator_Biconnected (Dual_Graph &graph,
+		 Coarse_Cell_Graph &cc_graph,
                  int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
@@ -249,6 +248,7 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
 /** @brief Constructor of the class. No specific implementation, it instantiates the
  * base class Agglomerator_Isotropic */
     Agglomerator_Triconnected (Dual_Graph &graph,
+		 Coarse_Cell_Graph &cc_graph,
                  int verbose = 0,
                  bool is_visu_data_stored = false,
                  int dimension = 3); 
