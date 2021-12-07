@@ -206,7 +206,7 @@ class Agglomerator_Isotropic : public Agglomerator{
     /** @brief Pure virtual function implemented in the cild classes. It implements the correction steps to operate
      * on the cells after the agglomeration performed with the classical biconnected and triconnected algorithms.
      * @param[in] correction_steps level of the correction steps. */
-    virtual void correction(int correction_steps) = 0;
+    virtual void correction(int correction_steps, int num_iterations) = 0;
 
 };
 
@@ -245,7 +245,12 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
                                   short &max_faces_in_common,
                                   double &min_ar_surf,
                                   double &min_ar_vol);
-    void correction(int correction_steps) override;
+    void correction(int correction_steps, int num_iterations) override;
+    /** @brief function to be specialized of correction steps. We use this method to 
+     * avoid reevaluation of the correction steps in the cycle of iterations
+     */
+    template <int correction_steps>
+    void operation_correction(int num_iterations);
 };
 
 
@@ -271,6 +276,6 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
                                                                     short &compactness) override;
     protected:
 
-    void correction(int correction_steps) override;
+    void correction(int correction_steps, int num_iterations) override;
 };
 #endif //COMMA_PROJECT_AGGLOMERATOR_H

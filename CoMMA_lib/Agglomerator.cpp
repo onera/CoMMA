@@ -280,7 +280,7 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     // We proceed in creating the delayed one
     (*_cc_graph).cc_create_all_delayed_cc();
     (*_cc_graph).fill_cc_neighbouring();
-    correction(correction_steps);
+    correction(correction_steps,4);
     (*_cc_graph).cc_renumber();
     _l_nb_of_cells.push_back((*_cc_graph)._cc_counter);
 
@@ -606,13 +606,73 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
 }
 
-void Agglomerator_Biconnected::correction(int correction_steps){
-
+void Agglomerator_Triconnected::correction(int correction_steps, int num_iterations){
+  // We iterate the corrections 
 }
 
-void Agglomerator_Triconnected::correction(int correction_steps){
-
+template<>
+void Agglomerator_Biconnected::operation_correction<1>(int num_iterations){
+	for (int i = 0; i<num_iterations; i++){
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+	}
 }
+template<>
+void Agglomerator_Biconnected::operation_correction<2>(int num_iterations){
+	for (int i = 0; i<num_iterations; i++){
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+	}
+}
+template<>
+void Agglomerator_Biconnected::operation_correction<3>(int num_iterations){
+	for (int i = 0; i<num_iterations; i++){
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_swap_leaf_fc_v2();
+	}
+}
+template<>
+void Agglomerator_Biconnected::operation_correction<4>(int num_iterations){
+	for (int i = 0; i<num_iterations; i++){
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_swap_leaf_fc_v2();
+			(*_cc_graph).correction_reduce_too_big_cc(_goal_card, _verbose);
+	}
+}
+template<>
+void Agglomerator_Biconnected::operation_correction<5>(int num_iterations){
+	for (int i = 0; i<num_iterations; i++){
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_swap_leaf_fc_v2();
+			(*_cc_graph).correction_reduce_too_big_cc(_goal_card, _verbose);
+			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
+	}
+}
+
+
+
+
+
+void Agglomerator_Biconnected::correction(int correction_steps, int num_iterations){
+	if (correction_steps == 0){
+               // if correction steps = 0 no correction is happening
+	} else if (correction_steps==1){
+		operation_correction<1>(num_iterations);
+	} else if (correction_steps==2){
+		operation_correction<2>(num_iterations);
+	} else if (correction_steps==3){
+		operation_correction<3>(num_iterations);
+	} else if (correction_steps==4){
+		operation_correction<4>(num_iterations);
+	} else if (correction_steps==5 || correction_steps==-1){
+		operation_correction<5>(num_iterations);
+	}
+	else{cout<<"Value out of range\n";}
+	// TODO reimplement  _correction_split_too_big_cc_in_two();
+}
+
 
 
 unordered_set<long> Agglomerator_Triconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
