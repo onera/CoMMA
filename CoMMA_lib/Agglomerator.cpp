@@ -108,7 +108,8 @@ void Agglomerator_Anisotropic::set_agglo_lines(long nb_aniso_agglo_lines,
 
 void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
                                          const short min_card,
-                                         const short max_card){
+                                         const short max_card,
+					 int correction_steps){
 // if the finest agglomeration line is not computed, hence compute it (REMEMBER! We compute the agglomeration lines 
 // only on the finest level, the other one are stored only for visualization purpose
      if (_v_lines[0].empty()) {
@@ -126,7 +127,7 @@ void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
 
     // Asserts that __v_lines[1] exists:
     if (!_v_lines[1].empty()) {
-	// We creathe the anisotropic coarse cells.
+	// We create the anisotropic coarse cells.
         create_all_anisotropic_cc_wrt_agglomeration_lines();
     }
 }
@@ -255,7 +256,8 @@ Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
 
 void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
                                          const short min_card,
-                                         const short max_card){
+                                         const short max_card,
+					 int correction_steps){
     set_agglomeration_parameter(goal_card,min_card,max_card);
     // We define a while for which we control the number of agglomerated cells
     cout<<"Entering in Agglomerate_one_level Isotropic\n";
@@ -274,7 +276,14 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     	 bool is_creation_delayed = compactness < _dimension;
          (*_cc_graph).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
     }
-    // When we exit from this process all the cell are agglomerated
+    // When we exit from this process all the cell are agglomerated, apart the delayed one
+    // We proceed in creating the delayed one
+    (*_cc_graph).cc_create_all_delayed_cc();
+    (*_cc_graph).fill_cc_neighbouring();
+    correction(correction_steps);
+    (*_cc_graph).cc_renumber();
+    _l_nb_of_cells.push_back((*_cc_graph)._cc_counter);
+
 }
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
@@ -597,6 +606,13 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
 }
 
+void Agglomerator_Biconnected::correction(int correction_steps){
+
+}
+
+void Agglomerator_Triconnected::correction(int correction_steps){
+
+}
 
 
 unordered_set<long> Agglomerator_Triconnected::choose_optimal_cc_and_update_seed_pool(const long seed,

@@ -101,9 +101,9 @@ void agglomerate_one_level( // Dual graph:
 
     // We add the following lines because the following sets can be rebuilt in the constructor of Dual_Graph class.
     // it introduce some randomness compare to the direct agglomerator call see Test_Agglomerator_basic.cpp
-    s_is_on_corner.clear();
-    s_is_on_ridge.clear();
-    s_is_on_valley.clear();
+//    s_is_on_corner.clear();
+    //    s_is_on_ridge.clear();
+//    s_is_on_valley.clear();
 
     // DUAL GRAPH
     //======================================
@@ -127,18 +127,22 @@ void agglomerate_one_level( // Dual graph:
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph); 
     bool is_visu_data_stored = true;  //TODO get this via argument:
     // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
-    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-                                    cc_graph,
-		                    verbose_long,
-                                    is_visu_data_stored,
-                                    dimension = dimension);
-    agg1->agglomerate_one_level(min_card,goal_card,max_card); 
+//    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
+//                                    cc_graph,
+//		                    verbose_long,
+//                                    is_visu_data_stored,
+//                                    dimension = dimension);
+//    long nb_agglomeration_lines = 0;
+//    forward_list<deque<long> *> agglomeration_lines;
+//    // TODO: add exception if it is not the first agglomeration (so if we are at a further level)
+//    agg1->set_agglo_lines(nb_agglomeration_lines,agglomeration_lines)
+//    agg1->agglomerate_one_level(min_card,goal_card,max_card,-1); 
     Agglomerator* agg = new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension); 
-    agg->agglomerate_one_level(min_card,goal_card,max_card);
+    agg->agglomerate_one_level(min_card,goal_card,max_card,-1);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];

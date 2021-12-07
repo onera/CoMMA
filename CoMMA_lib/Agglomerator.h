@@ -49,10 +49,13 @@ class Agglomerator {
      * param[in] goal_card goal cardinality of the coarse cell
      * param[in] min_card minimum cardinality of the coarse cell
      * param[in] max_card maximum cardinality of the coarse cell
+     * param[in] correction_steps it define the number of correction steps of the isotropic algorithm. In case
+     * of the anisotropic part, this variable is not taken into account
      */
     virtual void agglomerate_one_level(const short goal_card,
                                          const short min_card,
-                                         const short max_card) = 0;
+                                         const short max_card,
+					 int correction_steps) = 0;
     protected :
     
     /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3 -> 3D)*/
@@ -106,7 +109,8 @@ class Agglomerator_Anisotropic : public Agglomerator{
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
     void agglomerate_one_level(const short goal_card,
                                const short min_card,
-                               const short max_card) override;
+                               const short max_card,
+			       int correction_steps) override;
     
     /** @brief Accessor (for this reason it is public) 
      *  Function that returns the vector of agglomeration lines
@@ -190,7 +194,8 @@ class Agglomerator_Isotropic : public Agglomerator{
        * */
     void agglomerate_one_level(const short goal_card,
                                const short min_card,
-                               const short max_card) override;
+                               const short max_card,
+			       int correction_steps) override;
    /** @brief Pure virtual function that must be implemented in child classes to define the optimal coarse cell 
     *  @param[in] seed the seed cell to start cumulate the other cells
     *  @param[in] compactness the compactness is defined as the minimum number of neighbour of a fine cell inside
@@ -198,6 +203,11 @@ class Agglomerator_Isotropic : public Agglomerator{
     */ 
     virtual unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    short &compactness) = 0;
+    /** @brief Pure virtual function implemented in the cild classes. It implements the correction steps to operate
+     * on the cells after the agglomeration performed with the classical biconnected and triconnected algorithms.
+     * @param[in] correction_steps level of the correction steps. */
+    virtual void correction(int correction_steps) = 0;
+
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
@@ -235,6 +245,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
                                   short &max_faces_in_common,
                                   double &min_ar_surf,
                                   double &min_ar_vol);
+    void correction(int correction_steps) override;
 };
 
 
@@ -258,6 +269,8 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
      * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                     short &compactness) override;
+    protected:
 
+    void correction(int correction_steps) override;
 };
 #endif //COMMA_PROJECT_AGGLOMERATOR_H

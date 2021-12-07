@@ -80,7 +80,7 @@ TEST_CASE("Agglomerator Isotropic","[Isotropic]")
     REQUIRE (Data.adj_matrix_row_ptr_size == (Data.nb_fc + 1));
     REQUIRE(Data.nb_fc == ((Data.adjMatrix_row_ptr).size()-1));
     Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,0,Data.is_visu_data_stored,2);
-    test->agglomerate_one_level(2,2,2);
+    test->agglomerate_one_level(2,2,2,-1);
 }
 
 TEST_CASE("CoMMA","[CoMMA]")
