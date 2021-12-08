@@ -5,9 +5,7 @@
 #include "Coarse_Cell_Graph.h"
 
 Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
-                                     int verbose,
-                                     vector<long> debug_only_fc_to_cc,
-                                     forward_list<deque<long> *> *debug_a_anisotropic_lines)
+                                     int verbose)
         : _fc_graph(fc_graph), _verbose(verbose) {
     //==================
     // Input datas
@@ -19,45 +17,6 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
     // temporary fields
     //==================
     this->_fc_2_cc = vector<long>(fc_graph.number_of_cells, -1);
-    if (!debug_only_fc_to_cc.empty()) {
-        if (((*this)._verbose > 0) && (debug_only_fc_to_cc.size() != (*this)._fc_2_cc.size())) {
-            cerr << "mismatched sizes of debug_only_fc_to_cc " << debug_only_fc_to_cc.size() << " and of (*this)._fc_2_cc " << (*this)._fc_2_cc.size() << endl;
-        }
-        assert(debug_only_fc_to_cc.size() == (*this)._fc_2_cc.size());
-        unordered_map<long, unordered_set<long>> d_cc;
-        long i_fc = 0;
-        long nb_cc = 0;  //computes the max of i_cc
-        for (const long i_cc:debug_only_fc_to_cc) {
-            if (nb_cc < i_cc) {
-                nb_cc = i_cc;
-            }
-
-            if (d_cc.count(i_cc) > 0) {
-                d_cc[i_cc].insert(i_fc);
-            } else {
-                d_cc[i_cc] = unordered_set<long>({i_fc});
-            }
-            i_fc++;
-        }
-
-        unordered_set<long> s_anisotropic_cc;
-        if (debug_a_anisotropic_lines != NULL) {
-
-            for (auto &i_l :(*debug_a_anisotropic_lines)) {
-                for (const long &i_cc :(*i_l)) {
-                    s_anisotropic_cc.insert(i_cc);
-                }
-            }
-        }
-        nb_cc++;
-        //Creation of Coarse cells:
-        for (long i_cc = 0; i_cc < nb_cc; i_cc++) {
-            (*this).cc_create_a_cc(d_cc[i_cc], s_anisotropic_cc.count(i_cc) > 0);
-        }
-        (*this)._fc_2_cc = debug_only_fc_to_cc;
-        (*this).fill_cc_neighbouring();
-//        np.copyto((*this)._fc_2_cc, debug_only_fc_to_cc)
-    }
 }
 
 Coarse_Cell_Graph::~Coarse_Cell_Graph() {

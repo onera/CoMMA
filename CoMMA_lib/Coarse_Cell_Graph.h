@@ -14,9 +14,7 @@ class Coarse_Cell_Graph {
 
 public:
     Coarse_Cell_Graph(Dual_Graph &fc_graph,
-                      int verbose = 0,
-                      vector<long> debug_only_fc_to_cc = vector<long>(),
-                      forward_list<deque<long> *> *debug_a_anisotropic_lines = NULL);
+                      int verbose = 0);
 
     ~Coarse_Cell_Graph();
 
