@@ -8,26 +8,51 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
 
-//* Create a Coarse Cell Graph and contains the methods to do it takes as parameters the fc to cc
-
+/** @brief Create a Coarse Cell Graph, hence it is the
+ *  container of the Coarse Cells created and 
+ *  of the operation we can do on them.
+ *  @param[in] Dual_Graph input element Dual_Graph to work on the seeds choice and the seeds pool
+ *  @param[in] verbose it defines the verbose parameters
+*/
 class Coarse_Cell_Graph {
 
 public:
+/** @brief Constructor*/
     Coarse_Cell_Graph(Dual_Graph &fc_graph,
                       int verbose = 0);
-
+/** @brief Destructor*/
     ~Coarse_Cell_Graph();
-
+/** @brief Function that return if the coarse cell structure created is unstructured or structured (in dependence
+ * of the anisotropic  cells found)
+ * @param[in] goal_card goal cardinality, useful to check if in case of non presence of anisotropic cells we reached
+ * the goal cardinality for all the coarse cells created */
+    bool is_cc_grid_not_structured(short goal_card = -1);
+/** @brief Helper to get the member variable that defines the number of agglomerated fine cells */ 
     inline long get_number_of_fc_agglomerated() {
-        return _nb_of_agglomerated_fc;
-
+        return (_nb_of_agglomerated_fc);
     }
-
+/** @brief Helper to choose the new seed based on the already aggomerated fine cells*/
     inline long choose_new_seed() {
         return (*_fc_graph.seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
     }
+/** @brief Helper to get the number of coarse cells */
+    inline long get_nb_of_cc() {
+        return _cc_counter;
+    }
+/** @brief It creates a coarse cell based on the set of fine cells given as an input 
+ * @param[in] s_fc set of fine cells passed as a reference
+ * @param[in] is_anisotropic boolean that tells if we are in an anisotropic case or not
+ * @param[in] is_creation_delayed based on the agglomerator instruction we define if we delay or not the agglomeration
+ * @return a long with the global identifier of the coarse cell.*/
+    long cc_create_a_cc(const unordered_set<long> &s_fc,
+                        bool is_anisotropic = false,
+                        bool is_creation_delayed = false);
+/** @brief Vector of boolean for which the length is the number of fine cells and for which the value of i_fc cell is true 
+* when the cell is agglomerated in a coarse cell */
+    vector<bool> _a_is_fc_agglomerated;
 
-    bool is_cc_grid_not_structured(short goal_card = -1);
+
+
 
     void correction_main_triconnected(short min_neighbourhood_correction_step,
                                       short goal_card,
@@ -36,15 +61,9 @@ public:
     unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
     void print_d_distribution_of_cardinal_of_isotropic_cc();
-
-    inline long get_nb_of_cc() {
-        return _cc_counter;
-    }
-
-    long cc_create_a_cc(const unordered_set<long> &s_fc,
-                        bool is_anisotropic = false,
-                        bool is_creation_delayed = false);
-
+/** @brief Add a set of fine cells to the actual coarse cell and update the related dictionaries 
+ * @ param[in] set_of_fc_to_add set of fine cells to be added
+ * @ param[in] i_target_cc index of targetted coarse cells */
     void cc_update_cc(unordered_set<long> set_of_fc_to_add, long i_target_cc);
 
     void fill_cc_neighbouring();
@@ -138,8 +157,6 @@ public:
 
     unsigned short int get_cc_cardinal(long i_cc);
 
-    void cc_update_cc_specifics(unordered_set<long> set_of_fc_to_add, long i_target_cc);
-
     unordered_map<long, unordered_set<long>> compute_dict_faces_in_common_faces_with_cc_neighbourhood(long i_fc);
 
     void correction_swap_leaf_fc_v2(int nb_iteration = 5, Coarse_Cell_Graph *ccg_l_m_one = NULL, int verbose = 1);
@@ -152,10 +169,6 @@ public:
     Dual_Graph _fc_graph;
     // TODO mutualized Anisotropic with isotropic.
 
-    unordered_map<long, Coarse_Cell *> _d_isotropic_cc;
-
-    // Temporary datas
-    vector<bool> _a_is_fc_agglomerated;
 
     long _cc_counter = 0;  // Counter of cc (even the ones deleted)
 
@@ -169,7 +182,25 @@ public:
 
 
 protected :
+    /** @brief Variable where are recorded the isotropic coarse cells. Index is the global index of the coarse
+     * cell, key is the pointer to a Coarse_Cell element. */
+    unordered_map<long, Coarse_Cell *> _d_isotropic_cc;
+     /** @brief Number of agglomerated fine cells */
+    long _nb_of_agglomerated_fc = 0; 
+    /** @brief vector of the set of fine cells composing the too small coarse cells that will be built at the end of the agglomeration
+     * process */
+    vector<unordered_set<long>> _delayed_cc; 
+    // because they will be the first to be deleted.
+    /** @brief Variable where are recorded the anisotropic coarse cells. Index is the global index of the coarse
+     * cell, key is the pointer to a Coarse_Cell element. */
+    unordered_map<long, unordered_set<long>> _d_anisotropic_cc;     
+    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of the cells with a given cardinality
+     */
+    unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  
+    /** @brief Dictionary that contains the compactness as a key and a set of the compactness cells as a value*/
+    unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; 
 
+   
     void __remove_an_isotropic_cc(const long &i_cc);
 
     void _cc_update_neighbours(const long &i_fc,
@@ -191,30 +222,6 @@ protected :
 
     // Temporary datas
     unordered_set<long> _s_cc_to_remove;
-
-    long _nb_of_agglomerated_fc = 0;  // number of (already) agglomerated fine cells
-
-    vector<unordered_set<long>> _delayed_cc; // list of set of fc for too small cells. There are build at the end
-    // because they will be the first to be deleted.
-
-    // TODO mutualized Anisotropic with isotropic.
-    //    unordered_map<long, Coarse_Cell> dict_Coarse_Cells;
-
-
-    // Coarse Graph:
-
-
-    // Contains the CC index: list of FC, that can be modified (not anisotropic CC, and not "boundary" CC!
-
-    unordered_map<long, unordered_set<long>> _d_anisotropic_cc; // Dict of indices of anisotropic CC
-
-    // Pointers from caracteristics to cc index:
-    unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  // Contains the CC that can be modified, indexed by their
-    // cardinal i.e. {card: set of index of coarse cells of cardinal card}
-
-    unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; // Contains for every degree of compactness the list of
-    // CC of this type i.e. {deg_Of_compactness: set of CC of compactness deg_Of_compactness}
-
 
 };
 

@@ -280,7 +280,9 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     // We proceed in creating the delayed one
     (*_cc_graph).cc_create_all_delayed_cc();
     (*_cc_graph).fill_cc_neighbouring();
-    correction(correction_steps,4);
+    if ((*_cc_graph).is_cc_grid_not_structured(_goal_card)){
+      correction(correction_steps,4);
+    }
     (*_cc_graph).cc_renumber();
     _l_nb_of_cells.push_back((*_cc_graph)._cc_counter);
 

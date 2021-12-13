@@ -229,7 +229,3 @@ bool Seeds_Pool::is_empty(int i_level){
 
 
 }
-
-bool Seeds_Pool::is_initialized(){
-    return !d_is_on_bnd.empty();
-}

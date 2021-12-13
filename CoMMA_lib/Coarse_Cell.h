@@ -7,6 +7,16 @@
 
 #include "Dual_Graph.h"
 
+/** @brief Class implementing a Coarse_Cell object.
+ * @param[in] fc_graph Dual_Graph object from where are taken the set of fine cells to create the 
+ * coarse cell.
+ * @param[in] global index of the coarse cell
+ * @param[in] s_fc unordered set of fine cells constituting the coarse cell
+ * @param[in] is_isotropic boolean describing if the cell is coming from an isotropic agglomeration process
+ * or an anisotropic agglomeration process. The default value is set to true.
+ * @param[in] is_delayed boolean determing if the agglomeration process is delayed or not. The default value is set
+ * to true */
+
 class Coarse_Cell {
 public:
     Coarse_Cell(Dual_Graph &fc_graph,
@@ -18,39 +28,99 @@ public:
 
     ~Coarse_Cell() {
     };
-
+/** @brief Method that return a boolean determing if the Coarse Cell is defined by a connected sub-graph or not.
+ *  @return true if the subgraph is connected, false if the subgraph is not connected*/
     bool is_connected();
-
+/** @brief   The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
+ *  i.e. i_fc in self.__icc, j_fc in j_cc 
+ *  i_fc and j_cc are related to two different coarse
+ *  cells and connected thrpugh the outer face of j_fc.
+ *  i_fc--j_fc_area--j_fc*
+ *   |                  |
+ *   |                  |
+ *  i_cc              j_cc */
+    unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
+/** @brief Dictionary where the following structure is implemented:
+ * i i_fc --- face_area -- j_fc
+ * Pseudo code: Dict[i_fc: int, Dict[j_fc(out):int, surface_outer_face: float]] = dict()
+*/
+    unordered_map<long, unordered_map<long, double>> __tmp_fc_fine_cut_edges;
+/** @brief helper to retrive the set of fine cells with an outer neighborhood*/
     unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
-
-    //protected
+/** @brief variable defining ig the cell is finalized or not */
     bool _is_finalized = false;
-    //Private methods:
+/** @brief Check the connectivity of the subgraph representing the fine cells constituting the coarse cell
+ *  @return true if the subgraph is connected, false if it is not connected*/
     bool __check_connectivity(int verbose = 0);
+/** @brief Helper to add to the dictionary the value related. i_fc and j_cc are related to two different coarse
+ * cells and connected thrpugh the outer face of j_fc.
+ *  i_fc--j_fc_area--j_fc*
+ *   |                  |
+ *   |                  |
+ *  i_cc              j_cc */
 
     void __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area);
-
+/** @brief By cycling on the dictionary of the  connections fine cells coarse cells neighborhoods it gives back
+ * the set with the global index of the coarse cell neighborhood.
+ */
+    unordered_set<long> get_s_cc_neighbours();
+/** @brief dictionary that describe the subgraph describing the Coarse Cell 
+ * Pseudo code: [i_fc,[i_neigh,area]
+ * i_fc--area--i_neigh
+ * it is built in the constructor*/
+    unordered_map<long, unordered_map<long, double>> __d_def; 
+/** @brief Attention, this is a little bit complex:
+ * the problem is that there is multiple outer degree:
+ * for a inner fc:
+ *   //
+ *   //               # wrt fc        # wrt cc
+ *   //#####################################################
+ *   // fine edges    # Useless for   #  self.d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour
+ *   //               # Agglomeration #
+ *   //####################################################
+ *   // coarse edges  #  No sense     #  Number Cc neighbours
+ *   Pseudo code: Dict[outer fine_cell_degree, Dict[int:i_fc, Set[int: j_cc]]]
+*/
+    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour;
+/** @brief fill the dictionary for the present Coarse Cell*/
     void __compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour();
-
+/** @brief erase completely the value related to i_fc,j_cc,j_fc */
     void __delete_and_propagate_deletion__d_i_fc_to_j_cc_neighbourhood_to_j_fc(const long &i_fc,
                                                                                const long &j_cc,
                                                                                const long &j_fc);
 
+/** @brief erase completely the value related to i_fc,j_fc */
     void __delete_and_propagate_deletion__tmp_fc_fine_cut_edges(const long &i_fc,
                                                                 const long &j_fc);
 
+/** @brief With this function we fill the dictionary of neighborhoodi and we build up the coarse cell neighnorhood.*/
+    void fill_cc_neighbouring(vector<long> &fc_2_cc);
+/** @brief Add a set of fine cells to the actual coarse cell.
+ *  @param[in] s_fc_to_add set of fine cells to add.
+ *  @param[in] fc_2_cc vector of the global number of coarse cells assigned to the fine cells.*/
+    void add_fc(unordered_set<long> s_fc_to_add, vector<long> fc_2_cc);
+/** @brief Compute the compactness of a coarse cell */
+    inline void __compute_compactness(){
+        unsigned short int max_comp = 0;
+        for (auto &i_k_v :__d_compactness_to_s_fc) {
+            if (max_comp < i_k_v.first) {
+                max_comp = i_k_v.first;
+            }
+        }
+        for (unsigned short int i_comp = 0; i_comp < max(max_comp + 1, 4); i_comp++) {
+            if (__d_compactness_to_s_fc.count(i_comp) > 0 && !__d_compactness_to_s_fc[i_comp].empty()) {
+                __compactness = i_comp;
+                break;
+            }
+        }
+    }
     void __remove_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc_old);
 
     void __add_one_to_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour(unsigned short int nb_fine_edges_wrt_cc, long i_fc, long i_cc);
 
-    //Public methods:
-    void fill_cc_neighbouring(vector<long> &fc_2_cc);
 
-    unordered_set<long> get_s_cc_neighbours();
 
     unordered_set<long> compute_s_leaves();
-
-    void add_fc(unordered_set<long> s_fc_to_add, vector<long> fc_2_cc);
 
     bool check_consistency(vector<long> &fc_2_cc);
 
@@ -62,25 +132,6 @@ public:
     unordered_map<long, unordered_map<long, unordered_map<long, double>>> get_d_fc_w_outer_neighbours_j_cc_and_s_j_fc();
 
     void remove_fc(unordered_set<long> s_fc_to_remove, vector<long> fc_2_cc);
-
-    inline void __compute_compactness(){
-
-        unsigned short int max_comp = 0;
-        for (auto &i_k_v :(*this).__d_compactness_to_s_fc) {
-            if (max_comp < i_k_v.first) {
-                max_comp = i_k_v.first;
-            }
-        }
-        //    unsigned short int max_comp = max((*this).__d_compactness_to_s_fc.keys())
-
-        for (unsigned short int i_comp = 0; i_comp < max(max_comp + 1, 4); i_comp++) {
-            if ((*this).__d_compactness_to_s_fc.count(i_comp) > 0 && !(*this).__d_compactness_to_s_fc[i_comp].empty()) {
-                (*this).__compactness = i_comp;
-                break;
-            }
-        }
-    }
-
     void update_icc(long new_i_cc);
 
     void update_cc_neighbour_renumbering(unordered_map<long, long> dict_old_cc_to_new_cc);
@@ -98,36 +149,12 @@ public:
     unsigned short int __compactness;
     // if cc is of size 1, the __d_def map will not work
     unordered_set<long> __s_fc; 
-    // subgraph describing the cc
-    unordered_map<long, unordered_map<long, double>> __d_def;      
+     
     unordered_map<unsigned short int, unordered_set<long>> __d_compactness_to_s_fc; // TODO ordered dict????
 
-    // TODO useful?
     unordered_map<long, double> __d_i_fc_to_volume;  // volumes associated with each inner fc.
 
-    unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
-    // The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
-    // i.e. i_fc in self.__icc, j_fc in j_cc
-
-    // Only fine informations.
-    // TODO useful after first fill_cc_neighbourhood?
-    unordered_map<long, unordered_map<long, double>> __tmp_fc_fine_cut_edges;
-    // Dict[i_fc: int, Dict[j_fc(out):int, surface_outer_face: float]] = dict()
-
-    // Attention, this is a little bit complex:
-    // the problem is that there is multiple outer degree:
-    // for a inner fc:
-    //
-    //               # wrt fc        # wrt cc
-    //#####################################################
-    // fine edges    # Useless for   #  self.d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour
-    //               # Agglomeration #
-    //####################################################
-    // coarse edges  #  No sense     #  Number Cc neighbours
-    //
-    unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour;
-    // Dict[outer fine_cell_degree, Dict[int:i_fc, Set[int: j_cc]]]
-
+   /** @brief Total boundary area */
     double __boundary_area = 0.0;
 
     double volume = 0.0;  // TODO useful?
@@ -145,12 +172,6 @@ public:
     // le remplacer par un set?
     unordered_set<unsigned short int> __is_already_connected;
     // self.__is_already_connected = np.zeros((self.card,), dtype=bool)
-
-    //############################################
-    // Primal_mesh
-    //############################################
-//    self.primal_mesh = primal_mesh
-//    self.compute_convexity(s_fc)
 
 };
 
