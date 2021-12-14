@@ -8,6 +8,3 @@
 [submodule "dualGPy"]
 	path = dualGPy
 	url = https://github.com/albiremo/dualGPy.git
-[submodule "perfetto"]
-	path = perfetto
-	url = https://github.com/google/perfetto.git
