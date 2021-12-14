@@ -81,3 +81,24 @@ add_executable("Comma_test" ${TESTS})
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
 
+###################### Perfetto Settings #####################
+find_package(Threads)
+# Define a static library for Perfetto.
+include_directories(perfetto/sdk)
+add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
+SET(PROFILING_DIR "tests")
+
+set(PROFILING 
+	perfetto/sdk/perfetto.h
+	${IMPLEMENTATION}
+	${SOURCE_FILES}
+	${TEST_DIR}/input/DualGPy.h
+	${PROFILING_DIR}/profiling/trace_categories.h
+	${PROFILING_DIR}/profiling/trace_categories.cpp
+	${PROFILING_DIR}/test_profile.cpp
+	)
+
+
+# Link the library to your main executable.
+add_executable("Profiling" ${PROFILING})
+target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
