@@ -24,7 +24,10 @@ SET(SOURCE_DIR "CoMMA_lib")
 # headers are in source dir
 
 include_directories(${SOURCE_DIR})
-set(IMPLEMENTATION
+
+SET(PROFILING_DIR "tests")
+SET(TEST_DIR "tests")
+SET(IMPLEMENTATION
 	${SOURCE_DIR}/CoMMA.h
         ${SOURCE_DIR}/Seeds_Pool.h
         ${SOURCE_DIR}/Dual_Graph.h
@@ -56,20 +59,43 @@ set(SOURCE_FILES
         ${SOURCE_DIR}/Triconnected_graph.cpp
         ${SOURCE_DIR}/Util_graph.cpp
 	)
+set(PROFILING 
+	perfetto/sdk/perfetto.h
+	${PROFILING_DIR}/profiling/trace_categories.h
+	${PROFILING_DIR}/profiling/trace_categories.cpp
+	${PROFILING_DIR}/header_profile.h
+	)
 
-############################  TEST with CATCH2 BUILDING #########################
-# Why Catch2? Read: https://snorristurluson.github.io/Catch2/
-
-SET(TEST_DIR "tests")
-
+set(PROFILING_SOURCE 
+	${PROFILING_DIR}/input/DualGPy.h	
+	${PROFILING_DIR}/test_profile.cpp
+   )
 SET(TESTING_FILES
 	${TEST_DIR}/test_structure.cpp
 	)
 
-set(TESTS ${IMPLEMENTATION}
+SET(TESTS ${IMPLEMENTATION}
         ${SOURCE_FILES}
+	${PROFILING}
 	${TEST_DIR}/input/DualGPy.h
 	${TESTING_FILES})
+
+
+
+
+###################### Perfetto Settings #####################
+find_package(Threads)
+# Define a static library for Perfetto.
+include_directories(perfetto/sdk)
+add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
+
+
+# Link the library to your main executable.
+add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION} ${SOURCE_FILES})
+target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
+############################  TEST with CATCH2 BUILDING #########################
+# Why Catch2? Read: https://snorristurluson.github.io/Catch2/
+
 
 # Generate a test executable
 include_directories(Catch2/single_include)
@@ -81,24 +107,4 @@ add_executable("Comma_test" ${TESTS})
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
 
-###################### Perfetto Settings #####################
-find_package(Threads)
-# Define a static library for Perfetto.
-include_directories(perfetto/sdk)
-add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
-SET(PROFILING_DIR "tests")
 
-set(PROFILING 
-	perfetto/sdk/perfetto.h
-	${IMPLEMENTATION}
-	${SOURCE_FILES}
-	${TEST_DIR}/input/DualGPy.h
-	${PROFILING_DIR}/profiling/trace_categories.h
-	${PROFILING_DIR}/profiling/trace_categories.cpp
-	${PROFILING_DIR}/test_profile.cpp
-	)
-
-
-# Link the library to your main executable.
-add_executable("Profiling" ${PROFILING})
-target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})

@@ -21,13 +21,9 @@
 
 // The set of track event categories that the example is using.
 PERFETTO_DEFINE_CATEGORIES(
-    perfetto::Category("rendering")
+    perfetto::Category("setup")
         .SetDescription("Rendering and graphics events"),
-    perfetto::Category("network.debug")
-        .SetTags("debug")
-        .SetDescription("Verbose network events"),
-    perfetto::Category("audio.latency")
-        .SetTags("verbose")
-        .SetDescription("Detailed audio latency metrics"));
-
+    perfetto::Category("agglomerator")
+        .SetDescription("Agglomerator Events")
+);
 #endif  // TRACE_CATEGORIES_H

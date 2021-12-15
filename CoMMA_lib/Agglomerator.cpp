@@ -285,7 +285,6 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     }
     (*_cc_graph).cc_renumber();
     _l_nb_of_cells.push_back((*_cc_graph)._cc_counter);
-
 }
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,

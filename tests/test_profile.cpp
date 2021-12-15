@@ -1,51 +1,5 @@
-#include "profiling/trace_categories.h"
-#include <chrono>
-#include <fstream>
-#include <thread>
+#include "header_profile.h"
 #include "input/DualGPy.h"
-
-void InitializePerfetto() {
-  perfetto::TracingInitArgs args;
-  // The backends determine where trace events are recorded. For this example we
-  // are going to use the in-process tracing service, which only includes in-app
-  // events.
-  args.backends = perfetto::kInProcessBackend;
-
-  perfetto::Tracing::Initialize(args);
-  perfetto::TrackEvent::Register();
-}
-
-std::unique_ptr<perfetto::TracingSession> StartTracing() {
-  // The trace config defines which types of data sources are enabled for
-  // recording. In this example we just need the "track_event" data source,
-  // which corresponds to the TRACE_EVENT trace points.
-  perfetto::TraceConfig cfg;
-  cfg.add_buffers()->set_size_kb(1024);
-  auto* ds_cfg = cfg.add_data_sources()->mutable_config();
-  ds_cfg->set_name("track_event");
-
-  auto tracing_session = perfetto::Tracing::NewTrace();
-  tracing_session->Setup(cfg);
-  tracing_session->StartBlocking();
-  return tracing_session;
-}
-
-void StopTracing(std::unique_ptr<perfetto::TracingSession> tracing_session) {
-  // Make sure the last event is closed for this example.
-  perfetto::TrackEvent::Flush();
-
-  // Stop tracing and read the trace data.
-  tracing_session->StopBlocking();
-  std::vector<char> trace_data(tracing_session->ReadTraceBlocking());
-
-  // Write the result into a file.
-  // Note: To save memory with longer traces, you can tell Perfetto to write
-  // directly into a file by passing a file descriptor into Setup() above.
-  std::ofstream output;
-  output.open("example.pftrace", std::ios::out | std::ios::binary);
-  output.write(&trace_data[0], trace_data.size());
-  output.close();
-}
 
 int main(int argv, char** argc) {
   InitializePerfetto();
@@ -59,10 +13,12 @@ int main(int argv, char** argc) {
     // DualGPy class constructor loads the configuration
     // with the graph and all the variables required
     // TODO: maybe change to pointer for omogenity
-    TRACE_EVENT_BEGIN("rendering", "DualGPy");
+    TRACE_EVENT_BEGIN("setup", "DualGPy");
     DualGPy Data = DualGPy();
-    TRACE_EVENT_END("rendering");
+    TRACE_EVENT_END("setup");
     // Construction of the Dual Graph element
+   
+    TRACE_EVENT_BEGIN("setup", "Dual_Graph");
     Dual_Graph fc_graph = Dual_Graph(Data.nb_fc,
                                      Data.adjMatrix_row_ptr,
                                      Data.adjMatrix_col_ind,
@@ -76,7 +32,10 @@ int main(int argv, char** argc) {
                                      0,
                                      2
     );   
+   
+    TRACE_EVENT_END("setup");
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+   
     // Check the effective length
 
     // To test protected variables I use a child class. This is a trick to access. 
@@ -91,15 +50,35 @@ int main(int argv, char** argc) {
 		    bool test_variable(){
                        return(_is_visu_data_stored); 
 		    };
+                   void test_fill(long &nb_aniso_agglo_lines,forward_list<deque<long> *> &anisotropic_lines){
+                       set_agglo_lines(nb_aniso_agglo_lines,anisotropic_lines); 
+		    };
+
     };
+
+    TRACE_EVENT_BEGIN("setup", "Agglomerator");
     test* agg = new test(fc_graph,
 		         cc_graph,
                                     0,
                                     Data.is_visu_data_stored,
                                     2);
-     bool testing = agg->test_variable();
-     vector<long> gg = agg->get_fc_2_cc();
-     StopTracing(std::move(tracing_session));
+ 
+    TRACE_EVENT_END("setup");
+ 
+    bool testing = agg->test_variable();
+     vector<long> gg = agg->get_fc_2_cc(); 
+    TRACE_EVENT_BEGIN("agglomerator", "aniso");
+     long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> agglomeration_lines;
+//    // TODO: add exception if it is not the first agglomeration (so if we are at a further level)
+    agg->test_fill(nb_agglomeration_lines,agglomeration_lines);
+    agg->agglomerate_one_level(2,2,2,-1);
+    TRACE_EVENT_END("agglomerator");
+    TRACE_EVENT_BEGIN("agglomerator", "biconnected");
+     Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,0,Data.is_visu_data_stored,2);
+    test->agglomerate_one_level(2,2,2,-1); 
+    TRACE_EVENT_END("agglomerator");
+    StopTracing(std::move(tracing_session));
      return 0;
     // Check if the structure is correct: Have I really changed the testing variable that is in the Father class Agglomerator by setting it true (by default is false) in the child class??
 }
