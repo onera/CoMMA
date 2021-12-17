@@ -12,7 +12,6 @@ before_script:
  - apt-get -y install cmake 
  - apt-get -y install libpython3.9-dev
  - apt-get -y install doxygen
- - apt-get -y install perf
 CoMMA:
     stage: build
     script:
@@ -25,17 +24,10 @@ test_a:
     needs: [CoMMA]
     script:
         - cd build
-        - ./Comma_test
-Perf_Linux_tools:
-    stage: performance
-    needs: [CoMMA]
-    script:
-      - cd build
-      - perf record -g ./Profiling_perf
-      - perf report
+        - ./Comma_test -r junit
     artifacts:
-        paths:
-        - build/perf.data
+        reports:
+            junit: report.xml
 pages:
     stage: documentation
     script:
