@@ -70,6 +70,12 @@ set(PROFILING_SOURCE
 	${PROFILING_DIR}/input/DualGPy.h	
 	${PROFILING_DIR}/test_profile.cpp
    )
+
+set(PROFILING_PERF 
+	${PROFILING_DIR}/input/DualGPy.h	
+	${PROFILING_DIR}/test_perf.cpp
+   )
+
 SET(TESTING_FILES
 	${TEST_DIR}/test_structure.cpp
 	)
@@ -90,6 +96,10 @@ add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
 ## Link the library to your main executable.
 add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION} ${SOURCE_FILES})
 target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
+
+######################## Profiling Perf ########################################
+
+add_executable("Profiling_perf" ${PROFILING_PERF} ${IMPLEMENTATION} ${SOURCE_FILES})
 ############################  TEST with CATCH2 BUILDING #########################
 # Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
