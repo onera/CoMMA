@@ -3,34 +3,35 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 # Use the official gcc image
 stages:
-    - build
-    - testing
+    - build 
+    - test
     - performance
     - documentation
+image: alpine:latest
+before_script:
+    - apk update 
+    - apk add cmake 
+    - apk add libpython3.9-dev 
+    - apk add build-base 
+    - apk add linux-tools-common 
+    - apk add linux-tools-generic
+    - apk add doxygen
 CoMMA:
-    image: gcc
     stage: build
-    before_script:
-        - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
         - mkdir build
         - cd build
         - cmake ..
         - make
-    stage: testing
+test_a:
+    stage: test
+    needs: [CoMMA]
     script:
-      - cd build
-      - ./Comma_test
-    artifacts:
-        paths:
-        - build/
-Performance:
-    image: alpine:latest
+        - cd build
+        - ./Comma_test
+Perf_Linux_tools:
     stage: performance
-    before_script:
-        - apk update
-        - apk add linux-tools-common 
-        - apk add linux-tools-generic
+    needs: [CoMMA]
     script:
       - cd build
       - perf record -g ./Profiling_perf
@@ -39,13 +40,8 @@ Performance:
         paths:
         - build/perf.data
 pages:
-    image: alpine:latest
-    stage : documentation
-    before_script:
-        - apk update
-        - apk add doxygen
+    stage: documentation
     script:
-        - apk update && apk add doxygen
         - doxygen Documentation/Doxyfile
         - mv documentation/html/ public/
     artifacts:
