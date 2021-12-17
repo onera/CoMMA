@@ -12,7 +12,7 @@ before_script:
     - apk update 
     - apk add cmake 
     - apk add python3-dev
-    - apk add gcc libc-dev musl-dev 
+    - apk add gcc 
     - apk add linux-tools
     - apk add doxygen
 CoMMA:
