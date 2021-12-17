@@ -7,12 +7,11 @@ stages:
     - test
     - performance
     - documentation
-image: alpine:latest
+image: alpine-gcc
 before_script:
     - apk update 
     - apk add cmake 
     - apk add python3-dev
-    - apk add gcc 
     - apk add linux-tools
     - apk add doxygen
 CoMMA:
