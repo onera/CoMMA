@@ -1,4 +1,3 @@
-image: gcc
 variables:
   GIT_STRATEGY: clone
   GIT_SUBMODULE_STRATEGY: recursive
@@ -6,7 +5,9 @@ variables:
 stages:
     - build
     - test_structure
+    - documentation
 CoMMA:
+    image: gcc
     stage: build
     before_script:
         - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
@@ -19,8 +20,29 @@ CoMMA:
         paths:
         - build/
 Test:
- 
+    image: gcc
     stage: test_structure
+    before_script:
+      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
       - cd build
       - ./Comma_test
+Pages:
+    image: alpine:latest
+    stage : documentation
+    before_script:
+    - apk update
+    - apk add doxygen
+    script:
+    - apk update && apk add doxygen
+    - doxygen doxygen/Doxyfile
+    - mv documentation/html/ public/
+    artifacts:
+        paths:
+             - public
+    only:
+         - master
+
+
+
+
