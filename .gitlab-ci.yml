@@ -30,7 +30,7 @@ test_a:
         - ./Comma_test -r junit
     artifacts:
         reports:
-            junit: report.xml
+            junit: "*.xml"
 pages:
     stage: documentation
     script:
