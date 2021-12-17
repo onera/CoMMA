@@ -76,7 +76,6 @@ SET(TESTING_FILES
 
 SET(TESTS ${IMPLEMENTATION}
         ${SOURCE_FILES}
-	${PROFILING}
 	${TEST_DIR}/input/DualGPy.h
 	${TESTING_FILES})
 
@@ -85,12 +84,10 @@ SET(TESTS ${IMPLEMENTATION}
 
 ###################### Perfetto Settings #####################
 find_package(Threads)
-# Define a static library for Perfetto.
+## Define a static library for Perfetto.
 include_directories(perfetto/sdk)
 add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
-
-
-# Link the library to your main executable.
+## Link the library to your main executable.
 add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION} ${SOURCE_FILES})
 target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
 ############################  TEST with CATCH2 BUILDING #########################
