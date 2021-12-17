@@ -1,18 +1,19 @@
 variables:
   GIT_STRATEGY: clone
   GIT_SUBMODULE_STRATEGY: recursive
-# Use the official gcc image
 stages:
     - build 
     - test
     - performance
     - documentation
-image: n0madic/alpine-gcc:9.2.0
+image: gcc
 before_script:
-    - apk update 
-    - apk add cmake 
-    - apk add python3-dev
-    - apk add doxygen
+ - apt-get update 
+ - apt-get -y install cmake 
+ - apt-get -y install libpython3.9-dev
+ - apt-get -y install doxygen
+ - apt-get -y install inux-tools-common 
+ - apt-get -y install linux-tools-generic
 CoMMA:
     stage: build
     script:
