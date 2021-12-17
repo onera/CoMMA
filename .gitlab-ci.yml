@@ -7,7 +7,7 @@ stages:
     - test
     - performance
     - documentation
-image: alpine-gcc
+image: n0madic/alpine-gcc:9.2.0
 before_script:
     - apk update 
     - apk add cmake 
