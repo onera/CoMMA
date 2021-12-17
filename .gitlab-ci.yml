@@ -29,10 +29,8 @@ Test:
       - cd build
       - ./Comma_test
 Performance:
-    image: gcc
+    image: alpine:latest
     stage: performance
-    before_script:
-      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
       - cd build
       - perf record -g ./Profiling_perf
