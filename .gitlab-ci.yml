@@ -27,10 +27,10 @@ test_a:
     needs: [CoMMA]
     script:
         - cd build
-        - ./Comma_test -r junit
+        - ./Comma_test -r junit > test_a.xml
     artifacts:
         reports:
-            junit: "*.xml"
+            junit: build/test_a.xml
 pages:
     stage: documentation
     script:
