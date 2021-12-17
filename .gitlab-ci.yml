@@ -11,7 +11,7 @@ image: alpine:latest
 before_script:
     - apk update 
     - apk add cmake 
-    - apk add python3
+    - apk add python3-dev
     - apk add build-base 
     - apk add linux-tools
     - apk add doxygen
