@@ -5,6 +5,7 @@ variables:
 stages:
     - build
     - test_structure
+    - performance
     - documentation
 CoMMA:
     image: gcc
@@ -27,6 +28,18 @@ Test:
     script:
       - cd build
       - ./Comma_test
+Performance:
+    image: gcc
+    stage: performance
+    before_script:
+      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
+    script:
+      - cd build
+      - perf record -g ./Profiling_perf
+      - perf report
+    artifacts:
+        paths:
+        - build/perf.data
 pages:
     image: alpine:latest
     stage : documentation
