@@ -11,7 +11,7 @@ image: alpine:latest
 before_script:
     - apk update 
     - apk add cmake 
-    - apk add libpython3.9-dev 
+    - apk add python3
     - apk add build-base 
     - apk add linux-tools-common 
     - apk add linux-tools-generic
