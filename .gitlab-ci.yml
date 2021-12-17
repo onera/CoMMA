@@ -12,7 +12,7 @@ before_script:
  - apt-get -y install cmake 
  - apt-get -y install libpython3.9-dev
  - apt-get -y install doxygen
- - apt-get -y install linux-tools
+ - apt-get -y install perf
 CoMMA:
     stage: build
     script:
