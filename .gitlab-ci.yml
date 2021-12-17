@@ -12,8 +12,7 @@ before_script:
  - apt-get -y install cmake 
  - apt-get -y install libpython3.9-dev
  - apt-get -y install doxygen
- - apt-get -y install linux-tools-common 
- - apt-get -y install linux-tools-generic
+ - apt-get -y install linux-tools
 CoMMA:
     stage: build
     script:
