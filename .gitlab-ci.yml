@@ -19,6 +19,9 @@ CoMMA:
         - cd build
         - cmake ..
         - make
+    artifacts:
+        paths:
+        - build/
 test_a:
     stage: test
     needs: [CoMMA]
