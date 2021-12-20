@@ -7,6 +7,9 @@
  * to build up all the agglomeration process. The result will be the definition
  * of the agglomerated cells fc2cc.  
  * */
+
+
+
 template<typename CoMMAIndexType, typename CoMMAWeightType>
 void agglomerate_one_level( // Dual graph:
                            const vector<CoMMAIndexType> adjMatrix_row_ptr,
@@ -126,26 +129,39 @@ void agglomerate_one_level( // Dual graph:
     
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph); 
     bool is_visu_data_stored = true;  //TODO get this via argument:
-    // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
-//    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-//                                    cc_graph,
-//		                    verbose_long,
-//                                    is_visu_data_stored,
-//                                    dimension = dimension);
-//    long nb_agglomeration_lines = 0;
-//    forward_list<deque<long> *> agglomeration_lines;
-//    // TODO: add exception if it is not the first agglomeration (so if we are at a further level)
-//    agg1->set_agglo_lines(nb_agglomeration_lines,agglomeration_lines)
-//    agg1->agglomerate_one_level(min_card,goal_card,max_card,-1); 
-    Agglomerator* agg = new Agglomerator_Biconnected(fc_graph,
+ 
+   // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
+    // @todo maybe re-refactor the class agglomerator to allow the implicit upcast like the biconnected case
+    // The agglomerator anisotropic is not called with the  implicit upcasting pointing because of the initialization of
+    // the anisotropic lines.
+    // for more information look at: https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
+    // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
+    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
+                                    cc_graph,
+        	                    verbose_long,
+                                    is_visu_data_stored,
+                                    dimension = dimension);
+    long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> agglomeration_lines;
+    // @todo add exception if it is not the first agglomeration (so if we are at a further level)
+    // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
+    // in this case we are. in the todo we have to treat the case in which we are not
+    Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
+    agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
+    agg_dyn->_v_lines[0]= agglomeration_lines;
+    agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
+    // Free the pointer
+    delete(agg1);
+    unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
-                                    dimension = dimension); 
+                                    dimension = dimension)); 
     agg->agglomerate_one_level(min_card,goal_card,max_card,-1);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
     } 
+
 }
 #endif

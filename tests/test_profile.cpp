@@ -46,18 +46,15 @@ int main(int argv, char** argc) {
                         int verbose,
                         bool is_visu_data_stored,
                         int dimension) : Agglomerator_Anisotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){};
-
+                 ~test(){};
 		    bool test_variable(){
                        return(_is_visu_data_stored); 
-		    };
-                   void test_fill(long &nb_aniso_agglo_lines,forward_list<deque<long> *> &anisotropic_lines){
-                       set_agglo_lines(nb_aniso_agglo_lines,anisotropic_lines); 
 		    };
 
     };
 
     TRACE_EVENT_BEGIN("setup", "Agglomerator");
-    test* agg = new test(fc_graph,
+    test* agg=new test(fc_graph,
 		         cc_graph,
                                     0,
                                     Data.is_visu_data_stored,
@@ -66,12 +63,14 @@ int main(int argv, char** argc) {
     TRACE_EVENT_END("setup");
  
     bool testing = agg->test_variable();
-     vector<long> gg = agg->get_fc_2_cc(); 
     TRACE_EVENT_BEGIN("agglomerator", "aniso");
-     long nb_agglomeration_lines = 0;
+    long nb_agglomeration_lines = 0;
     forward_list<deque<long> *> agglomeration_lines;
-//    // TODO: add exception if it is not the first agglomeration (so if we are at a further level)
-    agg->test_fill(nb_agglomeration_lines,agglomeration_lines);
+    // @todo add exception if it is not the first agglomeration (so if we are at a further level)
+    // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
+    // in this case we are. in the todo we have to treat the case in which we are not
+    agg->_v_nb_lines[0] = nb_agglomeration_lines;
+    agg->_v_lines[0] = agglomeration_lines;
     agg->agglomerate_one_level(2,2,2,-1);
     TRACE_EVENT_END("agglomerator");
     TRACE_EVENT_BEGIN("agglomerator", "biconnected");

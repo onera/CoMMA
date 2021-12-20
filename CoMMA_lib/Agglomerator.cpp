@@ -57,8 +57,6 @@ Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
      _v_of_s_anisotropic_compliant_fc[0] = _fc_graph.s_anisotropic_compliant_cells;
      _v_nb_lines = vector<long>(2);
      _v_lines = vector<forward_list<deque<long> *> >(2);
-
-
 };
 
 /** @todo maybe delete the aggl_lines_sizes here. Not so sure that is useful.
@@ -98,13 +96,6 @@ void Agglomerator_Anisotropic::get_agglo_lines(int level,
     aggl_lines_sizes[0] = _v_nb_lines[level] + 1;
     aggl_lines_sizes[1] = number_of_fc_in_agglomeration_lines;
 };
-
-void Agglomerator_Anisotropic::set_agglo_lines(long nb_aniso_agglo_lines,
-                                         forward_list<deque<long> *> anisotropic_lines){
-// To call it before the Agglomerator_Anisotropic agglomerate one level
-     _v_nb_lines[0] = nb_aniso_agglo_lines;
-     _v_lines[0] = anisotropic_lines;
-}
 
 void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
                                          const short min_card,

@@ -83,10 +83,4 @@ TEST_CASE("Agglomerator Isotropic","[Isotropic]")
     test->agglomerate_one_level(2,2,2,-1);
 }
 
-TEST_CASE("CoMMA","[CoMMA]")
-{
-    // DualGPy class constructor loads the configuration
-    // with the graph and all the variables required
-    // TODO: maybe change to pointer for omogenity
-    DualGPy Data = DualGPy();
-}
+

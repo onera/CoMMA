@@ -1,3 +1,4 @@
+#include <memory>
 #include "CoMMATypes.h"
 #include "Agglomerator.h"
 #include "CoMMA.h"

@@ -104,6 +104,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
    /** @brief Destructor*/
     ~Agglomerator_Anisotropic();
 
+
     /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic.
        * We add the override key as a guard to possible mistakes:
        * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
@@ -129,12 +130,6 @@ class Agglomerator_Anisotropic : public Agglomerator{
 		         long *aggl_line_sizes,
                          vector<long> &agglo_lines_array_idx,
                          vector<long> &agglo_lines_array);
-
-    protected:
-    /** @brief Function that for the current agglomerator, it creates the  */
-    void create_all_anisotropic_cc_wrt_agglomeration_lines();
-    /** @brief Vector of set of the anisotropic compliant of fine cells*/
-    vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
     /** @brief Vector of number of Anisotropic agglomeration lines*/
     vector<long> _v_nb_lines;
     /** @brief _v_lines : Agglomeration lines structure:
@@ -143,12 +138,13 @@ class Agglomerator_Anisotropic : public Agglomerator{
     * deque : line cells
     * e.g _v_lines[0] --> agglomeration lines at the finest level*/
     vector<forward_list<deque<long> *>> _v_lines;  
-        /** @brief set the anisotropic line values to the member function (to avoid changing the general structure of
-      * agglomerate one level that is a virtual function of the base class Agglomerator) 
-      * param[in] nb_aniso_agglo_lines number of anisotropic agglomeration lines
-      * param[in] anisotropic lines forward list*/
-     void set_agglo_lines(long nb_aniso_agglo_lines,
-                                         forward_list<deque<long> *> anisotropic_lines);
+
+
+    protected:
+    /** @brief Function that for the current agglomerator, it creates the  */
+    void create_all_anisotropic_cc_wrt_agglomeration_lines();
+    /** @brief Vector of set of the anisotropic compliant of fine cells*/
+    vector<unordered_set<long>> _v_of_s_anisotropic_compliant_fc;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator class
