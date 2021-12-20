@@ -1,17 +1,19 @@
 variables:
   GIT_STRATEGY: clone
   GIT_SUBMODULE_STRATEGY: recursive
-# Use the official gcc image
 stages:
-    - build
-    - test_structure
+    - build 
+    - test
     - performance
     - documentation
+image: gcc
+before_script:
+ - apt-get update 
+ - apt-get -y install cmake 
+ - apt-get -y install libpython3.9-dev
+ - apt-get -y install doxygen
 CoMMA:
-    image: gcc
     stage: build
-    before_script:
-        - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
     script:
         - mkdir build
         - cd build
@@ -20,34 +22,18 @@ CoMMA:
     artifacts:
         paths:
         - build/
-Test:
-    image: gcc
-    stage: test_structure
-    before_script:
-      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
+test_a:
+    stage: test
+    needs: [CoMMA]
     script:
-      - cd build
-      - ./Comma_test
-Performance:
-    image: gcc
-    stage: performance
-    before_script:
-      - apt-get update && apt-get -y install cmake && apt-get -y install libpython3.9-dev
-    script:
-      - cd build
-      - perf record -g ./Profiling_perf
-      - perf report
+        - cd build
+        - ./Comma_test -r junit > test_a.xml
     artifacts:
-        paths:
-        - build/perf.data
+        reports:
+            junit: build/test_a.xml
 pages:
-    image: alpine:latest
-    stage : documentation
-    before_script:
-        - apk update
-        - apk add doxygen
+    stage: documentation
     script:
-        - apk update && apk add doxygen
         - doxygen Documentation/Doxyfile
         - mv documentation/html/ public/
     artifacts:
