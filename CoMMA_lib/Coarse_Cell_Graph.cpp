@@ -882,6 +882,8 @@ void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w
             long i_cc_neighbour = _fc_2_cc[i_fc_neighbour];
             if (is_isotropic_cc(i_cc_neighbour)) {
                 // we add the coarse cell containing the fine cell i_cc_neighbour in dict_adjacent_cc
+                // so that we count how many times appears and hence how many faces gas in common the
+                // current fine cell with the neighborhood
                 if (dict_adjacent_cc.count(i_cc_neighbour)) {
                     dict_adjacent_cc[i_cc_neighbour] += 1;
                 } else {

@@ -74,7 +74,9 @@ public:
 /** @brief functions called in the heart of correction_remove_too_small_cc 
  * given i_fc, inside i_cc, we look for which coarse neighbour shares the most common faces with it.
  * @param[in] i_fc index of the fine cells
- * @param[in] s_unwanted_fc set of unwanted fine cells*/
+ * @param[in] s_unwanted_fc set of unwanted fine cells. We do not porocess the unwanted cells
+ * @param[out] set_argmax_number_common_faces set of coarse cells with max number of faces with the i_fc
+ * @param[out] dict_adjacent_cc The key is the global number of coarse cell, value is the number of faces in common with i_fc.*/
     void compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long &i_fc,
                                                                               const unordered_set<long> &s_unwanted_fc,
                                                                               unordered_set<long> &set_argmax_number_common_faces,
