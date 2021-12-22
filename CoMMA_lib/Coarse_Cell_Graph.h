@@ -58,6 +58,8 @@ public:
                                       short goal_card,
                                       int verbose = false);
 
+/** @brief Return a dictionary where the key is the cqrdinality of an isotropic cell and the value is the number
+ * of the coarse cell that have the given cardinality.*/
     unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
     void print_d_distribution_of_cardinal_of_isotropic_cc();
@@ -65,6 +67,19 @@ public:
  * @ param[in] set_of_fc_to_add set of fine cells to be added
  * @ param[in] i_target_cc index of targetted coarse cells */
     void cc_update_cc(unordered_set<long> set_of_fc_to_add, long i_target_cc);
+// Corrections
+/** @brief It analyse the _d_card_2_cc cycling on the keys (hence the cardinality) */
+
+    void correction_remove_too_small_cc(const unsigned short &threshold_card);
+/** @brief functions called in the heart of correction_remove_too_small_cc 
+ * given i_fc, inside i_cc, we look for which coarse neighbour shares the most common faces with it.
+ * @param[in] i_fc index of the fine cells
+ * @param[in] s_unwanted_fc set of unwanted fine cells*/
+    void compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long &i_fc,
+                                                                              const unordered_set<long> &s_unwanted_fc,
+                                                                              unordered_set<long> &set_argmax_number_common_faces,
+                                                                              unordered_map<long, unsigned short> &dict_adjacent_cc) const;
+
 
     void fill_cc_neighbouring();
 
@@ -133,11 +148,6 @@ public:
 
     unordered_map<long, unordered_set<long>> compute_dict_faces_in_common_faces_with_cc_neighbourhood(const long &i_fc) const;
 
-    void compute_nb_faces_in_common_faces_with_cc_neighbourhood_w_unwanted_fc(const long &i_fc,
-                                                                              const unordered_set<long> &s_unwanted_fc,
-                                                                              unordered_set<long> &set_argmax_number_common_faces,
-                                                                              unordered_map<long, unsigned short> &dict_adjacent_cc) const;
-
     unordered_set<long> get_s_isotropic_cc_of_size(unsigned short size_min = 0, unsigned short size_max = 0);
 
     void correction_make_small_cc_bigger(const unsigned short &min_card,
@@ -148,7 +158,6 @@ public:
     void correction_reduce_too_big_cc(const unsigned short &goal_card,
                                       const unsigned short &verbose = 0);
 
-    void correction_remove_too_small_cc(const unsigned short &threshold_card);
 
     void cc_split_non_connected_cc(const long &i_cc);
 
@@ -194,7 +203,7 @@ protected :
     /** @brief Variable where are recorded the anisotropic coarse cells. Index is the global index of the coarse
      * cell, key is the pointer to a Coarse_Cell element. */
     unordered_map<long, unordered_set<long>> _d_anisotropic_cc;     
-    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of the cells with a given cardinality
+    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of thei coarse cells with a given cardinality
      */
     unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  
     /** @brief Dictionary that contains the compactness as a key and a set of the compactness cells as a value*/

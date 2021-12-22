@@ -819,9 +819,6 @@ bool Coarse_Cell_Graph::check_data_consistency_and_connectivity() {
 
 
 unordered_map<long, unsigned short> Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood(const long i_fc) const {
-
-    // TODO est-ce qu'il n'y aurait pas moyen de trier d'une manière ou d'une autre les voisins grossiers?
-    // TODO Tas?
     unordered_map<long, unsigned short> d_n_cc;
     for (const long &i_fc_neighbour: _fc_graph.get_neighbours(i_fc)) {
         if (i_fc != i_fc_neighbour) {
@@ -868,7 +865,6 @@ void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w
                                                                                              unordered_map<long, unsigned short> &dict_adjacent_cc
 ) const {
 
-// TODO le nom ne convient pas ca fait plus que la fonction compute_nb_faces_in_common_faces_with_cc_neighbourhood()
 /**
  * Computes the number of faces in contact of every cc neighours
  *       For every fine cell, i_fc, inside i_cc,
@@ -891,8 +887,7 @@ void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w
                 } else {
                     dict_adjacent_cc[i_cc_neighbour] = 1;
                 }
-                // On essaye de reperer le voisin qui a le plus grand nombre de face commune
-                // pour le rattacher a lui.
+                // We search the neighborhood with the largest number of faces
                 if (dict_adjacent_cc[i_cc_neighbour] > max_number_common_faces) {
                     max_number_common_faces = dict_adjacent_cc[i_cc_neighbour];
                     set_argmax_number_common_faces = {i_cc_neighbour};
@@ -1171,8 +1166,10 @@ void Coarse_Cell_Graph::cc_split_non_connected_cc(const long &i_cc) {
 unordered_map<unsigned short, long> Coarse_Cell_Graph::compute_d_distribution_of_cardinal_of_isotropic_cc() {
     unordered_map<unsigned short, long> d_distr_card_cc;
     for (const auto &i_k_v : _d_isotropic_cc) {
+        // We get the reference coarse cell cardinality
         unsigned short card = (*_d_isotropic_cc[i_k_v.first]).__card;
         if (d_distr_card_cc.count(card)) {
+        // If is alreafy inside +1 otherwise we initialize to 1
             d_distr_card_cc[card] += 1;
         } else {
             d_distr_card_cc[card] = 1;
@@ -1260,58 +1257,48 @@ void Coarse_Cell_Graph::correction_reduce_too_big_cc(const unsigned short &goal_
 }
 
 void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &threshold_card) {
-
-
     /**
      *  For every too small cc, we split it in fc and try to give it to the "optimal" cc neighbour.
      */
 
-    // TODO move this function inside ccg_v1 calls of self._d_card_2_cc and self._d_isotropic_cc
-   // assert(check_data_consistency_and_connectivity());
-        cout << "\t\tCall of correction_remove_too_small_cc" << endl;
-        cout << "\t\tfc_2_cc" << endl;
-//        print("\t\t", self.fc_2_cc.__repr__())
-
-    // TODO REMOVE THIS
-    unordered_set<long> set_removed_cc = {};
-
     // Treatment of too small cells:
     // 1<= card(Coarse_Cell_v2) <= threshold_card
     for (unsigned short i_cc_size = 1; i_cc_size < threshold_card + 1; i_cc_size++) {
-
+    // We check if it exist this determined cardinality
         if (_d_card_2_cc.count(i_cc_size)) {
-
+    // temporary set of Coarse Cell with a given cardinality
             unordered_set<long> s_temporary(_d_card_2_cc[i_cc_size]);
-
-            // The set of cc of card i_cc_size is not empty:
+    // We cycle on the coarse cells
             for (const long &i_cc :s_temporary) {
-
                 assert(is_isotropic_cc(i_cc));
+    // We point on the actual coarse cell
                 Coarse_Cell *cc = _d_isotropic_cc[i_cc];
-
+    // We get the set of Fine Cells of the current coarse cell
                 unordered_set<long> s_fc = (*cc).get_s_fc();
+    // We check if we realize the condition of the threshold_card (minimum cardinality to
+    // consider the coarse cell acceptable)
                 if (s_fc.size() > threshold_card) {
                     continue;
                 }
-
-                // We process every fine cell separately
+    // We process every fine cell separately
                 int iCount = 0;
-
+    // vector fc in cc
                 vector<long> l_fc_in_i_cc(s_fc.size());
+    // temp set
                 unordered_set<long> set_tmp(s_fc);
-
+    // Vector fill 
                 for (const long &i_fc:s_fc) {
                     l_fc_in_i_cc[iCount] = i_fc;
                     iCount++;
                 }
-
+    // Size of oribilan cc
                 unsigned short size_of_original_cc = l_fc_in_i_cc.size();
+    // Initialize untreated_fc
                 unordered_set<long> untreated_fc;
-
+    // Cycle on the fine cells of the coarse cells
                 for (unsigned short i = 0; i < l_fc_in_i_cc.size(); i++) {
                     const long &i_fc = l_fc_in_i_cc[i];
-//                    cout << "i_fc " << i_fc << endl;
-                    // We process every neighbour of i_fc
+    // We process every neighbour of i_fc
                     unordered_set<long> set_argmax_number_common_faces;
                     unordered_map<long, unsigned short> dict_adjacent_cc;
 
@@ -1519,10 +1506,6 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
 
             }
         }
-    }
-    if (_verbose) {
-        cout << "fc_2_cc" << endl;
-        //    print(self.fc_2_cc.__repr__())
     }
 }
 
