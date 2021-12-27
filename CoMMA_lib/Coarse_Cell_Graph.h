@@ -96,7 +96,14 @@ public:
     unsigned short int get_cc_compactness(const long &i_cc);
 
     void cc_create_all_delayed_cc();
-
+/** @brief This function swaps the fine cell i_fc which belongs to i_origin_cc cc to i_destination_cc cc.
+ * Connectivity is checked. if the swap leads to a disconnected cc, the cc is split
+ *
+ * @param[in] s_fc: set of fine cells to swap
+ * @param[in] i_origin_cc: index of the cc containing initially the fine cells
+ * @param[in] i_destination_cc: index of the cc that will contain  the fine cells.
+ * @return the set of cc to remove
+ */
     unordered_set<long> cc_swap_fc(unordered_set<long> &s_fc,
                                    const long i_origin_cc,
                                    const long i_destination_cc);

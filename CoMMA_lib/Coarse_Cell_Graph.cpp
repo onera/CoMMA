@@ -256,28 +256,6 @@ void Coarse_Cell_Graph::__remove_an_isotropic_cc(const long &i_cc) {
 unordered_set<long> Coarse_Cell_Graph::cc_swap_fc(unordered_set<long> &s_fc,
                                                   const long i_origin_cc,
                                                   const long i_destination_cc) {
-
-
-/***
- * This function swaps the fine cell i_fc which belongs to i_origin_cc cc to i_destination_cc cc.
- * Connectivity is checked. if the swap leads to a disconnected cc, the cc is split
- *
- * :param s_fc: set of fine cells to swap
- * :param i_origin_cc: index of the cc containing initially the fine cells
- * :param i_destination_cc: index of the cc that will contain  the fine cells.
- * :return: the set of cc to remove
- *
- */
-// TODO Verifier qu'on ne presuppose pas la connectivity!!!!
-    if (_verbose) {
-        cout << "Swap CC: {";
-        for (const long &i_fc: s_fc) {
-            cout << i_fc << ", ";
-        }
-        cout << "} " << i_origin_cc << " " << i_destination_cc << endl;
-    }
-
-    // print("cc_swap_fc ", s_fc, i_origin_cc, i_destination_cc)
     if (!is_isotropic_cc(i_origin_cc) or !(is_isotropic_cc(i_destination_cc))) {
         cerr << "Swap with non isotropic CC: {";
         for (const long &i_fc: s_fc) {
@@ -902,10 +880,6 @@ void Coarse_Cell_Graph::compute_nb_faces_in_common_faces_with_cc_neighbourhood_w
 }
 
 unordered_set<long> Coarse_Cell_Graph::get_s_isotropic_cc_of_size(unsigned short size_min, unsigned short size_max) {
-    /**
-        * :param size_min: included
-        * :param size_max: not included
-        */
 
     if (_d_isotropic_cc.empty()) {
         return unordered_set<long>();
@@ -1373,8 +1347,6 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                         long arg_min = numeric_limits<long>::max();
                         unsigned short size_min = numeric_limits<unsigned short>::max();
 
-                        // TODO Is it the better choice????
-                        // We choose the smallest coarse neighbour.
                         for (const long &i_c : set_argmax_number_common_faces) {
                             // reminder dict_Coarse_Elem contains only isotropic agglomeration
                             if ((*_d_isotropic_cc[i_c]).__card < size_min) {
