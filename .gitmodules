@@ -9,3 +9,6 @@
 	path = perfetto
 	url = https://android.googlesource.com/platform/external/perfetto
 	branch = v22.1
+[submodule "dualGPy"]
+	path = dualGPy
+	url = https://github.com/albiremo/dualGPy.git
