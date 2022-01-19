@@ -38,7 +38,7 @@ SET(IMPLEMENTATION
         ${SOURCE_DIR}/First_Order_Neighbourhood.h
         ${SOURCE_DIR}/Edge.h
         ${SOURCE_DIR}/CompStruct.h
-        ${SOURCE_DIR}/Triconnected_graph.h
+ #       ${SOURCE_DIR}/Triconnected_graph.h
         ${SOURCE_DIR}/Util_graph.h
         ${SOURCE_DIR}/CoMMATypes.h
 	${SOURCE_DIR}/templateHelpers.h
@@ -56,7 +56,7 @@ set(SOURCE_FILES
         ${SOURCE_DIR}/First_Order_Neighbourhood.cpp
         ${SOURCE_DIR}/Edge.cpp
         ${SOURCE_DIR}/CompStruct.cpp
-        ${SOURCE_DIR}/Triconnected_graph.cpp
+#        ${SOURCE_DIR}/Triconnected_graph.cpp
         ${SOURCE_DIR}/Util_graph.cpp
 	)
 set(PROFILING 

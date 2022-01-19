@@ -9,7 +9,6 @@
 #include "Coarse_Cell_Graph.h"
 #include "Util.h"
 #include "First_Order_Neighbourhood.h"
-#include "Triconnected_graph.h"
 #include "Util_graph.h"
 
 
