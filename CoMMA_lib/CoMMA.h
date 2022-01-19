@@ -48,7 +48,7 @@ void agglomerate_one_level( // Dual graph:
 {
 
     // GENERAL DESCRIPTION PARAMETERS
-    //======================================
+    //====================================== 
     // number of faces
     long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
     // Length of the offset vector of the CSR representation. it should be long as the number of faces
@@ -114,6 +114,7 @@ void agglomerate_one_level( // Dual graph:
     // fc = Fine Cells
     assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
+
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
                                      adjMatrix_row_ptr,
                                      adjMatrix_col_ind,
@@ -136,32 +137,36 @@ void agglomerate_one_level( // Dual graph:
     // the anisotropic lines.
     // for more information look at: https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
     // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
+    if (is_anisotropic_long){
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     cc_graph,
         	                    verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension);
-    long nb_agglomeration_lines = 0;
-    forward_list<deque<long> *> agglomeration_lines;
+   long nb_agglomeration_lines = 0;
+   forward_list<deque<long> *> agglomeration_lines;
     // @todo add exception if it is not the first agglomeration (so if we are at a further level)
     // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
     // in this case we are. in the todo we have to treat the case in which we are not
-    Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
+   Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
+   // cout << "Agg aniso";  
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
     // Free the pointer
-    delete(agg1);
-    unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
+    delete(agg1); 
+    }
+  unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
                                     verbose_long,
                                     is_visu_data_stored,
                                     dimension = dimension)); 
+
+ 
     agg->agglomerate_one_level(min_card,goal_card,max_card,-1);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
     } 
-
 }
 #endif

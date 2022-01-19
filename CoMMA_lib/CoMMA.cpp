@@ -10,7 +10,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
   [](const vector<long> adjMatrix_row_ptr,
                            const vector<long> adjMatrix_col_ind,
                            const vector<double> adjMatrix_areaValues,
-                           const vector<double> &volumes,
+                           const vector<double> volumes,
 
         // Indices of compliant cc
                            vector<long> arrayOfFineAnisotropicCompliantCells,

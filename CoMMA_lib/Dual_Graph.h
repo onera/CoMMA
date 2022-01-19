@@ -32,9 +32,31 @@ struct pair_hash {
     }
 };
 
+/** @brief A class responsible of storing the cell centered dual graph
+ * and of acting on it (in other words it implements the methods that complements
+ *  the agglomeration, like the detection of anisotropic lines
+ *  @author Alberto Remigi and Nicolas Lantos
+ */
 class Dual_Graph {
 
 public :
+/** @brief Constructor of the class
+ *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
+ *  @param[in] m_crs_col_ind the column index of the CRS representation
+ *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case will be the area
+ *  of the faces that in the graph representation are the edges between two nodes represented
+ *  by the cell centers.
+ *  @param[in] volumes The volumes of the cells
+ *  @param[in] d_is_on_bnd The dictionary of cells on boundary. In particular, it is built in CoMMA function
+ *  and for each global index of cell on boundary it pairs the number of faces on boundary.
+ *  @param[in]  is_on_corner see Mavriplis
+ *  @param[in]  is_on_ridge see Mavriplis
+ *  @param[in]  is_on_valley see Mavriplis
+ *  @param[in]  s_anisotropic_compliant_fc set of complianr fc cells (in the most of the case all)
+ *  @param[in]  verbose flag to have more information for debugging
+ *  @param[in]  dimension  3 or 2 (by default 3)
+ *
+ */
     Dual_Graph(long nb_c,
                const vector<long> &m_crs_row_ptr,
                const vector<long> &m_crs_col_ind,
@@ -49,27 +71,39 @@ public :
                int dim = 3
     );
 
+/** @brief Destructor of the class 
+ *
+ */ 
     ~Dual_Graph() {
         cout << "Delete Dual_Graph" << endl;
-//        delete seeds_pool;
     }
 
-    // Attributes
+/** @brief Number of cells in the mesh */ 
     int number_of_cells;
+/** @brief Dimension of the problem */ 
     int _dimension;
+/** @brief Flag to have more information for debugging */ 
     int _verbose;
+/** @brief Vector of row pointer of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
     const vector<long> _m_CRS_Row_Ptr;
+/** @brief Vector of column index of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
     const vector<long> _m_CRS_Col_Ind;
+/** @brief Vector of area weight of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
     const vector<double> _m_CRS_Values;
+/** @brief Vector of volumes (member variable different from the unordered
+ * set passed as a reference in input) */ 
     const vector<double> _volumes;
-
-    // TODO manage this. A pointer is not what I want.
+/** @brief Seeds pool object pointer*/ 
     Seeds_Pool *seeds_pool;
+/** @brief Member unordered set of compliant cells*/ 
     unordered_set<long> s_anisotropic_compliant_cells;
+/** @brief Anisotropic lines list size*/ 
     int _lines_size = 0;
+/** @brief List of deaue containing the anisotropic lines*/ 
     forward_list<deque<long> *> _lines;
-
-    // Methods
 
     unsigned short get_nb_of_neighbours(long i_c);
 

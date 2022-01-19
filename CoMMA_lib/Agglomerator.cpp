@@ -323,10 +323,11 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
        // We check as a consequence the threshold cardinality that is a minimum limit
        bool is_creation_delayed = (s_current_cc.size() <= _threshold_card);
        if (is_creation_delayed) {
-             compactness = 0;
+             compactness = 0; //Return
        } else {
              compactness = _dimension; //minimum number of nrighborhood of a connected cell TODO: CHECK THAT, it is not
 	     // better to be sustituted with number of neighborhood?
+	     //
        }
     }
     else{
@@ -351,6 +352,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     // (remember the constructor choice in case of -1) and the dictionary of the boundary cells, it means the total number of 
     // neighborhood cells until the order we have given (as default 3, so until the third order)
     short max_ind = min(_max_card, (short) (d_n_of_seed.size() + 1));
+    // We add the faces that are on boundary calling the method of seed pool.
     int number_of_external_faces_current_cc = nb_neighbours + (*_fc_graph.seeds_pool).boundary_value(seed) - 1;
     // d_keys_to_set from Util.h, it takes the keys of the unordered map and create an unordered set. The unordered
     // set is representing hence all the neighborood of seed until a given order.
