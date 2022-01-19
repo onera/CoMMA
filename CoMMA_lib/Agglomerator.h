@@ -9,7 +9,6 @@
 #include "Coarse_Cell_Graph.h"
 #include "Util.h"
 #include "First_Order_Neighbourhood.h"
-#include "Util_graph.h"
 
 
 // forward definition to keep the agglomerators in one file
