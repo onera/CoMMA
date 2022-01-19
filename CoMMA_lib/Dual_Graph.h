@@ -26,6 +26,9 @@
 
 using namespace std;
 
+/** @brief trick from
+https://stackoverflow.com/questions/32685540/why-cant-i-compile-an-unordered-map-with-a-pair-as-key
+ */
 struct pair_hash {
     inline std::size_t operator()(const std::pair<int, int> &v) const {
         return v.first * 31 + v.second;
