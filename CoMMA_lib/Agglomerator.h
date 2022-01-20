@@ -114,18 +114,12 @@ class Agglomerator_Anisotropic : public Agglomerator{
     /** @brief Accessor (for this reason it is public) 
      *  Function that returns the vector of agglomeration lines
      *  @param[in] level of the agglomeration process into the Multigrid algorithm
-     *  @param[in] *aggl_line_sizes pointer to the vector of sizes for the agglomeration
-     *  lines. 
-     *  aggl_line_sizes[0] = number of anisotropic lines for the current level
-     *  aggl_line_sizes[1] = total number of fine cells in the anisotropic lines found for
-     *  the current level.
      *  @param[out] agglo_lines_array_idx Each element points to a particular element in the 
      *  vector agglo_lines_array. This is due to the storing structure.
      *  @param[out] agglo_lines_array Array storing all the element of the anisotropic
      *  lines.
      *  */
     void get_agglo_lines(int level,
-		         long *aggl_line_sizes,
                          vector<long> &agglo_lines_array_idx,
                          vector<long> &agglo_lines_array);
     /** @brief Vector of number of Anisotropic agglomeration lines*/
