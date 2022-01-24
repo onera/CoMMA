@@ -66,11 +66,6 @@ void Agglomerator_Anisotropic::get_agglo_lines(int level,
 					       vector<long> &agglo_lines_array){
 // If at the level of agglomeration "level" the vector containing the number of
 // lines is empty, hence it means no line has been found at the current level.
-// we define the sizes.
-//    if (_v_nb_lines[level] == 0) {
-//        aggl_lines_sizes[0] = 1 + 1;
-//        aggl_lines_sizes[1] = 0;
-//    }
 // variable cumulating the number of fine cells in the agglomeration lines
 // of the current level
     long number_of_fc_in_agglomeration_lines = 0;
@@ -92,8 +87,6 @@ void Agglomerator_Anisotropic::get_agglo_lines(int level,
 // Next element in the pointer array idx.
        	i_l++;
     }
-//    aggl_lines_sizes[0] = _v_nb_lines[level] + 1;
-//    aggl_lines_sizes[1] = number_of_fc_in_agglomeration_lines;
 };
 
 void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,

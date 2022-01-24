@@ -117,7 +117,7 @@ public :
 
     forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
 
-    unordered_map<long, double> __compute_d_anisotropic_fc(vector<double> &maxArray);
+    void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc);
 
     long _compute_subgraph_root(unordered_set<long> s_fc);
 
