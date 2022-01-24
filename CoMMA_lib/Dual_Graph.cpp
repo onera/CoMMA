@@ -298,7 +298,9 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
              // case we have only 1 candidate to continue the line
              if (candidates.size() == 1){
                 // we can add to the actual deque
-                (*dQue).push_back(candidates[0]);
+                if (opposite_direction_check == false){
+                   (*dQue).push_back(candidates[0]);
+                } else {(*dQue).push_front(candidates[0]);}
                 // update the seed to the actual candidate
                 seed = candidates[0];
                 // the candidate (new seed) has been treated
