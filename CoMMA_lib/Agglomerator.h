@@ -27,12 +27,9 @@ class Agglomerator {
    public:
    /** @brief The constructor of the interface
     *  @param[in] graph    *Dual Graph* object that determines the connectivity of the matrix 
-    *  @param[in] verbose  a boolean to determine if to store the visualization data
     *  @param[in] dimension the dimension of the problem*/
    Agglomerator(Dual_Graph &graph,
                 Coarse_Cell_Graph &cc_graph,
- 		 int verbose = 0,
-                 bool is_visu_data_stored = false,
                  int dimension = 3);
     /** @brief The destructor of the class */ 
     ~Agglomerator() {
@@ -85,10 +82,6 @@ class Agglomerator {
     Dual_Graph _fc_graph;
     /** @brief pointer to Coarse Cell Graph element */
     Coarse_Cell_Graph *_cc_graph; 
-    /** @brief boolean flag to determine if visualization data are stored*/
-    bool _is_visu_data_stored;
-    /** @brief integer flag for the verbose mode.*/
-    int _verbose;
 };
 
 /** @brief Agglomerator_Anisotropic class is a child class of the Agglomerator class
@@ -98,7 +91,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
    public:
    /** @brief Constructor. The constructor takes as arguments the same arguments of the father and
     * in this way activates also the constructor of the base class.*/
-   Agglomerator_Anisotropic(Dual_Graph &graph,Coarse_Cell_Graph &cc_graph, int verbose = 0,bool is_visu_data_stored = false,int dimension = 3);
+   Agglomerator_Anisotropic(Dual_Graph &graph,Coarse_Cell_Graph &cc_graph,int dimension = 3);
    /** @brief Destructor*/
     ~Agglomerator_Anisotropic();
 
@@ -147,8 +140,6 @@ class Agglomerator_Isotropic : public Agglomerator{
     * in this way activates also the constructor of the base class.*/
     Agglomerator_Isotropic (Dual_Graph &graph,
 		   Coarse_Cell_Graph &cc_graph,
-                  int verbose = 0,
-                 bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Isotropic();
@@ -207,8 +198,6 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
  * base class Agglomerator_Isotropic */
     Agglomerator_Biconnected (Dual_Graph &graph,
 		 Coarse_Cell_Graph &cc_graph,
-                 int verbose = 0,
-                 bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Biconnected();
@@ -253,8 +242,6 @@ class Agglomerator_Triconnected : public Agglomerator_Isotropic{
  * base class Agglomerator_Isotropic */
     Agglomerator_Triconnected (Dual_Graph &graph,
 		 Coarse_Cell_Graph &cc_graph,
-                 int verbose = 0,
-                 bool is_visu_data_stored = false,
                  int dimension = 3); 
     /** @brief Destructor*/
     ~Agglomerator_Triconnected();

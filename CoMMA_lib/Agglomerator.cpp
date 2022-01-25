@@ -9,8 +9,6 @@
     // Main Class of the CoMMA library, containing the methods to operate the agglomeration
     // process. The constructor require the following parameters:
     //:param Dual_Graph: the struct Dual Graph 
-    //:param verbose: [boolean]
-    //:param is_visu_data_stored: parameter to store visualization data
     //:param dimension: dimension of the problem
     //"""
 
@@ -22,10 +20,8 @@
 
 Agglomerator::Agglomerator(Dual_Graph &graph,
                  Coarse_Cell_Graph &cc_graph,
-        	 int verbose,
-                 bool is_visu_data_stored,
                  int dimension):
-                 _fc_graph(graph), _verbose(verbose), _dimension(dimension), _is_visu_data_stored(is_visu_data_stored), _cc_graph(&cc_graph)
+                 _fc_graph(graph), _dimension(dimension), _cc_graph(&cc_graph)
 {
   if((_dimension != 2) && (_dimension != 3)) {
     throw range_error("dimension can only be 2 or 3");
@@ -43,9 +39,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
 // =======================
 Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
 		 Coarse_Cell_Graph &cc_graph,
-                 int verbose,
-                 bool is_visu_data_stored,
-                 int dimension) : Agglomerator(graph,cc_graph,verbose,is_visu_data_stored,dimension)
+                 int dimension) : Agglomerator(graph,cc_graph,dimension)
 {
 // for every defined level (1 by default), contains the number of cells
 // e.g. _l_nb_of_cells[0]= number of cells on finest level
@@ -175,9 +169,7 @@ void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines
 // ======================
 Agglomerator_Isotropic::Agglomerator_Isotropic (Dual_Graph &graph,
 		 Coarse_Cell_Graph &cc_graph,
-                 int verbose,
-                 bool is_visu_data_stored,
-		 int dimension) : Agglomerator(graph,cc_graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator(graph,cc_graph,dimension){
 	//no particular constructor
 };
 
@@ -221,16 +213,12 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
 
 Agglomerator_Biconnected::Agglomerator_Biconnected (Dual_Graph &graph,
 		 Coarse_Cell_Graph &cc_graph,
-                 int verbose,
-                 bool is_visu_data_stored,
-		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,dimension){
 	//no particular constructor
 };
 Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
 		Coarse_Cell_Graph &cc_graph,
-                  int verbose,
-                 bool is_visu_data_stored,
-		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){
+		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,dimension){
 	//no particular constructor
 };
 
@@ -603,14 +591,14 @@ template<>
 void Agglomerator_Biconnected::operation_correction<2>(int num_iterations){
 	for (int i = 0; i<num_iterations; i++){
 			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
 	}
 }
 template<>
 void Agglomerator_Biconnected::operation_correction<3>(int num_iterations){
 	for (int i = 0; i<num_iterations; i++){
 			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
 			(*_cc_graph).correction_swap_leaf_fc_v2();
 	}
 }
@@ -618,18 +606,18 @@ template<>
 void Agglomerator_Biconnected::operation_correction<4>(int num_iterations){
 	for (int i = 0; i<num_iterations; i++){
 			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
 			(*_cc_graph).correction_swap_leaf_fc_v2();
-			(*_cc_graph).correction_reduce_too_big_cc(_goal_card, _verbose);
+			(*_cc_graph).correction_reduce_too_big_cc(_goal_card,0);
 	}
 }
 template<>
 void Agglomerator_Biconnected::operation_correction<5>(int num_iterations){
 	for (int i = 0; i<num_iterations; i++){
 			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,_verbose);
+			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
 			(*_cc_graph).correction_swap_leaf_fc_v2();
-			(*_cc_graph).correction_reduce_too_big_cc(_goal_card, _verbose);
+			(*_cc_graph).correction_reduce_too_big_cc(_goal_card,0);
 			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
 	}
 }

@@ -43,26 +43,22 @@ int main(int argv, char** argc) {
 	    public:
 		 test(Dual_Graph &graph,
 			Coarse_Cell_Graph &cc_graph,
-                        int verbose,
-                        bool is_visu_data_stored,
-                        int dimension) : Agglomerator_Anisotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){};
+                        int dimension) : Agglomerator_Anisotropic(graph,cc_graph,dimension){};
                  ~test(){};
-		    bool test_variable(){
-                       return(_is_visu_data_stored); 
+		  short test_variable(){
+                       return(_threshold_card); 
 		    };
 
     };
 
     TRACE_EVENT_BEGIN("setup", "Agglomerator");
     test* agg=new test(fc_graph,
-		         cc_graph,
-                                    0,
-                                    Data.is_visu_data_stored,
-                                    2);
+		       cc_graph,
+                       2);
  
     TRACE_EVENT_END("setup");
  
-    bool testing = agg->test_variable();
+    short testing = agg->test_variable();
     TRACE_EVENT_BEGIN("agglomerator", "aniso");
     long nb_agglomeration_lines = 0;
     forward_list<deque<long> *> agglomeration_lines;
@@ -74,7 +70,7 @@ int main(int argv, char** argc) {
     agg->agglomerate_one_level(2,2,2,-1);
     TRACE_EVENT_END("agglomerator");
     TRACE_EVENT_BEGIN("agglomerator", "biconnected");
-     Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,0,Data.is_visu_data_stored,2);
+     Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,2);
     test->agglomerate_one_level(2,2,2,-1); 
     TRACE_EVENT_END("agglomerator");
     StopTracing(std::move(tracing_session));

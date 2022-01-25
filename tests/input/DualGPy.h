@@ -30,7 +30,6 @@ class DualGPy {
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
-    bool is_visu_data_stored = true;  
 
     DualGPy(){
     for (int i = 0; i < nb_fc; i++) {

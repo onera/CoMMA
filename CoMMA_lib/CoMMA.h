@@ -42,8 +42,7 @@ void agglomerate_one_level( // Dual graph:
                            long dimension,
                            long goal_card,
                            long min_card,
-                           long max_card,
-                           long verbose_long)
+                           long max_card)
 
 {
 
@@ -112,7 +111,6 @@ void agglomerate_one_level( // Dual graph:
     //======================================
     //It is built the dual graph class through the constructor. To see it look at DualGraph.hpp and DualGraph.cpp
     // fc = Fine Cells
-    assert(verbose_long < USHRT_MAX);
     assert(dimension < USHRT_MAX);
 
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
@@ -125,7 +123,7 @@ void agglomerate_one_level( // Dual graph:
                                      s_is_on_ridge,
                                      s_is_on_valley,
                                      s_anisotropic_compliant_fc,
-                                     verbose_long,
+                                     0,
                                      dimension);
     
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph); 
@@ -140,8 +138,6 @@ void agglomerate_one_level( // Dual graph:
     if (is_anisotropic_long){
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     cc_graph,
-        	                    verbose_long,
-                                    is_visu_data_stored,
                                     dimension = dimension);
    long nb_agglomeration_lines = 0;
    forward_list<deque<long> *> agglomeration_lines;
@@ -163,8 +159,6 @@ void agglomerate_one_level( // Dual graph:
     }
   unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
-                                    verbose_long,
-                                    is_visu_data_stored,
                                     dimension = dimension)); 
 
  

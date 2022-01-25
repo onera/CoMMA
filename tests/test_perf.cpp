@@ -26,12 +26,10 @@ int main(int argv, char** argc) {
 	    public:
 		 test(Dual_Graph &graph,
 			Coarse_Cell_Graph &cc_graph,
-                        int verbose,
-                        bool is_visu_data_stored,
-                        int dimension) : Agglomerator_Anisotropic(graph,cc_graph,verbose,is_visu_data_stored,dimension){};
+                        int dimension) : Agglomerator_Anisotropic(graph,cc_graph,dimension){};
                  ~test(){};
-		 bool test_variable(){
-                       return(_is_visu_data_stored); 
+		 short test_variable(){
+                       return(_threshold_card); 
 		    };
 
     };
@@ -39,8 +37,6 @@ int main(int argv, char** argc) {
 
     test* agg=new test(fc_graph,
 		         cc_graph,
-                                    0,
-                                    Data.is_visu_data_stored,
                                     2);
      long nb_agglomeration_lines = 0;
     forward_list<deque<long> *> agglomeration_lines;
@@ -49,10 +45,10 @@ int main(int argv, char** argc) {
     // in this case we are. in the todo we have to treat the case in which we are not
     agg->_v_nb_lines[0] = nb_agglomeration_lines;
     agg->_v_lines[0] = agglomeration_lines; 
-    bool testing = agg->test_variable();
+    short testing = agg->test_variable();
     vector<long> gg = agg->get_fc_2_cc(); 
     agg->agglomerate_one_level(2,2,2,-1);
-    Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,0,Data.is_visu_data_stored,2);
+    Agglomerator* test = new Agglomerator_Biconnected(fc_graph,cc_graph,2);
     test->agglomerate_one_level(2,2,2,-1); 
     // Check if the structure is correct: Have I really changed the testing variable that is in the Father class Agglomerator by setting it true (by default is false) in the child class??
 }
