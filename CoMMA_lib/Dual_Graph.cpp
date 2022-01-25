@@ -354,6 +354,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
        lines_size++;
      }
   }
+  nb_agglomeration_lines = (long) lines_size; 
   return lines;
 }
 

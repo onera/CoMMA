@@ -157,8 +157,6 @@ void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines
 
         // if i_count < len(line): there is a fc left!
         // i.e. the agglomeration line was of odd size.
-        // 2 situations: si la cellule abandonnee est contigue a la zone Euler, c'est OK.
-        //               sinon, c'est la merde!
         if (i_count < line_size) {
             // We add this fc to the last coarse element (thus of cardinal 3)
             (*_cc_graph).cc_update_cc({(**fLIt)[i_count]}, i_cc);
@@ -253,7 +251,8 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
         // 3)  Creation of cc:
          bool is_anistropic = false; // needed the create_cc of the coarse cell class
          // Check if delay the agglomeration based on compactness written during
-	 // the optimal cc choice process
+	 // the optimal cc choice process. Remember the compactness is the minimum degree in
+	 // the coarse cell.
     	 bool is_creation_delayed = compactness < _dimension;
          (*_cc_graph).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
     }

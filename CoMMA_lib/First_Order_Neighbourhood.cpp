@@ -26,6 +26,5 @@ unordered_set<long> First_Order_Neighbourhood::update(long new_fc, unordered_set
             }
         }
     }
-//    __first_order_neighbourhood.update((s_new_neighbour - __s_fc) & __s_neighbours_of_seed);
     return __first_order_neighbourhood;
 }
