@@ -37,6 +37,8 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     this->number_of_cells = number_of_cells;
     this->d_is_on_bnd = d_is_on_bnd;  // Useful for seed choice
     //For 2D, the mesh is 3D with one layer. We do not count the 2 lateral plans.
+    // only in case of 3D we have on corner case and the ridge and valley will be filled
+    // otherwise we get it through the boundary dictionary.
     if (!is_on_corner.empty()) {
         for (auto i : is_on_corner) {
             this->is_on_corner.insert(i);  // Useful for initial seed choice
@@ -48,8 +50,7 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
             this->is_on_valley.insert(i);  // Useful for initial seed choice
         }
     }
-//    for (auto iPairDict:dict_ConnectivityTree) {
-//        max_dict[iPairDict.first] = iPairDict.second;
+    // We cycle over boundary
     for (auto kv_fc:this->d_is_on_bnd) {
         //    self._d_is_on_bnd.keys():
         long i_fc = kv_fc.first;
