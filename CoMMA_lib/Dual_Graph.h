@@ -106,13 +106,22 @@ public :
     int _lines_size = 0;
 /** @brief List of deaue containing the anisotropic lines*/ 
     forward_list<deque<long> *> _lines;
-
+/** @brief Retrive the number of neighbours 
+ *  @param[in] i_c index of the cell 
+ *  @return number of neighbors of the given cell.**/
     unsigned short get_nb_of_neighbours(long i_c);
-
+/** @brief Based on the CRS representation retrives the neighbours of the cell given as an input.
+ * @param[in] i_c index of the cell to check the neighbours
+ * @return vector of the neighbors. **/
     vector<long> get_neighbours(const long &i_c) const;
-
+/** @brief Based on the area of the faces composing the cell given as an input, we retrive the faces connecting the given cell with the neighborhood that can be described also as the weight of the graph
+ * @return vector of weight associated to the cell.**/ 
     vector<double> get_weights(const long &i_c) const;
-
+/** @brief Checks the connectivity of the Coarse cell created.
+ *  @todo maybe to shift it to the coarse cell class
+ *  @param[in] s_fc Set of fine cells composing the coarse cell
+ *  @param[in] verbose Debugging flag to print information of the fine cells in case the coarse cell is identified as not connected
+ *  @return boolean to tell if the cell is connected or not**/ 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
     forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);

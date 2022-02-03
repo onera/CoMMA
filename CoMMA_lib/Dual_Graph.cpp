@@ -89,14 +89,7 @@ vector<double> Dual_Graph::get_weights(const long &i_c) const {
 
 bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
                                     int verbose) {
-
-//"""
 //Checks connectivity of the coarse cell
-//        :param listFineCells: List of fine cells defining the coarse element.
-//:param matrixAdj_CRS_row_ptr: dual graph information see MgridGen data structure
-//        :param matrixAdj_CRS_col_ind: dual graph information see MgridGen data structure
-//        :return: True or False
-//"""
     unordered_map<long, bool> map_isAlreadyConnected;
     int size = s_fc.size();
     if (size <= 1) {
