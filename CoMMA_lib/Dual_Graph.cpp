@@ -155,7 +155,6 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
 
     // Process of every compliant fine cells (it is a member variable, so it is not passed to the function):
     for (const long i_fc : s_anisotropic_compliant_cells) {
-
         min_weight = numeric_limits<double>::max();
         max_weight = 0.0;
         averageWeight = 0.0;
@@ -170,10 +169,9 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
         int nb_neighbours = v_neighbours.size();
 
 	for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
-
-            long i_fc_n = v_neighbours[i_n];
+  
+            long i_fc_n = v_neighbours[i_n]; 
             double i_w_fc_n = v_weights[i_n];
-
             if (i_fc_n != i_fc) {  // to avoid special case where the boundary value are stored
 //                weight = this->_m_CRS_Values[i_n];
                 if (max_weight < i_w_fc_n) {

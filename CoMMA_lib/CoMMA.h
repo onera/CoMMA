@@ -149,7 +149,7 @@ void agglomerate_one_level( // Dual graph:
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
-    int i_level = 1;
+    int i_level = 0;
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
                             agglomerationLines);;  
