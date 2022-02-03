@@ -109,7 +109,7 @@ include_directories(Catch2/single_include)
 #include_directories(Catch2/include)
 
 add_executable("Comma_test" ${TESTS})
-set_source_files_properties( myprogram.cpp PROPERTIES COMPILE_FLAGS "-std=c++11" )
+set_source_files_properties( myprogram.cpp PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
