@@ -11,6 +11,7 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
                          bool is_delayed) : __dim(fc_graph._dimension), __is_isotropic(is_isotropic), __is_delayed(is_delayed) {
     __fc_graph = &fc_graph;
     __i_cc = i_cc;
+      cout << "id coarse cell"<< i_cc <<endl;
     __card = s_fc.size();
 
     for (const long &i_fc : s_fc) {
@@ -26,6 +27,7 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
         vector<double> v_weights = fc_graph.get_weights(i_fc);
         assert(v_neighbours.size() == v_weights.size());
 
+      cout << "d_def START" <<endl;
         for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
             long i_fc_n = v_neighbours[i_n];
             double i_w_fc_n = v_weights[i_n];
@@ -38,10 +40,12 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
 
                 } else {
                     
+                    cout << "d_def i_fc"<< i_fc<<"i_fc_n"<<i_fc_n<<"i_w_fc_n"<<i_w_fc_n<< endl;
                     __d_def[i_fc][i_fc_n] = i_w_fc_n;
                 }
             } else {
                 __tmp_fc_fine_cut_edges[i_fc][i_fc_n] = i_w_fc_n;
+                cout << "tmpfcfine i_fc"<< i_fc<<"i_fc_n"<<i_fc_n<<"i_w_fc_n"<<i_w_fc_n<< endl;
             }
         }
 
@@ -170,6 +174,7 @@ void Coarse_Cell::fill_cc_neighbouring(vector<long> &fc_2_cc) {
             }
         }
         for (auto &i_k_v :__tmp_fc_fine_cut_edges) {
+            cout << "cell to add to the neig"<< i_k_v.first <<endl;
             long i_fc = i_k_v.first;
             for (auto &j_k_v : __tmp_fc_fine_cut_edges[i_fc]) {
                 long j_fc = j_k_v.first;
@@ -195,23 +200,30 @@ void Coarse_Cell::fill_cc_neighbouring(vector<long> &fc_2_cc) {
 
 // Method to add to the map
 void Coarse_Cell::__add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area) {
+        cout << "ENTERED IN __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc"<< i_fc << j_cc<<j_fc<<j_fc_area <<endl;
     assert(__d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc].count(j_fc) == 0);
     __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc][j_fc] = j_fc_area;
 }
 
 void Coarse_Cell::__compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour() {
     d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour.clear();
+    cout << "ENTERED IN d outer"<<endl;
     for (auto &i_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc) {
+        cout << "i_fc"<< i_k_v.first << endl;
         long i_fc = i_k_v.first;
         for (auto &j_k_v : __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc]) {
+            cout << "j_cc"<< j_k_v.first << endl;
             long j_cc = j_k_v.first;
             unsigned short int nb_fine_edges_wrt_cc = __d_i_fc_to_j_cc_neighbourhood_to_j_fc[i_fc][j_cc].size();
+            cout << "fine edges"<< nb_fine_edges_wrt_cc << endl;
             if (d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc].count(i_fc) > 0) {
                 // if the edges are more we insert in the unordered set at the proper position
                 // otherwise we define the set with the only j_cc
+                cout << "ALREADY FOUND"<< j_k_v.first << endl;
                 d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc].insert(j_cc);
             } else {
                 d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour[nb_fine_edges_wrt_cc][i_fc] = unordered_set<long>{j_cc};
+                cout << "NOT FOUND"<< j_k_v.first << endl;
             }
         }
     }

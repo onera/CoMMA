@@ -68,7 +68,9 @@ public:
  * @ param[in] i_target_cc index of targetted coarse cells */
     void cc_update_cc(unordered_set<long> set_of_fc_to_add, long i_target_cc);
 // Corrections
-/** @brief It analyse the _d_card_2_cc cycling on the keys (hence the cardinality) */
+/** @brief It analyse the _d_card_2_cc cycling on the keys (hence the cardinality). It splits the coarse cells in
+ * the rispective fine cells to find the best recomposition.
+ * @param[in] threshold_card threshold cardinality */
 
     void correction_remove_too_small_cc(const unsigned short &threshold_card);
 /** @brief functions called in the heart of correction_remove_too_small_cc 
@@ -82,7 +84,10 @@ public:
                                                                               unordered_set<long> &set_argmax_number_common_faces,
                                                                               unordered_map<long, unsigned short> &dict_adjacent_cc) const;
 
-
+/** @brief Fill the dictionaries of the neighborhood of the coarse cells. In particular the ownership of the cell in a filosopy:
+ * i_fc  | j_cc | i_cc | Area |
+ * ------------- | -------------|----------|--------|
+ *  8  | 0 | 4 |1 | */
     void fill_cc_neighbouring();
 
     unordered_map<long, unordered_set<long>> get_d_cc_all();

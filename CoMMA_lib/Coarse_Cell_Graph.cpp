@@ -1472,8 +1472,6 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
                             cout << i_fc << ", ";
                         }
                         cout << "}" << endl;
-//                        print("l=", untreated_fc, "and original cell", l_fc_in_i_cc)
-//                        raise ValueError("Problematic case! Untreated cells are not connected!")
                         exit(1);
                     }
                 }
@@ -1484,12 +1482,7 @@ void Coarse_Cell_Graph::correction_remove_too_small_cc(const unsigned short &thr
 }
 
 void Coarse_Cell_Graph::cc_remove_deleted_cc(unordered_set<long> set_removed_cc) {
-
-    /*
-      Deletion of some cc and renumbering of all cc
-      :param set_removed_cc: set of index of cc to remove
-      :return: None
-    */
+    //Case in which we removed some cc. We need renumbering.
     long new_cc;
     assert(_delayed_cc.size() > 0);
     if (set_removed_cc.size() > 0) {

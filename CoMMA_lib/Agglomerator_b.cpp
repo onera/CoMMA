@@ -197,7 +197,9 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(
     // Definition of _max_card
     if (max_card == -1) {
         _max_card = d_default_max_card[_dimension];
-    } else {
+        cout << "cardinality NOT set"<< _max_card <<endl;
+    } else { 
+        cout << "cardinality set"<< max_card <<endl;
         _max_card = max_card;
     }
     // Definition of _goal_card
@@ -259,6 +261,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
 		short &compactness){
     bool is_order_primary = false;
     bool increase_neighbouring = true; 
+    cout<<" seed "<< seed <<endl;
     //  The goal of this function is to choose from a pool of neighbour the better one to build a compact coarse cell
     assert(_goal_card != -1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
@@ -276,6 +279,15 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
                                             _max_card,
                                             (*_cc_graph)._a_is_fc_agglomerated); // anisotropic cells agglomerated (not to take into account in the process)
     // We get the number of neighborhoods
+    // DEBUG
+    cout<<" set "<<endl;
+    for (auto const &i: s_current_cc) {
+        cout << i <<endl;
+    }
+    cout<<" dictionary neigh "<<endl;
+    for (auto& it: d_n_of_seed) {
+             cout<<it.first<<" level "<<it.second<<endl;
+    }
     short nb_neighbours = _fc_graph.get_nb_of_neighbours(seed);
     // return the area of the face connected to the seed
     vector<double> neighbours_weights = _fc_graph.get_weights(seed);
@@ -290,6 +302,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     // The available neighborhood cells are not enought to reach the goal cardinality
 
     else if ((d_n_of_seed.size() + s_current_cc.size()) < _goal_card) {
+        cout<<"0. NOT ENOUGH "<<endl;
         // Not enough available neighbour, the dictionary
 	// of the available cells size summed with the current
 	// cell size is not enough to reach the goal cardinality
@@ -297,6 +310,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
         // We add the cells of the dictionary to the set of current coarse
 	// cell.    
        for (auto &i_k_v : d_n_of_seed) {
+            cout<<" current cc "<< i_k_v.first <<endl;
             s_current_cc.insert(i_k_v.first);
        }
        // We check as a consequence the threshold cardinality that is a minimum limit
@@ -308,8 +322,10 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
 	     // better to be sustituted with number of neighborhood?
 	     //
        }
+       cout<<" END 0 "<<endl;
     }
     else{
+        cout<<"1. NORMAL "<<endl;
      // If  we passed the two previous checks, the minimum size is the goal cardinality required TODO : CHECK THAT, if the goal is 2, the minimum size would be 3? 
     // ARGUABLE! Let's think to 3
     short min_size = _goal_card;
@@ -343,10 +359,16 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     unordered_set<long> s_up(v.begin(), v.end());
     // Generate the set of the first order neighborhood to the given seed
     unordered_set<long> fon = f_o_neighbourhood.update(seed, s_up);
-
+    cout<<" fon "<<endl;
+    for (auto const &i: fon) {
+        cout << i <<endl;
+    }
+ 
     // Choice of the fine cells to agglomerate
     // we enter in a while, we store anyways all the possible coarse cells 
     // (not only the max dimension one)
+
+    cout << "max_ind"<< max_ind  <<endl;
     while (size_current_cc < max_ind) {
         // argmin_ar is the best fine cell to add
         long argmin_ar = -1;
@@ -356,6 +378,12 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     // We compute the best fine cell to add, based on the aspect
     // ratio and is given back in argmin_ar. It takes account also
     // the fine cells that has been added until now.
+ 
+    cout << "Enter with this set of current CC"<<endl;
+    for (auto const &i: s_current_cc) {
+        cout << i <<endl;
+    }
+        
         compute_best_fc_to_add(_fc_graph,
                                fon,
                                d_n_of_seed,
@@ -368,18 +396,26 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
                                min_ar_surf,
                                min_ar_vol);
 
+        cout << "best_to_add"<< argmin_ar <<endl;
         number_of_external_faces_current_cc += _fc_graph.get_nb_of_neighbours(argmin_ar)
                                                + (*_fc_graph.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
+
+        cout << "best_to_add"<< argmin_ar << "number_external_faces"<< number_of_external_faces_current_cc << endl;
         // we increase the cc 
         size_current_cc++;
+        cout << "size current cc"<< size_current_cc <<endl;
         s_current_cc.insert(argmin_ar);
-
+        cout << "current cc" <<endl;
+        for (auto const &i: s_current_cc) {
+           cout << i <<endl;
+        }
+ 
         // if the constructed cc is eligible, i.e. its size is inside the permitted range
         // we store it inside dict_cc_in_creation
         // This choice is based on the idea that the smallest cc (w.r.t. card) is may be not the one that minimized
         // the number of external faces.
         // if this if is satisfied it means we have an eligible cell 
-        if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
+        if ((size_current_cc>=min_size) || size_current_cc == max_ind) {
 
             if (number_of_external_faces_current_cc <= min_external_faces) {
 
@@ -404,16 +440,13 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
         vector<long> v = _fc_graph.get_neighbours(argmin_ar);
         unordered_set<long> s_up(v.begin(), v.end());
         fon = f_o_neighbourhood.update(argmin_ar, s_up);
-    }
+    }// end while at this point we have a set of cc to add
    
     s_current_cc = dict_cc_in_creation[arg_min_external_faces].first;
 
     // If we do not chose the biggest cc, we put the useless fc back to the pool
+    // where argmin external faces is the size of the current cc. IF THERE ARE NOT NO USEFUL THIS
     for (long i_s = arg_min_external_faces + 1; i_s < max_ind + 1; i_s++) {
-        // for all size of Cell from arg_min_external_faces+1 to  min(max_card, len(d_n_of_seed) + 1) + 1
-        //d_n_of_seed.
-        //            update(dict_cc_in_creation[i_s][1])
-        // Merge/update:
         for (auto iKV:dict_cc_in_creation[i_s].second) {
             d_n_of_seed[iKV.first] = iKV.second;
         }
@@ -421,7 +454,8 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     assert(arg_min_external_faces == s_current_cc.size());
     // Computes the actual compactness of the coarse cell
     compactness = _fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
-    } //end else
+    cout << "Compactness"<< compactness  <<endl;
+    } //end giant else of options
     // Update seeds
     // Create of l_of_new_seed:
     list<long> l_of_new_seed;
@@ -490,14 +524,19 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 					    double &min_ar_vol){
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
+
+
+    cout << "ENTERED BEST FC" <<endl;
     double min_ar = numeric_limits<double>::max();
     long arg_max_faces_in_common = -1;
 
     // For every fc in the neighbourhood:
-    // we update the new aspect ratio
+    // we update the new aspect ratio and we check if it is suitable
     // we verify that fon is a sub member of the dict of seeds
     for (const long &i_fc: fon) {  // we test every possible new cells to chose the one that locally
         // minimizes the Aspect Ratio at the first fine cell of the fon.
+
+        cout << "BEST FC TEST:" << i_fc <<endl;
         if (arg_max_faces_in_common == -1) {
             arg_max_faces_in_common = i_fc;
         }
@@ -515,17 +554,21 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
     for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
 
+        cout << "neighborhood:" << v_neighbours[i_n] <<endl;
         long i_fc_n = v_neighbours[i_n];
         double i_w_fc_n = v_weights[i_n];
-
+        /** @todo Understand if we should get rid of it, it should not happen */
         if (i_fc_n == i_fc) {  // Boundary surface
+            cout << "OPTION 1:" << new_ar_surf <<endl;
             new_ar_surf += i_w_fc_n;
         } else if (s_of_fc_for_current_cc.count(i_fc_n) == 0) {
+            cout << "OPTION 2:" << new_ar_surf <<endl;
             new_ar_surf += i_w_fc_n;
         } else {
             is_fc_adjacent_to_any_cell_of_the_cc = true;
             new_ar_surf -= i_w_fc_n;
             number_faces_in_common++;
+            cout << "OPTION 3:" << new_ar_surf <<"and adjacent to cell of the cc"<<endl;
         }
     }
        // end new AR
@@ -536,24 +579,28 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
 // TODO This version seems good but refactorisation to do: perhaps it is not needed to update every new possible coarse cell aspect ratio?
 // TODO also need to remove the list of min_ar, argmin_ar, etc.
+
+        cout << "n faces in commpn:" << number_faces_in_common <<endl;
+        cout << "max faces in common:" << max_faces_in_common  <<endl;
+        cout << "arg max faces in common:" << arg_max_faces_in_common  << "i_fc"<< i_fc << "d_n_of_seed at arg"<< d_n_of_seed.at(arg_max_faces_in_common)<<endl;
         if (number_faces_in_common >= max_faces_in_common or is_order_primary) {  // if is_order_primary is True the order of
-// neighbourhood is primary
+// neighbourhood is primary. Normally is starting from the second fon.
             if (number_faces_in_common == max_faces_in_common or is_order_primary) {
 
                 if (order <= d_n_of_seed.at(arg_max_faces_in_common)) {  // [arg_max_faces_in_common] is not const.
-                    if (order == d_n_of_seed.at(arg_max_faces_in_common)) {
+                    if (order == d_n_of_seed.at(arg_max_faces_in_common)) { //It means that should be the same as the faces in common previously chosen, and hence assure the connectivity
                         if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
 // The second condition asserts the connectivity of the coarse element.
-                            min_ar = new_ar;
+                            min_ar = new_ar; // the new chosen cell to be added minimises the aspect ratio, so it is the new bound
                             argmin_ar = i_fc;
                             min_ar_surf = new_ar_surf;
                             min_ar_vol = new_ar_vol;
-
                             arg_max_faces_in_common = i_fc;
 // The number of face in common is the same no need to touch it
-                        }
+                        } //else nothing, the previous cell minimizes already the ar
                     } else {
 // Case :number_faces_in_common == max_faces_in_common and order < dict_neighbours_of_seed[arg_max_faces_in_common]:
+// order is less --> we chose this cell	
                         arg_max_faces_in_common = i_fc;
                         min_ar = new_ar;
                         argmin_ar = i_fc;
@@ -563,7 +610,7 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
                     }
                 }
             } else {
-// Case :number_faces_in_common > max_faces_in_common:
+// Case :number_faces_in_common > max_faces_in_common. Normally is the first case we add. The first adjacent cell:
                 max_faces_in_common = number_faces_in_common;
                 arg_max_faces_in_common = i_fc;
                 min_ar = new_ar;
