@@ -35,15 +35,25 @@ public:
  *  i.e. i_fc in self.__icc, j_fc in j_cc 
  *  i_fc and j_cc are related to two different coarse
  *  cells and connected thrpugh the outer face of j_fc.
- *  i_fc--j_fc_area--j_fc*
- *   |                  |
- *   |                  |
- *  i_cc              j_cc */
-    unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
-/** @brief Dictionary where the following structure is implemented:
- * i i_fc --- face_area -- j_fc
- * Pseudo code: Dict[i_fc: int, Dict[j_fc(out):int, surface_outer_face: float]] = dict()
-*/
+  * i_fc  | j_cc | i_cc | Area |
+ * ------------- | -------------|----------|--------|
+ *  8  | 0 | 4 |1 | 
+ *  9 | 0 | 5 | 1 |
+ *  6 | 0 | 5 | 1 |
+ *  2 | 0 | 1 | 1 |
+ *  \image html dict_neigh.png*/
+ 
+   unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
+/** @brief Dictionary where it is represented the neighborhood of a given fine cells with respect to the external
+ * neighborhood to the coarse cell to which is owned. E.g the table for the cell 0 of the example (the table is completed for all the cells in the code
+ * here we give as example only one part):
+   * i_fc  | j_fc | Area |
+ * ------------- | -------------|----------|
+ *  4  | 8 | 1 | 
+ *  5 | 9 | 1 |
+ *  5 | 6 | 1 | 
+ *  1 | 2 | 1 |
+ *  \image html aretes.png*/
     unordered_map<long, unordered_map<long, double>> __tmp_fc_fine_cut_edges;
 /** @brief helper to retrive the set of fine cells with an outer neighborhood*/
     unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
@@ -54,33 +64,48 @@ public:
     bool __check_connectivity(int verbose = 0);
 /** @brief Helper to add to the dictionary the value related. i_fc and j_cc are related to two different coarse
  * cells and connected thrpugh the outer face of j_fc.
- *  i_fc--j_fc_area--j_fc*
- *   |                  |
- *   |                  |
- *  i_cc              j_cc */
+ * i_fc  | j_cc | i_cc | Area |
+ * ------------- | -------------|----------|--------|
+ *  8  | 0 | 4 |1 | 
+ *  9 | 0 | 5 | 1 |
+ *  6 | 0 | 5 | 1 |
+ *  2 | 0 | 1 | 1 |
+ *  \image html dict_neigh.png*/
+ 
 
     void __add_to__d_i_fc_to_j_cc_neighbourhood_to_j_fc(long i_fc, long j_cc, long j_fc, double j_fc_area);
 /** @brief By cycling on the dictionary of the  connections fine cells coarse cells neighborhoods it gives back
  * the set with the global index of the coarse cell neighborhood.
  */
     unordered_set<long> get_s_cc_neighbours();
-/** @brief dictionary that describe the subgraph describing the Coarse Cell 
- * Pseudo code: [i_fc,[i_neigh,area]
- * i_fc--area--i_neigh
- * it is built in the constructor*/
+/** @brief Dictionary where it is represented the neighborhood of a given fine cells with respect to the INTERNAL (opposite of the __tmp_fc_fine_cut_edges structure)
+ * neighborhood to the coarse cell to which is owned. E.g the table for the cell 0 of the example (the table is completed for all the cells in the code, here we give as example
+ * only one part):
+   * i_fc  | j_fc | Area |
+ * ------------- | -------------|----------|
+ *  4  | 0 | 1 | 
+ *  4 | 5 | 1 |
+ *  5 | 1 | 1 | 
+ *  5 | 4 | 1 |
+ *  0 | 1 | 1 |
+ *  0 | 4 | 1 |
+ *  1 | 0 | 1 |
+ *  1 | 5 | 1 |
+ *  \image html aretes.png*/
+
     unordered_map<long, unordered_map<long, double>> __d_def; 
-/** @brief Attention, this is a little bit complex:
- * the problem is that there is multiple outer degree:
- * for a inner fc:
- *   //
- *   //               # wrt fc        # wrt cc
- *   //#####################################################
- *   // fine edges    # Useless for   #  self.d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour
- *   //               # Agglomeration #
- *   //####################################################
- *   // coarse edges  #  No sense     #  Number Cc neighbours
- *   Pseudo code: Dict[outer fine_cell_degree, Dict[int:i_fc, Set[int: j_cc]]]
-*/
+/** @brief Dictionary of the degree of the fine cell with respect to the coarse cell. The dictionary 
+ * will be composed like this:
+ * nb_edges |i_fc  | j_cc (set) | 
+ * ------------- | -------------|----------|
+ *  2  | 6 | 1,0 | 
+ *  2 | 9 | 1,0 | 
+ *  1 | 7 | 1 | 
+ *  \image html ar_deg.png*/
+ 
+
+
+
     unordered_map<unsigned short int, unordered_map<long, unordered_set<long>>> d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour;
 /** @brief fill the dictionary for the present Coarse Cell*/
     void __compute_d_outer_fine_degree_wrt_cc_to_fc_to_s_cc_neighbour();
