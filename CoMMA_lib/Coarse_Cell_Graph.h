@@ -91,7 +91,7 @@ public:
  *  9 | 0 | 5 | 1 |
  *  6 | 0 | 5 | 1 |
  *  2 | 0 | 1 | 1 |
- *  ![](https://gitlab.com/albiremo/CoMMA/-/blob/main/images/dict_neigh.pdf)*/
+ *  ![](https://gitlab.com/albiremo/CoMMA/-/blob/main/images/dict_neigh.png)*/
  
    void fill_cc_neighbouring();
 
