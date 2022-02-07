@@ -87,8 +87,13 @@ public:
 /** @brief Fill the dictionaries of the neighborhood of the coarse cells. In particular the ownership of the cell in a filosopy:
  * i_fc  | j_cc | i_cc | Area |
  * ------------- | -------------|----------|--------|
- *  8  | 0 | 4 |1 | */
-    void fill_cc_neighbouring();
+ *  8  | 0 | 4 |1 | 
+ *  9 | 0 | 5 | 1 |
+ *  6 | 0 | 5 | 1 |
+ *  2 | 0 | 1 | 1 |
+ *  ![](https://gitlab.com/albiremo/CoMMA/-/blob/main/images/dict_neigh.pdf)*/
+ 
+   void fill_cc_neighbouring();
 
     unordered_map<long, unordered_set<long>> get_d_cc_all();
 
