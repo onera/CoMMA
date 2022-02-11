@@ -35,6 +35,7 @@ SET(IMPLEMENTATION
         ${SOURCE_DIR}/Agglomerator.h
         ${SOURCE_DIR}/Coarse_Cell_Graph.h
         ${SOURCE_DIR}/Util.h
+        ${SOURCE_DIR}/Stack.h
         ${SOURCE_DIR}/First_Order_Neighbourhood.h
  #       ${SOURCE_DIR}/Edge.h
  #       ${SOURCE_DIR}/CompStruct.h

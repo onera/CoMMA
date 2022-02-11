@@ -49,20 +49,20 @@ void agglomerate_one_level( // Dual graph:
     // GENERAL DESCRIPTION PARAMETERS
     //====================================== 
     // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
+    long nb_fc = static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size()-1);
     // Length of the offset vector of the CSR representation. it should be long as the number of faces
     //  augmented of 1
     long adj_matrix_row_ptr_size = nb_fc + 1;
     // Length of the esges vector of the CSR representation, representing the adjacency
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
+    long adj_matrix_col_ind_size = static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
     // Length of the weigth of the CSR representation. In this kind of representation it is the same
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
+    long adj_matrix_areas_size = static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
     // Initialization of sets: s_is_on_valley, s_is_on_ridge, s_is_on_corner;
-    long is_on_valley_size = static_cast<long>(array_is_on_valley.size());
-    long is_on_ridge_size = static_cast<long>(array_is_on_ridge.size());
-    long is_on_corner_size = static_cast<long>(array_is_on_corner.size());
+    long is_on_valley_size = static_cast<CoMMAIndexType>(array_is_on_valley.size());
+    long is_on_ridge_size = static_cast<CoMMAIndexType>(array_is_on_ridge.size());
+    long is_on_corner_size = static_cast<CoMMAIndexType>(array_is_on_corner.size());
     // Initialize anisotropic compliant
-    long arrayOfFineAnisotropicCompliantCells_size = static_cast<long>(arrayOfFineAnisotropicCompliantCells.size());
+    long arrayOfFineAnisotropicCompliantCells_size = static_cast<CoMMAIndexType>(arrayOfFineAnisotropicCompliantCells.size());
 
     // BOUNDARIES
     //======================================
@@ -100,12 +100,6 @@ void agglomerate_one_level( // Dual graph:
     for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
-
-    // We add the following lines because the following sets can be rebuilt in the constructor of Dual_Graph class.
-    // it introduce some randomness compare to the direct agglomerator call see Test_Agglomerator_basic.cpp
-//    s_is_on_corner.clear();
-    //    s_is_on_ridge.clear();
-//    s_is_on_valley.clear();
 
     // DUAL GRAPH
     //======================================

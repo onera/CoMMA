@@ -37,7 +37,7 @@ class DualGPy {
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
-
+    vector<bool> a_is_fc_agglomerated;
     DualGPy(){
     for (int i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
@@ -59,6 +59,8 @@ class DualGPy {
     for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
+     vector<bool> tmp(nb_fc, false);
+     a_is_fc_agglomerated = tmp;
 };
 
 };
@@ -111,6 +113,8 @@ class DualGPy_5 {
     for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
+    vector<bool> a_is_fc_agglomerated(nb_fc, false);
+
 };
 };
 

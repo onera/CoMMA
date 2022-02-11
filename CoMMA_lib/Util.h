@@ -18,6 +18,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include "Stack.h"
 
 
 using namespace std;
