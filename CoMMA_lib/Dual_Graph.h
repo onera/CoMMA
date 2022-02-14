@@ -134,11 +134,6 @@ public :
     void compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso,
                                               double &median_aniso);
 
-    void compute_breadth_first_search(unordered_set<long> set_of_fc, long current_seed, unordered_map<long, long> dict_inv_list_of_fc, vector<long> color, long &max_color,
-                                      unordered_set<long> &s_fc_max_color, unordered_map<long, vector<long>> &d_spanning_tree);
-
-    void compute_breadth_first_search_v2(unordered_set<long> set_of_fc, long current_seed, vector<long> &predecessor, long &i_depth, unordered_map<long, vector<long> > &d_spanning_tree);
-
     unsigned short int compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
 
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
@@ -151,19 +146,6 @@ public :
 
     void compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l,
                                                     vector<long> &l_to_g) const;
-
-    unordered_set<long> compute_s_leaves(unordered_set<long> s_fc);
-
-    int compute_distance_from_seed_to_first_vertex_of_degree_2(long seed, unordered_map<long, queue<long> *> dict_Covering_Tree);
-
-    unordered_map<long, queue<long> *> find_seed_via_frontal_method(long &max_seed,
-                                                                    vector<long> listOfFineCells);
-
-    void remove_separating_vertex(long seed,
-                                  unordered_map<long, queue<long> *> &d_spanning_tree,
-                                  unordered_set<long> &s_fc,
-                                  long verbose = 0);
-
 
     void compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                      short &nb_of_order_of_neighbourhood,
