@@ -106,16 +106,27 @@ void agglomerate_one_level( // Dual graph:
     //It is built the dual graph class through the constructor. To see it look at DualGraph.hpp and DualGraph.cpp
     // fc = Fine Cells
     assert(dimension < USHRT_MAX);
+    int init_bnd_level = -1;
+    if (dimension == 2) {
+            init_bnd_level = 2;
+        } else if (dimension == 3) {
+            init_bnd_level = 3;
+        } else {
+            assert(false);
+        }
+    Seeds_Pool seeds_pool=  Seeds_Pool(nb_fc,
+                                d_is_on_bnd,
+                                s_is_on_corner,
+                                s_is_on_ridge,
+                                s_is_on_valley,
+                                init_bnd_level = init_bnd_level);
 
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
                                      adjMatrix_row_ptr,
                                      adjMatrix_col_ind,
                                      adjMatrix_areaValues,
                                      volumes,
-                                     d_is_on_bnd,
-                                     s_is_on_corner,
-                                     s_is_on_ridge,
-                                     s_is_on_valley,
+                                     seeds_pool,
                                      s_anisotropic_compliant_fc,
                                      0,
                                      dimension);

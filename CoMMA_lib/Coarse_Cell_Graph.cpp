@@ -4,7 +4,7 @@
 
 #include "Coarse_Cell_Graph.h"
 
-Coarse_Cell_Graph::Coarse_Cell_Graph(Dual_Graph &fc_graph,
+Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
                                      int verbose)
         : _fc_graph(fc_graph), _verbose(verbose) {
     //==================

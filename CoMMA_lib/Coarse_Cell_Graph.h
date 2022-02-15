@@ -18,7 +18,7 @@ class Coarse_Cell_Graph {
 
 public:
 /** @brief Constructor*/
-    Coarse_Cell_Graph(Dual_Graph &fc_graph,
+    Coarse_Cell_Graph(const Dual_Graph &fc_graph,
                       int verbose = 0);
 /** @brief Destructor*/
     ~Coarse_Cell_Graph();
@@ -33,7 +33,7 @@ public:
     }
 /** @brief Helper to choose the new seed based on the already aggomerated fine cells*/
     inline long choose_new_seed() {
-        return (*_fc_graph.seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
+        return (_fc_graph._seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
     }
 /** @brief Helper to get the number of coarse cells */
     inline long get_nb_of_cc() {

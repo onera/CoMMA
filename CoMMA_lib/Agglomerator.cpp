@@ -332,7 +332,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     // neighborhood cells until the order we have given (as default 3, so until the third order)
     short max_ind = min(_max_card, (short) (d_n_of_seed.size() + 1));
     // We add the faces that are on boundary calling the method of seed pool.
-    int number_of_external_faces_current_cc = nb_neighbours + (*_fc_graph.seeds_pool).boundary_value(seed) - 1;
+    int number_of_external_faces_current_cc = nb_neighbours + _fc_graph._seeds_pool.boundary_value(seed) - 1;
     // d_keys_to_set from Util.h, it takes the keys of the unordered map and create an unordered set. The unordered
     // set is representing hence all the neighborood of seed until a given order.
     unordered_set<long> s_neighbours_of_seed = d_keys_to_set(d_n_of_seed);
@@ -369,7 +369,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
                                min_ar_vol);
 
         number_of_external_faces_current_cc += _fc_graph.get_nb_of_neighbours(argmin_ar)
-                                               + (*_fc_graph.seeds_pool).boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
+                                               + _fc_graph._seeds_pool.boundary_value(argmin_ar) - 1 - 2 * max_faces_in_common;
         // we increase the cc 
         size_current_cc++;
         s_current_cc.insert(argmin_ar);
@@ -451,7 +451,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     } else {
         // else d_n_of_seed is empty: we used every neighbour!
         // if list_of_seeds is empty, we look for new seeds to add to the list_of_seeds.
-        if ((*_fc_graph.seeds_pool).is_empty()) {
+        if (_fc_graph._seeds_pool.is_empty()) {
             // if list_of_seeds is empty
             // we look if there is some neighbour to the current fc:
             // s_fc_neighbours_of_cc = set()
@@ -473,7 +473,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
         }
     }
     // Update of list_of_seeds:
-    (*_fc_graph.seeds_pool).update(l_of_new_seed);
+    (_fc_graph._seeds_pool).update(l_of_new_seed);
     return s_current_cc;
 }
 

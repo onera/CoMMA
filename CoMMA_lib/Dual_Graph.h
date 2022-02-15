@@ -42,26 +42,18 @@ public :
  *  of the faces that in the graph representation are the edges between two nodes represented
  *  by the cell centers.
  *  @param[in] volumes The volumes of the cells
- *  @param[in] d_is_on_bnd The dictionary of cells on boundary. In particular, it is built in CoMMA function
- *  and for each global index of cell on boundary it pairs the number of faces on boundary.
- *  @param[in]  is_on_corner see Mavriplis
- *  @param[in]  is_on_ridge see Mavriplis
- *  @param[in]  is_on_valley see Mavriplis
+ *  @param[in] seeds_pool The seeds pool structure
  *  @param[in]  s_anisotropic_compliant_fc set of complianr fc cells (in the most of the case all)
  *  @param[in]  verbose flag to have more information for debugging
  *  @param[in]  dimension  3 or 2 (by default 3)
- *
  */
     Dual_Graph(long nb_c,
                const vector<long> &m_crs_row_ptr,
                const vector<long> &m_crs_col_ind,
                const vector<double> &m_crs_values,
                const vector<double> &volumes,
-               unordered_map<long, int> &d_is_on_bnd,
-               unordered_set<long> is_on_corner = unordered_set<long>({}),
-               unordered_set<long> is_on_ridge = unordered_set<long>({}),
-               unordered_set<long> is_on_valley = unordered_set<long>({}),
-               unordered_set<long> s_anisotropic_compliant_fc = unordered_set<long>({}),
+               const Seeds_Pool &seeds_pool,
+               const unordered_set<long> &s_anisotropic_compliant_fc = unordered_set<long>({}),
                int verbose = 0,
                int dim = 3
     );
@@ -72,6 +64,9 @@ public :
     ~Dual_Graph() {
         cout << "Delete Dual_Graph" << endl;
     }
+/** @brief Member seeds pool variable */
+    Seeds_Pool _seeds_pool;
+
 
 /** @brief Number of cells in the mesh */ 
     int number_of_cells;
@@ -91,8 +86,6 @@ public :
 /** @brief Vector of volumes (member variable different from the unordered
  * set passed as a reference in input) */ 
     const vector<double> _volumes;
-/** @brief Seeds pool object pointer*/ 
-    Seeds_Pool *seeds_pool;
 /** @brief Member unordered set of compliant cells*/ 
     unordered_set<long> s_anisotropic_compliant_cells;
 /** @brief Anisotropic lines list size*/ 
@@ -116,7 +109,6 @@ public :
  *  @param[in] verbose Debugging flag to print information of the fine cells in case the coarse cell is identified as not connected
  *  @return boolean to tell if the cell is connected or not**/ 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
-
     forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
 
     void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc);
