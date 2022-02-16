@@ -10,18 +10,25 @@ using namespace std;
 
 class Tree;
 
+/** @brief Node data structure that represent a node of the tree*/
 struct node{
-    node(long index):_index(index){};
+    node(long index, double volume):_index(index),_volume(volume){};
+    /** @brief index of the cell*/
     long _index;
-    // number of son
-    int sonc;
+    /** @brief volume*/
+    double _volume 
+    /** @brief number of son*/
+    int _sonc;
     // vector of the pointers to the son
-    vector<shared_ptr<node>> sons;
+    vector<shared_ptr<node>> _sons;
 };
 
 
+
+/** @brief Tree structure that represent a coarse cell, the fine cell and the neighbors to them*/
 class Tree {
  public:
+/** @brief Constructor*/
    Tree(const node &root);
    void insertSon(const long &index, const double &volume);
    void searchSon(const long &index, const double &volume);
