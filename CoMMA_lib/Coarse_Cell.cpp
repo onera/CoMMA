@@ -19,7 +19,7 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
     __compactness = __card; 
     for (const long &i_fc : s_fc) {
 
-        assert(i_fc < fc_graph.number_of_cells);
+        assert(i_fc < fc_graph._number_of_cells);
         volume += fc_graph._volumes[i_fc];
 
         vector<long> v_neighbours = fc_graph.get_neighbours(i_fc);

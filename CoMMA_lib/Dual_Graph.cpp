@@ -13,17 +13,16 @@ Dual_Graph::Dual_Graph(long nb_c,
                        const Seeds_Pool &seeds_pool,
                        const unordered_set<long> &s_anisotropic_compliant_fc,
                        int verbose,
-                       int dim) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes),_seeds_pool(seeds_pool),number_of_cells(nb_c),_dimension(dim){
+                       int dim) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes),_seeds_pool(seeds_pool),_number_of_cells(nb_c),_verbose(verbose),_dimension(dim){
     // We check that effectively in the dictionary we have recorded cells with boundaries and we define the seed pool depending on the dimension of the problem. (2D or 3D)
         if (s_anisotropic_compliant_fc.size() > 0) {
-        this->s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
+        _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
         // Default initialization of this->s_anisotropic_compliant_cells
-        for (int i = 0; i < this->number_of_cells; i++) {
-            this->s_anisotropic_compliant_cells.insert(i);
+        for (int i = 0; i < _number_of_cells; i++) {
+            _s_anisotropic_compliant_cells.insert(i);
         }
     }
-    this->_verbose = verbose;
 }
 
 vector<long> Dual_Graph::get_neighbours(const long &i_c) const {
@@ -115,7 +114,7 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
     double min_weight, max_weight, averageWeight, weight;
 
     // Process of every compliant fine cells (it is a member variable, so it is not passed to the function):
-    for (const long i_fc : s_anisotropic_compliant_cells) {
+    for (const long i_fc : _s_anisotropic_compliant_cells) {
         min_weight = numeric_limits<double>::max();
         max_weight = 0.0;
         averageWeight = 0.0;
@@ -176,7 +175,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
      * Rmk: costly function: sort of a dictionary!
      */
 
-    long nb_fc = number_of_cells; // Number of cells is a member variable initialized through nb_fc in the 
+    long nb_fc = _number_of_cells; // Number of cells is a member variable initialized through nb_fc in the 
     // it is computed in d_anisotropic_fc as rhe max_weight
     vector<double> maxArray(nb_fc, 0.0);
     unordered_map<long, double> d_anisotropic_fc;
@@ -389,7 +388,7 @@ vector<double> Dual_Graph::compute_aspect_ratio() {
       Once the aspect ratio computed for every cells, we compute the mean, the min, the max, the standard deviation, the variance
     */
     vector<double> aspect_ratio;
-    for (int i_fc = 0; i_fc < number_of_cells; i_fc++) {
+    for (int i_fc = 0; i_fc < _number_of_cells; i_fc++) {
         double surface = 0.;
         for (auto i_w_n : get_weights(i_fc)) {
             /*we directly use j_cell because we don't need the real index of the neighbouring cell.
@@ -448,11 +447,11 @@ void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, 
     if (separate_iso_and_aniso) {
         vector<long> v_iso;
         unordered_set<long> s_cells;
-        for (int i = 0; i < number_of_cells; i++)
+        for (int i = 0; i < _number_of_cells; i++)
             s_cells.insert(i);
-        set_difference(s_cells.begin(), s_cells.end(), s_anisotropic_compliant_cells.begin(), s_anisotropic_compliant_cells.end(), back_inserter(v_iso));
+        set_difference(s_cells.begin(), s_cells.end(), _s_anisotropic_compliant_cells.begin(), _s_anisotropic_compliant_cells.end(), back_inserter(v_iso));
 
-        unsigned short int nb_aniso = s_anisotropic_compliant_cells.size();
+        unsigned short int nb_aniso = _s_anisotropic_compliant_cells.size();
         unsigned short int nb_iso = v_iso.size();;
 
         vector<double> a_aspect_ratio = compute_aspect_ratio();
@@ -462,7 +461,7 @@ void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, 
         for (auto i_cc : v_iso)
             a_aspect_ratio_iso.push_back(a_aspect_ratio[i_cc]);
 
-        for (auto i_cc : s_anisotropic_compliant_cells)
+        for (auto i_cc : _s_anisotropic_compliant_cells)
             a_aspect_ratio_aniso.push_back(a_aspect_ratio[i_cc]);
 
         if (nb_iso) {
@@ -640,8 +639,8 @@ void Dual_Graph::compute_local_crs_subgraph_from_global_crs(unordered_set<long> 
 // Given a set of nodes, it compute the csr subgraph starting from the global. We need to consider the 
 // vector passing from global to local and from local to global.
     unsigned short int number_Of_Nodes_L = set_of_node.size();
-    unsigned short int number_of_nodes_g = number_of_cells;
-    assert(number_of_cells == _m_CRS_Row_Ptr.size() - 1);
+    unsigned short int number_of_nodes_g = _number_of_cells;
+    assert(_number_of_cells == _m_CRS_Row_Ptr.size() - 1);
 
     vector<unordered_map<long, double>> adj_Matrix(number_of_nodes_g);
 

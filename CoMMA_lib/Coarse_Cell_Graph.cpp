@@ -12,7 +12,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
     //==================
      // Initialization of the vector of the agglomerated cells
      // as false at the beginning, are all not agglomerated.
-     vector<bool> tmp(fc_graph.number_of_cells, false);
+     vector<bool> tmp(fc_graph._number_of_cells, false);
     _a_is_fc_agglomerated = tmp;
 
     //==================
@@ -20,7 +20,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
     //==================
     // field that identify the index of the course cell in the 
     // fine cell (and retrived as the output)
-    _fc_2_cc = vector<long>(fc_graph.number_of_cells, -1);
+    _fc_2_cc = vector<long>(fc_graph._number_of_cells, -1);
 }
 
 Coarse_Cell_Graph::~Coarse_Cell_Graph() {
@@ -39,7 +39,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
 
 // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
-
+// error handling
     for (const long &i_fc :s_fc) {
         if (_fc_2_cc[i_fc] != -1) {
             cerr << "fc " << i_fc << " is already assigned to i_cc " << _fc_2_cc[i_fc] << endl;
@@ -696,7 +696,7 @@ bool Coarse_Cell_Graph::_check_consistency() {
     // Check _fc_2_cc
     //=========================
 
-    for (long i_fc = 0; i_fc < _fc_graph.number_of_cells; i_fc++) {
+    for (long i_fc = 0; i_fc < _fc_graph._number_of_cells; i_fc++) {
         long i_cc = _fc_2_cc[i_fc];
         if (_d_isotropic_cc.count(i_cc)) {
 
@@ -948,7 +948,7 @@ void Coarse_Cell_Graph::correction_make_small_cc_bigger(const unsigned short &mi
         // Building of the neighbourhood:
         // Watch out: different of Dual_graph.compute_neighbourhood(...) in the selection of neighbours
         short nb_of_order_of_neighbourhood = 3;
-        vector<bool> v_is_fc_agglomerated_in_isotropic_cc(_fc_graph.number_of_cells, false);  // Attention, there is a "!"/not in compute_neighbourhood_of_cc(...)
+        vector<bool> v_is_fc_agglomerated_in_isotropic_cc(_fc_graph._number_of_cells, false);  // Attention, there is a "!"/not in compute_neighbourhood_of_cc(...)
         for (const auto &i_k_v:_d_anisotropic_cc) {
             for (const long &i_fc:i_k_v.second) {
                 v_is_fc_agglomerated_in_isotropic_cc[i_fc] = true;
@@ -1768,7 +1768,7 @@ void Coarse_Cell_Graph::correction_swap_leaf_fc_v2(int nb_iteration, Coarse_Cell
 bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
 
     // All fc are agglomerated
-    assert(_nb_of_agglomerated_fc == _fc_graph.number_of_cells);
+    assert(_nb_of_agglomerated_fc == _fc_graph._number_of_cells);
 
     if (!_d_anisotropic_cc.empty()) {
         return true;
@@ -1783,7 +1783,7 @@ bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
         if (!_delayed_cc.empty()) {
             return true;
         }
-        return _fc_graph.s_anisotropic_compliant_cells.empty();
+        return _fc_graph._s_anisotropic_compliant_cells.empty();
     }
 }
 

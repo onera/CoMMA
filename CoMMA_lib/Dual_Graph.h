@@ -69,7 +69,7 @@ public :
 
 
 /** @brief Number of cells in the mesh */ 
-    int number_of_cells;
+    int _number_of_cells;
 /** @brief Dimension of the problem */ 
     int _dimension;
 /** @brief Flag to have more information for debugging */ 
@@ -87,7 +87,7 @@ public :
  * set passed as a reference in input) */ 
     const vector<double> _volumes;
 /** @brief Member unordered set of compliant cells*/ 
-    unordered_set<long> s_anisotropic_compliant_cells;
+    unordered_set<long> _s_anisotropic_compliant_cells;
 /** @brief Anisotropic lines list size*/ 
     int _lines_size = 0;
 /** @brief List of deaue containing the anisotropic lines*/ 

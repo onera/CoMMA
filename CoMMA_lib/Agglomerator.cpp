@@ -31,7 +31,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
   } else {
         _min_neighbourhood = 3;
   }
-  _l_nb_of_cells.push_back(graph.number_of_cells);
+  _l_nb_of_cells.push_back(graph._number_of_cells);
 }
 
 
@@ -44,11 +44,11 @@ Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
 // for every defined level (1 by default), contains the number of cells
 // e.g. _l_nb_of_cells[0]= number of cells on finest level
 //      _l_nb_of_cells[1]= number of cells on the first coarse level
-    _l_nb_of_cells.push_back(graph.number_of_cells);
+    _l_nb_of_cells.push_back(graph._number_of_cells);
 // For every level, we have a set containing the admissible cells for anisotropy cell number:
 // For level 0, it is the cell number of prism or hexahedron ...
      _v_of_s_anisotropic_compliant_fc = vector<unordered_set<long>>(2);
-     _v_of_s_anisotropic_compliant_fc[0] = _fc_graph.s_anisotropic_compliant_cells;
+     _v_of_s_anisotropic_compliant_fc[0] = _fc_graph._s_anisotropic_compliant_cells;
      _v_nb_lines = vector<long>(2);
      _v_lines = vector<forward_list<deque<long> *> >(2);
 };
@@ -412,8 +412,6 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
     for (long i_s = arg_min_external_faces + 1; i_s < max_ind + 1; i_s++) {
         // for all size of Cell from arg_min_external_faces+1 to  min(max_card, len(d_n_of_seed) + 1) + 1
         //d_n_of_seed.
-        //            update(dict_cc_in_creation[i_s][1])
-        // Merge/update:
         for (auto iKV:dict_cc_in_creation[i_s].second) {
             d_n_of_seed[iKV.first] = iKV.second;
         }
