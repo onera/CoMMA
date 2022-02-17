@@ -3,8 +3,10 @@
 
 
 #include<vector>
+#include<cstddef>
 #include<memory>
 #include<iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -19,8 +21,14 @@ struct node{
     double _volume;
     /** @brief number of son*/
     int _sonc;
-    // vector of the pointers to the son
-    vector<shared_ptr<node>> _sons;
+    /** @brief shared pointer to the father node */
+    shared_ptr<node> _father;
+    /** @brief shared pointer to the left element */ 
+    shared_ptr<node> _left_idx;
+    /** @brief shared pointer to the right element */
+    shared_ptr<node> _right_idx;
+    /** @brief shared pointer to the left element */ 
+    shared_ptr<node> _left_son_idx;
 };
 
 
@@ -29,10 +37,12 @@ struct node{
 class Tree {
  public:
 /** @brief Constructor*/
-   Tree(const node &root);
-   void insertSon(const long &index, const double &volume);
-   void searchSon(const long &index, const double &volume);
-   void deleteSon(const long &index, const double &volume);
+   Tree(shared_ptr<node> &root);
+   shared_ptr<node> _root;
+   void insertSon(const long &father_index, const long &index, const double &volume,const int &root);
+   shared_ptr<node> search(shared_ptr<node> &node,const long &value);
+   shared_ptr<node> transverse(shared_ptr<node> &node);
+   void delete_node(shared_ptr<node> &searched_node);
    void print();
 };
 
