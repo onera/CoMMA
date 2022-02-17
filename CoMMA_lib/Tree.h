@@ -16,7 +16,7 @@ struct node{
     /** @brief index of the cell*/
     long _index;
     /** @brief volume*/
-    double _volume 
+    double _volume;
     /** @brief number of son*/
     int _sonc;
     // vector of the pointers to the son
