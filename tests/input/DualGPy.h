@@ -1,6 +1,7 @@
 #include <memory>
 #include "CoMMATypes.h"
 #include "Agglomerator.h"
+#include "Tree.h"
 #include "CoMMA.h"
 #include "templateHelpers.h"
 

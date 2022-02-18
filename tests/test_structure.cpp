@@ -88,51 +88,17 @@ SCENARIO("Test of the stack", "[stack]") {
     };
   }
 }
-SCENARIO("Test of the seed pool", "[Seed Pool]") {
-  GIVEN("The DualGPy configuration used for the example") {
-    DualGPy Data = DualGPy();
-    WHEN("We build the seed pool") {
-      Seeds_Pool *sp =
-          new Seeds_Pool(Data.nb_fc, Data.d_is_on_bnd, Data.s_is_on_corner,
-                         Data.s_is_on_ridge, Data.s_is_on_valley, 2);
+SCENARIO("Test of the tree", "[Tree]") {
+  GIVEN("The node") {
+    shared_ptr<node> A(new node(2,1)); 
+    shared_ptr<Tree> Albero(new Tree(A));
+    WHEN("We add something to the tree") {
+      Albero->insertSon(2,1,1,1);
       THEN(
-          "We see that the sequence of seed choice is the one of Diskin "
-          "Mavriplis") {
-        long seed = sp->choose_new_seed(Data.a_is_fc_agglomerated);
-        REQUIRE(seed == 20);
-        seed = sp->choose_new_seed(Data.a_is_fc_agglomerated);
-        REQUIRE(seed == 17);
-        int b_v = sp->boundary_value(20);
-        REQUIRE(b_v == 2);
+          "The tree has a child") {
+          cout<< Albero->_root->_index;
+          REQUIRE(Albero->_root->_sonc==1);
       }
-      WHEN("We build the seed pool to access the list of possible seed") {
-        class test : public Seeds_Pool {
-         public:
-          test(int number_of_cells, unordered_map<long, int> &d_is_on_bnd,
-               unordered_set<long> is_on_corner,
-               unordered_set<long> is_on_ridge,
-               unordered_set<long> is_on_valley, int init_bnd_level)
-              : Seeds_Pool(number_of_cells, d_is_on_bnd, is_on_corner,
-                           is_on_ridge, is_on_valley, init_bnd_level) {};
-
-          vector<Stack<long>> list() {
-            return (_l_of_seeds);
-          };
-        };
-
-        test *sp = new test(Data.nb_fc, Data.d_is_on_bnd, Data.s_is_on_corner,
-                            Data.s_is_on_ridge, Data.s_is_on_valley, 2);
-        THEN(
-            "We see that the sequence of seed choice is the one of Diskin "
-            "Mavriplis") {
-          long seed = sp->choose_new_seed(Data.a_is_fc_agglomerated);
-          REQUIRE(seed == 20);
-          list<long> new_seeds = {5};
-          sp->update(new_seeds, false);
-          vector<Stack<long>> new_s_list = sp->list();
-          REQUIRE(new_s_list[0].top() == 5);
-        }
-      };
+     };
     }
-  }
 }

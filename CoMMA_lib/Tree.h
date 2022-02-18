@@ -20,7 +20,7 @@ struct node{
     /** @brief volume*/
     double _volume;
     /** @brief number of son*/
-    int _sonc;
+    int _sonc = 0;
     /** @brief shared pointer to the father node */
     shared_ptr<node> _father;
     /** @brief shared pointer to the left element */ 
@@ -38,6 +38,7 @@ class Tree {
  public:
 /** @brief Constructor*/
    Tree(shared_ptr<node> &root);
+   ~Tree(){};
    shared_ptr<node> _root;
    void insertSon(const long &father_index, const long &index, const double &volume,const int &root);
    shared_ptr<node> search(shared_ptr<node> &node,const long &value);

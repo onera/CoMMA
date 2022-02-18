@@ -5,7 +5,8 @@ Tree::Tree(shared_ptr<node> &root):_root(root){};
 void Tree::insertSon(const long &father_index,const long &index, const double &volume, const int &root){
      shared_ptr<node> insertion(new node(index,volume));
      shared_ptr<node> u_p_father;
-     if (root==1){u_p_father = _root;}
+     if (root==1){u_p_father = _root;
+     assert(u_p_father->_index == father_index);}
      else{u_p_father = search(_root->_left_son_idx,father_index);}
      assert(u_p_father!=nullptr);
      insertion->_father = u_p_father;
@@ -17,7 +18,8 @@ void Tree::insertSon(const long &father_index,const long &index, const double &v
         insertion->_left_idx = left_idx; 
         left_idx->_right_idx = insertion;
      }
-     u_p_father->_sonc++;
+     u_p_father->_sonc = u_p_father->_sonc + 1;
+     cout<<u_p_father->_sonc<<endl;
 };
 
 shared_ptr<node> Tree::transverse(shared_ptr<node> &node){
