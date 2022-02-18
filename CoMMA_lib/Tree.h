@@ -43,8 +43,10 @@ class Tree {
    void insertSon(const long &father_index, const long &index, const double &volume,const int &root);
    shared_ptr<node> search(shared_ptr<node> &node,const long &value);
    shared_ptr<node> transverse(shared_ptr<node> &node);
-   void delete_node(shared_ptr<node> &searched_node);
+   void deleteNode(const long &value);
+   void delete_node(shared_ptr<node> &searched_node, const long &value);
    void print();
+   void print_nodes(shared_ptr<node> &node);
 };
 
 

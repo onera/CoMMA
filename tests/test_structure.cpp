@@ -96,8 +96,15 @@ SCENARIO("Test of the tree", "[Tree]") {
       Albero->insertSon(2,1,1,1);
       THEN(
           "The tree has a child") {
-          cout<< Albero->_root->_index;
-          REQUIRE(Albero->_root->_sonc==1);
+           Albero->insertSon(2,3,1,1);
+           Albero->insertSon(2,4,1,1);
+           Albero->insertSon(4,2,1,0);
+           Albero->print();
+           REQUIRE(Albero->_root->_sonc==3);
+           Albero->deleteNode(4);
+           cout<< "deletion 4 performed" << endl;
+           Albero->print();
+           REQUIRE(Albero->_root->_sonc==2);
       }
      };
     }

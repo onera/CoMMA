@@ -33,7 +33,44 @@ shared_ptr<node> Tree::search(shared_ptr<node> &node, const long &value){
     return(search(node->_right_idx,value));
 };
 
-void Tree::delete_node(shared_ptr<node> &searched_node){};
+void Tree::deleteNode(const long &value){
+     delete_node(_root->_left_son_idx,value);
+};
 
-void Tree::print(){};
+
+void Tree::delete_node(shared_ptr<node> &searched_node,const long &value){
+     if (searched_node == nullptr){return;}
+     if(searched_node->_index==value){
+            // case 0: leftest node
+            if (searched_node->_left_idx == nullptr){ 
+               searched_node->_father->_sonc--;
+               searched_node->_father->_left_son_idx = searched_node->_right_idx;
+               searched_node->_right_idx->_left_idx = nullptr;
+               }
+            // case 1: rightest node
+            else if (searched_node->_right_idx == nullptr){
+               searched_node->_father->_sonc = searched_node->_father->_sonc-1; 
+               searched_node->_left_idx->_right_idx.reset();
+               }
+           else{ 
+               searched_node->_father->_sonc--;
+               searched_node->_left_idx->_right_idx = searched_node->_right_idx;
+               searched_node->_right_idx->_left_idx = searched_node->_left_idx;
+              }
+     return;
+     } 
+     delete_node(searched_node->_right_idx,value);
+};
+
+void Tree::print(){
+     print_nodes(_root);
+};
+
+
+void Tree::print_nodes(shared_ptr<node> &node){
+     if (node==nullptr) {return;}
+     cout<<"node"<<node->_index<<endl;
+     print_nodes(node->_left_son_idx);
+     print_nodes(node->_right_idx);
+};
 
