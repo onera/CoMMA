@@ -133,7 +133,6 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
             long i_fc_n = v_neighbours[i_n]; 
             double i_w_fc_n = v_weights[i_n];
             if (i_fc_n != i_fc) {  // to avoid special case where the boundary value are stored
-//                weight = this->_m_CRS_Values[i_n];
                 if (max_weight < i_w_fc_n) {
                     max_weight = i_w_fc_n;
                 }
@@ -147,13 +146,6 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
             averageWeight += i_w_fc_n / (double) (nb_neighbours);
         }
         maxArray[i_fc] = max_weight;
-
-        // TODO comprendre la raison d'etre des 2 criteres: present chez Mavriplis et DLR
-        // Anisotropy criteria for the initial sort
-        // if ratioArray[i_loc_fc] >= 2.0:
-        //     d_anisotropic_fc[ratioArray[i_loc_fc]] = i_loc_fc
-        //
-        //     count += 1
 
         // Anisotropy criteria for the line Admissibility
         if (max_weight / min_weight >= 4.0) {
@@ -324,12 +316,6 @@ unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unor
 
 
 long Dual_Graph::_compute_subgraph_root(unordered_set<long> s_fc) {
-    /*
-      search of the fine cell at the "root" of the coarse cell, i.e. the fine cell with the most faces in common with
-      its coarse cell.
-      :param i_cc:
-      :return:
-    */
     long max_number_common_faces(-1), arg_max_number_common_faces(-1);
     for (auto i_fc : s_fc) {
         // Computation of the degree of the node in the CC subgraph.
@@ -376,107 +362,8 @@ void Dual_Graph::clean_d_neighbours_of_seed(unordered_set<long> s_fc,
         if (!is_intersection) {
             d_neighbours_of_seed.erase(i_fc);
         }
-//        else {
-//            d_neighbours_of_seed[i_fc] = 2;
-//        }
     }
 }
-
-vector<double> Dual_Graph::compute_aspect_ratio() {
-    /*
-      With the storage in the CRS format of the dual mesh we can easily compute the aspect ratio of the cells.
-      Once the aspect ratio computed for every cells, we compute the mean, the min, the max, the standard deviation, the variance
-    */
-    vector<double> aspect_ratio;
-    for (int i_fc = 0; i_fc < _number_of_cells; i_fc++) {
-        double surface = 0.;
-        for (auto i_w_n : get_weights(i_fc)) {
-            /*we directly use j_cell because we don't need the real index of the neighbouring cell.
-          only the index for matrixAdj_CRS_surface_values_lvl_l*/
-            surface += i_w_n;
-        }
-        double tmp = pow(surface, 1.5) / _volumes[i_fc];
-        aspect_ratio.push_back(tmp);
-    }
-    return aspect_ratio;
-}
-
-
-void compute_characteristics_utility(vector<double> aspect_ratio, double &min, double &max, double &mean, double &sd, double &median) {
-    min = *min_element(aspect_ratio.begin(), aspect_ratio.end());
-    max = *max_element(aspect_ratio.begin(), aspect_ratio.end());
-    mean = accumulate(aspect_ratio.begin(), aspect_ratio.end(), 0);
-    mean /= aspect_ratio.size();
-
-    sd = 0.;
-    for (auto ar : aspect_ratio) {
-        sd += (ar - mean) * (ar - mean);
-    }
-
-    sd = sqrt(sd / aspect_ratio.size());
-
-
-    // TODO
-    median = 0.;
-}
-
-
-vector<double> Dual_Graph::compute_aspect_ratio_and_characteristics(double &min, double &max, double &mean, double &sd, double &median) {
-    /*
-      With the storage in the CRS format of the dual mesh we can easily compute the aspect ratio of the cells.
-      Once the aspect ratio computed for every cells, we compute the mean, the min, the max, the standard deviation, the variance
-      :param matrixAdj_CRS_row_ptr_lvl_l:
-      :param matrixAdj_CRS_surface_values_lvl_l:
-      :param volume_lvl_l:
-      :return:
-    */
-
- 
-    vector<double> aspect_ratio = compute_aspect_ratio();
-
-    compute_characteristics_utility(aspect_ratio, min, max, mean, sd, median);
-
-    return aspect_ratio;
-    //return aspect_ratio, aspect_ratio.min(), aspect_ratio.max(), np.mean(aspect_ratio), np.std(aspect_ratio), np.median(aspect_ratio)
-}
-
-
-void Dual_Graph::compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso,
-                                                      double &median_aniso) {
-    bool separate_iso_and_aniso(false);
-    if (separate_iso_and_aniso) {
-        vector<long> v_iso;
-        unordered_set<long> s_cells;
-        for (int i = 0; i < _number_of_cells; i++)
-            s_cells.insert(i);
-        set_difference(s_cells.begin(), s_cells.end(), _s_anisotropic_compliant_cells.begin(), _s_anisotropic_compliant_cells.end(), back_inserter(v_iso));
-
-        unsigned short int nb_aniso = _s_anisotropic_compliant_cells.size();
-        unsigned short int nb_iso = v_iso.size();;
-
-        vector<double> a_aspect_ratio = compute_aspect_ratio();
-        vector<double> a_aspect_ratio_iso;
-        vector<double> a_aspect_ratio_aniso;
-
-        for (auto i_cc : v_iso)
-            a_aspect_ratio_iso.push_back(a_aspect_ratio[i_cc]);
-
-        for (auto i_cc : _s_anisotropic_compliant_cells)
-            a_aspect_ratio_aniso.push_back(a_aspect_ratio[i_cc]);
-
-        if (nb_iso) {
-            compute_characteristics_utility(a_aspect_ratio_iso, min, max, mean, sd, median);
-        }
-
-        if (nb_aniso) {
-            compute_characteristics_utility(a_aspect_ratio_aniso, min_aniso, max_aniso, mean_aniso, sd_aniso, median_aniso);
-        }
-    } else {
-        vector<double> a_aspect_ratio = compute_aspect_ratio();
-        compute_characteristics_utility(a_aspect_ratio, min, max, mean, sd, median);
-    }
-}
-
 
 
 unsigned short int Dual_Graph::compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc) {

@@ -7,7 +7,7 @@
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
-
+#include "Tree.h"
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and 
  *  of the operation we can do on them.
@@ -50,9 +50,9 @@ public:
 /** @brief Vector of boolean for which the length is the number of fine cells and for which the value of i_fc cell is true 
 * when the cell is agglomerated in a coarse cell */
     vector<bool> _a_is_fc_agglomerated;
+    
 
-
-
+    vector<shared_ptr<Tree>> _cc_tree;
 
     void correction_main_triconnected(short min_neighbourhood_correction_step,
                                       short goal_card,
@@ -222,7 +222,7 @@ protected :
     /** @brief Variable where are recorded the anisotropic coarse cells. Index is the global index of the coarse
      * cell, key is the pointer to a Coarse_Cell element. */
     unordered_map<long, unordered_set<long>> _d_anisotropic_cc;     
-    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of thei coarse cells with a given cardinality
+    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of the coarse cells with a given cardinality
      */
     unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  
     /** @brief Dictionary that contains the compactness as a key and a set of the compactness cells as a value*/

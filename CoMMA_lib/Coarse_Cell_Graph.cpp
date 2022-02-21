@@ -40,12 +40,15 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
 // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
 // error handling
+    double vol_cc = 0;
     for (const long &i_fc :s_fc) {
+        vol_cc = vol_cc +_fc_graph._volumes[i_fc]; 
         if (_fc_2_cc[i_fc] != -1) {
             cerr << "fc " << i_fc << " is already assigned to i_cc " << _fc_2_cc[i_fc] << endl;
         }
         assert(_fc_2_cc[i_fc] == -1);
     }
+    
 
     bool is_mutable = true;
     if (is_anisotropic) {
@@ -65,6 +68,13 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
             //==================
+            shared_ptr<node> root(new node(_cc_counter,vol_cc));
+            shared_ptr<Tree> n_cc(new Tree(root));
+            for (const long &i_fc :s_fc) {
+                n_cc->insertSon(_cc_counter,i_fc,_fc_graph._volumes[i_fc],1);
+            }
+            n_cc->print();
+            _cc_tree.push_back(n_cc);
             Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
             _d_isotropic_cc[_cc_counter] = new_cc;
 

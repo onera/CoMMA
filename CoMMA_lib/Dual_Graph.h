@@ -110,24 +110,34 @@ public :
  *  @return boolean to tell if the cell is connected or not**/ 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
     forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
-
+/** @brief Computes the dictionqry of the anisotropic fine cells eligible for the agglomeration lines 
+ *  @param[out] maxArray Array of the maximum weight: the biggest area of the faces composing the given fine cell
+ *  @param[out] d_anisotropic_fc dictionary (unordered_map) storing the eligible anisotropic cells and the respective ratio between the max_weight and the min_weight
+ *  @param[out] d_isotropic_fc the same as the anisotropic but for the isotropic cells*/  
     void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc);
 
+ /** @brief search of the fine cell at the "root" of the coarse cell, i.e. the fine cell with the most faces in common with
+ *   its coarse cell.
+ *   @param[in] s_fc set of fine cells to analyse 
+ *   @return i_cc the index of the coarse cell
+ */
     long _compute_subgraph_root(unordered_set<long> s_fc);
 
     void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed);
-
+ /** @brief Compute the degree of one node in the subgraph.
+ *   @param[in] i_fc the global index of the fine cell
+ *   @return the degree of the node
+ */ 
     unsigned short int compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc);
-
-    vector<double> compute_aspect_ratio();
-
-    vector<double> compute_aspect_ratio_and_characteristics(double &min, double &max, double &mean, double &sd, double &median);
-
-    void compute_aspect_ratio_characteristics(double &min, double &max, double &mean, double &sd, double &median, double &min_aniso, double &max_aniso, double &mean_aniso, double &sd_aniso,
-                                              double &median_aniso);
-
+ /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
+ *   @param[in] s_fc set of fine cells to analyse 
+ *   @return the compactness of the fine cell
+ */
     unsigned short int compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
-
+ /** @brief Compute the dictionary of compactness of fine cells inside a coarse cell.
+ *   @param[in] s_fc set of fine cells to analyse 
+ *   @return the dictionary associating a fine cell in the coarse cell with its compactness
+ */ 
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
 
     vector<unordered_set<long>> compute_connected_components(const unordered_set<long> &s_initial_cc);
