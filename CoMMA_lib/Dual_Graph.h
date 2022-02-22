@@ -25,14 +25,70 @@
 
 using namespace std;
 
+class Dual_Graph;
 
 /** @brief A class responsible of storing the cell centered dual graph
  * and of acting on it (in other words it implements the methods that complements
  *  the agglomeration, like the detection of anisotropic lines
  *  @author Alberto Remigi and Nicolas Lantos
  */
+class Graph {
+public :
+/** @brief Constructor of the class
+ *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
+ *  @param[in] m_crs_col_ind the column index of the CRS representation
+ *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case will be the area
+ *  of the faces that in the graph representation are the edges between two nodes represented
+ *  by the cell centers.
+ *  @param[in] volumes The volumes of the cells
+ */
+    Graph(const long &nb_c,
+               const vector<long> &m_crs_row_ptr,
+               const vector<long> &m_crs_col_ind,
+               const vector<double> &m_crs_values,
+               const vector<double> &volumes
+    );
+   ~Graph() {
+        cout << "Delete Dual_Graph" << endl;
+    }
+/** @brief Number of cells in the mesh */ 
+    int _number_of_cells;
+/** @brief helper vector for the DFS*/
+    vector<bool> _visited;
+/** @brief Dimension of the problem */ 
+    int _dimension;
+/** @brief Vector of row pointer of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
+    const vector<long> _m_CRS_Row_Ptr;
+/** @brief Vector of column index of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
+    const vector<long> _m_CRS_Col_Ind;
+/** @brief Vector of area weight of CRS representation (member variable different from the unordered
+ * set passed as a reference in input) */ 
+    const vector<double> _m_CRS_Values;
+/** @brief Vector of volumes (member variable different from the unordered
+ * set passed as a reference in input) */ 
+    const vector<double> _volumes;
+/** @brief Depth First Search (DFS) recursive function 
+ *  @param[in] i_fc index of the node to print*/
+    void DFS(const long &i_fc);
 
-class Dual_Graph {
+/** @brief Retrive the number of neighbours 
+ *  @param[in] i_c index of the cell 
+ *  @return number of neighbors of the given cell.**/
+    unsigned short get_nb_of_neighbours(long i_c);
+/** @brief Based on the CRS representation retrives the neighbours of the cell given as an input.
+ * @param[in] i_c index of the cell to check the neighbours
+ * @return vector of the neighbors. **/
+    vector<long> get_neighbours(const long &i_c) const;
+/** @brief Based on the area of the faces composing the cell given as an input, we retrive the faces connecting the given cell with the neighborhood that can be described also as the weight of the graph
+ * @return vector of weight associated to the cell.**/ 
+    vector<double> get_weights(const long &i_c) const;
+};
+
+
+
+class Dual_Graph : public Graph {
 
 public :
 /** @brief Constructor of the class
@@ -47,7 +103,7 @@ public :
  *  @param[in]  verbose flag to have more information for debugging
  *  @param[in]  dimension  3 or 2 (by default 3)
  */
-    Dual_Graph(long nb_c,
+    Dual_Graph(const long &nb_c,
                const vector<long> &m_crs_row_ptr,
                const vector<long> &m_crs_col_ind,
                const vector<double> &m_crs_values,
@@ -66,43 +122,17 @@ public :
     }
 /** @brief Member seeds pool variable */
     Seeds_Pool _seeds_pool;
-
-
-/** @brief Number of cells in the mesh */ 
-    int _number_of_cells;
-/** @brief Dimension of the problem */ 
-    int _dimension;
 /** @brief Flag to have more information for debugging */ 
     int _verbose;
-/** @brief Vector of row pointer of CRS representation (member variable different from the unordered
- * set passed as a reference in input) */ 
-    const vector<long> _m_CRS_Row_Ptr;
-/** @brief Vector of column index of CRS representation (member variable different from the unordered
- * set passed as a reference in input) */ 
-    const vector<long> _m_CRS_Col_Ind;
-/** @brief Vector of area weight of CRS representation (member variable different from the unordered
- * set passed as a reference in input) */ 
-    const vector<double> _m_CRS_Values;
-/** @brief Vector of volumes (member variable different from the unordered
- * set passed as a reference in input) */ 
-    const vector<double> _volumes;
+/** @brief Dimension of the problem*/ 
+    int _dimension;
 /** @brief Member unordered set of compliant cells*/ 
     unordered_set<long> _s_anisotropic_compliant_cells;
 /** @brief Anisotropic lines list size*/ 
     int _lines_size = 0;
 /** @brief List of deaue containing the anisotropic lines*/ 
     forward_list<deque<long> *> _lines;
-/** @brief Retrive the number of neighbours 
- *  @param[in] i_c index of the cell 
- *  @return number of neighbors of the given cell.**/
-    unsigned short get_nb_of_neighbours(long i_c);
-/** @brief Based on the CRS representation retrives the neighbours of the cell given as an input.
- * @param[in] i_c index of the cell to check the neighbours
- * @return vector of the neighbors. **/
-    vector<long> get_neighbours(const long &i_c) const;
-/** @brief Based on the area of the faces composing the cell given as an input, we retrive the faces connecting the given cell with the neighborhood that can be described also as the weight of the graph
- * @return vector of weight associated to the cell.**/ 
-    vector<double> get_weights(const long &i_c) const;
+
 /** @brief Checks the connectivity of the Coarse cell created.
  *  @todo maybe to shift it to the coarse cell class
  *  @param[in] s_fc Set of fine cells composing the coarse cell

@@ -4,8 +4,58 @@
 #include "Dual_Graph.h"
 
 // Constructor : initialization of variables by :. The variables are recorded in member functions
+Graph::Graph(const long &nb_c,
+                       const vector<long> &m_crs_row_ptr,
+                       const vector<long> &m_crs_col_ind,
+                       const vector<double> &m_crs_values, 
+                       const vector<double> &volumes
+                       ) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes),_number_of_cells(nb_c){
 
-Dual_Graph::Dual_Graph(long nb_c,
+        for (int i = 0; i < _number_of_cells; i++) {
+            _visited.push_back(false);
+        } 
+   long start = 0;
+   DFS(start);
+}
+
+vector<long> Graph::get_neighbours(const long &i_c) const {
+    // given the index of a cell refurn the neighborhoods of this cell
+    long ind = _m_CRS_Row_Ptr[i_c];
+    long ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
+    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
+    // connected areai (and hence to the faces)
+    vector<long> result(_m_CRS_Col_Ind.begin() + ind, _m_CRS_Col_Ind.begin() + ind_p_one);
+    return result;
+
+}
+
+vector<double> Graph::get_weights(const long &i_c) const {
+    // Given the index of a cell, return the value of the faces connected
+    long ind = _m_CRS_Row_Ptr[i_c];
+    long ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
+    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
+    // connected areai (and hence to the faces)
+    vector<double> result(_m_CRS_Values.begin() + ind, this->_m_CRS_Values.begin() + ind_p_one);
+    return result;
+
+}
+
+void Graph::DFS(const long &i_fc){
+     cout<<"DFS"<< i_fc<< endl;
+     _visited[i_fc]=true;
+     vector<long> v_neigh;
+     v_neigh = get_neighbours(i_fc);
+     for(auto &it:v_neigh){
+        if(_visited[it]!=true){
+          DFS(it);
+        }
+     }
+}
+
+
+
+
+Dual_Graph::Dual_Graph(const long &nb_c,
                        const vector<long> &m_crs_row_ptr,
                        const vector<long> &m_crs_col_ind,
                        const vector<double> &m_crs_values, 
@@ -13,7 +63,7 @@ Dual_Graph::Dual_Graph(long nb_c,
                        const Seeds_Pool &seeds_pool,
                        const unordered_set<long> &s_anisotropic_compliant_fc,
                        int verbose,
-                       int dim) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes),_seeds_pool(seeds_pool),_number_of_cells(nb_c),_verbose(verbose),_dimension(dim){
+                       int dim) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_seeds_pool(seeds_pool),_verbose(verbose),_dimension(dim){
     // We check that effectively in the dictionary we have recorded cells with boundaries and we define the seed pool depending on the dimension of the problem. (2D or 3D)
         if (s_anisotropic_compliant_fc.size() > 0) {
         _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
@@ -25,27 +75,13 @@ Dual_Graph::Dual_Graph(long nb_c,
     }
 }
 
-vector<long> Dual_Graph::get_neighbours(const long &i_c) const {
-    // given the index of a cell refurn the neighborhoods of this cell
-    long ind = this->_m_CRS_Row_Ptr[i_c];
-    long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
-    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
-    // connected areai (and hence to the faces)
-    vector<long> result(this->_m_CRS_Col_Ind.begin() + ind, this->_m_CRS_Col_Ind.begin() + ind_p_one);
-    return result;
-
+unsigned short Graph::get_nb_of_neighbours(long i_c) {
+// Return the number of neightbohurs of the ith cell
+    	return this->_m_CRS_Row_Ptr[i_c + 1] - this->_m_CRS_Row_Ptr[i_c];
 }
 
-vector<double> Dual_Graph::get_weights(const long &i_c) const {
-    // Given the index of a cell, return the value of the faces connected
-    long ind = this->_m_CRS_Row_Ptr[i_c];
-    long ind_p_one = this->_m_CRS_Row_Ptr[i_c + 1];
-    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
-    // connected areai (and hence to the faces)
-    vector<double> result(this->_m_CRS_Values.begin() + ind, this->_m_CRS_Values.begin() + ind_p_one);
-    return result;
 
-}
+
 
 bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
                                     int verbose) {
@@ -98,11 +134,6 @@ bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
 
     return nbConnectedCells == size;
 
-}
-
-unsigned short Dual_Graph::get_nb_of_neighbours(long i_c) {
-// Return the number of neightbohurs of the ith cell
-    	return this->_m_CRS_Row_Ptr[i_c + 1] - this->_m_CRS_Row_Ptr[i_c];
 }
 
 
