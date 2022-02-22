@@ -15,7 +15,9 @@ Graph::Graph(const long &nb_c,
             _visited.push_back(false);
         } 
    long start = 0;
-   DFS(start);
+//   DFS(start);
+//   BFS(start);
+//   cout<<"connected?"<<check_connectivity_g()<<endl;
 }
 
 vector<long> Graph::get_neighbours(const long &i_c) const {
@@ -26,7 +28,6 @@ vector<long> Graph::get_neighbours(const long &i_c) const {
     // connected areai (and hence to the faces)
     vector<long> result(_m_CRS_Col_Ind.begin() + ind, _m_CRS_Col_Ind.begin() + ind_p_one);
     return result;
-
 }
 
 vector<double> Graph::get_weights(const long &i_c) const {
@@ -40,8 +41,77 @@ vector<double> Graph::get_weights(const long &i_c) const {
 
 }
 
+void Graph::insert_node(unordered_set<long> &s_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
+    // variable to add weight for each face
+    int iter_weight = 0;
+    // initialization pointers for insertion, pointing to the first element of each
+    auto pos_col = _m_CRS_Col_Ind.begin();
+    auto pos_Values = _m_CRS_Values.begin();
+    // cycle on the set of neighbours
+    for (const auto& elem: s_neigh) {
+        // insert the node and the weight (we have an iterator for this and remember that at edge is associated one weight)
+        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[elem], i_fc);
+        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[elem], weight[iter_weight]);
+        // We modify the row pointer as far it is related with what we have done before
+        for(auto it =_m_CRS_Row_Ptr.begin()+elem ; it != _m_CRS_Row_Ptr.end(); ++it) {
+           (*it++);       
+        }
+        // we do the same.
+        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[i_fc],elem);
+        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[i_fc], weight[iter_weight]);
+         for(auto it =_m_CRS_Row_Ptr.begin()+i_fc ; it != _m_CRS_Row_Ptr.end(); ++it) {
+           (*it++);       
+        }
+        // We increment the weight flag iterator
+        iter_weight++;
+    }   
+}
+
+void Graph::remove_node(){}
+
+// https://www.youtube.com/watch?v=oDqjPvD54Ss
+void Graph::BFS(const long &root){
+     queue<long> coda;
+     vector<long> v_neigh;
+     vector<long> path;
+     coda.push(root);
+     vector<bool> visited;
+     for (int i = 0; i < _number_of_cells; i++) {
+            visited.push_back(false);
+     } 
+     visited[root]=true;
+     vector<long> prev;
+     for (int i = 0; i < _number_of_cells; i++) {
+            prev.push_back(-1);
+     } 
+     while (coda.empty()!=true){
+         long node = coda.front();
+         coda.pop();
+         v_neigh = get_neighbours(node);
+         for(auto &it:v_neigh){
+            if(visited[it]!=true){
+               coda.push(it);
+               visited[it]=true;
+               prev[it]=node;
+            }
+          }
+     }
+     // to print the inverse path
+     long retro = prev[_number_of_cells-1];
+     while( retro !=-1) {
+         path.push_back(retro);
+         retro = prev[retro];
+     }
+     reverse(path.begin(), path.end());
+//     for (int i = 0; i < _number_of_cells; i++) {
+//            cout<<"BFS"<<path[i]<<endl;
+//     } 
+     
+
+}
+
+
 void Graph::DFS(const long &i_fc){
-     cout<<"DFS"<< i_fc<< endl;
      _visited[i_fc]=true;
      vector<long> v_neigh;
      v_neigh = get_neighbours(i_fc);
@@ -52,6 +122,18 @@ void Graph::DFS(const long &i_fc){
      }
 }
 
+bool Graph::check_connectivity_g(){
+     for (int i = 0; i < _number_of_cells; i++) {
+            _visited.push_back(false);
+     }
+     DFS( _m_CRS_Col_Ind[0]);
+     for (int i = 0; i < _number_of_cells; i++) {
+            if(_visited[i]==false){
+              return(false);
+            }
+     }
+     return(true);
+     }
 
 
 

@@ -18,8 +18,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
-#include "Stack.h"
-
+#include "Dual_Graph.h"
 
 using namespace std;
 

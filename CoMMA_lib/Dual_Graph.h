@@ -59,20 +59,22 @@ public :
     int _dimension;
 /** @brief Vector of row pointer of CRS representation (member variable different from the unordered
  * set passed as a reference in input) */ 
-    const vector<long> _m_CRS_Row_Ptr;
+    vector<long> _m_CRS_Row_Ptr;
 /** @brief Vector of column index of CRS representation (member variable different from the unordered
  * set passed as a reference in input) */ 
-    const vector<long> _m_CRS_Col_Ind;
+    vector<long> _m_CRS_Col_Ind;
 /** @brief Vector of area weight of CRS representation (member variable different from the unordered
  * set passed as a reference in input) */ 
-    const vector<double> _m_CRS_Values;
+    vector<double> _m_CRS_Values;
 /** @brief Vector of volumes (member variable different from the unordered
  * set passed as a reference in input) */ 
-    const vector<double> _volumes;
+    vector<double> _volumes;
 /** @brief Depth First Search (DFS) recursive function 
  *  @param[in] i_fc index of the node to print*/
     void DFS(const long &i_fc);
-
+/** @brief Breadth First Search (BFS) function 
+ *  @param[in] root  root of the spanning tree*/
+    void BFS(const long &root);
 /** @brief Retrive the number of neighbours 
  *  @param[in] i_c index of the cell 
  *  @return number of neighbors of the given cell.**/
@@ -84,6 +86,11 @@ public :
 /** @brief Based on the area of the faces composing the cell given as an input, we retrive the faces connecting the given cell with the neighborhood that can be described also as the weight of the graph
  * @return vector of weight associated to the cell.**/ 
     vector<double> get_weights(const long &i_c) const;
+    bool check_connectivity_g();
+
+void insert_node(unordered_set<long> &s_neigh, const long &i_fc,const double &volume,const vector<double> &weight);
+
+void remove_node();
 };
 
 

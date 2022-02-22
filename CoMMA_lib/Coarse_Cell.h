@@ -31,6 +31,15 @@ public:
 /** @brief Method that return a boolean determing if the Coarse Cell is defined by a connected sub-graph or not.
  *  @return true if the subgraph is connected, false if the subgraph is not connected*/
     bool is_connected();
+
+
+//vector<long> _adjMatrix_row_ptr;
+//vector<long> _adjMatrix_col_ind;
+//vector<double> _adjMatrix_areaValues;
+//vector<double> _volumes;
+
+//void convert_set_fc_to_CRS()
+
 /** @brief   The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
  *  i.e. i_fc in self.__icc, j_fc in j_cc 
  *  i_fc and j_cc are related to two different coarse
@@ -42,6 +51,9 @@ public:
  *  6 | 0 | 5 | 1 |
  *  2 | 0 | 1 | 1 |
  *  \image html dict_neigh.png*/
+
+
+
  
    unordered_map<long, unordered_map<long, unordered_map<long, double>>> __d_i_fc_to_j_cc_neighbourhood_to_j_fc;
 /** @brief Dictionary where it is represented the neighborhood of a given fine cells with respect to the external
