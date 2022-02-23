@@ -36,38 +36,10 @@ vector<double> Graph::get_weights(const long &i_c) const {
     long ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
     // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
     // connected areai (and hence to the faces)
-    vector<double> result(_m_CRS_Values.begin() + ind, this->_m_CRS_Values.begin() + ind_p_one);
+    vector<double> result(_m_CRS_Values.begin() + ind, _m_CRS_Values.begin() + ind_p_one);
     return result;
 
 }
-
-void Graph::insert_node(unordered_set<long> &s_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
-    // variable to add weight for each face
-    int iter_weight = 0;
-    // initialization pointers for insertion, pointing to the first element of each
-    auto pos_col = _m_CRS_Col_Ind.begin();
-    auto pos_Values = _m_CRS_Values.begin();
-    // cycle on the set of neighbours
-    for (const auto& elem: s_neigh) {
-        // insert the node and the weight (we have an iterator for this and remember that at edge is associated one weight)
-        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[elem], i_fc);
-        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[elem], weight[iter_weight]);
-        // We modify the row pointer as far it is related with what we have done before
-        for(auto it =_m_CRS_Row_Ptr.begin()+elem ; it != _m_CRS_Row_Ptr.end(); ++it) {
-           (*it++);       
-        }
-        // we do the same.
-        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[i_fc],elem);
-        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[i_fc], weight[iter_weight]);
-         for(auto it =_m_CRS_Row_Ptr.begin()+i_fc ; it != _m_CRS_Row_Ptr.end(); ++it) {
-           (*it++);       
-        }
-        // We increment the weight flag iterator
-        iter_weight++;
-    }   
-}
-
-void Graph::remove_node(){}
 
 // https://www.youtube.com/watch?v=oDqjPvD54Ss
 void Graph::BFS(const long &root){
@@ -133,7 +105,108 @@ bool Graph::check_connectivity_g(){
             }
      }
      return(true);
-     }
+}
+
+
+Subgraph::Subgraph(const long &nb_c,
+                       const vector<long> &m_crs_row_ptr,
+                       const vector<long> &m_crs_col_ind,
+                       const vector<double> &m_crs_values, 
+                       const vector<double> &volumes
+                       ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes){}
+
+void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
+    // Use the mapping
+    // local vector of neighborhood
+    vector<long> v_l_neigh;
+    vector<long>::iterator low1;
+    // @todo this solution clearly help in the connection of the subnode BUT can bring to instability
+    // and errors.
+    for (const auto &elem : v_neigh){
+        low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
+        if (low1!=_mapping_l_to_g.end()){
+            v_l_neigh.push_back(low1-_mapping_l_to_g.begin());
+        }
+    }
+    // variable to add weight for each face
+    int iter_weight = 0;
+    // initialization pointers for insertion, pointing to the first element of each
+    auto pos_col = _m_CRS_Col_Ind.begin();
+    auto pos_Values = _m_CRS_Values.begin();
+    // cycle on the set of neighbours
+    for (const auto& elem: v_neigh) {
+        // insert the node and the weight (we have an iterator for this and remember that at edge is associated one weight)
+        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[elem], i_fc);
+        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[elem], weight[iter_weight]);
+        // We modify the row pointer as far it is related with what we have done before
+        for(auto it =_m_CRS_Row_Ptr.begin()+elem ; it != _m_CRS_Row_Ptr.end(); ++it) {
+           (*it++);       
+        }
+        // we do the same.
+        _m_CRS_Col_Ind.insert(_m_CRS_Col_Ind.end(),elem);
+        _m_CRS_Values.insert(_m_CRS_Values.end(), weight[iter_weight]);
+       // We increment the weight flag iterator
+        iter_weight++;
+    }    
+    auto row_end = _m_CRS_Row_Ptr.end();
+    _m_CRS_Row_Ptr.push_back(*row_end + v_neigh.size());
+    _mapping_l_to_g.push_back(i_fc);
+}
+
+void Subgraph::remove_node(const long &i_fc){
+    // initialize starting indices
+    long ind;
+    long ind_p_one;
+    // getting neighbours
+    vector<long> v_neigh = get_neighbours(i_fc); 
+    // weight iterator for erasing in the weight vector
+    vector<double>::iterator weight_it;
+    auto pos_col = _m_CRS_Col_Ind.begin();
+    auto pos_Values = _m_CRS_Values.begin();
+    long k;
+    for (const auto& elem: v_neigh) {
+     ind = _m_CRS_Row_Ptr[elem];
+     ind_p_one = _m_CRS_Row_Ptr[elem+1];
+     // Constant to keep track and erase the weight
+     for(auto it =pos_col+ind ; it != pos_col+ind_p_one; ++it) {
+       if (*it==i_fc){
+           _m_CRS_Col_Ind.erase(it);
+         // define the exact position of the element for the processing of the weight
+        // later.
+           k = it-pos_col;
+           weight_it = pos_Values + k;
+           _m_CRS_Values.erase(weight_it); 
+           // for each found i decrease the successive of 1 for the offset
+           for(auto it =_m_CRS_Row_Ptr.begin()+elem+1 ; it != _m_CRS_Row_Ptr.end(); ++it) { 
+               (*it--);       
+           }
+           break;
+        }
+      }
+     } 
+      // reduce the row ptr value of the deleted value
+     // do the same with i_fc
+     ind = _m_CRS_Row_Ptr[i_fc];
+     ind_p_one = _m_CRS_Row_Ptr[i_fc+1];
+     for(auto it =pos_col+ind ; it != pos_col+ind_p_one; ++it) {
+           _m_CRS_Col_Ind.erase(it);
+         // define the exact position of the element for the processing of the weight
+        // later.
+            k = it-pos_col;
+           weight_it = pos_Values + k;
+           _m_CRS_Values.erase(weight_it); 
+           // for each found i decrease the successive of 1 for the offset
+           for(auto it =_m_CRS_Row_Ptr.begin()+i_fc+1 ; it != _m_CRS_Row_Ptr.end(); ++it) { 
+               (*it--);       
+           }
+       }
+     // Get rid of the col element
+     auto Col_pointer =_m_CRS_Row_Ptr.begin()+i_fc;
+     _m_CRS_Row_Ptr.erase(Col_pointer);
+     // now we do not have nomore our node, but we must create a mapping between the 
+     // before and now, and translate it in the col_ind and update the mapping with the 
+     // global graph
+}
 
 
 
