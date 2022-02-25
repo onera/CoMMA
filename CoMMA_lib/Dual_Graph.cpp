@@ -164,6 +164,8 @@ void Subgraph::remove_node(const long &i_fc){
     auto pos_col = _m_CRS_Col_Ind.begin();
     auto pos_Values = _m_CRS_Values.begin();
     long k;
+    // mapping for the renumbering of the nodes
+    vector<long> internal_mapping;
     for (const auto& elem: v_neigh) {
      ind = _m_CRS_Row_Ptr[elem];
      ind_p_one = _m_CRS_Row_Ptr[elem+1];
@@ -206,8 +208,18 @@ void Subgraph::remove_node(const long &i_fc){
      // now we do not have nomore our node, but we must create a mapping between the 
      // before and now, and translate it in the col_ind and update the mapping with the 
      // global graph
+     long indice=0;
+     while(indice!=_m_CRS_Row_Ptr.size()) {
+	     if(indice!=i_fc){
+                internal_mapping.push_back(indice);
+	        indice++;
+	     }
+             else{internal_mapping.push_back(-1);}	     
+     }
+     for(auto &actual:_m_CRS_Col_Ind){
+	     actual = internal_mapping[actual];
+     }
 }
-
 
 
 Dual_Graph::Dual_Graph(const long &nb_c,
