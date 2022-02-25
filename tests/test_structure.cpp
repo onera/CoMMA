@@ -109,3 +109,32 @@ SCENARIO("Test of the tree", "[Tree]") {
      };
     }
 }
+SCENARIO("Subgraph", "[Subgraph]") {
+  GIVEN("We have the CSR representation") {
+    vector<CoMMAIndexT> adjMatrix_row_ptr ={0,2,4,7,9,10};
+    vector<CoMMAIndexT> adjMatrix_col_ind ={1,3,0,2,1,3,4,0,2,2}; 
+    vector<CoMMAWeightT> adjMatrix_areaValues ={1,1,1,1,1,1,1,1,1,1};
+    vector<CoMMAWeightT> volumes ={1,1,1,1,1};
+    WHEN("We build the graph") {
+       shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes));
+      THEN(
+          "We remove a node") {
+	      Marion->remove_node(3);
+	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
+		      cout<<"row_ptr"<<elem<<endl;
+	      }
+	      for (auto &elem:Marion->_m_CRS_Col_Ind){
+		      cout<<"col_ind"<<elem<<endl;
+	      }
+	      Marion->remove_node(0);
+	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
+		      cout<<"row_ptr"<<elem<<endl;
+	      }
+	      for (auto &elem:Marion->_m_CRS_Col_Ind){
+		      cout<<"col_ind"<<elem<<endl;
+	      }
+      }
+     };
+    }
+}

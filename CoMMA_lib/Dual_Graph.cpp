@@ -159,6 +159,7 @@ void Subgraph::remove_node(const long &i_fc){
     long ind_p_one;
     // getting neighbours
     vector<long> v_neigh = get_neighbours(i_fc); 
+
     // weight iterator for erasing in the weight vector
     vector<double>::iterator weight_it;
     auto pos_col = _m_CRS_Col_Ind.begin();
@@ -171,35 +172,34 @@ void Subgraph::remove_node(const long &i_fc){
      ind_p_one = _m_CRS_Row_Ptr[elem+1];
      // Constant to keep track and erase the weight
      for(auto it =pos_col+ind ; it != pos_col+ind_p_one; ++it) {
-       if (*it==i_fc){
+      	 if (*it==i_fc){
            _m_CRS_Col_Ind.erase(it);
          // define the exact position of the element for the processing of the weight
         // later.
            k = it-pos_col;
-           weight_it = pos_Values + k;
-           _m_CRS_Values.erase(weight_it); 
-           // for each found i decrease the successive of 1 for the offset
-           for(auto it =_m_CRS_Row_Ptr.begin()+elem+1 ; it != _m_CRS_Row_Ptr.end(); ++it) { 
-               (*it--);       
+	   weight_it = pos_Values + k;
+           _m_CRS_Values.erase(weight_it);  
+ 	   // for each found i decrease the successive of 1 for the offset
+           for(auto it_bis =_m_CRS_Row_Ptr.begin()+elem+1 ; it_bis != _m_CRS_Row_Ptr.end(); ++it_bis) { 
+    	      *it_bis=*it_bis-1;       
            }
-           break;
-        }
+ 	 }
       }
      } 
-      // reduce the row ptr value of the deleted value
+    // reduce the row ptr value of the deleted value
      // do the same with i_fc
      ind = _m_CRS_Row_Ptr[i_fc];
      ind_p_one = _m_CRS_Row_Ptr[i_fc+1];
      for(auto it =pos_col+ind ; it != pos_col+ind_p_one; ++it) {
-           _m_CRS_Col_Ind.erase(it);
+  	    _m_CRS_Col_Ind.erase(it);
          // define the exact position of the element for the processing of the weight
         // later.
             k = it-pos_col;
            weight_it = pos_Values + k;
            _m_CRS_Values.erase(weight_it); 
            // for each found i decrease the successive of 1 for the offset
-           for(auto it =_m_CRS_Row_Ptr.begin()+i_fc+1 ; it != _m_CRS_Row_Ptr.end(); ++it) { 
-               (*it--);       
+           for(auto it_bis =_m_CRS_Row_Ptr.begin()+i_fc+1 ; it_bis != _m_CRS_Row_Ptr.end(); ++it_bis) { 
+               *it_bis=*it_bis-1;       
            }
        }
      // Get rid of the col element
@@ -209,12 +209,15 @@ void Subgraph::remove_node(const long &i_fc){
      // before and now, and translate it in the col_ind and update the mapping with the 
      // global graph
      long indice=0;
-     while(indice!=_m_CRS_Row_Ptr.size()) {
-	     if(indice!=i_fc){
+     // to cycle on the main vector
+     long ix =0;
+     while(ix!=_m_CRS_Row_Ptr.size()+1){
+	     if(ix!=i_fc){
                 internal_mapping.push_back(indice);
 	        indice++;
 	     }
              else{internal_mapping.push_back(-1);}	     
+             ++ix;
      }
      for(auto &actual:_m_CRS_Col_Ind){
 	     actual = internal_mapping[actual];
