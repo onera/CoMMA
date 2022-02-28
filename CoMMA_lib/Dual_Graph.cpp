@@ -109,11 +109,11 @@ bool Graph::check_connectivity_g(){
 
 
 Subgraph::Subgraph(const long &nb_c,
-                       const vector<long> &m_crs_row_ptr,
-                       const vector<long> &m_crs_col_ind,
-                       const vector<double> &m_crs_values, 
-                       const vector<double> &volumes
-                       ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes){}
+                   const vector<long> &m_crs_row_ptr,
+                   const vector<long> &m_crs_col_ind,
+                   const vector<double> &m_crs_values, 
+                   const vector<double> &volumes
+                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes){}
 
 void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
     // Use the mapping
@@ -126,29 +126,34 @@ void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &
         low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
         if (low1!=_mapping_l_to_g.end()){
             v_l_neigh.push_back(low1-_mapping_l_to_g.begin());
+            cout<<"elem_neigh"<<elem<<endl;
         }
     }
     // variable to add weight for each face
     int iter_weight = 0;
+    long local_index = _m_CRS_Row_Ptr.size()-1;
     // initialization pointers for insertion, pointing to the first element of each
     auto pos_col = _m_CRS_Col_Ind.begin();
     auto pos_Values = _m_CRS_Values.begin();
+    auto row_end = _m_CRS_Row_Ptr.end()-1;
+    
     // cycle on the set of neighbours
-    for (const auto& elem: v_neigh) {
+    for (const auto& elem: v_l_neigh) {
         // insert the node and the weight (we have an iterator for this and remember that at edge is associated one weight)
-        _m_CRS_Col_Ind.insert(pos_col+_m_CRS_Row_Ptr[elem], i_fc);
-        _m_CRS_Values.insert(pos_Values+_m_CRS_Row_Ptr[elem], weight[iter_weight]);
+        // look at here https://stackoverflow.com/questions/71299247/inserting-an-element-in-given-positions-more-than-one-of-a-vector/71299304#71299304
+        // to understand why we re-initialize.
+           _m_CRS_Col_Ind.insert(_m_CRS_Col_Ind.begin()+_m_CRS_Row_Ptr[elem],local_index);
+           _m_CRS_Values.insert(_m_CRS_Values.begin()+_m_CRS_Row_Ptr[elem], weight[iter_weight]);
         // We modify the row pointer as far it is related with what we have done before
-        for(auto it =_m_CRS_Row_Ptr.begin()+elem ; it != _m_CRS_Row_Ptr.end(); ++it) {
-           (*it++);       
+           for(auto it =_m_CRS_Row_Ptr.begin()+elem ; it != _m_CRS_Row_Ptr.end(); ++it) {
+              ++(*it); 
         }
         // we do the same.
         _m_CRS_Col_Ind.insert(_m_CRS_Col_Ind.end(),elem);
         _m_CRS_Values.insert(_m_CRS_Values.end(), weight[iter_weight]);
        // We increment the weight flag iterator
-        iter_weight++;
+        ++iter_weight; 
     }    
-    auto row_end = _m_CRS_Row_Ptr.end();
     _m_CRS_Row_Ptr.push_back(*row_end + v_neigh.size());
     _mapping_l_to_g.push_back(i_fc);
 }

@@ -118,6 +118,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
     WHEN("We build the graph") {
        shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
                    adjMatrix_areaValues, volumes));
+       Marion->_mapping_l_to_g = {20,30,40,50,60};
       THEN(
           "We remove a node") {
 	      Marion->remove_node(3);
@@ -134,7 +135,20 @@ SCENARIO("Subgraph", "[Subgraph]") {
 	      for (auto &elem:Marion->_m_CRS_Col_Ind){
 		      cout<<"col_ind"<<elem<<endl;
 	      }
+	      }
+       THEN(
+          "We add a node") {
+              vector<long> v_neigh = {30,20};
+              long i_fc = 10;
+              vector<double> weight = {1,1};
+	      Marion->insert_node(v_neigh,i_fc,1,weight);
+	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
+		      cout<<"row_ptr"<<elem<<endl;
+	      }
+	      for (auto &elem:Marion->_m_CRS_Col_Ind){
+		      cout<<"col_ind"<<elem<<endl;
+	      }
+	      }
       }
      };
-    }
 }
