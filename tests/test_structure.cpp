@@ -116,24 +116,12 @@ SCENARIO("Subgraph", "[Subgraph]") {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1,1,1,1,1,1,1,1,1,1};
     vector<CoMMAWeightT> volumes ={1,1,1,1,1};
     WHEN("We build the graph") {
+       vector<long> _mapping_l_to_g = {20,30,40,50,60};
        shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes));
-       Marion->_mapping_l_to_g = {20,30,40,50,60};
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g));
       THEN(
           "We remove a node") {
 	      Marion->remove_node(50);
-	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
-		      cout<<"row_ptr"<<elem<<endl;
-	      }
-	      for (auto &elem:Marion->_m_CRS_Col_Ind){
-		      cout<<"col_ind"<<elem<<endl;
-	      }
-	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
-		      cout<<"row_ptr"<<elem<<endl;
-	      }
-	      for (auto &elem:Marion->_m_CRS_Col_Ind){
-		      cout<<"col_ind"<<elem<<endl;
-	      }
 	      }
        THEN(
           "We add a node") {
@@ -141,15 +129,10 @@ SCENARIO("Subgraph", "[Subgraph]") {
               long i_fc = 10;
               vector<double> weight = {1,1};
 	      Marion->insert_node(v_neigh,i_fc,1,weight);
-	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
-		      cout<<"row_ptr"<<elem<<endl;
-	      }
-	      for (auto &elem:Marion->_m_CRS_Col_Ind){
-		      cout<<"col_ind"<<elem<<endl;
-	      }
-
+              REQUIRE(Marion->check_connectivity_g()==true);
               REQUIRE(Marion->_mapping_l_to_g[5]==10);
 	      }
+             
       }
      };
 }

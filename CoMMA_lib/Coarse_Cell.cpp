@@ -61,8 +61,58 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
     if (__compactness == __dim) {
         _is_finalized = true;
     }
-
+    _mapping_g_to_l = build_CRS();
+//    for (const long &i_fc :_mapping_g_to_l){
+//        cout<<"mapping"<< i_fc << endl;
+//    }
+//    for (const long &i_fc :_adjMatrix_col_ind){
+//        cout<<"col_ind"<< i_fc << endl;
+//    }
+//    for (const long &i_fc :_adjMatrix_row_ptr){
+//        cout<<"row_ptr"<< i_fc << endl;
+//    }
+    _cc_graph = make_shared<Subgraph>(s_fc.size(), _adjMatrix_row_ptr,_adjMatrix_col_ind , _adjMatrix_areaValues,_volumes,_mapping_g_to_l);
 }
+
+vector<long> Coarse_Cell::build_CRS(){
+    // initialization vectors
+    long position = 0;
+    long index_weight;
+    vector<long> neigh;
+    vector<double> weight;
+    vector<long> row_ptr = {0};
+    vector<long> col_ind;
+    vector<long> mapping;
+    vector<double> area;
+    for (const long &i_fc : __s_fc){
+        // we add to the mapping the i_fc
+        mapping.push_back(i_fc);
+        // get neighbours and the weights associated
+        neigh = __fc_graph->get_neighbours(i_fc);
+        area = __fc_graph->get_weights(i_fc);
+        for(auto it =neigh.begin() ; it != neigh.end(); ++it) {
+           index_weight =it - neigh.begin(); 
+           if(__s_fc.count(*it)){
+             ++position;
+             col_ind.push_back(*it);
+             weight.push_back(area[index_weight]);
+           }
+        }
+        row_ptr.push_back(position);
+        _volumes.push_back(__fc_graph->_volumes[i_fc]);                 
+    }
+    _adjMatrix_row_ptr = row_ptr;
+    // Map in the local subgraph
+    for(auto it =col_ind.begin() ; it != col_ind.end(); ++it) {
+       auto indx = find(mapping.begin(),mapping.end(),*it);
+       index_weight = indx - mapping.begin();
+       _adjMatrix_col_ind.push_back(index_weight);
+    }
+    _adjMatrix_areaValues = weight;
+    
+    return(mapping);
+}
+
 
 bool Coarse_Cell::is_connected() {
 

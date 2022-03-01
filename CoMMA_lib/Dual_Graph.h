@@ -112,7 +112,8 @@ class Subgraph : public Graph {
                const vector<long> &m_crs_row_ptr,
                const vector<long> &m_crs_col_ind,
                const vector<double> &m_crs_values,
-               const vector<double> &volumes
+               const vector<double> &volumes,
+               const vector<long> &mapping_l_to_g
     );
    ~Subgraph() {
         cout << "Delete Dual_Graph" << endl;

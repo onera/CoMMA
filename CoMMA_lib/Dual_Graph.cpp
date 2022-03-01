@@ -112,8 +112,9 @@ Subgraph::Subgraph(const long &nb_c,
                    const vector<long> &m_crs_row_ptr,
                    const vector<long> &m_crs_col_ind,
                    const vector<double> &m_crs_values, 
-                   const vector<double> &volumes
-                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes){}
+                   const vector<double> &volumes,
+                   const vector<long> &mapping_l_to_g
+                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_mapping_l_to_g(mapping_l_to_g){}
 
 void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
     // Use the mapping

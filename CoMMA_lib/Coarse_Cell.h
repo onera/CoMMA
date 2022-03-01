@@ -6,6 +6,7 @@
 #define COMMA_PROJECT_COARSE_CELL_H
 
 #include "Dual_Graph.h"
+#include <memory>
 
 /** @brief Class implementing a Coarse_Cell object.
  * @param[in] fc_graph Dual_Graph object from where are taken the set of fine cells to create the 
@@ -32,13 +33,21 @@ public:
  *  @return true if the subgraph is connected, false if the subgraph is not connected*/
     bool is_connected();
 
-
-//vector<long> _adjMatrix_row_ptr;
-//vector<long> _adjMatrix_col_ind;
-//vector<double> _adjMatrix_areaValues;
-//vector<double> _volumes;
-
-//void convert_set_fc_to_CRS()
+/** @brief mapping vector. The position of the index is the local node, the value is the global*/
+    vector<long> _mapping_g_to_l;
+/** @brief The row pointer of the CSR representation of the subgraph*/
+    vector<long> _adjMatrix_row_ptr;
+/** @brief The column index representation of the CSR representation*/
+    vector<long> _adjMatrix_col_ind;
+/** @brief The area value of the internal fine cells*/
+    vector<double> _adjMatrix_areaValues;
+/** @brief The volumes of the internal fine cells*/
+    vector<double> _volumes;
+/** @brief shared pointer of the subgraph structure (CSR representation)*/
+    shared_ptr<Subgraph> _cc_graph;
+/** @brief function to build the local CSR subgraph representation
+ * @return a vector representing the local to global mapping.*/
+    vector<long> build_CRS();
 
 /** @brief   The fine cell i_fc has edge to j_cc coarse cell via edges: (i_fc, j_fc) for some j_fc
  *  i.e. i_fc in self.__icc, j_fc in j_cc 
