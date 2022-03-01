@@ -128,7 +128,6 @@ SCENARIO("Subgraph", "[Subgraph]") {
 	      for (auto &elem:Marion->_m_CRS_Col_Ind){
 		      cout<<"col_ind"<<elem<<endl;
 	      }
-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
 		      cout<<"row_ptr"<<elem<<endl;
 	      }
