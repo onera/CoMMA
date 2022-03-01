@@ -120,7 +120,7 @@ class Subgraph : public Graph {
     vector<long> _mapping_l_to_g;
     void insert_node(vector<long> &v_neigh, const long &i_fc,const double &volume,const vector<double> &weight);
 
-    void remove_node(const long &i_fc);
+    void remove_node(const long &elemento);
 
 };
 

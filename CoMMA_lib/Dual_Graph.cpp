@@ -158,7 +158,9 @@ void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &
     _mapping_l_to_g.push_back(i_fc);
 }
 
-void Subgraph::remove_node(const long &i_fc){
+void Subgraph::remove_node(const long &elemento){
+    auto low = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elemento);
+    long i_fc = low -_mapping_l_to_g.begin();  
     // initialize starting indices
     long ind;
     long ind_p_one;
@@ -209,8 +211,11 @@ void Subgraph::remove_node(const long &i_fc){
        }
      // Get rid of the col element
      auto Col_pointer =_m_CRS_Row_Ptr.begin()+i_fc;
+     // Modify the mapping
+     auto mapping_pointer =_mapping_l_to_g.begin()+i_fc;
      _m_CRS_Row_Ptr.erase(Col_pointer);
-     // now we do not have nomore our node, but we must create a mapping between the 
+     _mapping_l_to_g.erase(mapping_pointer); 
+      // now we do not have nomore our node, but we must create a mapping between the 
      // before and now, and translate it in the col_ind and update the mapping with the 
      // global graph
      long indice=0;

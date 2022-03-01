@@ -121,14 +121,14 @@ SCENARIO("Subgraph", "[Subgraph]") {
        Marion->_mapping_l_to_g = {20,30,40,50,60};
       THEN(
           "We remove a node") {
-	      Marion->remove_node(3);
+	      Marion->remove_node(50);
 	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
 		      cout<<"row_ptr"<<elem<<endl;
 	      }
 	      for (auto &elem:Marion->_m_CRS_Col_Ind){
 		      cout<<"col_ind"<<elem<<endl;
 	      }
-	      Marion->remove_node(0);
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 	      for (auto &elem:Marion->_m_CRS_Row_Ptr){
 		      cout<<"row_ptr"<<elem<<endl;
 	      }
@@ -148,6 +148,8 @@ SCENARIO("Subgraph", "[Subgraph]") {
 	      for (auto &elem:Marion->_m_CRS_Col_Ind){
 		      cout<<"col_ind"<<elem<<endl;
 	      }
+
+              REQUIRE(Marion->_mapping_l_to_g[5]==10);
 	      }
       }
      };
