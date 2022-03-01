@@ -8,6 +8,7 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
 #include "Tree.h"
+#include <memory>
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and 
  *  of the operation we can do on them.
@@ -39,6 +40,9 @@ public:
     inline long get_nb_of_cc() {
         return _cc_counter;
     }
+    
+    vector<shared_ptr<Subgraph>> _cc_vec;
+
 /** @brief It creates a coarse cell based on the set of fine cells given as an input 
  * @param[in] s_fc set of fine cells passed as a reference
  * @param[in] is_anisotropic boolean that tells if we are in an anisotropic case or not

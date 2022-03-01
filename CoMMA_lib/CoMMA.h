@@ -167,7 +167,7 @@ void agglomerate_one_level( // Dual graph:
                                     dimension = dimension)); 
 
  
-    agg->agglomerate_one_level(min_card,goal_card,max_card,-1);
+    agg->agglomerate_one_level(min_card,goal_card,max_card,0);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];

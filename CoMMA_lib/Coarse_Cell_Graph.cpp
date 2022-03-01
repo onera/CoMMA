@@ -68,14 +68,9 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
             //==================
-            shared_ptr<node> root(new node(_cc_counter,vol_cc));
-            shared_ptr<Tree> n_cc(new Tree(root));
-            for (const long &i_fc :s_fc) {
-                n_cc->insertSon(_cc_counter,i_fc,_fc_graph._volumes[i_fc],1);
-            }
-            n_cc->print();
-            _cc_tree.push_back(n_cc);
             Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
+            // we collect the various cc_graph, where the index in the vector is the i_cc
+            _cc_vec.push_back(new_cc->_cc_graph);
             _d_isotropic_cc[_cc_counter] = new_cc;
 
             // Update of dict_Card_Coarse_Cells:
