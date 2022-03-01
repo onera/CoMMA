@@ -155,10 +155,12 @@ void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &
         ++iter_weight; 
     }    
     _m_CRS_Row_Ptr.push_back(*row_end + v_neigh.size());
+    _volumes.push_back(volume);
     _mapping_l_to_g.push_back(i_fc);
 }
 
 void Subgraph::remove_node(const long &elemento){
+    // Pass to the local
     auto low = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elemento);
     long i_fc = low -_mapping_l_to_g.begin();  
     // initialize starting indices
@@ -213,6 +215,8 @@ void Subgraph::remove_node(const long &elemento){
      auto Col_pointer =_m_CRS_Row_Ptr.begin()+i_fc;
      // Modify the mapping
      auto mapping_pointer =_mapping_l_to_g.begin()+i_fc;
+     auto volumes_pointer =_volumes.begin()+i_fc;
+     _volumes.erase(volumes_pointer);
      _m_CRS_Row_Ptr.erase(Col_pointer);
      _mapping_l_to_g.erase(mapping_pointer); 
       // now we do not have nomore our node, but we must create a mapping between the 

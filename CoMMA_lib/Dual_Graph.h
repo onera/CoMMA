@@ -117,9 +117,17 @@ class Subgraph : public Graph {
    ~Subgraph() {
         cout << "Delete Dual_Graph" << endl;
     }
+/** @brief Mapping from the local number of node to the global. Being a subgraph this variable connect the local index of the node 
+ * with the global one*/
     vector<long> _mapping_l_to_g;
+/** @brief Insert a node in the subgraph and add it to the mapping the 
+ *  @param[in] v_neigh vector of the neighbors to be added. The neighbors must be given in the global indexing system.
+ *  @param[in] i_fc global index of the node
+ *  @param[in] volume Volume of the cell
+ *  @param[in] weight vector of the area of the faces of the given cells to be added.*/ 
     void insert_node(vector<long> &v_neigh, const long &i_fc,const double &volume,const vector<double> &weight);
-
+/** @brief Remove a node from the CRS representation and automatically adjust the mapping
+ *  @param[in] elemento global index of the node to be deleted.*/
     void remove_node(const long &elemento);
 
 };
