@@ -10,7 +10,6 @@ set(CMAKE_BUILD_TYPE Debug)  # Debug version
 
 
 set(CMAKE_CXX_STANDARD 17)
-
 # for linker in MAC read: 
 # https://github.com/catchorg/Catch2/issues/1204
 
@@ -20,6 +19,7 @@ project(CoMMA_Project)
 # Effective library
 
 SET(SOURCE_DIR "CoMMA_lib")
+
 
 # headers are in source dir
 
@@ -101,10 +101,11 @@ SET(TESTS ${IMPLEMENTATION}
 
 # Generate a test executable
 include_directories(Catch2/single_include)
-#include_directories(Catch2/include)
-
+add_compile_options("--coverage")
 add_executable("Comma_test" ${TESTS})
-set_source_files_properties( myprogram.cpp PROPERTIES COMPILE_FLAGS "--coverage" )
+target_link_libraries(Comma_test gcov)
+#target_link_libraries(Comma_test Boost)
+#set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################
 add_subdirectory(pybind11)
 pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
