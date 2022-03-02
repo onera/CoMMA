@@ -8,6 +8,4 @@
 [submodule "perfetto"]
 	path = perfetto
 	url = https://github.com/google/perfetto
-[submodule "boost"]
-	path = boost
-	url = https://github.com/boostorg/boost
+
