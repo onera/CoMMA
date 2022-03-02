@@ -29,7 +29,7 @@ test_a:
     script:
         - cd build
         - ./Comma_test -r junit > test_a.xml
-        - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+        - gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         reports:
