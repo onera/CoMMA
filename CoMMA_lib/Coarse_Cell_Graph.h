@@ -7,7 +7,7 @@
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
-#include "Tree.h"
+#include "Bimap.h"
 #include <memory>
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and 
@@ -41,7 +41,7 @@ public:
         return _cc_counter;
     }
 /** @brief Container of the CSR representation of the coarse cells */    
-    vector<shared_ptr<Subgraph>> _cc_vec;
+    Bimap<long,shared_ptr<Subgraph>> _cc_vec;
 
 
 /** @brief It creates a coarse cell based on the set of fine cells given as an input 
@@ -57,7 +57,6 @@ public:
     vector<bool> _a_is_fc_agglomerated;
     
 
-    vector<shared_ptr<Tree>> _cc_tree;
 
     void correction_main_triconnected(short min_neighbourhood_correction_step,
                                       short goal_card,

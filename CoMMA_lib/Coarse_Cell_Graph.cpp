@@ -61,7 +61,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             //==================
             Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
             // we collect the various cc_graph, where the index in the vector is the i_cc
-            _cc_vec.push_back(new_cc->_cc_graph);
+            _cc_vec.insert(_cc_counter,new_cc->_cc_graph);
             _d_isotropic_cc[_cc_counter] = new_cc;
 
             // Update of dict_Card_Coarse_Cells:
