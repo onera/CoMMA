@@ -40,8 +40,9 @@ public:
     inline long get_nb_of_cc() {
         return _cc_counter;
     }
-    
+/** @brief Container of the CSR representation of the coarse cells */    
     vector<shared_ptr<Subgraph>> _cc_vec;
+
 
 /** @brief It creates a coarse cell based on the set of fine cells given as an input 
  * @param[in] s_fc set of fine cells passed as a reference

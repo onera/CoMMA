@@ -136,3 +136,30 @@ SCENARIO("Subgraph", "[Subgraph]") {
       }
      };
 }
+
+SCENARIO("Test of the in-house Bimap", "[Bimap]") {
+  GIVEN("We have a Bimap of long and shared_ptr") {
+    vector<CoMMAIndexT> adjMatrix_row_ptr ={0,2,4,7,9,10};
+    vector<CoMMAIndexT> adjMatrix_col_ind ={1,3,0,2,1,3,4,0,2,2}; 
+    vector<CoMMAWeightT> adjMatrix_areaValues ={1,1,1,1,1,1,1,1,1,1};
+    vector<CoMMAWeightT> volumes ={1,1,1,1,1};
+    vector<long> _mapping_l_to_g = {20,30,40,50,60};
+    shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g));
+   // Bimap<long, shared_ptr<Subgraph>> Collection;
+    Bimap<long, shared_ptr<Subgraph>> Collection;
+    WHEN("We insert an element and we delete it") {
+      long ins = 0;
+      Collection.insert(ins,Marion);
+      Collection.print();
+      auto prova = Collection.get_B(ins);
+      Collection.erase_B(ins);
+      cout<<prova<<endl;
+       THEN(
+          "Bimap is empty") {
+           REQUIRE(Collection.empty()==true);
+        }
+             
+      }
+     };
+}

@@ -18,7 +18,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
     //==================
     // temporary fields
     //==================
-    // field that identify the index of the course cell in the 
+    // field that identify the index of the coarse cells in the 
     // fine cell (and retrived as the output)
     _fc_2_cc = vector<long>(fc_graph._number_of_cells, -1);
 }
@@ -43,28 +43,19 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
     double vol_cc = 0;
     for (const long &i_fc :s_fc) {
         vol_cc = vol_cc +_fc_graph._volumes[i_fc]; 
-        if (_fc_2_cc[i_fc] != -1) {
-            cerr << "fc " << i_fc << " is already assigned to i_cc " << _fc_2_cc[i_fc] << endl;
-        }
         assert(_fc_2_cc[i_fc] == -1);
     }
     
 
-    bool is_mutable = true;
+// Anisotropic case
     if (is_anisotropic) {
-
         assert(!is_creation_delayed);
-        _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc);  //TODO check there is a copy???
-
-        is_mutable = false;
+        _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc);  
     }
 
     if (!is_creation_delayed) {
         // We create the cc right now.
         // Everything is updated:
-        // if is_mutable: dict_cc, dict_card_cc, dict_compactness_2_cc
-        // in both case: number_of_fine_agglomerated_cells_tmp, isFineCellAgglomerated_tmp, _fc_2_cc,
-        if (is_mutable) {
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
             //==================
@@ -93,17 +84,10 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             } else {
                _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
             }
-
-        }
-
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter
         for (const long &i_fc :s_fc) {
             // Only if not isCreationDelayed:
-            // TODO not check this in production
-            if (_fc_2_cc[i_fc] != -1) {
-                cerr << "fc " << i_fc << " is Already assigned fine cell" << endl;
-            }
             assert(_fc_2_cc[i_fc] == -1);
             _fc_2_cc[i_fc] = _cc_counter;
         }

@@ -40,6 +40,7 @@ SET(IMPLEMENTATION
         ${SOURCE_DIR}/Tree.h
         ${SOURCE_DIR}/CoMMATypes.h
 	${SOURCE_DIR}/templateHelpers.h
+	${SOURCE_DIR}/Bimap.h
 	)
 set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp

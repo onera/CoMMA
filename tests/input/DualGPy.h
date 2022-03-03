@@ -4,6 +4,7 @@
 #include "Tree.h"
 #include "CoMMA.h"
 #include "templateHelpers.h"
+#include "Bimap.h"
 
 #ifndef DUALGPY_TEST_H
 #define DUALGPY_TEST_H
