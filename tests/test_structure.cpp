@@ -4,9 +4,7 @@
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
 
-// TEST_CASE("Structure test","[structure]")
 SCENARIO("Test of a structure", "[structure]") {
-  //{
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
@@ -117,8 +115,8 @@ SCENARIO("Subgraph", "[Subgraph]") {
     vector<CoMMAWeightT> volumes ={1,1,1,1,1};
     WHEN("We build the graph") {
        vector<long> _mapping_l_to_g = {20,30,40,50,60};
-       shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes,_mapping_l_to_g));
+       auto Marion = make_shared<Subgraph>(5, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g);
       THEN(
           "We remove a node") {
 	      Marion->remove_node(50);
@@ -138,14 +136,56 @@ SCENARIO("Subgraph", "[Subgraph]") {
 }
 
 SCENARIO("Test of the in-house Bimap", "[Bimap]") {
+  GIVEN("We have a 4x4 square 2D matrix of 16 elements that we consider divided in 4 Subgraph the structure of the subgraph is the same, changes fundamentally the mapping") {
+    vector<CoMMAIndexT> adjMatrix_row_ptr ={0,2,4,6,8};
+    vector<CoMMAIndexT> adjMatrix_col_ind ={0,1,0,2,1,3,0,2}; 
+    vector<CoMMAWeightT> adjMatrix_areaValues ={1,1,1,1,1,1,1,1};
+    vector<CoMMAWeightT> volumes ={1,1,1,1};
+    vector<long> mapping_l_to_g_0 = {0,1,5,4};
+    vector<long> mapping_l_to_g_1 = {2,3,7,6};
+    vector<long> mapping_l_to_g_2 = {8,3,13,12};
+    vector<long> mapping_l_to_g_3 = {10,11,15,14};
+    auto cc0 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_0); 
+    auto cc1 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_1); 
+    auto cc2 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_2); 
+    auto cc3 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_3); 
+    WHEN("We Collect the cells in the Bimap") {
+
+       Bimap<long, shared_ptr<Subgraph>> Collection;
+       Collection.insert(0,cc0);
+       Collection.insert(1,cc1);
+       Collection.insert(2,cc2);
+       Collection.insert(3,cc3);
+       THEN(
+          "We eliminate an element and we check the dimension changed") {
+       auto lung =Collection.lung();
+       REQUIRE(lung==4);
+       long elim = 2;
+       Collection.erase_B(elim);
+       lung = Collection.lung();
+       REQUIRE(lung==3);
+       for (auto i = elim+1; i != lung+1;i++){        
+           Collection.update_nodeB(i,i-1);
+       }
+       Collection.print();
+        }
+             
+      }
+     };
+}
+SCENARIO("Test the insertion of a coarse cell and deletion", "[Insertion Deletion]") {
   GIVEN("We have a Bimap of long and shared_ptr") {
     vector<CoMMAIndexT> adjMatrix_row_ptr ={0,2,4,7,9,10};
     vector<CoMMAIndexT> adjMatrix_col_ind ={1,3,0,2,1,3,4,0,2,2}; 
     vector<CoMMAWeightT> adjMatrix_areaValues ={1,1,1,1,1,1,1,1,1,1};
     vector<CoMMAWeightT> volumes ={1,1,1,1,1};
     vector<long> _mapping_l_to_g = {20,30,40,50,60};
-    shared_ptr<Subgraph> Marion(new Subgraph(5, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes,_mapping_l_to_g));
+    auto Marion= make_shared<Subgraph>(5, adjMatrix_row_ptr, adjMatrix_col_ind,
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g);
    // Bimap<long, shared_ptr<Subgraph>> Collection;
     Bimap<long, shared_ptr<Subgraph>> Collection;
     WHEN("We insert an element and we delete it") {
