@@ -162,7 +162,7 @@ void agglomerate_one_level( // Dual graph:
 
     delete(agg1); 
     }
-  unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
+    unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
                                     dimension = dimension)); 
 

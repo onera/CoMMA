@@ -246,7 +246,9 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     }
     // When we exit from this process all the cell are agglomerated, apart the delayed one
     // We proceed in creating the delayed one
+    cout<<"end"<<endl;
     (*_cc_graph).cc_create_all_delayed_cc();
+    cout<<"end"<<endl;
     (*_cc_graph).fill_cc_neighbouring();
     if ((*_cc_graph).is_cc_grid_not_structured(_goal_card)){
       correction(correction_steps,4);

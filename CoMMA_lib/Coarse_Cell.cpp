@@ -117,77 +117,11 @@ vector<long> Coarse_Cell::build_CRS(){
 bool Coarse_Cell::is_connected() {
 
     if (!__is_connectivity_up_to_date) {
-       __is_connected = __check_connectivity();
+       __is_connected = _cc_graph->check_connectivity_g();
        __is_connectivity_up_to_date = true;
     }
     return __is_connected;
 
-}
-
-bool Coarse_Cell::__check_connectivity(
-        int verbose) {
-/**
- * Checks connectivity of the coarse cell
- * :param verbose: level of output
- * :return: True or False
- */
-
-    // We assume that the size of the coarse is small <USHRT_MAX
-    //TODO smartly manage this: i.e. at creation and when we add a cell
-    //TODO also checks positivity when we remove a fc!
-    assert(__card < USHRT_MAX);
-
-    if (__card <= 1) {
-        return true;
-    }
-
-    //list_fc = list((*this).__d_def.keys())
-    unsigned short int nb_fc = __d_def.size();
-    long list_fc[nb_fc];
-    unsigned short int i = 0;
-    for (auto iKV:__d_def) {
-        list_fc[i++] = iKV.first;
-    }
-
-    __is_already_connected.clear();
-    __is_already_connected.insert(0);
-    unordered_set<long> set_next = {list_fc[0]};
-
-    unsigned short int nb_connected_cells = 1;
-    unordered_map<long, unsigned short int> dict_global_to_local;
-
-    for (unsigned short int i_loc_fc = 0; i_loc_fc < __card; i_loc_fc++) {
-        dict_global_to_local[list_fc[i_loc_fc]] = i_loc_fc;
-    }
-
-    while (nb_connected_cells < __card) {
-
-        if (!set_next.empty()) {
-            // i_fc = set_next.pop()
-            long i_fc = *set_next.begin();
-            set_next.erase(set_next.begin());
-
-            for (auto &i_k_v :__d_def[i_fc]) {
-
-                long i_fc_n = i_k_v.first;
-                if (dict_global_to_local.count(i_fc_n) > 0) {
-                    if (__is_already_connected.count(dict_global_to_local[i_fc_n]) == 0) {
-                        // dict_global_to_local[i_fc_n] not in (*this).__is_already_connected
-                        set_next.insert(i_fc_n);
-                        nb_connected_cells += 1;
-                        __is_already_connected.insert(dict_global_to_local[i_fc_n]);
-                    }
-                }
-
-            }
-
-
-        } else {
-            break;
-        }
-
-    }
-    return (nb_connected_cells == __card);
 }
 
 

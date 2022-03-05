@@ -64,9 +64,6 @@ class Bimap {
       mapA.insert(move(node));
      }
    }
-   /** @brief Returns the size of the container*/
-   inline size_t lung(){return(mapB.size());}
-
     /**@brief Getter of the B value starting from a A value
  *     @param[in] a the associated value we want to search*/
       B get_B(const A &a){
@@ -100,7 +97,9 @@ class Bimap {
     }
   /** @brief Check if the Bimap is empty*/
     inline bool empty(){ return(mapA.empty());}
-   
+  /** @brief Returns the size of the container*/
+    inline size_t lung(){return(mapB.size());}
+ 
   protected:
     /** @brief Left map **/
     map<B, const A*> mapA;

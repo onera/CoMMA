@@ -80,9 +80,6 @@ public:
     unordered_set<long> get_s_fc_w_outer_neighbours(unsigned short int min_degree = 0);
 /** @brief variable defining ig the cell is finalized or not */
     bool _is_finalized = false;
-/** @brief Check the connectivity of the subgraph representing the fine cells constituting the coarse cell
- *  @return true if the subgraph is connected, false if it is not connected*/
-    bool __check_connectivity(int verbose = 0);
 /** @brief Helper to add to the dictionary the value related. i_fc and j_cc are related to two different coarse
  * cells and connected thrpugh the outer face of j_fc.
  * i_fc  | j_cc | i_cc | Area |

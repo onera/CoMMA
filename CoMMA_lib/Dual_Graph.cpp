@@ -98,6 +98,9 @@ bool Graph::check_connectivity_g(){
      for (int i = 0; i < _number_of_cells; i++) {
             _visited.push_back(false);
      }
+     if (_number_of_cells == 1){
+           return(true);
+     }
      DFS( _m_CRS_Col_Ind[0]);
      for (int i = 0; i < _number_of_cells; i++) {
             if(_visited[i]==false){
@@ -127,7 +130,6 @@ void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &
         low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
         if (low1!=_mapping_l_to_g.end()){
             v_l_neigh.push_back(low1-_mapping_l_to_g.begin());
-            cout<<"elem_neigh"<<elem<<endl;
         }
     }
     // variable to add weight for each face

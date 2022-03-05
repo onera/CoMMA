@@ -45,19 +45,19 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         vol_cc = vol_cc +_fc_graph._volumes[i_fc]; 
         assert(_fc_2_cc[i_fc] == -1);
     }
-    
-
+    bool is_mutable = true;
 // Anisotropic case
     if (is_anisotropic) {
         assert(!is_creation_delayed);
-        _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc);  
+        _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc); 
+        is_mutable = false; 
     }
-
     if (!is_creation_delayed) {
         // We create the cc right now.
         // Everything is updated:
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
+            if (is_mutable){
             //==================
             Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
             // we collect the various cc_graph, where the index in the vector is the i_cc
@@ -76,7 +76,6 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             // Update of compactness informations:
             //####################################
             assert((*new_cc).is_connected());
-
             unsigned short int deg_compactness = (*new_cc).__compactness;  // (*this)._fc_graph.compute_min_fc_compactness_inside_a_cc(s_fc)
             if (_d_compactness_2_cc.count(deg_compactness) > 0) {
                 //if deg_compactness in (*this)._d_compactness_2_cc:
@@ -84,6 +83,8 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             } else {
                _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
             }
+        }
+
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter
         for (const long &i_fc :s_fc) {
@@ -100,7 +101,6 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         // Only isFineCellAgglomerated_tmp, number_of_fine_agglomerated_cells_tmp and
         // dict_DistributionOfCardinalOfCoarseElements are modified!
         _delayed_cc.push_back(s_fc);
-        // raise ValueError("TO DO")
     }
 
     for (const long &i_fc :s_fc) {
