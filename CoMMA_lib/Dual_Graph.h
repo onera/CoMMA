@@ -118,6 +118,10 @@ class Subgraph : public Graph {
    ~Subgraph() {
         cout << "Delete Dual_Graph" << endl;
     }
+/** @brief Cardinality of the given subgraph, alias the number of nodes contained*/
+    long _cardinality = 0; 
+/** @brief Compactness of the given subgraph */
+    long _compactness=0;
 /** @brief Mapping from the local number of node to the global. Being a subgraph this variable connect the local index of the node 
  * with the global one*/
     vector<long> _mapping_l_to_g;

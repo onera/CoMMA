@@ -184,7 +184,7 @@ vector<long> Coarse_Cell_Graph::get_neigh_cc(const long &i_fc,const long &i_cc) 
 
  // update the member variable based on mapping
 void Coarse_Cell_Graph::update_fc_2_cc(const vector<long> &mapping) {
-    for (auto &elem : _fc_2_cc){
+    for (auto const &elem : _fc_2_cc){
         // we substitute in elem the mapped element
         elem = mapping[elem];
     }
@@ -234,12 +234,10 @@ void Coarse_Cell_Graph::correct(){
                 if (neig_cc->_cardinality == 4 && neig_cc->_compactness == 2){
                 // If the condition is verified we add the cell to the identified cc and
                 // we remove it from the current cc
-                   vector<long> fine_neigh = _fc_graph.get_neighbours(i_fc);
-                   vector<double> fine_weights = _fc_graph.get_weights(i_fc);
-                   neig_cc->insert_node(fine_neigh,i_fc,_fc_graph._volumes[i_fc],fine_weights); 
+                   neig_cc->insert_node(_fc_graph.get_neighbours(i_fc),i_fc,_fc_graph._volumes[i_fc],_fc_graph.get_weights(i_fc)); 
                    current_cc->remove_node(i_fc);
                    // the new it point directly to the next element in the map
-                   it = remove_cc(it);
+                   it = remove_cc(it)
                    break;
                 }
            }
@@ -260,7 +258,7 @@ void Coarse_Cell_Graph::correct(){
             neigh.clear();  
         }
         else{
-          ++it; 
+          ++it 
         }
     }
 }

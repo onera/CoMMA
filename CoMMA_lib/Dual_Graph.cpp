@@ -117,7 +117,21 @@ Subgraph::Subgraph(const long &nb_c,
                    const vector<double> &m_crs_values, 
                    const vector<double> &volumes,
                    const vector<long> &mapping_l_to_g
-                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_mapping_l_to_g(mapping_l_to_g){}
+                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_mapping_l_to_g(mapping_l_to_g){
+// Definition degree
+long pos_old = 0;
+long degree=0;
+for (const long &elem:m_crs_row_ptr){
+    degree = elem-pos_old;
+    if (degree> _compactness){
+      _compactness = degree;
+    } 
+    pos_old = elem;
+
+}
+//Definition cardinality
+ _cardinality=nb_c;
+}
 
 void Subgraph::insert_node(vector<long> &v_neigh,const long &i_fc,const double &volume,const vector<double> &weight){
     // Use the mapping
@@ -225,9 +239,9 @@ void Subgraph::remove_node(const long &elemento){
       // now we do not have nomore our node, but we must create a mapping between the 
      // before and now, and translate it in the col_ind and update the mapping with the 
      // global graph
-     long indice=0;
+     long indice = 0;
      // to cycle on the main vector
-     long ix =0;
+     long ix = 0;
      while(ix!=_m_CRS_Row_Ptr.size()+1){
 	     if(ix!=i_fc){
                 internal_mapping.push_back(indice);

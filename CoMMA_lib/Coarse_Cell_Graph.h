@@ -7,7 +7,6 @@
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
-#include "Bimap.h"
 #include <memory>
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and 
@@ -36,14 +35,25 @@ public:
     inline long choose_new_seed() {
         return (_fc_graph._seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
     }
+
+    
+
 /** @brief Helper to get the number of coarse cells */
     inline long get_nb_of_cc() {
         return _cc_counter;
     }
-/** @brief Container of the CSR representation of the coarse cells */    
-    Bimap<long,shared_ptr<Subgraph>> _cc_vec;
-
-
+/** @brief map container of the CSR representation of the coarse cells */    
+    map<long,shared_ptr<Subgraph>> _cc_vec;
+/** @brief Retrive the indexes of the neighbouring coarse cells to a given fine cell in a coarse cell (excluding the 
+ *  given coarse cell in which the fine cell is)
+ *  @param[in] i_fc index of the fine cell inside the coarse cell to be analysed
+ *  @param[in] i_cc index of the coarse cell in which the fine cell is in
+ *  @return vector of the index of the coarse cells
+ */
+    vector<long> get_neigh_cc(const long &i_fc,const long &i_cc);
+    void update_fc_2_cc(const vector<long> &mapping); 
+    map<long,shared_ptr<Subgraph>>::iterator remove_cc(map<long,shared_ptr<Subgraph>>::iterator elim);
+    void correct();
 /** @brief It creates a coarse cell based on the set of fine cells given as an input 
  * @param[in] s_fc set of fine cells passed as a reference
  * @param[in] is_anisotropic boolean that tells if we are in an anisotropic case or not
@@ -106,8 +116,6 @@ public:
     unordered_map<long, unordered_set<long>> get_d_cc_aniso();
 
     unordered_map<unsigned short int, long> get_d_distribution_of_cardinal_of_isotropic_cc();
-
-    unsigned short int get_cc_compactness(const long &i_cc);
 
     void cc_create_all_delayed_cc();
 /** @brief This function swaps the fine cell i_fc which belongs to i_origin_cc cc to i_destination_cc cc.
