@@ -216,12 +216,6 @@ Agglomerator_Biconnected::Agglomerator_Biconnected (Dual_Graph &graph,
 		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,dimension){
 	//no particular constructor
 };
-Agglomerator_Triconnected::Agglomerator_Triconnected (Dual_Graph &graph,
-		Coarse_Cell_Graph &cc_graph,
-		 int dimension) : Agglomerator_Isotropic(graph,cc_graph,dimension){
-	//no particular constructor
-};
-
 void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
                                          const short min_card,
                                          const short max_card,
@@ -230,9 +224,9 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     // We define a while for which we control the number of agglomerated cells
     short compactness = 0; 
     long nb_of_fc = _l_nb_of_cells[0];
-    while ((*_cc_graph).get_number_of_fc_agglomerated() < nb_of_fc) {
+    while (_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
-        long seed = (*_cc_graph).choose_new_seed();
+        long seed = _cc_graph->choose_new_seed();
         // 2) Choose the set of Coarse Cells with the specification of the algorithm
 	// in the children class (triconnected or biconnected)
 	unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,compactness);
@@ -242,19 +236,13 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
 	 // the optimal cc choice process. Remember the compactness is the minimum degree in
 	 // the coarse cell.
     	 bool is_creation_delayed = compactness < _dimension;
-         (*_cc_graph).cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
+         _cc_graph->cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
     }
     // When we exit from this process all the cell are agglomerated, apart the delayed one
     // We proceed in creating the delayed one
-    cout<<"end"<<endl;
-    (*_cc_graph).cc_create_all_delayed_cc();
-    cout<<"end"<<endl;
-    (*_cc_graph).fill_cc_neighbouring();
-    if ((*_cc_graph).is_cc_grid_not_structured(_goal_card)){
-      correction(correction_steps,4);
-    }
-    (*_cc_graph).cc_renumber();
-    _l_nb_of_cells.push_back((*_cc_graph)._cc_counter);
+    _cc_graph->cc_create_all_delayed_cc();
+    _cc_graph->correct();
+    _l_nb_of_cells.push_back(_cc_graph->_cc_counter);
 }
 
 unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
@@ -276,7 +264,7 @@ unordered_set<long> Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_
                                             max_order_of_neighbourhood,   //in and out
                                             d_n_of_seed, //output, the function fills the dictionary
                                             _max_card,
-                                            (*_cc_graph)._a_is_fc_agglomerated); // anisotropic cells agglomerated (not to take into account in the process)
+                                            _cc_graph->_a_is_fc_agglomerated); // anisotropic cells agglomerated (not to take into account in the process)
     // We get the number of neighborhoods
     short nb_neighbours = _fc_graph.get_nb_of_neighbours(seed);
     // return the area of the face connected to the seed
@@ -577,79 +565,4 @@ void Agglomerator_Biconnected::compute_best_fc_to_add(Dual_Graph &graph,
 
 }
 
-void Agglomerator_Triconnected::correction(int correction_steps, int num_iterations){
-  // We iterate the corrections 
-}
-
-template<>
-void Agglomerator_Biconnected::operation_correction<1>(int num_iterations){
-	for (int i = 0; i<num_iterations; i++){
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-	}
-}
-template<>
-void Agglomerator_Biconnected::operation_correction<2>(int num_iterations){
-	for (int i = 0; i<num_iterations; i++){
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
-	}
-}
-template<>
-void Agglomerator_Biconnected::operation_correction<3>(int num_iterations){
-	for (int i = 0; i<num_iterations; i++){
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
-			(*_cc_graph).correction_swap_leaf_fc_v2();
-	}
-}
-template<>
-void Agglomerator_Biconnected::operation_correction<4>(int num_iterations){
-	for (int i = 0; i<num_iterations; i++){
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
-			(*_cc_graph).correction_swap_leaf_fc_v2();
-			(*_cc_graph).correction_reduce_too_big_cc(_goal_card,0);
-	}
-}
-template<>
-void Agglomerator_Biconnected::operation_correction<5>(int num_iterations){
-	for (int i = 0; i<num_iterations; i++){
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-			(*_cc_graph).correction_make_small_cc_bigger(_threshold_card,_min_card,_goal_card,0);
-			(*_cc_graph).correction_swap_leaf_fc_v2();
-			(*_cc_graph).correction_reduce_too_big_cc(_goal_card,0);
-			(*_cc_graph).correction_remove_too_small_cc(_threshold_card);
-	}
-}
-
-
-
-
-
-void Agglomerator_Biconnected::correction(int correction_steps, int num_iterations){
-	if (correction_steps == 0){
-               // if correction steps = 0 no correction is happening
-	} else if (correction_steps==1){
-		operation_correction<1>(num_iterations);
-	} else if (correction_steps==2){
-		operation_correction<2>(num_iterations);
-	} else if (correction_steps==3){
-		operation_correction<3>(num_iterations);
-	} else if (correction_steps==4){
-		operation_correction<4>(num_iterations);
-	} else if (correction_steps==5 || correction_steps==-1){
-		operation_correction<5>(num_iterations);
-	}
-	else{cout<<"Value out of range\n";}
-	// TODO reimplement  _correction_split_too_big_cc_in_two();
-
-//            cout<<iteration<<" seed "<<seed<<endl;
-}
-
-
-
-unordered_set<long> Agglomerator_Triconnected::choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                   short &compactness){ 
-                                                                   bool is_order_primary = false; 
-                                                                   bool increase_neighbouring = true; }
 

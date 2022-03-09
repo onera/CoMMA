@@ -17,7 +17,6 @@
 class Agglomerator_Anisotropic;
 class Agglomerator_Isotropic;
 class Agglomerator_Biconnected;
-class Agglomerator_Triconnected;
 
 /** @brief A class responsible to do the interface between the different kinds of
  *  agglomerator
@@ -182,11 +181,6 @@ class Agglomerator_Isotropic : public Agglomerator{
     */ 
     virtual unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
                                                                    short &compactness) = 0;
-    /** @brief Pure virtual function implemented in the cild classes. It implements the correction steps to operate
-     * on the cells after the agglomeration performed with the classical biconnected and triconnected algorithms.
-     * @param[in] correction_steps level of the correction steps. */
-    virtual void correction(int correction_steps, int num_iterations) = 0;
-
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
@@ -222,35 +216,8 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
                                   short &max_faces_in_common,
                                   double &min_ar_surf,
                                   double &min_ar_vol);
-    void correction(int correction_steps, int num_iterations) override;
-    /** @brief function to be specialized of correction steps. We use this method to 
-     * avoid reevaluation of the correction steps in the cycle of iterations
-     */
-    template <int correction_steps>
-    void operation_correction(int num_iterations);
 };
 
 
 
-/** @brief Child class of Agglomerator Isotropic where is implemented a specific
- * triconnected algorithm for the agglomeration.
- */
-
-class Agglomerator_Triconnected : public Agglomerator_Isotropic{
-    public:	
-/** @brief Constructor of the class. No specific implementation, it instantiates the
- * base class Agglomerator_Isotropic */
-    Agglomerator_Triconnected (Dual_Graph &graph,
-		 Coarse_Cell_Graph &cc_graph,
-                 int dimension = 3); 
-    /** @brief Destructor*/
-    ~Agglomerator_Triconnected();
-    /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
-     * Agglomerate_one_level of the Agglomerator_Isotropic */
-    unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,
-                                                                    short &compactness) override;
-    protected:
-
-    void correction(int correction_steps, int num_iterations) override;
-};
 #endif //COMMA_PROJECT_AGGLOMERATOR_H
