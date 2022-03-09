@@ -66,7 +66,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
 
             // Update of dict_Card_Coarse_Cells:
             //==================
-            unsigned short int card = (*new_cc).__card;
+            unsigned short int card = (*new_cc)._cc_graph->_cardinality;
             if (_d_card_2_cc.count(card) > 0) {
                 _d_card_2_cc[card].insert(_cc_counter);
             } else {
@@ -76,7 +76,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             // Update of compactness informations:
             //####################################
             assert((*new_cc).is_connected());
-            unsigned short int deg_compactness = (*new_cc).__compactness;  // (*this)._fc_graph.compute_min_fc_compactness_inside_a_cc(s_fc)
+            auto deg_compactness = new_cc->_cc_graph->_compactness;  // (*this)._fc_graph.compute_min_fc_compactness_inside_a_cc(s_fc)
             if (_d_compactness_2_cc.count(deg_compactness) > 0) {
                 //if deg_compactness in (*this)._d_compactness_2_cc:
                 _d_compactness_2_cc[deg_compactness].insert(_cc_counter);
@@ -120,7 +120,7 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_iso() {
 
     for (auto &i_k_v : _d_isotropic_cc) {
         long i_cc = i_k_v.first;
-        unordered_set<long> tmp(i_k_v.second->get_s_fc());
+        unordered_set<long> tmp(i_k_v.second->__s_fc);
         d[i_cc] = tmp;
     }
     return d;
@@ -149,7 +149,7 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_all() {
 //            cout << i << ", ";
 //        }
 //        cout << endl;
-        unordered_set<long> tmp(i_k_v.second->get_s_fc());
+        unordered_set<long> tmp(i_k_v.second->__s_fc);
         d[i_cc] = tmp;
 //        if (*d)[i_cc]==NULL;
 
@@ -306,7 +306,7 @@ bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
         short goal_compactness = _fc_graph._dimension;
 
         for (const auto &i_k_v :_d_isotropic_cc) {
-            if ((*i_k_v.second).__compactness != goal_compactness) {
+            if ((*i_k_v.second)._cc_graph->_compactness != goal_compactness) {
                 return true;
             }
         }
@@ -320,7 +320,7 @@ bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {
 unordered_map<unsigned short, long> Coarse_Cell_Graph::compute_d_distribution_of_cardinal_of_isotropic_cc() {
     unordered_map<unsigned short, long> d_distr_card_cc;
     for (const auto &i_k_v : _d_isotropic_cc) {
-        unsigned short card = (*_d_isotropic_cc[i_k_v.first]).__card;
+        unsigned short card = (*_d_isotropic_cc[i_k_v.first])._cc_graph->_cardinality;
         if (d_distr_card_cc.count(card)) {
         } else {
             d_distr_card_cc[card] = 1;
