@@ -23,13 +23,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
     _fc_2_cc = vector<long>(fc_graph._number_of_cells, -1);
 }
 
-Coarse_Cell_Graph::~Coarse_Cell_Graph() {
-    if (!_d_isotropic_cc.empty()) {
-        for (auto i_kv:_d_isotropic_cc) {
-            delete i_kv.second;
-        }
-    }
-}
+Coarse_Cell_Graph::~Coarse_Cell_Graph() {}
 
 
 
@@ -45,21 +39,18 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         vol_cc = vol_cc +_fc_graph._volumes[i_fc]; 
         assert(_fc_2_cc[i_fc] == -1);
     }
-    bool is_mutable = true;
 // Anisotropic case
     if (is_anisotropic) {
         assert(!is_creation_delayed);
         _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc); 
-        is_mutable = false; 
     }
     if (!is_creation_delayed) {
         // We create the cc right now.
         // Everything is updated:
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
-      //      if (is_mutable){
             //==================
-            Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
+            auto new_cc = make_shared<Coarse_Cell>(_fc_graph,_cc_counter, s_fc);
             // we collect the various cc_graph, where the index in the vector is the i_cc
             _cc_vec.insert(pair<long,shared_ptr<Subgraph>>(_cc_counter,new_cc->_cc_graph));
             _d_isotropic_cc[_cc_counter] = new_cc;
@@ -83,7 +74,6 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             } else {
                _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
             }
-       // }
 
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter

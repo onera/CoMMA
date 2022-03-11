@@ -126,7 +126,7 @@ public:
 protected :
     /** @brief Variable where are recorded the isotropic coarse cells. Index is the global index of the coarse
      * cell, key is the pointer to a Coarse_Cell element. */
-    unordered_map<long, Coarse_Cell *> _d_isotropic_cc;
+    unordered_map<long, shared_ptr<Coarse_Cell>> _d_isotropic_cc;
      /** @brief Number of agglomerated fine cells */
     long _nb_of_agglomerated_fc = 0; 
     /** @brief vector of the set of fine cells composing the too small coarse cells that will be built at the end of the agglomeration
