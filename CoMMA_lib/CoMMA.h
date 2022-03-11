@@ -132,8 +132,6 @@ void agglomerate_one_level( // Dual graph:
                                      dimension);
     
     Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph); 
-    bool is_visu_data_stored = true;  //TODO get this via argument:
- 
    // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
     // @todo maybe re-refactor the class agglomerator to allow the implicit upcast like the biconnected case
     // The agglomerator anisotropic is not called with the  implicit upcasting pointing because of the initialization of
@@ -144,17 +142,33 @@ void agglomerate_one_level( // Dual graph:
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     cc_graph,
                                     dimension = dimension);
-   long nb_agglomeration_lines = 0;
-   forward_list<deque<long> *> agglomeration_lines;
+    long nb_agglomeration_lines = 0;
+    forward_list<deque<long> *> agglomeration_lines;
+    // case in which we have already agglomerated one level and hence we have already agglomeration
+    // lines available; no need to recreate them.
+    if(!isFirstAgglomeration_long){
+        auto fineAgglomerationLines_array_Idx_size = agglomerationLines_Idx.size();
+        for (long i = fineAgglomerationLines_array_Idx_size - 2; i > -1; i--) {
+            long ind = agglomerationLines_Idx[i];
+            long indPOne = agglomerationLines_Idx[i + 1];
+            deque<long> *dQue = new deque<long>();
+            for (long j = ind; j < indPOne; j++) {
+                (*dQue).push_back(agglomerationLines[j]);
+            }
+            agglomeration_lines.push_front(dQue);
+            nb_agglomeration_lines++;
+        }
+    }
     // @todo add exception if it is not the first agglomeration (so if we are at a further level)
     // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
     // in this case we are. in the todo we have to treat the case in which we are not
-   Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
-   // cout << "Agg aniso";  
+    Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
-    int i_level = 0;
+     //level of the line: WARNING! here 1 it means thatwe give it back lines in the new global
+     //index, 0 the old
+    int i_level = 1;
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
                             agglomerationLines);;  
@@ -162,9 +176,14 @@ void agglomerate_one_level( // Dual graph:
 
     delete(agg1); 
     }
-    unique_ptr<Agglomerator> agg(new Agglomerator_Biconnected(fc_graph,
+    auto agg = new Agglomerator_Biconnected(fc_graph,
 		                    cc_graph,
-                                    dimension = dimension)); 
+                                    dimension = dimension); 
+
+
+//    auto agg = make_unique<Agglomerator_Biconnected>(fc_graph,
+//		                    cc_graph,
+//                                    dimension = dimension); 
 
  
     agg->agglomerate_one_level(min_card,goal_card,max_card,0);
