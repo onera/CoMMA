@@ -57,7 +57,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         // Everything is updated:
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
-            if (is_mutable){
+      //      if (is_mutable){
             //==================
             Coarse_Cell *new_cc = new Coarse_Cell(_fc_graph,_cc_counter, s_fc);
             // we collect the various cc_graph, where the index in the vector is the i_cc
@@ -83,7 +83,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             } else {
                _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
             }
-        }
+       // }
 
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter
@@ -145,22 +145,13 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_all() {
 
     for (auto &i_k_v : _d_isotropic_cc) {
         long i_cc = i_k_v.first;
-//        for (auto &i  : i_k_v.second->get_s_fc()) {
-//            cout << i << ", ";
-//        }
-//        cout << endl;
         unordered_set<long> tmp(i_k_v.second->__s_fc);
         d[i_cc] = tmp;
-//        if (*d)[i_cc]==NULL;
-
-//        (*d)[i_cc] = (*(* i_k_v.second).get_s_fc());
     }
     for (auto &i_k_v : _d_anisotropic_cc) {
         long i_cc = i_k_v.first;
         d[i_cc] = i_k_v.second;
     }
-//    (*d).insert((*this)._d_anisotropic_cc.begin(), (*this)._d_anisotropic_cc.end());
-//    (*d).merge((*this)._d_anisotropic_cc);
     return d;
 }
 
@@ -191,11 +182,11 @@ map<long,shared_ptr<Subgraph>>::iterator Coarse_Cell_Graph::remove_cc(map<long,s
       // We get the length
       auto lung = _cc_vec.size();
       //update value of the other nodes
-      for (auto i = (it->first)+1; i != lung+1;i++){
+      for (auto i = (it->first); i != lung+1;i++){
          auto node = _cc_vec.extract(i);
          if (!node.empty())
          {
-           node.key() = i++;
+           node.key() = i-1;
            _cc_vec.insert(move(node));
           }
        }
@@ -210,7 +201,6 @@ void Coarse_Cell_Graph::correct(){
     map<long,shared_ptr<Subgraph>> cc_vec_copy;
     // We cycle on the subgraphs of the bimap structure
     for (auto it= _cc_vec.begin();it!=_cc_vec.end();) {
-        cout<<"enter"<<endl;
         // We enter in the property of the subgraph of being 1
         // and we consider what hapepns. Remember that second because
         // we are checking the subgraph
@@ -225,7 +215,7 @@ void Coarse_Cell_Graph::correct(){
            for (auto const &elem : neigh){
                 auto neig_cc = _cc_vec[elem];
                 //condizione
-                if (neig_cc->_cardinality == 4 && neig_cc->_compactness == 2){
+                if (neig_cc->_cardinality <= 4 && neig_cc->_compactness >= 1){
                 // If the condition is verified we add the cell to the identified cc and
                 // we remove it from the current cc
                 // first we assign to the fc_2_cc the new cc (later it will be renumbered considering the deleted
@@ -253,13 +243,14 @@ void Coarse_Cell_Graph::correct(){
              else{mapping.push_back(-1);}	     
              ++ix;
             }
-            update_fc_2_cc(mapping);
-            neigh.clear();  
+            update_fc_2_cc(mapping); 
+            neigh.clear(); 
         }
         else{
           ++it; 
         }
     }
+
 }
 
 
@@ -274,15 +265,16 @@ void Coarse_Cell_Graph::cc_create_all_delayed_cc() {
 
 
 void Coarse_Cell_Graph::cc_update_cc(unordered_set<long> set_of_fc_to_add,
-                                     long i_target_cc) {
+                                     const long &i_target_cc) {
 //Add (not yet agglomerated) fine cells to a already created cc of index i_target_cc.
 //          Update a cc with some (not yet agglomerated) fine cells.
-
-    if (is_isotropic_cc(i_target_cc)) {
-       cerr<<"error: function implemented for anisotropic"<<endl;
-    } else {
-        _d_anisotropic_cc[i_target_cc].insert(set_of_fc_to_add.begin(), set_of_fc_to_add.end());
-    }
+    _d_anisotropic_cc[i_target_cc].insert(set_of_fc_to_add.begin(), set_of_fc_to_add.end());
+    auto neig_cc = _cc_vec[i_target_cc];
+    for (auto &elem : set_of_fc_to_add){
+                   vector<long> fine_neigh = _fc_graph.get_neighbours(elem);
+                   vector<double> fine_weights = _fc_graph.get_weights(elem);
+                   neig_cc->insert_node(fine_neigh,elem,_fc_graph._volumes[elem],fine_weights); 
+        }
 
     // Update of the associated cc number the output of the current function agglomerate
     for (const long i_fc:set_of_fc_to_add) {

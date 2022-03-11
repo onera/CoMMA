@@ -71,7 +71,7 @@ public:
 /** @brief Add a set of fine cells to the actual coarse cell and update the related dictionaries 
  * @ param[in] set_of_fc_to_add set of fine cells to be added
  * @ param[in] i_target_cc index of targetted coarse cells */
-    void cc_update_cc(unordered_set<long> set_of_fc_to_add, long i_target_cc);
+    void cc_update_cc(unordered_set<long> set_of_fc_to_add,const long &i_target_cc);
 
     unordered_map<long, unordered_set<long>> get_d_cc_all();
 
@@ -85,10 +85,6 @@ public:
 
     inline bool is_anisotropic_cc(const long &i_cc) const {
         return (!_d_anisotropic_cc.empty()) && (_d_anisotropic_cc.count(i_cc));
-    }
-
-    inline bool is_isotropic_cc(const long &i_cc) const {
-        return (!_d_isotropic_cc.empty()) && (_d_isotropic_cc.count(i_cc));
     }
 
     inline bool is_fc_agglomerated_in_isotropic_cc(const long &i_fc) const {
@@ -146,11 +142,6 @@ protected :
     /** @brief Dictionary that contains the compactness as a key and a set of the compactness cells as a value*/
     unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; 
 
-
-    void _cc_update_neighbours(const long &i_fc,
-                               const unordered_set<long> &s_fc,
-                               const long &i_origin_cc,
-                               const long &i_dest_cc);
 
 unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 

@@ -50,7 +50,7 @@ public :
                const vector<double> &volumes
     );
    ~Graph() {
-        cout << "Delete Dual_Graph" << endl;
+    //    cout << "Delete Dual_Graph" << endl;
     }
 /** @brief Number of cells in the mesh */ 
     int _number_of_cells;
@@ -116,7 +116,7 @@ class Subgraph : public Graph {
                const vector<long> &mapping_l_to_g
     );
    ~Subgraph() {
-        cout << "Delete Dual_Graph" << endl;
+  //      cout << "Delete Dual_Graph" << endl;
     }
 /** @brief Cardinality of the given subgraph, alias the number of nodes contained*/
     long _cardinality = 0; 
@@ -167,7 +167,7 @@ public :
  *
  */ 
     ~Dual_Graph() {
-        cout << "Delete Dual_Graph" << endl;
+//        cout << "Delete Dual_Graph" << endl;
     }
 /** @brief Member seeds pool variable */
     Seeds_Pool _seeds_pool;
