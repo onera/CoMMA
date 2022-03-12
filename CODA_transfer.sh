@@ -8,6 +8,6 @@ rm -r -v ${CODA_INSTALL}*
 rm -r -v ${CODA_HEADER}*
 
 echo "Installing actual version"
-cp -r -v CoMMA_lib/*.cpp ${CODA_INSTALL}
-cp -r -v CoMMA_lib/*.h ${CODA_HEADER}
+rsync -av CoMMA_lib/*.cpp ${CODA_INSTALL} --exclude=CoMMA.cpp
+rsync -av CoMMA_lib/*.h ${CODA_HEADER}
 

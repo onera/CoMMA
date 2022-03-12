@@ -8,6 +8,7 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
 #include <memory>
+#include <map>
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and 
  *  of the operation we can do on them.

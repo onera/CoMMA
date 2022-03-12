@@ -172,11 +172,11 @@ map<long,shared_ptr<Subgraph>>::iterator Coarse_Cell_Graph::remove_cc(map<long,s
       // We get the length
       auto lung = _cc_vec.size();
       //update value of the other nodes
-      for (auto i = (it->first); i != lung+1;i++){
+      for (auto i = it; i != _cc_vec.end();i++){
          auto node = _cc_vec.extract(i);
          if (!node.empty())
          {
-           node.key() = i-1;
+           node.key() = (i->first)-1;
            _cc_vec.insert(move(node));
           }
        }
