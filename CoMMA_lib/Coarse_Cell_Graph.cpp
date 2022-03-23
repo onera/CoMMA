@@ -14,7 +14,7 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
      // as false at the beginning, are all not agglomerated.
      vector<bool> tmp(fc_graph._number_of_cells, false);
     _a_is_fc_agglomerated = tmp;
-
+    cout<<"CC_Graph init"<<endl;
     //==================
     // temporary fields
     //==================
@@ -40,13 +40,19 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         assert(_fc_2_cc[i_fc] == -1);
     }
 // Anisotropic case
+    bool is_mutable = true;
     if (is_anisotropic) {
         assert(!is_creation_delayed);
         _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc); 
+        auto new_cc = make_shared<Coarse_Cell>(_fc_graph,_cc_counter, s_fc);
+            // we collect the various cc_graph, where the index in the vector is the i_cc
+        _cc_vec.insert(pair<long,shared_ptr<Subgraph>>(_cc_counter,new_cc->_cc_graph));
+        is_mutable = false;
     }
     if (!is_creation_delayed) {
         // We create the cc right now.
         // Everything is updated:
+            if (is_mutable) {
             // the cell can be modified afterwards and is thus defined in dict_cc and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
             // Update of dict_cc:
             //==================
@@ -74,6 +80,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             } else {
                _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
             }
+         }
 
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter
@@ -168,11 +175,14 @@ void Coarse_Cell_Graph::update_fc_2_cc(const vector<long> &mapping) {
 
 map<long,shared_ptr<Subgraph>>::iterator Coarse_Cell_Graph::remove_cc(map<long,shared_ptr<Subgraph>>::iterator elim){
       // we delete the element and we obtainer the pointer to the next element in memory
-      auto it = _cc_vec.erase(elim);
+      map<long,shared_ptr<Subgraph>>::iterator it = _cc_vec.erase(elim);
       // We get the length
       auto lung = _cc_vec.size();
       //update value of the other nodes
       for (auto i = it; i != _cc_vec.end();i++){
+         for (auto const &i_fc : i->second->_mapping_l_to_g){
+          _fc_2_cc[i_fc] = (i->first)-1;
+         }
          auto node = _cc_vec.extract(i);
          if (!node.empty())
          {
@@ -185,7 +195,7 @@ map<long,shared_ptr<Subgraph>>::iterator Coarse_Cell_Graph::remove_cc(map<long,s
 }
 
 
-void Coarse_Cell_Graph::correct(){
+void Coarse_Cell_Graph::correct(const long &max_card){
     //initializing vector neigh_cc
     vector<long> neigh;
     map<long,shared_ptr<Subgraph>> cc_vec_copy;
@@ -205,7 +215,7 @@ void Coarse_Cell_Graph::correct(){
            for (auto const &elem : neigh){
                 auto neig_cc = _cc_vec[elem];
                 //condizione
-                if (neig_cc->_cardinality <= 4 && neig_cc->_compactness >= 1){
+                if (neig_cc->_cardinality <= max_card && neig_cc->_compactness >= 1){
                 // If the condition is verified we add the cell to the identified cc and
                 // we remove it from the current cc
                 // first we assign to the fc_2_cc the new cc (later it will be renumbered considering the deleted
@@ -221,20 +231,22 @@ void Coarse_Cell_Graph::correct(){
                 }
            }
            // Now we must renumber the cc following the given mapping
-           vector<long> mapping;
+//           vector<long> mapping;
            // we follow the same strategy of the subgraph function
-           long ix = 0;
-           long indice = 0;
-           while(ix!=_cc_vec.size()+1){
-	     if(ix!=i_cc){
-                mapping.push_back(indice);
-	        indice++;
-	     }
-             else{mapping.push_back(-1);}	     
-             ++ix;
-            }
-            update_fc_2_cc(mapping); 
-            neigh.clear(); 
+//           long ix = 0;
+//           long indice = 0;
+//           while(ix!=_cc_vec.size()+1){
+//	     if(ix!=i_cc){
+//                mapping.push_back(indice);
+//	        indice++;
+//	     }
+//             else{mapping.push_back(-1);}	     
+//             ix++;
+//             cout<<"i_cc"<<i_cc<<"ix"<<ix-1<<"mapping"<<indice-1<<endl;
+//          }
+//          update_fc_2_cc(mapping); 
+          neigh.clear();
+//          mapping.clear(); 
         }
         else{
           ++it; 

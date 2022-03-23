@@ -9,7 +9,7 @@
 #include <list>
 #include <cassert>
 #include <vector>
-#include "Stack.h"
+#include "Queue.h"
 
 
 using namespace std;
@@ -45,7 +45,7 @@ protected :
  *  2 : ridge (two faces on the edge of the domain)
  *  3 : corner (three faces on the edge of the domain)
 */
-    vector<Stack<long>> _l_of_seeds;
+    vector<Queue<long>> _l_of_seeds;
 
 public:
 /** @brief Constructor */
@@ -81,6 +81,12 @@ public:
     inline bool is_initialized(){
 	    return !_d_is_on_bnd.empty();
     }
+/** @brief Spoil seeds of one particular category (on_corner, on_valley, on_ridge, interior)
+ *  @param[in] i_l the category
+ *  @return the seed or -1 in case the seed of a particular category are finished
+*/ 
+    long spoil_seed(const int &i_l,const vector<bool> &a_is_fc_agglomerated);
+
 };
 
 #endif //COMMA_PROJECT_SEEDS_POOL_H

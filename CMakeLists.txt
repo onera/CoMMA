@@ -35,7 +35,7 @@ SET(IMPLEMENTATION
         ${SOURCE_DIR}/Agglomerator.h
         ${SOURCE_DIR}/Coarse_Cell_Graph.h
         ${SOURCE_DIR}/Util.h
-        ${SOURCE_DIR}/Stack.h
+        ${SOURCE_DIR}/Queue.h
         ${SOURCE_DIR}/First_Order_Neighbourhood.h
         ${SOURCE_DIR}/Tree.h
         ${SOURCE_DIR}/CoMMATypes.h
@@ -102,9 +102,9 @@ SET(TESTS ${IMPLEMENTATION}
 
 # Generate a test executable
 include_directories(Catch2/single_include)
-add_compile_options("--coverage")
+#add_compile_options("--coverage")
 add_executable("Comma_test" ${TESTS})
-target_link_libraries(Comma_test gcov)
+#target_link_libraries(Comma_test gcov)
 #target_link_libraries(Comma_test Boost)
 #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################

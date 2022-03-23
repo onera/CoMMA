@@ -138,6 +138,7 @@ void agglomerate_one_level( // Dual graph:
     // the anisotropic lines.
     // for more information look at: https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
     // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
+    cout<<"is anisotropic?"<<is_anisotropic_long<<endl;
     if (is_anisotropic_long){
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     cc_graph,
@@ -158,25 +159,27 @@ void agglomerate_one_level( // Dual graph:
             agglomeration_lines.push_front(dQue);
             nb_agglomeration_lines++;
         }
+
     }
     // @todo add exception if it is not the first agglomeration (so if we are at a further level)
     // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
     // in this case we are. in the todo we have to treat the case in which we are not
     Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
-    agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
     agg_dyn->_v_lines[0]= agglomeration_lines;
+    agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
+    cout<<"entered anisotropic"<<endl;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
      //level of the line: WARNING! here 1 it means thatwe give it back lines in the new global
      //index, 0 the old
-    int i_level = 1;
+    int i_level = 0;
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
-                            agglomerationLines);;  
+                            agglomerationLines);  
     // Free the pointer
 
-    delete(agg1); 
+//    delete(agg1); 
     }
-    auto agg = new Agglomerator_Biconnected(fc_graph,
+   auto agg = make_shared<Agglomerator_Biconnected>(fc_graph,
 		                    cc_graph,
                                     dimension = dimension); 
 
@@ -186,8 +189,9 @@ void agglomerate_one_level( // Dual graph:
 //                                    dimension = dimension); 
 
  
-    agg->agglomerate_one_level(min_card,goal_card,max_card,0);
+    agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
+
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
     } 

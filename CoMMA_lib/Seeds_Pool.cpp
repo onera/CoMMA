@@ -28,15 +28,15 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     _number_of_cells = number_of_cells;
     _init_bnd_level = init_bnd_level;
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
-    _l_of_seeds = vector<Stack<long>>(4);
+    _l_of_seeds = vector<Queue<long>>(4);
     assert(!d_is_on_bnd.empty());
 //    assert isinstance(d_is_on_bnd, dict)
     _d_is_on_bnd = d_is_on_bnd;  // Useful for seed choice
     //For 2D, the mesh is 3D with one layer. We do not count the 2 lateral plans.
     // only in case of 3D we have on corner case and the ridge and valley will be filled
     // otherwise we get it through the boundary dictionary.
-    if (is_on_ridge.empty() || is_on_valley.empty()){
-       cout << "WARNING! Boundary values emty, check again" << endl;
+    if (is_on_ridge.empty() && is_on_valley.empty()){
+       cout << "WARNING! Boundary values empty, check again" << endl;
     }
     for (auto i : is_on_corner) {
             _is_on_corner.insert(i);  // Useful for initial seed choice
@@ -47,7 +47,21 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     for (auto i : is_on_valley) {
             _is_on_valley.insert(i);  // Useful for initial seed choice
         }
-    // initialization of self.l_deque_of_seeds
+    // if empty recombination with d
+//    for (auto kv_fc:d_is_on_bnd) {
+//         long i_fc = kv_fc.first;
+//         int i_fc_bnd = kv_fc.second;
+//          if (i_fc_bnd >= 3) {
+//             _d_is_on_bnd[i_fc] = 3;
+//             _is_on_corner.insert(i_fc);
+//       } else if (i_fc_bnd == 2) {
+//           _is_on_ridge.insert(i_fc);
+//        } else if (i_fc_bnd == 1) {
+//            _is_on_valley.insert(i_fc);
+//        }
+//    }
+
+    // initialization of l_of_seeds
     if (_init_bnd_level <= 3 && _is_on_corner.size() > 0) {
         for (auto iFC: _is_on_corner) {
            _l_of_seeds[3].push(iFC);
@@ -71,6 +85,21 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     }
 }
 
+long Seeds_Pool::spoil_seed(const int &i_l,const vector<bool> &a_is_fc_agglomerated) {
+     long seed = _l_of_seeds[i_l].pop();
+     if (seed == -1){
+        return(seed);
+     }
+     else{
+     while (a_is_fc_agglomerated[seed]){
+        seed = _l_of_seeds[i_l].pop(); 
+        if(seed==-1){return(seed);}  
+     }
+     }
+     return(seed);
+}
+
+
 long Seeds_Pool::choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
 //
 //Choose a correct seed from the fc pool list_of_seeds beyond not agglomerated fc.
@@ -80,10 +109,11 @@ long Seeds_Pool::choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
 //We choose preferably the corners, then the ridges, then the valley, and finally interior cells:
 // see NIA (Mavriplis uses Wall and farfield only)
 // Exactly the inverse of the order of the list. For this reason we proceed with l--
-//    long seed = -1;
-  for (int i_l = 3; i_l > -1; i_l--) {
-      if (_l_of_seeds[i_l].top()!=-1 && !a_is_fc_agglomerated[_l_of_seeds[i_l].top()]){
-         return(_l_of_seeds[i_l].pop());
+  for (int i_l = 3; i_l > -1; i_l--) { 
+      long seed = spoil_seed(i_l,a_is_fc_agglomerated);    
+      if (seed!=-1)
+      {
+         return(seed);
       }
       else
       { continue;} 

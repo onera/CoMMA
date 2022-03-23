@@ -61,9 +61,9 @@ SCENARIO("Test of a structure", "[structure]") {
     }
   }
 }
-SCENARIO("Test of the stack", "[stack]") {
-  GIVEN("A simple stack of long type") {
-    Stack<long> st_long;
+SCENARIO("Test of the Queue", "[Queue]") {
+  GIVEN("A simple Queue of long type") {
+    Queue<long> st_long;
     WHEN("We push a certain number of elements") {
       st_long.push(0);
       st_long.push(1);
@@ -72,15 +72,15 @@ SCENARIO("Test of the stack", "[stack]") {
           "We can check that the operation on the stack are correctly "
           "realized") {
 
-        REQUIRE(st_long.top() == 2);
+        REQUIRE(st_long.top() == 0);
         long top = st_long.pop();
-        REQUIRE(top == 2);
+        REQUIRE(top == 0);
         REQUIRE(st_long.top() == 1);
         top = st_long.pop();
         REQUIRE(top == 1);
-        REQUIRE(st_long.top() == 0);
+        REQUIRE(st_long.top() == 2);
         top = st_long.pop();
-        REQUIRE(top == 0);
+        REQUIRE(top == 2);
         REQUIRE(st_long.top() == -1);
       }
     };

@@ -54,7 +54,7 @@ public:
     vector<long> get_neigh_cc(const long &i_fc,const long &i_cc);
     void update_fc_2_cc(const vector<long> &mapping); 
     map<long,shared_ptr<Subgraph>>::iterator remove_cc(map<long,shared_ptr<Subgraph>>::iterator elim);
-    void correct();
+    void correct(const long &max_card);
 /** @brief It creates a coarse cell based on the set of fine cells given as an input 
  * @param[in] s_fc set of fine cells passed as a reference
  * @param[in] is_anisotropic boolean that tells if we are in an anisotropic case or not
