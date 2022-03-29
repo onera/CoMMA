@@ -116,8 +116,9 @@ Subgraph::Subgraph(const long &nb_c,
                    const vector<long> &m_crs_col_ind,
                    const vector<double> &m_crs_values, 
                    const vector<double> &volumes,
-                   const vector<long> &mapping_l_to_g
-                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_mapping_l_to_g(mapping_l_to_g){
+                   const vector<long> &mapping_l_to_g,
+                   const bool &is_isotropic
+                   ) : Graph(nb_c,m_crs_row_ptr,m_crs_col_ind,m_crs_values,volumes),_mapping_l_to_g(mapping_l_to_g),_is_isotropic(is_isotropic){
 // Definition degree
 long pos_old = 0;
 long degree=0;

@@ -7,8 +7,8 @@
 Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
                          long i_cc,
                          const unordered_set<long> &s_fc,
-                         bool is_isotropic,
-                         bool is_delayed) : __dim(fc_graph._dimension), __is_isotropic(is_isotropic), __is_delayed(is_delayed) {
+                         bool is_isotropic
+                         ) : __dim(fc_graph._dimension), __is_isotropic(is_isotropic){
     // compactness, degrees are defined in the Subgraph
     // Other quantities are defined in the cc_graph map (e.h the i_cc)    
     __fc_graph = &fc_graph;
@@ -19,9 +19,9 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph,
     for (const long &i_fc : s_fc) {
         volume += fc_graph._volumes[i_fc];
     }
-
+   
     _mapping_g_to_l = build_CRS();
-    _cc_graph = make_shared<Subgraph>(s_fc.size(), _adjMatrix_row_ptr,_adjMatrix_col_ind , _adjMatrix_areaValues,_volumes,_mapping_g_to_l);
+    _cc_graph = make_shared<Subgraph>(s_fc.size(), _adjMatrix_row_ptr,_adjMatrix_col_ind , _adjMatrix_areaValues,_volumes,_mapping_g_to_l,is_isotropic);
 }
 
 vector<long> Coarse_Cell::build_CRS(){

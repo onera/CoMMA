@@ -100,8 +100,6 @@ void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
 // In case the if is not realized, this is not the first generation of a coarse level.
 // The anisotropic lines are given as input.
   // Copy of the current agglomeration_lines as a backup for visualization purpose.
-//    _v_lines[1] = copy_agglomeration_lines(_v_lines[0]);
-//    _v_nb_lines[1] = _v_nb_lines[0];
     // Asserts that __v_lines[1] exists:
     if (!_v_lines[0].empty()) {
 	// We create the anisotropic coarse cells.
@@ -110,132 +108,131 @@ void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
 }
 
 
-void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines() {
-    /**
-     * process along all agglomeration_lines to create every anisotropic cc.
-     * Generate also the coarse agglomeration lines and the set of compliant anisotropic cc
-     */
-    //TODO Comprendre quand est-ce qu'on supprime une ligne d'agglomeration?
-
-    // list of set of hexaedric or prismatic cell number (for level 0)
-    _v_of_s_anisotropic_compliant_fc[1] = {};
-
-    // Process of every agglomeration lines:
-    forward_list<deque<long> *>::iterator fLIt;
-    for (fLIt = _v_lines[1].begin(); fLIt != _v_lines[1].end(); fLIt++) {
-    // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
-    // level 0.
-    // We create a pointer to an empty deque for the line + 1, and hence for the next level of agglomeration 
-        deque<long> *line_lvl_p_one = new deque<long>();
-        // We check the line size for the pointed line by the iterator
-        long line_size = (**fLIt).size();
-        if (line_size <= 1) {
-            // the agglomeration_line is empty and hence the iterator points again to the
-            // empty deque, updating what is pointed by it and hence __v_lines[1]
-            // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
-            *fLIt = line_lvl_p_one;
-            // we pass to the next line
-            continue;
-        }
-
-        long i_count = 0;
-        bool is_anisotropic = true;
-        long i_cc;
-        // we agglomerate cells along the agglomeration line, hence we have to
-        // go through the faces and agglomerate two faces together, getting to cardinal 2
-        while (i_count + 2 <= line_size) {
-            const long i_fc = (**fLIt)[i_count];
-            const long i_fc_p_one = (**fLIt)[i_count + 1];
-
-            unordered_set<long> s_fc = {i_fc, i_fc_p_one};
-            // We create the course cell
-            i_cc = (*_cc_graph).cc_create_a_cc(s_fc, is_anisotropic);
-            line_lvl_p_one->push_back(i_cc);
-            // Checks that the agglomerated fc is indeed an anisotropic fc".
-            assert(_v_of_s_anisotropic_compliant_fc[0].count(i_fc));
-            assert(_v_of_s_anisotropic_compliant_fc[0].count(i_fc_p_one));
-            // the new cc is anisotropic compliant:
-            _v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
-            i_count += 2;
-        }
-
-        // if i_count < len(line): there is a fc left!
-        // i.e. the agglomeration line was of odd size.
-        // 2 situations: si la cellule abandonnee est contigue a la zone Euler, c'est OK.
-        //               sinon, c'est la merde!
-        if (i_count < line_size) {
-            // Problematic   Check! it may happen that the line touches the farfield
-            // This is correct!
-            // for example: RAE 2D case, Boxes iso_and_aniso
-            // // check
-            // ind = matrixAdj_CRS_row_ptr[cell]
-            // ind_p_one = matrixAdj_CRS_row_ptr[cell + 1]
-            // isOnBoundary = False
-            // for i in range(ind, ind_p_one):
-            //     indNeighbourCell = matrixAdj_CRS_col_ind[i]
-            //     if indNeighbourCell == cell:
-            //         isOnBoundary = True
-            // assert not isOnBoundary, "The left alone anisotropic cell to agglomerate is on boundary"
-            // // End Check
-
-            // We add this fc to the last coarse element (thus of cardinal 3)
-            (*_cc_graph).cc_update_cc({(**fLIt)[i_count]}, i_cc);
-        }
-        delete *fLIt;
-        // We update __v_lines[1]
-        *fLIt = line_lvl_p_one;
-    }
-}
-
-
 //void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines() {
+//    /**
+//     * process along all agglomeration_lines to create every anisotropic cc.
+//     * Generate also the coarse agglomeration lines and the set of compliant anisotropic cc
+//     */
+//    //TODO Comprendre quand est-ce qu'on supprime une ligne d'agglomeration?
+//
 //    // list of set of hexaedric or prismatic cell number (for level 0)
 //    _v_of_s_anisotropic_compliant_fc[1] = {};
+//
 //    // Process of every agglomeration lines:
-//    for (auto fLIt = _v_lines[0].begin(); fLIt != _v_lines[0].end(); fLIt++) {
+//    forward_list<deque<long> *>::iterator fLIt;
+//    for (fLIt = _v_lines[1].begin(); fLIt != _v_lines[1].end(); fLIt++) {
 //    // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
 //    // level 0.
 //    // We create a pointer to an empty deque for the line + 1, and hence for the next level of agglomeration 
+//        deque<long> *line_lvl_p_one = new deque<long>();
 //        // We check the line size for the pointed line by the iterator
-//   //     long line_size = (**fLIt).size();
-//        auto actual_deque = **fLIt;
-//        if (actual_deque.size() <= 1) {
+//        long line_size = (**fLIt).size();
+//        if (line_size <= 1) {
 //            // the agglomeration_line is empty and hence the iterator points again to the
 //            // empty deque, updating what is pointed by it and hence __v_lines[1]
 //            // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
+//            *fLIt = line_lvl_p_one;
+//            // we pass to the next line
 //            continue;
 //        }
-// 
-//        deque<long> *line_lvl_p_one = new deque<long>();
-//        bool is_anisotropic = true; // TODO here is necessary for the cc_create_a_cc but maybe we
-//	// need in some way to change that.
+//
+//        long i_count = 0;
+//        bool is_anisotropic = true;
 //        long i_cc;
-//        auto deqIt = actual_deque.begin();  
-//        while(deqIt+2-actual_deque.begin()<=actual_deque.size()){
 //        // we agglomerate cells along the agglomeration line, hence we have to
 //        // go through the faces and agglomerate two faces together, getting to cardinal 2
-//        // ANISOTROPIC: we agglomerate 2 by 2, hence the anisotropic agglomeration will 
-//	// provoke agglomerated coarse cells of cardinality 2.
-//        //    cout<<"ifc:"<<*deqIt<<"p_one:"<<*(deqIt+1)<<endl;
-//            unordered_set<long> s_fc = {*deqIt,*(deqIt+1)};
-//            // We create the coarse cell
-//            i_cc = (*_cc_graph).cc_create_a_cc(s_fc, is_anisotropic);
-//            cout<<"icc aggl"<< i_cc<<endl;
-//            line_lvl_p_one->push_back(i_cc);
-//            _v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
-//            deqIt+=2;
-//        }
-//       /*@todo see if we have to manage the odd cells numbers*/
-//       // if (i_count < line_size) {
-//            // We add this fc to the last coarse element (thus of cardinal 3)
-//        //    (*_cc_graph).cc_update_cc({(**fLIt)[i_count]}, i_cc);
-//       // }
-//        // We free the pointer and we reassign it in order to progress
-//      _v_lines[1].push_front(line_lvl_p_one);
-//      delete(line_lvl_p_one);
-//    };
-//}
+//        while (i_count + 2 <= line_size) {
+//            const long i_fc = (**fLIt)[i_count];
+//            const long i_fc_p_one = (**fLIt)[i_count + 1];
 //
+//            unordered_set<long> s_fc = {i_fc, i_fc_p_one};
+//            // We create the course cell
+//            i_cc = (*_cc_graph).cc_create_a_cc(s_fc, is_anisotropic);
+//            line_lvl_p_one->push_back(i_cc);
+//            // Checks that the agglomerated fc is indeed an anisotropic fc".
+//            assert(_v_of_s_anisotropic_compliant_fc[0].count(i_fc));
+//            assert(_v_of_s_anisotropic_compliant_fc[0].count(i_fc_p_one));
+//            // the new cc is anisotropic compliant:
+//            _v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
+//            i_count += 2;
+//        }
+//
+//        // if i_count < len(line): there is a fc left!
+//        // i.e. the agglomeration line was of odd size.
+//        // 2 situations: si la cellule abandonnee est contigue a la zone Euler, c'est OK.
+//        //               sinon, c'est la merde!
+//        if (i_count < line_size) {
+//            // Problematic   Check! it may happen that the line touches the farfield
+//            // This is correct!
+//            // for example: RAE 2D case, Boxes iso_and_aniso
+//            // // check
+//            // ind = matrixAdj_CRS_row_ptr[cell]
+//            // ind_p_one = matrixAdj_CRS_row_ptr[cell + 1]
+//            // isOnBoundary = False
+//            // for i in range(ind, ind_p_one):
+//            //     indNeighbourCell = matrixAdj_CRS_col_ind[i]
+//            //     if indNeighbourCell == cell:
+//            //         isOnBoundary = True
+//            // assert not isOnBoundary, "The left alone anisotropic cell to agglomerate is on boundary"
+//            // // End Check
+//
+//            // We add this fc to the last coarse element (thus of cardinal 3)
+//            (*_cc_graph).cc_update_cc({(**fLIt)[i_count]}, i_cc);
+//        }
+//        delete *fLIt;
+//        // We update __v_lines[1]
+//        *fLIt = line_lvl_p_one;
+//    }
+//}
+
+
+void Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines() {
+    // list of set of hexaedric or prismatic cell number (for level 0)
+    _v_of_s_anisotropic_compliant_fc[1] = {};
+    // Process of every agglomeration lines:
+    for (auto fLIt = _v_lines[0].begin(); fLIt != _v_lines[0].end(); fLIt++) {
+    // We iterate on the anisotropic lines of a particular level (the level 1, where they were copied from
+    // level 0.
+    // We create a pointer to an empty deque for the line + 1, and hence for the next level of agglomeration 
+        // We check the line size for the pointed line by the iterator
+   //     long line_size = (**fLIt).size();
+        auto actual_deque = **fLIt;
+        if (actual_deque.size() <= 1) {
+            // the agglomeration_line is empty and hence the iterator points again to the
+            // empty deque, updating what is pointed by it and hence __v_lines[1]
+            // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
+            continue;
+        }
+ 
+        deque<long> *line_lvl_p_one = new deque<long>();
+        bool is_anisotropic = true; // TODO here is necessary for the cc_create_a_cc but maybe we
+	// need in some way to change that.
+        long i_cc;
+        auto deqIt = actual_deque.begin();  
+        while(deqIt+2-actual_deque.begin()<=actual_deque.size()){
+        // we agglomerate cells along the agglomeration line, hence we have to
+        // go through the faces and agglomerate two faces together, getting to cardinal 2
+        // ANISOTROPIC: we agglomerate 2 by 2, hence the anisotropic agglomeration will 
+	// provoke agglomerated coarse cells of cardinality 2.
+        //    cout<<"ifc:"<<*deqIt<<"p_one:"<<*(deqIt+1)<<endl;
+            unordered_set<long> s_fc = {*deqIt,*(deqIt+1)};
+            // We create the coarse cell
+            i_cc = (*_cc_graph).cc_create_a_cc(s_fc, is_anisotropic);
+            line_lvl_p_one->push_back(i_cc);
+            _v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
+            deqIt+=2;
+        }
+       /*@todo see if we have to manage the odd cells numbers*/
+       // if (i_count < line_size) {
+            // We add this fc to the last coarse element (thus of cardinal 3)
+        //    (*_cc_graph).cc_update_cc({(**fLIt)[i_count]}, i_cc);
+       // }
+        // We free the pointer and we reassign it in order to progress
+      _v_lines[1].push_front(line_lvl_p_one);
+    //  delete(line_lvl_p_one);
+    };
+}
+
 
 
 

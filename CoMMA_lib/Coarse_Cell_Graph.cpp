@@ -50,7 +50,7 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
     if (is_anisotropic) {
         assert(!is_creation_delayed);
         _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc); 
-        auto new_cc = make_shared<Coarse_Cell>(_fc_graph,_cc_counter, s_fc);
+        auto new_cc = make_shared<Coarse_Cell>(_fc_graph,_cc_counter, s_fc,false);
             // we collect the various cc_graph, where the index in the vector is the i_cc
         _cc_vec.insert(pair<long,shared_ptr<Subgraph>>(_cc_counter,new_cc->_cc_graph));
         is_mutable = false;
@@ -204,7 +204,8 @@ void Coarse_Cell_Graph::correct(const long &max_card){
         // we are checking the subgraph
         auto current_cc = it->second;
         auto i_cc = it->first;
-        if (current_cc->_cardinality == 1){
+        // check the isotropic cells with cardinality 1
+        if (current_cc->_cardinality == 1 && current_cc->_is_isotropic == true){
            // Get the cc neigh of the given fine cell
            auto i_fc = current_cc->_mapping_l_to_g[0];
            neigh = get_neigh_cc(i_fc, i_cc);

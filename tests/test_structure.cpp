@@ -116,7 +116,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
     WHEN("We build the graph") {
        vector<long> _mapping_l_to_g = {20,30,40,50,60};
        auto Marion = make_shared<Subgraph>(5, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes,_mapping_l_to_g);
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g,true);
       THEN(
           "We remove a node") {
 	      Marion->remove_node(50);
@@ -146,13 +146,13 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     vector<long> mapping_l_to_g_2 = {8,3,13,12};
     vector<long> mapping_l_to_g_3 = {10,11,15,14};
     auto cc0 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes, mapping_l_to_g_0); 
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_0,true); 
     auto cc1 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes, mapping_l_to_g_1); 
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_1,true); 
     auto cc2 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes, mapping_l_to_g_2); 
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_2,true); 
     auto cc3 = make_shared<Subgraph>(4, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes, mapping_l_to_g_3); 
+                   adjMatrix_areaValues, volumes, mapping_l_to_g_3,true); 
     WHEN("We Collect the cells in the Bimap") {
 
        Bimap<long, shared_ptr<Subgraph>> Collection;
@@ -185,7 +185,7 @@ SCENARIO("Test the insertion of a coarse cell and deletion", "[Insertion Deletio
     vector<CoMMAWeightT> volumes ={1,1,1,1,1};
     vector<long> _mapping_l_to_g = {20,30,40,50,60};
     auto Marion= make_shared<Subgraph>(5, adjMatrix_row_ptr, adjMatrix_col_ind,
-                   adjMatrix_areaValues, volumes,_mapping_l_to_g);
+                   adjMatrix_areaValues, volumes,_mapping_l_to_g,true);
    // Bimap<long, shared_ptr<Subgraph>> Collection;
     Bimap<long, shared_ptr<Subgraph>> Collection;
     WHEN("We insert an element and we delete it") {

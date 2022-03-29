@@ -113,11 +113,14 @@ class Subgraph : public Graph {
                const vector<long> &m_crs_col_ind,
                const vector<double> &m_crs_values,
                const vector<double> &volumes,
-               const vector<long> &mapping_l_to_g
+               const vector<long> &mapping_l_to_g,
+               const bool &is_isotropic
     );
    ~Subgraph() {
   //      cout << "Delete Dual_Graph" << endl;
     }
+/** @brief it originates from an isotropic cell.*/
+    bool _is_isotropic;
 /** @brief Cardinality of the given subgraph, alias the number of nodes contained*/
     long _cardinality = 0; 
 /** @brief Compactness of the given subgraph */

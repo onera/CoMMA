@@ -15,17 +15,14 @@
  * @param[in] s_fc unordered set of fine cells constituting the coarse cell
  * @param[in] is_isotropic boolean describing if the cell is coming from an isotropic agglomeration process
  * or an anisotropic agglomeration process. The default value is set to true.
- * @param[in] is_delayed boolean determing if the agglomeration process is delayed or not. The default value is set
- * to true */
+ */
 
 class Coarse_Cell {
 public:
     Coarse_Cell(Dual_Graph &fc_graph,
                 long i_cc,
                 const unordered_set<long> &s_fc,
-                bool is_isotropic = true,
-                bool is_delayed = false
-    );
+                bool is_isotropic = true);
 
     ~Coarse_Cell() {
     };
@@ -54,8 +51,6 @@ public:
     short int __dim;
 /** @brief Is the cell isotropic or anisotropic*/
     bool __is_isotropic;
-/** @brief is delayed the building of the cell or not*/
-    bool __is_delayed;
 /** @brief is the cell connected*/
     bool __is_connected;
 /** @brief the connectivity has been checked*/
