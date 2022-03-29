@@ -138,7 +138,6 @@ void agglomerate_one_level( // Dual graph:
     // the anisotropic lines.
     // for more information look at: https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
     // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
-    cout<<"is anisotropic?"<<is_anisotropic_long<<endl;
     if (is_anisotropic_long){
     Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
                                     cc_graph,
@@ -167,11 +166,10 @@ void agglomerate_one_level( // Dual graph:
     Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
-    cout<<"entered anisotropic"<<endl;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
      //level of the line: WARNING! here 1 it means thatwe give it back lines in the new global
      //index, 0 the old
-    int i_level = 0;
+    int i_level = 1;
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
                             agglomerationLines);  
@@ -179,7 +177,7 @@ void agglomerate_one_level( // Dual graph:
 
 //    delete(agg1); 
     }
-   auto agg = make_shared<Agglomerator_Biconnected>(fc_graph,
+   auto agg = new Agglomerator_Biconnected (fc_graph,
 		                    cc_graph,
                                     dimension = dimension); 
 
@@ -191,7 +189,6 @@ void agglomerate_one_level( // Dual graph:
  
     agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
-
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
     } 

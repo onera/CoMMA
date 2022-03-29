@@ -14,7 +14,6 @@ Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph &fc_graph,
      // as false at the beginning, are all not agglomerated.
      vector<bool> tmp(fc_graph._number_of_cells, false);
     _a_is_fc_agglomerated = tmp;
-    cout<<"CC_Graph init"<<endl;
     //==================
     // temporary fields
     //==================
@@ -35,6 +34,13 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
     assert((!is_anisotropic) || (!is_creation_delayed));
 // error handling
     double vol_cc = 0;
+    for (const long &i_fc :s_fc) {
+      if (!_a_is_fc_agglomerated[i_fc]) {
+            // Rq: initialise to False pour chaque niveau dans agglomerate(...)
+            _a_is_fc_agglomerated[i_fc] = true;
+            _nb_of_agglomerated_fc++;
+        }
+    }
     for (const long &i_fc :s_fc) {
         vol_cc = vol_cc +_fc_graph._volumes[i_fc]; 
         assert(_fc_2_cc[i_fc] == -1);
@@ -98,14 +104,6 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
         // Only isFineCellAgglomerated_tmp, number_of_fine_agglomerated_cells_tmp and
         // dict_DistributionOfCardinalOfCoarseElements are modified!
         _delayed_cc.push_back(s_fc);
-    }
-
-    for (const long &i_fc :s_fc) {
-        if (!_a_is_fc_agglomerated[i_fc]) {
-            // Rq: initialise to False pour chaque niveau dans agglomerate(...)
-            _a_is_fc_agglomerated[i_fc] = true;
-            _nb_of_agglomerated_fc++;
-        }
     }
     return (_cc_counter - 1);
 }
