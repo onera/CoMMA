@@ -28,10 +28,8 @@ using namespace std;
 class Dual_Graph;
 class Subgraph;
 
-/** @brief A class responsible of storing the cell centered dual graph
- * and of acting on it (in other words it implements the methods that complements
- *  the agglomeration, like the detection of anisotropic lines
- *  @author Alberto Remigi and Nicolas Lantos
+/** @brief An interface class responsible of storing the cell centered dual graph
+ * and of acting on it (it is an interface for the global Dual Graph and the Subgraph)
  */
 class Graph {
 public :
@@ -50,9 +48,8 @@ public :
                const vector<double> &volumes
     );
    ~Graph() {
-    //    cout << "Delete Dual_Graph" << endl;
     }
-/** @brief Number of cells in the mesh */ 
+/** @brief Number of nodes in the Graph (it corresponds to the number of cells in the subgraph or the dual graph. */ 
     int _number_of_cells;
 /** @brief helper vector for the DFS*/
     vector<bool> _visited;
@@ -92,10 +89,7 @@ public :
 };
 
 
-/** @brief A class responsible of storing the cell centered dual graph
- * and of acting on it (in other words it implements the methods that complements
- *  the agglomeration, like the detection of anisotropic lines
- *  @author Alberto Remigi and Nicolas Lantos
+/** @brief A class implementing the CRS subgraph representation.
  */
 
 class Subgraph : public Graph {
@@ -191,6 +185,11 @@ public :
  *  @param[in] verbose Debugging flag to print information of the fine cells in case the coarse cell is identified as not connected
  *  @return boolean to tell if the cell is connected or not**/ 
     bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
+
+/** @brief Computes the anisotropic lines at the first level (only called at the first level of agglomeration)
+ *  @param[in/out] nb_agglomeration_lines number of the agglomeration lines
+ *  @return a forward list of pointers to the deque representing the lines
+*/
     forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
 /** @brief Computes the dictionqry of the anisotropic fine cells eligible for the agglomeration lines 
  *  @param[out] maxArray Array of the maximum weight: the biggest area of the faces composing the given fine cell
@@ -204,8 +203,6 @@ public :
  *   @return i_cc the index of the coarse cell
  */
     long _compute_subgraph_root(unordered_set<long> s_fc);
-
-    void clean_d_neighbours_of_seed(unordered_set<long> s_fc, unordered_map<long, unsigned short> &d_neighbours_of_seed);
  /** @brief Compute the degree of one node in the subgraph.
  *   @param[in] i_fc the global index of the fine cell
  *   @return the degree of the node
@@ -221,15 +218,6 @@ public :
  *   @return the dictionary associating a fine cell in the coarse cell with its compactness
  */ 
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
-
-    vector<unordered_set<long>> compute_connected_components(const unordered_set<long> &s_initial_cc);
-
-    unsigned short int compute_degree_of_node(int i_fc, bool (*test_function)(int) = nullptr);
-
-    short compute_degree_of_node_not_a(const long &i_fc, vector<bool> a);
-
-    void compute_local_crs_subgraph_from_global_crs(unordered_set<long> set_of_node, vector<long> &row_ptr_l, vector<long> &col_ind_l, vector<double> &values_l, vector<long> &g_to_l,
-                                                    vector<long> &l_to_g) const;
 
     void compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                      short &nb_of_order_of_neighbourhood,
