@@ -43,8 +43,7 @@ class Agglomerator {
      * param[in] goal_card goal cardinality of the coarse cell
      * param[in] min_card minimum cardinality of the coarse cell
      * param[in] max_card maximum cardinality of the coarse cell
-     * param[in] correction_steps it define the number of correction steps of the isotropic algorithm. In case
-     * of the anisotropic part, this variable is not taken into account
+     * param[in] correction_steps it defines if corrections for the isotropic algorithm are activated or not, for anisotropic algorithm not taken into account.
      */
     virtual void agglomerate_one_level(const short goal_card,
                                          const short min_card,
@@ -57,16 +56,8 @@ class Agglomerator {
     /** @brief boolean to define if it is anisotropic or not. It is set as default to false. 
      *  @todo: check if we can get rid of _is_anisotropic variable*/
     bool _is_anisotropic = false;
-    /** @brief string to define the kindo of algorithm used for the agglomerator (basic or triconnected)*/
-    string _kind_of_agglomerator;
-    /** @brief minimum number of neighborhood. Set as default to 3.*/
+    /** @brief minimum number of neighborhood we extend to search the neighborhood in the greedy algorithm. Set as default to 3.*/
     short _min_neighbourhood = 3;
-    /** @brief max number of neighborhood. Set as default to 6.*/
-    short int _max_neighbourhood = 6;
-    /** @brief minimum number of neighborhood for the correction step. Set as default to 1.*/
-    short _min_neighbourhood_correction_step = 1;
-    /** @brief maximum number of neighborhood for the correction. Set as default to 3.*/ 
-    short _max_neighbourhood_correction_step = 3;
     /** @brief minimum cardinality. Set as default to -1 (meaning the maximum possible).*/
     short _min_card = -1;
     /** @brief maximum cardinality. Set as default to -1 (meaning the maximum possible)*/
@@ -114,7 +105,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
     void get_agglo_lines(int level,
                          vector<long> &agglo_lines_array_idx,
                          vector<long> &agglo_lines_array);
-    /** @brief Vector of number of Anisotropic agglomeration lines*/
+    /** @brief Vector of number of Anisotropic agglomeration lines per level*/
     vector<long> _v_nb_lines;
     /** @brief _v_lines : Agglomeration lines structure:
     * vector : level
@@ -144,9 +135,6 @@ class Agglomerator_Isotropic : public Agglomerator{
     ~Agglomerator_Isotropic();
     /** @brief The task of the function is to set the parameters of
      * dermine the cardinality limits with respect to the parameters passed
-     * @param[in] kind_of_agglomeration Parameter that determine the type of agglomeration algorithm used
-     * for the *Isotropic* agglomeration algorithm. The choices are between: - basic; -triconnected. Set
-     * as default to basic.
      * @param[in] goal_card goal cardinality of the coarse cell (set as default to -1 indicating in our case
      * the maximum value)
      * @param[in] min_card minimum cardinality of the coarse cell(set as default to -1 indicating in our case
@@ -184,7 +172,7 @@ class Agglomerator_Isotropic : public Agglomerator{
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
- * biconnected algorithm for the agglomeration.
+ * biconnected algorithm for the agglomeration. We call it biconnected case, but it is the greedy algorithm in reality.
  */
 class Agglomerator_Biconnected : public Agglomerator_Isotropic{
     public: 	

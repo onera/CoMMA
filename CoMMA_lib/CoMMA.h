@@ -46,7 +46,7 @@ void agglomerate_one_level( // Dual graph:
 
 {
 
-    // GENERAL DESCRIPTION PARAMETERS
+    // SIZES CAST
     //====================================== 
     // number of faces
     long nb_fc = static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size()-1);
@@ -160,9 +160,6 @@ void agglomerate_one_level( // Dual graph:
         }
 
     }
-    // @todo add exception if it is not the first agglomeration (so if we are at a further level)
-    // Initialization of nb_agglo_lines in dependency if we are at the first agglomeration or not
-    // in this case we are. in the todo we have to treat the case in which we are not
     Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
@@ -173,20 +170,12 @@ void agglomerate_one_level( // Dual graph:
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
                             agglomerationLines);  
-    // Free the pointer
 
-//    delete(agg1); 
     }
    auto agg = new Agglomerator_Biconnected (fc_graph,
 		                    cc_graph,
                                     dimension = dimension); 
-
-
-//    auto agg = make_unique<Agglomerator_Biconnected>(fc_graph,
-//		                    cc_graph,
-//                                    dimension = dimension); 
-
- 
+    // Agglomerate 
     agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
