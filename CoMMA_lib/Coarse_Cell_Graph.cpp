@@ -67,27 +67,10 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
             _cc_vec.insert(pair<long,shared_ptr<Subgraph>>(_cc_counter,new_cc->_cc_graph));
             _d_isotropic_cc[_cc_counter] = new_cc;
 
-            // Update of dict_Card_Coarse_Cells:
-            //==================
-            unsigned short int card = (*new_cc)._cc_graph->_cardinality;
-            if (_d_card_2_cc.count(card) > 0) {
-                _d_card_2_cc[card].insert(_cc_counter);
-            } else {
-                _d_card_2_cc[card] = unordered_set<long>({_cc_counter});
-            }
-
             // Update of compactness informations:
             //####################################
             assert((*new_cc).is_connected());
-            auto deg_compactness = new_cc->_cc_graph->_compactness;  // (*this)._fc_graph.compute_min_fc_compactness_inside_a_cc(s_fc)
-            if (_d_compactness_2_cc.count(deg_compactness) > 0) {
-                //if deg_compactness in (*this)._d_compactness_2_cc:
-                _d_compactness_2_cc[deg_compactness].insert(_cc_counter);
-            } else {
-               _d_compactness_2_cc[deg_compactness] = unordered_set<long>({_cc_counter});
-            }
-         }
-
+        }
         // Update of _associatedCoarseCellNumber the output of the current function agglomerate
 	// _fc_2_cc is filled with _cc_counter
         for (const long &i_fc :s_fc) {
@@ -264,28 +247,6 @@ void Coarse_Cell_Graph::cc_create_all_delayed_cc() {
     _delayed_cc.clear();
 }
 
-
-void Coarse_Cell_Graph::cc_update_cc(unordered_set<long> set_of_fc_to_add,
-                                     const long &i_target_cc) {
-//Add (not yet agglomerated) fine cells to a already created cc of index i_target_cc.
-//          Update a cc with some (not yet agglomerated) fine cells.
-    _d_anisotropic_cc[i_target_cc].insert(set_of_fc_to_add.begin(), set_of_fc_to_add.end());
-    auto neig_cc = _cc_vec[i_target_cc];
-    for (auto &elem : set_of_fc_to_add){
-                   vector<long> fine_neigh = _fc_graph.get_neighbours(elem);
-                   vector<double> fine_weights = _fc_graph.get_weights(elem);
-                   neig_cc->insert_node(fine_neigh,elem,_fc_graph._volumes[elem],fine_weights); 
-        }
-
-    // Update of the associated cc number the output of the current function agglomerate
-    for (const long i_fc:set_of_fc_to_add) {
-        assert(!_a_is_fc_agglomerated[i_fc]);
-        _a_is_fc_agglomerated[i_fc] = true;  // Rk: initialized at false in agglomerate(...)
-        _fc_2_cc[i_fc] = i_target_cc;
-    }
-
-    _nb_of_agglomerated_fc += set_of_fc_to_add.size();
-}
 
 
 bool Coarse_Cell_Graph::is_cc_grid_not_structured(short goal_card) {

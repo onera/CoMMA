@@ -66,13 +66,6 @@ public:
 /** @brief Vector of boolean for which the length is the number of fine cells and for which the value of i_fc cell is true 
 * when the cell is agglomerated in a coarse cell */
     vector<bool> _a_is_fc_agglomerated;
-    
-
-
-/** @brief Add a set of fine cells to the actual coarse cell and update the related dictionaries 
- * @ param[in] set_of_fc_to_add set of fine cells to be added
- * @ param[in] i_target_cc index of targetted coarse cells */
-    void cc_update_cc(unordered_set<long> set_of_fc_to_add,const long &i_target_cc);
 
     unordered_map<long, unordered_set<long>> get_d_cc_all();
 
@@ -137,12 +130,6 @@ protected :
     /** @brief Variable where are recorded the anisotropic coarse cells. Index is the global index of the coarse
      * cell, key is the pointer to a Coarse_Cell element. */
     unordered_map<long, unordered_set<long>> _d_anisotropic_cc;     
-    /** @brief Cardinality counter of the coarse cell. Key is the cardinality value is an unordered set of the coarse cells with a given cardinality
-     */
-    unordered_map<unsigned short int, unordered_set<long>> _d_card_2_cc;  
-    /** @brief Dictionary that contains the compactness as a key and a set of the compactness cells as a value*/
-    unordered_map<unsigned short int, unordered_set<long>> _d_compactness_2_cc; 
-
 
 unordered_map<unsigned short, long> compute_d_distribution_of_cardinal_of_isotropic_cc();
 
