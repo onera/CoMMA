@@ -381,7 +381,7 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
         maxArray[i_fc] = max_weight;
 
         // Anisotropy criteria for the line Admissibility
-        if (max_weight / min_weight >= 20.0) {
+        if (max_weight / min_weight >= 4.0) {
         // If the ratio is more than 4 of the biggest zith the smallest cell , add it to the dictionary
         // where I store the ratio between the max and the average
 	    d_anisotropic_fc[i_fc] = max_weight / averageWeight;

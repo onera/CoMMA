@@ -166,7 +166,7 @@ void agglomerate_one_level( // Dual graph:
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
      //level of the line: WARNING! here 1 it means thatwe give it back lines in the new global
      //index, 0 the old
-    int i_level = 1;
+    int i_level = 0;
     agg_dyn->get_agglo_lines(i_level,
                             agglomerationLines_Idx,
                             agglomerationLines);  
@@ -178,8 +178,9 @@ void agglomerate_one_level( // Dual graph:
     // Agglomerate 
     agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
+    auto fccc = cc_graph._fc_2_cc;
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
-        fc_to_cc[i_fc] = agg->get_fc_2_cc()[i_fc];
+        fc_to_cc[i_fc] = fccc[i_fc];
     } 
 }
 #endif
