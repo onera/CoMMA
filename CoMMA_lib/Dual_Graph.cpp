@@ -392,7 +392,7 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
 }
 
 
-forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeration_lines) {
+vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeration_lines) {
     /**
      * The goal of this function is :
      * - firstly to look for anisotropic cells through the use of d_anisotropic_fc
@@ -427,7 +427,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
     // vector of the candidates to continue the line
     vector<long> candidates;
     // forward list containing the lines
-    forward_list<deque<long> *> lines;
+    vector<deque<long> *> lines;
     // vector of neighbours to the seed
     vector<long> v_neighbours;
     // vector of weight (face area) that connects to the seed neighborhood
@@ -445,8 +445,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
         // we initialize the seed at the beginning of each line
         seed = primal_seed; 
         // Create the new line
-        deque<long> *dQue;
-        dQue = new deque<long>();
+        auto dQue = new deque<long>();
         // we add the first seed
         (*dQue).push_back(seed);
         has_been_treated[seed]=true;
@@ -495,14 +494,18 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
                         // is not active? ==> push back
                           if (opposite_direction_check == false){
                            (*dQue).push_back(element);
+                           seed = element;
+                           has_been_treated[element]=true;
+                           break;
                           }
                           else { // if it is active push front
                            (*dQue).push_front(element);
-                          }
+                            seed = element;
+                            has_been_treated[element]=true;
+                            break;
+                         }
                           // we update the seed and the has been treated
-                          seed = element;
-                          has_been_treated[element]=true;
-                        }
+                                            }
                     }                      
              }// end elseif
              // 0 candidate, we are at the end of the line or at the end
@@ -526,7 +529,7 @@ forward_list<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglom
      opposite_direction_check = false;
      // we push the deque to the list if are bigger than 1
      if ((*dQue).size()>1){
-       lines.push_front(dQue);
+       lines.push_back(dQue);
        lines_size++;
      }
   }
@@ -633,7 +636,6 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
         d_n_of_order_o_m_one[i_fc] = 0;
     }
 
-
     int i_order = 1;
 
     while ((i_order < nb_of_order_of_neighbourhood + 1) ||
@@ -649,7 +651,6 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
 
             long seed_tmp = i_k_v.first;
             for (const long &i_fc_n : get_neighbours(seed_tmp)) {
-
                 if ((d_n_of_seed.count(i_fc_n) == 0) &&
                     ((!is_fc_agglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
                     if (d_n_of_order_o.count(i_fc_n) == 0) {

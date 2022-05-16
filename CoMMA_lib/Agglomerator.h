@@ -112,7 +112,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
     * forward list : identifier of the line
     * deque : line cells
     * e.g _v_lines[0] --> agglomeration lines at the finest level*/
-    vector<forward_list<deque<long> *>> _v_lines;  
+    vector<vector<deque<long> *>> _v_lines;  
 
 
     protected:

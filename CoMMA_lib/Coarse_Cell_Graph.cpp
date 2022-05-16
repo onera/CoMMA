@@ -179,9 +179,12 @@ map<long,shared_ptr<Subgraph>>::iterator Coarse_Cell_Graph::remove_cc(map<long,s
 void Coarse_Cell_Graph::correct(const long &max_card){
     //initializing vector neigh_cc
     vector<long> neigh;
-    map<long,shared_ptr<Subgraph>> cc_vec_copy;
     // We cycle on the subgraphs of the bimap structure
-    for (auto it= _cc_vec.begin();it!=_cc_vec.end();) {
+    auto it= _cc_vec.begin();
+    // We use itold to understand if we have succeded in the correction
+    auto it_old= _cc_vec.begin();
+    auto end = _cc_vec.end();
+    while (it !=  end) {
         // We enter in the property of the subgraph of being 1
         // and we consider what hapepns. Remember that second because
         // we are checking the subgraph
@@ -196,8 +199,7 @@ void Coarse_Cell_Graph::correct(const long &max_card){
            // control the characteristics
            for (auto const &elem : neigh){
                 auto neig_cc = _cc_vec[elem];
-                //condizione
-                if (neig_cc->_cardinality <= max_card && neig_cc->_compactness >= 1){
+                if (neig_cc->_compactness > 0 && neig_cc->_cardinality >= 2 && neig_cc->_is_isotropic==true){
                 // If the condition is verified we add the cell to the identified cc and
                 // we remove it from the current cc
                 // first we assign to the fc_2_cc the new cc (later it will be renumbered considering the deleted
@@ -212,23 +214,20 @@ void Coarse_Cell_Graph::correct(const long &max_card){
                    break;
                 }
            }
-           // Now we must renumber the cc following the given mapping
-//           vector<long> mapping;
-           // we follow the same strategy of the subgraph function
-//           long ix = 0;
-//           long indice = 0;
-//           while(ix!=_cc_vec.size()+1){
-//	     if(ix!=i_cc){
-//                mapping.push_back(indice);
-//	        indice++;
-//	     }
-//             else{mapping.push_back(-1);}	     
-//             ix++;
-//             cout<<"i_cc"<<i_cc<<"ix"<<ix-1<<"mapping"<<indice-1<<endl;
-//          }
-//          update_fc_2_cc(mapping); 
+           // if we failed we go on, it is life, so we agglomerate to the nearest cell (the first one of the vector
+           if (it==it_old){
+              auto const elem = neigh[0];
+              auto neig_cc = _cc_vec[elem];
+                   _fc_2_cc[i_fc] = elem;
+                   vector<long> fine_neigh = _fc_graph.get_neighbours(i_fc);
+                   vector<double> fine_weights = _fc_graph.get_weights(i_fc);
+                   neig_cc->insert_node(fine_neigh,i_fc,_fc_graph._volumes[i_fc],fine_weights); 
+                   current_cc->remove_node(i_fc);
+                   // the new it point directly to the next element in the map
+                   it = remove_cc(it);
+           }
           neigh.clear();
-//          mapping.clear(); 
+          it_old = it;
         }
         else{
           ++it; 

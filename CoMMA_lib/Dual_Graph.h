@@ -15,7 +15,6 @@
 #include <map>
 #include <algorithm>
 #include <list>
-#include <forward_list>
 #include "Seeds_Pool.h"
 #include "Util.h"
 #include <iostream>
@@ -177,7 +176,7 @@ public :
 /** @brief Anisotropic lines list size*/ 
     int _lines_size = 0;
 /** @brief List of deaue containing the anisotropic lines*/ 
-    forward_list<deque<long> *> _lines;
+    vector<deque<long> *> _lines;
 
 /** @brief Checks the connectivity of the Coarse cell created.
  *  @todo maybe to shift it to the coarse cell class
@@ -190,7 +189,7 @@ public :
  *  @param[in/out] nb_agglomeration_lines number of the agglomeration lines
  *  @return a forward list of pointers to the deque representing the lines
 */
-    forward_list<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
+    vector<deque<long> *> compute_anisotropic_line(long &nb_agglomeration_lines);
 /** @brief Computes the dictionqry of the anisotropic fine cells eligible for the agglomeration lines 
  *  @param[out] maxArray Array of the maximum weight: the biggest area of the faces composing the given fine cell
  *  @param[out] d_anisotropic_fc dictionary (unordered_map) storing the eligible anisotropic cells and the respective ratio between the max_weight and the min_weight
