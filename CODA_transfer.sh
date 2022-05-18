@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CODA_INSTALL="../../multigrid/negev_new_comma/thirdparty/comma/src/"
-CODA_HEADER="../../multigrid/negev_new_comma/thirdparty/comma/include/Comma/"
+CODA_INSTALL="../../multigrid_valid/negev/thirdparty/comma/src/"
+CODA_HEADER="../../multigrid_valid/negev/thirdparty/comma/include/Comma/"
 
 echo "Removing previous version"
 rm -r -v ${CODA_INSTALL}*
