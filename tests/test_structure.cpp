@@ -186,7 +186,6 @@ SCENARIO("Test the insertion of a coarse cell and deletion", "[Insertion Deletio
     vector<long> _mapping_l_to_g = {20,30,40,50,60};
     auto Marion= make_shared<Subgraph>(5, adjMatrix_row_ptr, adjMatrix_col_ind,
                    adjMatrix_areaValues, volumes,_mapping_l_to_g,true);
-   // Bimap<long, shared_ptr<Subgraph>> Collection;
     Bimap<long, shared_ptr<Subgraph>> Collection;
     WHEN("We insert an element and we delete it") {
       long ins = 0;
@@ -198,6 +197,30 @@ SCENARIO("Test the insertion of a coarse cell and deletion", "[Insertion Deletio
        THEN(
           "Bimap is empty") {
            REQUIRE(Collection.empty()==true);
+        }
+             
+      }
+     };
+}
+
+SCENARIO("Test the anisotropic agglomeration for small cases", "[Anisotropic]") {
+  GIVEN("We load the anisotropic mesh structure") {
+    DualGPy_aniso Data = DualGPy_aniso();
+    Seeds_Pool seeds_pool= Seeds_Pool(Data.nb_fc,Data.d_is_on_bnd,
+                   Data.s_is_on_corner, Data.s_is_on_ridge, Data.s_is_on_valley,2);
+     Dual_Graph fc_graph =
+        Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+                   Data.adjMatrix_areaValues, Data.volumes,seeds_pool,Data.s_anisotropic_compliant_fc, 0, 2);
+        Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+        Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
+                                    cc_graph,
+                                    2);
+        // I progress with the downcasting to get the anisotropic lines
+        Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1);
+   // COMPLETE THE TEST 
+    WHEN("We insert an element and we delete it") {
+       THEN(
+          "Bimap is empty") {
         }
              
       }

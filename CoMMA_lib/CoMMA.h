@@ -145,9 +145,11 @@ void agglomerate_one_level( // Dual graph:
     // for more information look at: https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
     // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
     if (is_anisotropic_long){
-    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-                                    cc_graph,
-                                    dimension = dimension);
+
+    shared_ptr<Agglomerator> agg1 = make_shared<Agglomerator_Anisotropic>(fc_graph,cc_graph,dimension=dimension);
+//    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
+//                                    cc_graph,
+//                                    dimension = dimension);
     long nb_agglomeration_lines = 0;
     vector<deque<long> *> agglomeration_lines;
     // case in which we have already agglomerated one level and hence we have already agglomeration
@@ -167,7 +169,7 @@ void agglomerate_one_level( // Dual graph:
         }
 
     }
-    Agglomerator_Anisotropic* agg_dyn = dynamic_cast<Agglomerator_Anisotropic*>(agg1); 
+    shared_ptr<Agglomerator_Anisotropic> agg_dyn = dynamic_pointer_cast<Agglomerator_Anisotropic>(agg1); 
     agg_dyn->_v_lines[0]= agglomeration_lines;
     agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
@@ -179,9 +181,7 @@ void agglomerate_one_level( // Dual graph:
                             agglomerationLines);  
 
     }
-   auto agg = new Agglomerator_Biconnected (fc_graph,
-		                    cc_graph,
-                                    dimension = dimension); 
+    auto agg = make_unique<Agglomerator_Biconnected>(fc_graph,cc_graph,dimension=dimension);
     // Agglomerate 
     agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
     // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)

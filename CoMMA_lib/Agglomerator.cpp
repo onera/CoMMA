@@ -34,7 +34,6 @@ Agglomerator::Agglomerator(Dual_Graph &graph,
   _l_nb_of_cells.push_back(graph._number_of_cells);
 }
 
-
 // Anisotropic constructor
 // =======================
 Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,

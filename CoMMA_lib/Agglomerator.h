@@ -31,8 +31,7 @@ class Agglomerator {
                 Coarse_Cell_Graph &cc_graph,
                  int dimension = 3);
     /** @brief The destructor of the class */ 
-    ~Agglomerator() {
-        }
+    virtual ~Agglomerator() = default;
     /** @brief Accessor to retrive the fine cells to coarse cells from the coarse cell graphs class
      */
     vector<long> get_fc_2_cc() {
@@ -83,7 +82,7 @@ class Agglomerator_Anisotropic : public Agglomerator{
     * in this way activates also the constructor of the base class.*/
    Agglomerator_Anisotropic(Dual_Graph &graph,Coarse_Cell_Graph &cc_graph,int dimension = 3);
    /** @brief Destructor*/
-    ~Agglomerator_Anisotropic();
+    ~Agglomerator_Anisotropic(){};
 
 
     /** @brief Specialization of the pure virtual function to the class Agglomerator_Anisotropic.
@@ -132,7 +131,7 @@ class Agglomerator_Isotropic : public Agglomerator{
 		   Coarse_Cell_Graph &cc_graph,
                  int dimension = 3); 
     /** @brief Destructor*/
-    ~Agglomerator_Isotropic();
+    ~Agglomerator_Isotropic(){};
     /** @brief The task of the function is to set the parameters of
      * dermine the cardinality limits with respect to the parameters passed
      * @param[in] goal_card goal cardinality of the coarse cell (set as default to -1 indicating in our case
@@ -182,7 +181,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic{
 		 Coarse_Cell_Graph &cc_graph,
                  int dimension = 3); 
     /** @brief Destructor*/
-    ~Agglomerator_Biconnected();
+    ~Agglomerator_Biconnected(){};
     /** @brief Specialization of the pure virtual function in the parent class, to be used in couple with the 
      * Agglomerate_one_level of the Agglomerator_Isotropic */
     unordered_set<long> choose_optimal_cc_and_update_seed_pool(const long seed,

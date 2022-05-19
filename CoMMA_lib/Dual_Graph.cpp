@@ -619,8 +619,7 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                              short &nb_of_order_of_neighbourhood,
                                              unordered_map<long, short> &d_n_of_seed, // defined also as d_of_neighborhood, output
                                              const short max_card,
-                                             vector<bool> &is_fc_agglomerated_tmp,
-                                             unordered_set<long> s_of_constrained_fc) {
+                                             vector<bool> &is_fc_agglomerated_tmp) {
     // Basic checks
     assert(max_card != -1);
     // TODO : If the fine cells foud are not sufficient to build a course cell of given cardinality, maybe define a wile to reach this 
@@ -652,19 +651,8 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
             long seed_tmp = i_k_v.first;
             for (const long &i_fc_n : get_neighbours(seed_tmp)) {
                 if ((d_n_of_seed.count(i_fc_n) == 0) &&
-                    ((!is_fc_agglomerated_tmp[i_fc_n] || !(s_of_constrained_fc).empty()))) {
+                    ((!is_fc_agglomerated_tmp[i_fc_n]))) {
                     if (d_n_of_order_o.count(i_fc_n) == 0) {
-                        if (!(s_of_constrained_fc).empty()) {
-                            if ((s_of_constrained_fc).count(i_fc_n)) {
-                                if (d_n_of_order_o_m_one.count(i_fc_n)) {
-                                    if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
-                                        d_n_of_order_o[i_fc_n] = i_order;
-                                    }
-                                } else {
-                                    d_n_of_order_o[i_fc_n] = i_order;
-                                }
-                            }
-                        } else {
                             // a fc can be access via multiple ways. We look for the quickest
                             if (d_n_of_order_o_m_one.count(i_fc_n)) {
                                 if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
@@ -673,7 +661,7 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                             } else {
                                 d_n_of_order_o[i_fc_n] = i_order;
                             }
-                        }
+                        
                     }
                 }
             }

@@ -88,7 +88,7 @@ public :
 };
 
 
-/** @brief A class implementing the CRS subgraph representation.
+/** @brief A class implementing the CRS subgraph representation. It is used in the framework of CoMMA for the implementation of the CSR representation of the coarse cells.
  */
 
 class Subgraph : public Graph {
@@ -133,6 +133,8 @@ class Subgraph : public Graph {
 
 };
 
+/** @brief A class implementing the CRS global graph representation.
+ */
 class Dual_Graph : public Graph {
 
 public :
@@ -217,13 +219,19 @@ public :
  *   @return the dictionary associating a fine cell in the coarse cell with its compactness
  */ 
     unordered_map<long, unsigned short int> compute_fc_compactness_inside_a_cc(unordered_set<long> &s_fc);
-
+ /** @brief Compute the dictionary of compactness of fine cells inside a coarse cell.
+ *   @param[in] s_seeds set of seeds for which the neighborhood must be cmputed. Generally theu are the fine cells composing the coarse cell for which we are trying to compute the neighborhood.
+ *   @param[in] nb_of_order_of_neighbourhood order of the neighborhood at which we want to extend the dictionary 
+ *   @param[out] d_n_of_seed dictionary of the neighborhood given as an output. The key of the associative structure is the index of the fine cell, the value is the order of the distance.
+ *   @param[in] max_card maximum cardinality
+ *   @param[in] is_fc_agglomerated_tmp vector reporting the already agglomerated cell, useful in the algorithm
+ */ 
+ 
     void compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                      short &nb_of_order_of_neighbourhood,
                                      unordered_map<long, short> &d_n_of_seed,
                                      const short max_card,
-                                     vector<bool> &is_fc_agglomerated_tmp,
-                                     unordered_set<long> s_of_constrained_fc = {});
+                                     vector<bool> &is_fc_agglomerated_tmp);
 };
 
 
