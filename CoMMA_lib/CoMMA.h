@@ -22,9 +22,6 @@ void agglomerate_one_level( // Dual graph:
 
         // boundaries
                            const vector<CoMMAIndexType> &isOnFineBnd,
-                           vector<CoMMAIndexType> &array_is_on_valley,
-                           vector<CoMMAIndexType> &array_is_on_ridge,
-                           vector<CoMMAIndexType> &array_is_on_corner,
 
         // Agglomeration argument
                            long isFirstAgglomeration_long,
@@ -57,10 +54,6 @@ void agglomerate_one_level( // Dual graph:
     long adj_matrix_col_ind_size = static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
     // Length of the weigth of the CSR representation. In this kind of representation it is the same
     long adj_matrix_areas_size = static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
-    // Initialization of sets: s_is_on_valley, s_is_on_ridge, s_is_on_corner;
-    long is_on_valley_size = static_cast<CoMMAIndexType>(array_is_on_valley.size());
-    long is_on_ridge_size = static_cast<CoMMAIndexType>(array_is_on_ridge.size());
-    long is_on_corner_size = static_cast<CoMMAIndexType>(array_is_on_corner.size());
     // Initialize anisotropic compliant
     long arrayOfFineAnisotropicCompliantCells_size = static_cast<CoMMAIndexType>(arrayOfFineAnisotropicCompliantCells.size());
 
@@ -76,22 +69,7 @@ void agglomerate_one_level( // Dual graph:
 	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    // initialization set
-    unordered_set<CoMMAIndexType> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
-    // filling
-    for (long i_o_v = 0; i_o_v < is_on_valley_size; i_o_v++) {
-        s_is_on_valley.insert(array_is_on_valley[i_o_v]);
-    }
-
-    for (long i_o_r = 0; i_o_r < is_on_ridge_size; i_o_r++) {
-        s_is_on_ridge.insert(array_is_on_ridge[i_o_r]);
-    }
-
-    for (long iOC = 0; iOC < is_on_corner_size; iOC++) {
-        s_is_on_corner.insert(array_is_on_corner[iOC]);
-    }
-
-    // ANISOTROPIC COMPLIANT FC
+        // ANISOTROPIC COMPLIANT FC
     //======================================
     // Elements that is checked if they are anisotropic. 
     // e.g : in case of CODA software are passed all the children, and hence all the source elements of the 
@@ -106,21 +84,7 @@ void agglomerate_one_level( // Dual graph:
     //It is built the dual graph class through the constructor. To see it look at DualGraph.hpp and DualGraph.cpp
     // fc = Fine Cells
     assert(dimension < USHRT_MAX);
-    int init_bnd_level = -1;
-    if (dimension == 2) {
-            init_bnd_level = 2;
-        } else if (dimension == 3) {
-            init_bnd_level = 3;
-        } else {
-            assert(false);
-        }
-    Seeds_Pool seeds_pool=  Seeds_Pool(nb_fc,
-                                d_is_on_bnd,
-                                s_is_on_corner,
-                                s_is_on_ridge,
-                                s_is_on_valley,
-                                init_bnd_level = init_bnd_level);
-
+    Seeds_Pool seeds_pool=  Seeds_Pool(nb_fc,d_is_on_bnd);
     Dual_Graph fc_graph = Dual_Graph(nb_fc,
                                      adjMatrix_row_ptr,
                                      adjMatrix_col_ind,

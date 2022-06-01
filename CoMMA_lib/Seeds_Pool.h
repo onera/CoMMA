@@ -50,13 +50,10 @@ protected :
 public:
 /** @brief Constructor */
     Seeds_Pool(int number_of_cells,
-               unordered_map<long, int> &d_is_on_bnd,
-               unordered_set<long> is_on_corner = unordered_set<long>({}),
-               unordered_set<long> is_on_ridge = unordered_set<long>({}),
-               unordered_set<long> is_on_valley = unordered_set<long>({}),
-               int init_bnd_level = 3);
+               unordered_map<long, int> &d_is_on_bnd);
 
-
+/** @brief Destructor */
+    ~Seeds_Pool(){};
 /** @brief Choose a new seed in the pool
  *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells agglomerated (true) or not agglomerated (false)
  *  @return New seed

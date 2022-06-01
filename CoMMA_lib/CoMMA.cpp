@@ -17,9 +17,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
 
         // boundaries
                            const vector<long> isOnFineBnd,
-                           vector<long> array_is_on_valley,
-                           vector<long> array_is_on_ridge,
-                           vector<long> array_is_on_corner,
 
         // Agglomeration argument
                            long isFirstAgglomeration_long,
@@ -39,7 +36,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
                            long min_card,
                            long max_card)
       {
-          agglomerate_one_level<CoMMAIndexT,CoMMAWeightT>(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnFineBnd,array_is_on_valley,array_is_on_ridge,array_is_on_corner,isFirstAgglomeration_long,is_anisotropic_long,fc_to_cc, agglomerationLines_Idx, agglomerationLines,is_basic_or_triconnected,dimension,goal_card,min_card,max_card);
+          agglomerate_one_level<CoMMAIndexT,CoMMAWeightT>(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnFineBnd,isFirstAgglomeration_long,is_anisotropic_long,fc_to_cc, agglomerationLines_Idx, agglomerationLines,is_basic_or_triconnected,dimension,goal_card,min_card,max_card);
       return std::make_tuple(fc_to_cc, agglomerationLines_Idx, agglomerationLines); 
       });
 }

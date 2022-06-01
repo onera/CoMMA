@@ -4,11 +4,7 @@
 #include "Seeds_Pool.h"
 
 Seeds_Pool::Seeds_Pool(int number_of_cells,
-                       unordered_map<long, int> &d_is_on_bnd,
-                       unordered_set<long> is_on_corner,
-                       unordered_set<long> is_on_ridge,
-                       unordered_set<long> is_on_valley,
-                       int init_bnd_level) {
+                       unordered_map<long, int> &d_is_on_bnd) {
     /*
     :param number_of_cells: number of cells in the graph
     :param d_is_on_bnd: dictionary i_c to bnd value
@@ -26,27 +22,10 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
     // 2 : ridge (two faces on the edge of the domain)
     // 3 : corner (three faces on the edge of the domain)
     _number_of_cells = number_of_cells;
-    _init_bnd_level = init_bnd_level;
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
     _l_of_seeds = vector<Queue<long>>(4);
     assert(!d_is_on_bnd.empty());
     _d_is_on_bnd = d_is_on_bnd;  // Useful for seed choice
-    //For 2D, the mesh is 3D with one layer. We do not count the 2 lateral plans.
-    // only in case of 3D we have on corner case and the ridge and valley will be filled
-    // otherwise we get it through the boundary dictionary.
-    if (is_on_ridge.empty() && is_on_valley.empty()){
-       cout << "WARNING! Boundary values empty, check again" << endl;
-    }
-    for (auto i : is_on_corner) {
-            _is_on_corner.insert(i);  // Useful for initial seed choice
-        }
-    for (auto i : is_on_ridge) {
-            _is_on_ridge.insert(i);  // Useful for initial seed choice
-        }
-    for (auto i : is_on_valley) {
-            _is_on_valley.insert(i);  // Useful for initial seed choice
-        }
-    // if empty recombination with d
     for (auto kv_fc:d_is_on_bnd) {
          long i_fc = kv_fc.first;
          int i_fc_bnd = kv_fc.second;
@@ -60,22 +39,17 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
         }
     }
     // initialization of l_of_seeds
-    if (_init_bnd_level <= 3 && _is_on_corner.size() > 0) {
+    if (_is_on_corner.size() > 0) {
         for (auto iFC: _is_on_corner) {
            _l_of_seeds[3].push(iFC);
-          _init_bnd_level--;
         }
     }
 
-    // Not used by default, legacy issue
     if (_is_on_ridge.size() > 0) {
         for (auto iFC: _is_on_ridge) {
             _l_of_seeds[2].push(iFC);
-            _init_bnd_level--;
         }
     }
-
-    // Not used by default, legacy issue
     if (_is_on_valley.size() > 0) {
         for (auto iFC: _is_on_valley) {
             _l_of_seeds[1].push(iFC);
@@ -86,11 +60,10 @@ Seeds_Pool::Seeds_Pool(int number_of_cells,
 long Seeds_Pool::spoil_seed(const int &i_l,const vector<bool> &a_is_fc_agglomerated) {
      long seed = _l_of_seeds[i_l].pop();
      if (seed == -1){ 
-        cout<<"emty level"<<endl;
         return(seed);
      }
      else{
-     while (a_is_fc_agglomerated[seed]){
+     while (a_is_fc_agglomerated[seed]==true){
         seed = _l_of_seeds[i_l].pop(); 
         if(seed==-1){return(seed);}  
      }
@@ -111,15 +84,12 @@ long Seeds_Pool::choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
   for (int i_l = 3; i_l >= 0; i_l--) { 
       long seed = spoil_seed(i_l,a_is_fc_agglomerated);    
       if (seed!=-1){
-         cout<<"seed_chosen"<<i_l<<seed<<endl;
          return(seed);
          }
       else
-      {cout<<i_l<<"failed"<<endl;
-       continue;} 
+      {continue;} 
    }
    for (int i = 0; i < _number_of_cells; i++) {
-            cout<<"entered in random"<<endl;
             if (!a_is_fc_agglomerated[i]) {
                 return(i);
             }
@@ -149,7 +119,6 @@ void Seeds_Pool::update(
             if (i_new_seed_finder != _d_is_on_bnd.end()) {
                 value_is_on_bnd = _d_is_on_bnd[i_new_seed];
             }
-           cout<<"value_on_bnd"<<value_is_on_bnd<<endl;
             // Update of isOnBnd to avoid value > 3
             if(value_is_on_bnd >= 3){
                 value_is_on_bnd = 3;

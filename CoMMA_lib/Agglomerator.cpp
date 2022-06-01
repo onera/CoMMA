@@ -224,8 +224,8 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
          // Check if delay the agglomeration based on compactness written during
 	 // the optimal cc choice process. Remember the compactness is the minimum degree in
 	 // the coarse cell.
-    	 bool is_creation_delayed = compactness < _dimension;
-//    	 bool is_creation_delayed = false;
+//    	 bool is_creation_delayed = compactness < _dimension;
+    	 bool is_creation_delayed = false;
          _cc_graph->cc_create_a_cc(set_current_cc, is_anistropic, is_creation_delayed);
     }
     // When we exit from this process all the cell are agglomerated, apart the delayed one
