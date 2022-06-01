@@ -215,7 +215,7 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
     long nb_of_fc = _l_nb_of_cells[0];
     while (_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
 	// 1) Choose a new seed
-        long seed = _cc_graph->choose_new_seed();
+        long seed = (_fc_graph._seeds_pool).choose_new_seed(_cc_graph->_a_is_fc_agglomerated);
         // 2) Choose the set of Coarse Cells with the specification of the algorithm
 	// in the children class (triconnected or biconnected)
 	unordered_set<long> set_current_cc = choose_optimal_cc_and_update_seed_pool(seed,compactness);

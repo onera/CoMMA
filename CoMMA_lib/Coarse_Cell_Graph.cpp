@@ -117,7 +117,6 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_aniso() {
 }
 
 unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_all() {
-    // assert not (*this)._delayed_cc`
     // Watch out that delayed_cc may not be empty , i.e. not yet created and numbered!
     unordered_map<long, unordered_set<long>> d;
 

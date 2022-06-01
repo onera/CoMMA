@@ -32,12 +32,6 @@ public:
     inline long get_number_of_fc_agglomerated() {
         return (_nb_of_agglomerated_fc);
     }
-/** @brief Helper to choose the new seed based on the already aggomerated fine cells*/
-    inline long choose_new_seed() {
-        return (_fc_graph._seeds_pool).choose_new_seed(_a_is_fc_agglomerated);
-    }
-
-    
 
 /** @brief Helper to get the number of coarse cells */
     inline long get_nb_of_cc() {
