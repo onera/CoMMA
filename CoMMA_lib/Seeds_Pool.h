@@ -21,8 +21,6 @@ class Seeds_Pool {
 protected :
 /** @brief Number of cells */
     int _number_of_cells;
-/** @brief Dictionary of number of faces on boundary per cell*/
-    unordered_map<long, int> _d_is_on_bnd;
 /** @brief set of cells on corner */
     unordered_set<long> _is_on_corner;
 /** @brief set of cells on ridge */
@@ -83,6 +81,8 @@ public:
  *  @return the seed or -1 in case the seed of a particular category are finished
 */ 
     long spoil_seed(const int &i_l,const vector<bool> &a_is_fc_agglomerated);
+/** @brief Dictionary of number of faces on boundary per cell*/
+    unordered_map<long, int> _d_is_on_bnd;
 
 };
 

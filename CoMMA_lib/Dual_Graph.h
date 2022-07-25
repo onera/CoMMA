@@ -195,8 +195,9 @@ public :
 /** @brief Computes the dictionqry of the anisotropic fine cells eligible for the agglomeration lines 
  *  @param[out] maxArray Array of the maximum weight: the biggest area of the faces composing the given fine cell
  *  @param[out] d_anisotropic_fc dictionary (unordered_map) storing the eligible anisotropic cells and the respective ratio between the max_weight and the min_weight
- *  @param[out] d_isotropic_fc the same as the anisotropic but for the isotropic cells*/  
-    void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc);
+ *  @param[out] d_isotropic_fc the same as the anisotropic but for the isotropic cells
+ *  @param[in] preserving if 0 does not hit only the BL prism to preserve the boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only in the anisotropic agglomeration*/  
+    void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc, const long preserving);
 
  /** @brief search of the fine cell at the "root" of the coarse cell, i.e. the fine cell with the most faces in common with
  *   its coarse cell.

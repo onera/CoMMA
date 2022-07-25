@@ -189,7 +189,6 @@ void Coarse_Cell_Graph::correct(const long &max_card){
         // we are checking the subgraph
         auto current_cc = it->second;
         auto i_cc = it->first;
-        cout<<"i_cc"<<i_cc<<end;
         // check the isotropic cells with cardinality 1
         if (current_cc->_cardinality == 1 && current_cc->_is_isotropic == true){
            // Get the cc neigh of the given fine cell
@@ -218,13 +217,13 @@ void Coarse_Cell_Graph::correct(const long &max_card){
            if (it==it_old){
               auto const elem = neigh[0];
               auto neig_cc = _cc_vec[elem];
-              _fc_2_cc[i_fc] = elem;
-              vector<long> fine_neigh = _fc_graph.get_neighbours(i_fc);
-              vector<double> fine_weights = _fc_graph.get_weights(i_fc);
-              neig_cc->insert_node(fine_neigh,i_fc,_fc_graph._volumes[i_fc],fine_weights); 
-              current_cc->remove_node(i_fc);
-              // the new it point directly to the next element in the map
-              it = remove_cc(it);
+                   _fc_2_cc[i_fc] = elem;
+                   vector<long> fine_neigh = _fc_graph.get_neighbours(i_fc);
+                   vector<double> fine_weights = _fc_graph.get_weights(i_fc);
+                   neig_cc->insert_node(fine_neigh,i_fc,_fc_graph._volumes[i_fc],fine_weights); 
+                   current_cc->remove_node(i_fc);
+                   // the new it point directly to the next element in the map
+                   it = remove_cc(it);
            }
           neigh.clear();
           it_old = it;

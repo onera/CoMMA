@@ -341,7 +341,7 @@ bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
 
 // Return the dictionary of anisotropic faces. The values are the ratio of the area by definition
 // while the keys are the global index of the faces
-void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map<long, double> &d_anisotropic_fc, unordered_map<long, double> &d_isotropic_fc) {
+void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map<long, double> &d_anisotropic_fc, unordered_map<long, double> &d_isotropic_fc, const long preserving) {
     // values are the ratio Max to average (ratioArray[iCell]) and keys
     // the (global) index of the cell. d_anisotropic_fc[ifc]= max_weight/min_weight
     double min_weight, max_weight, averageWeight, weight;
@@ -361,8 +361,7 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
         assert(v_neighbours.size() == v_weights.size());
         int nb_neighbours = v_neighbours.size();
 
-	for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {
-  
+	for (int i_n = 0; i_n < v_neighbours.size(); i_n++) {  
             long i_fc_n = v_neighbours[i_n]; 
             double i_w_fc_n = v_weights[i_n];
             if (i_fc_n != i_fc) {  // to avoid special case where the boundary value are stored
@@ -379,16 +378,42 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
             averageWeight += i_w_fc_n / (double) (nb_neighbours);
         }
         maxArray[i_fc] = max_weight;
-
-        // Anisotropy criteria for the line Admissibility
-        if (max_weight / min_weight >= 4.0) {
-        // If the ratio is more than 4 of the biggest zith the smallest cell , add it to the dictionary
-        // where I store the ratio between the max and the average
-	    d_anisotropic_fc[i_fc] = max_weight / averageWeight;
-        } else {
-            d_isotropic_fc[i_fc] = max_weight / averageWeight;
-        }
+        if (preserving == 0){
+	        // Anisotropy criteria for the line Admissibility
+        	if (max_weight / min_weight >= 4.0) {
+        	// If the ratio is more than 4 of the biggest zith the smallest cell , add it to the dictionary
+        	// where I store the ratio between the max and the average
+	   	 d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+       		 } else {
+            	d_isotropic_fc[i_fc] = max_weight / averageWeight;
+        	}
+        } else if (preserving == 2){
+        	if (max_weight / min_weight >= 4.0) {
+                   if (_seeds_pool. _d_is_on_bnd.count(i_fc) && nb_neighbours==3){
+	   	      d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+		   }	  
+                   else if (nb_neighbours==4){
+             	      d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+                   }
+                   else{
+            	d_isotropic_fc[i_fc] = max_weight / averageWeight;}
+                } else { 
+            	d_isotropic_fc[i_fc] = max_weight / averageWeight;}
+    }else if (preserving == 3){
+        	if (max_weight / min_weight >= 4.0) {
+                   if (_seeds_pool. _d_is_on_bnd.count(i_fc) && nb_neighbours==5){
+	   	      d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+		   }
+                   else if (nb_neighbours==6){
+	   	      d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+                   }
+                   else{
+            	d_isotropic_fc[i_fc] = max_weight / averageWeight;}
+                } else { 
+            	d_isotropic_fc[i_fc] = max_weight / averageWeight;}
     }
+}
+
 }
 
 
@@ -410,7 +435,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
     // Computation of the anisotropic cell , alias of the cells for which the
     // ration between the face with maximum area and the face with minimum area
     // is more than 4.
-    compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
+    compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc,0);
     // Initialization of the map: for each anisotropic cell
     // we check if has been analyzed or not 
     for (auto& it: d_anisotropic_fc){
