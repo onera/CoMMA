@@ -4,8 +4,8 @@
 /// Type of an index (used by agglomerator CoMMA for edges and nodes).
 using CoMMAIndexT = long;
 
-/// Type of floating-point values (used by agglomerator CoMMA for this edge weights).
+/// Type of floating-point values (used by agglomerator CoMMA for this edge
+/// weights).
 using CoMMAWeightT = double;
 
 #endif
-
