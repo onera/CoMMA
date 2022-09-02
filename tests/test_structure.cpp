@@ -126,7 +126,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
               long i_fc = 10;
               vector<double> weight = {1,1};
 	      Marion->insert_node(v_neigh,i_fc,1,weight);
-              REQUIRE(Marion->check_connectivity_g()==true);
+              REQUIRE(Marion->check_connectivity()==true);
               REQUIRE(Marion->_mapping_l_to_g[5]==10);
 	      }
              

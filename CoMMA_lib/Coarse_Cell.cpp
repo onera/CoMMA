@@ -67,7 +67,7 @@ vector<long> Coarse_Cell::build_CRS(){
 bool Coarse_Cell::is_connected() {
 
     if (!__is_connectivity_up_to_date) {
-       __is_connected = _cc_graph->check_connectivity_g();
+       __is_connected = _cc_graph->check_connectivity();
        __is_connectivity_up_to_date = true;
     }
     return __is_connected;

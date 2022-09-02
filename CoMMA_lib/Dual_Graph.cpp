@@ -94,7 +94,7 @@ void Graph::DFS(const long &i_fc){
      }
 }
 
-bool Graph::check_connectivity_g(){
+bool Graph::check_connectivity(){
      for (int i = 0; i < _number_of_cells; i++) {
             _visited.push_back(false);
      }
@@ -285,60 +285,6 @@ unsigned short Graph::get_nb_of_neighbours(long i_c) {
 
 
 
-bool Dual_Graph::check_connectivity(unordered_set<long> s_fc,
-                                    int verbose) {
-//Checks connectivity of the coarse cell
-    unordered_map<long, bool> map_isAlreadyConnected;
-    int size = s_fc.size();
-    if (size <= 1) {
-        return true;
-    }
-    for (long iFC :s_fc) {
-        map_isAlreadyConnected[iFC] = false;
-    }
-    long front = *s_fc.begin();
-    map_isAlreadyConnected[front] = true;
-
-    unordered_set<long> setNext({front});
-    int nbConnectedCells = 1;
-
-    while (nbConnectedCells < size) {
-
-        if (!setNext.empty()) {
-            long iFineCell = *setNext.begin();
-            setNext.erase(setNext.begin());
-            long ind = this->_m_CRS_Row_Ptr[iFineCell];  // Usefull to find neighbours of seed
-            long ind_p_one = this->_m_CRS_Row_Ptr[iFineCell + 1]; // Usefull to find neighbours of seed
-            for (long iFC = ind; iFC < ind_p_one; iFC++) {
-                long iFCellNeighbour = this->_m_CRS_Col_Ind[iFC];
-                if (map_isAlreadyConnected.count(iFCellNeighbour) == 1) {
-                    if ((iFCellNeighbour != iFineCell) && (!map_isAlreadyConnected[iFCellNeighbour])) {
-                        setNext.insert(iFCellNeighbour);
-                        nbConnectedCells += 1;
-                        map_isAlreadyConnected[iFCellNeighbour] = true;
-                    }
-                }
-            }
-        } else {
-            break;
-        }
-    }
-    if ((verbose) && (nbConnectedCells != size)) {
-        cout << "s_fc " << endl;
-        int iCount = 0;
-        for (auto i : s_fc) {
-            cout << i << " : " << map_isAlreadyConnected[i] << endl;
-            iCount++;
-        }
-
-        cout << "nbConnectedCells " << nbConnectedCells << " size " << size << endl;
-    }
-
-    return nbConnectedCells == size;
-
-}
-
-
 // Return the dictionary of anisotropic faces. The values are the ratio of the area by definition
 // while the keys are the global index of the faces
 void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map<long, double> &d_anisotropic_fc, unordered_map<long, double> &d_isotropic_fc, const long preserving) {
@@ -525,6 +471,9 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
                            (*dQue).push_back(element);
                            seed = element;
                            has_been_treated[element]=true;
+                       // It break otherwise we risk to add 2 (problematic with primal seed)
+                       // It is what is done in Mavriplis 
+                       // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
                            break;
                           }
                           else { // if it is active push front

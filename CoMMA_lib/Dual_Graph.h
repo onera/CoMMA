@@ -83,7 +83,10 @@ public :
 /** @brief Based on the area of the faces composing the cell given as an input, we retrive the faces connecting the given cell with the neighborhood that can be described also as the weight of the graph
  * @return vector of weight associated to the cell.**/ 
     vector<double> get_weights(const long &i_c) const;
-    bool check_connectivity_g();
+
+/** @brief Check the connectivity of the given Graph.
+ * @return True if the graph is connected, false if it is not connected**/ 
+    bool check_connectivity();
 
 };
 
@@ -179,13 +182,6 @@ public :
     int _lines_size = 0;
 /** @brief List of deaue containing the anisotropic lines*/ 
     vector<deque<long> *> _lines;
-
-/** @brief Checks the connectivity of the Coarse cell created.
- *  @todo maybe to shift it to the coarse cell class
- *  @param[in] s_fc Set of fine cells composing the coarse cell
- *  @param[in] verbose Debugging flag to print information of the fine cells in case the coarse cell is identified as not connected
- *  @return boolean to tell if the cell is connected or not**/ 
-    bool check_connectivity(unordered_set<long> s_fc, int verbose = 0);
 
 /** @brief Computes the anisotropic lines at the first level (only called at the first level of agglomeration)
  *  @param[in/out] nb_agglomeration_lines number of the agglomeration lines
