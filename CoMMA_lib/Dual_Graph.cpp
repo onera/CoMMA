@@ -10,11 +10,9 @@ Graph::Graph(const long &nb_c,
                        const vector<double> &m_crs_values, 
                        const vector<double> &volumes
                        ) : _m_CRS_Row_Ptr(m_crs_row_ptr), _m_CRS_Col_Ind(m_crs_col_ind), _m_CRS_Values(m_crs_values), _volumes(volumes),_number_of_cells(nb_c){
-
-        for (int i = 0; i < _number_of_cells; i++) {
-            _visited.push_back(false);
-        } 
-   long start = 0;
+        _visited.resize(_number_of_cells);
+        std::fill(_visited.begin(), _visited.end(), false);
+//   long start = 0;
 //   DFS(start);
 //   BFS(start);
 //   cout<<"connected?"<<check_connectivity_g()<<endl;
@@ -34,8 +32,8 @@ vector<double> Graph::get_weights(const long &i_c) const {
     // Given the index of a cell, return the value of the faces connected
     long ind = _m_CRS_Row_Ptr[i_c];
     long ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
-    // insert the values of the CRS_vaue from begin+ind (pointed to the face) till the next pointed one, so related to all the 
-    // connected areai (and hence to the faces)
+    // insert the values of the CRS_value from begin+ind (pointed to the face) till the next pointed one, so related to all the 
+    // connected areas (and hence to the faces)
     vector<double> result(_m_CRS_Values.begin() + ind, _m_CRS_Values.begin() + ind_p_one);
     return result;
 
@@ -47,21 +45,15 @@ void Graph::BFS(const long &root){
      vector<long> v_neigh;
      vector<long> path;
      coda.push(root);
-     vector<bool> visited;
-     for (int i = 0; i < _number_of_cells; i++) {
-            visited.push_back(false);
-     } 
+     vector<bool> visited(_number_of_cells, false);
      visited[root]=true;
-     vector<long> prev;
-     for (int i = 0; i < _number_of_cells; i++) {
-            prev.push_back(-1);
-     } 
-     while (coda.empty()!=true){
+     vector<long> prev(_number_of_cells, -1);
+     while (!coda.empty()){
          long node = coda.front();
          coda.pop();
          v_neigh = get_neighbours(node);
          for(auto &it:v_neigh){
-            if(visited[it]!=true){
+            if(!visited[it]){
                coda.push(it);
                visited[it]=true;
                prev[it]=node;
@@ -88,7 +80,7 @@ void Graph::DFS(const long &i_fc){
      vector<long> v_neigh;
      v_neigh = get_neighbours(i_fc);
      for(auto &it:v_neigh){
-        if(_visited[it]!=true){
+        if(!_visited[it]){
           DFS(it);
         }
      }
@@ -324,10 +316,6 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
             averageWeight += i_w_fc_n / (double) (nb_neighbours);
         }
         maxArray[i_fc] = max_weight;
-        // WARNING! Preserving flag marks the fact that certain shape must be preserved.
-        // Here we put preserving the Hexa (or quad) to try to preserve the BL. This is nowadays 
-        // hardcoded, for the future it would be important (and useful) to pass to a not hardcoded
-        // solution.
         if (preserving == 0){
 	        // Anisotropy criteria for the line Admissibility
         	if (max_weight / min_weight >= 4.0) {
@@ -409,7 +397,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
     // we cycle on all the anisotropic cells identified before
     for (auto& it: d_anisotropic_fc){
         // seed from where we start the deck
-        if (has_been_treated[it.first]==true){
+        if (has_been_treated[it.first]){
            // If the cell has been already treated, continue to the next anisotropic
            // cell in the unordered map
            continue;
@@ -425,7 +413,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
         has_been_treated[seed]=true;
         // Start the check from the seed
         // while the line is not ended
-        while (end!=true){
+        while (!end){
             // for the seed (that is updated each time end!= true) we fill the neighbours
             // and the weights
             v_neighbours = get_neighbours(seed);
@@ -434,20 +422,16 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
                // we check if in the neighbours there is the seed (it should not happen,
                // but we prevent like this mistakes)
                if (v_neighbours[i]==seed){continue;}
-               // we check if it is in the dictionary of anisotropic cells
-               // the boundary and if it is along the maximum interface
-               if(d_anisotropic_fc.count(v_neighbours[i]) != 0 and v_w_neighbours[i] > 0.75 * maxArray[seed]){
-               // it it is in the dictionary of anisotropic we check if the neigh has been already treated
-                 if(has_been_treated[v_neighbours[i]]==false){
-               // if has not been treated we add it to the vectors of candidates to continue the line
+               if(d_anisotropic_fc.count(v_neighbours[i]) != 0   // if anisotropic cell...
+                  and v_w_neighbours[i] > 0.75 * maxArray[seed]  // ...and if along the max interface...
+                  and !has_been_treated[v_neighbours[i]]){       // ...and if not treated
                    candidates.push_back(v_neighbours[i]);
-                 }                
                }               
              } // end for loop
              // case we have only 1 candidate to continue the line
              if (candidates.size() == 1){
                 // we can add to the actual deque
-                if (opposite_direction_check == false){
+                if (!opposite_direction_check){
                    (*dQue).push_back(candidates[0]);
                 } else {(*dQue).push_front(candidates[0]);}
                 // update the seed to the actual candidate
@@ -461,13 +445,13 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
                 /** @todo Not properly efficient. We risk to do twice the operations (we overwrite the seed. This is not proper **/
                 for (auto & element : candidates) {
                         // if has been treated ==> we check the next candidate
-                        if(has_been_treated[element]==true){
+                        if(has_been_treated[element]){
                           continue;
                         }
                         else{
                         // if has not been treated, the opposite direction flag
                         // is not active? ==> push back
-                          if (opposite_direction_check == false){
+                          if (!opposite_direction_check){
                            (*dQue).push_back(element);
                            seed = element;
                            has_been_treated[element]=true;
@@ -489,14 +473,14 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
              // 0 candidate, we are at the end of the line or at the end
              // of one direction
              else if (candidates.size() == 0){
-                  if (opposite_direction_check==true){
+                  if (opposite_direction_check){
                       end = true;
                   }
                   else{
                   seed = primal_seed;
                   opposite_direction_check = true;}
              }
-            // we clear the cansidates and the neighbours value for the 
+            // we clear the candidates and the neighbours value for the 
             // next seed
             candidates.clear(); 
             v_w_neighbours.clear();

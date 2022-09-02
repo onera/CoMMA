@@ -87,7 +87,7 @@ void agglomerate_one_level( // Dual graph:
     // In particular starting from the vector we pass we store in a map
     // the key relative to the cell analysed and the relative NUMBER OF FACES on the boundary
     unordered_map<CoMMAIndexType, int> d_is_on_bnd;
-    for (int i = 0; i < nb_fc; i++) {
+    for (long i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
 	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
@@ -97,10 +97,11 @@ void agglomerate_one_level( // Dual graph:
     // Elements that is checked if they are anisotropic. 
     // e.g : in case of CODA software are passed all the children, and hence all the source elements of the 
     // previous agglomeration process.
-    unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc;
-    for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
+    unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(arrayOfFineAnisotropicCompliantCells.begin(),
+                                                             arrayOfFineAnisotropicCompliantCells.end());
+    // for (long i_a_c_fc = 0; i_a_c_fc < arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
+    //     s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
+    // }
 
     // DUAL GRAPH
     //======================================
@@ -133,45 +134,46 @@ void agglomerate_one_level( // Dual graph:
     // About constructors when upcasting : https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
     if (is_anisotropic_long){
 
-    shared_ptr<Agglomerator> agg1 = make_shared<Agglomerator_Anisotropic>(fc_graph,cc_graph,dimension=dimension);
-//    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-//                                    cc_graph,
-//                                    dimension = dimension);
-    long nb_agglomeration_lines = 0;
-    vector<deque<long> *> agglomeration_lines;
-    // case in which we have already agglomerated one level and hence we have already agglomeration
-    // lines available; no need to recreate them.
-    if(!isFirstAgglomeration_long){
-        is_basic_or_triconnected = 0;
-        auto fineAgglomerationLines_array_Idx_size = agglomerationLines_Idx.size();
-        for (long i = fineAgglomerationLines_array_Idx_size - 2; i > -1; i--) {
-            long ind = agglomerationLines_Idx[i];
-            long indPOne = agglomerationLines_Idx[i + 1];
-            deque<long> *dQue = new deque<long>();
-            for (long j = ind; j < indPOne; j++) {
-                (*dQue).push_back(agglomerationLines[j]);
+        shared_ptr<Agglomerator> agg1 = make_shared<Agglomerator_Anisotropic>(fc_graph,cc_graph,dimension=dimension);
+    //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
+    //                                    cc_graph,
+    //                                    dimension = dimension);
+        long nb_agglomeration_lines = 0;
+        vector<deque<long> *> agglomeration_lines;
+        // case in which we have already agglomerated one level and hence we have already agglomeration
+        // lines available; no need to recreate them.
+        if(!isFirstAgglomeration_long){
+            is_basic_or_triconnected = 0;
+            auto fineAgglomerationLines_array_Idx_size = agglomerationLines_Idx.size();
+            for (long i = fineAgglomerationLines_array_Idx_size - 2; i > -1; i--) {
+                long ind = agglomerationLines_Idx[i];
+                long indPOne = agglomerationLines_Idx[i + 1];
+                deque<long> *dQue = new deque<long>(agglomerationLines.begin()+ind,
+                                                    agglomerationLines.begin()+indPOne);
+                // for (long j = ind; j < indPOne; j++) {
+                //     (*dQue).push_back(agglomerationLines[j]);
+                // }
+                agglomeration_lines.push_back(dQue);
+                nb_agglomeration_lines++;
             }
-            agglomeration_lines.push_back(dQue);
-            nb_agglomeration_lines++;
+    
         }
-
-    }
-    shared_ptr<Agglomerator_Anisotropic> agg_dyn = dynamic_pointer_cast<Agglomerator_Anisotropic>(agg1); 
-    agg_dyn->_v_lines[0]= agglomeration_lines;
-    agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
-    agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
-     //level of the line: WARNING! here 1 it means thatwe give it back lines in the new global
-     //index, 0 the old
-    int i_level = 1;
-    agg_dyn->get_agglo_lines(i_level,
-                            agglomerationLines_Idx,
-                            agglomerationLines);  
-
+        shared_ptr<Agglomerator_Anisotropic> agg_dyn = dynamic_pointer_cast<Agglomerator_Anisotropic>(agg1); 
+        agg_dyn->_v_lines[0]= agglomeration_lines;
+        agg_dyn->_v_nb_lines[0]= nb_agglomeration_lines;
+        agg_dyn->agglomerate_one_level(min_card,goal_card,max_card,-1);  
+         //level of the line: WARNING! here 1 it means that we give it back lines in the new global
+         //index, 0 the old
+        int i_level = 1;
+        agg_dyn->get_agglo_lines(i_level,
+                                agglomerationLines_Idx,
+                                agglomerationLines);  
+    
     }
     auto agg = make_unique<Agglomerator_Biconnected>(fc_graph,cc_graph,dimension=dimension);
     // Agglomerate 
     agg->agglomerate_one_level(min_card,goal_card,max_card,is_basic_or_triconnected);
-    // FILLING FC TO CC (it is a property of the cc_graph but retrived through an helper of the agglomerator)
+    // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an helper of the agglomerator)
     auto fccc = cc_graph._fc_2_cc;
     for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
         fc_to_cc[i_fc] = fccc[i_fc];
