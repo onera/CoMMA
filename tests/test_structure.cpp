@@ -224,3 +224,29 @@ SCENARIO("Test the anisotropic agglomeration for small cases", "[Anisotropic]") 
       }
      };
 }
+SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
+  GIVEN("We load the Minimal Isotropic mesh structure") {
+    DualGPy_minimal Data = DualGPy_minimal();
+    Seeds_Pool seeds_pool= Seeds_Pool(Data.nb_fc,Data.d_is_on_bnd);
+     Dual_Graph fc_graph =
+        Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+                   Data.adjMatrix_areaValues, Data.volumes,seeds_pool,Data.s_anisotropic_compliant_fc, 0, 2);
+        Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+        auto agg = make_unique<Agglomerator_Biconnected>(fc_graph,
+                                    cc_graph,
+                                    2);
+   // COMPLETE THE TEST 
+    WHEN("We proceed with the Isotropic agglomeration") {
+          agg->agglomerate_one_level(2, 2, 2,
+                             1);
+
+       THEN(
+          "No cells are left with cardinality 1") {
+             for (auto i =cc_graph._cc_vec.begin() ; i != cc_graph._cc_vec.end(); i++) {
+                 REQUIRE(i->second->_cardinality!=1);
+             }
+        }
+             
+      }
+     };
+}
