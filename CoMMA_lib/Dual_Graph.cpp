@@ -378,6 +378,10 @@ void Dual_Graph::compute_d_anisotropic_fc(vector<double> &maxArray,unordered_map
             averageWeight += i_w_fc_n / (double) (nb_neighbours);
         }
         maxArray[i_fc] = max_weight;
+        // WARNING! Preserving flag marks the fact that certain shape must be preserved.
+        // Here we put preserving the Hexa (or quad) to try to preserve the BL. This is nowadays 
+        // hardcoded, for the future it would be important (and useful) to pass to a not hardcoded
+        // solution.
         if (preserving == 0){
 	        // Anisotropy criteria for the line Admissibility
         	if (max_weight / min_weight >= 4.0) {
@@ -422,19 +426,18 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
      * The goal of this function is :
      * - firstly to look for anisotropic cells through the use of d_anisotropic_fc
      * - secondly build anisotropic lines
-     * Rmk: costly function: sort of a dictionary!
      */
 
     long nb_fc = _number_of_cells; // Number of cells is a member variable initialized through nb_fc in the 
-    // it is computed in d_anisotropic_fc as rhe max_weight
+    // it is computed in d_anisotropic_fc as the max_weight, hence the maximum area among the faces composing the cell.
     vector<double> maxArray(nb_fc, 0.0);
     unordered_map<long, double> d_anisotropic_fc;
     unordered_map<long, double> d_isotropic_fc; 
     // Map to address if the cell has been added to a line
     unordered_map<long, bool> has_been_treated;
     // Computation of the anisotropic cell , alias of the cells for which the
-    // ration between the face with maximum area and the face with minimum area
-    // is more than 4.
+    // ratio between the face with maximum area and the face with minimum area
+    // is more than 4. It is a method of the class.
     compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc,0);
     // Initialization of the map: for each anisotropic cell
     // we check if has been analyzed or not 
@@ -451,7 +454,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
     int lines_size = 0;
     // vector of the candidates to continue the line
     vector<long> candidates;
-    // forward list containing the lines
+    // vector of deques containing the lines
     vector<deque<long> *> lines;
     // vector of neighbours to the seed
     vector<long> v_neighbours;
@@ -475,7 +478,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
         (*dQue).push_back(seed);
         has_been_treated[seed]=true;
         // Start the check from the seed
-        // while the line is not enced
+        // while the line is not ended
         while (end!=true){
             // for the seed (that is updated each time end!= true) we fill the neighbours
             // and the weights
@@ -509,6 +512,7 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
              // case we have more than one candidate
              else if (candidates.size()>1){
                 // we cycle on candidates
+                /** @todo Not properly efficient. We risk to do twice the operations (we overwrite the seed. This is not proper **/
                 for (auto & element : candidates) {
                         // if has been treated ==> we check the next candidate
                         if(has_been_treated[element]==true){
@@ -561,35 +565,6 @@ vector<deque<long> *> Dual_Graph::compute_anisotropic_line(long &nb_agglomeratio
   nb_agglomeration_lines = (long) lines_size; 
   return lines;
 }
-
-unsigned short int Dual_Graph::compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc) {
-
-    unsigned short int deg(0);
-    for (const long &i_fc_n : get_neighbours(i_fc)) {
-        // the count method computes the number of occurence of the neighborhood and
-        // hence it guarantees that is in the subset
-        if (i_fc_n != i_fc && s_of_fc.count(i_fc_n) > 0) {
-            deg++;
-        }
-    }
-    return deg;
-}
-
-
-long Dual_Graph::_compute_subgraph_root(unordered_set<long> s_fc) {
-    long max_number_common_faces(-1), arg_max_number_common_faces(-1);
-    for (auto i_fc : s_fc) {
-        // Computation of the degree of the node in the CC subgraph.
-        unsigned short int nb_common_faces_i_fc = compute_degree_of_node_in_subgraph(i_fc, s_fc);
-
-        if (nb_common_faces_i_fc > max_number_common_faces) {
-            max_number_common_faces = nb_common_faces_i_fc;
-            arg_max_number_common_faces = i_fc;
-        }
-    }
-    return arg_max_number_common_faces;
-}
-
 
 unsigned short int Dual_Graph::compute_min_fc_compactness_inside_a_cc(unordered_set<long> &s_fc) {
     // Compute Compactness of a cc
@@ -647,13 +622,6 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
                                              vector<bool> &is_fc_agglomerated_tmp) {
     // Basic checks
     assert(max_card != -1);
-    // TODO : If the fine cells foud are not sufficient to build a course cell of given cardinality, maybe define a wile to reach this 
-    // goal and go the furthest possible.    
-    // This function computes the neighbourhood of a seed passed as argument.
-    // It looks in the neighbourhood of order at least nb_of_order_of_neighbourhood, but if the size of the set of neighbour
-    // is too small (<max_card), we look in higher order neighbourhood.
-    //
-//    unordered_map<long, int> d_n_of_seed;  // dict of fc with the order of neighbouring from seed
     unordered_map<long, int> d_n_of_order_o_m_one;  // dict of FC with the order of neighbouring from seed
     // we initialize for seeds where order is 0
     for (const long &i_fc : s_seeds) {
@@ -698,7 +666,6 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
             break;
         }
 
-        // Copy: d_n_of_order_o_m_one = d_n_of_order_o;
         d_n_of_order_o_m_one.clear();
         for (auto id:d_n_of_order_o) {
             d_n_of_order_o_m_one[id.first] = id.second;
@@ -717,5 +684,4 @@ void Dual_Graph::compute_neighbourhood_of_cc(const unordered_set<long> s_seeds,
     }
 
     nb_of_order_of_neighbourhood = i_order;
-//    return d_n_of_seed;
 }

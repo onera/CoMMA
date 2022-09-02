@@ -199,17 +199,6 @@ public :
  *  @param[in] preserving if 0 does not hit only the BL prism to preserve the boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only in the anisotropic agglomeration*/  
     void compute_d_anisotropic_fc(vector<double> &maxArray, unordered_map<long,double> &d_anisotropic_fc, unordered_map<long,double> &d_isotropic_fc, const long preserving);
 
- /** @brief search of the fine cell at the "root" of the coarse cell, i.e. the fine cell with the most faces in common with
- *   its coarse cell.
- *   @param[in] s_fc set of fine cells to analyse 
- *   @return i_cc the index of the coarse cell
- */
-    long _compute_subgraph_root(unordered_set<long> s_fc);
- /** @brief Compute the degree of one node in the subgraph.
- *   @param[in] i_fc the global index of the fine cell
- *   @return the degree of the node
- */ 
-    unsigned short int compute_degree_of_node_in_subgraph(int i_fc, unordered_set<long> s_of_fc);
  /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
  *   @param[in] s_fc set of fine cells to analyse 
  *   @return the compactness of the fine cell
