@@ -8,7 +8,7 @@ SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
-    Seeds_Pool seeds_pool= Seeds_Pool(Data.nb_fc,Data.d_is_on_bnd);
+    Seeds_Pool<long> seeds_pool(Data.nb_fc,Data.d_is_on_bnd);
     Dual_Graph fc_graph =
         Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                    Data.adjMatrix_areaValues, Data.volumes,seeds_pool,Data.s_anisotropic_compliant_fc, 0, 2);
@@ -205,7 +205,7 @@ SCENARIO("Test the insertion of a coarse cell and deletion", "[Insertion Deletio
 SCENARIO("Test the anisotropic agglomeration for small cases", "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
     DualGPy_aniso Data = DualGPy_aniso();
-    Seeds_Pool seeds_pool= Seeds_Pool(Data.nb_fc,Data.d_is_on_bnd);
+    Seeds_Pool<long> seeds_pool(Data.nb_fc,Data.d_is_on_bnd);
      Dual_Graph fc_graph =
         Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                    Data.adjMatrix_areaValues, Data.volumes,seeds_pool,Data.s_anisotropic_compliant_fc, 0, 2);
@@ -227,7 +227,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases", "[Anisotropic]") 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
-    Seeds_Pool seeds_pool= Seeds_Pool(Data.nb_fc,Data.d_is_on_bnd);
+    Seeds_Pool<long> seeds_pool(Data.nb_fc,Data.d_is_on_bnd);
      Dual_Graph fc_graph =
         Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                    Data.adjMatrix_areaValues, Data.volumes,seeds_pool,Data.s_anisotropic_compliant_fc, 0, 2);

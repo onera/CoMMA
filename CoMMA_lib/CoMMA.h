@@ -52,8 +52,8 @@ void agglomerate_one_level(  // Dual graph:
     vector<CoMMAIndexType> &agglomerationLines,      // In & out
 
     // Args with default value
-    bool correction, short dimension, short goal_card,
-    short min_card, short max_card) {
+    bool correction, short dimension, short goal_card, short min_card,
+    short max_card) {
 
   // SIZES CAST
   //======================================
@@ -89,10 +89,10 @@ void agglomerate_one_level(  // Dual graph:
   // DualGraph.hpp and DualGraph.cpp
   // fc = Fine Cells
   assert(dimension < USHRT_MAX);
-  Seeds_Pool seeds_pool = Seeds_Pool(nb_fc, d_is_on_bnd);
-  Dual_Graph fc_graph = Dual_Graph(nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind,
-                                   adjMatrix_areaValues, volumes, seeds_pool,
-                                   s_anisotropic_compliant_fc, 0, dimension);
+  Seeds_Pool<CoMMAIndexType> seeds_pool(nb_fc, d_is_on_bnd);
+  Dual_Graph fc_graph(nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind,
+                      adjMatrix_areaValues, volumes, seeds_pool,
+                      s_anisotropic_compliant_fc, 0, dimension);
   // Debug
   //    vector<double> maxArray(nb_fc, 0.0);
   //    unordered_map<long, double> d_anisotropic_fc;

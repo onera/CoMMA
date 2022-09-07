@@ -169,7 +169,7 @@ class Dual_Graph : public Graph {
   Dual_Graph(const long &nb_c, const vector<long> &m_crs_row_ptr,
              const vector<long> &m_crs_col_ind,
              const vector<double> &m_crs_values, const vector<double> &volumes,
-             const Seeds_Pool &seeds_pool,
+             const Seeds_Pool<long> &seeds_pool,
              const unordered_set<long> &s_anisotropic_compliant_fc =
                  unordered_set<long>({}),
              int verbose = 0, short dim = 3);
@@ -181,7 +181,7 @@ class Dual_Graph : public Graph {
     //        cout << "Delete Dual_Graph" << endl;
   }
   /** @brief Member seeds pool variable */
-  Seeds_Pool _seeds_pool;
+  Seeds_Pool<long> _seeds_pool;
   /** @brief Flag to have more information for debugging */
   int _verbose;
   /** @brief Dimension of the problem*/

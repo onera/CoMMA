@@ -31,7 +31,7 @@ class Bimap {
     const B *bp = &(aitr->first);  // get pointer of our stored copy of b
     auto bitr =
         mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
-    const A *ap = &(bitr->first);  // update pointer in mapA to point to a
+    const A *ap = &(bitr->first);    // update pointer in mapA to point to a
     auto aim = mapA.insert_or_assign(b, ap);
   }
 
