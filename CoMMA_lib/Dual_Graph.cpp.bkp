@@ -27,12 +27,12 @@ Graph::Graph(const long &nb_c, const vector<long> &m_crs_row_ptr,
 }
 
 vector<long> Graph::get_neighbours(const long &i_c) const {
-  // given the index of a cell refurn the neighborhoods of this cell
+  // given the index of a cell return the neighborhoods of this cell
   long ind = _m_CRS_Row_Ptr[i_c];
   long ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
-  // insert the values of the CRS_vaue from begin+ind (pointed to the face) till
+  // insert the values of the CRS_value from begin+ind (pointed to the face) till
   // the next pointed one, so related to all the
-  // connected areai (and hence to the faces)
+  // connected areas (and hence to the faces)
   vector<long> result(_m_CRS_Col_Ind.begin() + ind,
                       _m_CRS_Col_Ind.begin() + ind_p_one);
   return result;

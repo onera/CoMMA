@@ -21,7 +21,7 @@ class Coarse_Cell_Graph {
 
  public:
   /** @brief Constructor*/
-  Coarse_Cell_Graph(const Dual_Graph &fc_graph, int verbose = 0);
+  Coarse_Cell_Graph(const Dual_Graph<long,double> &fc_graph, int verbose = 0);
   /** @brief Destructor*/
   ~Coarse_Cell_Graph();
   /** @brief Function that return if the coarse cell structure created is
@@ -40,7 +40,7 @@ class Coarse_Cell_Graph {
   /** @brief Helper to get the number of coarse cells */
   inline long get_nb_of_cc() { return _cc_counter; }
   /** @brief map container of the CSR representation of the coarse cells */
-  map<long, shared_ptr<Subgraph>> _cc_vec;
+  map<long, shared_ptr<Subgraph<long,double>>> _cc_vec;
   /** @brief Retrieve the indexes of the neighbouring coarse cells to a given
    * fine cell in a coarse cell (excluding the
    *  given coarse cell in which the fine cell is)
@@ -51,8 +51,8 @@ class Coarse_Cell_Graph {
    */
   vector<long> get_neigh_cc(const long &i_fc, const long &i_cc);
   void update_fc_2_cc(const vector<long> &mapping);
-  map<long, shared_ptr<Subgraph>>::iterator remove_cc(
-      map<long, shared_ptr<Subgraph>>::iterator elim);
+  map<long, shared_ptr<Subgraph<long,double>>>::iterator remove_cc(
+      map<long, shared_ptr<Subgraph<long,double>>>::iterator elim);
   void correct(const long &max_card);
   /** @brief It creates a coarse cell based on the set of fine cells given as an
    * input
@@ -114,7 +114,7 @@ class Coarse_Cell_Graph {
     return !_d_anisotropic_cc.empty();
   }
   /** @brief Dual graph representation.*/
-  Dual_Graph _fc_graph;
+  Dual_Graph<long,double> _fc_graph;
   /** @brief Number of coarse cells in the Coarse cell Graph*/
   long _cc_counter = 0;
   /** @brief Output vector of the fine cells to the coarse cell. The vector
