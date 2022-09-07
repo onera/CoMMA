@@ -17,9 +17,9 @@
 using namespace std;
 
 template <typename CoMMAIndexType, typename CoMMAWeightType>
-class Dual_Graph;
-template <typename CoMMAIndexType, typename CoMMAWeightType>
 class Subgraph;
+template <typename CoMMAIndexType, typename CoMMAWeightType>
+class Dual_Graph;
 
 /** @brief An interface class responsible of storing the cell centered dual
  * graph
@@ -193,7 +193,7 @@ class Graph {
  */
 
 template <typename CoMMAIndexType, typename CoMMAWeightType>
-class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
+class Subgraph : public Graph<CoMMAIndexType,CoMMAWeightType> {
  public:
   /** @brief Constructor of the class
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
@@ -269,12 +269,12 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
     }
     // variable to add weight for each face
     int iter_weight = 0;
-    CoMMAIndexType local_index = _m_CRS_Row_Ptr.size() - 1;
+    CoMMAIndexType local_index = this->_m_CRS_Row_Ptr.size() - 1;
     // initialization pointers for insertion, pointing to the first element of
     // each
-    auto pos_col = _m_CRS_Col_Ind.begin();
-    auto pos_Values = _m_CRS_Values.begin();
-    auto row_end = _m_CRS_Row_Ptr.end() - 1;
+    auto pos_col = this->_m_CRS_Col_Ind.begin();
+    auto pos_Values = this->_m_CRS_Values.begin();
+    auto row_end = this->_m_CRS_Row_Ptr.end() - 1;
 
     // cycle on the set of neighbours
     for (const auto &elem : v_l_neigh) {
@@ -283,24 +283,24 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
       // look at here
       // https://stackoverflow.com/questions/71299247/inserting-an-element-in-given-positions-more-than-one-of-a-vector/71299304#71299304
       // to understand why we re-initialize.
-      _m_CRS_Col_Ind.insert(_m_CRS_Col_Ind.begin() + _m_CRS_Row_Ptr[elem],
+      this->_m_CRS_Col_Ind.insert(this->_m_CRS_Col_Ind.begin() + this->_m_CRS_Row_Ptr[elem],
                             local_index);
-      _m_CRS_Values.insert(_m_CRS_Values.begin() + _m_CRS_Row_Ptr[elem],
+      this->_m_CRS_Values.insert(this->_m_CRS_Values.begin() + this->_m_CRS_Row_Ptr[elem],
                            weight[iter_weight]);
       // We modify the row pointer as far it is related with what we have done
       // before
-      for (auto it = _m_CRS_Row_Ptr.begin() + elem; it != _m_CRS_Row_Ptr.end();
+      for (auto it = this->_m_CRS_Row_Ptr.begin() + elem; it != this->_m_CRS_Row_Ptr.end();
            ++it) {
         ++(*it);
       }
       // we do the same.
-      _m_CRS_Col_Ind.insert(_m_CRS_Col_Ind.end(), elem);
-      _m_CRS_Values.insert(_m_CRS_Values.end(), weight[iter_weight]);
+      this->_m_CRS_Col_Ind.insert(this->_m_CRS_Col_Ind.end(), elem);
+      this->_m_CRS_Values.insert(this->_m_CRS_Values.end(), weight[iter_weight]);
       // We increment the weight flag iterator
       ++iter_weight;
     }
-    _m_CRS_Row_Ptr.push_back(*row_end + v_neigh.size());
-    _volumes.push_back(volume);
+    this->_m_CRS_Row_Ptr.push_back(*row_end + v_neigh.size());
+    this->_volumes.push_back(volume);
     _mapping_l_to_g.push_back(i_fc);
   }
 
@@ -319,27 +319,27 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
 
     // weight iterator for erasing in the weight vector
     typename vector<CoMMAWeightType>::iterator weight_it;
-    auto pos_col = _m_CRS_Col_Ind.begin();
-    auto pos_Values = _m_CRS_Values.begin();
+    auto pos_col = this->_m_CRS_Col_Ind.begin();
+    auto pos_Values = this->_m_CRS_Values.begin();
     CoMMAIndexType k;
     // mapping for the renumbering of the nodes
     vector<CoMMAIndexType> internal_mapping;
     for (const auto &elem : v_neigh) {
-      ind = _m_CRS_Row_Ptr[elem];
-      ind_p_one = _m_CRS_Row_Ptr[elem + 1];
+      ind = this->_m_CRS_Row_Ptr[elem];
+      ind_p_one = this->_m_CRS_Row_Ptr[elem + 1];
       // Constant to keep track and erase the weight
       for (auto it = pos_col + ind; it != pos_col + ind_p_one; ++it) {
         if (*it == i_fc) {
-          _m_CRS_Col_Ind.erase(it);
+          this->_m_CRS_Col_Ind.erase(it);
           // define the exact position of the element for the processing of the
           // weight
           // later.
           k = it - pos_col;
           weight_it = pos_Values + k;
-          _m_CRS_Values.erase(weight_it);
+          this->_m_CRS_Values.erase(weight_it);
           // for each found i decrease the successive of 1 for the offset
-          for (auto it_bis = _m_CRS_Row_Ptr.begin() + elem + 1;
-               it_bis != _m_CRS_Row_Ptr.end(); ++it_bis) {
+          for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
+               it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
             *it_bis = *it_bis - 1;
           }
         }
@@ -347,28 +347,28 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
     }
     // reduce the row ptr value of the deleted value
     // do the same with i_fc
-    ind = _m_CRS_Row_Ptr[i_fc];
-    ind_p_one = _m_CRS_Row_Ptr[i_fc + 1];
+    ind = this->_m_CRS_Row_Ptr[i_fc];
+    ind_p_one = this->_m_CRS_Row_Ptr[i_fc + 1];
     for (auto it = pos_col + ind; it != pos_col + ind_p_one; ++it) {
-      _m_CRS_Col_Ind.erase(it);
+      this->_m_CRS_Col_Ind.erase(it);
       // define the exact position of the element for the processing of the weight
       // later.
       k = it - pos_col;
       weight_it = pos_Values + k;
-      _m_CRS_Values.erase(weight_it);
+      this->_m_CRS_Values.erase(weight_it);
       // for each found i decrease the successive of 1 for the offset
-      for (auto it_bis = _m_CRS_Row_Ptr.begin() + i_fc + 1;
-           it_bis != _m_CRS_Row_Ptr.end(); ++it_bis) {
+      for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
+           it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
         *it_bis = *it_bis - 1;
       }
     }
     // Get rid of the col element
-    auto Col_pointer = _m_CRS_Row_Ptr.begin() + i_fc;
+    auto Col_pointer = this->_m_CRS_Row_Ptr.begin() + i_fc;
     // Modify the mapping
     auto mapping_pointer = _mapping_l_to_g.begin() + i_fc;
-    auto volumes_pointer = _volumes.begin() + i_fc;
-    _volumes.erase(volumes_pointer);
-    _m_CRS_Row_Ptr.erase(Col_pointer);
+    auto volumes_pointer = this->_volumes.begin() + i_fc;
+    this->_volumes.erase(volumes_pointer);
+    this->_m_CRS_Row_Ptr.erase(Col_pointer);
     _mapping_l_to_g.erase(mapping_pointer);
     // now we do not have nomore our node, but we must create a mapping between
     // the
@@ -378,7 +378,7 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
     CoMMAIndexType indice = 0;
     // to cycle on the main vector
     CoMMAIndexType ix = 0;
-    while (ix != _m_CRS_Row_Ptr.size() + 1) {
+    while (ix != this->_m_CRS_Row_Ptr.size() + 1) {
       if (ix != i_fc) {
         internal_mapping.push_back(indice);
         indice++;
@@ -387,7 +387,7 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
       }
       ++ix;
     }
-    for (auto &actual : _m_CRS_Col_Ind) {
+    for (auto &actual : this->_m_CRS_Col_Ind) {
       actual = internal_mapping[actual];
     }
   }
@@ -396,7 +396,7 @@ class Subgraph : Graph<CoMMAIndexType,CoMMAWeightType> {
 /** @brief A class implementing the CRS global graph representation.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType>
-class Dual_Graph : Graph <CoMMAIndexType,CoMMAWeightType> {
+class Dual_Graph : public Graph <CoMMAIndexType,CoMMAWeightType> {
 
  public:
   /** @brief Constructor of the class
@@ -423,7 +423,6 @@ class Dual_Graph : Graph <CoMMAIndexType,CoMMAWeightType> {
              int verbose = 0, int dim = 3)
     : Graph<CoMMAIndexType,CoMMAWeightType>(nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
       _seeds_pool(seeds_pool),
-      _verbose(verbose),
       _dimension(dim) {
     // We check that effectively in the dictionary we have recorded cells with
     // boundaries and we define the seed pool depending on the dimension of the
@@ -432,7 +431,7 @@ class Dual_Graph : Graph <CoMMAIndexType,CoMMAWeightType> {
       _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
       // Default initialization of s_anisotropic_compliant_cells
-      for (int i = 0; i < _number_of_cells; i++) {
+      for (int i = 0; i < this->_number_of_cells; i++) {
         _s_anisotropic_compliant_cells.insert(i);
       }
     }
@@ -447,9 +446,6 @@ class Dual_Graph : Graph <CoMMAIndexType,CoMMAWeightType> {
 
   /** @brief Member seeds pool variable */
   Seeds_Pool<CoMMAIndexType> _seeds_pool;
-
-  /** @brief Flag to have more information for debugging */
-  int _verbose;
 
   /** @brief Dimension of the problem*/
   int _dimension;
@@ -622,7 +618,12 @@ class Dual_Graph : Graph <CoMMAIndexType,CoMMAWeightType> {
     }
     return dict_fc_compactness;
   }
-
+  /** @brief Getter that returns the number of cells
+ *    @return number of cells
+ */
+  int get_nb_cells(){
+      return this->_number_of_cells;
+  }
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
   *   @param[in] s_seeds set of seeds for which the neighborhood must be

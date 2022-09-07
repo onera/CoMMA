@@ -59,7 +59,7 @@ class Agglomerator {
   bool _is_anisotropic = false;
   /** @brief minimum number of neighborhood we extend to search the neighborhood
    * in the greedy algorithm. Set as default to 3.*/
-  short _min_neighbourhood = 3;
+  int _min_neighbourhood = 3;
   /** @brief minimum cardinality. Set as default to -1 (meaning the maximum
    * possible).*/
   short _min_card = -1;

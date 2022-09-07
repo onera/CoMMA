@@ -276,7 +276,7 @@ Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(
   unordered_map<long, int> d_n_of_seed;
   // Number of fine cells constituting the current coarse cell in construction.
   short size_current_cc = 1;  // CC contains only one cell: the seed
-  short max_order_of_neighbourhood =
+  int max_order_of_neighbourhood =
       _min_neighbourhood;  // set to 3 as default we set to this value the
                            // maximum order to which we search to compose the
                            // coarse cell

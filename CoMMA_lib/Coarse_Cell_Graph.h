@@ -97,7 +97,7 @@ class Coarse_Cell_Graph {
     /**
      * The computation and/or recovery of cc depends of the data structure
      */
-    return _nb_of_agglomerated_fc == _fc_graph._number_of_cells;
+    return _nb_of_agglomerated_fc == _fc_graph.get_nb_cells();
   }
 
   inline bool is_agglomeration_isotropic() {
