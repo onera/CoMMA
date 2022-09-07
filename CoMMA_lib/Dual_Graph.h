@@ -54,7 +54,7 @@ class Graph {
   /** @brief helper vector for the DFS*/
   vector<bool> _visited;
   /** @brief Dimension of the problem */
-  int _dimension;
+  short _dimension;
   /** @brief Vector of row pointer of CRS representation (member variable
    * different from the unordered
    * set passed as a reference in input) */
@@ -172,7 +172,7 @@ class Dual_Graph : public Graph {
              const Seeds_Pool &seeds_pool,
              const unordered_set<long> &s_anisotropic_compliant_fc =
                  unordered_set<long>({}),
-             int verbose = 0, int dim = 3);
+             int verbose = 0, short dim = 3);
 
   /** @brief Destructor of the class
    *
@@ -185,7 +185,7 @@ class Dual_Graph : public Graph {
   /** @brief Flag to have more information for debugging */
   int _verbose;
   /** @brief Dimension of the problem*/
-  int _dimension;
+  short _dimension;
   /** @brief Member unordered set of compliant cells*/
   unordered_set<long> _s_anisotropic_compliant_cells;
   /** @brief Anisotropic lines list size*/

@@ -44,7 +44,7 @@ void agglomerate_one_level(  // Dual graph:
     const vector<CoMMAIndexType> &isOnFineBnd,
 
     // Agglomeration argument
-    long isFirstAgglomeration_long, long is_anisotropic_long,
+    bool isFirstAgglomeration, bool is_anisotropic,
 
     // Outputs
     vector<CoMMAIndexType> &fc_to_cc,                // Out
@@ -52,28 +52,13 @@ void agglomerate_one_level(  // Dual graph:
     vector<CoMMAIndexType> &agglomerationLines,      // In & out
 
     // Args with default value
-    long is_basic_or_triconnected, long dimension, long goal_card,
-    long min_card, long max_card) {
+    bool correction, short dimension, short goal_card,
+    short min_card, short max_card) {
 
   // SIZES CAST
   //======================================
   // number of faces
   long nb_fc = static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
-  // Length of the offset vector of the CSR representation. it should be long as
-  // the number of faces
-  //  augmented of 1
-  long adj_matrix_row_ptr_size = nb_fc + 1;
-  // Length of the esges vector of the CSR representation, representing the
-  // adjacency
-  long adj_matrix_col_ind_size =
-      static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
-  // Length of the weigth of the CSR representation. In this kind of
-  // representation it is the same
-  long adj_matrix_areas_size =
-      static_cast<CoMMAIndexType>(adjMatrix_col_ind.size());
-  // Initialize anisotropic compliant
-  long arrayOfFineAnisotropicCompliantCells_size =
-      static_cast<CoMMAIndexType>(arrayOfFineAnisotropicCompliantCells.size());
 
   // BOUNDARIES
   //======================================
@@ -97,10 +82,6 @@ void agglomerate_one_level(  // Dual graph:
   unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(
       arrayOfFineAnisotropicCompliantCells.begin(),
       arrayOfFineAnisotropicCompliantCells.end());
-  // for (long i_a_c_fc = 0; i_a_c_fc <
-  // arrayOfFineAnisotropicCompliantCells_size; i_a_c_fc++) {
-  //     s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-  // }
 
   // DUAL GRAPH
   //======================================
@@ -131,7 +112,7 @@ void agglomerate_one_level(  // Dual graph:
   // https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
   // About constructors when upcasting :
   // https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
-  if (is_anisotropic_long) {
+  if (is_anisotropic) {
 
     shared_ptr<Agglomerator> agg1 = make_shared<Agglomerator_Anisotropic>(
         fc_graph, cc_graph, dimension = dimension);
@@ -143,8 +124,8 @@ void agglomerate_one_level(  // Dual graph:
     // case in which we have already agglomerated one level and hence we have
     // already agglomeration
     // lines available; no need to recreate them.
-    if (!isFirstAgglomeration_long) {
-      is_basic_or_triconnected = 0;
+    if (!isFirstAgglomeration) {
+      correction = false;
       auto fineAgglomerationLines_array_Idx_size =
           agglomerationLines_Idx.size();
       for (long i = fineAgglomerationLines_array_Idx_size - 2; i > -1; i--) {
@@ -164,7 +145,7 @@ void agglomerate_one_level(  // Dual graph:
         dynamic_pointer_cast<Agglomerator_Anisotropic>(agg1);
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
-    agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, -1);
+    agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, false);
     // level of the line: WARNING! here 1 it means that we give it back lines in
     // the new global
     // index, 0 the old
@@ -175,8 +156,7 @@ void agglomerate_one_level(  // Dual graph:
   auto agg = make_unique<Agglomerator_Biconnected>(fc_graph, cc_graph,
                                                    dimension = dimension);
   // Agglomerate
-  agg->agglomerate_one_level(min_card, goal_card, max_card,
-                             is_basic_or_triconnected);
+  agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   auto fccc = cc_graph._fc_2_cc;
