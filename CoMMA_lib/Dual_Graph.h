@@ -15,12 +15,12 @@
 #include <map>
 #include <algorithm>
 #include <list>
-#include "Seeds_Pool.h"
-#include "Util.h"
 #include <iostream>
 #include <climits>
 #include <utility>
 #include <numeric>
+
+#include "Seeds_Pool.h"
 
 using namespace std;
 

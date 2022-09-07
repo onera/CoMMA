@@ -5,8 +5,9 @@
 #ifndef COMMA_PROJECT_COARSE_CELL_H
 #define COMMA_PROJECT_COARSE_CELL_H
 
-#include "Dual_Graph.h"
 #include <memory>
+
+#include "Dual_Graph.h"
 
 /** @brief Class implementing a Coarse_Cell object.
  * @param[in] fc_graph Dual_Graph object from where are taken the set of fine

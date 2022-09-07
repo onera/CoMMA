@@ -5,10 +5,11 @@
 #ifndef COMMA_PROJECT_COARSE_CELL_GRAPH_H
 #define COMMA_PROJECT_COARSE_CELL_GRAPH_H
 
-#include "Dual_Graph.h"
-#include "Coarse_Cell.h"
 #include <memory>
 #include <map>
+
+#include "Dual_Graph.h"
+#include "Coarse_Cell.h"
 /** @brief Create a Coarse Cell Graph, hence it is the
  *  container of the Coarse Cells created and
  *  of the operation we can do on them.
@@ -40,7 +41,7 @@ class Coarse_Cell_Graph {
   inline long get_nb_of_cc() { return _cc_counter; }
   /** @brief map container of the CSR representation of the coarse cells */
   map<long, shared_ptr<Subgraph>> _cc_vec;
-  /** @brief Retrive the indexes of the neighbouring coarse cells to a given
+  /** @brief Retrieve the indexes of the neighbouring coarse cells to a given
    * fine cell in a coarse cell (excluding the
    *  given coarse cell in which the fine cell is)
    *  @param[in] i_fc index of the fine cell inside the coarse cell to be
@@ -116,7 +117,7 @@ class Coarse_Cell_Graph {
   Dual_Graph _fc_graph;
   /** @brief Number of coarse cells in the Coarse cell Graph*/
   long _cc_counter = 0;
-  /** @brief Output vector of the fince cells to the coarse cell. The vector
+  /** @brief Output vector of the fine cells to the coarse cell. The vector
    * long as much as the fine cells have as a value the corresponding coarse
    * cell id*/
   vector<long> _fc_2_cc;

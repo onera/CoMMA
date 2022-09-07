@@ -2,8 +2,9 @@
 // Created by Nicolas Lantos on 02/04/2021.
 //
 
-#include "Agglomerator.h"
 #include <stdexcept>
+
+#include "Agglomerator.h"
 
 //"""
 // Main Class of the CoMMA library, containing the methods to operate the

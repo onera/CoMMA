@@ -4,11 +4,13 @@
 
 #ifndef COMMA_PROJECT_SEEDS_POOL_H
 #define COMMA_PROJECT_SEEDS_POOL_H
+
 #include <unordered_set>
 #include <unordered_map>
 #include <list>
 #include <cassert>
 #include <vector>
+
 #include "Queue.h"
 
 using namespace std;
