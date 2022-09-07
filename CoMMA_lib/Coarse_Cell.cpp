@@ -6,13 +6,13 @@
 
 Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph, long i_cc,
                          const unordered_set<long> &s_fc, bool is_isotropic)
-    : __dim(fc_graph._dimension), __is_isotropic(is_isotropic) {
+    : _dim(fc_graph._dimension), _is_isotropic(is_isotropic) {
   // compactness, degrees are defined in the Subgraph
   // Other quantities are defined in the cc_graph map (e.h the i_cc)
-  __fc_graph = &fc_graph;
+  _fc_graph = &fc_graph;
 
   for (const long &i_fc : s_fc) {
-    __s_fc.insert(i_fc);
+    _s_fc.insert(i_fc);
   }
   for (const long &i_fc : s_fc) {
     volume += fc_graph._volumes[i_fc];
@@ -34,22 +34,22 @@ vector<long> Coarse_Cell::build_CRS() {
   vector<long> col_ind;
   vector<long> mapping;
   vector<double> area;
-  for (const long &i_fc : __s_fc) {
+  for (const long &i_fc : _s_fc) {
     // we add to the mapping the i_fc
     mapping.push_back(i_fc);
     // get neighbours and the weights associated
-    neigh = __fc_graph->get_neighbours(i_fc);
-    area = __fc_graph->get_weights(i_fc);
+    neigh = _fc_graph->get_neighbours(i_fc);
+    area = _fc_graph->get_weights(i_fc);
     for (auto it = neigh.begin(); it != neigh.end(); ++it) {
       index_weight = it - neigh.begin();
-      if (__s_fc.count(*it)) {
+      if (_s_fc.count(*it)) {
         ++position;
         col_ind.push_back(*it);
         weight.push_back(area[index_weight]);
       }
     }
     row_ptr.push_back(position);
-    _volumes.push_back(__fc_graph->_volumes[i_fc]);
+    _volumes.push_back(_fc_graph->_volumes[i_fc]);
   }
   _adjMatrix_row_ptr = row_ptr;
   // Map in the local subgraph
@@ -65,9 +65,9 @@ vector<long> Coarse_Cell::build_CRS() {
 
 bool Coarse_Cell::is_connected() {
 
-  if (!__is_connectivity_up_to_date) {
-    __is_connected = _cc_graph->check_connectivity();
-    __is_connectivity_up_to_date = true;
+  if (!_is_connectivity_up_to_date) {
+    _is_connected = _cc_graph->check_connectivity();
+    _is_connectivity_up_to_date = true;
   }
-  return __is_connected;
+  return _is_connected;
 }

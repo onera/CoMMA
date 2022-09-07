@@ -104,7 +104,7 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_iso() {
 
   for (auto &i_k_v : _d_isotropic_cc) {
     long i_cc = i_k_v.first;
-    unordered_set<long> tmp(i_k_v.second->__s_fc);
+    unordered_set<long> tmp(i_k_v.second->_s_fc);
     d[i_cc] = tmp;
   }
   return d;
@@ -130,7 +130,7 @@ unordered_map<long, unordered_set<long>> Coarse_Cell_Graph::get_d_cc_all() {
 
   for (auto &i_k_v : _d_isotropic_cc) {
     long i_cc = i_k_v.first;
-    unordered_set<long> tmp(i_k_v.second->__s_fc);
+    unordered_set<long> tmp(i_k_v.second->_s_fc);
     d[i_cc] = tmp;
   }
   for (auto &i_k_v : _d_anisotropic_cc) {

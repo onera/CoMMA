@@ -25,7 +25,7 @@ class Coarse_Cell {
               bool is_isotropic = true);
 
   ~Coarse_Cell() {};
-  /** @brief Method that return a boolean determing if the Coarse Cell is
+  /** @brief Method that return a boolean determining if the Coarse Cell is
    * defined by a connected sub-graph or not.
    *  @return true if the subgraph is connected, false if the subgraph is not
    * connected*/
@@ -48,18 +48,18 @@ class Coarse_Cell {
    * @return a vector representing the local to global mapping.*/
   vector<long> build_CRS();
   /** @brief The global dual graph*/
-  Dual_Graph *__fc_graph;
+  Dual_Graph *_fc_graph;
   /** @brief the dimension of the problem (2D or 3D)*/
-  short int __dim;
+  short int _dim;
   /** @brief Is the cell isotropic or anisotropic*/
-  bool __is_isotropic;
+  bool _is_isotropic;
   /** @brief is the cell connected*/
-  bool __is_connected;
+  bool _is_connected;
   /** @brief the connectivity has been checked*/
-  bool __is_connectivity_up_to_date =
+  bool _is_connectivity_up_to_date =
       false;  //  # TODO useful for is_connected?
-              /** @brief Set of fine cells composing the  Coarse cell*/
-  unordered_set<long> __s_fc;
+  /** @brief Set of fine cells composing the  Coarse cell*/
+  unordered_set<long> _s_fc;
   /** @brief Total volume of the coarse cell */
   double volume = 0.0;
 };
