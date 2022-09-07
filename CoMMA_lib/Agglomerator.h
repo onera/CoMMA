@@ -28,7 +28,7 @@ class Agglomerator {
    * of the matrix
    *  @param[in] dimension the dimension of the problem*/
   Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-               int dimension = 3);
+               short dimension = 3);
   /** @brief The destructor of the class */
   virtual ~Agglomerator() = default;
   /** @brief Accessor to retrive the fine cells to coarse cells from the coarse
@@ -47,12 +47,12 @@ class Agglomerator {
      */
   virtual void agglomerate_one_level(const short goal_card,
                                      const short min_card, const short max_card,
-                                     int correction_steps) = 0;
+                                     bool correction_steps) = 0;
 
  protected:
   /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
-  int _dimension;
+  short _dimension;
   /** @brief boolean to define if it is anisotropic or not. It is set as default
    * to false.
    *  @todo: check if we can get rid of _is_anisotropic variable*/
@@ -92,7 +92,7 @@ class Agglomerator_Anisotropic : public Agglomerator {
    * of the father and
    * in this way activates also the constructor of the base class.*/
   Agglomerator_Anisotropic(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           int dimension = 3);
+                           short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Anisotropic() {};
 
@@ -102,7 +102,7 @@ class Agglomerator_Anisotropic : public Agglomerator {
      * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
   void agglomerate_one_level(const short goal_card, const short min_card,
                              const short max_card,
-                             int correction_steps) override;
+                             bool correction_steps) override;
 
   /** @brief Accessor (for this reason it is public)
    *  Function that returns the vector of agglomeration lines
@@ -141,7 +141,7 @@ class Agglomerator_Isotropic : public Agglomerator {
   * of the father and
   * in this way activates also the constructor of the base class.*/
   Agglomerator_Isotropic(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                         int dimension = 3);
+                         short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Isotropic() {};
   /** @brief The task of the function is to set the parameters of
@@ -177,7 +177,7 @@ class Agglomerator_Isotropic : public Agglomerator {
       * */
   void agglomerate_one_level(const short goal_card, const short min_card,
                              const short max_card,
-                             int correction_steps) override;
+                             bool correction_steps) override;
   /** @brief Pure virtual function that must be implemented in child classes to
    * define the optimal coarse cell
    *  @param[in] seed the seed cell to start cumulate the other cells
@@ -199,7 +199,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic {
    * instantiates the
    * base class Agglomerator_Isotropic */
   Agglomerator_Biconnected(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           int dimension = 3);
+                           short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Biconnected() {};
   /** @brief Specialization of the pure virtual function in the parent class, to
@@ -209,7 +209,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic {
       const long seed, short &compactness) override;
 
  protected:
-  /** @brief Method that inside the biconnected algorith, checked in the
+  /** @brief Method that inside the biconnected algorithm, checked in the
    * choose_optimal_cc_and_update_seed_pool
    * function all the possible exception, computes the best fine cells to add to
    * the coarse cell.

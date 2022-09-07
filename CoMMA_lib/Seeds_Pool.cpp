@@ -100,6 +100,8 @@ long Seeds_Pool::choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
       return (i);
     }
   }
+  // Avoid warning
+  return -1;
 }
 
 int Seeds_Pool::boundary_value(const long &i_fc) {

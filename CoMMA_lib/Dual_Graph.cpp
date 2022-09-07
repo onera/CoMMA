@@ -270,7 +270,7 @@ Dual_Graph::Dual_Graph(const long &nb_c, const vector<long> &m_crs_row_ptr,
                        const vector<double> &volumes,
                        const Seeds_Pool &seeds_pool,
                        const unordered_set<long> &s_anisotropic_compliant_fc,
-                       int verbose, int dim)
+                       int verbose, short dim)
     : Graph(nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
       _seeds_pool(seeds_pool),
       _verbose(verbose),

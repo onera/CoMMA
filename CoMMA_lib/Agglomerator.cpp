@@ -20,7 +20,7 @@
 // https://weseetips.wordpress.com/tag/exception-from-constructor-initializer-list/
 
 Agglomerator::Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           int dimension)
+                           short dimension)
     : _fc_graph(graph), _dimension(dimension), _cc_graph(&cc_graph) {
   if ((_dimension != 2) && (_dimension != 3)) {
     throw range_error("dimension can only be 2 or 3");
@@ -37,7 +37,7 @@ Agglomerator::Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
 // =======================
 Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
                                                    Coarse_Cell_Graph &cc_graph,
-                                                   int dimension)
+                                                   short dimension)
     : Agglomerator(graph, cc_graph, dimension) {
   // for every defined level (1 by default), contains the number of cells
   // e.g. _l_nb_of_cells[0]= number of cells on finest level
@@ -88,7 +88,7 @@ void Agglomerator_Anisotropic::get_agglo_lines(
 void Agglomerator_Anisotropic::agglomerate_one_level(const short goal_card,
                                                      const short min_card,
                                                      const short max_card,
-                                                     int correction_steps) {
+                                                     bool correction_steps) {
   // if the finest agglomeration line is not computed, hence compute it
   // (REMEMBER! We compute the agglomeration lines
   // only on the finest level, the other one are stored only for visualization
@@ -176,7 +176,7 @@ Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines() {
 // ======================
 Agglomerator_Isotropic::Agglomerator_Isotropic(Dual_Graph &graph,
                                                Coarse_Cell_Graph &cc_graph,
-                                               int dimension)
+                                               short dimension)
     : Agglomerator(graph, cc_graph, dimension) {
           // no particular constructor
       };
@@ -215,14 +215,14 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(short goal_card,
 
 Agglomerator_Biconnected::Agglomerator_Biconnected(Dual_Graph &graph,
                                                    Coarse_Cell_Graph &cc_graph,
-                                                   int dimension)
+                                                   short dimension)
     : Agglomerator_Isotropic(graph, cc_graph, dimension) {
           // no particular constructor
       };
 void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
                                                    const short min_card,
                                                    const short max_card,
-                                                   int correction_steps) {
+                                                   bool correction_steps) {
   set_agglomeration_parameter(goal_card, min_card, max_card);
   // We define a while for which we control the number of agglomerated cells
   short compactness = 0;
@@ -251,7 +251,7 @@ void Agglomerator_Isotropic::agglomerate_one_level(const short goal_card,
   // delayed one
   // We proceed in creating the delayed one
   _cc_graph->cc_create_all_delayed_cc();
-  if (correction_steps == 1) {
+  if (correction_steps) {
     _cc_graph->correct(_max_card);
   }
   _l_nb_of_cells.push_back(_cc_graph->_cc_counter);
