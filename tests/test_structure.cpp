@@ -14,14 +14,16 @@ SCENARIO("Test of a structure", "[structure]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
     // Check the effective length
     WHEN("We try to access to the member variables") {
       class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT> {
        public:
-        test(Dual_Graph<TestIndexT, TestWeightT> &graph, Coarse_Cell_Graph &cc_graph,
+        test(Dual_Graph<TestIndexT, TestWeightT> &graph,
+             Coarse_Cell_Container<TestIndexT, TestWeightT> &cc_graph,
              int dimension)
-            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
+            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph,
+                                                                dimension) {};
 
         short test_variable() {
           return (this->_threshold_card);
@@ -36,9 +38,11 @@ SCENARIO("Test of a structure", "[structure]") {
     WHEN("We try to access to Define the cardinality") {
       class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT> {
        public:
-        test(Dual_Graph<TestIndexT, TestWeightT> &graph, Coarse_Cell_Graph &cc_graph,
+        test(Dual_Graph<TestIndexT, TestWeightT> &graph,
+             Coarse_Cell_Container<TestIndexT, TestWeightT> &cc_graph,
              int dimension)
-            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
+            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph,
+                                                                dimension) {};
 
         short thres() {
           return (_threshold_card);
@@ -160,7 +164,8 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
         mapping_l_to_g_3, true);
     WHEN("We Collect the cells in the Bimap") {
 
-      Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT>>> Collection;
+      Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT>>>
+          Collection;
       Collection.insert(0, cc0);
       Collection.insert(1, cc1);
       Collection.insert(2, cc2);
@@ -213,8 +218,10 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
-    Agglomerator<TestIndexT, TestWeightT> *agg1 = new Agglomerator_Anisotropic<TestIndexT, TestWeightT>(fc_graph, cc_graph, 2);
+    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
+    Agglomerator<TestIndexT, TestWeightT> *agg1 =
+        new Agglomerator_Anisotropic<TestIndexT, TestWeightT>(fc_graph,
+                                                              cc_graph, 2);
     // I progress with the downcasting to get the anisotropic lines
     Agglomerator_Anisotropic<TestIndexT, TestWeightT> *agg_dyn =
         dynamic_cast<Agglomerator_Anisotropic<TestIndexT, TestWeightT> *>(agg1);
@@ -232,8 +239,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
-    auto agg = make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT>>(fc_graph, cc_graph, 2);
+    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
+    auto agg = make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT>>(
+        fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
       agg->agglomerate_one_level(2, 2, 2, 1);

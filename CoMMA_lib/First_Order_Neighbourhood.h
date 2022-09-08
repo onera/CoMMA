@@ -19,7 +19,8 @@ class First_Order_Neighbourhood {
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed */
-  First_Order_Neighbourhood(unordered_set<CoMMAIndexType> s_neighbours_of_seed) {
+  First_Order_Neighbourhood(
+      unordered_set<CoMMAIndexType> s_neighbours_of_seed) {
     _s_fc = {};                                    // definition of the cc
     _s_neighbours_of_seed = s_neighbours_of_seed;  // defined once and for all
     _first_order_neighbourhood = {};
@@ -35,7 +36,8 @@ class First_Order_Neighbourhood {
    * be added to the _first_order_neighbourhood
    * member variable only if the element of the set are in the set of neighbours
    * of seed.*/
-  unordered_set<CoMMAIndexType> update(CoMMAIndexType new_fc, unordered_set<CoMMAIndexType> s_new_neighbour) {
+  unordered_set<CoMMAIndexType> update(
+      CoMMAIndexType new_fc, unordered_set<CoMMAIndexType> s_new_neighbour) {
     _s_fc.insert(new_fc);
     if (_first_order_neighbourhood.count(new_fc)) {
       _first_order_neighbourhood.erase(new_fc);

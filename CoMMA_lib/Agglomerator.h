@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #include "Dual_Graph.h"
-#include "Coarse_Cell_Graph.h"
+#include "Coarse_Cell_Container.h"
 #include "Util.h"
 #include "First_Order_Neighbourhood.h"
 
@@ -49,7 +49,8 @@ class Agglomerator {
    * of the matrix
    *  @param[in] dimension the dimension of the problem*/
   Agglomerator(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
-               Coarse_Cell_Graph &cc_graph, short dimension = 3)
+               Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> &cc_graph,
+               short dimension = 3)
       : _fc_graph(graph), _dimension(dimension), _cc_graph(&cc_graph) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw range_error("dimension can only be 2 or 3");
@@ -113,7 +114,7 @@ class Agglomerator {
    * connectivity.*/
   Dual_Graph<CoMMAIndexType, CoMMAWeightType> _fc_graph;
   /** @brief pointer to Coarse Cell Graph element */
-  Coarse_Cell_Graph *_cc_graph;
+  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> *_cc_graph;
 };
 
 /** @brief Agglomerator_Anisotropic class is a child class of the Agglomerator
@@ -127,8 +128,10 @@ class Agglomerator_Anisotropic
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and
    * in this way activates also the constructor of the base class.*/
-  Agglomerator_Anisotropic(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
-                           Coarse_Cell_Graph &cc_graph, short dimension = 3)
+  Agglomerator_Anisotropic(
+      Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> &cc_graph,
+      short dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType>(graph, cc_graph,
                                                       dimension) {
     // for every defined level (1 by default), contains the number of cells
@@ -312,8 +315,10 @@ class Agglomerator_Isotropic
   /** @brief Constructor. The constructor takes as arguments the same arguments
   * of the father and
   * in this way activates also the constructor of the base class.*/
-  Agglomerator_Isotropic(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
-                         Coarse_Cell_Graph &cc_graph, short dimension = 3)
+  Agglomerator_Isotropic(
+      Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> &cc_graph,
+      short dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType>(graph, cc_graph,
                                                       dimension) {
     // no particular constructor
@@ -442,8 +447,10 @@ class Agglomerator_Biconnected
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the
    * base class Agglomerator_Isotropic */
-  Agglomerator_Biconnected(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
-                           Coarse_Cell_Graph &cc_graph, short dimension = 3)
+  Agglomerator_Biconnected(
+      Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> &cc_graph,
+      short dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType>(graph, cc_graph,
                                                                 dimension) {
     // no particular constructor

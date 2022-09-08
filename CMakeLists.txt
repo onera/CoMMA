@@ -33,7 +33,7 @@ SET(IMPLEMENTATION
         ${SOURCE_DIR}/Dual_Graph.h
         ${SOURCE_DIR}/Coarse_Cell.h
         ${SOURCE_DIR}/Agglomerator.h
-        ${SOURCE_DIR}/Coarse_Cell_Graph.h
+        ${SOURCE_DIR}/Coarse_Cell_Container.h
         ${SOURCE_DIR}/Util.h
         ${SOURCE_DIR}/Queue.h
         ${SOURCE_DIR}/First_Order_Neighbourhood.h
@@ -46,7 +46,7 @@ set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
 set(SOURCE_FILES
-        ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
+#        ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
         ${SOURCE_DIR}/Tree.cpp
 	)
 set(PROFILING 

@@ -101,7 +101,7 @@ void agglomerate_one_level(  // Dual graph:
   // with minimum area
   //    //                 // is more than 4.
   //    fc_graph.compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
-  Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> cc_graph(fc_graph);
   // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
   // @todo maybe re-refactor the class agglomerator to allow the implicit upcast
   // like the biconnected case

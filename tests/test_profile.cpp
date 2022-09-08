@@ -33,8 +33,10 @@ int main(int argv, char** argc) {
   // To test protected variables I use a child class. This is a trick to access.
   class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT> {
    public:
-    test(Dual_Graph<TestIndexT, TestWeightT>& graph, Coarse_Cell_Graph& cc_graph, int dimension)
-        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
+    test(Dual_Graph<TestIndexT, TestWeightT>& graph,
+         Coarse_Cell_Graph& cc_graph, int dimension)
+        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph,
+                                                            dimension) {};
     ~test() {};
     short test_variable() {
       return (_threshold_card);
@@ -61,7 +63,9 @@ int main(int argv, char** argc) {
   agg->agglomerate_one_level(2, 2, 2, -1);
   TRACE_EVENT_END("agglomerator");
   TRACE_EVENT_BEGIN("agglomerator", "biconnected");
-  Agglomerator<TestIndexT, TestWeightT>* test = new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph, 2);
+  Agglomerator<TestIndexT, TestWeightT>* test =
+      new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph,
+                                                            2);
   test->agglomerate_one_level(2, 2, 2, -1);
   TRACE_EVENT_END("agglomerator");
   StopTracing(std::move(tracing_session));
