@@ -10,24 +10,24 @@ namespace py = pybind11;
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() = "CoMMA is an agglomeration library";
   module_handle.def("agglomerate_one_level",
-                    [](const vector<long> adjMatrix_row_ptr,
-                       const vector<long> adjMatrix_col_ind,
-                       const vector<double> adjMatrix_areaValues,
-                       const vector<double> volumes,
+                    [](const vector<CoMMAIndexT> adjMatrix_row_ptr,
+                       const vector<CoMMAIndexT> adjMatrix_col_ind,
+                       const vector<CoMMAWeightT> adjMatrix_areaValues,
+                       const vector<CoMMAWeightT> volumes,
 
                        // Indices of compliant cc
-                       vector<long> arrayOfFineAnisotropicCompliantCells,
+                       vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells,
 
                        // boundaries
-                       const vector<long> isOnFineBnd,
+                       const vector<CoMMAIndexT> isOnFineBnd,
 
                        // Agglomeration argument
                        bool isFirstAgglomeration, bool is_anisotropic,
 
                        // Outputs
-                       vector<long> fc_to_cc,                // Out
-                       vector<long> agglomerationLines_Idx,  // In & out
-                       vector<long> agglomerationLines,      // In & out
+                       vector<CoMMAIndexT> fc_to_cc,                // Out
+                       vector<CoMMAIndexT> agglomerationLines_Idx,  // In & out
+                       vector<CoMMAIndexT> agglomerationLines,      // In & out
 
                        // Args with default value
                        bool correction, short dimension, short goal_card,

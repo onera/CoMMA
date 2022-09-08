@@ -576,7 +576,7 @@ class Agglomerator_Biconnected
       // set is representing hence all the neighborhood of seed until a given
       // order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
-          d_keys_to_set(d_n_of_seed);
+          d_keys_to_set<CoMMAIndexType,short>(d_n_of_seed);
       // Build the class first order neighborhood
       First_Order_Neighbourhood<CoMMAIndexType> f_o_neighbourhood =
           First_Order_Neighbourhood<CoMMAIndexType>(s_neighbours_of_seed);
