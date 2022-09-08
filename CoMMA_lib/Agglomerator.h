@@ -571,8 +571,8 @@ class Agglomerator_Biconnected
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set(d_n_of_seed);
       // Build the class first order neighborhood
-      First_Order_Neighbourhood f_o_neighbourhood =
-          First_Order_Neighbourhood(s_neighbours_of_seed);
+      First_Order_Neighbourhood<CoMMAIndexType> f_o_neighbourhood =
+          First_Order_Neighbourhood<CoMMAIndexType>(s_neighbours_of_seed);
       // Retrieves the neighborhood of the seed
       vector<CoMMAIndexType> v = this->_fc_graph.get_neighbours(seed);
       unordered_set<CoMMAIndexType> s_up(v.begin(), v.end());
