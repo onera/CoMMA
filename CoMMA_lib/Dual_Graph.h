@@ -28,7 +28,8 @@ class Dual_Graph;
  * and of acting on it (it is an interface for the global Dual Graph and the
  * Subgraph)
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or area) of the nodes or edges of the Mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType>
 class Graph {
@@ -199,7 +200,8 @@ class Graph {
  * the framework of CoMMA for the implementation of the CSR representation of
  * the coarse cells.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or area) of the nodes or edges of the Mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
  */
 
 template <typename CoMMAIndexType, typename CoMMAWeightType>
@@ -414,9 +416,11 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType> {
   }
 };
 
-/** @brief A class implementing the CRS global graph representation of the global mesh
+/** @brief A class implementing the CRS global graph representation of the
+ * global mesh
  *  @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or area) of the nodes or edges of the Mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType>
 class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
@@ -443,7 +447,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
              const vector<CoMMAWeightType> &volumes,
              const Seeds_Pool<CoMMAIndexType> &seeds_pool,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
-                 unordered_set<CoMMAIndexType>({}), int dim = 3)
+                 unordered_set<CoMMAIndexType>({}),
+             int dim = 3)
       : Graph<CoMMAIndexType, CoMMAWeightType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
         _seeds_pool(seeds_pool),

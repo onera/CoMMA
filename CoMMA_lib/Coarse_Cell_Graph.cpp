@@ -48,7 +48,8 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
   if (is_anisotropic) {
     assert(!is_creation_delayed);
     _d_anisotropic_cc[_cc_counter] = unordered_set<long>(s_fc);
-    auto new_cc = make_shared<Coarse_Cell>(_fc_graph, _cc_counter, s_fc, false);
+    auto new_cc = make_shared<Coarse_Cell<long, double>>(_fc_graph, _cc_counter,
+                                                         s_fc, false);
     // we collect the various cc_graph, where the index in the vector is the
     // i_cc
     _cc_vec.insert(pair<long, shared_ptr<Subgraph<long, double>>>(
@@ -63,7 +64,8 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
       // dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
       // Update of dict_cc:
       //==================
-      auto new_cc = make_shared<Coarse_Cell>(_fc_graph, _cc_counter, s_fc);
+      auto new_cc =
+          make_shared<Coarse_Cell<long, double>>(_fc_graph, _cc_counter, s_fc);
       // we collect the various cc_graph, where the index in the vector is the
       // i_cc
       _cc_vec.insert(pair<long, shared_ptr<Subgraph<long, double>>>(
