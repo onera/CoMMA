@@ -99,9 +99,9 @@ SET(TESTS ${IMPLEMENTATION}
 
 # Generate a test executable
 include_directories(Catch2/single_include)
-#add_compile_options("--coverage")
+add_compile_options("--coverage")
 add_executable("Comma_test" ${TESTS})
-#target_link_libraries(Comma_test gcov)
+target_link_libraries(Comma_test gcov)
 #target_link_libraries(Comma_test Boost)
 #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################

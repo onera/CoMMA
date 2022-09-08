@@ -22,8 +22,8 @@
 
 class Coarse_Cell {
  public:
-  Coarse_Cell(Dual_Graph<long, double> &fc_graph, long i_cc, const unordered_set<long> &s_fc,
-              bool is_isotropic = true);
+  Coarse_Cell(Dual_Graph<long, double> &fc_graph, long i_cc,
+              const unordered_set<long> &s_fc, bool is_isotropic = true);
 
   ~Coarse_Cell() {};
   /** @brief Method that return a boolean determining if the Coarse Cell is
@@ -44,12 +44,12 @@ class Coarse_Cell {
   /** @brief The volumes of the internal fine cells*/
   vector<double> _volumes;
   /** @brief shared pointer of the subgraph structure (CSR representation)*/
-  shared_ptr<Subgraph<long,double> > _cc_graph;
+  shared_ptr<Subgraph<long, double> > _cc_graph;
   /** @brief function to build the local CSR subgraph representation
    * @return a vector representing the local to global mapping.*/
   vector<long> build_CRS();
   /** @brief The global dual graph*/
-  Dual_Graph<long,double> *_fc_graph;
+  Dual_Graph<long, double> *_fc_graph;
   /** @brief the dimension of the problem (2D or 3D)*/
   short int _dim;
   /** @brief Is the cell isotropic or anisotropic*/
@@ -57,8 +57,7 @@ class Coarse_Cell {
   /** @brief is the cell connected*/
   bool _is_connected;
   /** @brief the connectivity has been checked*/
-  bool _is_connectivity_up_to_date =
-      false;  //  # TODO useful for is_connected?
+  bool _is_connectivity_up_to_date = false;  //  # TODO useful for is_connected?
   /** @brief Set of fine cells composing the  Coarse cell*/
   unordered_set<long> _s_fc;
   /** @brief Total volume of the coarse cell */

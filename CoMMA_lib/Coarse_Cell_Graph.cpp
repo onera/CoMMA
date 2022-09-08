@@ -4,7 +4,8 @@
 
 #include "Coarse_Cell_Graph.h"
 
-Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph<long,double> &fc_graph, int verbose)
+Coarse_Cell_Graph::Coarse_Cell_Graph(const Dual_Graph<long, double> &fc_graph,
+                                     int verbose)
     : _fc_graph(fc_graph), _verbose(verbose) {
   //==================
   // Input datas
@@ -50,8 +51,8 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
     auto new_cc = make_shared<Coarse_Cell>(_fc_graph, _cc_counter, s_fc, false);
     // we collect the various cc_graph, where the index in the vector is the
     // i_cc
-    _cc_vec.insert(
-        pair<long, shared_ptr<Subgraph<long,double>>>(_cc_counter, new_cc->_cc_graph));
+    _cc_vec.insert(pair<long, shared_ptr<Subgraph<long, double>>>(
+        _cc_counter, new_cc->_cc_graph));
     is_mutable = false;
   }
   if (!is_creation_delayed) {
@@ -65,8 +66,8 @@ long Coarse_Cell_Graph::cc_create_a_cc(const unordered_set<long> &s_fc,
       auto new_cc = make_shared<Coarse_Cell>(_fc_graph, _cc_counter, s_fc);
       // we collect the various cc_graph, where the index in the vector is the
       // i_cc
-      _cc_vec.insert(
-          pair<long, shared_ptr<Subgraph<long,double>>>(_cc_counter, new_cc->_cc_graph));
+      _cc_vec.insert(pair<long, shared_ptr<Subgraph<long, double>>>(
+          _cc_counter, new_cc->_cc_graph));
       _d_isotropic_cc[_cc_counter] = new_cc;
 
       // Update of compactness informations:
@@ -160,11 +161,13 @@ void Coarse_Cell_Graph::update_fc_2_cc(const vector<long> &mapping) {
   }
 }
 
-map<long, shared_ptr<Subgraph<long,double>>>::iterator Coarse_Cell_Graph::remove_cc(
-    map<long, shared_ptr<Subgraph<long,double>>>::iterator elim) {
+map<long, shared_ptr<Subgraph<long, double>>>::iterator
+Coarse_Cell_Graph::remove_cc(
+    map<long, shared_ptr<Subgraph<long, double>>>::iterator elim) {
   // we delete the element and we obtainer the pointer to the next element in
   // memory
-  map<long, shared_ptr<Subgraph<long,double>>>::iterator it = _cc_vec.erase(elim);
+  map<long, shared_ptr<Subgraph<long, double>>>::iterator it =
+      _cc_vec.erase(elim);
   // We get the length
   auto lung = _cc_vec.size();
   // update value of the other nodes
