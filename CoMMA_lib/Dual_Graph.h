@@ -502,12 +502,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
      * - secondly build anisotropic lines
      */
 
-    long nb_fc =
-        this->_number_of_cells;  // Number of cells is a member variable
-                                 // initialized through nb_fc in the
     // it is computed in d_anisotropic_fc as the max_weight, hence the maximum
     // area among the faces composing the cell.
-    vector<CoMMAWeightType> maxArray(nb_fc, 0.0);
+    vector<CoMMAWeightType> maxArray(this->_number_of_cells, 0.0);
     unordered_map<CoMMAIndexType, CoMMAWeightType> d_anisotropic_fc;
     unordered_map<CoMMAIndexType, CoMMAWeightType> d_isotropic_fc;
     // Map to address if the cell has been added to a line
@@ -528,7 +525,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
     // to determine if we arrived at the end of an extreme of a line
     bool opposite_direction_check = false;
     // size of the line
-    int lines_size = 0;
+    CoMMAIndexType lines_size = 0;
     // vector of the candidates to continue the line
     vector<CoMMAIndexType> candidates;
     // vector of deques containing the lines
@@ -553,7 +550,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
       // we initialize the seed at the beginning of each line
       seed = primal_seed;
       // Create the new line
-      auto dQue = new deque<long>();
+      auto dQue = new deque<CoMMAIndexType>();
       // we add the first seed
       (*dQue).push_back(seed);
       has_been_treated[seed] = true;
@@ -652,7 +649,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
         lines_size++;
       }
     }
-    nb_agglomeration_lines = (long)lines_size;
+    nb_agglomeration_lines = lines_size;
     return lines;
   };
 
