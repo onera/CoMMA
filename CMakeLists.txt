@@ -47,7 +47,6 @@ set(INTERFACCIA
 	)
 set(SOURCE_FILES
         ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
-        ${SOURCE_DIR}/First_Order_Neighbourhood.cpp
         ${SOURCE_DIR}/Tree.cpp
 	)
 set(PROFILING 
