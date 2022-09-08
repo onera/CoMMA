@@ -1,5 +1,6 @@
 # CoMMA (COarse Mesh Multigrid Agglomerator)
 [![coverage report](https://gitlab.com/albiremo/CoMMA/badges/main/coverage.svg)](https://gitlab.com/albiremo/CoMMA/-/commits/main)
+[Documentation](https://albiremo.gitlab.io/CoMMA/)
 ## Capabilities
 CoMMA is a Geometric Agglomerator with the following characteristics:
 - Sequential by zone (i.e. no coupling with graph partitioner);
