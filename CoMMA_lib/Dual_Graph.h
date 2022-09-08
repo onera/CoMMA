@@ -490,10 +490,13 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
 
   /** @brief Computes the anisotropic lines at the first level (only called at
    * the first level of agglomeration)
+   *  @param[in] threshold_anisotropy Value of the aspect ration above which a
+   *  cell is considered anisotropic
    *  @param[in/out] nb_agglomeration_lines number of the agglomeration lines
    *  @return a forward list of pointers to the deque representing the lines
   */
   vector<deque<CoMMAIndexType> *> compute_anisotropic_line(
+      const CoMMAWeightType threshold_anisotropy,
       CoMMAIndexType &nb_agglomeration_lines) {
     /**
      * The goal of this function is :
@@ -515,7 +518,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
     // Computation of the anisotropic cell , alias of the cells for which the
     // ratio between the face with maximum area and the face with minimum area
     // is more than 4. It is a method of the class.
-    compute_d_anisotropic_fc(maxArray, d_anisotropic_fc, d_isotropic_fc, 0);
+    compute_d_anisotropic_fc(maxArray, d_anisotropic_fc, d_isotropic_fc,
+                             threshold_anisotropy, 0);
     // Initialization of the map: for each anisotropic cell
     // we check if has been analyzed or not
     for (auto &it : d_anisotropic_fc) {
@@ -665,6 +669,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
    * and the min_weight
    *  @param[out] d_isotropic_fc the same as the anisotropic but for the
    * isotropic cells
+   *  @param[in] threshold_anisotropy Value of the aspect ration above which a
+   *  cell is considered anisotropic
    *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration*/
@@ -672,6 +678,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
       vector<CoMMAWeightType> &maxArray,
       unordered_map<CoMMAIndexType, CoMMAWeightType> &d_anisotropic_fc,
       unordered_map<CoMMAIndexType, CoMMAWeightType> &d_isotropic_fc,
+      const CoMMAWeightType threshold_anisotropy,
       const CoMMAIndexType preserving) {
     // values are the ratio Max to average (ratioArray[iCell]) and keys
     // the (global) index of the cell. d_anisotropic_fc[ifc]=
@@ -716,8 +723,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
       maxArray[i_fc] = max_weight;
       if (preserving == 0) {
         // Anisotropy criteria for the line Admissibility
-        if (max_weight / min_weight >= 4.0) {
-          // If the ratio is more than 4 of the biggest zith the smallest cell ,
+        if (max_weight / min_weight >= threshold_anisotropy) {
+          // If the ratio is more than 4 of the biggest with the smallest cell ,
           // add it to the dictionary
           // where I store the ratio between the max and the average
           d_anisotropic_fc[i_fc] = max_weight / averageWeight;
@@ -725,7 +732,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
           d_isotropic_fc[i_fc] = max_weight / averageWeight;
         }
       } else if (preserving == 2) {
-        if (max_weight / min_weight >= 4.0) {
+        if (max_weight / min_weight >= threshold_anisotropy) {
           if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 3) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
           } else if (nb_neighbours == 4) {
@@ -737,7 +744,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType> {
           d_isotropic_fc[i_fc] = max_weight / averageWeight;
         }
       } else if (preserving == 3) {
-        if (max_weight / min_weight >= 4.0) {
+        if (max_weight / min_weight >= threshold_anisotropy) {
           if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 5) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
           } else if (nb_neighbours == 6) {

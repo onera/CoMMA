@@ -61,16 +61,17 @@ verbose = 0
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
 agglomerationLines_Idx = np.array([0],dtype='long')
 agglomerationLines = np.array([0],dtype='long')
-isFirstAgglomeration = 1
-isAnisotropic = 1
+isFirstAgglomeration = True
+isAnisotropic = True
 dimension = 2
-is_basic_or_triconnected = 1
+corrections = True
+threshold_anisotropy = 4.
 
 print("CoMMA call")
 #isotropic
-fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,0,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard)
+fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,0,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard)
 #anisotropic
-fc_to_cc_res2,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,1,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard)
+fc_to_cc_res2,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,1,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard)
 #print("anisotropic",len(agglomerationLines_Idx_res),"not anisotropic",len(agglomerationLines_Idx_res_iso))
 #print("anisotropic",len(agglomerationLines_res),"not anisotropic",len(agglomerationLines_res_iso))
 #print(agglomerationLines_Idx_res)

@@ -51,13 +51,14 @@ verbose = 0
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
 agglomerationLines_Idx = np.array([0],dtype='long')
 agglomerationLines = np.array([0],dtype='long')
-isFirstAgglomeration = 1
-isAnisotropic = 0
+isFirstAgglomeration = True
+isAnisotropic = False
 dimension = 2
-is_basic_or_triconnected = 0
+corrections = False
+threshold_anisotropy = 4.
 
 start = time.time()
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard)
 end = time.time()
 fine_cells = []
 for j in range(len(fc_to_cc_res)):

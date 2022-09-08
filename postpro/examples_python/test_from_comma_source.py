@@ -20,12 +20,13 @@ verbose = 0
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
 agglomerationLines_Idx = np.zeros(nb_fc,dtype='long')
 agglomerationLines = np.zeros(nb_fc,dtype='long')
-isFirstAgglomeration = 1
-isAnisotropic = 0
+isFirstAgglomeration = True
+isAnisotropic = False
 dimension = 2
-is_basic_or_triconnected = 0
+corrections = True
+threshold_anisotropy = 4.
 
 
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,fc_to_cc,agglomerationLines_Idx,agglomerationLines,is_basic_or_triconnected,dimension,goalCard,minCard,maxCard,checks,verbose)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,checks,verbose)
 
 print(fc_to_cc_res)

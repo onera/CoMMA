@@ -128,7 +128,9 @@ class Agglomerator_Anisotropic
    * of the father and
    * in this way activates also the constructor of the base class.*/
   Agglomerator_Anisotropic(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
-                           Coarse_Cell_Graph &cc_graph, short dimension = 3)
+                           Coarse_Cell_Graph &cc_graph,
+                           const CoMMAWeightType threshold_anisotropy,
+                           short dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType>(graph, cc_graph,
                                                       dimension) {
     // for every defined level (1 by default), contains the number of cells
@@ -144,6 +146,12 @@ class Agglomerator_Anisotropic
         this->_fc_graph._s_anisotropic_compliant_cells;
     this->_v_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<deque<CoMMAIndexType> *>>(2);
+
+    assert(threshold_anisotropy > 0);
+    this->_threshold_anisotropy =
+        (threshold_anisotropy < 1)
+            ? static_cast<CoMMAWeightType>(1. / threshold_anisotropy)
+            : threshold_anisotropy;
   }
 
   /** @brief Destructor*/
@@ -164,6 +172,7 @@ class Agglomerator_Anisotropic
       // The anisotropic lines are only computed on the original (finest) mesh.
       CoMMAIndexType nb_agglomeration_lines(0);
       this->_v_lines[0] = this->_fc_graph.compute_anisotropic_line(
+          this->_threshold_anisotropy,
           nb_agglomeration_lines);  // finest level!!!
       this->_v_nb_lines[0] = nb_agglomeration_lines;
     }
@@ -300,6 +309,10 @@ class Agglomerator_Anisotropic
 
   /** @brief Vector of set of the anisotropic compliant of fine cells*/
   vector<unordered_set<CoMMAIndexType>> _v_of_s_anisotropic_compliant_fc;
+
+  /** @brief Value of the aspect ration above which a cell is considered
+   * anisotropic */
+  CoMMAWeightType _threshold_anisotropy;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator
