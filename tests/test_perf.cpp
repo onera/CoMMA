@@ -17,8 +17,10 @@ int main(int argv, char** argc) {
   // To test protected variables I use a child class. This is a trick to access.
   class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT> {
    public:
-    test(Dual_Graph<TestIndexT, TestWeightT>& graph, Coarse_Cell_Graph& cc_graph, int dimension)
-        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
+    test(Dual_Graph<TestIndexT, TestWeightT>& graph,
+         Coarse_Cell_Graph& cc_graph, int dimension)
+        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph,
+                                                            dimension) {};
     ~test() {};
     short test_variable() {
       return (_threshold_card);
@@ -39,7 +41,9 @@ int main(int argv, char** argc) {
   short testing = agg->test_variable();
   vector<TestIndexT> gg = agg->get_fc_2_cc();
   agg->agglomerate_one_level(2, 2, 2, -1);
-  Agglomerator<TestIndexT, TestWeightT>* test = new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph, 2);
+  Agglomerator<TestIndexT, TestWeightT>* test =
+      new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph,
+                                                            2);
   test->agglomerate_one_level(2, 2, 2, -1);
   // Check if the structure is correct: Have I really changed the testing
   // variable that is in the Father class Agglomerator by setting it true (by
