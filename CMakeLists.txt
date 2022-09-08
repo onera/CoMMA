@@ -46,8 +46,6 @@ set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
 set(SOURCE_FILES
-        ${SOURCE_DIR}/Coarse_Cell.cpp
-        ${SOURCE_DIR}/Agglomerator.cpp
         ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
         ${SOURCE_DIR}/First_Order_Neighbourhood.cpp
         ${SOURCE_DIR}/Tree.cpp
@@ -70,6 +68,7 @@ set(PROFILING_PERF
    )
 
 SET(TESTING_FILES
+  ${TEST_DIR}/test_types.h
 	${TEST_DIR}/test_structure.cpp
 	)
 

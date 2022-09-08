@@ -1,4 +1,5 @@
 #include "input/DualGPy.h"
+#include "test_types.h"
 
 int main(int argv, char** argc) {
 
@@ -14,10 +15,10 @@ int main(int argv, char** argc) {
   // Check the effective length
 
   // To test protected variables I use a child class. This is a trick to access.
-  class test : public Agglomerator_Anisotropic {
+  class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT> {
    public:
-    test(Dual_Graph& graph, Coarse_Cell_Graph& cc_graph, int dimension)
-        : Agglomerator_Anisotropic(graph, cc_graph, dimension) {};
+    test(Dual_Graph<TestIndexT, TestWeightT>& graph, Coarse_Cell_Graph& cc_graph, int dimension)
+        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
     ~test() {};
     short test_variable() {
       return (_threshold_card);
@@ -25,8 +26,8 @@ int main(int argv, char** argc) {
   };
 
   test* agg = new test(fc_graph, cc_graph, 2);
-  long nb_agglomeration_lines = 0;
-  forward_list<deque<long>*> agglomeration_lines;
+  TestIndexT nb_agglomeration_lines = 0;
+  forward_list<deque<TestIndexT>*> agglomeration_lines;
   // @todo add exception if it is not the first agglomeration (so if we are at a
   // further level)
   // Initialization of nb_agglo_lines in dependency if we are at the first
@@ -36,9 +37,9 @@ int main(int argv, char** argc) {
   agg->_v_nb_lines[0] = nb_agglomeration_lines;
   agg->_v_lines[0] = agglomeration_lines;
   short testing = agg->test_variable();
-  vector<long> gg = agg->get_fc_2_cc();
+  vector<TestIndexT> gg = agg->get_fc_2_cc();
   agg->agglomerate_one_level(2, 2, 2, -1);
-  Agglomerator* test = new Agglomerator_Biconnected(fc_graph, cc_graph, 2);
+  Agglomerator<TestIndexT, TestWeightT>* test = new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph, 2);
   test->agglomerate_one_level(2, 2, 2, -1);
   // Check if the structure is correct: Have I really changed the testing
   // variable that is in the Father class Agglomerator by setting it true (by

@@ -114,13 +114,14 @@ void agglomerate_one_level(  // Dual graph:
   // https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
   if (is_anisotropic) {
 
-    shared_ptr<Agglomerator> agg1 = make_shared<Agglomerator_Anisotropic>(
-        fc_graph, cc_graph, dimension = dimension);
+    shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType>> agg1 =
+        make_shared<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>(
+            fc_graph, cc_graph, dimension = dimension);
     //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
     //                                    cc_graph,
     //                                    dimension = dimension);
-    long nb_agglomeration_lines = 0;
-    vector<deque<long> *> agglomeration_lines;
+    CoMMAIndexType nb_agglomeration_lines = 0;
+    vector<deque<CoMMAIndexType> *> agglomeration_lines;
     // case in which we have already agglomerated one level and hence we have
     // already agglomeration
     // lines available; no need to recreate them.
@@ -128,12 +129,13 @@ void agglomerate_one_level(  // Dual graph:
       correction = false;
       auto fineAgglomerationLines_array_Idx_size =
           agglomerationLines_Idx.size();
-      for (long i = fineAgglomerationLines_array_Idx_size - 2; i > -1; i--) {
-        long ind = agglomerationLines_Idx[i];
-        long indPOne = agglomerationLines_Idx[i + 1];
-        deque<long> *dQue =
-            new deque<long>(agglomerationLines.begin() + ind,
-                            agglomerationLines.begin() + indPOne);
+      for (CoMMAIndexType i = fineAgglomerationLines_array_Idx_size - 2; i > -1;
+           i--) {
+        CoMMAIndexType ind = agglomerationLines_Idx[i];
+        CoMMAIndexType indPOne = agglomerationLines_Idx[i + 1];
+        deque<CoMMAIndexType> *dQue =
+            new deque<CoMMAIndexType>(agglomerationLines.begin() + ind,
+                                      agglomerationLines.begin() + indPOne);
         // for (long j = ind; j < indPOne; j++) {
         //     (*dQue).push_back(agglomerationLines[j]);
         // }
@@ -141,8 +143,9 @@ void agglomerate_one_level(  // Dual graph:
         nb_agglomeration_lines++;
       }
     }
-    shared_ptr<Agglomerator_Anisotropic> agg_dyn =
-        dynamic_pointer_cast<Agglomerator_Anisotropic>(agg1);
+    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>
+        agg_dyn = dynamic_pointer_cast<
+            Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>(agg1);
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, false);
@@ -153,8 +156,9 @@ void agglomerate_one_level(  // Dual graph:
     agg_dyn->get_agglo_lines(i_level, agglomerationLines_Idx,
                              agglomerationLines);
   }
-  auto agg = make_unique<Agglomerator_Biconnected>(fc_graph, cc_graph,
-                                                   dimension = dimension);
+  auto agg =
+      make_unique<Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType>>(
+          fc_graph, cc_graph, dimension = dimension);
   // Agglomerate
   agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an

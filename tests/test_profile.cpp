@@ -19,7 +19,7 @@ int main(int argv, char** argc) {
   // Construction of the Dual Graph element
 
   TRACE_EVENT_BEGIN("setup", "Dual_Graph");
-  Dual_Graph fc_graph =
+  Dual_Graph<TestIndexT, TestWeightT> fc_graph =
       Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                  Data.adjMatrix_areaValues, Data.volumes, Data.d_is_on_bnd,
                  Data.s_is_on_corner, Data.s_is_on_ridge, Data.s_is_on_valley,
@@ -31,10 +31,10 @@ int main(int argv, char** argc) {
   // Check the effective length
 
   // To test protected variables I use a child class. This is a trick to access.
-  class test : public Agglomerator_Anisotropic {
+  class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT> {
    public:
-    test(Dual_Graph& graph, Coarse_Cell_Graph& cc_graph, int dimension)
-        : Agglomerator_Anisotropic(graph, cc_graph, dimension) {};
+    test(Dual_Graph<TestIndexT, TestWeightT>& graph, Coarse_Cell_Graph& cc_graph, int dimension)
+        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph, dimension) {};
     ~test() {};
     short test_variable() {
       return (_threshold_card);
@@ -48,8 +48,8 @@ int main(int argv, char** argc) {
 
   short testing = agg->test_variable();
   TRACE_EVENT_BEGIN("agglomerator", "aniso");
-  long nb_agglomeration_lines = 0;
-  forward_list<deque<long>*> agglomeration_lines;
+  TestIndexT nb_agglomeration_lines = 0;
+  forward_list<deque<TestIndexT>*> agglomeration_lines;
   // @todo add exception if it is not the first agglomeration (so if we are at a
   // further level)
   // Initialization of nb_agglo_lines in dependency if we are at the first
@@ -61,7 +61,7 @@ int main(int argv, char** argc) {
   agg->agglomerate_one_level(2, 2, 2, -1);
   TRACE_EVENT_END("agglomerator");
   TRACE_EVENT_BEGIN("agglomerator", "biconnected");
-  Agglomerator* test = new Agglomerator_Biconnected(fc_graph, cc_graph, 2);
+  Agglomerator<TestIndexT, TestWeightT>* test = new Agglomerator_Biconnected<TestIndexT, TestWeightT>(fc_graph, cc_graph, 2);
   test->agglomerate_one_level(2, 2, 2, -1);
   TRACE_EVENT_END("agglomerator");
   StopTracing(std::move(tracing_session));
