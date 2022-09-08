@@ -31,7 +31,7 @@ class Agglomerator {
                short dimension = 3);
   /** @brief The destructor of the class */
   virtual ~Agglomerator() = default;
-  /** @brief Accessor to retrive the fine cells to coarse cells from the coarse
+  /** @brief Accessor to retrieve the fine cells to coarse cells from the coarse
    * cell graphs class
    */
   vector<long> get_fc_2_cc() { return _cc_graph->_fc_2_cc; }
@@ -74,7 +74,7 @@ class Agglomerator {
   short _threshold_card = -1;
   /** @brief List of number of cells per coarse cell created.*/
   vector<long> _l_nb_of_cells;
-  /** @brief Dual_Graph object detemining Fine cells graph and hence the
+  /** @brief Dual_Graph object determining Fine cells graph and hence the
    * connectivity.*/
   Dual_Graph _fc_graph;
   /** @brief pointer to Coarse Cell Graph element */
@@ -145,7 +145,7 @@ class Agglomerator_Isotropic : public Agglomerator {
   /** @brief Destructor*/
   ~Agglomerator_Isotropic() {};
   /** @brief The task of the function is to set the parameters of
-   * dermine the cardinality limits with respect to the parameters passed
+   * determine the cardinality limits with respect to the parameters passed
    * @param[in] goal_card goal cardinality of the coarse cell (set as default to
    * -1 indicating in our case
    * the maximum value)

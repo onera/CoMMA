@@ -2,6 +2,7 @@
 // Created by Nicolas Lantos on 02/04/2021.
 //
 
+#include <cmath>
 #include <stdexcept>
 
 #include "Agglomerator.h"

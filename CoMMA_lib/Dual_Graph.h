@@ -7,18 +7,10 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include <cassert>
-#include <cmath>
 #include <deque>
-#include <queue>
 #include <vector>
-#include <map>
 #include <algorithm>
-#include <list>
-#include <iostream>
 #include <climits>
-#include <utility>
-#include <numeric>
 
 #include "Seeds_Pool.h"
 
@@ -233,7 +225,7 @@ class Dual_Graph : public Graph {
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
   *   @param[in] s_seeds set of seeds for which the neighborhood must be
-  * cmputed. Generally theu are the fine cells composing the coarse cell for
+  * computed. Generally they are the fine cells composing the coarse cell for
   * which we are trying to compute the neighborhood.
   *   @param[in] nb_of_order_of_neighbourhood order of the neighborhood at which
   * we want to extend the dictionary

@@ -1,6 +1,11 @@
 //
 // Created by Nicolas Lantos on 31/03/2021.
 //
+
+#include <climits>
+#include <cmath>
+#include <queue>
+
 #include "Dual_Graph.h"
 
 // Constructor : initialization of variables by :. The variables are recorded in
