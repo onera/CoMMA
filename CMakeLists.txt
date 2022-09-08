@@ -46,7 +46,6 @@ set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
 set(SOURCE_FILES
-#        ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
         ${SOURCE_DIR}/Tree.cpp
 	)
 set(PROFILING 
