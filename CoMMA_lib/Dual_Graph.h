@@ -10,7 +10,9 @@
 #include <deque>
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include <climits>
+#include "Queue.h"
 
 #include "Seeds_Pool.h"
 
@@ -100,7 +102,7 @@ class Graph {
   /** @brief Breadth First Search (BFS) function
    *  @param[in] root  root of the spanning tree*/
   void BFS(const CoMMAIndexType &root) {
-    queue<CoMMAIndexType> coda;
+    Queue<CoMMAIndexType> coda;
     vector<CoMMAIndexType> v_neigh;
     vector<CoMMAIndexType> path;
     coda.push(root);
