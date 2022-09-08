@@ -21,8 +21,8 @@
 // Error handling from
 // https://weseetips.wordpress.com/tag/exception-from-constructor-initializer-list/
 
-Agglomerator::Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           short dimension)
+Agglomerator::Agglomerator(Dual_Graph<long, double> &graph,
+                           Coarse_Cell_Graph &cc_graph, short dimension)
     : _fc_graph(graph), _dimension(dimension), _cc_graph(&cc_graph) {
   if ((_dimension != 2) && (_dimension != 3)) {
     throw range_error("dimension can only be 2 or 3");
@@ -37,9 +37,9 @@ Agglomerator::Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
 
 // Anisotropic constructor
 // =======================
-Agglomerator_Anisotropic::Agglomerator_Anisotropic(Dual_Graph &graph,
-                                                   Coarse_Cell_Graph &cc_graph,
-                                                   short dimension)
+Agglomerator_Anisotropic::Agglomerator_Anisotropic(
+    Dual_Graph<long, double> &graph, Coarse_Cell_Graph &cc_graph,
+    short dimension)
     : Agglomerator(graph, cc_graph, dimension) {
   // for every defined level (1 by default), contains the number of cells
   // e.g. _l_nb_of_cells[0]= number of cells on finest level
@@ -176,7 +176,7 @@ Agglomerator_Anisotropic::create_all_anisotropic_cc_wrt_agglomeration_lines() {
 
 // Isotropic Constructor
 // ======================
-Agglomerator_Isotropic::Agglomerator_Isotropic(Dual_Graph &graph,
+Agglomerator_Isotropic::Agglomerator_Isotropic(Dual_Graph<long, double> &graph,
                                                Coarse_Cell_Graph &cc_graph,
                                                short dimension)
     : Agglomerator(graph, cc_graph, dimension) {
@@ -215,9 +215,9 @@ void Agglomerator_Isotropic::set_agglomeration_parameter(short goal_card,
   _threshold_card = d_default_threshold_card[_dimension];
 }
 
-Agglomerator_Biconnected::Agglomerator_Biconnected(Dual_Graph &graph,
-                                                   Coarse_Cell_Graph &cc_graph,
-                                                   short dimension)
+Agglomerator_Biconnected::Agglomerator_Biconnected(
+    Dual_Graph<long, double> &graph, Coarse_Cell_Graph &cc_graph,
+    short dimension)
     : Agglomerator_Isotropic(graph, cc_graph, dimension) {
           // no particular constructor
       };
@@ -276,7 +276,7 @@ Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(
   unordered_map<long, short> d_n_of_seed;
   // Number of fine cells constituting the current coarse cell in construction.
   short size_current_cc = 1;  // CC contains only one cell: the seed
-  short max_order_of_neighbourhood =
+  int max_order_of_neighbourhood =
       _min_neighbourhood;  // set to 3 as default we set to this value the
                            // maximum order to which we search to compose the
                            // coarse cell
@@ -511,7 +511,8 @@ Agglomerator_Biconnected::choose_optimal_cc_and_update_seed_pool(
 }
 
 void Agglomerator_Biconnected::compute_best_fc_to_add(
-    Dual_Graph &graph, unordered_set<long> fon,  // First order neighborhood
+    Dual_Graph<long, double> &graph,
+    unordered_set<long> fon,  // First order neighborhood
     const unordered_map<long, short> &d_n_of_seed, const bool &is_order_primary,
     const double &cc_surf, const double &vol_cc,
     const unordered_set<long> &s_of_fc_for_current_cc, long &argmin_ar,

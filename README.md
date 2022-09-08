@@ -41,8 +41,7 @@ git submodule update
 
 The file `CODA_transfer.sh` help for the installation in the CODA-CFD library.
 
-## TO BE DONE
-
-- Proper [Doxigen](https://www.doxygen.nl/index.html) documentation.
-- Possible ML implementation of the algorithm
-- Better coverage of the code
+## To understand the templetization and other features
+- [The use of this in the child classes](https://stackoverflow.com/questions/7076169/not-declared-in-this-scope-error-with-templates-and-inheritance)
+- [The runtime vs the compile time](https://stackoverflow.com/questions/7076169/not-declared-in-this-scope-error-with-templates-and-inheritance)
+- [The constexpr bool vs macro](https://stackoverflow.com/questions/67454808/c-constexpr-boolean-vs-macro) 

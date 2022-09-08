@@ -4,7 +4,7 @@
 
 #include "Coarse_Cell.h"
 
-Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph, long i_cc,
+Coarse_Cell::Coarse_Cell(Dual_Graph<long, double> &fc_graph, long i_cc,
                          const unordered_set<long> &s_fc, bool is_isotropic)
     : _dim(fc_graph._dimension), _is_isotropic(is_isotropic) {
   // compactness, degrees are defined in the Subgraph
@@ -19,9 +19,9 @@ Coarse_Cell::Coarse_Cell(Dual_Graph &fc_graph, long i_cc,
   }
 
   _mapping_g_to_l = build_CRS();
-  _cc_graph = make_shared<Subgraph>(s_fc.size(), _adjMatrix_row_ptr,
-                                    _adjMatrix_col_ind, _adjMatrix_areaValues,
-                                    _volumes, _mapping_g_to_l, is_isotropic);
+  _cc_graph = make_shared<Subgraph<long, double> >(
+      s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
+      _adjMatrix_areaValues, _volumes, _mapping_g_to_l, is_isotropic);
 }
 
 vector<long> Coarse_Cell::build_CRS() {

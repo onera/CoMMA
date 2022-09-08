@@ -3,11 +3,8 @@
 #include <fstream>
 #include <thread>
 
-
 #ifndef HEADER_PROFILE_H
 #define HEADER_PROFILE_H
-
-
 
 void InitializePerfetto() {
   perfetto::TracingInitArgs args;

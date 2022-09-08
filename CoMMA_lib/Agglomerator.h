@@ -27,7 +27,7 @@ class Agglomerator {
    *  @param[in] graph    *Dual Graph* object that determines the connectivity
    * of the matrix
    *  @param[in] dimension the dimension of the problem*/
-  Agglomerator(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
+  Agglomerator(Dual_Graph<long, double> &graph, Coarse_Cell_Graph &cc_graph,
                short dimension = 3);
   /** @brief The destructor of the class */
   virtual ~Agglomerator() = default;
@@ -59,7 +59,7 @@ class Agglomerator {
   bool _is_anisotropic = false;
   /** @brief minimum number of neighborhood we extend to search the neighborhood
    * in the greedy algorithm. Set as default to 3.*/
-  short _min_neighbourhood = 3;
+  int _min_neighbourhood = 3;
   /** @brief minimum cardinality. Set as default to -1 (meaning the maximum
    * possible).*/
   short _min_card = -1;
@@ -76,7 +76,7 @@ class Agglomerator {
   vector<long> _l_nb_of_cells;
   /** @brief Dual_Graph object determining Fine cells graph and hence the
    * connectivity.*/
-  Dual_Graph _fc_graph;
+  Dual_Graph<long, double> _fc_graph;
   /** @brief pointer to Coarse Cell Graph element */
   Coarse_Cell_Graph *_cc_graph;
 };
@@ -91,8 +91,8 @@ class Agglomerator_Anisotropic : public Agglomerator {
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and
    * in this way activates also the constructor of the base class.*/
-  Agglomerator_Anisotropic(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           short dimension = 3);
+  Agglomerator_Anisotropic(Dual_Graph<long, double> &graph,
+                           Coarse_Cell_Graph &cc_graph, short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Anisotropic() {};
 
@@ -140,8 +140,8 @@ class Agglomerator_Isotropic : public Agglomerator {
   /** @brief Constructor. The constructor takes as arguments the same arguments
   * of the father and
   * in this way activates also the constructor of the base class.*/
-  Agglomerator_Isotropic(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                         short dimension = 3);
+  Agglomerator_Isotropic(Dual_Graph<long, double> &graph,
+                         Coarse_Cell_Graph &cc_graph, short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Isotropic() {};
   /** @brief The task of the function is to set the parameters of
@@ -198,8 +198,8 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic {
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the
    * base class Agglomerator_Isotropic */
-  Agglomerator_Biconnected(Dual_Graph &graph, Coarse_Cell_Graph &cc_graph,
-                           short dimension = 3);
+  Agglomerator_Biconnected(Dual_Graph<long, double> &graph,
+                           Coarse_Cell_Graph &cc_graph, short dimension = 3);
   /** @brief Destructor*/
   ~Agglomerator_Biconnected() {};
   /** @brief Specialization of the pure virtual function in the parent class, to
@@ -215,7 +215,7 @@ class Agglomerator_Biconnected : public Agglomerator_Isotropic {
    * the coarse cell.
    */
   void compute_best_fc_to_add(
-      Dual_Graph &graph, unordered_set<long> fon,
+      Dual_Graph<long, double> &graph, unordered_set<long> fon,
       const unordered_map<long, short> &dict_neighbours_of_seed,
       const bool &is_order_primary, const double &cc_surf, const double &vol_cc,
       const unordered_set<long> &s_of_fc_for_current_cc, long &argmin_ar,

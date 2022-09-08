@@ -46,7 +46,6 @@ set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
 set(SOURCE_FILES
-        ${SOURCE_DIR}/Dual_Graph.cpp
         ${SOURCE_DIR}/Coarse_Cell.cpp
         ${SOURCE_DIR}/Agglomerator.cpp
         ${SOURCE_DIR}/Coarse_Cell_Graph.cpp
