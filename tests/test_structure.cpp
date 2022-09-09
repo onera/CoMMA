@@ -212,14 +212,14 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
-    Seeds_Pool<TestIndexT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<TestIndexT, TestWeightT> fc_graph(
+    Seeds_Pool<TestIndexT,TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT,TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 3);
-    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
     auto agg =
-      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT>>(
+      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
           fc_graph, cc_graph, 3);
     // COMPLETE THE TEST
     WHEN("We Agglomerate the mesh") {  
@@ -253,14 +253,14 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_quad_4 Data = DualGPy_quad_4();
-    Seeds_Pool<TestIndexT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<TestIndexT, TestWeightT> fc_graph(
+    Seeds_Pool<TestIndexT,TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT,TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
     auto agg =
-      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT>>(
+      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We Agglomerate the mesh") {  
@@ -322,14 +322,14 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 3);
-    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
-    shared_ptr<Agglomerator<TestIndexT, TestWeightT>> agg1 =
-        make_shared<Agglomerator_Anisotropic<TestIndexT, TestWeightT>>(
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
+    shared_ptr<Agglomerator<TestIndexT, TestWeightT,TestIntT>> agg1 =
+        make_shared<Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>(
             fc_graph, cc_graph, 4, 3);
     // I progress with the downcasting to get the anisotropic lines
-    shared_ptr<Agglomerator_Anisotropic<TestIndexT, TestWeightT>>
+    shared_ptr<Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>
         agg_dyn = dynamic_pointer_cast<
-            Agglomerator_Anisotropic<TestIndexT, TestWeightT>>(agg1);
+            Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>(agg1);
     // We setup the structures to gather the agglomeration lines
     TestIndexT nb_agglomeration_lines = 0;
     vector<deque<TestIndexT> *> agglomeration_lines;
