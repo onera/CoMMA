@@ -131,6 +131,7 @@ class Agglomerator_Anisotropic
   Agglomerator_Anisotropic(
       Dual_Graph<CoMMAIndexType, CoMMAWeightType> &graph,
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> &cc_graph,
+      const CoMMAWeightType threshold_anisotropy,
       short dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType>(graph, cc_graph,
                                                       dimension) {
