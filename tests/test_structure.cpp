@@ -106,7 +106,6 @@ SCENARIO("Test of the tree", "[Tree]") {
         Albero->print();
         REQUIRE(Albero->_root->_sonc == 3);
         Albero->deleteNode(4);
-        cout << "deletion 4 performed" << endl;
         Albero->print();
         REQUIRE(Albero->_root->_sonc == 2);
       }
@@ -185,6 +184,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     }
   };
 }
+
 SCENARIO("Test the insertion of a coarse cell and deletion",
          "[Insertion Deletion]") {
   GIVEN("We have a Bimap of TestIndexT and shared_ptr") {
@@ -203,11 +203,115 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
       Collection.print();
       auto prova = Collection.get_B(ins);
       Collection.erase_B(ins);
-      cout << prova << endl;
       THEN("Bimap is empty") { REQUIRE(Collection.empty() == true); }
     }
   };
 }
+
+SCENARIO("Test the Isotropic agglomeration for small 3D cases",
+         "[Isotropic]") {
+  GIVEN("We load the Isotropic mesh structure") {
+    DualGPy_cube_4 Data = DualGPy_cube_4();
+    Seeds_Pool<TestIndexT,TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT,TestIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc, 3);
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
+    auto agg =
+      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
+          fc_graph, cc_graph, 3);
+    // COMPLETE THE TEST
+    WHEN("We Agglomerate the mesh") {  
+      agg->agglomerate_one_level(8, 8, 8, 0);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+         auto fccc = cc_graph._fc_2_cc;
+         vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc;
+             i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+
+      }
+    }
+    WHEN("We Agglomerate the mesh and we try to correct") {  
+      agg->agglomerate_one_level(8, 8, 8, 1);
+      THEN("Nothing changes with respect to the case without correction") {
+         auto fccc = cc_graph._fc_2_cc;
+         vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc;
+             i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+      }
+    }
+
+  };
+}
+
+SCENARIO("Test the Isotropic agglomeration for small 2D cases",
+         "[Isotropic]") {
+  GIVEN("We load the Isotropic mesh structure") {
+    DualGPy_quad_4 Data = DualGPy_quad_4();
+    Seeds_Pool<TestIndexT,TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT,TestIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc, 2);
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
+    auto agg =
+      make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
+          fc_graph, cc_graph, 2);
+    // COMPLETE THE TEST
+    WHEN("We Agglomerate the mesh") {  
+      agg->agglomerate_one_level(4, 4, 4, 0);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+         auto fccc = cc_graph._fc_2_cc;
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
+      }
+    }
+    WHEN("We Agglomerate the mesh and we try to correct") {  
+      agg->agglomerate_one_level(4, 4, 4, 1);
+      THEN("Nothing changes with respect to the case without correction") {
+         auto fccc = cc_graph._fc_2_cc;
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
+      }
+    }
+
+  };
+}
+
+
 
 SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
@@ -217,20 +321,29 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph(fc_graph);
-    Agglomerator<TestIndexT, TestWeightT, TestIntT> *agg1 =
-        new Agglomerator_Anisotropic<TestIndexT, TestWeightT, TestIntT>(fc_graph,
-                                                              cc_graph, 2);
+        Data.s_anisotropic_compliant_fc, 3);
+    Coarse_Cell_Container<TestIndexT, TestWeightT,TestIntT> cc_graph(fc_graph);
+    shared_ptr<Agglomerator<TestIndexT, TestWeightT,TestIntT>> agg1 =
+        make_shared<Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>(
+            fc_graph, cc_graph, 4, 3);
     // I progress with the downcasting to get the anisotropic lines
-    Agglomerator_Anisotropic<TestIndexT, TestWeightT, TestIntT> *agg_dyn =
-        dynamic_cast<Agglomerator_Anisotropic<TestIndexT, TestWeightT, TestIntT> *>(agg1);
-    // COMPLETE THE TEST
-    WHEN("We insert an element and we delete it") {
-      THEN("Bimap is empty") {}
+    shared_ptr<Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>
+        agg_dyn = dynamic_pointer_cast<
+            Agglomerator_Anisotropic<TestIndexT, TestWeightT,TestIntT>>(agg1);
+    // We setup the structures to gather the agglomeration lines
+    TestIndexT nb_agglomeration_lines = 0;
+    vector<deque<TestIndexT> *> agglomeration_lines;
+    // We pass the structures to the level 0
+    agg_dyn->_v_lines[0] = agglomeration_lines;
+    agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
+    WHEN("We proceed with the agglomeration of the anisotropic lines (we gatherthem and later we agglomerate") {      
+         agg_dyn->agglomerate_one_level(2, 2, 2, false);
+      THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
   };
 }
+
+
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
