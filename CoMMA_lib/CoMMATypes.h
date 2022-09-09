@@ -30,4 +30,21 @@ using CoMMAIndexT = long;
 /// weights).
 using CoMMAWeightT = double;
 
+/** @brief Type of an element according to its boundary faces / edges
+ *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
+ *  to minimizes the too small cells!
+ *  0 : interior (no face on the edge of the domain)
+ *  1 : valley (one face on the edge of the domain)
+ *  2 : ridge (two faces on the edge of the domain)
+ *  3 : corner (three faces on the edge of the domain)
+ */
+enum CoMMACellT : int {
+  INTERIOR     = 0,
+  VALLEY       = 1,
+  RIDGE        = 2,
+  CORNER       = 3,
+  EXTREME      = 4,
+  N_CELL_TYPES = 4
+};
+
 #endif

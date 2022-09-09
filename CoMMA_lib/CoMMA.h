@@ -70,7 +70,7 @@ void agglomerate_one_level(  // Dual graph:
   // the boundary
   unordered_map<CoMMAIndexType, int> d_is_on_bnd;
   for (long i = 0; i < nb_fc; i++) {
-    if (isOnFineBnd[i] > 0) {
+    if (isOnFineBnd[i] > CoMMACellT::INTERIOR) {
       fill_value<true, int, const long>(d_is_on_bnd[i], isOnFineBnd[i]);
     }
   }
