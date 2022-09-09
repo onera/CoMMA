@@ -106,7 +106,6 @@ SCENARIO("Test of the tree", "[Tree]") {
         Albero->print();
         REQUIRE(Albero->_root->_sonc == 3);
         Albero->deleteNode(4);
-        cout << "deletion 4 performed" << endl;
         Albero->print();
         REQUIRE(Albero->_root->_sonc == 2);
       }
@@ -185,6 +184,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     }
   };
 }
+
 SCENARIO("Test the insertion of a coarse cell and deletion",
          "[Insertion Deletion]") {
   GIVEN("We have a Bimap of TestIndexT and shared_ptr") {
@@ -203,7 +203,6 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
       Collection.print();
       auto prova = Collection.get_B(ins);
       Collection.erase_B(ins);
-      cout << prova << endl;
       THEN("Bimap is empty") { REQUIRE(Collection.empty() == true); }
     }
   };
@@ -231,6 +230,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     }
   };
 }
+
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
