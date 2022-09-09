@@ -91,7 +91,7 @@ void agglomerate_one_level(  // Dual graph:
   // fc = Fine Cells
   assert(dimension < USHRT_MAX);
   Seeds_Pool<CoMMAIndexType> seeds_pool(nb_fc, d_is_on_bnd);
-  Dual_Graph fc_graph(nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind,
+  Dual_Graph<CoMMAIndexType,CoMMAWeightType> fc_graph(nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind,
                       adjMatrix_areaValues, volumes, seeds_pool,
                       s_anisotropic_compliant_fc, dimension);
   // Debug
@@ -102,7 +102,7 @@ void agglomerate_one_level(  // Dual graph:
   // with minimum area
   //    //                 // is more than 4.
   //    fc_graph.compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
-  Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> cc_graph(fc_graph);
   // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
   // @todo maybe re-refactor the class agglomerator to allow the implicit upcast
   // like the biconnected case
@@ -165,7 +165,7 @@ void agglomerate_one_level(  // Dual graph:
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   auto fccc = cc_graph._fc_2_cc;
-  for (long i_fc = 0; i_fc < nb_fc; i_fc++) {
+  for (CoMMAIndexType i_fc = 0; i_fc < nb_fc; i_fc++) {
     fc_to_cc[i_fc] = fccc[i_fc];
   }
 }
