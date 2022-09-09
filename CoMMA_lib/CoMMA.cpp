@@ -23,7 +23,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
 
                        // Agglomeration argument
                        bool isFirstAgglomeration, bool is_anisotropic,
-                       double threshold_anisotropy,
+                       CoMMAWeightT threshold_anisotropy,
 
                        // Outputs
                        vector<CoMMAIndexT> fc_to_cc,                // Out

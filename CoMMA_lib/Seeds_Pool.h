@@ -237,8 +237,8 @@ class Seeds_Pool {
    *  @return the seed or -1 in case the seed of a particular category are
    * finished
   */
-  long spoil_seed(const int &i_l, const vector<bool> &a_is_fc_agglomerated) {
-    long seed = _l_of_seeds[i_l].pop();
+  CoMMAIndexType spoil_seed(const int &i_l, const vector<bool> &a_is_fc_agglomerated) {
+    CoMMAIndexType seed = _l_of_seeds[i_l].pop();
     if (seed == -1) {
       return (seed);
     } else {

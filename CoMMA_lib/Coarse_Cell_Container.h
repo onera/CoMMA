@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <map>
+
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
 /** @brief Create a Coarse Cell Graph, hence it is the
@@ -54,8 +55,8 @@ class Coarse_Cell_Container {
     vector<bool> tmp(fc_graph._number_of_cells, false);
     _a_is_fc_agglomerated = tmp;
     // field that identify the index of the coarse cells in the
-    // fine cell (and retrived as the output)
-    _fc_2_cc = vector<long>(fc_graph._number_of_cells, -1);
+    // fine cell (and retrieved as the output)
+    _fc_2_cc = vector<CoMMAIntType>(fc_graph._number_of_cells, -1);
   };
 
   /** @brief Destructor*/
