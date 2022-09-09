@@ -56,7 +56,7 @@ class Coarse_Cell_Container {
     _a_is_fc_agglomerated = tmp;
     // field that identify the index of the coarse cells in the
     // fine cell (and retrieved as the output)
-    _fc_2_cc = vector<CoMMAIntType>(fc_graph._number_of_cells, -1);
+    _fc_2_cc = vector<CoMMAIndexType>(fc_graph._number_of_cells, -1);
   };
 
   /** @brief Destructor*/
