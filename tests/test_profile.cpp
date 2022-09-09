@@ -19,26 +19,26 @@ int main(int argv, char** argc) {
   // Construction of the Dual Graph element
 
   TRACE_EVENT_BEGIN("setup", "Dual_Graph");
-  Dual_Graph<TestIndexT, TestWeightT> fc_graph =
-      Dual_Graph(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+  Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph =
+      Dual_Graph<TestIndexT, TestWeightT, TestIntT>(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                  Data.adjMatrix_areaValues, Data.volumes, Data.d_is_on_bnd,
                  Data.s_is_on_corner, Data.s_is_on_ridge, Data.s_is_on_valley,
                  Data.s_anisotropic_compliant_fc, 0, 2);
 
   TRACE_EVENT_END("setup");
-  Coarse_Cell_Graph cc_graph = Coarse_Cell_Graph(fc_graph);
+  Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph = Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>(fc_graph);
 
   // Check the effective length
 
   // To test protected variables I use a child class. This is a trick to access.
-  class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT> {
+  class test : public Agglomerator_Anisotropic<TestIndexT, TestWeightT, TestIntT> {
    public:
-    test(Dual_Graph<TestIndexT, TestWeightT>& graph,
-         Coarse_Cell_Graph& cc_graph, int dimension)
-        : Agglomerator_Anisotropic<TestIndexT, TestWeightT>(graph, cc_graph,
+    test(Dual_Graph<TestIndexT, TestWeightT, TestIntT>& graph,
+         Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>& cc_graph, TestIntT dimension)
+        : Agglomerator_Anisotropic<TestIndexT, TestWeightT, TestIntT>(graph, cc_graph,
                                                             dimension) {};
     ~test() {};
-    short test_variable() {
+    TestIntT test_variable() {
       return (_threshold_card);
     };
   };
@@ -48,7 +48,7 @@ int main(int argv, char** argc) {
 
   TRACE_EVENT_END("setup");
 
-  short testing = agg->test_variable();
+  TestIntT testing = agg->test_variable();
   TRACE_EVENT_BEGIN("agglomerator", "aniso");
   TestIndexT nb_agglomeration_lines = 0;
   forward_list<deque<TestIndexT>*> agglomeration_lines;

@@ -30,18 +30,24 @@
 #include <vector>
 
 #include "Queue.h"
+#include "CoMMATypes.h"
 
 using namespace std;
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell  */
+ * cell
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
 
-template <typename CoMMAIndexType>
+template <typename CoMMAIndexType, typename CoMMAIntType>
 class Seeds_Pool {
 
  protected:
   /** @brief Number of cells */
-  int _number_of_cells;
+  CoMMAIndexType _number_of_cells;
   /** @brief set of cells on corner */
   unordered_set<CoMMAIndexType> _is_on_corner;
   /** @brief set of cells on ridge */
@@ -59,7 +65,7 @@ class Seeds_Pool {
    *  2 : ridge (two faces on the edge of the domain)
    *  3 : corner (three faces on the edge of the domain)
   */
-  int _init_bnd_level;
+  CoMMAIntType _init_bnd_level;
   /** @brief List of deque of seeds. For each identifier we have the available
    * seeds
    *  0 : interior (no face on the edge of the domain)
@@ -71,8 +77,8 @@ class Seeds_Pool {
 
  public:
   /** @brief Constructor */
-  Seeds_Pool(int number_of_cells,
-             unordered_map<CoMMAIndexType, int> &d_is_on_bnd) {
+  Seeds_Pool(CoMMAIndexType number_of_cells,
+             unordered_map<CoMMAIndexType, CoMMAIntType> &d_is_on_bnd) {
     /*
     :param number_of_cells: number of cells in the graph
     :param d_is_on_bnd: dictionary i_c to bnd value
@@ -93,36 +99,36 @@ class Seeds_Pool {
     // 3 : corner (three faces on the edge of the domain)
     _number_of_cells = number_of_cells;
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
-    _l_of_seeds = vector<Queue<CoMMAIndexType>>(4);
+    _l_of_seeds = vector<Queue<CoMMAIndexType>>(CoMMACellT::N_CELL_TYPES);
     assert(!d_is_on_bnd.empty());
     _d_is_on_bnd = d_is_on_bnd;  // Useful for seed choice
     for (auto kv_fc : d_is_on_bnd) {
       CoMMAIndexType i_fc = kv_fc.first;
-      int i_fc_bnd = kv_fc.second;
-      if (i_fc_bnd >= 3) {
-        _d_is_on_bnd[i_fc] = 3;
+      CoMMAIntType i_fc_bnd = kv_fc.second;
+      if (i_fc_bnd >= CoMMACellT::CORNER) {
+        _d_is_on_bnd[i_fc] = CoMMACellT::CORNER;
         _is_on_corner.insert(i_fc);
-      } else if (i_fc_bnd == 2) {
+      } else if (i_fc_bnd == CoMMACellT::RIDGE) {
         _is_on_ridge.insert(i_fc);
-      } else if (i_fc_bnd == 1) {
+      } else if (i_fc_bnd == CoMMACellT::VALLEY) {
         _is_on_valley.insert(i_fc);
       }
     }
     // initialization of l_of_seeds
     if (_is_on_corner.size() > 0) {
       for (auto iFC : _is_on_corner) {
-        _l_of_seeds[3].push(iFC);
+        _l_of_seeds[CoMMACellT::CORNER].push(iFC);
       }
     }
 
     if (_is_on_ridge.size() > 0) {
       for (auto iFC : _is_on_ridge) {
-        _l_of_seeds[2].push(iFC);
+        _l_of_seeds[CoMMACellT::RIDGE].push(iFC);
       }
     }
     if (_is_on_valley.size() > 0) {
       for (auto iFC : _is_on_valley) {
-        _l_of_seeds[1].push(iFC);
+        _l_of_seeds[CoMMACellT::VALLEY].push(iFC);
       }
     }
   };
@@ -147,7 +153,7 @@ class Seeds_Pool {
     // see NIA (Mavriplis uses Wall and farfield only)
     // Exactly the inverse of the order of the list. For this reason we proceed
     // with l--
-    for (int i_l = 3; i_l >= 0; i_l--) {
+    for (CoMMAIntType i_l = CoMMACellT::CORNER; i_l >= CoMMACellT::INTERIOR; i_l--) {
       CoMMAIndexType seed = spoil_seed(i_l, a_is_fc_agglomerated);
       if (seed != -1) {
         return (seed);
@@ -155,7 +161,7 @@ class Seeds_Pool {
         continue;
       }
     }
-    for (int i = 0; i < _number_of_cells; i++) {
+    for (CoMMAIndexType i = 0; i < _number_of_cells; i++) {
       if (!a_is_fc_agglomerated[i]) {
         return (i);
       }
@@ -165,17 +171,16 @@ class Seeds_Pool {
   };
 
   /** @brief Given the index of the cell it returns the number of faces on the
-   * boundary analysing the
-   * dictionaty of faces on boundary cell
+   * boundary analysing the dictionary of faces on boundary cell
    * @param[in] i_fc global index of the fine cell
    * @return the number of faces
   */
-  int boundary_value(const CoMMAIndexType &i_fc) {
+  CoMMAIntType boundary_value(const CoMMAIndexType &i_fc) {
     auto i_fc_finder = _d_is_on_bnd.find(i_fc);
     if (i_fc_finder != _d_is_on_bnd.end()) {
       return _d_is_on_bnd[i_fc];
     } else {
-      return 0;
+      return CoMMACellT::INTERIOR;
     }
   };
 
@@ -189,17 +194,17 @@ class Seeds_Pool {
       for (const CoMMAIndexType &i_new_seed : l_new_seeds) {
         // the value of isOnBnd[_i_lvl-1][i_new_seed] may be strictly bigger
         // than
-        // 3, in case of partitionning
+        // 3, in case of partitioning
         // via Metis or Scotch.
-        int value_is_on_bnd = 0;
+        CoMMAIntType value_is_on_bnd = CoMMACellT::INTERIOR;
         auto i_new_seed_finder = _d_is_on_bnd.find(i_new_seed);
         if (i_new_seed_finder != _d_is_on_bnd.end()) {
           value_is_on_bnd = _d_is_on_bnd[i_new_seed];
         }
         // Update of isOnBnd to avoid value > 3
-        if (value_is_on_bnd >= 3) {
-          value_is_on_bnd = 3;
-          _d_is_on_bnd[i_new_seed] = 3;
+        if (value_is_on_bnd >= CoMMACellT::CORNER) {
+          value_is_on_bnd = CoMMACellT::CORNER;
+          _d_is_on_bnd[i_new_seed] = CoMMACellT::CORNER;
         }
         _l_of_seeds[value_is_on_bnd].push(i_new_seed);
       }
@@ -207,8 +212,8 @@ class Seeds_Pool {
       // here we add as bnd point at the extremity of graph, where
       // eccentricity=diameter
       for (const CoMMAIndexType &i_new_seed : l_new_seeds) {
-        _d_is_on_bnd[i_new_seed] = 4;
-        _l_of_seeds[3].push(i_new_seed);
+        _d_is_on_bnd[i_new_seed] = CoMMACellT::EXTREME;
+        _l_of_seeds[CoMMACellT::CORNER].push(i_new_seed);
       }
     }
   };
@@ -216,11 +221,11 @@ class Seeds_Pool {
   /** @brief Given the default levels we define if the list of the targeted
    * level is empty
    * @param[in] i_level level of the defined list */
-  bool is_empty(int i_level = 0) {
-    assert(0 <= i_level);
-    assert(i_level <= 3);
+  bool is_empty(CoMMAIntType i_level = 0) {
+    assert(CoMMACellT::INTERIOR <= i_level);
+    assert(i_level <= CoMMACellT::CORNER);
     if (_l_of_seeds.size() > 0) {
-      for (int i = 3; i > i_level - 1; i--) {
+      for (CoMMAIntType i = CoMMACellT::CORNER; i > i_level -1; i--) {
         if (_l_of_seeds[i].top() != -1) {
           return false;
         }
@@ -237,8 +242,9 @@ class Seeds_Pool {
    *  @return the seed or -1 in case the seed of a particular category are
    * finished
   */
-  long spoil_seed(const int &i_l, const vector<bool> &a_is_fc_agglomerated) {
-    long seed = _l_of_seeds[i_l].pop();
+  CoMMAIndexType spoil_seed(const CoMMAIntType &i_l,
+                            const vector<bool> &a_is_fc_agglomerated) {
+    CoMMAIndexType seed = _l_of_seeds[i_l].pop();
     if (seed == -1) {
       return (seed);
     } else {
@@ -252,6 +258,6 @@ class Seeds_Pool {
     return (seed);
   };
   /** @brief Dictionary of number of faces on boundary per cell*/
-  unordered_map<CoMMAIndexType, int> _d_is_on_bnd;
+  unordered_map<CoMMAIndexType, CoMMAIntType> _d_is_on_bnd;
 };
 #endif  // COMMA_PROJECT_SEEDS_POOL_H

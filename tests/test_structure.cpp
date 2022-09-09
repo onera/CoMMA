@@ -9,48 +9,48 @@ SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
-    Seeds_Pool<TestIndexT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<TestIndexT, TestWeightT> fc_graph(
+    Seeds_Pool<TestIndexT, TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
+    Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph(fc_graph);
     // Check the effective length
     WHEN("We try to access to the member variables") {
-      class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT> {
+      class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT, TestIntT> {
        public:
-        test(Dual_Graph<TestIndexT, TestWeightT> &graph,
-             Coarse_Cell_Container<TestIndexT, TestWeightT> &cc_graph,
-             int dimension)
-            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph,
+        test(Dual_Graph<TestIndexT, TestWeightT, TestIntT> &graph,
+             Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> &cc_graph,
+             TestIntT dimension)
+            : Agglomerator_Biconnected<TestIndexT, TestWeightT, TestIntT>(graph, cc_graph,
                                                                 dimension) {};
 
-        short test_variable() {
+        TestIntT test_variable() {
           return (this->_threshold_card);
         };
       };
       THEN("We see that the agglomeration is not set, hence set to -1") {
         test *agg = new test(fc_graph, cc_graph, 2);
-        short testing = agg->test_variable();
+        TestIntT testing = agg->test_variable();
         REQUIRE(testing == -1);
       }
     }
     WHEN("We try to access to Define the cardinality") {
-      class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT> {
+      class test : public Agglomerator_Biconnected<TestIndexT, TestWeightT, TestIntT> {
        public:
-        test(Dual_Graph<TestIndexT, TestWeightT> &graph,
-             Coarse_Cell_Container<TestIndexT, TestWeightT> &cc_graph,
-             int dimension)
-            : Agglomerator_Biconnected<TestIndexT, TestWeightT>(graph, cc_graph,
+        test(Dual_Graph<TestIndexT, TestWeightT, TestIntT> &graph,
+             Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> &cc_graph,
+             TestIntT dimension)
+            : Agglomerator_Biconnected<TestIndexT, TestWeightT, TestIntT>(graph, cc_graph,
                                                                 dimension) {};
 
-        short thres() {
+        TestIntT thres() {
           return (_threshold_card);
         };
-        short max() {
+        TestIntT max() {
           return (_max_card);
         };
-        short min() {
+        TestIntT min() {
           return (_min_card);
         };
       };
@@ -120,7 +120,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
     vector<CoMMAWeightT> volumes = {1, 1, 1, 1, 1};
     WHEN("We build the graph") {
       vector<TestIndexT> _mapping_l_to_g = {20, 30, 40, 50, 60};
-      auto Marion = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+      auto Marion = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
           5, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
           volumes, _mapping_l_to_g, true);
       THEN("We remove a node") { Marion->remove_node(50); }
@@ -149,21 +149,21 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     vector<TestIndexT> mapping_l_to_g_1 = {2, 3, 7, 6};
     vector<TestIndexT> mapping_l_to_g_2 = {8, 3, 13, 12};
     vector<TestIndexT> mapping_l_to_g_3 = {10, 11, 15, 14};
-    auto cc0 = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+    auto cc0 = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
         4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         mapping_l_to_g_0, true);
-    auto cc1 = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+    auto cc1 = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
         4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         mapping_l_to_g_1, true);
-    auto cc2 = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+    auto cc2 = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
         4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         mapping_l_to_g_2, true);
-    auto cc3 = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+    auto cc3 = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
         4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         mapping_l_to_g_3, true);
     WHEN("We Collect the cells in the Bimap") {
 
-      Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT>>>
+      Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT, TestIntT>>>
           Collection;
       Collection.insert(0, cc0);
       Collection.insert(1, cc1);
@@ -193,10 +193,10 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
     vector<CoMMAWeightT> adjMatrix_areaValues = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     vector<CoMMAWeightT> volumes = {1, 1, 1, 1, 1};
     vector<TestIndexT> _mapping_l_to_g = {20, 30, 40, 50, 60};
-    auto Marion = make_shared<Subgraph<TestIndexT, TestWeightT>>(
+    auto Marion = make_shared<Subgraph<TestIndexT, TestWeightT, TestIntT>>(
         5, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         _mapping_l_to_g, true);
-    Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT>>> Collection;
+    Bimap<TestIndexT, shared_ptr<Subgraph<TestIndexT, TestWeightT, TestIntT>>> Collection;
     WHEN("We insert an element and we delete it") {
       TestIndexT ins = 0;
       Collection.insert(ins, Marion);
@@ -317,8 +317,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
     DualGPy_aniso Data = DualGPy_aniso();
-    Seeds_Pool<TestIndexT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<TestIndexT, TestWeightT> fc_graph(
+    Seeds_Pool<TestIndexT, TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 3);
@@ -347,13 +347,13 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
-    Seeds_Pool<TestIndexT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<TestIndexT, TestWeightT> fc_graph(
+    Seeds_Pool<TestIndexT, TestIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
         Data.s_anisotropic_compliant_fc, 2);
-    Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
-    auto agg = make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT>>(
+    Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph(fc_graph);
+    auto agg = make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT, TestIntT>>(
         fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
