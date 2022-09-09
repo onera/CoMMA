@@ -41,25 +41,25 @@ class Bimap {
 
   //  using container= map<A, const B*>;
   //  using iterator=typename container::iterator;
-  //  inline iterator begin() noexcept { return mapB.begin(); }
-  //  inline iterator end() noexcept { return mapB.end(); }
+  //  inline iterator begin() noexcept { return _mapB.begin(); }
+  //  inline iterator end() noexcept { return _mapB.end(); }
 
   /** @brief Insertion function in the Bimap
 *     @param[in] a element A to add
 *     @param[in] b element B to add**/
 
   void insert(const A &a, const B &b) {
-    auto aitr = mapA.insert({b, nullptr}).first;  // creates first pair
+    auto aitr = _mapA.insert({b, nullptr}).first;  // creates first pair
     const B *bp = &(aitr->first);  // get pointer of our stored copy of b
     auto bitr =
-        mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
-    const A *ap = &(bitr->first);    // update pointer in mapA to point to a
-    auto aim = mapA.insert_or_assign(b, ap);
+        _mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
+    const A *ap = &(bitr->first);    // update pointer in _mapA to point to a
+    auto aim = _mapA.insert_or_assign(b, ap);
   }
 
   /** @brief Function to print the map */
   void print() {
-    for (const auto & [ key, value ] : mapB) {
+    for (const auto & [ key, value ] : _mapB) {
       cout << '[' << key << "] = " << *value << "; ";
     }
   }
@@ -69,10 +69,10 @@ class Bimap {
 * find it through the find.
 * @param[in] a_new the new value we want to attribute to the node A. */
   void update_nodeB(const A &a_old, const A &a_new) {
-    auto node = mapB.extract(a_old);
+    auto node = _mapB.extract(a_old);
     if (!node.empty()) {
       node.key() = a_new;
-      mapB.insert(move(node));
+      _mapB.insert(move(node));
     }
   }
   /** @brief Update of the key of the map A and hence the value of the node B
@@ -80,10 +80,10 @@ class Bimap {
 * find it through the find.
 * @param[in] b_new the new value we want to attribute to the node B. */
   void update_nodeA(const B &b_old, const B &b_new) {
-    auto node = mapA.extract(b_old);
+    auto node = _mapA.extract(b_old);
     if (!node.empty()) {
       node.key() = b_new;
-      mapA.insert(move(node));
+      _mapA.insert(move(node));
     }
   }
   /**@brief Getter of the B value starting from a A value
@@ -91,7 +91,7 @@ class Bimap {
   B get_B(const A &a) {
     // We pass the associated value we want to search to the member
     // variable
-    auto it = mapB.find(a);
+    auto it = _mapB.find(a);
     return (*(it->second));
   }
 
@@ -100,7 +100,7 @@ class Bimap {
   A get_A(const B &b) {
     // We pass the associated value we want to search to the member
     // variable
-    auto it = mapA.find(b);
+    auto it = _mapA.find(b);
     return (*(it->second));
   }
 
@@ -110,21 +110,21 @@ class Bimap {
   void erase_B(const A &a) {
     // We pass the associated value we want to search to the member
     // variable
-    auto itB = mapB.find(a);
+    auto itB = _mapB.find(a);
     auto b = *(itB->second);
-    auto itA = mapA.find(b);
-    mapB.erase(itB);
-    mapA.erase(itA);
+    auto itA = _mapA.find(b);
+    _mapB.erase(itB);
+    _mapA.erase(itA);
   }
   /** @brief Check if the Bimap is empty*/
-  inline bool empty() { return (mapA.empty()); }
+  inline bool empty() { return (_mapA.empty()); }
   /** @brief Returns the size of the container*/
-  inline size_t lung() { return (mapB.size()); }
+  inline size_t lung() { return (_mapB.size()); }
 
  protected:
   /** @brief Left map **/
-  map<B, const A *> mapA;
+  map<B, const A *> _mapA;
   /** @brief Right map*/
-  map<A, const B *> mapB;
+  map<A, const B *> _mapB;
 };
 #endif
