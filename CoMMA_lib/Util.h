@@ -29,9 +29,9 @@
 
 using namespace std;
 
-template<typename CoMMAIndexType, typename CoMMACardType>
+template <typename CoMMAIndexType, typename CoMMAIntType>
 inline unordered_set<CoMMAIndexType> d_keys_to_set(
-    const unordered_map<CoMMAIndexType, CoMMACardType> &dict) {
+    const unordered_map<CoMMAIndexType, CoMMAIntType> &dict) {
   unordered_set<CoMMAIndexType> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);

@@ -29,6 +29,9 @@ using CoMMAIndexT = long;
 /// Type of floating-point values (used by agglomerator CoMMA for this edge
 /// weights).
 using CoMMAWeightT = double;
+/// Type of integer for cardinality of coarse cells, dimension, distances,
+/// orders...
+using CoMMAIntT = int;
 
 /** @brief Type of an element according to its boundary faces / edges
  *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
@@ -38,7 +41,7 @@ using CoMMAWeightT = double;
  *  2 : ridge (two faces on the edge of the domain)
  *  3 : corner (three faces on the edge of the domain)
  */
-enum CoMMACellT : int {
+enum CoMMACellT : CoMMAIntT {
   INTERIOR     = 0,
   VALLEY       = 1,
   RIDGE        = 2,

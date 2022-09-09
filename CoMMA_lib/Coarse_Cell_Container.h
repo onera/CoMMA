@@ -36,18 +36,20 @@
  *  @param[in] verbose it defines the verbose parameters
 */
 
-template <typename CoMMAIndexType, typename CoMMAWeightType>
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 using MapIterator = typename map<
-    CoMMAIndexType,
-    shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>>>::iterator;
+    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
+                                        CoMMAIntType>>>::iterator;
 
-template <typename CoMMAIndexType, typename CoMMAWeightType>
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 class Coarse_Cell_Container {
 
  public:
   /** @brief Constructor*/
   Coarse_Cell_Container(
-      const Dual_Graph<CoMMAIndexType, CoMMAWeightType> &fc_graph)
+      const Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph)
       : _fc_graph(fc_graph) {
     // Initialization of the vector of the agglomerated cells
     // as false at the beginning, are all not agglomerated.
@@ -67,7 +69,7 @@ class Coarse_Cell_Container {
    * @param[in] goal_card goal cardinality, useful to check if in case of non
    * presence of anisotropic cells we reached
    * the goal cardinality for all the coarse cells created */
-  bool is_cc_grid_not_structured(short goal_card = -1);
+  bool is_cc_grid_not_structured(CoMMAIntType goal_card = -1);
   /** @brief Helper to get the member variable that defines the number of
    * agglomerated fine cells */
   inline CoMMAIndexType get_number_of_fc_agglomerated() {
@@ -79,7 +81,8 @@ class Coarse_Cell_Container {
     return _cc_counter;
   };
   /** @brief map container of the CSR representation of the coarse cells */
-  map<CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>>>
+  map<CoMMAIndexType,
+      shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>
       _cc_vec;
   /** @brief Retrieve the indexes of the neighbouring coarse cells to a given
    * fine cell in a coarse cell (excluding the
@@ -114,11 +117,12 @@ class Coarse_Cell_Container {
   /** @brief Remove a coarse cell from the mapping
    * @param[in] elim iterator to the element to eliminate
    * @return iterator to the next element*/
-  MapIterator<CoMMAIndexType, CoMMAWeightType> remove_cc(
-      MapIterator<CoMMAIndexType, CoMMAWeightType> elim) {
+  MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> remove_cc(
+      MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> elim) {
     // we delete the element and we obtainer the pointer to the next element in
     // memory
-    MapIterator<CoMMAIndexType, CoMMAWeightType> it = _cc_vec.erase(elim);
+    MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> it =
+        _cc_vec.erase(elim);
     // We get the length
     auto lung = _cc_vec.size();
     // update value of the other nodes
@@ -137,25 +141,24 @@ class Coarse_Cell_Container {
   };
   /** @brief Implementation of the Correction. In this version it implements the
    * correction of singular cells (if one cell is alone after the agglomeration
-   * step is agglomerated
-   * to a neightbouring cell
+   * step is agglomerated to a neighbouring cell
    * @param[in] max_card Maximum cardinality of the agglomerator. */
   void correct(const CoMMAIndexType &max_card) {
     // initializing vector neigh_cc
     vector<CoMMAIndexType> neigh;
     // We cycle on the subgraphs of the bimap structure
     auto it = _cc_vec.begin();
-    // We use itold to understand if we have succeded in the correction
+    // We use it to understand if we have succeeded in the correction
     auto it_old = _cc_vec.begin();
     auto end = _cc_vec.end();
     while (it != end) {
       // We enter in the property of the subgraph of being 1
-      // and we consider what hapepns. Remember that second because
+      // and we consider what happens. Remember that second because
       // we are checking the subgraph
       auto current_cc = it->second;
       auto i_cc = it->first;
       // check the isotropic cells with cardinality 1
-      if (current_cc->_cardinality == 1 && current_cc->_is_isotropic == true) {
+      if (current_cc->_cardinality == 1 && current_cc->_is_isotropic) {
         // Get the cc neigh of the given fine cell
         auto i_fc = current_cc->_mapping_l_to_g[0];
         neigh = get_neigh_cc(i_fc, i_cc);
@@ -164,7 +167,7 @@ class Coarse_Cell_Container {
         for (auto const &elem : neigh) {
           auto neig_cc = _cc_vec[elem];
           if (neig_cc->_compactness > 0 && neig_cc->_cardinality >= 2 &&
-              neig_cc->_is_isotropic == true) {
+              neig_cc->_is_isotropic) {
             // If the condition is verified we add the cell to the identified cc
             // and
             // we remove it from the current cc
@@ -234,14 +237,15 @@ class Coarse_Cell_Container {
     bool is_mutable = true;
     if (is_anisotropic) {
       assert(!is_creation_delayed);
-      auto new_cc = make_shared<Coarse_Cell<CoMMAIndexType, CoMMAWeightType>>(
+      auto new_cc = make_shared<
+          Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
           _fc_graph, _cc_counter, s_fc, false);
       // we collect the various cc_graph, where the index in the vector is the
       // i_cc
-      _cc_vec.insert(
-          pair<CoMMAIndexType,
-               shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>>>(
-              _cc_counter, new_cc->_cc_graph));
+      _cc_vec.insert(pair<
+          CoMMAIndexType,
+          shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>(
+          _cc_counter, new_cc->_cc_graph));
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -253,13 +257,15 @@ class Coarse_Cell_Container {
         // dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
         // Update of dict_cc:
         //==================
-        auto new_cc = make_shared<Coarse_Cell<CoMMAIndexType, CoMMAWeightType>>(
+        auto new_cc = make_shared<
+            Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
             _fc_graph, _cc_counter, s_fc);
         // we collect the various cc_graph, where the index in the vector is the
         // i_cc
         _cc_vec.insert(
             pair<CoMMAIndexType,
-                 shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>>>(
+                 shared_ptr<
+                     Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>(
                 _cc_counter, new_cc->_cc_graph));
 
         // Update of compactness informations:
@@ -307,13 +313,13 @@ class Coarse_Cell_Container {
 
   /** @brief checks if the fine cell is already or not agglomerated
    * @param[in] i_fc global index of the fine cell to analyse
-   * @return true or false with respecr to the answer*/
+   * @return true or false with respect to the answer*/
   inline bool is_fc_not_already_agglomerated(const CoMMAIndexType &i_fc) const {
     return !_a_is_fc_agglomerated[i_fc];
   }
 
   /** @brief Dual graph representation.*/
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType> _fc_graph;
+  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _fc_graph;
   /** @brief Number of coarse cells in the Coarse cell Graph*/
   CoMMAIndexType _cc_counter = 0;
   /** @brief Output vector of the fine cells to the coarse cell. The vector
