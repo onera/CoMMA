@@ -53,13 +53,13 @@ class Coarse_Cell {
       _s_fc.insert(i_fc);
     }
     for (const CoMMAIndexType &i_fc : s_fc) {
-      volume += fc_graph._volumes[i_fc];
+      _volume += fc_graph._volumes[i_fc];
     }
 
     _mapping_g_to_l = build_CRS();
     _cc_graph = make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType>>(
         s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
-        _adjMatrix_areaValues, _volumes, _mapping_g_to_l, is_isotropic);
+        _adjMatrix_areaValues, _fc_volumes, _mapping_g_to_l, is_isotropic);
   }
 
   ~Coarse_Cell() {};
@@ -78,7 +78,7 @@ class Coarse_Cell {
   vector<CoMMAWeightType> _adjMatrix_areaValues;
 
   /** @brief The volumes of the internal fine cells*/
-  vector<CoMMAWeightType> _volumes;
+  vector<CoMMAWeightType> _fc_volumes;
 
   /** @brief shared pointer of the subgraph structure (CSR representation)*/
   shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>> _cc_graph;
@@ -102,7 +102,7 @@ class Coarse_Cell {
   unordered_set<CoMMAIndexType> _s_fc;
 
   /** @brief Total volume of the coarse cell */
-  CoMMAWeightType volume = 0.0;
+  CoMMAWeightType _volume = 0.0;
 
   /** @brief Method that return a boolean determining if the Coarse Cell is
    * defined by a connected sub-graph or not.
@@ -144,7 +144,7 @@ class Coarse_Cell {
         }
       }
       row_ptr.push_back(position);
-      _volumes.push_back(_fc_graph->_volumes[i_fc]);
+      _fc_volumes.push_back(_fc_graph->_volumes[i_fc]);
     }
     _adjMatrix_row_ptr = row_ptr;
     // Map in the local subgraph
