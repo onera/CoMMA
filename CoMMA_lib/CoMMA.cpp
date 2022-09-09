@@ -23,6 +23,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
 
                        // Agglomeration argument
                        bool isFirstAgglomeration, bool is_anisotropic,
+                       double threshold_anisotropy,
 
                        // Outputs
                        vector<CoMMAIndexT> fc_to_cc,                // Out
@@ -35,8 +36,9 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     agglomerate_one_level<CoMMAIndexT, CoMMAWeightT>(
         adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
         arrayOfFineAnisotropicCompliantCells, isOnFineBnd, isFirstAgglomeration,
-        is_anisotropic, fc_to_cc, agglomerationLines_Idx, agglomerationLines,
-        correction, dimension, goal_card, min_card, max_card);
+        is_anisotropic, threshold_anisotropy, fc_to_cc, agglomerationLines_Idx,
+        agglomerationLines, correction, dimension, goal_card, min_card,
+        max_card);
     return std::make_tuple(fc_to_cc, agglomerationLines_Idx,
                            agglomerationLines);
   });

@@ -45,6 +45,7 @@ void agglomerate_one_level(  // Dual graph:
 
     // Agglomeration argument
     bool isFirstAgglomeration, bool is_anisotropic,
+    CoMMAWeightType threshold_anisotropy,
 
     // Outputs
     vector<CoMMAIndexType> &fc_to_cc,                // Out
@@ -116,7 +117,7 @@ void agglomerate_one_level(  // Dual graph:
 
     shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType>> agg1 =
         make_shared<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>(
-            fc_graph, cc_graph, dimension = dimension);
+            fc_graph, cc_graph, threshold_anisotropy, dimension = dimension);
     //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
     //                                    cc_graph,
     //                                    dimension = dimension);
