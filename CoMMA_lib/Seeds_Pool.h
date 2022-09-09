@@ -35,7 +35,12 @@
 using namespace std;
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell  */
+ * cell
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
 
 template <typename CoMMAIndexType, typename CoMMAIntType>
 class Seeds_Pool {
