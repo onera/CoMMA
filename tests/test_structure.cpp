@@ -321,17 +321,24 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Dual_Graph<TestIndexT, TestWeightT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
+        Data.s_anisotropic_compliant_fc, 3);
     Coarse_Cell_Container<TestIndexT, TestWeightT> cc_graph(fc_graph);
-    Agglomerator<TestIndexT, TestWeightT> *agg1 =
-        new Agglomerator_Anisotropic<TestIndexT, TestWeightT>(fc_graph,
-                                                              cc_graph, 2);
+    shared_ptr<Agglomerator<TestIndexT, TestWeightT>> agg1 =
+        make_shared<Agglomerator_Anisotropic<TestIndexT, TestWeightT>>(
+            fc_graph, cc_graph, 4, 3);
     // I progress with the downcasting to get the anisotropic lines
-    Agglomerator_Anisotropic<TestIndexT, TestWeightT> *agg_dyn =
-        dynamic_cast<Agglomerator_Anisotropic<TestIndexT, TestWeightT> *>(agg1);
-    // COMPLETE THE TEST
-    WHEN("We insert an element and we delete it") {
-      THEN("Bimap is empty") {}
+    shared_ptr<Agglomerator_Anisotropic<TestIndexT, TestWeightT>>
+        agg_dyn = dynamic_pointer_cast<
+            Agglomerator_Anisotropic<TestIndexT, TestWeightT>>(agg1);
+    // We setup the structures to gather the agglomeration lines
+    TestIndexT nb_agglomeration_lines = 0;
+    vector<deque<TestIndexT> *> agglomeration_lines;
+    // We pass the structures to the level 0
+    agg_dyn->_v_lines[0] = agglomeration_lines;
+    agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
+    WHEN("We proceed with the agglomeration of the anisotropic lines (we gatherthem and later we agglomerate") {      
+         agg_dyn->agglomerate_one_level(2, 2, 2, false);
+      THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
   };
 }

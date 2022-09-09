@@ -14,6 +14,8 @@ class DualGPy;
 class DualGPy_5;
 class DualGPy_aniso;
 class DualGPy_minimal;
+class DualGPy_cube_4;
+class DualGPy_quad_4;
 
 class DualGPy {
 
