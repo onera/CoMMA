@@ -28,22 +28,29 @@
 #include "Dual_Graph.h"
 
 /** @brief Class implementing a Coarse_Cell object.
- * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
- * cells to create the
- * coarse cell.
- * @param[in] global index of the coarse cell
- * @param[in] s_fc unordered set of fine cells constituting the coarse cell
- * @param[in] is_isotropic boolean describing if the cell is coming from an
- * isotropic agglomeration process
- * or an anisotropic agglomeration process. The default value is set to true.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
  */
 
-template <typename CoMMAIndexType, typename CoMMAWeightType>
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 class Coarse_Cell {
  public:
-  Coarse_Cell(Dual_Graph<CoMMAIndexType, CoMMAWeightType> &fc_graph,
-              CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
-              bool is_isotropic = true)
+  /** @brief Constructor of the class
+   * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
+   * cells to create the coarse cell.
+   * @param[in] global index of the coarse cell
+   * @param[in] s_fc unordered set of fine cells constituting the coarse cell
+   * @param[in] is_isotropic boolean describing if the cell is coming from an
+   * isotropic agglomeration process
+   * or an anisotropic agglomeration process. The default value is set to true.
+   */
+  Coarse_Cell(
+      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph,
+      CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
+      bool is_isotropic = true)
       : _dim(fc_graph._dimension), _is_isotropic(is_isotropic) {
     // compactness, degrees are defined in the Subgraph
     // Other quantities are defined in the cc_graph map (e.h the i_cc)
@@ -57,9 +64,10 @@ class Coarse_Cell {
     }
 
     _mapping_g_to_l = build_CRS();
-    _cc_graph = make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType>>(
-        s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
-        _adjMatrix_areaValues, _fc_volumes, _mapping_g_to_l, is_isotropic);
+    _cc_graph =
+        make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+            s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
+            _adjMatrix_areaValues, _fc_volumes, _mapping_g_to_l, is_isotropic);
   }
 
   ~Coarse_Cell() {};
@@ -81,13 +89,13 @@ class Coarse_Cell {
   vector<CoMMAWeightType> _fc_volumes;
 
   /** @brief shared pointer of the subgraph structure (CSR representation)*/
-  shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType>> _cc_graph;
+  shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
 
   /** @brief The global dual graph*/
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType> *_fc_graph;
+  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *_fc_graph;
 
   /** @brief the dimension of the problem (2D or 3D)*/
-  short int _dim;
+  CoMMAIntType _dim;
 
   /** @brief Is the cell isotropic or anisotropic*/
   bool _is_isotropic;

@@ -30,7 +30,8 @@
  * of the agglomerated cells fc2cc.
  * */
 
-template <typename CoMMAIndexType, typename CoMMAWeightType>
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 void agglomerate_one_level(  // Dual graph:
     const vector<CoMMAIndexType> adjMatrix_row_ptr,
     const vector<CoMMAIndexType> adjMatrix_col_ind,
@@ -53,13 +54,14 @@ void agglomerate_one_level(  // Dual graph:
     vector<CoMMAIndexType> &agglomerationLines,      // In & out
 
     // Args with default value
-    bool correction, short dimension, short goal_card, short min_card,
-    short max_card) {
+    bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
+    CoMMAIntType min_card, CoMMAIntType max_card) {
 
   // SIZES CAST
   //======================================
   // number of faces
-  long nb_fc = static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
+  CoMMAIndexType nb_fc =
+      static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
   // BOUNDARIES
   //======================================
@@ -71,7 +73,8 @@ void agglomerate_one_level(  // Dual graph:
   unordered_map<CoMMAIndexType, int> d_is_on_bnd;
   for (long i = 0; i < nb_fc; i++) {
     if (isOnFineBnd[i] > CoMMACellT::INTERIOR) {
-      fill_value<true, int, const long>(d_is_on_bnd[i], isOnFineBnd[i]);
+      fill_value<true, CoMMAIntType, const CoMMAIndexType>(d_is_on_bnd[i],
+                                                           isOnFineBnd[i]);
     }
   }
   // ANISOTROPIC COMPLIANT FC
@@ -90,10 +93,10 @@ void agglomerate_one_level(  // Dual graph:
   // DualGraph.hpp and DualGraph.cpp
   // fc = Fine Cells
   assert(dimension < USHRT_MAX);
-  Seeds_Pool<CoMMAIndexType> seeds_pool(nb_fc, d_is_on_bnd);
-  Dual_Graph<CoMMAIndexType,CoMMAWeightType> fc_graph(nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind,
-                      adjMatrix_areaValues, volumes, seeds_pool,
-                      s_anisotropic_compliant_fc, dimension);
+  Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
+  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
+      nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
+      volumes, seeds_pool, s_anisotropic_compliant_fc, dimension);
   // Debug
   //    vector<double> maxArray(nb_fc, 0.0);
   //    unordered_map<long, double> d_anisotropic_fc;
@@ -102,7 +105,8 @@ void agglomerate_one_level(  // Dual graph:
   // with minimum area
   //    //                 // is more than 4.
   //    fc_graph.compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
-  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType> cc_graph(fc_graph);
+  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cc_graph(
+      fc_graph);
   // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
   // @todo maybe re-refactor the class agglomerator to allow the implicit upcast
   // like the biconnected case
@@ -115,8 +119,9 @@ void agglomerate_one_level(  // Dual graph:
   // https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
   if (is_anisotropic) {
 
-    shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType>> agg1 =
-        make_shared<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>(
+    shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+        agg1 = make_shared<Agglomerator_Anisotropic<
+            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
             fc_graph, cc_graph, threshold_anisotropy, dimension = dimension);
     //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
     //                                    cc_graph,
@@ -144,22 +149,23 @@ void agglomerate_one_level(  // Dual graph:
         nb_agglomeration_lines++;
       }
     }
-    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>
-        agg_dyn = dynamic_pointer_cast<
-            Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType>>(agg1);
+    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType,
+                                        CoMMAIntType>> agg_dyn =
+        dynamic_pointer_cast<Agglomerator_Anisotropic<
+            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(agg1);
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, false);
     // level of the line: WARNING! here 1 it means that we give it back lines in
     // the new global
     // index, 0 the old
-    int i_level = 1;
+    CoMMAIntType i_level = 1;
     agg_dyn->get_agglo_lines(i_level, agglomerationLines_Idx,
                              agglomerationLines);
   }
-  auto agg =
-      make_unique<Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType>>(
-          fc_graph, cc_graph, dimension = dimension);
+  auto agg = make_unique<
+      Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      fc_graph, cc_graph, dimension = dimension);
   // Agglomerate
   agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an

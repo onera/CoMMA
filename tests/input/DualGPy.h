@@ -30,14 +30,14 @@ class DualGPy {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1.41421356, 1,1,1,  1 ,1,1,   1      ,       1,         1,         1,         1,1,         1,         1,         1,         1,         1,1,        1,         1,         1,         1,         1,1,         1,         1,         1,         1,         1,1,         1};
     vector<CoMMAWeightT> volumes ={0.5, 0.5, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,  1,  1};
   // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
+    CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
     long adj_matrix_row_ptr_size = nb_fc + 1;
     long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
     long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
     long is_on_valley_size = static_cast<long>(array_is_on_valley.size());
     long is_on_ridge_size = static_cast<long>(array_is_on_ridge.size());
     long is_on_corner_size = static_cast<long>(array_is_on_corner.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
@@ -45,7 +45,7 @@ class DualGPy {
     DualGPy(){
     for (int i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
-	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
+	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
     for (long i_o_v = 0; i_o_v < is_on_valley_size; i_o_v++) {
@@ -84,14 +84,14 @@ class DualGPy_5 {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1.41421356, 1,1,1,  1 ,1,1,   1      ,       1,         1,         1,         1,1,         1,         1,         1,         1,         1,1,        1,         1,         1,         1,         1,1,         1,         1,         1,         1,         1,1,         1};
     vector<CoMMAWeightT> volumes ={0.5, 0.5, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,  1,  1};
   // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
+    CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
     long adj_matrix_row_ptr_size = nb_fc + 1;
     long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
     long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
     long is_on_valley_size = static_cast<long>(array_is_on_valley.size());
     long is_on_ridge_size = static_cast<long>(array_is_on_ridge.size());
     long is_on_corner_size = static_cast<long>(array_is_on_corner.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
@@ -99,7 +99,7 @@ class DualGPy_5 {
     DualGPy_5(){
     for (int i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
-	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
+	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
     for (long i_o_v = 0; i_o_v < is_on_valley_size; i_o_v++) {
@@ -144,7 +144,7 @@ class DualGPy_aniso {
     long is_on_valley_size = static_cast<long>(array_is_on_valley.size());
     long is_on_ridge_size = static_cast<long>(array_is_on_ridge.size());
     long is_on_corner_size = static_cast<long>(array_is_on_corner.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
@@ -152,7 +152,7 @@ class DualGPy_aniso {
     DualGPy_aniso(){
     for (int i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
-	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
+	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
     for (long i_o_v = 0; i_o_v < is_on_valley_size; i_o_v++) {
@@ -191,7 +191,7 @@ class DualGPy_minimal {
     long adj_matrix_row_ptr_size = nb_fc + 1;
     long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
     long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     unordered_set<CoMMAIndexT> s_is_on_valley, s_is_on_ridge, s_is_on_corner;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
@@ -199,7 +199,7 @@ class DualGPy_minimal {
     DualGPy_minimal(){
     for (int i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
-	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
+	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
     for (int i = 0; i < nb_fc; i++) {
