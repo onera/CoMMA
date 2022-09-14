@@ -162,6 +162,7 @@ class Coarse_Cell_Container {
         // Get the cc neigh of the given fine cell
         auto i_fc = current_cc->_mapping_l_to_g[0];
         neigh = get_neigh_cc(i_fc, i_cc);
+        if(!neigh.empty()){
         // now we have the neighborhood cc cell, we can access to them and
         // control the characteristics
         for (auto const &elem : neigh) {
@@ -198,7 +199,9 @@ class Coarse_Cell_Container {
           current_cc->remove_node(i_fc);
           // the new it point directly to the next element in the map
           it = remove_cc(it);
-        }
+        } 
+       } else {++it;};
+        end = _cc_vec.end();
         neigh.clear();
         it_old = it;
       } else {
