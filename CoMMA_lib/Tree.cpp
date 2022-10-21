@@ -1,6 +1,6 @@
 #include "Tree.h"
 
-Tree::Tree(shared_ptr<node> &root) : _root(root) {};
+Tree::Tree(shared_ptr<node> &root) : _root(root) {}
 
 void Tree::insertSon(const long &father_index, const long &index,
                      const double &volume, const int &root) {
@@ -24,14 +24,14 @@ void Tree::insertSon(const long &father_index, const long &index,
   }
   u_p_father->_sonc = u_p_father->_sonc + 1;
   cout << u_p_father->_sonc << endl;
-};
+}
 
 shared_ptr<node> Tree::transverse(shared_ptr<node> &node) {
   if (node == nullptr || node->_right_idx == nullptr) {
     return node;
   }
   return (transverse(node->_right_idx));
-};
+}
 
 shared_ptr<node> Tree::search(shared_ptr<node> &node, const long &value) {
   if (node->_index == value && node->_father != nullptr) {
@@ -41,11 +41,11 @@ shared_ptr<node> Tree::search(shared_ptr<node> &node, const long &value) {
     return nullptr;
   }
   return (search(node->_right_idx, value));
-};
+}
 
 void Tree::deleteNode(const long &value) {
   delete_node(_root->_left_son_idx, value);
-};
+}
 
 void Tree::delete_node(shared_ptr<node> &searched_node, const long &value) {
   if (searched_node == nullptr) {
@@ -70,11 +70,11 @@ void Tree::delete_node(shared_ptr<node> &searched_node, const long &value) {
     return;
   }
   delete_node(searched_node->_right_idx, value);
-};
+}
 
 void Tree::print() {
   print_nodes(_root);
-};
+}
 
 void Tree::print_nodes(shared_ptr<node> &node) {
   if (node == nullptr) {
@@ -83,4 +83,4 @@ void Tree::print_nodes(shared_ptr<node> &node) {
   cout << "node" << node->_index << endl;
   print_nodes(node->_left_son_idx);
   print_nodes(node->_right_idx);
-};
+}

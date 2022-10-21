@@ -123,8 +123,6 @@ class Coarse_Cell_Container {
     // memory
     MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> it =
         _cc_vec.erase(elim);
-    // We get the length
-    auto lung = _cc_vec.size();
     // update value of the other nodes
     for (auto i = it; i != _cc_vec.end(); i++) {
       for (auto const &i_fc : i->second->_mapping_l_to_g) {
@@ -144,6 +142,8 @@ class Coarse_Cell_Container {
    * step is agglomerated to a neighbouring cell
    * @param[in] max_card Maximum cardinality of the agglomerator. */
   void correct(const CoMMAIndexType &max_card) {
+    // Unused parameter
+    (void)max_card;
     // initializing vector neigh_cc
     vector<CoMMAIndexType> neigh;
     // We cycle on the subgraphs of the bimap structure

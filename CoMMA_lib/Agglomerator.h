@@ -77,7 +77,7 @@ class Agglomerator {
                Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                      CoMMAIntType> &cc_graph,
                CoMMAIntType dimension = 3)
-      : _fc_graph(graph), _dimension(dimension), _cc_graph(&cc_graph) {
+      : _dimension(dimension), _fc_graph(graph), _cc_graph(&cc_graph) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw range_error("dimension can only be 2 or 3");
     }
@@ -196,6 +196,11 @@ class Agglomerator_Anisotropic
                              const CoMMAIntType min_card,
                              const CoMMAIntType max_card,
                              bool correction_steps) override {
+    // Unused parameters
+    (void)goal_card;
+    (void)min_card;
+    (void)max_card;
+    (void)correction_steps;
     // if the finest agglomeration line is not computed, hence compute it
     // (REMEMBER! We compute the agglomeration lines
     // only on the finest level, the other one are stored only for visualization
@@ -519,7 +524,6 @@ class Agglomerator_Biconnected
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness) override {
     bool is_order_primary = false;
-    bool increase_neighbouring = true;
     //  The goal of this function is to choose from a pool of neighbour the
     // better
     // one to build a compact coarse cell
@@ -565,7 +569,7 @@ class Agglomerator_Biconnected
     }
     // The available neighborhood cells are not enough to reach the goal
     // cardinality
-    else if ((d_n_of_seed.size() + s_current_cc.size()) < this->_goal_card) {
+    else if (static_cast<CoMMAIntType>(d_n_of_seed.size() + s_current_cc.size()) < this->_goal_card) {
       // Not enough available neighbour, the dictionary
       // of the available cells size summed with the current
       // cell size is not enough to reach the goal cardinality
@@ -577,7 +581,7 @@ class Agglomerator_Biconnected
       }
       // We check as a consequence the threshold cardinality that is a minimum
       // limit
-      bool is_creation_delayed = (s_current_cc.size() <= this->_threshold_card);
+      bool is_creation_delayed = (static_cast<CoMMAIntType>(s_current_cc.size()) <= this->_threshold_card);
       if (is_creation_delayed) {
         compactness = 0;  // Return
       } else {
@@ -714,7 +718,7 @@ class Agglomerator_Biconnected
           d_n_of_seed[iKV.first] = iKV.second;
         }
       }
-      assert(arg_min_external_faces == s_current_cc.size());
+      assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
       // Computes the actual compactness of the coarse cell
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
@@ -821,10 +825,10 @@ class Agglomerator_Biconnected
       vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
       assert(v_neighbours.size() == v_weights.size());
 
-      for (CoMMAIntType i_n = 0; i_n < v_neighbours.size(); i_n++) {
+      for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
 
-        CoMMAIndexType i_fc_n = v_neighbours[i_n];
-        CoMMAWeightType i_w_fc_n = v_weights[i_n];
+        const CoMMAIndexType i_fc_n = v_neighbours[i_n];
+        const CoMMAWeightType i_w_fc_n = v_weights[i_n];
 
         if (i_fc_n == i_fc) {  // Boundary surface
           new_ar_surf += i_w_fc_n;
@@ -838,15 +842,13 @@ class Agglomerator_Biconnected
       }
       // end new AR
 
-      CoMMAWeightType new_ar = pow(new_ar_surf, 1.5) / new_ar_vol;
+      const CoMMAWeightType new_ar = sqrt(new_ar_surf*new_ar_surf*new_ar_surf) / new_ar_vol;
 
-      const CoMMAIntType &order = d_n_of_seed.at(
-          i_fc);  // [i_fc] is not const the method at returns the
-                  // reference to the value of the key i_fc.
+      // [i_fc] is not const the method at returns the reference to the value of the key i_fc.
+      const CoMMAIntType &order = d_n_of_seed.at(i_fc);
 
       // TODO This version seems good but refactorisation to do: perhaps it is
-      // not
-      // needed to update every new possible coarse cell aspect ratio?
+      // not needed to update every new possible coarse cell aspect ratio?
       // TODO also need to remove the list of min_ar, argmin_ar, etc.
       if (number_faces_in_common >=
           max_faces_in_common or
@@ -854,11 +856,8 @@ class Agglomerator_Biconnected
                                    // neighbourhood is primary
         if (number_faces_in_common == max_faces_in_common or is_order_primary) {
 
-          if (order <=
-              d_n_of_seed.at(
-                  arg_max_faces_in_common)) {  // [arg_max_faces_in_common] is
-                                               // not
-                                               // const.
+          if (order <= d_n_of_seed.at(arg_max_faces_in_common)) {
+            // [arg_max_faces_in_common] is not const.
             if (order == d_n_of_seed.at(arg_max_faces_in_common)) {
               if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
                 // The second condition asserts the connectivity of the coarse

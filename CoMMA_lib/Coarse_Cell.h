@@ -52,6 +52,8 @@ class Coarse_Cell {
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       bool is_isotropic = true)
       : _dim(fc_graph._dimension), _is_isotropic(is_isotropic) {
+    // Unused
+    (void)i_cc;
     // compactness, degrees are defined in the Subgraph
     // Other quantities are defined in the cc_graph map (e.h the i_cc)
     _fc_graph = &fc_graph;

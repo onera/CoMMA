@@ -172,7 +172,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
       THEN("We eliminate an element and we check the dimension changed") {
         auto lung = Collection.lung();
         REQUIRE(lung == 4);
-        TestIndexT elim = 2;
+        decltype(lung) elim = 2;
         Collection.erase_B(elim);
         lung = Collection.lung();
         REQUIRE(lung == 3);

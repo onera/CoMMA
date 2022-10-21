@@ -48,12 +48,6 @@ class Seeds_Pool {
  protected:
   /** @brief Number of cells */
   CoMMAIndexType _number_of_cells;
-  /** @brief set of cells on corner */
-  unordered_set<CoMMAIndexType> _is_on_corner;
-  /** @brief set of cells on ridge */
-  unordered_set<CoMMAIndexType> _is_on_ridge;
-  /** @brief set of cells on valley */
-  unordered_set<CoMMAIndexType> _is_on_valley;
   /** @brief level of boundary we want to put initially in the pool (default is
    * 3)
    *  We want the seed to be chosen preferably in the corner, then ridges,
@@ -107,28 +101,11 @@ class Seeds_Pool {
       CoMMAIntType i_fc_bnd = kv_fc.second;
       if (i_fc_bnd >= CoMMACellT::CORNER) {
         _d_is_on_bnd[i_fc] = CoMMACellT::CORNER;
-        _is_on_corner.insert(i_fc);
+        _l_of_seeds[CoMMACellT::CORNER].push(i_fc);
       } else if (i_fc_bnd == CoMMACellT::RIDGE) {
-        _is_on_ridge.insert(i_fc);
+        _l_of_seeds[CoMMACellT::RIDGE].push(i_fc);
       } else if (i_fc_bnd == CoMMACellT::VALLEY) {
-        _is_on_valley.insert(i_fc);
-      }
-    }
-    // initialization of l_of_seeds
-    if (_is_on_corner.size() > 0) {
-      for (auto iFC : _is_on_corner) {
-        _l_of_seeds[CoMMACellT::CORNER].push(iFC);
-      }
-    }
-
-    if (_is_on_ridge.size() > 0) {
-      for (auto iFC : _is_on_ridge) {
-        _l_of_seeds[CoMMACellT::RIDGE].push(iFC);
-      }
-    }
-    if (_is_on_valley.size() > 0) {
-      for (auto iFC : _is_on_valley) {
-        _l_of_seeds[CoMMACellT::VALLEY].push(iFC);
+        _l_of_seeds[CoMMACellT::VALLEY].push(i_fc);
       }
     }
   };
