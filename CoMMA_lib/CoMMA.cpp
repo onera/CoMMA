@@ -6,7 +6,6 @@
 
 #include "CoMMATypes.h"
 
-namespace py = pybind11;
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() = "CoMMA is an agglomeration library";
   module_handle.def(

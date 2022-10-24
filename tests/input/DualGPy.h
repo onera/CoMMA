@@ -29,23 +29,23 @@ class DualGPy {
     vector<CoMMAWeightT> volumes ={0.5, 0.5, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,  1,  1};
   // number of faces
     CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
-    long adj_matrix_row_ptr_size = nb_fc + 1;
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    CoMMAIndexT adj_matrix_row_ptr_size = nb_fc + 1;
+    CoMMAIndexT adj_matrix_col_ind_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    CoMMAIndexT adj_matrix_areas_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
     vector<bool> a_is_fc_agglomerated;
     DualGPy(){
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
 	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
-    for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
+    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
      vector<bool> tmp(nb_fc, false);
@@ -66,23 +66,23 @@ class DualGPy_aniso {
     vector<CoMMAWeightT> volumes ={0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.05788845944824356, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.15735714739564882, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 0.42774107434374375, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 1.162720789674148, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888, 3.1606027941427888};
   // number of faces
     CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
-    long adj_matrix_row_ptr_size = nb_fc + 1;
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    CoMMAIndexT adj_matrix_row_ptr_size = nb_fc + 1;
+    CoMMAIndexT adj_matrix_col_ind_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    CoMMAIndexT adj_matrix_areas_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_aniso(){
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
 	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
-    for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
+    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
     vector<bool> a_is_fc_agglomerated(nb_fc, false);
@@ -101,24 +101,24 @@ class DualGPy_minimal {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     vector<CoMMAWeightT> volumes ={1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
-    long adj_matrix_row_ptr_size = nb_fc + 1;
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
+    CoMMAIndexT adj_matrix_row_ptr_size = nb_fc + 1;
+    CoMMAIndexT adj_matrix_col_ind_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    CoMMAIndexT adj_matrix_areas_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_minimal(){
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
-	    	fill_value<true,int,const long>(d_is_on_bnd[i],isOnFineBnd[i]);		
+	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
-    for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
+    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
     vector<bool> a_is_fc_agglomerated(nb_fc, false);
@@ -137,24 +137,24 @@ class DualGPy_quad_4 {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     vector<CoMMAWeightT> volumes ={1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
-    long adj_matrix_row_ptr_size = nb_fc + 1;
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
+    CoMMAIndexT adj_matrix_row_ptr_size = nb_fc + 1;
+    CoMMAIndexT adj_matrix_col_ind_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    CoMMAIndexT adj_matrix_areas_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_quad_4(){
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
 	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
-    for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
+    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
     vector<bool> a_is_fc_agglomerated(nb_fc, false);
@@ -173,24 +173,24 @@ class DualGPy_cube_4 {
     vector<CoMMAWeightT> adjMatrix_areaValues ={1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     vector<CoMMAWeightT> volumes ={1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   // number of faces
-    long nb_fc = static_cast<long>(adjMatrix_row_ptr.size()-1);
-    long adj_matrix_row_ptr_size = nb_fc + 1;
-    long adj_matrix_col_ind_size = static_cast<long>(adjMatrix_col_ind.size());
-    long adj_matrix_areas_size = static_cast<long>(adjMatrix_col_ind.size());
-    unordered_map<CoMMAIndexT, int> d_is_on_bnd;
+    CoMMAIndexT nb_fc = static_cast<CoMMAIndexT>(adjMatrix_row_ptr.size()-1);
+    CoMMAIndexT adj_matrix_row_ptr_size = nb_fc + 1;
+    CoMMAIndexT adj_matrix_col_ind_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    CoMMAIndexT adj_matrix_areas_size = static_cast<CoMMAIndexT>(adjMatrix_col_ind.size());
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_is_on_bnd;
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = vector<CoMMAIndexT>(nb_fc);
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_cube_4(){
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
 	    if (isOnFineBnd[i] > 0){
 	    	fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);		
     }
     }
-    for (int i = 0; i < nb_fc; i++) {
+    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
     }
-    for (long i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
+    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
     }
     vector<bool> a_is_fc_agglomerated(nb_fc, false);

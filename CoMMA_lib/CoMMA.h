@@ -60,7 +60,7 @@ void agglomerate_one_level(  // Dual graph:
   // SIZES CAST
   //======================================
   // number of faces
-  CoMMAIndexType nb_fc =
+  const CoMMAIndexType nb_fc =
       static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
   // BOUNDARIES
@@ -70,8 +70,8 @@ void agglomerate_one_level(  // Dual graph:
   // In particular starting from the vector we pass we store in a map
   // the key relative to the cell analysed and the relative NUMBER OF FACES on
   // the boundary
-  unordered_map<CoMMAIndexType, int> d_is_on_bnd;
-  for (long i = 0; i < nb_fc; i++) {
+  unordered_map<CoMMAIndexType, CoMMAIntType> d_is_on_bnd;
+  for (CoMMAIndexType i = 0; i < nb_fc; i++) {
     if (isOnFineBnd[i] > CoMMACellT::INTERIOR) {
       fill_value<true, CoMMAIntType, const CoMMAIndexType>(d_is_on_bnd[i],
                                                            isOnFineBnd[i]);
