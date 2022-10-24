@@ -66,7 +66,6 @@ set(PROFILING_PERF
    )
 
 SET(TESTING_FILES
-  ${TEST_DIR}/test_types.h
 	${TEST_DIR}/test_structure.cpp
 	)
 
