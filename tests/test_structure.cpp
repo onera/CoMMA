@@ -221,23 +221,26 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     auto agg =
       make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
           fc_graph, cc_graph, 3);
-    const vector<TestIndexT> fc2cc_req = {6, 6, 4, 4, 6, 6, 4, 4, 2, 2, 7, 7, 2, 2, 7, 7, 6, 6, 4, 4, 6, 6, 4, 4, 2, 2, 7, 7, 2, 2, 7, 7, 1, 1, 0, 0, 1, 1, 0, 0, 5, 5, 3, 3, 5, 5, 3, 3, 1, 1, 0, 0, 1, 1, 0, 0, 5, 5, 3, 3, 5, 5, 3, 3};
     // COMPLETE THE TEST
     WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(8, 8, 8, false);
+      agg->agglomerate_one_level(8, 8, 8, 0);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        auto fccc = cc_graph._fc_2_cc;
-        for (auto i = 0; i != Data.nb_fc; i++) {
+         auto fccc = cc_graph._fc_2_cc;
+         vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc;
+             i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
 
       }
     }
     WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(8, 8, 8, true);
+      agg->agglomerate_one_level(8, 8, 8, 1);
       THEN("Nothing changes with respect to the case without correction") {
-        auto fccc = cc_graph._fc_2_cc;
-        for (auto i = 0; i != Data.nb_fc; i++) {
+         auto fccc = cc_graph._fc_2_cc;
+         vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc;
+             i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
       }
@@ -261,47 +264,47 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(4, 4, 4, false);
+      agg->agglomerate_one_level(4, 4, 4, 0);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
          auto fccc = cc_graph._fc_2_cc;
-        REQUIRE(fccc[0]== 3);
-        REQUIRE(fccc[1]== 3);
-        REQUIRE(fccc[2]== 1);
-        REQUIRE(fccc[3]== 1);
-        REQUIRE(fccc[4]== 3);
-        REQUIRE(fccc[5]== 3);
-        REQUIRE(fccc[6]== 1);
-        REQUIRE(fccc[7]== 1);
-        REQUIRE(fccc[8]== 0);
-        REQUIRE(fccc[9]== 0);
-        REQUIRE(fccc[10]== 2);
-        REQUIRE(fccc[11]== 2);
-        REQUIRE(fccc[12]== 0);
-        REQUIRE(fccc[13]== 0);
-        REQUIRE(fccc[14]== 2);
-        REQUIRE(fccc[15]== 2);
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
       }
     }
     WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(4, 4, 4, true);
+      agg->agglomerate_one_level(4, 4, 4, 1);
       THEN("Nothing changes with respect to the case without correction") {
          auto fccc = cc_graph._fc_2_cc;
-        REQUIRE(fccc[0]== 3);
-        REQUIRE(fccc[1]== 3);
-        REQUIRE(fccc[2]== 1);
-        REQUIRE(fccc[3]== 1);
-        REQUIRE(fccc[4]== 3);
-        REQUIRE(fccc[5]== 3);
-        REQUIRE(fccc[6]== 1);
-        REQUIRE(fccc[7]== 1);
-        REQUIRE(fccc[8]== 0);
-        REQUIRE(fccc[9]== 0);
-        REQUIRE(fccc[10]== 2);
-        REQUIRE(fccc[11]== 2);
-        REQUIRE(fccc[12]== 0);
-        REQUIRE(fccc[13]== 0);
-        REQUIRE(fccc[14]== 2);
-        REQUIRE(fccc[15]== 2);
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
       }
     }
 
@@ -354,7 +357,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
-      agg->agglomerate_one_level(2, 2, 2, true);
+      agg->agglomerate_one_level(2, 2, 2, 1);
 
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph._cc_vec.begin(); i != cc_graph._cc_vec.end();
