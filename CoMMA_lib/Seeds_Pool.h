@@ -48,20 +48,14 @@ class Seeds_Pool {
  protected:
   /** @brief Number of cells */
   CoMMAIndexType _number_of_cells;
-  /** @brief level of boundary we want to put initially in the pool (default is
-   * 3)
+
+  CoMMAIntType _init_bnd_level;
+  /** @brief List of deque of seeds. For each identifier we have the available
+   * seeds
    *  We want the seed to be chosen preferably in the corner, then ridges,
    * valleys and then interiors.
    *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
    *  to minimizes the too small cells!
-   *  0 : interior (no face on the edge of the domain)
-   *  1 : valley (one face on the edge of the domain)
-   *  2 : ridge (two faces on the edge of the domain)
-   *  3 : corner (three faces on the edge of the domain)
-  */
-  CoMMAIntType _init_bnd_level;
-  /** @brief List of deque of seeds. For each identifier we have the available
-   * seeds
    *  0 : interior (no face on the edge of the domain)
    *  1 : valley (one face on the edge of the domain)
    *  2 : ridge (two faces on the edge of the domain)
