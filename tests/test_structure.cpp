@@ -222,8 +222,8 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
           fc_graph, cc_graph, 3);
     // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(8, 8, 8, 0);
+    WHEN("We Agglomerate the mesh") {
+      agg->agglomerate_one_level(8, 8, 8, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
          auto fccc = cc_graph._fc_2_cc;
          vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -234,8 +234,8 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
 
       }
     }
-    WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(8, 8, 8, 1);
+    WHEN("We Agglomerate the mesh and we try to correct") {
+      agg->agglomerate_one_level(8, 8, 8, true);
       THEN("Nothing changes with respect to the case without correction") {
          auto fccc = cc_graph._fc_2_cc;
          vector<TestIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -263,8 +263,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       make_unique<Agglomerator_Biconnected<TestIndexT, TestWeightT,TestIntT>>(
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(4, 4, 4, 0);
+    WHEN("We Agglomerate the mesh") {
+      agg->agglomerate_one_level(4, 4, 4, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
          auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -285,8 +285,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(4, 4, 4, 1);
+    WHEN("We Agglomerate the mesh and we try to correct") {
+      agg->agglomerate_one_level(4, 4, 4, true);
       THEN("Nothing changes with respect to the case without correction") {
          auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -336,7 +336,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     // We pass the structures to the level 0
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
-    WHEN("We proceed with the agglomeration of the anisotropic lines (we gatherthem and later we agglomerate") {      
+    WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
          agg_dyn->agglomerate_one_level(2, 2, 2, false);
       THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
@@ -357,7 +357,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
-      agg->agglomerate_one_level(2, 2, 2, 1);
+      agg->agglomerate_one_level(2, 2, 2, true);
 
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph._cc_vec.begin(); i != cc_graph._cc_vec.end();
