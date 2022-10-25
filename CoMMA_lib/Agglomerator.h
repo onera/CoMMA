@@ -305,9 +305,9 @@ class Agglomerator_Anisotropic
         continue;
       }
       deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
-      bool is_anisotropic =
-          true;  // TODO here is necessary for the cc_create_a_cc but maybe we
-                 // need in some way to change that.
+      // TODO here is necessary for the cc_create_a_cc but maybe we need in
+      // some way to change that.
+      bool is_anisotropic = true;
       // Important to put it in the global scope
       unordered_set<CoMMAIndexType> s_fc;
       for (auto deqIt = actual_deque.rbegin(); deqIt != actual_deque.rend();
@@ -316,12 +316,10 @@ class Agglomerator_Anisotropic
         // go through the faces and agglomerate two faces together, getting to
         // cardinal 2
         // ANISOTROPIC: we agglomerate 2 by 2, hence the anisotropic
-        // agglomeration
-        // will
-        // provoke agglomerated coarse cells of cardinality 2.
+        // agglomeration will provoke agglomerated coarse cells of cardinality
+        // 2.
         // Here we have to consider the two different case in which we have an
-        // odd
-        // number of cells.
+        // odd number of cells.
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
         if (line_size <= deqIt + 3 - actual_deque.rbegin() &&
             line_size % 2 != 0) {
@@ -531,10 +529,8 @@ class Agglomerator_Biconnected
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
     // Dictionary of the neighborhood of the seed, the key is the global index
-    // of
-    // the cell and the value
-    // the order of distance from the seed (1 order direct neighborhood, 2 order
-    // etc.)
+    // of the cell and the value the order of distance from the seed (1 order
+    // direct neighborhood, 2 order etc.)
     unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_seed;
     // Number of fine cells constituting the current coarse cell in
     // construction.
@@ -548,10 +544,9 @@ class Agglomerator_Biconnected
         s_current_cc, max_order_of_neighbourhood,  // in and out
         d_n_of_seed,  // output, the function fills the dictionary
         this->_max_card,
-        this->_cc_graph->_a_is_fc_agglomerated);  // anisotropic cells
-                                                  // agglomerated (not to
-                                                  // take into account in the
-                                                  // process)
+        // anisotropic cells agglomerated (not to take into account in the
+        // process)
+        this->_cc_graph->_a_is_fc_agglomerated);
 
     // We get the number of neighborhoods
     CoMMAIntType nb_neighbours = this->_fc_graph.get_nb_of_neighbours(seed);
@@ -606,10 +601,8 @@ class Agglomerator_Biconnected
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
-      // inside
-      // the permitted range.
-      // This is useful to track back our step if needed.
-      // [size of the current, [cell set, d_n_of seed]]
+      // inside the permitted range. This is useful to track back our step if
+      // needed. [size of the current, [cell set, d_n_of seed]]
       unordered_map<CoMMAIntType,
                     pair<unordered_set<CoMMAIndexType>,
                          unordered_map<CoMMAIndexType, CoMMAIntType>>>
@@ -617,23 +610,18 @@ class Agglomerator_Biconnected
       CoMMAIntType min_external_faces = numeric_limits<CoMMAIntType>::max();
       CoMMAIntType arg_min_external_faces = min_size;
       // Here we define the exact dimension of the coarse cell as the min
-      // between
-      // the max cardinality given as an input
-      // (remember the constructor choice in case of -1) and the dictionary of
-      // the
-      // boundary cells, it means the total number of
-      // neighborhood cells until the order we have given (as default 3, so
-      // until
-      // the third order)
+      // between the max cardinality given as an input (remember the constructor
+      // choice in case of -1) and the dictionary of the boundary cells, it
+      // means the total number of neighborhood cells until the order we have
+      // given (as default 3, so until the third order)
       CoMMAIntType max_ind =
-          min(this->_max_card, (CoMMAIntType)(d_n_of_seed.size() + 1));
+          min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
           nb_neighbours + this->_fc_graph._seeds_pool.boundary_value(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
-      // create an unordered set. The unordered
-      // set is representing hence all the neighborhood of seed until a given
-      // order.
+      // create an unordered set. The unordered set is representing hence all
+      // the neighborhood of seed until a given order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
@@ -645,9 +633,8 @@ class Agglomerator_Biconnected
       // Generate the set of the first order neighborhood to the given seed
       unordered_set<CoMMAIndexType> fon = f_o_neighbourhood.update(seed, s_up);
 
-      // Choice of the fine cells to agglomerate
-      // we enter in a while, we store anyways all the possible coarse cells
-      // (not only the max dimension one)
+      // Choice of the fine cells to agglomerate we enter in a while, we store
+      // anyways all the possible coarse cells (not only the max dimension one)
       while (size_current_cc < max_ind) {
         // argmin_ar is the best fine cell to add
         CoMMAIndexType argmin_ar = -1;
@@ -670,13 +657,10 @@ class Agglomerator_Biconnected
         s_current_cc.insert(argmin_ar);
 
         // if the constructed cc is eligible, i.e. its size is inside the
-        // permitted range
-        // we store it inside dict_cc_in_creation
-        // This choice is based on the idea that the smallest cc (w.r.t. card)
-        // is
-        // may be not the one that minimized
-        // the number of external faces.
-        // if this if is satisfied it means we have an eligible cell
+        // permitted range we store it inside dict_cc_in_creation This choice is
+        // based on the idea that the smallest cc (w.r.t. card) is may be not
+        // the one that minimized the number of external faces. If this if is
+        // satisfied it means we have an eligible cell
         if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
 
           if (number_of_external_faces_current_cc <= min_external_faces) {
@@ -732,8 +716,7 @@ class Agglomerator_Biconnected
       // l_of_new_seed.resize(size);
       // if d_n_of_seed is not empty
       // Reminder: d_n_of_seed is here the pool of cell neighbouring the
-      // previous
-      // seed!
+      // previous seed!
       for (auto &i_k_v : d_n_of_seed) {
         if (i_k_v.second <= 2) {
           l_of_new_seed.push_back(i_k_v.first);
@@ -756,12 +739,12 @@ class Agglomerator_Biconnected
       // else d_n_of_seed is empty: we used every neighbour!
       // if list_of_seeds is empty, we look for new seeds to add to the
       // list_of_seeds.
-      // if list_of_seeds is empty
-      // we look if there is some neighbour to the current fc:
+      // if list_of_seeds is empty we look if there is some neighbour to the
+      // current fc:
       // s_fc_neighbours_of_cc = set()
       // we remove seed because we already update its first neighbours.
-      unordered_set<CoMMAIndexType> tmp_set(
-          s_current_cc);  // copy needed because the set is used inside ccg
+      // A copy needed because the set is used inside ccg
+      unordered_set<CoMMAIndexType> tmp_set(s_current_cc);
       tmp_set.erase(seed);
 
       // We add to s_fc_neighbours_of_cc all the neighbours of FC included in
@@ -805,9 +788,8 @@ class Agglomerator_Biconnected
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
     // we verify that fon is a sub member of the dict of seeds
-    for (const CoMMAIndexType &i_fc :
-         fon) {  // we test every possible new cells to chose the one that
-                 // locally
+    for (const CoMMAIndexType &i_fc : fon) {
+      // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
       if (arg_max_faces_in_common == -1) {
         arg_max_faces_in_common = i_fc;
