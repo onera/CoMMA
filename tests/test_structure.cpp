@@ -2,6 +2,12 @@
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "CoMMATypes.h"
+#include <set>
+#include <unordered_set>
+#include <unordered_map>
+#include <map>
+#include <vector>
+#include <utility>
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
 
@@ -135,6 +141,104 @@ SCENARIO("Subgraph", "[Subgraph]") {
         REQUIRE(Marion->_mapping_l_to_g[5] == 10);
       }
     }
+  };
+  GIVEN("We have a 7x7 Cartesian 2D matrix") {
+    DualGPy_quad_7 Data = DualGPy_quad_7();
+    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc, 2);
+    CoMMAIndexT seed = 24;
+    CoMMAIntT neigh_order = 3;
+    unordered_set<CoMMAIndexT> s_seeds = {seed};
+    CoMMAIntT card = 4;
+    WHEN("We compute neighborhood of cell 24 (no cell is agglomerated)") {
+      vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
+      unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
+      fc_graph.compute_neighbourhood_of_cc(s_seeds, neigh_order, d_n_of_seed,
+          card, agglomerated);
+      vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
+      for (auto [k, v] : d_n_of_seed)
+        neighs[v-1].insert(k);
+      // Dump
+      //for (int i = 0; i < 3; ++i) {
+        //cout << "* Order " << i+1 << ": ";
+        //for (auto s : neighs[i]) cout << s << " ";
+        //cout << "||" << endl;
+      //} // for i
+      THEN("Check order sizes and composition") {
+        // Size
+        REQUIRE(neighs[0].size() == 4);
+        REQUIRE(neighs[1].size() == 8);
+        REQUIRE(neighs[2].size() == 12);
+        // First order
+        REQUIRE(neighs[0].count(17) > 0);
+        REQUIRE(neighs[0].count(23) > 0);
+        REQUIRE(neighs[0].count(25) > 0);
+        REQUIRE(neighs[0].count(31) > 0);
+        // Second order
+        REQUIRE(neighs[1].count(10) > 0);
+        REQUIRE(neighs[1].count(16) > 0);
+        REQUIRE(neighs[1].count(18) > 0);
+        REQUIRE(neighs[1].count(22) > 0);
+        REQUIRE(neighs[1].count(26) > 0);
+        REQUIRE(neighs[1].count(30) > 0);
+        REQUIRE(neighs[1].count(32) > 0);
+        REQUIRE(neighs[1].count(38) > 0);
+        // Third order
+        REQUIRE(neighs[2].count(3) > 0);
+        REQUIRE(neighs[2].count(9) > 0);
+        REQUIRE(neighs[2].count(11) > 0);
+        REQUIRE(neighs[2].count(15) > 0);
+        REQUIRE(neighs[2].count(19) > 0);
+        REQUIRE(neighs[2].count(21) > 0);
+        REQUIRE(neighs[2].count(27) > 0);
+        REQUIRE(neighs[2].count(29) > 0);
+        REQUIRE(neighs[2].count(33) > 0);
+        REQUIRE(neighs[2].count(37) > 0);
+        REQUIRE(neighs[2].count(39) > 0);
+        REQUIRE(neighs[2].count(45) > 0);
+      }
+    } // WHEN PREVIOUS AGGLOMERATION
+    WHEN("We compute neighborhood of cell 24 (cell 10,16, 28-to-34 agglomerated)") {
+      vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
+      agglomerated[10] = agglomerated[16] = true;
+      for (int i = 28; i < 35; ++i)
+        agglomerated[i] = true;
+      unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
+      fc_graph.compute_neighbourhood_of_cc(s_seeds, neigh_order, d_n_of_seed,
+          card, agglomerated);
+      vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
+      for (auto [k, v] : d_n_of_seed)
+        neighs[v-1].insert(k);
+      // Dump
+      //for (int i = 0; i < 3; ++i) {
+        //cout << "* Order " << i+1 << ": ";
+        //for (auto s : neighs[i]) cout << s << " ";
+        //cout << "||" << endl;
+      //} // for i
+      THEN("Check order sizes and composition") {
+        // Size
+        REQUIRE(neighs[0].size() == 3);
+        REQUIRE(neighs[1].size() == 3);
+        REQUIRE(neighs[2].size() == 5);
+        // First order
+        REQUIRE(neighs[0].count(17) > 0);
+        REQUIRE(neighs[0].count(23) > 0);
+        REQUIRE(neighs[0].count(25) > 0);
+        // Second order
+        REQUIRE(neighs[1].count(18) > 0);
+        REQUIRE(neighs[1].count(22) > 0);
+        REQUIRE(neighs[1].count(26) > 0);
+        // Third order
+        REQUIRE(neighs[2].count(11) > 0);
+        REQUIRE(neighs[2].count(15) > 0);
+        REQUIRE(neighs[2].count(19) > 0);
+        REQUIRE(neighs[2].count(21) > 0);
+        REQUIRE(neighs[2].count(27) > 0);
+      }
+    } // WHEN PREVIOUS AGGLOMERATION
   };
 }
 
