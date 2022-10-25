@@ -48,12 +48,6 @@ class Seeds_Pool {
  protected:
   /** @brief Number of cells */
   CoMMAIndexType _number_of_cells;
-  /** @brief set of cells on corner */
-  unordered_set<CoMMAIndexType> _is_on_corner;
-  /** @brief set of cells on ridge */
-  unordered_set<CoMMAIndexType> _is_on_ridge;
-  /** @brief set of cells on valley */
-  unordered_set<CoMMAIndexType> _is_on_valley;
   /** @brief level of boundary we want to put initially in the pool (default is
    * 3)
    *  We want the seed to be chosen preferably in the corner, then ridges,
@@ -98,6 +92,10 @@ class Seeds_Pool {
     // 2 : ridge (two faces on the edge of the domain)
     // 3 : corner (three faces on the edge of the domain)
     _number_of_cells = number_of_cells;
+    // Use sets to ensure unique elements
+    unordered_set<CoMMAIndexType> is_on_corner;
+    unordered_set<CoMMAIndexType> is_on_ridge;
+    unordered_set<CoMMAIndexType> is_on_valley;
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
     _l_of_seeds = vector<Queue<CoMMAIndexType>>(CoMMACellT::N_CELL_TYPES);
     assert(!d_is_on_bnd.empty());
@@ -107,27 +105,27 @@ class Seeds_Pool {
       CoMMAIntType i_fc_bnd = kv_fc.second;
       if (i_fc_bnd >= CoMMACellT::CORNER) {
         _d_is_on_bnd[i_fc] = CoMMACellT::CORNER;
-        _is_on_corner.insert(i_fc);
+        is_on_corner.insert(i_fc);
       } else if (i_fc_bnd == CoMMACellT::RIDGE) {
-        _is_on_ridge.insert(i_fc);
+        is_on_ridge.insert(i_fc);
       } else if (i_fc_bnd == CoMMACellT::VALLEY) {
-        _is_on_valley.insert(i_fc);
+        is_on_valley.insert(i_fc);
       }
     }
     // initialization of l_of_seeds
-    if (_is_on_corner.size() > 0) {
-      for (auto iFC : _is_on_corner) {
+    if (is_on_corner.size() > 0) {
+      for (auto iFC : is_on_corner) {
         _l_of_seeds[CoMMACellT::CORNER].push(iFC);
       }
     }
 
-    if (_is_on_ridge.size() > 0) {
-      for (auto iFC : _is_on_ridge) {
+    if (is_on_ridge.size() > 0) {
+      for (auto iFC : is_on_ridge) {
         _l_of_seeds[CoMMACellT::RIDGE].push(iFC);
       }
     }
-    if (_is_on_valley.size() > 0) {
-      for (auto iFC : _is_on_valley) {
+    if (is_on_valley.size() > 0) {
+      for (auto iFC : is_on_valley) {
         _l_of_seeds[CoMMACellT::VALLEY].push(iFC);
       }
     }

@@ -54,7 +54,7 @@ class Bimap {
     auto bitr =
         _mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
     const A *ap = &(bitr->first);    // update pointer in _mapA to point to a
-    auto aim = _mapA.insert_or_assign(b, ap);
+    _mapA.insert_or_assign(b, ap);
   }
 
   /** @brief Function to print the map */

@@ -5,7 +5,7 @@
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
 
-SCENARIO("CoMMA of a structure", "[structure]") {
+SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
@@ -68,7 +68,7 @@ SCENARIO("CoMMA of a structure", "[structure]") {
     }
   }
 }
-SCENARIO("CoMMA of the Queue", "[Queue]") {
+SCENARIO("Test of the Queue", "[Queue]") {
   GIVEN("A simple Queue of CoMMAIndexT type") {
     Queue<CoMMAIndexT> st_long;
     WHEN("We push a certain number of elements") {
@@ -136,7 +136,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
   };
 }
 
-SCENARIO("CoMMA of the in-house Bimap", "[Bimap]") {
+SCENARIO("Test of the in-house Bimap", "[Bimap]") {
   GIVEN(
       "We have a 4x4 square 2D matrix of 16 elements that we consider divided "
       "in 4 Subgraph the structure of the subgraph is the same, changes "
@@ -172,7 +172,7 @@ SCENARIO("CoMMA of the in-house Bimap", "[Bimap]") {
       THEN("We eliminate an element and we check the dimension changed") {
         auto lung = Collection.lung();
         REQUIRE(lung == 4);
-        CoMMAIndexT elim = 2;
+        decltype(lung) elim = 2;
         Collection.erase_B(elim);
         lung = Collection.lung();
         REQUIRE(lung == 3);
@@ -185,7 +185,7 @@ SCENARIO("CoMMA of the in-house Bimap", "[Bimap]") {
   };
 }
 
-SCENARIO("CoMMA the insertion of a coarse cell and deletion",
+SCENARIO("Test the insertion of a coarse cell and deletion",
          "[Insertion Deletion]") {
   GIVEN("We have a Bimap of CoMMAIndexT and shared_ptr") {
     vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 4, 7, 9, 10};
@@ -208,7 +208,7 @@ SCENARIO("CoMMA the insertion of a coarse cell and deletion",
   };
 }
 
-SCENARIO("CoMMA the Isotropic agglomeration for small 3D cases",
+SCENARIO("Test the Isotropic agglomeration for small 3D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
@@ -222,8 +222,8 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 3D cases",
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, 3);
     // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(8, 8, 8, 0);
+    WHEN("We Agglomerate the mesh") {
+      agg->agglomerate_one_level(8, 8, 8, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
          auto fccc = cc_graph._fc_2_cc;
          vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -234,8 +234,8 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 3D cases",
 
       }
     }
-    WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(8, 8, 8, 1);
+    WHEN("We Agglomerate the mesh and we try to correct") {
+      agg->agglomerate_one_level(8, 8, 8, true);
       THEN("Nothing changes with respect to the case without correction") {
          auto fccc = cc_graph._fc_2_cc;
          vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -249,7 +249,7 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 3D cases",
   };
 }
 
-SCENARIO("CoMMA the Isotropic agglomeration for small 2D cases",
+SCENARIO("Test the Isotropic agglomeration for small 2D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_quad_4 Data = DualGPy_quad_4();
@@ -263,8 +263,8 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 2D cases",
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {  
-      agg->agglomerate_one_level(4, 4, 4, 0);
+    WHEN("We Agglomerate the mesh") {
+      agg->agglomerate_one_level(4, 4, 4, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
          auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -285,8 +285,8 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    WHEN("We Agglomerate the mesh and we try to correct") {  
-      agg->agglomerate_one_level(4, 4, 4, 1);
+    WHEN("We Agglomerate the mesh and we try to correct") {
+      agg->agglomerate_one_level(4, 4, 4, true);
       THEN("Nothing changes with respect to the case without correction") {
          auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -313,7 +313,7 @@ SCENARIO("CoMMA the Isotropic agglomeration for small 2D cases",
 
 
 
-SCENARIO("CoMMA the anisotropic agglomeration for small cases",
+SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
     DualGPy_aniso Data = DualGPy_aniso();
@@ -336,7 +336,7 @@ SCENARIO("CoMMA the anisotropic agglomeration for small cases",
     // We pass the structures to the level 0
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
-    WHEN("We proceed with the agglomeration of the anisotropic lines (we gatherthem and later we agglomerate") {      
+    WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
          agg_dyn->agglomerate_one_level(2, 2, 2, false);
       THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
@@ -344,7 +344,7 @@ SCENARIO("CoMMA the anisotropic agglomeration for small cases",
 }
 
 
-SCENARIO("CoMMA the correction in 2D", "[Isotropic Correction]") {
+SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
@@ -357,7 +357,7 @@ SCENARIO("CoMMA the correction in 2D", "[Isotropic Correction]") {
         fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
-      agg->agglomerate_one_level(2, 2, 2, 1);
+      agg->agglomerate_one_level(2, 2, 2, true);
 
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph._cc_vec.begin(); i != cc_graph._cc_vec.end();

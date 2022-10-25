@@ -69,11 +69,11 @@ class Graph {
         const vector<CoMMAIndexType> &m_crs_col_ind,
         const vector<CoMMAWeightType> &m_crs_values,
         const vector<CoMMAWeightType> &volumes)
-      : _m_CRS_Row_Ptr(m_crs_row_ptr),
+      : _number_of_cells(nb_c),
+        _m_CRS_Row_Ptr(m_crs_row_ptr),
         _m_CRS_Col_Ind(m_crs_col_ind),
         _m_CRS_Values(m_crs_values),
-        _volumes(volumes),
-        _number_of_cells(nb_c) {
+        _volumes(volumes) {
     _visited.resize(_number_of_cells);
     std::fill(_visited.begin(), _visited.end(), false);
   }
@@ -248,8 +248,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
            const bool &is_isotropic)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _mapping_l_to_g(mapping_l_to_g),
-        _is_isotropic(is_isotropic) {
+        _is_isotropic(is_isotropic),
+        _mapping_l_to_g(mapping_l_to_g) {
     // Definition degree
     CoMMAIndexType pos_old = 0;
     CoMMAIndexType degree = 0;
@@ -311,8 +311,6 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     CoMMAIndexType local_index = this->_m_CRS_Row_Ptr.size() - 1;
     // initialization pointers for insertion, pointing to the first element of
     // each
-    auto pos_col = this->_m_CRS_Col_Ind.begin();
-    auto pos_Values = this->_m_CRS_Values.begin();
     auto row_end = this->_m_CRS_Row_Ptr.end() - 1;
 
     // cycle on the set of neighbours
@@ -423,7 +421,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     CoMMAIndexType indice = 0;
     // to cycle on the main vector
     CoMMAIndexType ix = 0;
-    while (ix != this->_m_CRS_Row_Ptr.size() + 1) {
+    while (ix != static_cast<CoMMAIntType>(this->_m_CRS_Row_Ptr.size()) + 1) {
       if (ix != i_fc) {
         internal_mapping.push_back(indice);
         indice++;
@@ -589,20 +587,19 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         // and the weights
         v_neighbours = this->get_neighbours(seed);
         v_w_neighbours = this->get_weights(seed);
-        for (auto i = 0; i < v_neighbours.size(); i++) {
+        for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
           // we check if in the neighbours there is the seed (it should not
           // happen,
           // but we prevent like this mistakes)
           if (v_neighbours[i] == seed) {
             continue;
           }
-          if (d_anisotropic_fc.count(v_neighbours[i]) !=
-              0  // if anisotropic cell...
-                  and v_w_neighbours[i] >
-                  0.75 * maxArray[seed]  // ...and if along the max interface...
-                      and !has_been_treated[v_neighbours[i]]) {  // ...and if
-                                                                 // not
-                                                                 // treated
+          if (d_anisotropic_fc.count(v_neighbours[i]) != 0
+              // if anisotropic cell...
+                  and v_w_neighbours[i] > 0.75 * maxArray[seed]
+                  // ...and if along the max interface...
+                      and !has_been_treated[v_neighbours[i]]
+                ) {  // ...and if not treated
             candidates.push_back(v_neighbours[i]);
           }
         }  // end for loop
@@ -703,7 +700,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     // values are the ratio Max to average (ratioArray[iCell]) and keys
     // the (global) index of the cell. d_anisotropic_fc[ifc]=
     // max_weight/min_weight
-    CoMMAWeightType min_weight, max_weight, averageWeight, weight;
+    CoMMAWeightType min_weight, max_weight, averageWeight;
 
     // Process of every compliant fine cells (it is a member variable, so it is
     // not passed to the function):
@@ -723,7 +720,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       assert(v_neighbours.size() == v_weights.size());
       auto nb_neighbours = v_neighbours.size();
 
-      for (auto i_n = 0; i_n < v_neighbours.size(); i_n++) {
+      for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
         CoMMAIndexType i_fc_n = v_neighbours[i_n];
         CoMMAWeightType i_w_fc_n = v_weights[i_n];
         if (i_fc_n != i_fc) {  // to avoid special case where the boundary value
@@ -875,7 +872,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     CoMMAIntType i_order = 1;
 
     while ((i_order < nb_of_order_of_neighbourhood + 1) ||
-           (d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
+           static_cast<CoMMAIntT>(d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
 
       unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
