@@ -29,45 +29,140 @@
 #include <iostream>
 #include <cassert>
 
-using namespace std;
-
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Node;
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 class Tree;
 
-/** @brief Node data structure that represent a node of the tree*/
-struct node {
-  node(long index, double volume) : _index(index), _volume(volume) {};
+using namespace std;
+
+/** @brief Node data structure that represent a node of the tree
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Node {
+  public:
+  Node(CoMMAIndexType index, CoMMAWeightType volume) : _index(index), _volume(volume) {};
   /** @brief index of the cell*/
-  long _index;
+  CoMMAIndexType _index;
   /** @brief volume*/
-  double _volume;
+  CoMMAWeightType _volume;
   /** @brief number of son*/
-  int _sonc = 0;
+  CoMMAIntType _sonc = 0;
   /** @brief shared pointer to the father node */
-  shared_ptr<node> _father;
+  shared_ptr<Node> _father;
   /** @brief shared pointer to the left element */
-  shared_ptr<node> _left_idx;
+  shared_ptr<Node> _left_idx;
   /** @brief shared pointer to the right element */
-  shared_ptr<node> _right_idx;
+  shared_ptr<Node> _right_idx;
   /** @brief shared pointer to the left element */
-  shared_ptr<node> _left_son_idx;
+  shared_ptr<Node> _left_son_idx;
 };
 
 /** @brief Tree structure that represent a coarse cell, the fine cell and the
- * neighbors to them*/
+ * neighbors to them
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 class Tree {
  public:
+  /** @brief Type of node for the current tree */
+  using NodeType = Node<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+
   /** @brief Constructor*/
-  Tree(shared_ptr<node> &root);
+  Tree(shared_ptr<NodeType> &root) : _root(root) {}
+
   ~Tree() {};
-  shared_ptr<node> _root;
-  void insertSon(const long &father_index, const long &index,
-                 const double &volume, const int &root);
-  shared_ptr<node> search(shared_ptr<node> &node, const long &value);
-  shared_ptr<node> transverse(shared_ptr<node> &node);
-  void deleteNode(const long &value);
-  void delete_node(shared_ptr<node> &searched_node, const long &value);
-  void print();
-  void print_nodes(shared_ptr<node> &node);
+
+  shared_ptr<NodeType> _root;
+
+  void insertSon(const CoMMAIndexType &father_index, const CoMMAIndexType &index,
+                 const CoMMAWeightType &volume, const CoMMAIntType &root) {
+    shared_ptr<NodeType> insertion(new NodeType(index, volume));
+    shared_ptr<NodeType> u_p_father;
+    if (root == 1) {
+      u_p_father = _root;
+      assert(u_p_father->_index == father_index);
+    } else {
+      u_p_father = search(_root->_left_son_idx, father_index);
+    }
+    assert(u_p_father != nullptr);
+    insertion->_father = u_p_father;
+    shared_ptr<NodeType> left_idx;
+    left_idx = transverse(u_p_father->_left_son_idx);
+    if (left_idx == nullptr) {
+      u_p_father->_left_son_idx = insertion;
+    } else {
+      insertion->_left_idx = left_idx;
+      left_idx->_right_idx = insertion;
+    }
+    u_p_father->_sonc = u_p_father->_sonc + 1;
+    cout << u_p_father->_sonc << endl;
+  }
+  shared_ptr<NodeType> search(shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
+    if (node->_index == value && node->_father != nullptr) {
+      return node;
+    }
+    if (node == nullptr || node->_right_idx == nullptr) {
+      return nullptr;
+    }
+    return (search(node->_right_idx, value));
+  }
+
+  shared_ptr<NodeType> transverse(shared_ptr<NodeType> &node) {
+    if (node == nullptr || node->_right_idx == nullptr) {
+      return node;
+    }
+    return (transverse(node->_right_idx));
+  }
+
+  void deleteNode(const CoMMAIndexType &value) {delete_node(_root->_left_son_idx, value);}
+
+  void delete_node(shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
+    if (searched_node == nullptr) {
+      return;
+    }
+    if (searched_node->_index == value) {
+      // case 0: leftest node
+      if (searched_node->_left_idx == nullptr) {
+        searched_node->_father->_sonc--;
+        searched_node->_father->_left_son_idx = searched_node->_right_idx;
+        searched_node->_right_idx->_left_idx = nullptr;
+      }
+      // case 1: rightest node
+      else if (searched_node->_right_idx == nullptr) {
+        searched_node->_father->_sonc = searched_node->_father->_sonc - 1;
+        searched_node->_left_idx->_right_idx.reset();
+      } else {
+        searched_node->_father->_sonc--;
+        searched_node->_left_idx->_right_idx = searched_node->_right_idx;
+        searched_node->_right_idx->_left_idx = searched_node->_left_idx;
+      }
+      return;
+    }
+    delete_node(searched_node->_right_idx, value);
+  }
+
+  void print() { print_nodes(_root); }
+
+  void print_nodes(shared_ptr<NodeType> &node) {
+    if (node == nullptr) {
+      return;
+    }
+    cout << "node" << node->_index << endl;
+    print_nodes(node->_left_son_idx);
+    print_nodes(node->_right_idx);
+  }
 };
 
 #endif  // COMMA_PROJECT_TREE_H

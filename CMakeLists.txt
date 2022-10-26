@@ -45,9 +45,6 @@ SET(IMPLEMENTATION
 set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
-set(SOURCE_FILES
-        ${SOURCE_DIR}/Tree.cpp
-	)
 set(PROFILING 
 	perfetto/sdk/perfetto.h
 	${PROFILING_DIR}/profiling/trace_categories.h
@@ -70,7 +67,6 @@ SET(TESTING_FILES
 	)
 
 SET(TESTS ${IMPLEMENTATION}
-        ${SOURCE_FILES}
 	${TEST_DIR}/input/DualGPy.h
 	${TESTING_FILES})
 
@@ -83,12 +79,12 @@ SET(TESTS ${IMPLEMENTATION}
 #include_directories(perfetto/sdk)
 #add_library(perfetto STATIC perfetto/sdk/perfetto.cc)
 ### Link the library to your main executable.
-#add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION} ${SOURCE_FILES})
+#add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION})
 #target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
 #
 ######################### Profiling Perf ########################################
 #
-#add_executable("Profiling_perf" ${PROFILING_PERF} ${IMPLEMENTATION} ${SOURCE_FILES})
+#add_executable("Profiling_perf" ${PROFILING_PERF} ${IMPLEMENTATION})
 #############################  TEST with CATCH2 BUILDING #########################
 # Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
@@ -102,6 +98,6 @@ target_link_libraries(Comma_test gcov)
 #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################
 add_subdirectory(pybind11)
-pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
+pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA})
 
 

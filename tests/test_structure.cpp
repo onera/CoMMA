@@ -95,8 +95,10 @@ SCENARIO("Test of the Queue", "[Queue]") {
 }
 SCENARIO("CoMMA of the tree", "[Tree]") {
   GIVEN("The node") {
-    shared_ptr<node> A(new node(2, 1));
-    shared_ptr<Tree> Albero(new Tree(A));
+    shared_ptr<Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>
+      A(new Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(2, 1));
+    shared_ptr<Tree<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>
+      Albero(new Tree<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(A));
     WHEN("We add something to the tree") {
       Albero->insertSon(2, 1, 1, 1);
       THEN("The tree has a child") {
