@@ -25,6 +25,7 @@
 
 #include <unordered_set>
 #include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ class First_Order_Neighbourhood {
       unordered_set<CoMMAIndexType> s_neighbours_of_seed) {
     _s_fc = {};                                    // definition of the cc
     _s_neighbours_of_seed = s_neighbours_of_seed;  // defined once and for all
-    _first_order_neighbourhood = {};
+    _q_fon = {};
   }
 
   /** @brief Method that updates the first order neighborhood, by updating the
@@ -60,18 +61,42 @@ class First_Order_Neighbourhood {
    */
   unordered_set<CoMMAIndexType> update(
       CoMMAIndexType new_fc, vector<CoMMAIndexType> s_new_neighbour) {
+
+    // Add new_fc to current CC and remove it from previous neighborhoods
     _s_fc.insert(new_fc);
-    if (_first_order_neighbourhood.count(new_fc)) {
-      _first_order_neighbourhood.erase(new_fc);
-    }
+    for (auto &fon : _q_fon)
+      fon.erase(new_fc);
+
+    // Compute the set of direct neighbors allowed by original neighborhood-order
+    unordered_set<CoMMAIndexType> curr_set = unordered_set<CoMMAIndexType>();
     for (const CoMMAIndexType& i_fc : s_new_neighbour) {
       if ( (_s_fc.count(i_fc) == 0) &&
            (_s_neighbours_of_seed.count(i_fc) > 0) ) {
         // If not yet in coarse cell and among the allowed neighbours, insert
-        _first_order_neighbourhood.insert(i_fc);
+        curr_set.insert(i_fc);
       }
     }
-    return _first_order_neighbourhood;
+
+    // Add current set to the queue
+    _q_fon.push_front(curr_set);
+
+    // Now, see which FON to return. Here is the strategy:
+    // If most recent FON is not empty, return it. If not, check the oldest FON: if
+    // not empty return it, otherwise check the previous FON. If empty, check the
+    // second oldest, and so on...
+    auto cur_front = decltype(_q_fon.size()){0};
+    auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
+    while (cur_front <= cur_back) {
+      typename deque<unordered_set<CoMMAIndexType>>::iterator it =
+        _q_fon.begin() + (cur_front++);
+      if ( !it->empty() )
+        return *it;
+      it =  _q_fon.begin() + (cur_back--);
+      if ( !it->empty() )
+        return *it;
+    }
+    // If everything failed, return empty set
+    return {};
   }
 
   /** @brief Set of the fine cells composing the coarse cell */
@@ -84,9 +109,9 @@ class First_Order_Neighbourhood {
    */
   unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 
-  /** @brief Set of the first order neighborhood updated with the method update
-   * of the class */
-  unordered_set<CoMMAIndexType> _first_order_neighbourhood;
+  /** @brief History of the first-order-neighborhoods of the fine cells recently
+   * agglomerated */
+  deque<unordered_set<CoMMAIndexType>> _q_fon;
 };
 
 #endif  // COMMA_PROJECT_FIRST_ORDER_NEIGHBOURHOOD_H
