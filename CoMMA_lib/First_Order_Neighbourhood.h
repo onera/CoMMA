@@ -29,6 +29,8 @@ using namespace std;
 
 /** @brief Class representing the first order neighborhood of a given cell in
  * the graph.
+ * Mind that no information about the element being already agglomerated or not
+ * is known here.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -47,15 +49,14 @@ class First_Order_Neighbourhood {
   }
 
   /** @brief Method that updates the first order neighborhood, by updating the
-   * front. given the new_fc, if is
-   * in the neighbours, it is deleted and are added the s_new_neighbours in in
-   * the set of neighbours given in the
+   * front. Given the new_fc, if is in the neighbours, it is deleted and are
+   * added the s_new_neighbours in in the set of neighbours given in the
    * constructor.
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] s_new_neighbours set of the new neighbours to be analysed and to
-   * be added to the _first_order_neighbourhood
-   * member variable only if the element of the set are in the set of neighbours
-   * of seed.*/
+   * be added to the _first_order_neighbourhood member variable only if the
+   * element of the set are in the set of neighbours of seed.
+   */
   unordered_set<CoMMAIndexType> update(
       CoMMAIndexType new_fc, unordered_set<CoMMAIndexType> s_new_neighbour) {
     _s_fc.insert(new_fc);
@@ -75,7 +76,10 @@ class First_Order_Neighbourhood {
   /** @brief Set of the fine cells composing the coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
 
-  /** @brief Set of the neighbours of seed given as an input in the constructor
+  /** @brief Set of the neighbours of seed given as an input in the constructor.
+   * Here, we can find all the neighbours of order up to a user-defined value
+   * (by default is 3, this means neighbours of neighbours of neighbours) of the
+   * initial seed. Hence, it holds the cells allowed to be agglomerated
    */
   unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 

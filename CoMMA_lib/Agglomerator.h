@@ -523,8 +523,7 @@ class Agglomerator_Biconnected
       const CoMMAIndexType seed, CoMMAIntType &compactness) override {
     bool is_order_primary = false;
     //  The goal of this function is to choose from a pool of neighbour the
-    // better
-    // one to build a compact coarse cell
+    // better one to build a compact coarse cell
     assert(this->_goal_card != -1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
@@ -555,22 +554,17 @@ class Agglomerator_Biconnected
         this->_fc_graph.get_weights(seed);
 
     // If no neighbour is found for seed: this case happened only when isotropic
-    // cell is surrounded
-    // by anisotropic cells.
+    // cell is surrounded by anisotropic cells.
     if (d_n_of_seed.empty()) {
-      // d_n_of_seed is empty, i.e: the cc is not complete
-      // and no neighbour are available!
+      // d_n_of_seed is empty, i.e: the cc is not complete and no neighbour are
+      // available!
       compactness = 0;
     }
-    // The available neighborhood cells are not enough to reach the goal
-    // cardinality
     else if (static_cast<CoMMAIntType>(d_n_of_seed.size() + s_current_cc.size()) < this->_goal_card) {
-      // Not enough available neighbour, the dictionary
-      // of the available cells size summed with the current
-      // cell size is not enough to reach the goal cardinality
-      // : creation of a (too small) coarse cell.
-      // We add the cells of the dictionary to the set of current coarse
-      // cell.
+      // Not enough available neighbour, the dictionary of the available cells
+      // size summed with the current cell size is not enough to reach the goal
+      // cardinality: creation of a (too small) coarse cell.
+      // We add ALL the cells of the dictionary to the set of current coarse cell.
       for (auto &i_k_v : d_n_of_seed) {
         s_current_cc.insert(i_k_v.first);
       }
@@ -580,14 +574,16 @@ class Agglomerator_Biconnected
       if (is_creation_delayed) {
         compactness = 0;  // Return
       } else {
-        compactness = this->_dimension;  // minimum number of neighborhood of a
-        // connected cell TODO: CHECK THAT, it is not
-        // better to be substituted with number of neighborhood?
+        // minimum number of neighborhood of a connected cell
+        compactness = this->_dimension;
+        // TODO: CHECK THAT, it is not better to be substituted with number of
+        // neighborhood?
       }
-    } else {
-      // If  we passed the two previous checks, the minimum size is the goal
-      // cardinality required TODO : CHECK THAT, if the goal is 2, the minimum
-      // size would be 3?
+    }
+    else {
+      // If we passed the two previous checks, the minimum size is the goal
+      // cardinality required
+      // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
       CoMMAIntType min_size = this->_goal_card;
       // Computation of the initial aspect ratio: we need cc_surf: i.e. the
@@ -621,7 +617,7 @@ class Agglomerator_Biconnected
           nb_neighbours + this->_fc_graph._seeds_pool.boundary_value(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
-      // the neighborhood of seed until a given order.
+      // the neighbors of seed until a given order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood

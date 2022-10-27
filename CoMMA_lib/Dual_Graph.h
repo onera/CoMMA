@@ -59,10 +59,8 @@ class Graph {
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
    *  @param[in] m_crs_col_ind the column index of the CRS representation
    *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
-   * will be the area
-   *  of the faces that in the graph representation are the edges between two
-   * nodes represented
-   *  by the cell centers.
+   * will be the area of the faces that in the graph representation are the edges
+   * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    */
   Graph(const CoMMAIndexType &nb_c, const vector<CoMMAIndexType> &m_crs_row_ptr,
@@ -122,7 +120,8 @@ class Graph {
   }
 
   /** @brief Breadth First Search (BFS) function
-   *  @param[in] root  root of the spanning tree*/
+   *  @param[in] root  root of the spanning tree
+   */
   void BFS(const CoMMAIndexType &root) {
     Queue<CoMMAIndexType> coda;
     vector<CoMMAIndexType> v_neigh;
@@ -157,25 +156,25 @@ class Graph {
 
   /** @brief Retrieve the number of neighbours
    *  @param[in] i_c index of the cell
-   *  @return number of neighbors of the given cell.**/
+   *  @return number of neighbors of the given cell.
+   */
   CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) {
     // Return the number of neighbours of the ith cell
     return _m_CRS_Row_Ptr[i_c + 1] - _m_CRS_Row_Ptr[i_c];
   }
 
   /** @brief Based on the CRS representation retrieves the neighbours of the
-   * cell
-   * given as an input.
+   * cell given as an input.
    * @param[in] i_c index of the cell to check the neighbours
-   * @return vector of the neighbors. **/
+   * @return vector of the neighbors.
+   */
   vector<CoMMAIndexType> get_neighbours(const CoMMAIndexType &i_c) const {
     // given the index of a cell return the neighborhoods of this cell
     CoMMAIndexType ind = _m_CRS_Row_Ptr[i_c];
     CoMMAIndexType ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
-    // insert the values of the CRS_value from begin+ind (pointed to the face)
-    // till
-    // the next pointed one, so related to all the
-    // connected areas (and hence to the faces)
+    // insert the values of the CRS_value from begin+ind (pointed to the face) till
+    // the next pointed one, so related to all the connected areas (and hence to the
+    // faces)
     vector<CoMMAIndexType> result(_m_CRS_Col_Ind.begin() + ind,
                                   _m_CRS_Col_Ind.begin() + ind_p_one);
     return result;
@@ -183,23 +182,24 @@ class Graph {
 
   /** @brief Based on the area of the faces composing the cell given as an
    * input, we retrieve the faces connecting the given cell with the
-   * neighborhood
-   * that can be described also as the weight of the graph
-   * @return vector of weight associated to the cell.**/
+   * neighborhood that can be described also as the weight of the graph
+   * @return vector of weight associated to the cell.
+   */
   vector<CoMMAWeightType> get_weights(const CoMMAIndexType &i_c) const {
     // Given the index of a cell, return the value of the faces connected
     CoMMAIndexType ind = _m_CRS_Row_Ptr[i_c];
     CoMMAIndexType ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
-    // insert the values of the CRS_value from begin+ind (pointed to the face)
-    // till the next pointed one, so related to all the
-    // connected areas (and hence to the faces)
+    // insert the values of the CRS_value from begin+ind (pointed to the face) till
+    // the next pointed one, so related to all the connected areas (and hence to the
+    // faces)
     vector<CoMMAWeightType> result(_m_CRS_Values.begin() + ind,
                                    _m_CRS_Values.begin() + ind_p_one);
     return result;
   }
 
   /** @brief Check the connectivity of the given Graph.
-   * @return True if the graph is connected, false if it is not connected**/
+   * @return True if the graph is connected, false if it is not connected
+   */
   bool check_connectivity() {
     for (CoMMAIntType i = 0; i < _number_of_cells; i++) {
       _visited.push_back(false);
@@ -233,10 +233,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
    *  @param[in] m_crs_col_ind the column index of the CRS representation
    *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
-   * will be the area
-   *  of the faces that in the graph representation are the edges between two
-   * nodes represented
-   *  by the cell centers.
+   * will be the area of the faces that in the graph representation are the edges
+   * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    */
   Subgraph(const CoMMAIndexType &nb_c,
@@ -280,7 +278,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Mapping from the local number of node to the global. Being a
    * subgraph this variable connect the local index of the node
-   * with the global one*/
+   * with the global one
+   */
   vector<CoMMAIndexType> _mapping_l_to_g;
 
   /** @brief Insert a node in the subgraph and add it to the mapping the
@@ -289,7 +288,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] i_fc global index of the node
    *  @param[in] volume Volume of the cell
    *  @param[in] weight vector of the area of the faces of the given cells to be
-   * added.*/
+   * added.
+   */
   void insert_node(vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
                    const CoMMAWeightType &volume,
                    const vector<CoMMAWeightType> &weight) {
@@ -298,8 +298,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     vector<CoMMAIndexType> v_l_neigh;
     typename vector<CoMMAIndexType>::iterator low1;
     // @todo this solution clearly help in the connection of the subnode BUT can
-    // bring to instability
-    // and errors.
+    // bring to instability and errors.
     for (const auto &elem : v_neigh) {
       low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
       if (low1 != _mapping_l_to_g.end()) {
@@ -315,10 +314,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
     // cycle on the set of neighbours
     for (const auto &elem : v_l_neigh) {
-      // insert the node and the weight (we have an iterator for this and
-      // remember
-      // that at edge is associated one weight)
-      // look at here
+      // insert the node and the weight (we have an iterator for this and remember
+      // that at edge is associated one weight) look at here
       // https://stackoverflow.com/questions/71299247/inserting-an-element-in-given-positions-more-than-one-of-a-vector/71299304#71299304
       // to understand why we re-initialize.
       this->_m_CRS_Col_Ind.insert(
@@ -347,7 +344,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Remove a node from the CRS representation and automatically adjust
    * the mapping
-   *  @param[in] elemento global index of the node to be deleted.*/
+   *  @param[in] elemento global index of the node to be deleted.
+   */
   void remove_node(const CoMMAIndexType &elemento) {
     // Pass to the local
     auto low = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elemento);
@@ -373,8 +371,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         if (*it == i_fc) {
           this->_m_CRS_Col_Ind.erase(it);
           // define the exact position of the element for the processing of the
-          // weight
-          // later.
+          // weight later.
           k = it - pos_col;
           weight_it = pos_Values + k;
           this->_m_CRS_Values.erase(weight_it);
@@ -393,8 +390,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     for (auto it = pos_col + ind; it != pos_col + ind_p_one; ++it) {
       this->_m_CRS_Col_Ind.erase(it);
       // define the exact position of the element for the processing of the
-      // weight
-      // later.
+      // weight later.
       k = it - pos_col;
       weight_it = pos_Values + k;
       this->_m_CRS_Values.erase(weight_it);
@@ -412,12 +408,9 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     this->_volumes.erase(volumes_pointer);
     this->_m_CRS_Row_Ptr.erase(Col_pointer);
     _mapping_l_to_g.erase(mapping_pointer);
-    // now we do not have nomore our node, but we must create a mapping between
-    // the
-    // before and now, and translate it in the col_ind and update the mapping
-    // with
-    // the
-    // global graph
+    // now we do not have nomore our node, but we must create a mapping between the
+    // before and now, and translate it in the col_ind and update the mapping with
+    // the global graph
     CoMMAIndexType indice = 0;
     // to cycle on the main vector
     CoMMAIndexType ix = 0;
@@ -451,10 +444,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
    *  @param[in] m_crs_col_ind the column index of the CRS representation
    *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
-   * will be the area
-   *  of the faces that in the graph representation are the edges between two
-   * nodes represented
-   *  by the cell centers.
+   * will be the area of the faces that in the graph representation are the edges
+   * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    *  @param[in] seeds_pool The seeds pool structure
    *  @param[in]  s_anisotropic_compliant_fc set of compliant fc cells (in the
@@ -564,13 +555,11 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // seed from where we start the deck
       if (has_been_treated[it.first]) {
         // If the cell has been already treated, continue to the next
-        // anisotropic
-        // cell in the unordered map
+        // anisotropic cell in the unordered map
         continue;
       }
       // we save the primal seed for the opposite direction check that will
-      // happen
-      // later
+      // happen later
       auto primal_seed = it.first;
       // we initialize the seed at the beginning of each line
       seed = primal_seed;
@@ -583,14 +572,12 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // while the line is not ended
       while (!end) {
         // for the seed (that is updated each time end!= true) we fill the
-        // neighbours
-        // and the weights
+        // neighbours and the weights
         v_neighbours = this->get_neighbours(seed);
         v_w_neighbours = this->get_weights(seed);
         for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
           // we check if in the neighbours there is the seed (it should not
-          // happen,
-          // but we prevent like this mistakes)
+          // happen, but we prevent like this mistakes)
           if (v_neighbours[i] == seed) {
             continue;
           }
@@ -648,8 +635,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
             }
           }
         }  // end elseif
-        // 0 candidate, we are at the end of the line or at the end
-        // of one direction
+        // 0 candidate, we are at the end of the line or at the end of one direction
         else if (candidates.size() == 0) {
           if (opposite_direction_check) {
             end = true;
@@ -658,8 +644,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
             opposite_direction_check = true;
           }
         }
-        // we clear the candidates and the neighbours value for the
-        // next seed
+        // we clear the candidates and the neighbours value for the next seed
         candidates.clear();
         v_w_neighbours.clear();
         v_neighbours.clear();
@@ -690,7 +675,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  cell is considered anisotropic
    *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
-   * in the anisotropic agglomeration*/
+   * in the anisotropic agglomeration
+   */
   void compute_d_anisotropic_fc(
       vector<CoMMAWeightType> &maxArray,
       unordered_map<CoMMAIndexType, CoMMAWeightType> &d_anisotropic_fc,
@@ -712,8 +698,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // computation of min_weight, max_weight and averageWeight for the current
       // cell i_loc_fc
       // Process of every faces/Neighboursi and compute for the current cell the
-      // neighborhood and the
-      // area associated with the neighborhood cells
+      // neighborhood and the area associated with the neighborhood cells
       vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
       vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
 
@@ -741,9 +726,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       if (preserving == 0) {
         // Anisotropy criteria for the line Admissibility
         if (max_weight / min_weight >= threshold_anisotropy) {
-          // If the ratio is more than 4 of the biggest with the smallest cell ,
-          // add it to the dictionary
-          // where I store the ratio between the max and the average
+          // If the ratio is more than the given threshold of the biggest with the
+          // smallest cell, add it to the dictionary where I store the ratio between
+          // the max and the average
           d_anisotropic_fc[i_fc] = max_weight / averageWeight;
         } else {
           d_isotropic_fc[i_fc] = max_weight / averageWeight;
@@ -859,11 +844,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       const CoMMAIntType max_card, vector<bool> &is_fc_agglomerated_tmp) {
     // Basic checks
     assert(max_card != -1);
-    unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o_m_one;  // dict
-                                                                       // of FC
-                                                                       // with
-    // the order
-    // of neighbouring from seed
+    // dict of FC with the order of neighbouring from seed
+    unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o_m_one;
     // we initialize for seeds where order is 0
     for (const CoMMAIndexType &i_fc : s_seeds) {
       d_n_of_order_o_m_one[i_fc] = 0;
@@ -876,23 +858,36 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
       unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
+      // If here, add elements of previous elements to output dictionary
       for (auto id_M_one : d_n_of_order_o_m_one) {
         d_n_of_seed[id_M_one.first] = id_M_one.second;
       }
 
       for (const auto &i_k_v : d_n_of_order_o_m_one) {
+        // For all the cells in the previous neighborhood order...
 
         CoMMAIndexType seed_tmp = i_k_v.first;
+
         for (const CoMMAIndexType &i_fc_n : this->get_neighbours(seed_tmp)) {
+          // For all the neighbours of current seed...
+
           if ((d_n_of_seed.count(i_fc_n) == 0) &&
               ((!is_fc_agglomerated_tmp[i_fc_n]))) {
+            // If not yet in the final dictionary and not yet agglomerated...
+
             if (d_n_of_order_o.count(i_fc_n) == 0) {
+              // If not yet in the current neighborhood order...
               // a fc can be access via multiple ways. We look for the quickest
               if (d_n_of_order_o_m_one.count(i_fc_n)) {
+                // If it was already in the previous neighborhood order
+
                 if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
+                  // If current order smaller than the previous one
+                  // ...update the order
                   d_n_of_order_o[i_fc_n] = i_order;
                 }
               } else {
+                // ...add the neighbour
                 d_n_of_order_o[i_fc_n] = i_order;
               }
             }
@@ -900,18 +895,19 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       }
 
-      // Exit condition
+      // Exit condition (while)
       if (d_n_of_order_o.empty()) {
         // No more neighbours available:
         break;
       }
 
+      // Update previous order
       d_n_of_order_o_m_one.clear();
       for (auto id : d_n_of_order_o) {
         d_n_of_order_o_m_one[id.first] = id.second;
       }
       i_order++;
-    }
+    } // End of while
     // Update of d_n_of_seed
     // d_n_of_seed.update(d_n_of_order_o_m_one)
     for (auto id_M_one : d_n_of_order_o_m_one) {
