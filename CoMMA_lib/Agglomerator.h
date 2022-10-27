@@ -623,11 +623,9 @@ class Agglomerator_Biconnected
       // Build the class first order neighborhood
       First_Order_Neighbourhood<CoMMAIndexType> f_o_neighbourhood =
           First_Order_Neighbourhood<CoMMAIndexType>(s_neighbours_of_seed);
-      // Retrieves the neighborhood of the seed
-      vector<CoMMAIndexType> v = this->_fc_graph.get_neighbours(seed);
-      unordered_set<CoMMAIndexType> s_up(v.begin(), v.end());
       // Generate the set of the first order neighborhood to the given seed
-      unordered_set<CoMMAIndexType> fon = f_o_neighbourhood.update(seed, s_up);
+      unordered_set<CoMMAIndexType> fon =
+        f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -681,9 +679,8 @@ class Agglomerator_Biconnected
         // Remove added fc from the available neighbours
         d_n_of_seed.erase(argmin_ar);
 
-        vector<CoMMAIndexType> v = this->_fc_graph.get_neighbours(argmin_ar);
-        unordered_set<CoMMAIndexType> s_up(v.begin(), v.end());
-        fon = f_o_neighbourhood.update(argmin_ar, s_up);
+        fon = f_o_neighbourhood.update(argmin_ar,
+            this->_fc_graph.get_neighbours(argmin_ar));
       }
 
       s_current_cc = dict_cc_in_creation[arg_min_external_faces].first;

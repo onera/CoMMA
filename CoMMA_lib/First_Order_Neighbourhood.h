@@ -24,6 +24,7 @@
 */
 
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
 
@@ -58,16 +59,16 @@ class First_Order_Neighbourhood {
    * element of the set are in the set of neighbours of seed.
    */
   unordered_set<CoMMAIndexType> update(
-      CoMMAIndexType new_fc, unordered_set<CoMMAIndexType> s_new_neighbour) {
+      CoMMAIndexType new_fc, vector<CoMMAIndexType> s_new_neighbour) {
     _s_fc.insert(new_fc);
     if (_first_order_neighbourhood.count(new_fc)) {
       _first_order_neighbourhood.erase(new_fc);
     }
     for (const CoMMAIndexType& i_fc : s_new_neighbour) {
-      if (_s_fc.count(i_fc) == 0) {
-        if (_s_neighbours_of_seed.count(i_fc)) {
-          _first_order_neighbourhood.insert(i_fc);
-        }
+      if ( (_s_fc.count(i_fc) == 0) &&
+           (_s_neighbours_of_seed.count(i_fc) > 0) ) {
+        // If not yet in coarse cell and among the allowed neighbours, insert
+        _first_order_neighbourhood.insert(i_fc);
       }
     }
     return _first_order_neighbourhood;
