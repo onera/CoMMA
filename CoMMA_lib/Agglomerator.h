@@ -236,8 +236,7 @@ class Agglomerator_Anisotropic
   void get_agglo_lines(CoMMAIntType level,
                        vector<CoMMAIndexType> &agglo_lines_array_idx,
                        vector<CoMMAIndexType> &agglo_lines_array) {
-    // If at the level of agglomeration "level" the vector containing the number
-    // of
+    // If at the level of agglomeration "level" the vector containing the number of
     // lines is empty, hence it means no line has been found at the current
     // level.
     // variable cumulating the number of fine cells in the agglomeration lines
@@ -252,8 +251,7 @@ class Agglomerator_Anisotropic
       // This vector store the end of a line and the start of a new anisotropic
       // line
       // WARNING! We are storing the anisotropic lines in a vector so we need a
-      // way to point
-      // to the end of a line and the starting of a new one.
+      // way to point to the end of a line and the starting of a new one.
       agglo_lines_array_idx.push_back(size_of_line +
                                       number_of_fc_in_agglomeration_lines);
       // Here we store the index of the cell.
@@ -284,11 +282,9 @@ class Agglomerator_Anisotropic
     for (auto fLIt = this->_v_lines[0].begin(); fLIt != this->_v_lines[0].end();
          fLIt++) {
       // We iterate on the anisotropic lines of a particular level (the level 1,
-      // where they were copied from
-      // level 0.
+      // where they were copied from level 0.
       // We create a pointer to an empty deque for the line + 1, and hence for
-      // the
-      // next level of agglomeration
+      // the next level of agglomeration
       // We check the line size for the pointed line by the iterator
       //     CoMMAIndexType line_size = (**fLIt).size();
       auto actual_deque = **fLIt;
@@ -297,11 +293,8 @@ class Agglomerator_Anisotropic
       CoMMAIndexType i_cc;
       if (actual_deque.size() <= 1) {
         // the agglomeration_line is empty and hence the iterator points again
-        // to
-        // the
-        // empty deque, updating what is pointed by it and hence __v_lines[1]
-        // (each time we iterate on the line, a new deque line_lvl_p_one is
-        // defined)
+        // to the empty deque, updating what is pointed by it and hence __v_lines[1]
+        // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
         continue;
       }
       deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
@@ -424,22 +417,22 @@ class Agglomerator_Isotropic
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Isotropic.
-      * We add the override key as a guard to possible mistakes:
-      * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
-      * The function must be called later by the derived class
+   * We add the override key as a guard to possible mistakes:
+   * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
+   * The function must be called later by the derived class
    * Agglomerator_Biconnected and Agglomerator Triconnected in order to
-      * specialize the implementation of the choose optimal_cc. For further
+   * specialize the implementation of the choose optimal_cc. For further
    * information
-      * about the structure, have a look at :
-      * http://www.cplusplus.com/forum/general/31851/
-      * The pseudo-code considers the while function and the agglomeration
+   * about the structure, have a look at :
+   * http://www.cplusplus.com/forum/general/31851/
+   * The pseudo-code considers the while function and the agglomeration
    * process is not completed until all the cells are not
-      * agglomerated. Hence:
-      * - we choose a new seed
-      * - we check with a specific algorithm the neighbouring cells to
+   * agglomerated. Hence:
+   * - we choose a new seed
+   * - we check with a specific algorithm the neighbouring cells to
    * agglomerate to the seed
-      * - we create a new coarse cell (using the apposite method in cc_graph)
-      * */
+   * - we create a new coarse cell (using the apposite method in cc_graph)
+   */
   void agglomerate_one_level(const CoMMAIntType goal_card,
                              const CoMMAIntType min_card,
                              const CoMMAIntType max_card,
@@ -522,7 +515,7 @@ class Agglomerator_Biconnected
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness) override {
     bool is_order_primary = false;
-    //  The goal of this function is to choose from a pool of neighbour the
+    // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
     assert(this->_goal_card != -1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
@@ -761,9 +754,8 @@ class Agglomerator_Biconnected
 
  protected:
   /** @brief Method that inside the biconnected algorithm, checked in the
-   * choose_optimal_cc_and_update_seed_pool
-   * function all the possible exception, computes the best fine cells to add to
-   * the coarse cell.
+   * choose_optimal_cc_and_update_seed_pool function all the possible exception,
+   * computes the best fine cells to add to the coarse cell.
    */
   void compute_best_fc_to_add(
       unordered_set<CoMMAIndexType> fon,
@@ -805,9 +797,12 @@ class Agglomerator_Biconnected
         const CoMMAIndexType i_fc_n = v_neighbours[i_n];
         const CoMMAWeightType i_w_fc_n = v_weights[i_n];
 
-        if (i_fc_n == i_fc) {  // Boundary surface
+        if (i_fc_n == i_fc) {
+          // This can never happen!!!
+          // Boundary surface
           new_ar_surf += i_w_fc_n;
         } else if (s_of_fc_for_current_cc.count(i_fc_n) == 0) {
+          // i_fc_n is not yet in CC -> ext surface
           new_ar_surf += i_w_fc_n;
         } else {
           is_fc_adjacent_to_any_cell_of_the_cc = true;
@@ -819,6 +814,7 @@ class Agglomerator_Biconnected
 
       const CoMMAWeightType new_ar = sqrt(new_ar_surf*new_ar_surf*new_ar_surf) / new_ar_vol;
 
+      // Neighborhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the key i_fc.
       const CoMMAIntType &order = d_n_of_seed.at(i_fc);
 
@@ -830,6 +826,8 @@ class Agglomerator_Biconnected
               is_order_primary) {  // if is_order_primary is True the order of
                                    // neighbourhood is primary
         if (number_faces_in_common == max_faces_in_common or is_order_primary) {
+          // If the number of faces in common is the same, let's see whether it's
+          // worth to update or not
 
           if (order <= d_n_of_seed.at(arg_max_faces_in_common)) {
             // [arg_max_faces_in_common] is not const.
@@ -857,7 +855,8 @@ class Agglomerator_Biconnected
             }
           }
         } else {
-          // Case :number_faces_in_common > max_faces_in_common:
+          // Case number_faces_in_common > max_faces_in_common:
+          // -> Just update and see what comes next
           max_faces_in_common = number_faces_in_common;
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
