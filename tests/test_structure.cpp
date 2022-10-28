@@ -11,6 +11,11 @@
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
 
+inline CoMMAWeightT compute_AR(const CoMMAWeightT surf,
+    const CoMMAWeightT vol) {
+  return sqrt(surf*surf*surf) / vol;
+}
+
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
@@ -352,6 +357,54 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       }
     }
 
+    WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
+      const CoMMAWeightT eps = 1e-10;
+      // In
+      unordered_set<CoMMAIndexT> cc = {0,1,4,5};
+      CoMMAWeightT cc_surf = 12.,
+                   cc_vol  = 4.;
+      // Out
+      CoMMAIntT shared_faces;
+      CoMMAWeightT ar, ar2, ar3;
+      CoMMAWeightT ref_surf = 16.,
+                   ref_vol  = 5.;
+      CoMMAWeightT ref_ar = compute_AR(ref_surf, ref_vol);
+      THEN("Boundary faces are approximated [0 boundary faces]") {
+        agg->compute_next_cc_features(21, cc_surf, cc_vol, cc, shared_faces, ar);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar) < eps);
+      }
+      THEN("Boundary faces are approximated [1 boundary face]") {
+        agg->compute_next_cc_features(6, cc_surf, cc_vol, cc, shared_faces, ar2);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar2) < eps);
+      }
+      // If the two above pass, then the following one should pass too, still, better
+      // be safe than sorry
+      THEN("With or without boundary faces, the result is the same") {
+        REQUIRE(fabs(ar - ar2) < eps);
+      }
+      THEN("Boundary faces are approximated [2 boundary faces]") {
+        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar3);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar3) < eps);
+      }
+      // If the two above pass, then the following one should pass too, still, better
+      // be safe than sorry
+      THEN("With or without boundary faces, the result is the same") {
+        REQUIRE(fabs(ar2 - ar3) < eps);
+      }
+      cc.erase(0);
+      cc_surf  = 14., cc_vol  = 3.;
+      ref_surf = 16., ref_vol = 4.;
+      ref_ar = compute_AR(ref_surf, ref_vol);
+      THEN("Boundary faces are approximated [3 boundary faces, 2 shared faces]") {
+        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar);
+        REQUIRE(shared_faces == 2);
+        REQUIRE(fabs(ref_ar - ar) < 1e-10);
+      }
+    } // Aspect ratio
+
   };
 }
 
@@ -412,6 +465,54 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[14]== 1);
         REQUIRE(fccc[15]== 1);
       }
+    }
+
+    WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
+      const CoMMAWeightT eps = 1e-10;
+      // In
+      unordered_set<CoMMAIndexT> cc = {0,1};
+      CoMMAWeightT cc_surf = 6.,
+                   cc_vol  = 2.;
+      // Out
+      CoMMAIntT shared_faces;
+      CoMMAWeightT ar, ar2;
+      CoMMAWeightT ref_surf = 8.,
+                   ref_vol  = 3.;
+      CoMMAWeightT ref_ar = compute_AR(ref_surf, ref_vol);
+      THEN("Boundary faces are approximated [0 boundary faces]") {
+        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar) < eps);
+      }
+      THEN("Boundary faces are approximated [1 boundary face]") {
+        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar2);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar2) < eps);
+      }
+      // If the two above pass, then the following one should pass too, still, better
+      // be safe than sorry
+      THEN("With or without boundary faces, the result is the same") {
+        REQUIRE(fabs(ar - ar2) < eps);
+      }
+      cc.erase(0);
+      cc.insert(2);
+      THEN("Boundary faces are approximated [2 boundary faces]") {
+        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar);
+        REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_ar - ar) < eps);
+      }
+      cc.erase(2);
+      cc.insert(0);
+      cc.insert(4);
+      cc_surf  = 8., cc_vol  = 3.;
+      ref_surf = 8., ref_vol = 4.;
+      ref_ar = compute_AR(ref_surf, ref_vol);
+      THEN("Boundary faces are approximated [2 shared faces]") {
+        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar);
+        REQUIRE(shared_faces == 2);
+        REQUIRE(fabs(ref_ar - ar) < eps);
+      }
+
     }
 
   };

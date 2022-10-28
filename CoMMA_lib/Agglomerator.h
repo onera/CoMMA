@@ -773,6 +773,7 @@ class Agglomerator_Biconnected
 
     shared_faces = 0;
     CoMMAWeightType new_surf{cc_surf};
+    CoMMAWeightType fc_int_surf_prod{1.};
     vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
     vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
     assert(v_neighbours.size() == v_weights.size());
@@ -794,6 +795,18 @@ class Agglomerator_Biconnected
         shared_faces++;
       }
 
+      fc_int_surf_prod *= i_w_fc_n;
+    }
+
+    const CoMMAIntType n_bdry_f =
+      (this->_fc_graph._seeds_pool).get_n_boundary_faces(i_fc);
+    if (n_bdry_f > 0) {
+      // Approximate with an average of the internal faces
+      // We could choose many kind of averages, e.g. arithmetic or geometric, I
+      // honestly don't know if one is better then the other...
+      // Here, we use the geometric one, which should be less sensitive to outliers
+      new_surf += n_bdry_f * pow(fc_int_surf_prod,
+                                 CoMMAWeightType{1.} / v_neighbours.size());
     }
 
     // AR is the non-dimensional ratio between the surface and the volume
