@@ -49,7 +49,6 @@ class Seeds_Pool {
   /** @brief Number of cells */
   CoMMAIndexType _number_of_cells;
 
-  CoMMAIntType _init_bnd_level;
   /** @brief List of deque of seeds. For each identifier we have the available
    * seeds
    *  We want the seed to be chosen preferably in the corner, then ridges,
