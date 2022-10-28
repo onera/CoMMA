@@ -752,6 +752,56 @@ class Agglomerator_Biconnected
     return s_current_cc;
   }
 
+  /** @brief Computes features of the CC obtained by adding a given fine cell. The
+   * features are Aspect-Ratio and number of face shared with other cells already
+   * agglomerated (Current coarse cell means without i_fc)
+   *  @param[in] i_fc Index of the fine cell to add to the coarse cell
+   *  @param[in] cc_surf Surface of the current coarse cell
+   *  @param[in] cc_vol Volume of the current coarse cell
+   *  @param[in] fc_of_cc Index of the fine cells already agglomerated in the coarse
+   *  cell
+   *  @param[out] shared_faces Number of faces shared by the fine cell with the
+   *  current coarse cell
+   *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
+   *  \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
+   */
+  inline void compute_next_cc_features(const CoMMAIndexType i_fc,
+    const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
+    const unordered_set<CoMMAIndexType> &fc_of_cc,
+    // out
+    CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio) {
+
+    shared_faces = 0;
+    CoMMAWeightType new_surf{cc_surf};
+    vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
+    vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
+    assert(v_neighbours.size() == v_weights.size());
+
+    for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
+
+      const CoMMAIndexType i_fc_n = v_neighbours[i_n];
+      const CoMMAWeightType i_w_fc_n = v_weights[i_n];
+
+      if (i_fc_n == i_fc) {
+        // This can never happen!!! -> See below
+        // Boundary surface
+        new_surf += i_w_fc_n;
+      } else if (fc_of_cc.count(i_fc_n) == 0) {
+        // i_fc_n is not yet in CC -> ext surface
+        new_surf += i_w_fc_n;
+      } else {
+        new_surf -= i_w_fc_n;
+        shared_faces++;
+      }
+
+    }
+
+    // AR is the non-dimensional ratio between the surface and the volume
+    aspect_ratio = sqrt(new_surf*new_surf*new_surf) /
+                      (cc_vol +  + this->_fc_graph._volumes[i_fc]);
+
+  }
+
  protected:
   /** @brief Method that inside the biconnected algorithm, checked in the
    * choose_optimal_cc_and_update_seed_pool function all the possible exception,
@@ -780,42 +830,18 @@ class Agglomerator_Biconnected
         arg_max_faces_in_common = i_fc;
       }
 
-      // update of the vol
-      CoMMAWeightType new_ar_vol = vol_cc + this->_fc_graph._volumes[i_fc];
-
+      // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
-      bool is_fc_adjacent_to_any_cell_of_the_cc = false;
-      CoMMAWeightType new_ar_surf = cc_surf;
-      // New Aspect Ratio of the tested neighborhood
-      vector<CoMMAIndexType> v_neighbours =
-          this->_fc_graph.get_neighbours(i_fc);
-      vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
-      assert(v_neighbours.size() == v_weights.size());
-
-      for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
-
-        const CoMMAIndexType i_fc_n = v_neighbours[i_n];
-        const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-
-        if (i_fc_n == i_fc) {
-          // This can never happen!!!
-          // Boundary surface
-          new_ar_surf += i_w_fc_n;
-        } else if (s_of_fc_for_current_cc.count(i_fc_n) == 0) {
-          // i_fc_n is not yet in CC -> ext surface
-          new_ar_surf += i_w_fc_n;
-        } else {
-          is_fc_adjacent_to_any_cell_of_the_cc = true;
-          new_ar_surf -= i_w_fc_n;
-          number_faces_in_common++;
-        }
-      }
-      // end new AR
-
-      const CoMMAWeightType new_ar = sqrt(new_ar_surf*new_ar_surf*new_ar_surf) / new_ar_vol;
+      CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
+      compute_next_cc_features(i_fc, cc_surf,
+          vol_cc,
+          s_of_fc_for_current_cc,
+          // out
+          number_faces_in_common, new_ar);
 
       // Neighborhood order of i_fc wrt to original seed of CC
-      // [i_fc] is not const the method at returns the reference to the value of the key i_fc.
+      // [i_fc] is not const the method at returns the reference to the value of the
+      // key i_fc.
       const CoMMAIntType &order = d_n_of_seed.at(i_fc);
 
       // TODO This version seems good but refactorisation to do: perhaps it is
@@ -832,13 +858,11 @@ class Agglomerator_Biconnected
           if (order <= d_n_of_seed.at(arg_max_faces_in_common)) {
             // [arg_max_faces_in_common] is not const.
             if (order == d_n_of_seed.at(arg_max_faces_in_common)) {
-              if (new_ar < min_ar and is_fc_adjacent_to_any_cell_of_the_cc) {
+              if (new_ar < min_ar and number_faces_in_common > 0 ) {
                 // The second condition asserts the connectivity of the coarse
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
-                min_ar_surf = new_ar_surf;
-                min_ar_vol = new_ar_vol;
 
                 arg_max_faces_in_common = i_fc;
                 // The number of face in common is the same no need to touch it
@@ -849,8 +873,6 @@ class Agglomerator_Biconnected
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
-              min_ar_surf = new_ar_surf;
-              min_ar_vol = new_ar_vol;
               // The number of face in common is the same no need to touch it
             }
           }
@@ -861,8 +883,6 @@ class Agglomerator_Biconnected
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
-          min_ar_surf = new_ar_surf;
-          min_ar_vol = new_ar_vol;
         }
       }
     }
