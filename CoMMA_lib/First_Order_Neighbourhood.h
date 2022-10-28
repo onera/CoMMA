@@ -34,17 +34,18 @@ using namespace std;
  * Mind that no information about the element being already agglomerated or not
  * is known here.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * @tparam CoMMAIntType the CoMMA type for integers
  * area) of the nodes or edges of the Mesh
  */
-template <typename CoMMAIndexType>
+template <typename CoMMAIndexType, typename CoMMAIntType>
 class First_Order_Neighbourhood {
  public:
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed */
   First_Order_Neighbourhood(
-      unordered_set<CoMMAIndexType> s_neighbours_of_seed) {
+      unordered_set<CoMMAIndexType> s_neighbours_of_seed, CoMMAIntType dimension) :
+      _dimension(dimension) {
     _s_fc = {};                                    // definition of the cc
     _s_neighbours_of_seed = s_neighbours_of_seed;  // defined once and for all
     _q_fon = {};
@@ -84,16 +85,29 @@ class First_Order_Neighbourhood {
     // If most recent FON is not empty, return it. If not, check the oldest FON: if
     // not empty return it, otherwise check the previous FON. If empty, check the
     // second oldest, and so on...
-    auto cur_front = decltype(_q_fon.size()){0};
-    auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
-    while (cur_front <= cur_back) {
-      typename deque<unordered_set<CoMMAIndexType>>::iterator it =
-        _q_fon.begin() + (cur_front++);
-      if ( !it->empty() )
-        return *it;
-      it =  _q_fon.begin() + (cur_back--);
-      if ( !it->empty() )
-        return *it;
+    // We grant ourselves one exception...
+    if ( _q_fon.size() <= _dimension ) {
+      // If at the (very) beginning of the agglomeration, still consider every
+      // possible neighbor. This will allow to obtain nice quads from quads
+      // TODO[RM]: I think this workaround is needed because we are not able to
+      // compute exactly the AR; if we ever we will be able we should try to remove
+      // it
+      for (auto prev_fon = _q_fon.begin() + 1; prev_fon != _q_fon.end(); ++prev_fon)
+        curr_set.insert(prev_fon->begin(), prev_fon->end());
+      return curr_set;
+    }
+    else {
+      auto cur_front = decltype(_q_fon.size()){0};
+      auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
+      while (cur_front <= cur_back) {
+        typename deque<unordered_set<CoMMAIndexType>>::iterator it =
+          _q_fon.begin() + (cur_front++);
+        if ( !it->empty() )
+          return *it;
+        it =  _q_fon.begin() + (cur_back--);
+        if ( !it->empty() )
+          return *it;
+      }
     }
     // If everything failed, return empty set
     return {};
@@ -112,6 +126,10 @@ class First_Order_Neighbourhood {
   /** @brief History of the first-order-neighborhoods of the fine cells recently
    * agglomerated */
   deque<unordered_set<CoMMAIndexType>> _q_fon;
+
+  /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
+   * -> 3D)*/
+  CoMMAIntType _dimension;
 };
 
 #endif  // COMMA_PROJECT_FIRST_ORDER_NEIGHBOURHOOD_H
