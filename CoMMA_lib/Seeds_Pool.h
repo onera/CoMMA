@@ -248,6 +248,15 @@ class Seeds_Pool {
     }
     return (seed);
   };
+
+  /** @brief Return how many boundary faces a certain cell has
+   *  @param[in] idx_f Index of the cell
+   *  @return the number of boundary faces
+   */
+  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexT idx_c) {
+    return _d_is_on_bnd[idx_c];
+  }
+
   /** @brief Dictionary of number of faces on boundary per cell*/
   unordered_map<CoMMAIndexType, CoMMAIntType> _d_is_on_bnd;
 };
