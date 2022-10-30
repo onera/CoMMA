@@ -25,11 +25,16 @@
 
 #include "Agglomerator.h"
 #include "templateHelpers.h"
+#include "CoMMATypes.h"
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
  * of the agglomerated cells fc2cc.
  * */
-
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 void agglomerate_one_level(  // Dual graph:
@@ -47,6 +52,7 @@ void agglomerate_one_level(  // Dual graph:
     // Agglomeration argument
     bool isFirstAgglomeration, bool is_anisotropic,
     CoMMAWeightType threshold_anisotropy,
+    const CoMMAIntType type_of_isotropic_agglomeration,
 
     // Outputs
     vector<CoMMAIndexType> &fc_to_cc,                // Out
@@ -163,11 +169,21 @@ void agglomerate_one_level(  // Dual graph:
     agg_dyn->get_agglo_lines(i_level, agglomerationLines_Idx,
                              agglomerationLines);
   }
-  auto agg = make_unique<
-      Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-      fc_graph, cc_graph, dimension = dimension);
-  // Agglomerate
+  // We define here the type of Agglomerator
+  IsotropicPtr<CoMMAIndexType, CoMMAWeightType,CoMMAIntType> agg = nullptr;
+  // TODO: maybe pass to a switch when another agglomerator will be implemented
+  if (type_of_isotropic_agglomeration==CoMMAAgglT::BICONNECTED){
+    agg = make_unique<
+        Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fc_graph, cc_graph, dimension = dimension);
+  }
+  else {
+    agg = make_unique<
+        Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fc_graph, cc_graph, dimension = dimension);
+  }
   agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
+  // Agglomerate
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   auto fccc = cc_graph._fc_2_cc;
