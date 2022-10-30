@@ -319,19 +319,19 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
   };
 }
 
-//SCENARIO("Test the Isotropic agglomeration for small 3D cases",
-//         "[Isotropic]") {
-//  GIVEN("We load the Isotropic mesh structure") {
-//    DualGPy_cube_4 Data = DualGPy_cube_4();
-//    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-//    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
-//        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-//        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-//        Data.s_anisotropic_compliant_fc, 3);
-//    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
-//    auto agg =
-//      make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-//          fc_graph, cc_graph, 3);
+SCENARIO("Test the Isotropic agglomeration for small 3D cases",
+         "[Isotropic]") {
+  GIVEN("We load the Isotropic mesh structure") {
+    DualGPy_cube_4 Data = DualGPy_cube_4();
+    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc, 3);
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+    auto agg =
+      make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+          fc_graph, cc_graph, 3);
 //    // COMPLETE THE TEST
 //    WHEN("We Agglomerate the mesh") {
 //      agg->agglomerate_one_level(8, 8, 8, false);
