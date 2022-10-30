@@ -330,7 +330,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
         Data.s_anisotropic_compliant_fc, 3);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
-      make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+      make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, 3);
     // COMPLETE THE TEST
     WHEN("We Agglomerate the mesh") {
