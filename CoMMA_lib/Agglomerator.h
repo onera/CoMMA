@@ -474,6 +474,68 @@ class Agglomerator_Isotropic
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
+  /** @brief Computes features of the CC obtained by adding a given fine cell. The
+   * features are Aspect-Ratio and number of face shared with other cells already
+   * agglomerated (Current coarse cell means without i_fc)
+   *  @param[in] i_fc Index of the fine cell to add to the coarse cell
+   *  @param[in] cc_surf Surface of the current coarse cell
+   *  @param[in] cc_vol Volume of the current coarse cell
+   *  @param[in] fc_of_cc Index of the fine cells already agglomerated in the coarse
+   *  cell
+   *  @param[out] shared_faces Number of faces shared by the fine cell with the
+   *  current coarse cell
+   *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
+   *  \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
+   */
+  inline void compute_next_cc_features(const CoMMAIndexType i_fc,
+    const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
+    const unordered_set<CoMMAIndexType> &fc_of_cc,
+    // out
+    CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio) {
+
+    shared_faces = 0;
+    CoMMAWeightType new_surf{cc_surf};
+    CoMMAWeightType fc_int_surf_prod{1.};
+    vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
+    vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
+    assert(v_neighbours.size() == v_weights.size());
+
+    for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
+
+      const CoMMAIndexType i_fc_n = v_neighbours[i_n];
+      const CoMMAWeightType i_w_fc_n = v_weights[i_n];
+
+      if (i_fc_n == i_fc) {
+        // This can never happen!!! -> See below
+        // Boundary surface
+        new_surf += i_w_fc_n;
+      } else if (fc_of_cc.count(i_fc_n) == 0) {
+        // i_fc_n is not yet in CC -> ext surface
+        new_surf += i_w_fc_n;
+      } else {
+        new_surf -= i_w_fc_n;
+        shared_faces++;
+      }
+
+      fc_int_surf_prod *= i_w_fc_n;
+    }
+
+    const CoMMAIntType n_bdry_f =
+      (this->_fc_graph._seeds_pool).get_n_boundary_faces(i_fc);
+    if (n_bdry_f > 0) {
+      // Approximate with an average of the internal faces
+      // We could choose many kind of averages, e.g. arithmetic or geometric, I
+      // honestly don't know if one is better then the other...
+      // Here, we use the geometric one, which should be less sensitive to outliers
+      new_surf += n_bdry_f * pow(fc_int_surf_prod,
+                                 CoMMAWeightType{1.} / v_neighbours.size());
+    }
+
+    // AR is the non-dimensional ratio between the surface and the volume
+    aspect_ratio = sqrt(new_surf*new_surf*new_surf) /
+                      (cc_vol +  + this->_fc_graph._volumes[i_fc]);
+
+  }
 
   /** @brief Pure virtual function that must be implemented in child classes to
    * define the optimal coarse cell
@@ -756,69 +818,6 @@ class Agglomerator_Biconnected
     return s_current_cc;
   }
 
-  /** @brief Computes features of the CC obtained by adding a given fine cell. The
-   * features are Aspect-Ratio and number of face shared with other cells already
-   * agglomerated (Current coarse cell means without i_fc)
-   *  @param[in] i_fc Index of the fine cell to add to the coarse cell
-   *  @param[in] cc_surf Surface of the current coarse cell
-   *  @param[in] cc_vol Volume of the current coarse cell
-   *  @param[in] fc_of_cc Index of the fine cells already agglomerated in the coarse
-   *  cell
-   *  @param[out] shared_faces Number of faces shared by the fine cell with the
-   *  current coarse cell
-   *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
-   *  \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
-   */
-  inline void compute_next_cc_features(const CoMMAIndexType i_fc,
-    const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
-    const unordered_set<CoMMAIndexType> &fc_of_cc,
-    // out
-    CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio) {
-
-    shared_faces = 0;
-    CoMMAWeightType new_surf{cc_surf};
-    CoMMAWeightType fc_int_surf_prod{1.};
-    vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
-    vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
-    assert(v_neighbours.size() == v_weights.size());
-
-    for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
-
-      const CoMMAIndexType i_fc_n = v_neighbours[i_n];
-      const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-
-      if (i_fc_n == i_fc) {
-        // This can never happen!!! -> See below
-        // Boundary surface
-        new_surf += i_w_fc_n;
-      } else if (fc_of_cc.count(i_fc_n) == 0) {
-        // i_fc_n is not yet in CC -> ext surface
-        new_surf += i_w_fc_n;
-      } else {
-        new_surf -= i_w_fc_n;
-        shared_faces++;
-      }
-
-      fc_int_surf_prod *= i_w_fc_n;
-    }
-
-    const CoMMAIntType n_bdry_f =
-      (this->_fc_graph._seeds_pool).get_n_boundary_faces(i_fc);
-    if (n_bdry_f > 0) {
-      // Approximate with an average of the internal faces
-      // We could choose many kind of averages, e.g. arithmetic or geometric, I
-      // honestly don't know if one is better then the other...
-      // Here, we use the geometric one, which should be less sensitive to outliers
-      new_surf += n_bdry_f * pow(fc_int_surf_prod,
-                                 CoMMAWeightType{1.} / v_neighbours.size());
-    }
-
-    // AR is the non-dimensional ratio between the surface and the volume
-    aspect_ratio = sqrt(new_surf*new_surf*new_surf) /
-                      (cc_vol +  + this->_fc_graph._volumes[i_fc]);
-
-  }
-
  protected:
   /** @brief Method that inside the biconnected algorithm, checked in the
    * choose_optimal_cc_and_update_seed_pool function all the possible exception,
@@ -850,7 +849,7 @@ class Agglomerator_Biconnected
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
-      compute_next_cc_features(i_fc, cc_surf,
+      this->compute_next_cc_features(i_fc, cc_surf,
           vol_cc,
           s_of_fc_for_current_cc,
           // out
