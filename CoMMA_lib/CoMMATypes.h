@@ -49,5 +49,13 @@ enum CoMMACellT : CoMMAIntT {
   EXTREME      = 4,
   N_CELL_TYPES = 4
 };
+/** @brief Type of Isotropic Agglomerator 
+ *  0 : Biconnected from Mavriplis Paper
+ *  1 : Pure front where a pure front advancing method is implemented
+ */
+enum CoMMAAgglT : CoMMAIntT {
+  BICONNECTED     = 0,
+  PURE_FRONT       = 1,
+};
 
 #endif
