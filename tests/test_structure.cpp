@@ -319,41 +319,41 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
   };
 }
 
-SCENARIO("Test the Isotropic agglomeration for small 3D cases",
-         "[Isotropic]") {
-  GIVEN("We load the Isotropic mesh structure") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
-        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 3);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
-    auto agg =
-      make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-          fc_graph, cc_graph, 3);
-    // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {
-      agg->agglomerate_one_level(8, 8, 8, false);
-      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-         auto fccc = cc_graph._fc_2_cc;
-         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 8, 3, 4, 8, 8, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 8, 5, 4, 6, 8, 0, 4, 4, 8, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 8, 0, 4, 2, 2, 0, 1, 7, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
-        for (auto i = 0; i != Data.nb_fc; i++) {
-          REQUIRE(fccc[i]==fc2cc_req[i]);
-        }
-
-      }
-    }
-    WHEN("We Agglomerate the mesh and we try to correct") {
-      agg->agglomerate_one_level(8, 8, 8, true);
-      THEN("Corrections are applied") {
-         auto fccc = cc_graph._fc_2_cc;
-         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 7, 3, 4, 7, 7, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 7, 5, 4, 6, 7, 0, 4, 4, 7, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 7, 0, 4, 2, 2, 0, 1, 1, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
-        for (auto i = 0; i != Data.nb_fc; i++) {
-          REQUIRE(fccc[i]==fc2cc_req[i]);
-        }
-      }
-    }
+//SCENARIO("Test the Isotropic agglomeration for small 3D cases",
+//         "[Isotropic]") {
+//  GIVEN("We load the Isotropic mesh structure") {
+//    DualGPy_cube_4 Data = DualGPy_cube_4();
+//    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+//    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+//        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+//        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+//        Data.s_anisotropic_compliant_fc, 3);
+//    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+//    auto agg =
+//      make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+//          fc_graph, cc_graph, 3);
+//    // COMPLETE THE TEST
+//    WHEN("We Agglomerate the mesh") {
+//      agg->agglomerate_one_level(8, 8, 8, false);
+//      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+//         auto fccc = cc_graph._fc_2_cc;
+//         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 8, 3, 4, 8, 8, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 8, 5, 4, 6, 8, 0, 4, 4, 8, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 8, 0, 4, 2, 2, 0, 1, 7, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
+//        for (auto i = 0; i != Data.nb_fc; i++) {
+//          REQUIRE(fccc[i]==fc2cc_req[i]);
+//        }
+//
+//      }
+//    }
+//    WHEN("We Agglomerate the mesh and we try to correct") {
+//      agg->agglomerate_one_level(8, 8, 8, true);
+//      THEN("Corrections are applied") {
+//         auto fccc = cc_graph._fc_2_cc;
+//         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 7, 3, 4, 7, 7, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 7, 5, 4, 6, 7, 0, 4, 4, 7, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 7, 0, 4, 2, 2, 0, 1, 1, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
+//        for (auto i = 0; i != Data.nb_fc; i++) {
+//          REQUIRE(fccc[i]==fc2cc_req[i]);
+//        }
+//      }
+//    }
 
     WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
       const CoMMAWeightT eps = 1e-10;
