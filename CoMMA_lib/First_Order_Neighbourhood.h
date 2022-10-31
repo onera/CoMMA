@@ -81,7 +81,7 @@ class First_Order_Neighbourhood {
     }
     return(_first_order_set);
     } else {
-	    // Add new_fc to current CC and remove it from previous neighborhoods
+    // Add new_fc to current CC and remove it from previous neighborhoods
     _s_fc.insert(new_fc);
     for (auto &fon : _q_fon)
       fon.erase(new_fc);
@@ -95,7 +95,7 @@ class First_Order_Neighbourhood {
         curr_set.insert(i_fc);
       }
     }
-    
+
      _q_fon.push_front(curr_set);
 
      // Now, see which FON to return. Here is the strategy:
