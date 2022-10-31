@@ -20,7 +20,7 @@ isotropic_agglo_types = [
 # Input-related parameters
 input_mesh = "../meshes/naca2d_structured_ansys.msh"
 ##
-dimension = 3
+dimension = 2
 ##
 anisotropic = False
 ## CoMMA parameters
