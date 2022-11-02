@@ -24,6 +24,8 @@
 */
 
 #include <cmath>
+#include <functional>
+#include <numeric>
 #include <stdexcept>
 
 #include "Dual_Graph.h"
@@ -474,6 +476,24 @@ class Agglomerator_Isotropic
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
+
+  /** @brief Approximate the value of a boundary face using the known internal
+   * faces. It uses a (geometric) average, so the result is correct only if the cell
+   * is a regular polygon
+   * @param int_face Vector of the surfaces of the internal faces
+   * @return An approximation of the surface of a boundary face
+   */
+  inline CoMMAWeightType estimate_boundary_face(
+      const vector<CoMMAWeightType> &int_faces) {
+    // Approximate with an average of the internal faces
+    // We could choose many kinds of average, e.g. arithmetic or geometric, I
+    // honestly don't know if one is better then the other...
+    // Here, we use the geometric one, which should be less sensitive to outliers
+    CoMMAWeightType prod = accumulate(int_faces.begin(), int_faces.end(),
+                              CoMMAWeightType{1.}, multiplies<>());
+    return pow(prod, CoMMAWeightType{1.} / int_faces.size());
+  }
+
   /** @brief Computes features of the CC obtained by adding a given fine cell. The
    * features are Aspect-Ratio and number of face shared with other cells already
    * agglomerated (Current coarse cell means without i_fc)
@@ -496,7 +516,6 @@ class Agglomerator_Isotropic
 
     shared_faces = 0;
     new_surf = cc_surf;
-    CoMMAWeightType fc_int_surf_prod{1.};
     vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
     vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
     assert(v_neighbours.size() == v_weights.size());
@@ -517,19 +536,12 @@ class Agglomerator_Isotropic
         new_surf -= i_w_fc_n;
         shared_faces++;
       }
-
-      fc_int_surf_prod *= i_w_fc_n;
     }
 
     const CoMMAIntType n_bdry_f =
       (this->_fc_graph._seeds_pool).get_n_boundary_faces(i_fc);
     if (n_bdry_f > 0) {
-      // Approximate with an average of the internal faces
-      // We could choose many kind of averages, e.g. arithmetic or geometric, I
-      // honestly don't know if one is better then the other...
-      // Here, we use the geometric one, which should be less sensitive to outliers
-      new_surf += n_bdry_f * pow(fc_int_surf_prod,
-                                 CoMMAWeightType{1.} / v_neighbours.size());
+      new_surf += n_bdry_f * this->estimate_boundary_face(v_weights);
     }
 
     // Return parameters
@@ -649,10 +661,12 @@ class Agglomerator_Biconnected
       // Computation of the initial aspect ratio: we need cc_surf: i.e. the
       // external area (perimeter in 2D and sum of external faces in 3D) and
       // volume
-      CoMMAWeightType cc_surf = 0.0;
-      // the weights are the area of the neighborhood faces of a cell
-      for (const CoMMAWeightType &w : neighbours_weights) {
-        cc_surf += w;
+      CoMMAWeightType cc_surf = accumulate(neighbours_weights.begin(),
+          neighbours_weights.begin(), CoMMAWeightType{0});
+      const CoMMAIntType n_bdry_f =
+        (this->_fc_graph._seeds_pool).get_n_boundary_faces(seed);
+      if (n_bdry_f > 0) {
+        cc_surf += n_bdry_f * this->estimate_boundary_face(neighbours_weights);
       }
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
