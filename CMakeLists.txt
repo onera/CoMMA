@@ -10,11 +10,23 @@ set(CMAKE_BUILD_TYPE Debug)  # Debug version
 
 
 set(CMAKE_CXX_STANDARD 17)
-# for linker in MAC read: 
+# for linker in MAC read:
 # https://github.com/catchorg/Catch2/issues/1204
 
 ###################################  PROJECT #################################
 project(CoMMA_Project)
+
+if ( CODAFLAGS )
+   # We just do not set the optimization flags nor the parallelism-related ones
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-finite-math-only -fno-math-errno -fvisibility-inlines-hidden -Wno-int-in-bool-context -Wno-misleading-indentation -Wno-deprecated-declarations")
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fvisibility-inlines-hidden")
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-finite-math-only -fno-math-errno -fvisibility-inlines-hidden -Wall -Wno-absolute-value -Wno-deprecated-register -Wno-unused-lambda-capture")
+  endif()
+  message("Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
+endif()
 
 # Effective library
 
@@ -45,20 +57,20 @@ SET(IMPLEMENTATION
 set(INTERFACCIA
         ${SOURCE_DIR}/CoMMA.cpp
 	)
-set(PROFILING 
+set(PROFILING
 	perfetto/sdk/perfetto.h
 	${PROFILING_DIR}/profiling/trace_categories.h
 	${PROFILING_DIR}/profiling/trace_categories.cpp
 	${PROFILING_DIR}/header_profile.h
 	)
 
-set(PROFILING_SOURCE 
-	${PROFILING_DIR}/input/DualGPy.h	
+set(PROFILING_SOURCE
+	${PROFILING_DIR}/input/DualGPy.h
 	${PROFILING_DIR}/test_profile.cpp
    )
 
-set(PROFILING_PERF 
-	${PROFILING_DIR}/input/DualGPy.h	
+set(PROFILING_PERF
+	${PROFILING_DIR}/input/DualGPy.h
 	${PROFILING_DIR}/test_perf.cpp
    )
 
