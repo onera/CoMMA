@@ -27,6 +27,7 @@
 #include <functional>
 #include <numeric>
 #include <stdexcept>
+#include <iterator>
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell_Container.h"
@@ -159,6 +160,7 @@ class Agglomerator_Anisotropic
     : public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   // Constructor
  public:
+   using LineIterator = typename vector<deque<CoMMAIndexType> *>::iterator;
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and
    * in this way activates also the constructor of the base class.*/
@@ -283,6 +285,42 @@ class Agglomerator_Anisotropic
   void create_all_anisotropic_cc_wrt_agglomeration_lines() {
     // list of set of hexaedric or prismatic cell number (for level 0)
     this->_v_of_s_anisotropic_compliant_fc[1] = {};
+
+    // Setting up lambda function that will perform the loop. This is needed since we
+    // want to loop forwards or backwards according to some runtime value
+    // See, e.g., https://stackoverflow.com/a/56133699/12152457
+    auto loop_line = [&](auto begin, auto end) {
+      deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
+      // TODO here is necessary for the cc_create_a_cc but maybe we need in
+      // some way to change that.
+      const bool is_anisotropic = true;
+      for (auto deqIt = begin; deqIt != end; deqIt += 2) {
+        // we agglomerate cells along the agglomeration line, hence we have to
+        // go through the faces and agglomerate two faces together, getting to
+        // cardinal 2
+        // ANISOTROPIC: we agglomerate 2 by 2, hence the anisotropic
+        // agglomeration will provoke agglomerated coarse cells of cardinality
+        // 2.
+        // Here we have to consider the two different case in which we have an
+        // odd number of cells.
+        // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
+        unordered_set<CoMMAIndexType> s_fc = {*deqIt, *(deqIt + 1)};
+        if (distance(deqIt, end) == 3) {
+          // If only three cells left, agglomerate them
+          s_fc.insert(*(deqIt + 2));
+          deqIt++;
+        }
+        // We create the coarse cell
+        const CoMMAIndexType i_cc =
+          (*(this->_cc_graph)).cc_create_a_cc(s_fc, is_anisotropic);
+        line_lvl_p_one->push_back(i_cc);
+        this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
+      }
+
+      this->_v_lines[1].push_back(line_lvl_p_one);
+
+    }; // End lambda def
+
     // Process of every agglomeration lines:
     for (auto fLIt = this->_v_lines[0].begin(); fLIt != this->_v_lines[0].end();
          fLIt++) {
@@ -293,51 +331,23 @@ class Agglomerator_Anisotropic
       // We check the line size for the pointed line by the iterator
       //     CoMMAIndexType line_size = (**fLIt).size();
       auto actual_deque = **fLIt;
-      CoMMAIndexType line_size = actual_deque.size();
-      CoMMAIndexType line_size_p_one = 0;
-      CoMMAIndexType i_cc;
       if (actual_deque.size() <= 1) {
         // the agglomeration_line is empty and hence the iterator points again
         // to the empty deque, updating what is pointed by it and hence __v_lines[1]
         // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
         continue;
       }
-      deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
-      // TODO here is necessary for the cc_create_a_cc but maybe we need in
-      // some way to change that.
-      bool is_anisotropic = true;
-      // Important to put it in the global scope
-      unordered_set<CoMMAIndexType> s_fc;
-      for (auto deqIt = actual_deque.rbegin(); deqIt != actual_deque.rend();
-           deqIt += 2) {
-        // we agglomerate cells along the agglomeration line, hence we have to
-        // go through the faces and agglomerate two faces together, getting to
-        // cardinal 2
-        // ANISOTROPIC: we agglomerate 2 by 2, hence the anisotropic
-        // agglomeration will provoke agglomerated coarse cells of cardinality
-        // 2.
-        // Here we have to consider the two different case in which we have an
-        // odd number of cells.
-        // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
-        if (line_size <= deqIt + 3 - actual_deque.rbegin() &&
-            line_size % 2 != 0) {
-          s_fc = {*deqIt, *(deqIt + 1), *(deqIt + 2)};
-          line_size_p_one += 3;
-        } else {
-          s_fc = {*deqIt, *(deqIt + 1)};
-          line_size_p_one += 2;
-        }
-        // We create the coarse cell
-        i_cc = (*(this->_cc_graph)).cc_create_a_cc(s_fc, is_anisotropic);
-        line_lvl_p_one->push_back(i_cc);
-        this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
-        if (line_size <= deqIt + 3 - actual_deque.rbegin() &&
-            line_size % 2 != 0) {
-          break;
-        }
-      }
+      // We start agglomerating from the head or the tail of the line according to
+      // which of the two has more boundary faces
+      const bool forward_line =
+        (this->_fc_graph._seeds_pool).get_n_boundary_faces(actual_deque.front()) >=
+          (this->_fc_graph._seeds_pool).get_n_boundary_faces(actual_deque.back());
 
-      this->_v_lines[1].push_back(line_lvl_p_one);
+      if (forward_line)
+        loop_line(actual_deque.begin(), actual_deque.end());
+      else
+        loop_line(actual_deque.rbegin(), actual_deque.rend());
+
     }
   }
 
