@@ -491,10 +491,11 @@ class Agglomerator_Isotropic
     const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
     const unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
-    CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio) {
+    CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio,
+    CoMMAWeightType &new_surf, CoMMAWeightType &new_vol) {
 
     shared_faces = 0;
-    CoMMAWeightType new_surf{cc_surf};
+    new_surf = cc_surf;
     CoMMAWeightType fc_int_surf_prod{1.};
     vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
     vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
@@ -531,9 +532,10 @@ class Agglomerator_Isotropic
                                  CoMMAWeightType{1.} / v_neighbours.size());
     }
 
+    // Return parameters
+    new_vol = cc_vol + this->_fc_graph._volumes[i_fc];
     // AR is the non-dimensional ratio between the surface and the volume
-    aspect_ratio = sqrt(new_surf*new_surf*new_surf) /
-                      (cc_vol +  + this->_fc_graph._volumes[i_fc]);
+    aspect_ratio = sqrt(new_surf*new_surf*new_surf) / new_vol;
 
   }
 
@@ -849,11 +851,13 @@ class Agglomerator_Biconnected
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_surf = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_vol = numeric_limits<CoMMAWeightType>::min();
       this->compute_next_cc_features(i_fc, cc_surf,
           vol_cc,
           s_of_fc_for_current_cc,
           // out
-          number_faces_in_common, new_ar);
+          number_faces_in_common, new_ar, new_ar_surf, new_ar_vol);
 
       // Neighborhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the
@@ -879,6 +883,8 @@ class Agglomerator_Biconnected
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
+                min_ar_surf = new_ar_surf;
+                min_ar_vol = new_ar_vol;
 
                 arg_max_faces_in_common = i_fc;
                 // The number of face in common is the same no need to touch it
@@ -889,6 +895,8 @@ class Agglomerator_Biconnected
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
+              min_ar_surf = new_ar_surf;
+              min_ar_vol = new_ar_vol;
               // The number of face in common is the same no need to touch it
             }
           }
@@ -899,6 +907,8 @@ class Agglomerator_Biconnected
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
+          min_ar_surf = new_ar_surf;
+          min_ar_vol = new_ar_vol;
         }
       }
     }
@@ -1205,11 +1215,13 @@ class Agglomerator_Pure_Front
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_surf = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_vol = numeric_limits<CoMMAWeightType>::min();
       this->compute_next_cc_features(i_fc, cc_surf,
           vol_cc,
           s_of_fc_for_current_cc,
           // out
-          number_faces_in_common, new_ar);
+          number_faces_in_common, new_ar, new_ar_surf, new_ar_vol);
 
       // Neighborhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the
@@ -1235,6 +1247,8 @@ class Agglomerator_Pure_Front
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
+                min_ar_surf = new_ar_surf;
+                min_ar_vol = new_ar_vol;
 
                 arg_max_faces_in_common = i_fc;
                 // The number of face in common is the same no need to touch it
@@ -1245,6 +1259,8 @@ class Agglomerator_Pure_Front
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
+              min_ar_surf = new_ar_surf;
+              min_ar_vol = new_ar_vol;
               // The number of face in common is the same no need to touch it
             }
           }
@@ -1255,6 +1271,8 @@ class Agglomerator_Pure_Front
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
+          min_ar_surf = new_ar_surf;
+          min_ar_vol = new_ar_vol;
         }
       }
     }

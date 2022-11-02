@@ -359,6 +359,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       const CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0,1,4,5};
+      CoMMAWeightT tmp_surf{-1.}, tmp_vol{-1.};
       CoMMAWeightT cc_surf = 12.,
                    cc_vol  = 4.;
       // Out
@@ -368,13 +369,17 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
                    ref_vol  = 5.;
       CoMMAWeightT ref_ar = compute_AR(ref_surf, ref_vol);
       THEN("Boundary faces are approximated [0 boundary faces]") {
-        agg->compute_next_cc_features(21, cc_surf, cc_vol, cc, shared_faces, ar);
+        agg->compute_next_cc_features(21, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar) < eps);
       }
       THEN("Boundary faces are approximated [1 boundary face]") {
-        agg->compute_next_cc_features(6, cc_surf, cc_vol, cc, shared_faces, ar2);
+        agg->compute_next_cc_features(6, cc_surf, cc_vol, cc, shared_faces, ar2, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar2) < eps);
       }
       // If the two above pass, then the following one should pass too, still, better
@@ -383,8 +388,10 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
         REQUIRE(fabs(ar - ar2) < eps);
       }
       THEN("Boundary faces are approximated [2 boundary faces]") {
-        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar3);
+        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar3, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar3) < eps);
       }
       // If the two above pass, then the following one should pass too, still, better
@@ -397,8 +404,10 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       ref_surf = 16., ref_vol = 4.;
       ref_ar = compute_AR(ref_surf, ref_vol);
       THEN("Boundary faces are approximated [3 boundary faces, 2 shared faces]") {
-        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar);
+        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 2);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar) < 1e-10);
       }
     } // Aspect ratio
@@ -472,19 +481,24 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       CoMMAWeightT cc_surf = 6.,
                    cc_vol  = 2.;
       // Out
+      CoMMAWeightT tmp_surf{-1.}, tmp_vol{-1.};
       CoMMAIntT shared_faces;
       CoMMAWeightT ar, ar2;
       CoMMAWeightT ref_surf = 8.,
                    ref_vol  = 3.;
       CoMMAWeightT ref_ar = compute_AR(ref_surf, ref_vol);
       THEN("Boundary faces are approximated [0 boundary faces]") {
-        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar);
+        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar) < eps);
       }
       THEN("Boundary faces are approximated [1 boundary face]") {
-        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar2);
+        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar2, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar2) < eps);
       }
       // If the two above pass, then the following one should pass too, still, better
@@ -495,8 +509,10 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       cc.erase(0);
       cc.insert(2);
       THEN("Boundary faces are approximated [2 boundary faces]") {
-        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar);
+        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 1);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar) < eps);
       }
       cc.erase(2);
@@ -506,8 +522,10 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       ref_surf = 8., ref_vol = 4.;
       ref_ar = compute_AR(ref_surf, ref_vol);
       THEN("Boundary faces are approximated [2 shared faces]") {
-        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar);
+        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
         REQUIRE(shared_faces == 2);
+        REQUIRE(fabs(ref_surf - tmp_surf) < eps);
+        REQUIRE(fabs(ref_vol  - tmp_vol)  < eps);
         REQUIRE(fabs(ref_ar - ar) < eps);
       }
 
