@@ -81,7 +81,7 @@ class First_Order_Neighbourhood {
     }
     return(_first_order_set);
     } else {
-	    // Add new_fc to current CC and remove it from previous neighborhoods
+    // Add new_fc to current CC and remove it from previous neighborhoods
     _s_fc.insert(new_fc);
     for (auto &fon : _q_fon)
       fon.erase(new_fc);
@@ -95,7 +95,7 @@ class First_Order_Neighbourhood {
         curr_set.insert(i_fc);
       }
     }
-    
+
      _q_fon.push_front(curr_set);
 
      // Now, see which FON to return. Here is the strategy:
@@ -103,7 +103,7 @@ class First_Order_Neighbourhood {
      // not empty return it, otherwise check the previous FON. If empty, check the
      // second oldest, and so on...
      // We grant ourselves one exception...
-     if ( _q_fon.size() <= _dimension ) {
+     if ( _q_fon.size() <= static_cast<decltype(_q_fon.size())>(_dimension) ) {
        // If at the (very) beginning of the agglomeration, still consider every
        // possible neighbor. This will allow to obtain nice quads from quads
        // TODO[RM]: I think this workaround is needed because we are not able to
