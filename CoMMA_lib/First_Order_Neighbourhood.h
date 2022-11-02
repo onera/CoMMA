@@ -103,7 +103,7 @@ class First_Order_Neighbourhood {
      // not empty return it, otherwise check the previous FON. If empty, check the
      // second oldest, and so on...
      // We grant ourselves one exception...
-     if ( _q_fon.size() <= _dimension ) {
+     if ( _q_fon.size() <= static_cast<decltype(_q_fon.size())>(_dimension) ) {
        // If at the (very) beginning of the agglomeration, still consider every
        // possible neighbor. This will allow to obtain nice quads from quads
        // TODO[RM]: I think this workaround is needed because we are not able to
