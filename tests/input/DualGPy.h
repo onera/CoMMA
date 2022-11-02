@@ -11,11 +11,11 @@
 
 
 class DualGPy;
-class DualGPy_5;
 class DualGPy_aniso;
 class DualGPy_minimal;
 class DualGPy_cube_4;
 class DualGPy_quad_4;
+class DualGPy_quad_7;
 
 class DualGPy {
 
@@ -37,20 +37,16 @@ class DualGPy {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
     vector<bool> a_is_fc_agglomerated;
     DualGPy(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
+      a_is_fc_agglomerated = tmp;
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-     vector<bool> tmp(nb_fc, false);
-     a_is_fc_agglomerated = tmp;
-};
 };
 
 
@@ -74,20 +70,15 @@ class DualGPy_aniso {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_aniso(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-    vector<bool> a_is_fc_agglomerated(nb_fc, false);
-
-};
 };
 
 class DualGPy_minimal {
@@ -110,20 +101,15 @@ class DualGPy_minimal {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_minimal(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-    vector<bool> a_is_fc_agglomerated(nb_fc, false);
-
-};
 };
 
 class DualGPy_quad_4 {
@@ -146,20 +132,15 @@ class DualGPy_quad_4 {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_quad_4(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-    vector<bool> a_is_fc_agglomerated(nb_fc, false);
-
-};
 };
 
 class DualGPy_quad_7 {
@@ -181,20 +162,15 @@ class DualGPy_quad_7 {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_quad_7(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-    vector<bool> a_is_fc_agglomerated(nb_fc, false);
-
-};
 };
 
 class DualGPy_cube_4 {
@@ -217,20 +193,15 @@ class DualGPy_cube_4 {
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc;
 
     DualGPy_cube_4(){
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
-      if (isOnFineBnd[i] > 0){
-        fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
-    }
-    }
-    for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+      for (CoMMAIndexT i = 0; i < nb_fc; i++) {
+        if (isOnFineBnd[i] > 0){
+          fill_value<true,CoMMAIntT,const CoMMAIndexT>(d_is_on_bnd[i],isOnFineBnd[i]);
+        }
         arrayOfFineAnisotropicCompliantCells[i] = i;
+        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
+      }
+      vector<bool> tmp(nb_fc, false);
     }
-    for (CoMMAIndexT i_a_c_fc = 0; i_a_c_fc < nb_fc; i_a_c_fc++) {
-        s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i_a_c_fc]);
-    }
-    vector<bool> a_is_fc_agglomerated(nb_fc, false);
-
-};
 };
 
 #endif
