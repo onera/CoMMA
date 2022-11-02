@@ -118,10 +118,10 @@ SCENARIO("CoMMA of the tree", "[Tree]") {
         Albero->insertSon(2, 3, 1, 1);
         Albero->insertSon(2, 4, 1, 1);
         Albero->insertSon(4, 2, 1, 0);
-        Albero->print();
+        //Albero->print();
         REQUIRE(Albero->_root->_sonc == 3);
         Albero->deleteNode(4);
-        Albero->print();
+        //Albero->print();
         REQUIRE(Albero->_root->_sonc == 2);
       }
     };
@@ -292,7 +292,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
         for (auto i = elim + 1; i != lung + 1; i++) {
           Collection.update_nodeB(i, i - 1);
         }
-        Collection.print();
+        //Collection.print();
       }
     }
   };
@@ -313,7 +313,7 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
     WHEN("We insert an element and we delete it") {
       CoMMAIndexT ins = 0;
       Collection.insert(ins, Marion);
-      Collection.print();
+      //Collection.print();
       auto prova = Collection.get_B(ins);
       Collection.erase_B(ins);
       THEN("Bimap is empty") { REQUIRE(Collection.empty() == true); }

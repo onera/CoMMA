@@ -107,7 +107,7 @@ class Tree {
       left_idx->_right_idx = insertion;
     }
     u_p_father->_sonc = u_p_father->_sonc + 1;
-    cout << u_p_father->_sonc << endl;
+    //cout << u_p_father->_sonc << endl;
   }
   shared_ptr<NodeType> search(shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
     if (node->_index == value && node->_father != nullptr) {
@@ -159,7 +159,7 @@ class Tree {
     if (node == nullptr) {
       return;
     }
-    cout << "node" << node->_index << endl;
+    //cout << "node" << node->_index << endl;
     print_nodes(node->_left_son_idx);
     print_nodes(node->_right_idx);
   }
