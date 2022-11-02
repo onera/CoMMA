@@ -287,12 +287,11 @@ class Agglomerator_Anisotropic
     // Setting up lambda function that will perform the loop. This is needed since we
     // want to loop forwards or backwards according to some runtime value
     // See, e.g., https://stackoverflow.com/a/56133699/12152457
-    auto loop_line = [&](auto begin, auto end, const CoMMAIndexType line_size) {
+    auto loop_line = [&](auto begin, auto end) {
       deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
       // TODO here is necessary for the cc_create_a_cc but maybe we need in
       // some way to change that.
       const bool is_anisotropic = true;
-      const bool odd_line = line_size % 2 != 0;
       for (auto deqIt = begin; deqIt != end; deqIt += 2) {
         // we agglomerate cells along the agglomeration line, hence we have to
         // go through the faces and agglomerate two faces together, getting to
@@ -304,17 +303,16 @@ class Agglomerator_Anisotropic
         // odd number of cells.
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
         unordered_set<CoMMAIndexType> s_fc = {*deqIt, *(deqIt + 1)};
-        const bool agglo_3cells = odd_line && line_size <= distance(begin, deqIt) + 3;
-        if (agglo_3cells)
-          // If only three left, agglomerate them
+        if (distance(deqIt, end) == 3) {
+          // If only three cells left, agglomerate them
           s_fc.insert(*(deqIt + 2));
+          deqIt++;
+        }
         // We create the coarse cell
         const CoMMAIndexType i_cc =
           (*(this->_cc_graph)).cc_create_a_cc(s_fc, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
         this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
-        if (agglo_3cells)
-          break;
       }
 
       this->_v_lines[1].push_back(line_lvl_p_one);
@@ -331,14 +329,12 @@ class Agglomerator_Anisotropic
       // We check the line size for the pointed line by the iterator
       //     CoMMAIndexType line_size = (**fLIt).size();
       auto actual_deque = **fLIt;
-      const CoMMAIndexType line_size = actual_deque.size();
       if (actual_deque.size() <= 1) {
         // the agglomeration_line is empty and hence the iterator points again
         // to the empty deque, updating what is pointed by it and hence __v_lines[1]
         // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
         continue;
       }
-      deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
       // We start agglomerating from the head or the tail of the line according to
       // which of the two has more boundary faces
       const bool forward_line =
@@ -346,9 +342,9 @@ class Agglomerator_Anisotropic
           (this->_fc_graph._seeds_pool).get_n_boundary_faces(actual_deque.back());
 
       if (forward_line)
-        loop_line(actual_deque.begin(), actual_deque.end(), line_size);
+        loop_line(actual_deque.begin(), actual_deque.end());
       else
-        loop_line(actual_deque.rbegin(), actual_deque.rend(), line_size);
+        loop_line(actual_deque.rbegin(), actual_deque.rend());
 
     }
   }

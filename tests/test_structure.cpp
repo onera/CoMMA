@@ -6,10 +6,13 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <map>
+#include <memory>
 #include <vector>
 #include <utility>
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
+
+using namespace std;
 
 inline CoMMAWeightT compute_AR(const CoMMAWeightT surf,
     const CoMMAWeightT vol) {
