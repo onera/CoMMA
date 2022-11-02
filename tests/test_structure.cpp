@@ -546,6 +546,40 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
       THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
   };
+  GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
+    DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const CoMMAWeightT aniso_thresh{4.};
+    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc, Data.dim);
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+    auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+            fc_graph, cc_graph, aniso_thresh, Data.dim);
+    agg->agglomerate_one_level(4, 4, 4, false);
+    WHEN("We agglomerate the mesh") {
+      const auto f2c = cc_graph._fc_2_cc;
+      THEN("There is only one isotropic coarse cell") {
+        REQUIRE((f2c[5] == f2c[6] && f2c[6] == f2c[17] && f2c[17] == f2c[18]));
+      }
+      THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
+        REQUIRE(f2c[0]  == f2c[1]);
+        REQUIRE(f2c[11] == f2c[10]);
+        REQUIRE(f2c[16] == f2c[14]);
+        REQUIRE(f2c[20] == f2c[22]);
+      }
+      THEN("The interior anisotropic coarse cells are of cardinality 3") {
+#define check3cells(a,b,c) (f2c[a] == f2c[b] && f2c[b] == f2c[c])
+        REQUIRE(check3cells(2,3,4));
+        REQUIRE(check3cells(9,8,7));
+        REQUIRE(check3cells(12,13,15));
+        REQUIRE(check3cells(23,21,19));
+#undef check3cells
+      }
+    }
+
+  };
 }
 
 
