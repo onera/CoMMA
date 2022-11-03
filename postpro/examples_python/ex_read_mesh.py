@@ -18,7 +18,9 @@ isotropic_agglo_types = [
 # USER PARAMETERS
 #################
 # Input-related parameters
-input_mesh = "../meshes/naca2d_structured_ansys.msh"
+# Format is one of those accepted by meshio or None
+# e.g., input_mesh, input_format = "3D_CRM.vtu", None
+input_mesh, input_format = "../meshes/naca2d_structured_ansys.msh", "ansys"
 ##
 dimension = 2
 ##
@@ -42,7 +44,7 @@ renumber_coarse = -1 # 10 #
 
 if not os.path.exists(input_mesh):
     raise OSError(f'Cannot find mesh', filename = input_mesh)
-mmio = meshio.read(input_mesh)
+mmio = meshio.read(input_mesh, file_format = None)
 mio_dim = mmio.points.shape[-1]
 if dimension != mio_dim:
     raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
