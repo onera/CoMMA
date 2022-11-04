@@ -102,7 +102,7 @@ void agglomerate_one_level(  // Dual graph:
   Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, seeds_pool, s_anisotropic_compliant_fc, dimension);
+      volumes, seeds_pool, s_anisotropic_compliant_fc);
   // Debug
   //    vector<double> maxArray(nb_fc, 0.0);
   //    unordered_map<long, double> d_anisotropic_fc;
