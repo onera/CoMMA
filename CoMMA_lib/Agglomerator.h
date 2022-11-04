@@ -75,6 +75,13 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Agglomerator {
  public:
+  /** @brief Function which computes the aspect-ratio from a surface and a volume
+   *  In 3D: \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
+   *  In 2D: \f$ AR = surf_{CC}^2 / vol_{CC} \f$
+   *  (Recall that in 2D the surface is the perimeter and the volume is the surface)
+  */
+  function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
+
   /** @brief The constructor of the interface
    *  @param[in] graph    *Dual Graph* object that determines the connectivity
    * of the matrix
@@ -89,8 +96,12 @@ class Agglomerator {
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
+      _compute_AR = [](const CoMMAWeightType perim, const CoMMAWeightType area)
+                        -> CoMMAWeightType { return perim*perim / area; };
     } else {
       _min_neighbourhood = 3;
+      _compute_AR = [](const CoMMAWeightType surf, const CoMMAWeightType vol)
+                        -> CoMMAWeightType { return sqrt(surf*surf*surf) / vol; };
     }
     _l_nb_of_cells.push_back(graph._number_of_cells);
   }
@@ -514,7 +525,6 @@ class Agglomerator_Isotropic
    *  @param[out] shared_faces Number of faces shared by the fine cell with the
    *  current coarse cell
    *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
-   *  \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
    */
   inline void compute_next_cc_features(const CoMMAIndexType i_fc,
     const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
@@ -556,7 +566,7 @@ class Agglomerator_Isotropic
     // Return parameters
     new_vol = cc_vol + this->_fc_graph._volumes[i_fc];
     // AR is the non-dimensional ratio between the surface and the volume
-    aspect_ratio = sqrt(new_surf*new_surf*new_surf) / new_vol;
+    aspect_ratio = this->_compute_AR(new_surf, new_vol);
 
   }
 
