@@ -51,7 +51,7 @@ class Coarse_Cell {
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       bool is_isotropic = true)
-      : _dim(fc_graph._dimension), _is_isotropic(is_isotropic) {
+      : _is_isotropic(is_isotropic) {
     // Unused
     (void)i_cc;
     // compactness, degrees are defined in the Subgraph
@@ -60,9 +60,6 @@ class Coarse_Cell {
 
     for (const CoMMAIndexType &i_fc : s_fc) {
       _s_fc.insert(i_fc);
-    }
-    for (const CoMMAIndexType &i_fc : s_fc) {
-      _volume += fc_graph._volumes[i_fc];
     }
 
     _mapping_g_to_l = build_CRS();
@@ -96,9 +93,6 @@ class Coarse_Cell {
   /** @brief The global dual graph*/
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *_fc_graph;
 
-  /** @brief the dimension of the problem (2D or 3D)*/
-  CoMMAIntType _dim;
-
   /** @brief Is the cell isotropic or anisotropic*/
   bool _is_isotropic;
 
@@ -110,9 +104,6 @@ class Coarse_Cell {
                                              //
   /** @brief Set of fine cells composing the  Coarse cell*/
   unordered_set<CoMMAIndexType> _s_fc;
-
-  /** @brief Total volume of the coarse cell */
-  CoMMAWeightType _volume = 0.0;
 
   /** @brief Method that return a boolean determining if the Coarse Cell is
    * defined by a connected sub-graph or not.

@@ -84,9 +84,6 @@ class Graph {
   /** @brief helper vector for the DFS*/
   vector<bool> _visited;
 
-  /** @brief Dimension of the problem */
-  CoMMAIntType _dimension;
-
   /** @brief Vector of row pointer of CRS representation (member variable
    * different from the unordered
    * set passed as a reference in input) */
@@ -450,7 +447,6 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] seeds_pool The seeds pool structure
    *  @param[in]  s_anisotropic_compliant_fc set of compliant fc cells (in the
    * most of the case all)
-   *  @param[in]  dimension  3 or 2 (by default 3)
    */
   Dual_Graph(const CoMMAIndexType &nb_c,
              const vector<CoMMAIndexType> &m_crs_row_ptr,
@@ -459,15 +455,12 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAWeightType> &volumes,
              const Seeds_Pool<CoMMAIndexType, CoMMAIntType> &seeds_pool,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
-                 unordered_set<CoMMAIndexType>({}),
-             CoMMAIntType dim = 3)
+                 unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _seeds_pool(seeds_pool),
-        _dimension(dim) {
+        _seeds_pool(seeds_pool) {
     // We check that effectively in the dictionary we have recorded cells with
-    // boundaries and we define the seed pool depending on the dimension of the
-    // problem. (2D or 3D)
+    // boundaries
     if (s_anisotropic_compliant_fc.size() > 0) {
       _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
@@ -487,9 +480,6 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Member seeds pool variable */
   Seeds_Pool<CoMMAIndexType, CoMMAIntType> _seeds_pool;
-
-  /** @brief Dimension of the problem*/
-  CoMMAIntType _dimension;
 
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;

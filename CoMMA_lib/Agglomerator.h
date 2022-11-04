@@ -160,7 +160,6 @@ class Agglomerator_Anisotropic
     : public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   // Constructor
  public:
-   using LineIterator = typename vector<deque<CoMMAIndexType> *>::iterator;
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and
    * in this way activates also the constructor of the base class.*/

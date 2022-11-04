@@ -29,7 +29,7 @@ SCENARIO("Test of a structure", "[structure]") {
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     // Check the effective length
     WHEN("We try to access to the member variables") {
@@ -158,7 +158,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
+        Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -332,7 +332,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 3);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -428,7 +428,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -549,7 +549,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 3);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
         make_shared<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -576,7 +576,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, Data.dim);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
             fc_graph, cc_graph, aniso_thresh, Data.dim);
@@ -613,7 +613,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
-        Data.s_anisotropic_compliant_fc, 2);
+        Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
         fc_graph, cc_graph, 2);

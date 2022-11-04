@@ -23,7 +23,7 @@ int main(int argv, char** argc) {
       Dual_Graph<TestIndexT, TestWeightT, TestIntT>(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
                  Data.adjMatrix_areaValues, Data.volumes, Data.d_is_on_bnd,
                  Data.s_is_on_corner, Data.s_is_on_ridge, Data.s_is_on_valley,
-                 Data.s_anisotropic_compliant_fc, 0, 2);
+                 Data.s_anisotropic_compliant_fc, 0);
 
   TRACE_EVENT_END("setup");
   Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph = Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>(fc_graph);
