@@ -71,8 +71,7 @@ nb_fc = len(graph.vertex)-1
 adjMatrix_row_ptr= np.array(graph.vertex , dtype='long')
 adjMatrix_col_ind= np.array(graph.edges ,dtype='long')
 
-adjMatrix_areaValues = np.array(mesh.area,dtype='double') if dimension == 2 \
-                       else np.ones(len(mesh.cells),dtype='double')
+adjMatrix_areaValues = np.array(mesh.area,dtype='double')
 volumes = np.array(mesh.volume,dtype='double')
 isOnBnd = np.array(mesh.boundary_cells,dtype='long')
 fc_to_cc = np.full(nb_fc, -1,dtype='long')
@@ -88,18 +87,13 @@ fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard)
 
-
 print("Finalizing")
-#fine_cells_iso =
 agglo = [ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)] if renum \
                   else [fc_to_cc_res]
 
-meshOUT_iso = meshio.Mesh(
+print(f"Writing in {outname}")
+meshio.Mesh(
     mesh.mesh.points,
     mesh.mesh.cells,
     cell_data = {"agglomerate":agglo},
-)
-
-print(f"Writing in {outname}")
-meshOUT_iso.write(outname)
-
+).write(outname)

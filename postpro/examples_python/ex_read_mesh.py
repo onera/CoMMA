@@ -39,12 +39,12 @@ isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
 # numbers from 1 to the given value are used (it makes it easier to distinguish the
 # coarse cells in Paraview
-renumber_coarse = -1 # 10 #
+renumber_coarse = 10 # -1 #
 #########
 
 if not os.path.exists(input_mesh):
     raise OSError(f'Cannot find mesh', filename = input_mesh)
-mmio = meshio.read(input_mesh, file_format = None)
+mmio = meshio.read(input_mesh, file_format = input_format)
 mio_dim = mmio.points.shape[-1]
 if dimension != mio_dim:
     raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
@@ -79,29 +79,24 @@ graph = Graph2D(mesh)
 graph.get_CSR()
 mesh.boundary_detection()
 nb_fc = len(graph.vertex)-1
-adjMatrix_row_ptr= np.array(graph.vertex , dtype='long')
-adjMatrix_col_ind= np.array(graph.edges ,dtype='long')
+adjMatrix_row_ptr= np.array(graph.vertex, dtype = 'long')
+adjMatrix_col_ind= np.array(graph.edges, dtype = 'long')
 
-adjMatrix_areaValues = np.array(mesh.area,dtype='double') if dimension == 2 \
-                       else np.ones(len(mesh.cells),dtype='double')
-volumes = np.array(mesh.volume,dtype='double') if dimension == 2 \
-          else np.ones(len(mesh.cells),dtype='double')
-isOnBnd = np.array(mesh.boundary_cells,dtype='long')
-fc_to_cc = np.full(nb_fc, -1,dtype='long')
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
-agglomerationLines_Idx = np.array([0],dtype='long')
-agglomerationLines = np.array([0],dtype='long')
+adjMatrix_areaValues = np.array(mesh.area, dtype = 'double')
+volumes = np.array(mesh.volume, dtype = 'double')
+isOnBnd = np.array(mesh.boundary_cells, dtype = 'long')
+fc_to_cc = np.full(nb_fc, -1, dtype = 'long')
+arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype= 'long')
+agglomerationLines_Idx = np.array([0], dtype = 'long')
+agglomerationLines = np.array([0], dtype = 'long')
 
 print("CoMMA call")
-#isotropic
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy, isotropic_agglo,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard)
-
-# print(fc_to_cc_res1)
 
 print("Finalizing")
 agglo = []
@@ -111,7 +106,7 @@ if renum:
     agglo = []
     start = 0
     for cells_by_type in mesh.mesh.cells:
-        n_cell = len(cells_by_type.data.tolist())
+        n_cell = cells_by_type.data.shape[0]
         agglo.append( fine_cells_renum[start:start+n_cell] )
         start += n_cell
 else:
