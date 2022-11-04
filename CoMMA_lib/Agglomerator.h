@@ -499,9 +499,9 @@ class Agglomerator_Isotropic
     // We could choose many kinds of average, e.g. arithmetic or geometric, I
     // honestly don't know if one is better then the other...
     // Here, we use the geometric one, which should be less sensitive to outliers
-    CoMMAWeightType prod = accumulate(int_faces.begin(), int_faces.end(),
-                              CoMMAWeightType{1.}, multiplies<>());
-    return pow(prod, CoMMAWeightType{1.} / int_faces.size());
+    return pow(accumulate(int_faces.begin(), int_faces.end(),
+                              CoMMAWeightType{1.}, multiplies<>()),
+               CoMMAWeightType{1.} / int_faces.size());
   }
 
   /** @brief Computes features of the CC obtained by adding a given fine cell. The
@@ -1037,10 +1037,12 @@ class Agglomerator_Pure_Front
       // Computation of the initial aspect ratio: we need cc_surf: i.e. the
       // external area (perimeter in 2D and sum of external faces in 3D) and
       // volume
-      CoMMAWeightType cc_surf = 0.0;
-      // the weights are the area of the neighborhood faces of a cell
-      for (const CoMMAWeightType &w : neighbours_weights) {
-        cc_surf += w;
+      CoMMAWeightType cc_surf = accumulate(neighbours_weights.begin(),
+          neighbours_weights.begin(), CoMMAWeightType{0});
+      const CoMMAIntType n_bdry_f =
+        (this->_fc_graph._seeds_pool).get_n_boundary_faces(seed);
+      if (n_bdry_f > 0) {
+        cc_surf += n_bdry_f * this->estimate_boundary_face(neighbours_weights);
       }
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
