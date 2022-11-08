@@ -23,7 +23,7 @@ SCENARIO("Test of a structure", "[structure]") {
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     // Check the effective length
@@ -152,7 +152,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
@@ -326,7 +326,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -422,7 +422,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -543,7 +543,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
@@ -570,7 +570,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -607,7 +607,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(

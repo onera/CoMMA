@@ -71,7 +71,7 @@ class Graph {
         _m_CRS_Row_Ptr(m_crs_row_ptr),
         _m_CRS_Col_Ind(m_crs_col_ind),
         _m_CRS_Values(m_crs_values),
-        _volumes(volumes) {
+        _volumes(volumes){
     _visited.resize(_number_of_cells);
     std::fill(_visited.begin(), _visited.end(), false);
   }
@@ -453,12 +453,13 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAIndexType> &m_crs_col_ind,
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
+             const vector<vector<CoMMAWeightType>> &centers,
              const Seeds_Pool<CoMMAIndexType, CoMMAIntType> &seeds_pool,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _seeds_pool(seeds_pool) {
+        _seeds_pool(seeds_pool), _centers(centers) {
     // We check that effectively in the dictionary we have recorded cells with
     // boundaries
     if (s_anisotropic_compliant_fc.size() > 0) {
@@ -489,6 +490,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief List of deque containing the anisotropic lines*/
   vector<deque<CoMMAIndexType> *> _lines;
+
+  /** @brief Vector of cell centers */
+  vector<vector<CoMMAWeightType>> _centers;
 
   /** @brief Computes the anisotropic lines at the first level (only called at
    * the first level of agglomeration)
