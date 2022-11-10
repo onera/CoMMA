@@ -462,28 +462,54 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, 3);
-//    // COMPLETE THE TEST
-//    WHEN("We Agglomerate the mesh") {
-//      agg->agglomerate_one_level(8, 8, 8, false);
-//      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-//         auto fccc = cc_graph._fc_2_cc;
-//         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 8, 3, 4, 8, 8, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 8, 5, 4, 6, 8, 0, 4, 4, 8, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 8, 0, 4, 2, 2, 0, 1, 7, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
-//        for (auto i = 0; i != Data.nb_fc; i++) {
-//          REQUIRE(fccc[i]==fc2cc_req[i]);
-//        }
-//
-//      }
-//    }
-//    WHEN("We Agglomerate the mesh and we try to correct") {
-//      agg->agglomerate_one_level(8, 8, 8, true);
-//      THEN("Corrections are applied") {
-//         auto fccc = cc_graph._fc_2_cc;
-//         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 6, 7, 3, 4, 7, 7, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 7, 5, 4, 6, 7, 0, 4, 4, 7, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 7, 0, 4, 2, 2, 0, 1, 1, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
-//        for (auto i = 0; i != Data.nb_fc; i++) {
-//          REQUIRE(fccc[i]==fc2cc_req[i]);
-//        }
-//      }
-//    }
+    // COMPLETE THE TEST
+    WHEN("We agglomerate the mesh with a biconnected agglomerator") {
+      agg->agglomerate_one_level(8, 8, 8, false);
+      THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
+        auto fccc = cc_graph._fc_2_cc;
+        vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc; i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+
+      }
+    }
+    WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
+      agg->agglomerate_one_level(8, 8, 8, true);
+      THEN("Corrections are applied") {
+        auto fccc = cc_graph._fc_2_cc;
+        vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
+        for (auto i = 0; i != Data.nb_fc; i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+      }
+    }
+
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_PF_graph(fc_graph);
+    auto agg_PF =
+      make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+          fc_graph, cc_PF_graph, 3);
+    // COMPLETE THE TEST
+    WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
+      agg_PF->agglomerate_one_level(8, 8, 8, false);
+      THEN("We obtain the 64 fine cells divided in 9 coarse cells") {
+        auto fccc = cc_PF_graph._fc_2_cc;
+        vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 8, 8, 3, 4, 8, 8, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 8, 5, 4, 6, 8, 0, 4, 4, 8, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 6, 0, 4, 2, 2, 0, 1, 7, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
+        for (auto i = 0; i != Data.nb_fc; i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+      }
+    }
+    WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
+      agg_PF->agglomerate_one_level(8, 8, 8, true);
+      THEN("Corrections are applied") {
+        auto fccc = cc_PF_graph._fc_2_cc;
+        vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 7, 7, 3, 4, 7, 7, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 7, 5, 4, 6, 7, 0, 4, 4, 7, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 6, 0, 4, 2, 2, 0, 1, 1, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
+        for (auto i = 0; i != Data.nb_fc; i++) {
+          REQUIRE(fccc[i]==fc2cc_req[i]);
+        }
+      }
+    }
 
     WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
       const CoMMAWeightT eps = 1e-10;
@@ -559,10 +585,10 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
-    WHEN("We Agglomerate the mesh") {
+    WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-         auto fccc = cc_graph._fc_2_cc;
+        auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 2);
@@ -581,10 +607,62 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    WHEN("We Agglomerate the mesh and we try to correct") {
+    WHEN("We ugglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(4, 4, 4, true);
       THEN("Nothing changes with respect to the case without correction") {
-         auto fccc = cc_graph._fc_2_cc;
+        auto fccc = cc_graph._fc_2_cc;
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
+      }
+    }
+    
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_PF_graph(fc_graph);
+    auto agg_PF =
+      make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+          fc_graph, cc_PF_graph, 2);
+    // COMPLETE THE TEST
+    WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
+      agg_PF->agglomerate_one_level(4, 4, 4, false);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        // Nothing changes with respect to the case of the standard Biconnected 
+        // We have a trick that make it work as it should
+        auto fccc = cc_PF_graph._fc_2_cc;
+        REQUIRE(fccc[0]== 0);
+        REQUIRE(fccc[1]== 0);
+        REQUIRE(fccc[2]== 2);
+        REQUIRE(fccc[3]== 2);
+        REQUIRE(fccc[4]== 0);
+        REQUIRE(fccc[5]== 0);
+        REQUIRE(fccc[6]== 2);
+        REQUIRE(fccc[7]== 2);
+        REQUIRE(fccc[8]== 3);
+        REQUIRE(fccc[9]== 3);
+        REQUIRE(fccc[10]== 1);
+        REQUIRE(fccc[11]== 1);
+        REQUIRE(fccc[12]== 3);
+        REQUIRE(fccc[13]== 3);
+        REQUIRE(fccc[14]== 1);
+        REQUIRE(fccc[15]== 1);
+      }
+    }
+    WHEN("We ugglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
+      agg_PF->agglomerate_one_level(4, 4, 4, true);
+      THEN("Nothing changes with respect to the case without correction") {
+        auto fccc = cc_PF_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 2);
