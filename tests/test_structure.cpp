@@ -79,6 +79,7 @@ SCENARIO("Test of a structure", "[structure]") {
     }
   }
 }
+
 SCENARIO("Test of the Queue", "[Queue]") {
   GIVEN("A simple Queue of CoMMAIndexT type") {
     Queue<CoMMAIndexT> st_long;
@@ -104,7 +105,8 @@ SCENARIO("Test of the Queue", "[Queue]") {
     };
   }
 }
-SCENARIO("CoMMA of the tree", "[Tree]") {
+
+SCENARIO("Test of the tree", "[Tree]") {
   GIVEN("The node") {
     shared_ptr<Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>
       A(new Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(2, 1));
@@ -125,6 +127,7 @@ SCENARIO("CoMMA of the tree", "[Tree]") {
     };
   }
 }
+
 SCENARIO("Subgraph", "[Subgraph]") {
   GIVEN("We have the CSR representation") {
     vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 4, 7, 9, 10};
@@ -147,6 +150,9 @@ SCENARIO("Subgraph", "[Subgraph]") {
       }
     }
   };
+}
+
+SCENARIO("Test dual graph", "[Dual graph]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
     DualGPy_quad_7 Data = DualGPy_quad_7();
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
@@ -166,12 +172,6 @@ SCENARIO("Subgraph", "[Subgraph]") {
       vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v-1].insert(k);
-      // Dump
-      //for (int i = 0; i < 3; ++i) {
-        //cout << "* Order " << i+1 << ": ";
-        //for (auto s : neighs[i]) cout << s << " ";
-        //cout << "||" << endl;
-      //} // for i
       THEN("Check order sizes and composition") {
         // Size
         REQUIRE(neighs[0].size() == 4);
@@ -217,12 +217,6 @@ SCENARIO("Subgraph", "[Subgraph]") {
       vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v-1].insert(k);
-      // Dump
-      //for (int i = 0; i < 3; ++i) {
-        //cout << "* Order " << i+1 << ": ";
-        //for (auto s : neighs[i]) cout << s << " ";
-        //cout << "||" << endl;
-      //} // for i
       THEN("Check order sizes and composition") {
         // Size
         REQUIRE(neighs[0].size() == 3);
@@ -534,8 +528,6 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
   };
 }
 
-
-
 SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
@@ -599,7 +591,6 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
 
   };
 }
-
 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
