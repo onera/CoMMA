@@ -607,7 +607,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    WHEN("We ugglomerate the mesh with a biconnected agglomerator and we try to correct") {
+    WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(4, 4, 4, true);
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_graph._fc_2_cc;
@@ -659,7 +659,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    WHEN("We ugglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
+    WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
       agg_PF->agglomerate_one_level(4, 4, 4, true);
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_PF_graph._fc_2_cc;
