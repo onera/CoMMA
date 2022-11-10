@@ -152,7 +152,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
   };
 }
 
-SCENARIO("Test dual graph", "[Dual graph]") {
+SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
     DualGPy_quad_7 Data = DualGPy_quad_7();
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
@@ -238,6 +238,142 @@ SCENARIO("Test dual graph", "[Dual graph]") {
         REQUIRE(neighs[2].count(27) > 0);
       }
     } // WHEN PREVIOUS AGGLOMERATION
+  };
+  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
+    DualGPy_quad_7 Data = DualGPy_quad_7();
+    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc);
+    CoMMAIndexT seed = 24;
+    CoMMAIntT neigh_order = 2;
+    unordered_set<CoMMAIndexT> s_seeds = {seed};
+    CoMMAIntT card = 4;
+    vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
+    fc_graph.compute_neighbourhood_of_cc(s_seeds, neigh_order, d_n_of_seed,
+        card, agglomerated);
+    unordered_set<CoMMAIndexT> s_neighbours_of_seed =
+        d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
+    First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT> f_o_n =
+        First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT>(s_neighbours_of_seed, 2, false);
+    unordered_set<CoMMAIndexT> fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first FON") {
+      THEN("Only direct neighbors are in the FON") {
+        REQUIRE(fon.count(17) > 0);
+        REQUIRE(fon.count(23) > 0);
+        REQUIRE(fon.count(25) > 0);
+        REQUIRE(fon.count(31) > 0);
+      }
+    }
+    fon = f_o_n.update(31, fc_graph.get_neighbours(31));
+    WHEN("We add cell 31") {
+      THEN("Cell 31 is no more in the FON") {
+        REQUIRE(fon.count(31) == 0);
+      }
+      THEN("Old neighbors are still in the FON") {
+        REQUIRE(fon.count(17) > 0);
+        REQUIRE(fon.count(23) > 0);
+        REQUIRE(fon.count(25) > 0);
+      }
+      THEN("Direct neighbors of 31 are in the FON") {
+        REQUIRE(fon.count(30) > 0);
+        REQUIRE(fon.count(32) > 0);
+        REQUIRE(fon.count(38) > 0);
+      }
+    }
+    fon = f_o_n.update(38, fc_graph.get_neighbours(38));
+    WHEN("We add cell 38") {
+      THEN("Cell 38 is no more in the FON") {
+        REQUIRE(fon.count(38) == 0);
+      }
+      THEN("Old neighbors are still in the FON") {
+        REQUIRE(fon.count(17) > 0);
+        REQUIRE(fon.count(23) > 0);
+        REQUIRE(fon.count(25) > 0);
+        REQUIRE(fon.count(30) > 0);
+        REQUIRE(fon.count(32) > 0);
+      }
+      THEN("Direct neighbors of 31 are NOT in the FON (max order neighborhood)") {
+        REQUIRE(fon.count(37) == 0);
+        REQUIRE(fon.count(39) == 0);
+        REQUIRE(fon.count(45) == 0);
+      }
+    }
+  };
+  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a Pure Front First Order Neighborhood for 24") {
+    DualGPy_quad_7 Data = DualGPy_quad_7();
+    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc);
+    CoMMAIndexT seed = 24;
+    CoMMAIntT neigh_order = 2;
+    unordered_set<CoMMAIndexT> s_seeds = {seed};
+    CoMMAIntT card = 4;
+    vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
+    unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
+    fc_graph.compute_neighbourhood_of_cc(s_seeds, neigh_order, d_n_of_seed,
+        card, agglomerated);
+    unordered_set<CoMMAIndexT> s_neighbours_of_seed =
+        d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
+    First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT> f_o_n =
+        First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT>(s_neighbours_of_seed, 2, true);
+    unordered_set<CoMMAIndexT> fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first FON") {
+      THEN("Only direct neighbors are in the FON") {
+        REQUIRE(fon.count(17) > 0);
+        REQUIRE(fon.count(23) > 0);
+        REQUIRE(fon.count(25) > 0);
+        REQUIRE(fon.count(31) > 0);
+      }
+    }
+    fon = f_o_n.update(31, fc_graph.get_neighbours(31));
+    WHEN("We add cell 31") {
+      THEN("Direct neighbors of 31 are in the current FON") {
+        REQUIRE(fon.count(30) > 0);
+        REQUIRE(fon.count(32) > 0);
+        REQUIRE(fon.count(38) > 0);
+      }
+      auto prev_fon = f_o_n._q_fon.begin() + 1;
+      THEN("Cell 31 is no more in the previous FON") {
+        REQUIRE(prev_fon->count(31) == 0);
+      }
+      THEN("Old neighbors are still in the previous FON") {
+        REQUIRE(prev_fon->count(17) > 0);
+        REQUIRE(prev_fon->count(23) > 0);
+        REQUIRE(prev_fon->count(25) > 0);
+      }
+    }
+    fon = f_o_n.update(38, fc_graph.get_neighbours(38));
+    WHEN("We add cell 38") {
+      THEN("Direct neighbors of 31 are NOT in the NOT (max order neighborhood)") {
+        REQUIRE(fon.count(37) == 0);
+        REQUIRE(fon.count(39) == 0);
+        REQUIRE(fon.count(45) == 0);
+      }
+      THEN("First ever computed FON is returned since no direct neighbors were added") {
+        REQUIRE(fon.count(17) > 0);
+        REQUIRE(fon.count(23) > 0);
+        REQUIRE(fon.count(25) > 0);
+      }
+      auto prev_fon = f_o_n._q_fon.begin() + 1;
+      THEN("Cell 38 is no more in the previous FON") {
+        REQUIRE(prev_fon->count(38) == 0);
+      }
+      THEN("Old neighbors are still in the previous FON") {
+        REQUIRE(prev_fon->count(30) > 0);
+        REQUIRE(prev_fon->count(32) > 0);
+      }
+      prev_fon++;
+      THEN("Older neighbors are still in the second-to-last FON (which happens to be the first ever, hence the current)") {
+        REQUIRE(prev_fon->count(17) > 0);
+        REQUIRE(prev_fon->count(23) > 0);
+        REQUIRE(prev_fon->count(25) > 0);
+      }
+    }
   };
 }
 
