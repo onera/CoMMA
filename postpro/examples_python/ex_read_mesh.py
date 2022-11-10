@@ -99,18 +99,22 @@ fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
                               correction, dimension,goalCard,minCard,maxCard)
 
 print("Finalizing")
+# fine_cells_renum = ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse) if renum \
+        # else fc_to_res
+# As long as the data is composed of (integer) IDs, the following is equivalent but much faster
+fine_cells_renum = (np.asarray(fc_to_cc_res) % renumber_coarse) if renum \
+        else fc_to_cc_res
+
 agglo = []
-if renum:
-    fine_cells_renum = ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)
-    # Adapt cell_data to meshio cellblock format
-    agglo = []
+if len(mesh.mesh.cells) > 1:
+    # More than one element type -> Adapt cell_data to meshio cellblock format
     start = 0
     for cells_by_type in mesh.mesh.cells:
         n_cell = cells_by_type.data.shape[0]
         agglo.append( fine_cells_renum[start:start+n_cell] )
         start += n_cell
 else:
-    agglo = [fc_to_cc_res]
+    agglo = [fine_cells_renum]
 
 print(f"Writing in {outname}")
 meshio.Mesh(
