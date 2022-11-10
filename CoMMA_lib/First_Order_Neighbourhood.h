@@ -63,72 +63,72 @@ class First_Order_Neighbourhood {
    * element of the set are in the set of neighbours of seed.
    */
   unordered_set<CoMMAIndexType> update(
-      CoMMAIndexType new_fc, vector<CoMMAIndexType> s_new_neighbour) {
+      const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &s_new_neighbours) {
 
     if (!_pure_front_advancing){
-    // Add new_fc to current CC and remove it from previous neighborhoods
-    _s_fc.insert(new_fc);
-    if (_first_order_set.count(new_fc)) {
+      // Add new_fc to current CC and remove it from previous neighborhoods
+      _s_fc.insert(new_fc);
       _first_order_set.erase(new_fc);
-    }
-    // Compute the set of direct neighbors allowed by original neighborhood-order
-    for (const CoMMAIndexType& i_fc : s_new_neighbour) {
-      if ( (_s_fc.count(i_fc) == 0) &&
-           (_s_neighbours_of_seed.count(i_fc) > 0) ) {
-        // If not yet in coarse cell and among the allowed neighbours, insert
-        _first_order_set.insert(i_fc);
+
+      // Compute the set of direct neighbors allowed by original neighborhood-order
+      for (const CoMMAIndexType& i_fc : s_new_neighbours) {
+        if ( (_s_fc.count(i_fc) == 0) &&
+             (_s_neighbours_of_seed.count(i_fc) > 0) ) {
+          // If not yet in coarse cell and among the allowed neighbours, insert
+          _first_order_set.insert(i_fc);
+        }
       }
-    }
-    return(_first_order_set);
-    } else {
-    // Add new_fc to current CC and remove it from previous neighborhoods
-    _s_fc.insert(new_fc);
-    for (auto &fon : _q_fon)
-      fon.erase(new_fc);
+      return(_first_order_set);
+    } // End not pure_front
+    else {
+      // Add new_fc to current CC and remove it from previous neighborhoods
+      _s_fc.insert(new_fc);
+      for (auto &fon : _q_fon)
+        fon.erase(new_fc);
 
-    // Compute the set of direct neighbors allowed by original neighborhood-order
-    unordered_set<CoMMAIndexType> curr_set = unordered_set<CoMMAIndexType>();
-    for (const CoMMAIndexType& i_fc : s_new_neighbour) {
-      if ( (_s_fc.count(i_fc) == 0) &&
-           (_s_neighbours_of_seed.count(i_fc) > 0) ) {
-        // If not yet in coarse cell and among the allowed neighbours, insert
-        curr_set.insert(i_fc);
+      // Compute the set of direct neighbors allowed by original neighborhood-order
+      unordered_set<CoMMAIndexType> curr_set = unordered_set<CoMMAIndexType>();
+      for (const CoMMAIndexType& i_fc : s_new_neighbours) {
+        if ( (_s_fc.count(i_fc) == 0) &&
+             (_s_neighbours_of_seed.count(i_fc) > 0) ) {
+          // If not yet in coarse cell and among the allowed neighbours, insert
+          curr_set.insert(i_fc);
+        }
       }
-    }
 
-     _q_fon.push_front(curr_set);
+       _q_fon.push_front(curr_set);
 
-     // Now, see which FON to return. Here is the strategy:
-     // If most recent FON is not empty, return it. If not, check the oldest FON: if
-     // not empty return it, otherwise check the previous FON. If empty, check the
-     // second oldest, and so on...
-     // We grant ourselves one exception...
-     if ( _q_fon.size() <= static_cast<decltype(_q_fon.size())>(_dimension) ) {
-       // If at the (very) beginning of the agglomeration, still consider every
-       // possible neighbor. This will allow to obtain nice quads from quads
-       // TODO[RM]: I think this workaround is needed because we are not able to
-       // compute exactly the AR; if we ever we will be able we should try to remove
-       // it
-       for (auto prev_fon = _q_fon.begin() + 1; prev_fon != _q_fon.end(); ++prev_fon)
-        curr_set.insert(prev_fon->begin(), prev_fon->end());
-       return curr_set;
+       // Now, see which FON to return. Here is the strategy:
+       // If most recent FON is not empty, return it. If not, check the oldest FON: if
+       // not empty return it, otherwise check the previous FON. If empty, check the
+       // second oldest, and so on...
+       // We grant ourselves one exception...
+       if ( _q_fon.size() <= static_cast<decltype(_q_fon.size())>(_dimension) ) {
+         // If at the (very) beginning of the agglomeration, still consider every
+         // possible neighbor. This will allow to obtain nice quads from quads
+         // TODO[RM]: I think this workaround is needed because we are not able to
+         // compute exactly the AR; if we ever we will be able we should try to remove
+         // it
+         for (auto prev_fon = _q_fon.begin() + 1; prev_fon != _q_fon.end(); ++prev_fon)
+          curr_set.insert(prev_fon->begin(), prev_fon->end());
+         return curr_set;
+         }
+       else {
+         auto cur_front = decltype(_q_fon.size()){0};
+         auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
+         while (cur_front <= cur_back) {
+           typename deque<unordered_set<CoMMAIndexType>>::iterator it =
+             _q_fon.begin() + (cur_front++);
+           if ( !it->empty() )
+             return *it;
+           it =  _q_fon.begin() + (cur_back--);
+           if ( !it->empty() )
+             return *it;
+         }
        }
-     else {
-       auto cur_front = decltype(_q_fon.size()){0};
-       auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
-       while (cur_front <= cur_back) {
-         typename deque<unordered_set<CoMMAIndexType>>::iterator it =
-           _q_fon.begin() + (cur_front++);
-         if ( !it->empty() )
-           return *it;
-         it =  _q_fon.begin() + (cur_back--);
-         if ( !it->empty() )
-           return *it;
-       }
-     }
-   }
+   } // End if is_pure_front
    // If everything fails return an empty set
-   return{};
+   return unordered_set<CoMMAIndexType>();
   }
   /** @brief Set of the fine cells composing the coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
