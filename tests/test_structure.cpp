@@ -2,6 +2,8 @@
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "CoMMATypes.h"
+#include "Priority_Pair.h"
+#include <iterator>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
@@ -125,6 +127,55 @@ SCENARIO("Test of the tree", "[Tree]") {
         REQUIRE(Albero->_root->_sonc == 2);
       }
     };
+  }
+}
+
+SCENARIO("Test of Priority Pair", "[Priority Pair]") {
+  GIVEN("Some pairs") {
+    Priority_Pair<CoMMAIntT, CoMMAIntT> p1{0,1}, p1bis{0,1},
+      p2{3,0}, p3{0,0};
+    WHEN("We compare two equal pairs") {
+      THEN("Equal pairs are identified") {
+        REQUIRE(p1 == p1bis);
+      }
+    }
+    WHEN("We compare two pair with different first element") {
+      THEN("The one with the greater first element is identified as smaller") {
+        REQUIRE(p2 < p1);
+      }
+    }
+    WHEN("We compare two pair with the same first element") {
+      THEN("The one with the smaller first element is identified as smaller") {
+        REQUIRE(p3 < p1);
+      }
+    }
+  }
+  GIVEN("A set of pairs") {
+    set<Priority_Pair<CoMMAIntT, CoMMAIntT>> s = 
+      {{0,1}, {0,1}, {3,0}, {0,0}, {2,-1}};
+    WHEN("We iterate over the set") {
+      vector<CoMMAIntT> fe1 = {3,  2, 0, 0};
+      vector<CoMMAIntT> se1 = {0, -1, 0, 1};
+      THEN("The expected order is obtined") {
+        for (auto it = s.begin(); it != s.end(); ++it) {
+          const auto idx = distance(s.begin(), it);
+          REQUIRE(it->first()  == fe1[idx]);
+          REQUIRE(it->second() == se1[idx]);
+        }
+      }
+    }
+    WHEN("We add an item and iterate on the new set") {
+      s.emplace(1,4);
+      vector<CoMMAIntT> fe2 = {3,  2, 1, 0, 0};
+      vector<CoMMAIntT> se2 = {0, -1, 4, 0, 1};
+      THEN("The expected order is obtined") {
+        for (auto it = s.begin(); it != s.end(); ++it) {
+          const auto idx = distance(s.begin(), it);
+          REQUIRE(it->first()  == fe2[idx]);
+          REQUIRE(it->second() == se2[idx]);
+        }
+      }
+    }
   }
 }
 
