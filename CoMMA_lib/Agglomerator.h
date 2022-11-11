@@ -787,62 +787,6 @@ class Agglomerator_Biconnected
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }  // end else
-    // Update seeds
-    // Create of l_of_new_seed:
-    list<CoMMAIndexType> l_of_new_seed;
-    if (!d_n_of_seed.empty()) {
-
-      // CoMMAIntType size = d_n_of_seed.size();
-      // l_of_new_seed.resize(size);
-      // if d_n_of_seed is not empty
-      // Reminder: d_n_of_seed is here the pool of cell neighbouring the
-      // previous seed!
-      for (auto &i_k_v : d_n_of_seed) {
-        if (i_k_v.second <= 2) {
-          l_of_new_seed.push_back(i_k_v.first);
-        }
-      }
-      // if list of new seeds is still empty we go to order 3
-      CoMMAIntType i_k = 3;
-      while (l_of_new_seed.empty()) {
-        // We put FC in the l_of_new_seed according to its order of neighbouring
-        // of previous seed.
-        // order 1 or 2 then 3, then 4 and so on.
-        for (auto &i_k_v : d_n_of_seed) {
-          if (i_k_v.second <= i_k) {
-            l_of_new_seed.push_back(i_k_v.first);
-          }
-        }
-        i_k++;
-      }
-    } else if (this->_fc_graph._seeds_pool.is_empty()) {
-      // else d_n_of_seed is empty: we used every neighbour!
-      // if list_of_seeds is empty, we look for new seeds to add to the
-      // list_of_seeds.
-      // if list_of_seeds is empty we look if there is some neighbour to the
-      // current fc:
-      // s_fc_neighbours_of_cc = set()
-      // we remove seed because we already update its first neighbours.
-      // A copy needed because the set is used inside ccg
-      unordered_set<CoMMAIndexType> tmp_set(s_current_cc);
-      tmp_set.erase(seed);
-
-      // We add to s_fc_neighbours_of_cc all the neighbours of FC included in
-      // s_fc_for_current_cc without seed
-      for (auto &i_fc : tmp_set) {
-        vector<CoMMAIndexType> a_neighbours =
-            this->_fc_graph.get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : a_neighbours) {
-          if ((*(this->_cc_graph)).is_fc_not_already_agglomerated(i_fc_n)) {
-            // _a_is_fc_agglomerated is up-to-date.
-            // remark: we don't care i_fc_n == i_fc.
-            l_of_new_seed.push_back(i_fc_n);
-          }
-        }
-      }
-    }
-    // Update of list_of_seeds:
-    (this->_fc_graph._seeds_pool).update(l_of_new_seed);
     return s_current_cc;
   }
 
@@ -1153,62 +1097,6 @@ class Agglomerator_Pure_Front
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }  // end else
-    // Update seeds
-    // Create of l_of_new_seed:
-    list<CoMMAIndexType> l_of_new_seed;
-    if (!d_n_of_seed.empty()) {
-
-      // CoMMAIntType size = d_n_of_seed.size();
-      // l_of_new_seed.resize(size);
-      // if d_n_of_seed is not empty
-      // Reminder: d_n_of_seed is here the pool of cell neighbouring the
-      // previous seed!
-      for (auto &i_k_v : d_n_of_seed) {
-        if (i_k_v.second <= 2) {
-          l_of_new_seed.push_back(i_k_v.first);
-        }
-      }
-      // if list of new seeds is still empty we go to order 3
-      CoMMAIntType i_k = 3;
-      while (l_of_new_seed.empty()) {
-        // We put FC in the l_of_new_seed according to its order of neighbouring
-        // of previous seed.
-        // order 1 or 2 then 3, then 4 and so on.
-        for (auto &i_k_v : d_n_of_seed) {
-          if (i_k_v.second <= i_k) {
-            l_of_new_seed.push_back(i_k_v.first);
-          }
-        }
-        i_k++;
-      }
-    } else if (this->_fc_graph._seeds_pool.is_empty()) {
-      // else d_n_of_seed is empty: we used every neighbour!
-      // if list_of_seeds is empty, we look for new seeds to add to the
-      // list_of_seeds.
-      // if list_of_seeds is empty we look if there is some neighbour to the
-      // current fc:
-      // s_fc_neighbours_of_cc = set()
-      // we remove seed because we already update its first neighbours.
-      // A copy needed because the set is used inside ccg
-      unordered_set<CoMMAIndexType> tmp_set(s_current_cc);
-      tmp_set.erase(seed);
-
-      // We add to s_fc_neighbours_of_cc all the neighbours of FC included in
-      // s_fc_for_current_cc without seed
-      for (auto &i_fc : tmp_set) {
-        vector<CoMMAIndexType> a_neighbours =
-            this->_fc_graph.get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : a_neighbours) {
-          if ((*(this->_cc_graph)).is_fc_not_already_agglomerated(i_fc_n)) {
-            // _a_is_fc_agglomerated is up-to-date.
-            // remark: we don't care i_fc_n == i_fc.
-            l_of_new_seed.push_back(i_fc_n);
-          }
-        }
-      }
-    }
-    // Update of list_of_seeds:
-    (this->_fc_graph._seeds_pool).update(l_of_new_seed);
     return s_current_cc;
   }
 
