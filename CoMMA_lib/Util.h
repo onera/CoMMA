@@ -29,6 +29,8 @@
 
 using namespace std;
 
+#define CoMMAUnused(var) (void)(var)
+
 template <typename CoMMAIndexType, typename CoMMAIntType>
 inline unordered_set<CoMMAIndexType> d_keys_to_set(
     const unordered_map<CoMMAIndexType, CoMMAIntType> &dict) {

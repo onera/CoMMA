@@ -210,10 +210,10 @@ class Agglomerator_Anisotropic
                              const CoMMAIntType max_card,
                              bool correction_steps) override {
     // Unused parameters
-    (void)goal_card;
-    (void)min_card;
-    (void)max_card;
-    (void)correction_steps;
+    CoMMAUnused(goal_card);
+    CoMMAUnused(min_card);
+    CoMMAUnused(max_card);
+    CoMMAUnused(correction_steps);
     // if the finest agglomeration line is not computed, hence compute it
     // (REMEMBER! We compute the agglomeration lines
     // only on the finest level, the other one are stored only for visualization
@@ -475,7 +475,7 @@ class Agglomerator_Isotropic
     // We proceed in creating the delayed one
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
-      this->_cc_graph->correct(this->_max_card);
+      this->_cc_graph->correct();
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }

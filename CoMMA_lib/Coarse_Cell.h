@@ -41,19 +41,17 @@ class Coarse_Cell {
   /** @brief Constructor of the class
    * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
    * cells to create the coarse cell.
-   * @param[in] global index of the coarse cell
+   * @param[in] i_cc Index of the coarse cell
    * @param[in] s_fc unordered set of fine cells constituting the coarse cell
    * @param[in] is_isotropic boolean describing if the cell is coming from an
-   * isotropic agglomeration process
-   * or an anisotropic agglomeration process. The default value is set to true.
+   * isotropic agglomeration process or an anisotropic agglomeration process.
+   * The default value is set to true.
    */
   Coarse_Cell(
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       bool is_isotropic = true)
-      : _is_isotropic(is_isotropic) {
-    // Unused
-    (void)i_cc;
+      : _idx(i_cc), _is_isotropic(is_isotropic) {
     // compactness, degrees are defined in the Subgraph
     // Other quantities are defined in the cc_graph map (e.h the i_cc)
     _fc_graph = &fc_graph;
@@ -71,8 +69,12 @@ class Coarse_Cell {
 
   ~Coarse_Cell() {};
 
+  /** @brief Index of the coarse cell*/
+  CoMMAIndexType _idx;
+
   /** @brief mapping vector. The position of the index is the local node, the
-   * value is the global*/
+   * value is the global
+   **/
   vector<CoMMAIndexType> _mapping_g_to_l;
 
   /** @brief The row pointer of the CSR representation of the subgraph*/
@@ -100,15 +102,16 @@ class Coarse_Cell {
   bool _is_connected;
 
   /** @brief the connectivity has been checked*/
-  bool _is_connectivity_up_to_date = false;  //  # TODO useful for is_connected?
-                                             //
+  bool _is_connectivity_up_to_date = false;  // TODO useful for is_connected?
+
   /** @brief Set of fine cells composing the  Coarse cell*/
   unordered_set<CoMMAIndexType> _s_fc;
 
   /** @brief Method that return a boolean determining if the Coarse Cell is
    * defined by a connected sub-graph or not.
    *  @return true if the subgraph is connected, false if the subgraph is not
-   * connected*/
+   * connected
+   **/
   bool is_connected() {
 
     if (!_is_connectivity_up_to_date) {
@@ -119,7 +122,8 @@ class Coarse_Cell {
   }
 
   /** @brief function to build the local CSR subgraph representation
-   * @return a vector representing the local to global mapping.*/
+   * @return a vector representing the local to global mapping.
+   **/
   vector<CoMMAIndexType> build_CRS() {
     // initialization vectors
     CoMMAIndexType position = 0;
