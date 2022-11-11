@@ -2,6 +2,7 @@
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "CoMMATypes.h"
+#include "Queue.h"
 #include "Priority_Pair.h"
 #include <iterator>
 #include <set>

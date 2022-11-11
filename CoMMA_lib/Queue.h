@@ -62,5 +62,6 @@ class Queue {
     }
     return _elems.front();
   }
+  inline bool empty() const {return _elems.empty(); }
 };
 #endif

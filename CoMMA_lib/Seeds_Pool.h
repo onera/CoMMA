@@ -23,13 +23,14 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <unordered_set>
+#include <deque>
+#include <set>
 #include <unordered_map>
 #include <list>
 #include <cassert>
+#include <utility>
 #include <vector>
 
-#include "Queue.h"
 #include "CoMMATypes.h"
 
 using namespace std;
@@ -60,12 +61,12 @@ class Seeds_Pool {
    *  2 : ridge (two faces on the edge of the domain)
    *  3 : corner (three faces on the edge of the domain)
   */
-  vector<Queue<CoMMAIndexType>> _l_of_seeds;
+  vector<deque<CoMMAIndexType>> _l_of_seeds;
 
  public:
   /** @brief Constructor */
   Seeds_Pool(CoMMAIndexType number_of_cells,
-             unordered_map<CoMMAIndexType, CoMMAIntType> &d_is_on_bnd) {
+             const unordered_map<CoMMAIndexType, CoMMAIntType> &d_is_on_bnd) {
     /*
     :param number_of_cells: number of cells in the graph
     :param d_is_on_bnd: dictionary i_c to bnd value
@@ -86,11 +87,13 @@ class Seeds_Pool {
     // 3 : corner (three faces on the edge of the domain)
     _number_of_cells = number_of_cells;
     // Use sets to ensure unique elements
+    // Sets are ordered. The ordering of a pair works element-wise, hence the
+    // weight has the priority over the index
     unordered_set<CoMMAIndexType> is_on_corner;
     unordered_set<CoMMAIndexType> is_on_ridge;
     unordered_set<CoMMAIndexType> is_on_valley;
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
-    _l_of_seeds = vector<Queue<CoMMAIndexType>>(CoMMACellT::N_CELL_TYPES);
+    _l_of_seeds = vector<deque<CoMMAIndexType>>(CoMMACellT::N_CELL_TYPES);
     assert(!d_is_on_bnd.empty());
     _d_is_on_bnd = d_is_on_bnd;  // Useful for seed choice
     for (auto kv_fc : d_is_on_bnd) {
@@ -108,18 +111,18 @@ class Seeds_Pool {
     // initialization of l_of_seeds
     if (is_on_corner.size() > 0) {
       for (auto iFC : is_on_corner) {
-        _l_of_seeds[CoMMACellT::CORNER].push(iFC);
+        _l_of_seeds[CoMMACellT::CORNER].push_back(iFC);
       }
     }
 
     if (is_on_ridge.size() > 0) {
       for (auto iFC : is_on_ridge) {
-        _l_of_seeds[CoMMACellT::RIDGE].push(iFC);
+        _l_of_seeds[CoMMACellT::RIDGE].push_back(iFC);
       }
     }
     if (is_on_valley.size() > 0) {
       for (auto iFC : is_on_valley) {
-        _l_of_seeds[CoMMACellT::VALLEY].push(iFC);
+        _l_of_seeds[CoMMACellT::VALLEY].push_back(iFC);
       }
     }
   };
@@ -197,14 +200,14 @@ class Seeds_Pool {
           value_is_on_bnd = CoMMACellT::CORNER;
           _d_is_on_bnd[i_new_seed] = CoMMACellT::CORNER;
         }
-        _l_of_seeds[value_is_on_bnd].push(i_new_seed);
+        _l_of_seeds[value_is_on_bnd].push_back(i_new_seed);
       }
     } else {
       // here we add as bnd point at the extremity of graph, where
       // eccentricity=diameter
       for (const CoMMAIndexType &i_new_seed : l_new_seeds) {
         _d_is_on_bnd[i_new_seed] = CoMMACellT::EXTREME;
-        _l_of_seeds[CoMMACellT::CORNER].push(i_new_seed);
+        _l_of_seeds[CoMMACellT::CORNER].push_back(i_new_seed);
       }
     }
   };
@@ -217,7 +220,7 @@ class Seeds_Pool {
     assert(i_level <= CoMMACellT::CORNER);
     if (_l_of_seeds.size() > 0) {
       for (CoMMAIntType i = CoMMACellT::CORNER; i > i_level -1; i--) {
-        if (_l_of_seeds[i].top() != -1) {
+        if (!_l_of_seeds[i].empty()) {
           return false;
         }
       }
@@ -235,18 +238,19 @@ class Seeds_Pool {
   */
   CoMMAIndexType spoil_seed(const CoMMAIntType &i_l,
                             const vector<bool> &a_is_fc_agglomerated) {
-    CoMMAIndexType seed = _l_of_seeds[i_l].pop();
-    if (seed == -1) {
-      return (seed);
-    } else {
-      while (a_is_fc_agglomerated[seed] == true) {
-        seed = _l_of_seeds[i_l].pop();
-        if (seed == -1) {
-          return (seed);
-        }
+    auto &seeds = _l_of_seeds[i_l];
+    if (!seeds.empty()) {
+      CoMMAIndexType s = seeds.front();
+      seeds.pop_front();
+      while (a_is_fc_agglomerated[s] == true) {
+        if (seeds.empty())
+          return -1;
+        s = seeds.front();
+        seeds.pop_front();
       }
+      return s;
     }
-    return (seed);
+    return -1;
   };
 
   /** @brief Return how many boundary faces a certain cell has

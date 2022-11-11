@@ -31,7 +31,6 @@
 #include <limits>
 #include <climits>
 
-#include "Queue.h"
 #include "Seeds_Pool.h"
 
 using namespace std;
@@ -120,20 +119,20 @@ class Graph {
    *  @param[in] root  root of the spanning tree
    */
   void BFS(const CoMMAIndexType &root) {
-    Queue<CoMMAIndexType> coda;
+    deque<CoMMAIndexType> coda;
     vector<CoMMAIndexType> v_neigh;
     vector<CoMMAIndexType> path;
-    coda.push(root);
+    coda.push_back(root);
     vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
     vector<CoMMAIndexType> prev(_number_of_cells, -1);
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
-      coda.pop();
+      coda.pop_front();
       v_neigh = get_neighbours(node);
       for (auto &it : v_neigh) {
         if (!visited[it]) {
-          coda.push(it);
+          coda.push_pack(it);
           visited[it] = true;
           prev[it] = node;
         }
