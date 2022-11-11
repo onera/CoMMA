@@ -64,14 +64,15 @@ class Coarse_Cell_Container {
   /** @brief Destructor*/
   ~Coarse_Cell_Container() {};
   /** @brief Function that return if the coarse cell structure created is
-   * unstructured or structured (in dependence
-   * of the anisotropic  cells found)
+   * unstructured or structured (in dependence of the anisotropic  cells found)
    * @param[in] goal_card goal cardinality, useful to check if in case of non
-   * presence of anisotropic cells we reached
-   * the goal cardinality for all the coarse cells created */
+   * presence of anisotropic cells we reached * the goal cardinality for all
+   * the coarse cells created
+   */
   bool is_cc_grid_not_structured(CoMMAIntType goal_card = -1);
   /** @brief Helper to get the member variable that defines the number of
-   * agglomerated fine cells */
+   * agglomerated fine cells
+   **/
   inline CoMMAIndexType get_number_of_fc_agglomerated() {
     return (_nb_of_agglomerated_fc);
   };
@@ -85,13 +86,13 @@ class Coarse_Cell_Container {
       shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>
       _cc_vec;
   /** @brief Retrieve the indexes of the neighbouring coarse cells to a given
-   * fine cell in a coarse cell (excluding the
-   *  given coarse cell in which the fine cell is)
+   * fine cell in a coarse cell (excluding the given coarse cell in which the
+   * fine cell is)
    *  @param[in] i_fc index of the fine cell inside the coarse cell to be
    * analysed
    *  @param[in] i_cc index of the coarse cell in which the fine cell is in
    *  @return vector of the index of the coarse cells
-   */
+   **/
   vector<CoMMAIndexType> get_neigh_cc(const CoMMAIndexType &i_fc,
                                       const CoMMAIndexType &i_cc) {
     vector<CoMMAIndexType> neigh = _fc_graph.get_neighbours(i_fc);
@@ -106,7 +107,7 @@ class Coarse_Cell_Container {
   /** @brief Update the member variable of the memebr fc2cc based on the mapping
    * given
    *  @param[in] mapping mapping on old fc2cc to the new fc2cc
-   */
+   **/
   void update_fc_2_cc(const vector<CoMMAIndexType> &mapping) {
     for (auto &elem : _fc_2_cc) {
       // we substitute in elem the mapped element
@@ -116,7 +117,8 @@ class Coarse_Cell_Container {
 
   /** @brief Remove a coarse cell from the mapping
    * @param[in] elim iterator to the element to eliminate
-   * @return iterator to the next element*/
+   * @return iterator to the next element
+   **/
   MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> remove_cc(
       MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> elim) {
     // we delete the element and we obtainer the pointer to the next element in
@@ -213,11 +215,12 @@ class Coarse_Cell_Container {
    * case or not
    * @param[in] is_creation_delayed based on the agglomerator instruction we
    * define if we delay or not the agglomeration
-   * @return a long with the global identifier of the coarse cell.*/
+   * @return a long with the global identifier of the coarse cell
+   **/
   CoMMAIndexType cc_create_a_cc(
       const unordered_set<CoMMAIndexType> &s_fc, bool is_anisotropic = false,
-      bool is_creation_delayed = false) {  // Create a course cell from the fine
-                                           // cells and update the fc_2_cc tree.
+      bool is_creation_delayed = false) {
+    // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
     // error handling
     CoMMAWeightType vol_cc = 0;
