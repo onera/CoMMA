@@ -10,16 +10,17 @@ PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() = "CoMMA is an agglomeration library";
   module_handle.def(
       "agglomerate_one_level",
-      [](const vector<CoMMAIndexT> adjMatrix_row_ptr,
-         const vector<CoMMAIndexT> adjMatrix_col_ind,
-         const vector<CoMMAWeightT> adjMatrix_areaValues,
-         const vector<CoMMAWeightT> volumes,
+      [](const vector<CoMMAIndexT> &adjMatrix_row_ptr,
+         const vector<CoMMAIndexT> &adjMatrix_col_ind,
+         const vector<CoMMAWeightT> &adjMatrix_areaValues,
+         const vector<CoMMAWeightT> &volumes,
+         const vector<CoMMAWeightT> &priority_weights,
 
          // Indices of compliant cc
-         vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells,
+         const vector<CoMMAIndexT> &arrayOfFineAnisotropicCompliantCells,
 
          // boundaries
-         const vector<CoMMAIndexT> isOnFineBnd,
+         const vector<CoMMAIntT> &n_bnd_faces,
 
          // Agglomeration argument
          bool isFirstAgglomeration, bool is_anisotropic,
@@ -36,7 +37,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          CoMMAIntT min_card, CoMMAIntT max_card) {
         agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
             adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-            arrayOfFineAnisotropicCompliantCells, isOnFineBnd,
+            priority_weights, arrayOfFineAnisotropicCompliantCells, n_bnd_faces,
             isFirstAgglomeration, is_anisotropic, threshold_anisotropy,type_of_isotropic_agglomeration,
             fc_to_cc, agglomerationLines_Idx, agglomerationLines, correction,
             dimension, goal_card, min_card, max_card);

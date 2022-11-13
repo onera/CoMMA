@@ -4,6 +4,7 @@
 #include "CoMMATypes.h"
 #include "Queue.h"
 #include "Priority_Pair.h"
+#include <algorithm>
 #include <iterator>
 #include <set>
 #include <unordered_set>
@@ -19,11 +20,14 @@ using namespace std;
 
 #define equal_up_to(a,b,eps) (fabs(a - b) < eps)
 
+using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
+using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
+
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
     DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
-    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -207,7 +211,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
 SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
     DualGPy_quad_7 Data = DualGPy_quad_7();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -292,8 +296,13 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     } // WHEN PREVIOUS AGGLOMERATION
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
+ #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
+ #define found_(cont, obj) check_(find, !=, cont, obj)
+ #define not_found_(cont, obj) check_(find, ==, cont, obj) 
+ #define found_1stEl_(cont, obj) check_(find_if, !=, (*cont), CoMMAPairFindFirstBasedT(obj))
+ #define not_found_1stEl_(cont, obj) check_(find_if, ==, (*cont), CoMMAPairFindFirstBasedT(obj)) 
     DualGPy_quad_7 Data = DualGPy_quad_7();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -308,55 +317,56 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT> f_o_n =
-        First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT>(s_neighbours_of_seed, 2, false);
-    unordered_set<CoMMAIndexT> fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
+    First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n =
+        First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(s_neighbours_of_seed,
+          Data.weights, 2, false);
+    auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
     WHEN("We check the first FON") {
       THEN("Only direct neighbors are in the FON") {
-        REQUIRE(fon.count(17) > 0);
-        REQUIRE(fon.count(23) > 0);
-        REQUIRE(fon.count(25) > 0);
-        REQUIRE(fon.count(31) > 0);
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+        REQUIRE(found_(fon, 31));
       }
     }
     fon = f_o_n.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       THEN("Cell 31 is no more in the FON") {
-        REQUIRE(fon.count(31) == 0);
+        REQUIRE(not_found_(fon, 31));
       }
       THEN("Old neighbors are still in the FON") {
-        REQUIRE(fon.count(17) > 0);
-        REQUIRE(fon.count(23) > 0);
-        REQUIRE(fon.count(25) > 0);
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
       }
       THEN("Direct neighbors of 31 are in the FON") {
-        REQUIRE(fon.count(30) > 0);
-        REQUIRE(fon.count(32) > 0);
-        REQUIRE(fon.count(38) > 0);
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
       }
     }
     fon = f_o_n.update(38, fc_graph.get_neighbours(38));
     WHEN("We add cell 38") {
       THEN("Cell 38 is no more in the FON") {
-        REQUIRE(fon.count(38) == 0);
+        REQUIRE(not_found_(fon, 38));
       }
       THEN("Old neighbors are still in the FON") {
-        REQUIRE(fon.count(17) > 0);
-        REQUIRE(fon.count(23) > 0);
-        REQUIRE(fon.count(25) > 0);
-        REQUIRE(fon.count(30) > 0);
-        REQUIRE(fon.count(32) > 0);
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
       }
       THEN("Direct neighbors of 31 are NOT in the FON (max order neighborhood)") {
-        REQUIRE(fon.count(37) == 0);
-        REQUIRE(fon.count(39) == 0);
-        REQUIRE(fon.count(45) == 0);
+        REQUIRE(not_found_(fon, 37));
+        REQUIRE(not_found_(fon, 39));
+        REQUIRE(not_found_(fon, 45));
       }
     }
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a Pure Front First Order Neighborhood for 24") {
     DualGPy_quad_7 Data = DualGPy_quad_7();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -371,61 +381,67 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT> f_o_n =
-        First_Order_Neighbourhood<CoMMAIndexT, CoMMAIntT>(s_neighbours_of_seed, 2, true);
-    unordered_set<CoMMAIndexT> fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
+    First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n =
+        First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(s_neighbours_of_seed,
+          Data.weights, 2, true);
+    auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
     WHEN("We check the first FON") {
       THEN("Only direct neighbors are in the FON") {
-        REQUIRE(fon.count(17) > 0);
-        REQUIRE(fon.count(23) > 0);
-        REQUIRE(fon.count(25) > 0);
-        REQUIRE(fon.count(31) > 0);
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+        REQUIRE(found_(fon, 31));
       }
     }
     fon = f_o_n.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       THEN("Direct neighbors of 31 are in the current FON") {
-        REQUIRE(fon.count(30) > 0);
-        REQUIRE(fon.count(32) > 0);
-        REQUIRE(fon.count(38) > 0);
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
       }
       auto prev_fon = f_o_n._q_fon.begin() + 1;
       THEN("Cell 31 is no more in the previous FON") {
-        REQUIRE(prev_fon->count(31) == 0);
+        REQUIRE(not_found_1stEl_(prev_fon, 31));
       }
       THEN("Old neighbors are still in the previous FON") {
-        REQUIRE(prev_fon->count(17) > 0);
-        REQUIRE(prev_fon->count(23) > 0);
-        REQUIRE(prev_fon->count(25) > 0);
+        REQUIRE(found_1stEl_(prev_fon, 17));
+        REQUIRE(found_1stEl_(prev_fon, 23));
+        REQUIRE(found_1stEl_(prev_fon, 25));
       }
     }
     fon = f_o_n.update(38, fc_graph.get_neighbours(38));
     WHEN("We add cell 38") {
-      THEN("Direct neighbors of 31 are NOT in the NOT (max order neighborhood)") {
-        REQUIRE(fon.count(37) == 0);
-        REQUIRE(fon.count(39) == 0);
-        REQUIRE(fon.count(45) == 0);
+      THEN("Direct neighbors of 31 are NOT in the FON (max order neighborhood)") {
+        REQUIRE(not_found_(fon, 37));
+        REQUIRE(not_found_(fon, 39));
+        REQUIRE(not_found_(fon, 45));
       }
       THEN("First ever computed FON is returned since no direct neighbors were added") {
-        REQUIRE(fon.count(17) > 0);
-        REQUIRE(fon.count(23) > 0);
-        REQUIRE(fon.count(25) > 0);
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
       }
       auto prev_fon = f_o_n._q_fon.begin() + 1;
       THEN("Cell 38 is no more in the previous FON") {
-        REQUIRE(prev_fon->count(38) == 0);
+        REQUIRE(not_found_1stEl_(prev_fon, 38));
       }
       THEN("Old neighbors are still in the previous FON") {
-        REQUIRE(prev_fon->count(30) > 0);
-        REQUIRE(prev_fon->count(32) > 0);
+        REQUIRE(found_1stEl_(prev_fon, 30));
+        REQUIRE(found_1stEl_(prev_fon, 32));
       }
       prev_fon++;
       THEN("Older neighbors are still in the second-to-last FON (which happens to be the first ever, hence the current)") {
-        REQUIRE(prev_fon->count(17) > 0);
-        REQUIRE(prev_fon->count(23) > 0);
-        REQUIRE(prev_fon->count(25) > 0);
+        REQUIRE(found_1stEl_(prev_fon, 17));
+        REQUIRE(found_1stEl_(prev_fon, 23));
+        REQUIRE(found_1stEl_(prev_fon, 25));
       }
     }
+#undef check_
+#undef found_
+#undef not_found_
+#undef found_1stEl_
+#undef not_found_1stEl_
   };
 }
 
@@ -505,7 +521,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -516,7 +532,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
           fc_graph, cc_graph, 3);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
-      agg->agglomerate_one_level(8, 8, 8, false);
+      agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         auto fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -527,7 +543,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       }
     }
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
-      agg->agglomerate_one_level(8, 8, 8, true);
+      agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Corrections are applied") {
         auto fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 1, 1, 3, 3, 1, 1, 3, 3, 6, 6, 0, 0, 6, 6, 0, 0, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7, 5, 5, 7, 7, 2, 2, 4, 4, 2, 2, 4, 4};
@@ -543,7 +559,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
           fc_graph, cc_PF_graph, 3);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
-      agg_PF->agglomerate_one_level(8, 8, 8, false);
+      agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 9 coarse cells") {
         auto fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 8, 8, 3, 4, 8, 8, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 8, 5, 4, 6, 8, 0, 4, 4, 8, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 6, 0, 4, 2, 2, 0, 1, 7, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
@@ -553,7 +569,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       }
     }
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
-      agg_PF->agglomerate_one_level(8, 8, 8, true);
+      agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Corrections are applied") {
         auto fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {1, 1, 3, 3, 1, 7, 7, 3, 4, 7, 7, 0, 4, 4, 0, 0, 1, 1, 3, 3, 6, 6, 7, 5, 4, 6, 7, 0, 4, 4, 7, 0, 1, 1, 3, 3, 6, 6, 5, 5, 4, 6, 6, 0, 4, 2, 2, 0, 1, 1, 5, 3, 6, 5, 5, 5, 2, 2, 2, 5, 2, 2, 2, 0};
@@ -627,7 +643,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     DualGPy_quad_4 Data = DualGPy_quad_4();
-    Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -638,7 +654,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
           fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
-      agg->agglomerate_one_level(4, 4, 4, false);
+      agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -660,7 +676,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       }
     }
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
-      agg->agglomerate_one_level(4, 4, 4, true);
+      agg->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -688,7 +704,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
           fc_graph, cc_PF_graph, 2);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
-      agg_PF->agglomerate_one_level(4, 4, 4, false);
+      agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         // Nothing changes with respect to the case of the standard Biconnected 
         // We have a trick that make it work as it should
@@ -712,7 +728,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       }
     }
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
-      agg_PF->agglomerate_one_level(4, 4, 4, true);
+      agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_PF_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -798,7 +814,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
     DualGPy_aniso Data = DualGPy_aniso();
-    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -818,14 +834,14 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
-         agg_dyn->agglomerate_one_level(2, 2, 2, false);
+         agg_dyn->agglomerate_one_level(2, 2, 2, Data.weights, false);
       THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
     }
   };
   GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
     DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
-    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -833,7 +849,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
             fc_graph, cc_graph, aniso_thresh, Data.dim);
-    agg->agglomerate_one_level(4, 4, 4, false);
+    agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
     WHEN("We agglomerate the mesh") {
       const auto f2c = cc_graph._fc_2_cc;
       THEN("There is only one isotropic coarse cell") {
@@ -861,7 +877,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     DualGPy_minimal Data = DualGPy_minimal();
-    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
@@ -871,7 +887,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         fc_graph, cc_graph, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
-      agg->agglomerate_one_level(2, 2, 2, true);
+      agg->agglomerate_one_level(2, 2, 2, Data.weights, true);
 
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph._cc_vec.begin(); i != cc_graph._cc_vec.end();

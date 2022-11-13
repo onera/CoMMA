@@ -23,9 +23,14 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include <unordered_set>
+#include <set>
 #include <vector>
 #include <deque>
+#include <queue>
+
+#include "Util.h"
 
 using namespace std;
 
@@ -34,65 +39,110 @@ using namespace std;
  * Mind that no information about the element being already agglomerated or not
  * is known here.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAIntType the CoMMA type for integers
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
  */
-template <typename CoMMAIndexType, typename CoMMAIntType>
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
 class First_Order_Neighbourhood {
  public:
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  /** @brief Functor used if find-like function relying only on first element of the pair */
+  using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
+
+#if 0
+Some remarks about the implementation. All the work is done in the function "update",
+hence that is where we have to focus on. There are only two constraints for the
+returned object: it should be an iterable, and the content (the indices of the neighbours)
+must be ordered using their weights. An ordered set of pair of (index, weight) with
+CustomPairGreaterFunctor as comparator would not work as because we want unique indices
+and that would have been quite hard to achieve even if defining a custom operator==,
+have a look here, https://stackoverflow.com/a/1114862
+We still use sets, but we have an extra check before inserting whether there already is
+a pair with the same index.
+#endif
+
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
-   * chosen as seed */
-  First_Order_Neighbourhood(
-      unordered_set<CoMMAIndexType> s_neighbours_of_seed, CoMMAIntType dimension, bool pure_front_advancing) :
-      _dimension(dimension) {
-    _s_fc = {};                                    // definition of the cc
-    _s_neighbours_of_seed = s_neighbours_of_seed;  // defined once and for all
-    _q_fon = {};
-    _first_order_set = {};
-    _pure_front_advancing = pure_front_advancing; // define if to use the fon in a pure front advancing manner or not
-   }
+   * chosen as seed
+   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] dimension Dimension of the problem
+   *  @param[in] pure_front_advancing Whether we should consider a pure front
+   * advancing algorithm, meaning that the next candidates are only the direct
+   * neighbors of the last added cell
+   **/
+  First_Order_Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+      const vector<CoMMAWeightType> &weights, CoMMAIntType dimension,
+      bool pure_front_advancing) :
+      _s_neighbours_of_seed(s_neighbours_of_seed), _weights(weights), _s_fc(),
+      _q_fon(), _first_order_set(), _dimension(dimension),
+      _pure_front_advancing(pure_front_advancing) { }
 
   /** @brief Method that updates the first order neighborhood, by updating the
    * front. Given the new_fc, if is in the neighbours, it is deleted and are
    * added the s_new_neighbours in in the set of neighbours given in the
    * constructor.
    * @param[in] new_fc new fine cell to be added to the set of fine cells
-   * @param[in] s_new_neighbours set of the new neighbours to be analysed and to
+   * @param[in] new_neighbours vector of the new neighbours to be analysed and to
    * be added to the _first_order_neighbourhood member variable only if the
    * element of the set are in the set of neighbours of seed.
+   * @return A vector of candidates for the fine cell to agglomerate
    */
-  unordered_set<CoMMAIndexType> update(
-      const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &s_new_neighbours) {
-
+  vector<CoMMAIndexType> update(
+      const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) {
     if (!_pure_front_advancing){
       // Add new_fc to current CC and remove it from previous neighborhoods
       _s_fc.insert(new_fc);
-      _first_order_set.erase(new_fc);
+      if (!_first_order_set.empty()) {
+        // There is erase_if for sets in C++20
+        //erase_if(_first_order_set, [&new_fc](const CoMMAPairType &p){
+        //                              return p.first == new_fc;});
+        auto it = find_if(_first_order_set.begin(), _first_order_set.end(),
+                       CoMMAPairFindFirstBasedType(new_fc));
+                       //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
+        assert(it != _first_order_set.end()); // It must be there!
+        _first_order_set.erase(it);
+      }
 
       // Compute the set of direct neighbors allowed by original neighborhood-order
-      for (const CoMMAIndexType& i_fc : s_new_neighbours) {
-        if ( (_s_fc.count(i_fc) == 0) &&
+      for (const CoMMAIndexType& i_fc : new_neighbours) {
+        if ( (find_if(_first_order_set.begin(), _first_order_set.end(),
+                     CoMMAPairFindFirstBasedType(i_fc))
+                     //[&i_fc](const CoMMAPairType &p){return p.first == i_fc;})
+              == _first_order_set.end()) &&
+             (_s_fc.count(i_fc) == 0) &&
              (_s_neighbours_of_seed.count(i_fc) > 0) ) {
-          // If not yet in coarse cell and among the allowed neighbours, insert
-          _first_order_set.insert(i_fc);
+          // If not yet in the FON, not yet in the coarse cell and among the
+          // allowed neighbours, insert
+          _first_order_set.emplace(i_fc, _weights[i_fc]);
         }
       }
-      return(_first_order_set);
+      return vector_of_first_elements<decltype(_first_order_set)>(_first_order_set);
     } // End not pure_front
     else {
       // Add new_fc to current CC and remove it from previous neighborhoods
       _s_fc.insert(new_fc);
-      for (auto &fon : _q_fon)
-        fon.erase(new_fc);
+      for (auto &fon : _q_fon) {
+        // There is erase_if for sets in C++20
+        //erase_if(fon, [&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
+        auto it = find_if(fon.begin(), fon.end(),
+                          CoMMAPairFindFirstBasedType(new_fc));
+                          //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
+        if (it != fon.end())
+          fon.erase(it);
+      }
 
       // Compute the set of direct neighbors allowed by original neighborhood-order
-      unordered_set<CoMMAIndexType> curr_set = unordered_set<CoMMAIndexType>();
-      for (const CoMMAIndexType& i_fc : s_new_neighbours) {
+      CoMMASetOfPairType curr_set = CoMMASetOfPairType();
+      for (const CoMMAIndexType& i_fc : new_neighbours) {
         if ( (_s_fc.count(i_fc) == 0) &&
              (_s_neighbours_of_seed.count(i_fc) > 0) ) {
           // If not yet in coarse cell and among the allowed neighbours, insert
-          curr_set.insert(i_fc);
+          curr_set.emplace(i_fc, _weights[i_fc]);
         }
       }
 
@@ -110,29 +160,26 @@ class First_Order_Neighbourhood {
         // compute exactly the AR; if we ever we will be able we should try to remove
         // it
         for (auto prev_fon = _q_fon.begin() + 1; prev_fon != _q_fon.end(); ++prev_fon)
-         curr_set.insert(prev_fon->begin(), prev_fon->end());
-        return curr_set;
+          curr_set.insert(prev_fon->begin(), prev_fon->end());
+        return vector_of_first_elements<decltype(curr_set)>(curr_set);
       }
       else {
         auto cur_front = decltype(_q_fon.size()){0};
         auto cur_back  = decltype(_q_fon.size()){_q_fon.size() - 1};
         while (cur_front <= cur_back) {
-          typename deque<unordered_set<CoMMAIndexType>>::iterator it =
+          typename decltype(_q_fon)::iterator it =
             _q_fon.begin() + (cur_front++);
           if ( !it->empty() )
-            return *it;
+            return vector_of_first_elements<typename decltype(_q_fon)::value_type>(*it);
           it =  _q_fon.begin() + (cur_back--);
           if ( !it->empty() )
-            return *it;
+            return vector_of_first_elements<typename decltype(_q_fon)::value_type>(*it);
         }
       }
     } // End if is_pure_front
     // If everything fails return an empty set
-    return unordered_set<CoMMAIndexType>();
+    return vector<CoMMAIndexType>();
   }
-  /** @brief Set of the fine cells composing the coarse cell */
-  unordered_set<CoMMAIndexType> _s_fc;
-
   /** @brief Set of the neighbours of seed given as an input in the constructor.
    * Here, we can find all the neighbours of order up to a user-defined value
    * (by default is 3, this means neighbours of neighbours of neighbours) of the
@@ -140,11 +187,17 @@ class First_Order_Neighbourhood {
    */
   unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 
+  /** @brief Priority weights */
+  const vector<CoMMAWeightType> &_weights;
+
+  /** @brief Set of the fine cells composing the coarse cell */
+  unordered_set<CoMMAIndexType> _s_fc;
+
   /** @brief History of the first-order-neighborhoods of the fine cells recently
    * agglomerated */
-  deque<unordered_set<CoMMAIndexType>> _q_fon;
+  deque<CoMMASetOfPairType> _q_fon;
   /** @brief First order set TODO[AR]: it must be refactored to take into account the two versions */
-  unordered_set<CoMMAIndexType> _first_order_set;
+  CoMMASetOfPairType _first_order_set;
 
   /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/

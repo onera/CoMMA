@@ -452,7 +452,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAIndexType> &m_crs_col_ind,
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
-             const Seeds_Pool<CoMMAIndexType, CoMMAIntType> &seeds_pool,
+             const Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
@@ -478,7 +478,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   }
 
   /** @brief Member seeds pool variable */
-  Seeds_Pool<CoMMAIndexType, CoMMAIntType> _seeds_pool;
+  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _seeds_pool;
 
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
@@ -672,24 +672,22 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       unordered_map<CoMMAIndexType, CoMMAWeightType> &d_isotropic_fc,
       const CoMMAWeightType threshold_anisotropy,
       const CoMMAIndexType preserving) {
-    // values are the ratio Max to average (ratioArray[iCell]) and keys
-    // the (global) index of the cell. d_anisotropic_fc[ifc]=
-    // max_weight/min_weight
-    CoMMAWeightType min_weight, max_weight, averageWeight;
-
     // Process of every compliant fine cells (it is a member variable, so it is
     // not passed to the function):
     for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
-      min_weight = numeric_limits<CoMMAWeightType>::max();
-      max_weight = 0.0;
-      averageWeight = 0.0;
+      // values are the ratio Max to average (ratioArray[iCell]) and keys
+      // the (global) index of the cell. d_anisotropic_fc[ifc]=
+      // max_weight/min_weight
+      CoMMAWeightType min_weight = numeric_limits<CoMMAWeightType>::max();
+      CoMMAWeightType max_weight = 0.0;
+      CoMMAWeightType averageWeight = 0.0;
 
       // computation of min_weight, max_weight and averageWeight for the current
       // cell i_loc_fc
-      // Process of every faces/Neighboursi and compute for the current cell the
+      // Process every faces/Neighbours and compute for the current cell the
       // neighborhood and the area associated with the neighborhood cells
-      vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
-      vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
+      const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
+      const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
 
       assert(v_neighbours.size() == v_weights.size());
       auto nb_neighbours = v_neighbours.size();
@@ -724,7 +722,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 2) {
         if (max_weight / min_weight >= threshold_anisotropy) {
-          if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 3) {
+          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 3) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
           } else if (nb_neighbours == 4) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
@@ -736,7 +734,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 3) {
         if (max_weight / min_weight >= threshold_anisotropy) {
-          if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 5) {
+          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 5) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
           } else if (nb_neighbours == 6) {
             d_anisotropic_fc[i_fc] = max_weight / averageWeight;
