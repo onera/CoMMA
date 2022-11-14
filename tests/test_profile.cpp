@@ -12,18 +12,20 @@ int main(int argv, char** argc) {
   perfetto::TrackEvent::SetTrackDescriptor(process_track, desc);
   // DualGPy class constructor loads the configuration
   // with the graph and all the variables required
-  // TODO: maybe change to pointer for omogenity
+  // TODO: maybe change to pointer for homogeneity
   TRACE_EVENT_BEGIN("setup", "DualGPy");
   DualGPy Data = DualGPy();
   TRACE_EVENT_END("setup");
   // Construction of the Dual Graph element
 
+  TRACE_EVENT_BEGIN("setup", "Seeds_Pool");
+  Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
+  TRACE_EVENT_END("setup");
   TRACE_EVENT_BEGIN("setup", "Dual_Graph");
   Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph =
       Dual_Graph<TestIndexT, TestWeightT, TestIntT>(Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-                 Data.adjMatrix_areaValues, Data.volumes, Data.d_is_on_bnd,
-                 Data.s_is_on_corner, Data.s_is_on_ridge, Data.s_is_on_valley,
-                 Data.s_anisotropic_compliant_fc, 0);
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.s_anisotropic_compliant_fc);
 
   TRACE_EVENT_END("setup");
   Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph = Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>(fc_graph);

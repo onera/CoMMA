@@ -4,7 +4,7 @@
 int main(int argv, char** argc) {
 
   DualGPy Data = DualGPy();
-    Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
