@@ -1,6 +1,16 @@
-build/
-build2/
-build3/
+# Build related
+build*/
+compile_commands.json
+# Python
+.cache
+# Git stuff
+*.patch
+*.orig
+# Editors
+.vscode
+# Documentation
+documentation
+Doxyfile.bak
 # Prerequisites
 *.d
 

@@ -133,10 +133,6 @@ class Agglomerator {
   /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
   CoMMAIntType _dimension;
-  /** @brief boolean to define if it is anisotropic or not. It is set as default
-   * to false.
-   *  @todo: check if we can get rid of _is_anisotropic variable*/
-  bool _is_anisotropic = false;
   /** @brief minimum number of neighborhood we extend to search the neighborhood
    * in the greedy algorithm. Set as default to 3.*/
   CoMMAIntType _min_neighbourhood = 3;
@@ -214,10 +210,10 @@ class Agglomerator_Anisotropic
                              const CoMMAIntType max_card,
                              bool correction_steps) override {
     // Unused parameters
-    (void)goal_card;
-    (void)min_card;
-    (void)max_card;
-    (void)correction_steps;
+    CoMMAUnused(goal_card);
+    CoMMAUnused(min_card);
+    CoMMAUnused(max_card);
+    CoMMAUnused(correction_steps);
     // if the finest agglomeration line is not computed, hence compute it
     // (REMEMBER! We compute the agglomeration lines
     // only on the finest level, the other one are stored only for visualization
@@ -492,7 +488,7 @@ class Agglomerator_Isotropic
     // We proceed in creating the delayed one
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
-      this->_cc_graph->correct(this->_max_card);
+      this->_cc_graph->correct();
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
@@ -839,7 +835,7 @@ class Agglomerator_Biconnected
    * computes the best fine cells to add to the coarse cell.
    */
   void compute_best_fc_to_add(
-      unordered_set<CoMMAIndexType> fon,
+      const unordered_set<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
@@ -854,7 +850,7 @@ class Agglomerator_Biconnected
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
     // we verify that fon is a sub member of the dict of seeds
-    for (const CoMMAIndexType &i_fc : fon) {
+    for (const CoMMAIndexType &i_fc : neighbors) {
       // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
       if (arg_max_faces_in_common == -1) {
@@ -1195,7 +1191,7 @@ class Agglomerator_Pure_Front
    * computes the best fine cells to add to the coarse cell.
    */
   void compute_best_fc_to_add(
-      unordered_set<CoMMAIndexType> fon,
+      const unordered_set<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
@@ -1210,7 +1206,7 @@ class Agglomerator_Pure_Front
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
     // we verify that fon is a sub member of the dict of seeds
-    for (const CoMMAIndexType &i_fc : fon) {
+    for (const CoMMAIndexType &i_fc : neighbors) {
       // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
       if (arg_max_faces_in_common == -1) {

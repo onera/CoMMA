@@ -21,6 +21,7 @@ CoMMA:
         - cmake ..
         - make
     artifacts:
+        expire_in: 1 month
         paths:
         - build/
 test_a:
@@ -32,6 +33,7 @@ test_a:
         - gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
+        expire_in: 1 month
         reports:
             junit: build/test_a.xml
             coverage_report:
@@ -43,6 +45,7 @@ pages:
         - doxygen Documentation/Doxyfile
         - mv documentation/html/ public/
     artifacts:
+        expire_in: 1 month
         paths:
             - public
     rules:

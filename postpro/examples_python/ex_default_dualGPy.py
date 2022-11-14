@@ -18,7 +18,7 @@ dimension = 2
 ##
 anisotropic = False
 ## Points per edge of the quad/hex
-n = 5
+n = 25
 ## CoMMA parameters
 isFirstAgglomeration = True
 if dimension == 3:
@@ -88,7 +88,10 @@ fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
                               correction, dimension,goalCard,minCard,maxCard)
 
 print("Finalizing")
-agglo = [ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)] if renum \
+# agglo = [ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)] if renum \
+                  # else [fc_to_cc_res]
+# As long as the data is composed of (integer) IDs, the following is equivalent but much faster
+agglo = [(np.asarray(fc_to_cc_res) % renumber_coarse)] if renum \
                   else [fc_to_cc_res]
 
 print(f"Writing in {outname}")
