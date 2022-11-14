@@ -59,6 +59,7 @@ class Seeds_Pool {
   /** @brief Type of priority queue with pairs */
   // A drawback of priority_queue to be aware of: it cannot be looped through
   // A workaround is explained on https://stackoverflow.com/questions/4484767/how-to-iterate-over-a-priority-queue
+  // TODO: Maybe change to the advised make_heap (with vector or deque)
   using CoMMAPriorityQueueType = priority_queue<CoMMAPairType,
                                                 CoMMAContainerPairType,
                                                 CustomPairLessFunctor<CoMMAPairType>>;
