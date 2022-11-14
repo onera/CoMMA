@@ -131,7 +131,7 @@ class Seeds_Pool {
     for (auto prio_q = _l_of_seeds.rbegin(); prio_q != _l_of_seeds.rend(); ++prio_q) {
       for (; !prio_q->empty() && a_is_fc_agglomerated[prio_q->top().first]; prio_q->pop()) {
         // If there still is something and it's already agglomerated, then keep on searching
-        // [Willingly leaving this empty]
+        // [Intentionally leaving this empty]
       }
       if (!prio_q->empty()) {
         const auto seed = prio_q->top().first;

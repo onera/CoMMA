@@ -161,7 +161,7 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
     WHEN("We iterate over the set") {
       vector<CoMMAIntT> fe1 = {3,  2, 0, 0};
       vector<CoMMAIntT> se1 = {0, -1, 0, 1};
-      THEN("The expected order is obtined") {
+      THEN("The expected order is obtained") {
         for (auto it = s.begin(); it != s.end(); ++it) {
           const auto idx = distance(s.begin(), it);
           REQUIRE(it->first()  == fe1[idx]);
@@ -173,12 +173,58 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
       s.emplace(1,4);
       vector<CoMMAIntT> fe2 = {3,  2, 1, 0, 0};
       vector<CoMMAIntT> se2 = {0, -1, 4, 0, 1};
-      THEN("The expected order is obtined") {
+      THEN("The expected order is obtained") {
         for (auto it = s.begin(); it != s.end(); ++it) {
           const auto idx = distance(s.begin(), it);
           REQUIRE(it->first()  == fe2[idx]);
           REQUIRE(it->second() == se2[idx]);
         }
+      }
+    }
+  }
+}
+
+SCENARIO("Test custom pair comparison", "[Pair comparison]") {
+  using PairT = pair<CoMMAIntT, CoMMAIntT>;
+  GIVEN("Some (int,int) pairs in a set with custom 'Greater'") {
+    set<PairT, CustomPairGreaterFunctor<PairT>> s = {{1,0}, {1,0}, {1,3}, {0,3}};
+    WHEN("We have a look at the set:") {
+      THEN("The expected order is obtained") {
+        auto it = s.begin();
+        REQUIRE(it->first  == 0);
+        REQUIRE(it->second == 3);
+        //
+        it++;
+        REQUIRE(it->first  == 1);
+        REQUIRE(it->second == 3);
+        //
+        it++;
+        REQUIRE(it->first  == 1);
+        REQUIRE(it->second == 0);
+      }
+      THEN("Duplicates are not added") {
+        REQUIRE(s.size() == 3);
+      }
+    }
+  }
+  GIVEN("Some (int,int) pairs in a set with custom 'Less'") {
+    set<PairT, CustomPairLessFunctor<PairT>> s = {{1,3}, {1,0}, {1,0}, {0,3}};
+    WHEN("We have a look at the set:") {
+      THEN("The expected order is obtained") {
+        auto it = s.begin();
+        REQUIRE(it->first  == 1);
+        REQUIRE(it->second == 0);
+        //
+        it++;
+        REQUIRE(it->first  == 1);
+        REQUIRE(it->second == 3);
+        //
+        it++;
+        REQUIRE(it->first  == 0);
+        REQUIRE(it->second == 3);
+      }
+      THEN("Duplicates are not added") {
+        REQUIRE(s.size() == 3);
       }
     }
   }
@@ -208,6 +254,45 @@ SCENARIO("Subgraph", "[Subgraph]") {
   };
 }
 
+SCENARIO("Test of the seed pool", "[Seed_Pool]") {
+  GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the numbering") {
+    DualGPy_cube_4 Data = DualGPy_cube_4();
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
+    deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
+    for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
+      switch (Data.n_bnd_faces[i]) {
+        case 3:
+          corners.push_back(i);
+          break;
+        case 2:
+          ridges.push_back(i);
+          break;
+        case 1:
+          valleys.push_back(i);
+          break;
+        case 0:
+          interior.push_back(i);
+          break;
+        default:
+          continue;
+      } /* Switch */
+    } /* For */
+    vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We spoil the seed") {
+      THEN("The order is respected") {
+        for (auto i : corners)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : ridges)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : valleys)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : interior)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+      }
+    }
+  }
+}
+
 SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
     DualGPy_quad_7 Data = DualGPy_quad_7();
@@ -228,38 +313,41 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
       vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v-1].insert(k);
-      THEN("Check order sizes and composition") {
-        // Size
+#define is_in_order(idx, order) neighs[order].count(idx) > 0
+      THEN("Sizes are good") {
         REQUIRE(neighs[0].size() == 4);
         REQUIRE(neighs[1].size() == 8);
         REQUIRE(neighs[2].size() == 12);
-        // First order
-        REQUIRE(neighs[0].count(17) > 0);
-        REQUIRE(neighs[0].count(23) > 0);
-        REQUIRE(neighs[0].count(25) > 0);
-        REQUIRE(neighs[0].count(31) > 0);
-        // Second order
-        REQUIRE(neighs[1].count(10) > 0);
-        REQUIRE(neighs[1].count(16) > 0);
-        REQUIRE(neighs[1].count(18) > 0);
-        REQUIRE(neighs[1].count(22) > 0);
-        REQUIRE(neighs[1].count(26) > 0);
-        REQUIRE(neighs[1].count(30) > 0);
-        REQUIRE(neighs[1].count(32) > 0);
-        REQUIRE(neighs[1].count(38) > 0);
-        // Third order
-        REQUIRE(neighs[2].count(3) > 0);
-        REQUIRE(neighs[2].count(9) > 0);
-        REQUIRE(neighs[2].count(11) > 0);
-        REQUIRE(neighs[2].count(15) > 0);
-        REQUIRE(neighs[2].count(19) > 0);
-        REQUIRE(neighs[2].count(21) > 0);
-        REQUIRE(neighs[2].count(27) > 0);
-        REQUIRE(neighs[2].count(29) > 0);
-        REQUIRE(neighs[2].count(33) > 0);
-        REQUIRE(neighs[2].count(37) > 0);
-        REQUIRE(neighs[2].count(39) > 0);
-        REQUIRE(neighs[2].count(45) > 0);
+      }
+      THEN("First order is good") {
+        REQUIRE(is_in_order(17,0));
+        REQUIRE(is_in_order(23,0));
+        REQUIRE(is_in_order(25,0));
+        REQUIRE(is_in_order(31,0));
+      }
+      THEN("Second order is good") {
+        REQUIRE(is_in_order(10,1));
+        REQUIRE(is_in_order(16,1));
+        REQUIRE(is_in_order(18,1));
+        REQUIRE(is_in_order(22,1));
+        REQUIRE(is_in_order(26,1));
+        REQUIRE(is_in_order(30,1));
+        REQUIRE(is_in_order(32,1));
+        REQUIRE(is_in_order(38,1));
+      }
+      THEN("Third order is good") {
+        REQUIRE(is_in_order(3,2));
+        REQUIRE(is_in_order(9,2));
+        REQUIRE(is_in_order(11,2));
+        REQUIRE(is_in_order(15,2));
+        REQUIRE(is_in_order(19,2));
+        REQUIRE(is_in_order(21,2));
+        REQUIRE(is_in_order(27,2));
+        REQUIRE(is_in_order(29,2));
+        REQUIRE(is_in_order(33,2));
+        REQUIRE(is_in_order(37,2));
+        REQUIRE(is_in_order(39,2));
+        REQUIRE(is_in_order(45,2));
       }
     } // WHEN PREVIOUS AGGLOMERATION
     WHEN("We compute neighborhood of cell 24 (cell 10,16, 28-to-34 agglomerated)") {
@@ -273,27 +361,30 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
       vector< set<CoMMAIndexT> > neighs = vector< set<CoMMAIndexT> >(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v-1].insert(k);
-      THEN("Check order sizes and composition") {
-        // Size
+      THEN("Sizes are good") {
         REQUIRE(neighs[0].size() == 3);
         REQUIRE(neighs[1].size() == 3);
         REQUIRE(neighs[2].size() == 5);
-        // First order
-        REQUIRE(neighs[0].count(17) > 0);
-        REQUIRE(neighs[0].count(23) > 0);
-        REQUIRE(neighs[0].count(25) > 0);
-        // Second order
-        REQUIRE(neighs[1].count(18) > 0);
-        REQUIRE(neighs[1].count(22) > 0);
-        REQUIRE(neighs[1].count(26) > 0);
-        // Third order
-        REQUIRE(neighs[2].count(11) > 0);
-        REQUIRE(neighs[2].count(15) > 0);
-        REQUIRE(neighs[2].count(19) > 0);
-        REQUIRE(neighs[2].count(21) > 0);
-        REQUIRE(neighs[2].count(27) > 0);
+      }
+      THEN("First order is good") {
+        REQUIRE(is_in_order(17,0));
+        REQUIRE(is_in_order(23,0));
+        REQUIRE(is_in_order(25,0));
+      }
+      THEN("Second order is good") {
+        REQUIRE(is_in_order(18,1));
+        REQUIRE(is_in_order(22,1));
+        REQUIRE(is_in_order(26,1));
+      }
+      THEN("Third order is good") {
+        REQUIRE(is_in_order(11,2));
+        REQUIRE(is_in_order(15,2));
+        REQUIRE(is_in_order(19,2));
+        REQUIRE(is_in_order(21,2));
+        REQUIRE(is_in_order(27,2));
       }
     } // WHEN PREVIOUS AGGLOMERATION
+#undef is_in_order
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
  #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()

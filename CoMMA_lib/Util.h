@@ -50,17 +50,22 @@ struct CustomPairLessFunctor {
   }
 };
 
-/** @brief Functor for pairs implementing a custom 'greater than'. It relies on
- * CustomPairLessFunctor, indeed it just returns its negation
+/** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
+ * 'greater than' operator for the second elements and 'less than' for the first ones.
  *  @tparam CoMMAPairType type of pair
  *  @param[in] p First pair
  *  @param[in] q Second pair
- *  @return Negation of CustomPairLessFunctor(p,q)
+ *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
+ * false otherwise
  */
 template<typename CoMMAPairType>
 struct CustomPairGreaterFunctor {
   inline bool operator() (CoMMAPairType p, CoMMAPairType q) const {
-    return !CustomPairLessFunctor<CoMMAPairType>()(p,q);
+    // I tried this: return !CustomPairLessFunctor<CoMMAPairType>()(p,q);
+    // but it didn't work well for equality
+    if      (p.second > q.second)   return true;
+    else if (p.second < q.second)   return false;
+    else /* p.second == q.second */ return p.first < q.first;
   }
 };
 
