@@ -393,15 +393,17 @@ class Agglomerator_Isotropic
   /** @brief Destructor*/
   ~Agglomerator_Isotropic() {};
 
-  /** @brief Set up the parameters related to the cardinality limits according to
-   * to the parameters passed by the user
-   * @param[in] goal_card goal cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   * @param[in] min_card minimum cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   * @param[in] max_card maximum cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   **/
+  /** @brief The task of the function is to set the parameters of
+   * determine the cardinality limits with respect to the parameters passed
+   * @param[in] goal_card goal cardinality of the coarse cell (set as default to
+   * -1 indicating in our case
+   * the maximum value)
+   * @param[in] min_card minimum cardinality of the coarse cell(set as default
+   * to -1 indicating in our case
+   * the maximum value)
+   * @param[in] max_card maximum cardinality of the coarse cell(set as default
+   * to -1 indicating in our case
+   * the maximum value)*/
   void set_agglomeration_parameter(CoMMAIntType goal_card = -1,
                                    CoMMAIntType min_card  = -1,
                                    CoMMAIntType max_card  = -1) {
@@ -422,6 +424,7 @@ class Agglomerator_Isotropic
     } else {
       this->_min_card = min_card;
     }
+
     // Definition of _max_card
     if (max_card == -1) {
       this->_max_card = d_default_max_card.at(this->_dimension);
@@ -434,6 +437,7 @@ class Agglomerator_Isotropic
     } else {
       this->_goal_card = goal_card;
     }
+
     // Definition of _threshold_card
     this->_threshold_card = d_default_threshold_card.at(this->_dimension);
   }
