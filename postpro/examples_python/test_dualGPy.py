@@ -7,7 +7,7 @@ import numpy as np
 import networkx as nx
 
 points = [
-    [0.0, 0.0], 
+    [0.0, 0.0],
     [1.0, 0.0],
     [0.0, 1.0],
     [1.0, 1.0],
@@ -71,7 +71,8 @@ volumes = np.array(Mesh1.volume,dtype='double')
 print("row ptr len:", len(adjMatrix_row_ptr))
 print("col ind len:", len(adjMatrix_col_ind))
 print("vol len:", len(volumes))
-isOnBnd = np.array(Mesh1.boundary_cells,dtype='long')
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = 'double')
+isOnBnd = np.array(mesh.boundary_cells, dtype=int)
 print("bound_cells:", len(Mesh1.boundary_cells))
 array_isOnRidge=np.array(Mesh1.onRidge,dtype='long')
 array_isOnValley=np.array(Mesh1.onValley, dtype='long')
@@ -96,7 +97,7 @@ threshold_anisotropy = 4.
 iso_agglo_type = 1
 
 
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,iso_agglo_type,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,verbose)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,weights,arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,iso_agglo_type,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,verbose)
 
 
 fine_cells_triangle = []
