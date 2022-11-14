@@ -389,38 +389,51 @@ class Agglomerator_Isotropic
   /** @brief Destructor*/
   ~Agglomerator_Isotropic() {};
 
-  /** @brief Set up the parameters related to the cardinality limits according to
-   * to the parameters passed by the user
-   * @param[in] goal_card goal cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   * @param[in] min_card minimum cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   * @param[in] max_card maximum cardinality of the coarse cell (default = -1,
-    indicating the use of the default value)
-   **/
+  /** @brief The task of the function is to set the parameters of
+   * determine the cardinality limits with respect to the parameters passed
+   * @param[in] goal_card goal cardinality of the coarse cell (set as default to
+   * -1 indicating in our case
+   * the maximum value)
+   * @param[in] min_card minimum cardinality of the coarse cell(set as default
+   * to -1 indicating in our case
+   * the maximum value)
+   * @param[in] max_card maximum cardinality of the coarse cell(set as default
+   * to -1 indicating in our case
+   * the maximum value)*/
   void set_agglomeration_parameter(CoMMAIntType goal_card = -1,
-                                   CoMMAIntType min_card  = -1,
-                                   CoMMAIntType max_card  = -1) {
+                                   CoMMAIntType min_card = -1,
+                                   CoMMAIntType max_card = -1) {
+    unordered_map<CoMMAIntType, CoMMAIntType> d_default_min_card = {{2, 3},
+                                                                    {3, 6}};
+    unordered_map<CoMMAIntType, CoMMAIntType> d_default_max_card = {{2, 5},
+                                                                    {3, 10}};
+    unordered_map<CoMMAIntType, CoMMAIntType> d_default_goal_card = {{2, 4},
+                                                                     {3, 8}};
+    unordered_map<CoMMAIntType, CoMMAIntType> d_default_threshold_card = {
+        {2, 2}, {3, 3}};
+
     // Definition of _min_card
     if (min_card == -1) {
-      this->_min_card = this->_d_default_min_card.at(this->_dimension);
+      this->_min_card = d_default_min_card[this->_dimension];
     } else {
       this->_min_card = min_card;
     }
+
     // Definition of _max_card
     if (max_card == -1) {
-      this->_max_card = this->_d_default_max_card.at(this->_dimension);
+      this->_max_card = d_default_max_card[this->_dimension];
     } else {
       this->_max_card = max_card;
     }
     // Definition of _goal_card
     if (goal_card == -1) {
-      this->_goal_card = this->_d_default_goal_card.at(this->_dimension);
+      this->_goal_card = d_default_goal_card[this->_dimension];
     } else {
       this->_goal_card = goal_card;
     }
+
     // Definition of _threshold_card
-    this->_threshold_card = this->_d_default_threshold_card.at(this->_dimension);
+    this->_threshold_card = d_default_threshold_card[this->_dimension];
   }
 
   /** @brief Specialization of the pure virtual function to the class
@@ -562,16 +575,6 @@ class Agglomerator_Isotropic
    */
   virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness) = 0;
-protected:
-    static const inline unordered_map<CoMMAIntType, CoMMAIntType>
-                          _d_default_min_card = {{2, 3}, {3, 6}};
-    static const inline unordered_map<CoMMAIntType, CoMMAIntType>
-                          _d_default_max_card = {{2, 5}, {3, 10}};
-    static const inline unordered_map<CoMMAIntType, CoMMAIntType>
-                          _d_default_goal_card = {{2, 4}, {3, 8}};
-    static const inline unordered_map<CoMMAIntType, CoMMAIntType>
-                          _d_default_threshold_card = {{2, 2}, {3, 3}};
-
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
