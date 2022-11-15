@@ -255,7 +255,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
 }
 
 SCENARIO("Test of the seed pool", "[Seed_Pool]") {
-  GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the numbering") {
+  GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the cell numbering") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
@@ -272,6 +272,44 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
           break;
         case 0:
           interior.push_back(i);
+          break;
+        default:
+          continue;
+      } /* Switch */
+    } /* For */
+    vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We spoil the seed") {
+      THEN("The order is respected") {
+        for (auto i : corners)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : ridges)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : valleys)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+        for (auto i : interior)
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+      }
+    }
+  }
+  GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
+    DualGPy_cube_4 Data = DualGPy_cube_4();
+    vector<CoMMAWeightT> w(Data.nb_fc);
+    iota(w.begin(), w.end(), 0);
+    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, w);
+    deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
+    for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
+      switch (Data.n_bnd_faces[i]) {
+        case 3:
+          corners.push_front(i);
+          break;
+        case 2:
+          ridges.push_front(i);
+          break;
+        case 1:
+          valleys.push_front(i);
+          break;
+        case 0:
+          interior.push_front(i);
           break;
         default:
           continue;
