@@ -120,19 +120,27 @@ if len(m.mesh.cells) > 1:
 else:
     agglo = [fine_cells_renum]
 
-dic = {}
 f2c = np.asarray(fc_to_cc_res, dtype=int)
-# For every line...
-for i in range(len(alines_Idx)-1):
-    mask = np.full(len(fc_to_cc_res), False)
-    # For every coarse cell in the line...
-    for cc in alines[alines_Idx[i]:alines_Idx[i+1]]:
-        # Take all the fine cells that are in the coarse cell
-        mask |= f2c == cc
-    dic[i] = np.flatnonzero(mask)
+# Building a dictionary 'aniso line ID' : [fine cells in line]
+# One-liner:
+dic = { i: np.flatnonzero(
+                np.isin(f2c, alines[alines_Idx[i]:alines_Idx[i+1]])) \
+        for i in range(len(alines_Idx)-1)
+}
+# Second option, better explained
+# dic = {}
+# # For every line...
+# for i in range(len(alines_Idx)-1):
+    # mask = np.full(len(fc_to_cc_res), False)
+    # # For every coarse cell in the line...
+    # for cc in alines[alines_Idx[i]:alines_Idx[i+1]]:
+        # # Take all the fine cells that are in the coarse cell
+        # mask |= f2c == cc
+    # dic[i] = np.flatnonzero(mask)
+
 line_draw = "test_lines.png"
 print(f"Drawing graph and lines in {line_draw}")
-m.draw_aggl_lines(line_draw, dic, -0.02, 2.02, -0.02, 2.02, show_axes = False)
+m.draw_aggl_lines(line_draw, dic, -0.02, 4.02, -0.02, 2.02, show_axes = False)
 
 print(f"Writing in {outname}")
 meshio.Mesh(
