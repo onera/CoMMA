@@ -1,4 +1,7 @@
-"""Create a mesh with the default constructor of dualGPy, agglomerate with CoMMA and export the result."""
+"""Goals: show how to use `dualGPy` to create a Cartesian-like mesh and agglomerate it with `CoMMA`
+
+Create a mesh with the default constructor of `dualGPy, agglomerate with `CoMMA` and export the result.
+"""
 from CoMMA import *
 import meshio
 from dualGPy.Graph import Graph2D
@@ -26,7 +29,7 @@ if dimension == 3:
 else:
     minCard, goalCard, maxCard = 4, 4, 4
 correction = False
-threshold_anisotropy = .25
+threshold_anisotropy = 4.
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 
 # Output-related parameters

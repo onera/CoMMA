@@ -1,6 +1,6 @@
-"""Create a mesh with the default constructor of dualGPy, apply several levels of agglomeration with CoMMA and export the result.
+"""Goals: show how to agglomerate several consecutive times the same mesh.
 
-Goal: show how to agglomerate several consecutive times the same mesh.
+Create a mesh with the default constructor of `dualGPy`, apply several levels of agglomeration with `CoMMA` and export the result.
 """
 from CoMMA import *
 import meshio
@@ -29,7 +29,7 @@ if dimension == 3:
 else:
     minCard, goalCard, maxCard = 4, 4, 4
 correction = False
-threshold_anisotropy = .25
+threshold_anisotropy = 4.
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 agglomeration_levels = 3
 

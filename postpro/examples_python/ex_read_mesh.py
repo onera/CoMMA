@@ -1,6 +1,9 @@
-"""Read an existing mesh via meshio, agglomerate with CoMMA and export the result
+"""Goals: show how to read an existing mesh with `meshio` and agglomerate it with
+`CoMMA`; show how to treat meshes with more than one element-type
+
+Read an existing mesh via `meshio`, agglomerate with `CoMMA` and export the result
 Features: A special case of VTK output is used if hybrid mesh with multi-elements
-(e.g. quads *and* tetras as in raebis)
+(e.g. quads *and* tetras as in `raebis`)
 """
 from CoMMA import *
 import meshio
@@ -32,7 +35,7 @@ if dimension == 3:
 else:
     minCard, goalCard, maxCard = 4, 4, 4
 correction = False
-threshold_anisotropy = .25
+threshold_anisotropy = 4.
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 
 # Output-related parameters
