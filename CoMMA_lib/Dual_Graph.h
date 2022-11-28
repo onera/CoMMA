@@ -452,13 +452,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAIndexType> &m_crs_col_ind,
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
+             const vector<vector<CoMMAWeightType>> &centers,
              const Seeds_Pool<CoMMAIndexType, CoMMAIntType> &seeds_pool,
              const CoMMAIntType dimension,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _seeds_pool(seeds_pool) {
+        _seeds_pool(seeds_pool), _centers(centers) {
     if (s_anisotropic_compliant_fc.size() > 0) {
       _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
@@ -492,6 +493,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief List of deque containing the anisotropic lines*/
   vector<deque<CoMMAIndexType> *> _lines;
 
+  /** @brief Vector of cell centers */
+  vector<vector<CoMMAWeightType>> _centers;
+  
   /** @brief Function which computes the aspect-ratio from the minimum and maximum
    * faces
    *  In 3D: \f$ AR = sqrt(max_{surf} / min_{surf}) \f$

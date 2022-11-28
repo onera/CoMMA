@@ -75,10 +75,10 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Agglomerator {
  public:
-  /** @brief Function which computes the aspect-ratio from a surface and a volume
-   *  In 3D: \f$ AR = (surf_{CC})^{3/2} / vol_{CC} \f$
-   *  In 2D: \f$ AR = surf_{CC}^2 / vol_{CC} \f$
-   *  (Recall that in 2D the surface is the perimeter and the volume is the surface)
+  /** @brief Function which computes the aspect-ratio from a diameter and a volume
+   *  In 3D: \f$ AR = diam_{CC} / \sqrt{vol_{CC}} \f$
+   *  In 2D: \f$ AR = diam_{CC} / \sqrt[3]{vol_{CC}} \f$
+   *  (Recall that in 2D the volume is the surface)
   */
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
 
@@ -96,12 +96,12 @@ class Agglomerator {
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
-      _compute_AR = [](const CoMMAWeightType perim, const CoMMAWeightType area)
-                        -> CoMMAWeightType { return perim*perim / area; };
+      _compute_AR = [](const CoMMAWeightType diam, const CoMMAWeightType area)
+                        -> CoMMAWeightType { return diam / sqrt(area); };
     } else {
       _min_neighbourhood = 3;
-      _compute_AR = [](const CoMMAWeightType surf, const CoMMAWeightType vol)
-                        -> CoMMAWeightType { return sqrt(surf*surf*surf) / vol; };
+      _compute_AR = [](const CoMMAWeightType diam, const CoMMAWeightType vol)
+                        -> CoMMAWeightType { return diam / cbrt(vol); };
     }
     _l_nb_of_cells.push_back(graph._number_of_cells);
   }
@@ -517,56 +517,44 @@ class Agglomerator_Isotropic
    * features are Aspect-Ratio and number of face shared with other cells already
    * agglomerated (Current coarse cell means without i_fc)
    *  @param[in] i_fc Index of the fine cell to add to the coarse cell
-   *  @param[in] cc_surf Surface of the current coarse cell
+   *  @param[in] cc_diam (Approximation of the) Diameter of the current coarse cell
    *  @param[in] cc_vol Volume of the current coarse cell
    *  @param[in] fc_of_cc Index of the fine cells already agglomerated in the coarse
    *  cell
    *  @param[out] shared_faces Number of faces shared by the fine cell with the
    *  current coarse cell
    *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
+   *  @param[out] new_diam (Approximation of the) Diameter of the (final) coarse cell
+   *  @param[out] new_vol Volume of the (final) coarse cell
    */
   inline void compute_next_cc_features(const CoMMAIndexType i_fc,
-    const CoMMAWeightType cc_surf, const CoMMAWeightType cc_vol,
+    const CoMMAWeightType cc_diam, const CoMMAWeightType cc_vol,
     const unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
     CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio,
-    CoMMAWeightType &new_surf, CoMMAWeightType &new_vol) {
-
+    CoMMAWeightType &new_diam, CoMMAWeightType &new_vol) {
+    // Compute shared faces
     shared_faces = 0;
-    new_surf = cc_surf;
-    vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
-    vector<CoMMAWeightType> v_weights = this->_fc_graph.get_weights(i_fc);
-    assert(v_neighbours.size() == v_weights.size());
-
-    for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
-
-      const CoMMAIndexType i_fc_n = v_neighbours[i_n];
-      const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-
-      if (i_fc_n == i_fc) {
-        // This can never happen!!! -> See below
-        // Boundary surface
-        new_surf += i_w_fc_n;
-      } else if (fc_of_cc.count(i_fc_n) == 0) {
-        // i_fc_n is not yet in CC -> ext surface
-        new_surf += i_w_fc_n;
-      } else {
-        new_surf -= i_w_fc_n;
+    const vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
+    for (const auto i_n : v_neighbours) {
+      if (i_n != i_fc && (fc_of_cc.count(i_n) != 0))
         shared_faces++;
-      }
     }
 
-    const CoMMAIntType n_bdry_f =
-      (this->_fc_graph._seeds_pool).get_n_boundary_faces(i_fc);
-    if (n_bdry_f > 0) {
-      new_surf += n_bdry_f * this->estimate_boundary_face(v_weights);
-    }
+    // Compute new diameter
+    const vector<CoMMAWeightType>& cen_fc = this->_fc_graph._centers[i_fc];
+    CoMMAWeightType max_diam = cc_diam;
+    for (const auto i_fc_cc : fc_of_cc) {
+      const CoMMAWeightType d = euclidean_distance<CoMMAWeightType>(
+          cen_fc, this->_fc_graph._centers[i_fc_cc]);
+      if (d > max_diam)
+        max_diam = d;
+    } // for i_fc_cc
+    new_diam = max_diam;
 
-    // Return parameters
     new_vol = cc_vol + this->_fc_graph._volumes[i_fc];
-    // AR is the non-dimensional ratio between the surface and the volume
-    aspect_ratio = this->_compute_AR(new_surf, new_vol);
 
+    aspect_ratio = this->_compute_AR(new_diam, new_vol);
   }
 
   /** @brief Pure virtual function that must be implemented in child classes to
@@ -676,16 +664,8 @@ class Agglomerator_Biconnected
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
       CoMMAIntType min_size = this->_goal_card;
-      // Computation of the initial aspect ratio: we need cc_surf: i.e. the
-      // external area (perimeter in 2D and sum of external faces in 3D) and
-      // volume
-      CoMMAWeightType cc_surf = accumulate(neighbours_weights.begin(),
-          neighbours_weights.begin(), CoMMAWeightType{0});
-      const CoMMAIntType n_bdry_f =
-        (this->_fc_graph._seeds_pool).get_n_boundary_faces(seed);
-      if (n_bdry_f > 0) {
-        cc_surf += n_bdry_f * this->estimate_boundary_face(neighbours_weights);
-      }
+      // Computation of the initial aspect ratio
+      CoMMAWeightType diam_cc{-1.};
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
@@ -725,15 +705,15 @@ class Agglomerator_Biconnected
       while (size_current_cc < max_ind) {
         // argmin_ar is the best fine cell to add
         CoMMAIndexType argmin_ar = -1;
-        CoMMAWeightType min_ar_surf = numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType min_ar_diam = numeric_limits<CoMMAWeightType>::max();
         CoMMAWeightType min_ar_vol = numeric_limits<CoMMAWeightType>::max();
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
-        compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, cc_surf,
+        compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
                                vol_cc, s_current_cc, argmin_ar,  // output
-                               max_faces_in_common, min_ar_surf, min_ar_vol);
+                               max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
@@ -765,8 +745,8 @@ class Agglomerator_Biconnected
           dict_cc_in_creation[size_current_cc] = p;
         }
 
-        // Update of cc_surf and vol_cc with the new fc added
-        cc_surf = min_ar_surf;
+        // Update of diam_cc and vol_cc with the new fc added
+        diam_cc = min_ar_diam;
         vol_cc = min_ar_vol;
 
         // Remove added fc from the available neighbours
@@ -860,11 +840,11 @@ class Agglomerator_Biconnected
   void compute_best_fc_to_add(
       const unordered_set<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
-      const bool &is_order_primary, const CoMMAWeightType &cc_surf,
+      const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
       const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
       CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
-      CoMMAWeightType &min_ar_surf, CoMMAWeightType &min_ar_vol) {
+      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) {
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
@@ -883,13 +863,11 @@ class Agglomerator_Biconnected
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightT new_ar_surf = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_diam = numeric_limits<CoMMAWeightType>::min();
       CoMMAWeightT new_ar_vol = numeric_limits<CoMMAWeightType>::min();
-      this->compute_next_cc_features(i_fc, cc_surf,
-          vol_cc,
-          s_of_fc_for_current_cc,
+      this->compute_next_cc_features(i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
           // out
-          number_faces_in_common, new_ar, new_ar_surf, new_ar_vol);
+          number_faces_in_common, new_ar, new_ar_diam, new_ar_vol);
 
       // Neighborhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the
@@ -915,7 +893,7 @@ class Agglomerator_Biconnected
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
-                min_ar_surf = new_ar_surf;
+                min_ar_diam = new_ar_diam;
                 min_ar_vol = new_ar_vol;
 
                 arg_max_faces_in_common = i_fc;
@@ -927,7 +905,7 @@ class Agglomerator_Biconnected
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
-              min_ar_surf = new_ar_surf;
+              min_ar_diam = new_ar_diam;
               min_ar_vol = new_ar_vol;
               // The number of face in common is the same no need to touch it
             }
@@ -939,7 +917,7 @@ class Agglomerator_Biconnected
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
-          min_ar_surf = new_ar_surf;
+          min_ar_diam = new_ar_diam;
           min_ar_vol = new_ar_vol;
         }
       }
@@ -1042,16 +1020,8 @@ class Agglomerator_Pure_Front
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
       CoMMAIntType min_size = this->_goal_card;
-      // Computation of the initial aspect ratio: we need cc_surf: i.e. the
-      // external area (perimeter in 2D and sum of external faces in 3D) and
-      // volume
-      CoMMAWeightType cc_surf = accumulate(neighbours_weights.begin(),
-          neighbours_weights.begin(), CoMMAWeightType{0});
-      const CoMMAIntType n_bdry_f =
-        (this->_fc_graph._seeds_pool).get_n_boundary_faces(seed);
-      if (n_bdry_f > 0) {
-        cc_surf += n_bdry_f * this->estimate_boundary_face(neighbours_weights);
-      }
+      // Computation of the initial aspect ratio
+      CoMMAWeightType diam_cc{-1.};
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
@@ -1091,15 +1061,15 @@ class Agglomerator_Pure_Front
       while (size_current_cc < max_ind) {
         // argmin_ar is the best fine cell to add
         CoMMAIndexType argmin_ar = -1;
-        CoMMAWeightType min_ar_surf = numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType min_ar_diam = numeric_limits<CoMMAWeightType>::max();
         CoMMAWeightType min_ar_vol = numeric_limits<CoMMAWeightType>::max();
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
-        compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, cc_surf,
+        compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
                                vol_cc, s_current_cc, argmin_ar,  // output
-                               max_faces_in_common, min_ar_surf, min_ar_vol);
+                               max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
@@ -1131,8 +1101,8 @@ class Agglomerator_Pure_Front
           dict_cc_in_creation[size_current_cc] = p;
         }
 
-        // Update of cc_surf and vol_cc with the new fc added
-        cc_surf = min_ar_surf;
+        // Update of diam_cc and vol_cc with the new fc added
+        diam_cc = min_ar_diam;
         vol_cc = min_ar_vol;
 
         // Remove added fc from the available neighbours
@@ -1226,11 +1196,11 @@ class Agglomerator_Pure_Front
   void compute_best_fc_to_add(
       const unordered_set<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
-      const bool &is_order_primary, const CoMMAWeightType &cc_surf,
+      const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
       const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
       CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
-      CoMMAWeightType &min_ar_surf, CoMMAWeightType &min_ar_vol) {
+      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) {
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
@@ -1249,13 +1219,11 @@ class Agglomerator_Pure_Front
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightT new_ar_surf = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightT new_ar_diam = numeric_limits<CoMMAWeightType>::min();
       CoMMAWeightT new_ar_vol = numeric_limits<CoMMAWeightType>::min();
-      this->compute_next_cc_features(i_fc, cc_surf,
-          vol_cc,
-          s_of_fc_for_current_cc,
+      this->compute_next_cc_features(i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
           // out
-          number_faces_in_common, new_ar, new_ar_surf, new_ar_vol);
+          number_faces_in_common, new_ar, new_ar_diam, new_ar_vol);
 
       // Neighborhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the
@@ -1281,7 +1249,7 @@ class Agglomerator_Pure_Front
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
-                min_ar_surf = new_ar_surf;
+                min_ar_diam = new_ar_diam;
                 min_ar_vol = new_ar_vol;
 
                 arg_max_faces_in_common = i_fc;
@@ -1293,7 +1261,7 @@ class Agglomerator_Pure_Front
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
-              min_ar_surf = new_ar_surf;
+              min_ar_diam = new_ar_diam;
               min_ar_vol = new_ar_vol;
               // The number of face in common is the same no need to touch it
             }
@@ -1305,7 +1273,7 @@ class Agglomerator_Pure_Front
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
-          min_ar_surf = new_ar_surf;
+          min_ar_diam = new_ar_diam;
           min_ar_vol = new_ar_vol;
         }
       }
