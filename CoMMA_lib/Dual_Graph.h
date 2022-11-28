@@ -487,15 +487,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
 
-  /** @brief Anisotropic lines list size*/
-  CoMMAIntType _lines_size = 0;
-
-  /** @brief List of deque containing the anisotropic lines*/
-  vector<deque<CoMMAIndexType> *> _lines;
-
   /** @brief Vector of cell centers */
   vector<vector<CoMMAWeightType>> _centers;
-  
+
   /** @brief Function which computes the aspect-ratio from the minimum and maximum
    * faces
    *  In 3D: \f$ AR = sqrt(max_{surf} / min_{surf}) \f$
