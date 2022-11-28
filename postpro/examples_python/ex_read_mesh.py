@@ -92,7 +92,7 @@ agglomerationLines = np.array([0], dtype = 'long')
 
 print("CoMMA call")
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
-        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy, isotropic_agglo,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
