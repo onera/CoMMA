@@ -23,7 +23,7 @@ SCENARIO("Test of a structure", "[structure]") {
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     // Check the effective length
@@ -158,7 +158,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
@@ -244,7 +244,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
@@ -307,7 +307,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
@@ -456,7 +456,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 3,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -578,7 +578,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     Seeds_Pool<CoMMAIndexT,CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -629,7 +629,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         REQUIRE(fccc[15]== 1);
       }
     }
-    
+
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_PF_graph(fc_graph);
     auto agg_PF =
       make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -638,7 +638,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(4, 4, 4, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        // Nothing changes with respect to the case of the standard Biconnected 
+        // Nothing changes with respect to the case of the standard Biconnected
         // We have a trick that make it work as it should
         auto fccc = cc_PF_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
@@ -749,12 +749,13 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 3,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+    const CoMMAWeightT aniso_thresh{2.};
     shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
         make_shared<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-            fc_graph, cc_graph, 4, 3);
+            fc_graph, cc_graph, aniso_thresh, 3);
     // I progress with the downcasting to get the anisotropic lines
     shared_ptr<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>
         agg_dyn = dynamic_pointer_cast<
@@ -776,7 +777,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -812,7 +813,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(

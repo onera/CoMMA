@@ -300,7 +300,7 @@ class Agglomerator_Anisotropic
       // TODO here is necessary for the cc_create_a_cc but maybe we need in
       // some way to change that.
       const bool is_anisotropic = true;
-      for (auto deqIt = begin; deqIt != end; deqIt += 2) {
+      for (auto line_it = begin; line_it != end; line_it += 2) {
         // we agglomerate cells along the agglomeration line, hence we have to
         // go through the faces and agglomerate two faces together, getting to
         // cardinal 2
@@ -310,11 +310,11 @@ class Agglomerator_Anisotropic
         // Here we have to consider the two different case in which we have an
         // odd number of cells.
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
-        unordered_set<CoMMAIndexType> s_fc = {*deqIt, *(deqIt + 1)};
-        if (distance(deqIt, end) == 3) {
+        unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+        if (distance(line_it, end) == 3) {
           // If only three cells left, agglomerate them
-          s_fc.insert(*(deqIt + 2));
-          deqIt++;
+          s_fc.insert(*(line_it + 2));
+          line_it++;
         }
         // We create the coarse cell
         const CoMMAIndexType i_cc =

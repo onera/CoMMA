@@ -95,22 +95,12 @@ void agglomerate_one_level(  // Dual graph:
 
   // DUAL GRAPH
   //======================================
-  // It is built the dual graph class through the constructor. To see it look at
-  // DualGraph.hpp and DualGraph.cpp
   // fc = Fine Cells
-  assert(dimension < USHRT_MAX);
+  assert(dimension == 2 || dimension == 3);
   Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, seeds_pool, s_anisotropic_compliant_fc);
-  // Debug
-  //    vector<double> maxArray(nb_fc, 0.0);
-  //    unordered_map<long, double> d_anisotropic_fc;
-  //    unordered_map<long, double> d_isotropic_fc;
-  //    //             // ration between the face with maximum area and the face
-  // with minimum area
-  //    //                 // is more than 4.
-  //    fc_graph.compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
+      volumes, seeds_pool, dimension, s_anisotropic_compliant_fc);
   Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cc_graph(
       fc_graph);
   // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
@@ -128,15 +118,11 @@ void agglomerate_one_level(  // Dual graph:
     shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
         agg1 = make_shared<Agglomerator_Anisotropic<
             CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            fc_graph, cc_graph, threshold_anisotropy, dimension = dimension);
-    //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-    //                                    cc_graph,
-    //                                    dimension = dimension);
+            fc_graph, cc_graph, threshold_anisotropy, dimension);
     CoMMAIndexType nb_agglomeration_lines = 0;
     vector<deque<CoMMAIndexType> *> agglomeration_lines;
     // case in which we have already agglomerated one level and hence we have
-    // already agglomeration
-    // lines available; no need to recreate them.
+    // already agglomeration lines available; no need to recreate them.
     if (!isFirstAgglomeration) {
       correction = false;
       auto fineAgglomerationLines_array_Idx_size =
@@ -148,9 +134,6 @@ void agglomerate_one_level(  // Dual graph:
         deque<CoMMAIndexType> *dQue =
             new deque<CoMMAIndexType>(agglomerationLines.begin() + ind,
                                       agglomerationLines.begin() + indPOne);
-        // for (long j = ind; j < indPOne; j++) {
-        //     (*dQue).push_back(agglomerationLines[j]);
-        // }
         agglomeration_lines.push_back(dQue);
         nb_agglomeration_lines++;
       }
@@ -175,12 +158,12 @@ void agglomerate_one_level(  // Dual graph:
   if (type_of_isotropic_agglomeration==CoMMAAgglT::BICONNECTED){
     agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension = dimension);
+        fc_graph, cc_graph, dimension);
   }
   else {
     agg = make_unique<
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension = dimension);
+        fc_graph, cc_graph, dimension);
   }
   agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
   // Agglomerate
