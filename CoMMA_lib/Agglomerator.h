@@ -328,15 +328,15 @@ class Agglomerator_Anisotropic
     }; // End lambda def
 
     // Process of every agglomeration lines:
-    for (auto fLIt = this->_v_lines[0].begin(); fLIt != this->_v_lines[0].end();
-         fLIt++) {
+    for (auto line_ptr = this->_v_lines[0].begin(); line_ptr != this->_v_lines[0].end();
+         line_ptr++) {
       // We iterate on the anisotropic lines of a particular level (the level 1,
       // where they were copied from level 0.
       // We create a pointer to an empty deque for the line + 1, and hence for
       // the next level of agglomeration
       // We check the line size for the pointed line by the iterator
-      //     CoMMAIndexType line_size = (**fLIt).size();
-      auto actual_deque = **fLIt;
+      //     CoMMAIndexType line_size = (**line_ptr).size();
+      auto actual_deque = **line_ptr;
       if (actual_deque.size() <= 1) {
         // the agglomeration_line is empty and hence the iterator points again
         // to the empty deque, updating what is pointed by it and hence __v_lines[1]
@@ -443,12 +443,10 @@ class Agglomerator_Isotropic
    * The function must be called later by the derived class
    * Agglomerator_Biconnected and Agglomerator Triconnected in order to
    * specialize the implementation of the choose optimal_cc. For further
-   * information
-   * about the structure, have a look at :
+   * information about the structure, have a look at :
    * http://www.cplusplus.com/forum/general/31851/
    * The pseudo-code considers the while function and the agglomeration
-   * process is not completed until all the cells are not
-   * agglomerated. Hence:
+   * process is not completed until all the cells are not agglomerated. Hence:
    * - we choose a new seed
    * - we check with a specific algorithm the neighbouring cells to
    * agglomerate to the seed

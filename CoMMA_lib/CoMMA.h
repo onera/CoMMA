@@ -131,10 +131,10 @@ void agglomerate_one_level(  // Dual graph:
            i--) {
         CoMMAIndexType ind = agglomerationLines_Idx[i];
         CoMMAIndexType indPOne = agglomerationLines_Idx[i + 1];
-        deque<CoMMAIndexType> *dQue =
+        deque<CoMMAIndexType> *new_line =
             new deque<CoMMAIndexType>(agglomerationLines.begin() + ind,
                                       agglomerationLines.begin() + indPOne);
-        agglomeration_lines.push_back(dQue);
+        agglomeration_lines.push_back(new_line);
         nb_agglomeration_lines++;
       }
     }

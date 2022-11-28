@@ -543,9 +543,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // seed to be considered to add or not a new cell to the line
       CoMMAIndexType seed = primal_seed;
       // Create the new line
-      auto dQue = new deque<CoMMAIndexType>();
+      auto cur_line = new deque<CoMMAIndexType>();
       // we add the first seed
-      dQue->push_back(seed);
+      cur_line->push_back(seed);
       has_been_treated[seed] = true;
       // Flag to determine end of line
       bool end = false;
@@ -576,9 +576,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         if (candidates.size() == 1) {
           // we can add to the actual deque
           if (!opposite_direction_check) {
-            dQue->push_back(candidates[0]);
+            cur_line->push_back(candidates[0]);
           } else {
-            dQue->push_front(candidates[0]);
+            cur_line->push_front(candidates[0]);
           }
           // update the seed to the actual candidate
           seed = candidates[0];
@@ -598,7 +598,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
               // if has not been treated, the opposite direction flag
               // is not active? ==> push back
               if (!opposite_direction_check) {
-                dQue->push_back(element);
+                cur_line->push_back(element);
                 seed = element;
                 has_been_treated[element] = true;
                 // It break otherwise we risk to add 2 (problematic with primal
@@ -607,7 +607,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
                 // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
                 break;
               } else {  // if it is active push front
-                dQue->push_front(element);
+                cur_line->push_front(element);
                 seed = element;
                 has_been_treated[element] = true;
                 break;
@@ -627,8 +627,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       }
       // we push the deque to the list if are bigger than 1
-      if (dQue->size() > 1) {
-        lines.push_back(dQue);
+      if (cur_line->size() > 1) {
+        lines.push_back(cur_line);
         lines_size++;
       }
     }
