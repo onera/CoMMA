@@ -199,7 +199,12 @@ class Agglomerator_Anisotropic
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Anisotropic() {};
+  ~Agglomerator_Anisotropic() {
+    for (auto line : _v_lines[0])
+      delete line;
+    for (auto line : _v_lines[1])
+      delete line;
+  };
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
