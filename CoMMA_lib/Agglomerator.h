@@ -225,11 +225,7 @@ class Agglomerator_Anisotropic
     // purpose
     if (this->_v_lines[0].empty()) {
       // The anisotropic lines are only computed on the original (finest) mesh.
-      CoMMAIndexType nb_agglomeration_lines(0);
-      this->_v_lines[0] = this->_fc_graph.compute_anisotropic_line(
-          this->_threshold_anisotropy,
-          nb_agglomeration_lines);  // finest level!!!
-      this->_v_nb_lines[0] = nb_agglomeration_lines;
+      this->compute_anisotropic_line();  // finest level!!!
     }
     // In case the if is not realized, this is not the first generation of a
     // coarse level.
@@ -359,6 +355,133 @@ class Agglomerator_Anisotropic
       else
         loop_line(actual_deque.rbegin(), actual_deque.rend());
 
+    }
+  }
+
+  /** @brief Computes the anisotropic lines at the first level (only called at
+   * the first level of agglomeration). Two main steps are performed:
+   * 1) Look for anisotropic cells (via the dual graph)
+   * 2) Build anisotropic lines
+   */
+  void compute_anisotropic_line() {
+    // it is computed in d_anisotropic_fc as the max_weight, hence the maximum
+    // area among the faces composing the cell.
+    vector<CoMMAWeightType> maxArray(this->_fc_graph._number_of_cells, 0.0);
+    unordered_set<CoMMAIndexType> anisotropic_fc;
+    // Computation of the anisotropic cell , alias of the cells for which the
+    // ratio between the face with maximum area and the face with minimum area
+    // is more than a given threshold.
+    this->_fc_graph.compute_anisotropic_fc(maxArray, anisotropic_fc,
+                                           _threshold_anisotropy, 0);
+    // Map to address if the cell has been added to a line
+    unordered_map<CoMMAIndexType, bool> has_been_treated;
+    for (auto &i_fc : anisotropic_fc) {
+      has_been_treated[i_fc] = false;
+    }
+    // size of the line
+    this->_v_nb_lines[0] = 0;
+    // we cycle on all the anisotropic cells identified before
+    for (auto &i_fc : anisotropic_fc) {
+      // seed from where we start the deck
+      if (has_been_treated[i_fc]) {
+        // If the cell has been already treated, continue to the next
+        // anisotropic cell in the unordered map
+        continue;
+      }
+      // we save the primal seed for the opposite direction check that will
+      // happen later
+      const auto primal_seed = i_fc;
+      // seed to be considered to add or not a new cell to the line
+      CoMMAIndexType seed = primal_seed;
+      // Create the new line
+      auto cur_line = new deque<CoMMAIndexType>();
+      // we add the first seed
+      cur_line->push_back(seed);
+      has_been_treated[seed] = true;
+      // Flag to determine end of line
+      bool end = false;
+      // Flag to determine if we arrived at the end of an extreme of a line
+      bool opposite_direction_check = false;
+      // Start the check from the seed
+      // while the line is not ended
+      while (!end) {
+        // for the seed (that is updated each time end!= true) we fill the
+        // neighbours and the weights
+        const vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(seed);
+        const vector<CoMMAWeightType> v_w_neighbours = this->_fc_graph.get_weights(seed);
+        // vector of the candidates to continue the line
+        vector<CoMMAIndexType> candidates;
+        for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
+          if (v_neighbours[i] != seed
+              // Avoid the seed (it should not happen, but better safe than sorry)
+                and anisotropic_fc.count(v_neighbours[i]) != 0
+                // if anisotropic cell...
+                  and v_w_neighbours[i] > 0.90 * maxArray[seed]
+                  // ...and if along the max interface...
+                      and !has_been_treated[v_neighbours[i]]
+                ) {  // ...and if not treated
+            candidates.push_back(v_neighbours[i]);
+          }
+        }  // end for loop
+        // case we have only 1 candidate to continue the line
+        if (candidates.size() == 1) {
+          // we can add to the actual deque
+          if (!opposite_direction_check) {
+            cur_line->push_back(candidates[0]);
+          } else {
+            cur_line->push_front(candidates[0]);
+          }
+          // update the seed to the actual candidate
+          seed = candidates[0];
+          // the candidate (new seed) has been treated
+          has_been_treated[seed] = true;
+        }
+        // case we have more than one candidate
+        else if (candidates.size() > 1) {
+          // we cycle on candidates
+          /** @todo Not properly efficient. We risk to do twice the operations
+           * (we overwrite the seed. This is not proper **/
+          for (auto &element : candidates) {
+            // if has been treated ==> we check the next candidate
+            if (has_been_treated[element]) {
+              continue;
+            } else {
+              // if has not been treated, the opposite direction flag
+              // is not active? ==> push back
+              if (!opposite_direction_check) {
+                cur_line->push_back(element);
+                seed = element;
+                has_been_treated[element] = true;
+                // It break otherwise we risk to add 2 (problematic with primal
+                // seed)
+                // It is what is done in Mavriplis
+                // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
+                break;
+              } else {  // if it is active push front
+                cur_line->push_front(element);
+                seed = element;
+                has_been_treated[element] = true;
+                break;
+              }
+              // we update the seed and the has been treated
+            }
+          }
+        }  // end elseif
+        // 0 candidate, we are at the end of the line or at the end of one direction
+        else /*if (candidates.size() == 0)*/ {
+          if (opposite_direction_check) {
+            end = true;
+          } else {
+            seed = primal_seed;
+            opposite_direction_check = true;
+          }
+        }
+      }
+      // we push the deque to the list if are bigger than 1
+      if (cur_line->size() > 1) {
+        this->_v_lines[0].push_back(cur_line);
+        this->_v_nb_lines[0] += 1;
+      }
     }
   }
 
