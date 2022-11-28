@@ -1,7 +1,7 @@
 """Goals: show how to draw with `dualGPy` anisotropic lines obtained by `CoMMA`.
 
-This script create a small handmade 2D mesh with a block of anisotropic cells
-at the bottom, agglomerates and draw the mesh including the computed
+This script creates a small handmade 2D mesh with a block of anisotropic cells
+at the bottom, then agglomerates it and draws the mesh including the computed
 anisotropic lines using the related features of `dualGPy`.
 """
 from CoMMA import *
