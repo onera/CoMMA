@@ -25,9 +25,10 @@
 
 #include <cmath>
 #include <functional>
+#include <iterator>
+#include <memory>
 #include <numeric>
 #include <stdexcept>
-#include <iterator>
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell_Container.h"
@@ -167,6 +168,13 @@ class Agglomerator_Anisotropic
     : public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   // Constructor
  public:
+
+  /** @brief Container for an anisotropic line */
+  using AnisotropicLine = deque<CoMMAIndexType>;
+
+  /** @brief (Shared) Pointer to an anisotropic line */
+  using AnisotropicLinePtr = shared_ptr<deque<CoMMAIndexType>>;
+
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and
    * in this way activates also the constructor of the base class.*/
@@ -189,7 +197,7 @@ class Agglomerator_Anisotropic
     this->_v_of_s_anisotropic_compliant_fc[0] =
         this->_fc_graph._s_anisotropic_compliant_cells;
     this->_v_nb_lines = vector<CoMMAIndexType>(2);
-    this->_v_lines = vector<vector<deque<CoMMAIndexType> *>>(2);
+    this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
 
     assert(threshold_anisotropy > 0);
     this->_threshold_anisotropy =
@@ -199,12 +207,7 @@ class Agglomerator_Anisotropic
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Anisotropic() {
-    for (auto line : _v_lines[0])
-      delete line;
-    for (auto line : _v_lines[1])
-      delete line;
-  };
+  ~Agglomerator_Anisotropic() {};
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
@@ -284,7 +287,7 @@ class Agglomerator_Anisotropic
   * forward list : identifier of the line
   * deque : line cells
   * e.g _v_lines[0] --> agglomeration lines at the finest level*/
-  vector<vector<deque<CoMMAIndexType> *>> _v_lines;
+  vector<vector<AnisotropicLinePtr>> _v_lines;
 
  protected:
   /** @brief Function that for the current agglomerator, it creates the coarse
@@ -297,7 +300,7 @@ class Agglomerator_Anisotropic
     // want to loop forwards or backwards according to some runtime value
     // See, e.g., https://stackoverflow.com/a/56133699/12152457
     auto loop_line = [&](auto begin, auto end) {
-      deque<CoMMAIndexType> *line_lvl_p_one = new deque<CoMMAIndexType>();
+      AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
       // TODO here is necessary for the cc_create_a_cc but maybe we need in
       // some way to change that.
       const bool is_anisotropic = true;
@@ -394,7 +397,7 @@ class Agglomerator_Anisotropic
       // seed to be considered to add or not a new cell to the line
       CoMMAIndexType seed = primal_seed;
       // Create the new line
-      auto cur_line = new deque<CoMMAIndexType>();
+      AnisotropicLinePtr cur_line = make_shared<AnisotropicLine>();
       // we add the first seed
       cur_line->push_back(seed);
       has_been_treated[seed] = true;

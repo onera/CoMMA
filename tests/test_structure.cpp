@@ -727,16 +727,19 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     const CoMMAWeightT aniso_thresh{2.};
+
+    using AnisotropicAgglomerator = Agglomerator_Anisotropic<
+            CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
+    using AnisotropicLinePtr = typename AnisotropicAgglomerator::AnisotropicLinePtr;
+
     shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
-        make_shared<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-            fc_graph, cc_graph, aniso_thresh, 3);
+        make_shared<AnisotropicAgglomerator>(fc_graph, cc_graph, aniso_thresh, 3);
     // I progress with the downcasting to get the anisotropic lines
-    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>
-        agg_dyn = dynamic_pointer_cast<
-            Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(agg1);
+    shared_ptr<AnisotropicAgglomerator> agg_dyn =
+                          dynamic_pointer_cast<AnisotropicAgglomerator>(agg1);
     // We setup the structures to gather the agglomeration lines
     CoMMAIndexT nb_agglomeration_lines = 0;
-    vector<deque<CoMMAIndexT> *> agglomeration_lines;
+    vector<AnisotropicLinePtr> agglomeration_lines;
     // We pass the structures to the level 0
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;

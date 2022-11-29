@@ -116,43 +116,55 @@ void agglomerate_one_level(  // Dual graph:
   // https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
   if (is_anisotropic) {
 
+    using AnisotropicAgglomerator = Agglomerator_Anisotropic<
+            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+    using AnisotropicLine    = typename AnisotropicAgglomerator::AnisotropicLine;
+    using AnisotropicLinePtr = typename AnisotropicAgglomerator::AnisotropicLinePtr;
+
     shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
-        agg1 = make_shared<Agglomerator_Anisotropic<
-            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            fc_graph, cc_graph, threshold_anisotropy, dimension);
+        agg1 = make_shared<AnisotropicAgglomerator>(fc_graph, cc_graph,
+            threshold_anisotropy, dimension);
     CoMMAIndexType nb_agglomeration_lines = 0;
-    vector<deque<CoMMAIndexType> *> agglomeration_lines;
+    vector<AnisotropicLinePtr> agglomeration_lines{};
     // case in which we have already agglomerated one level and hence we have
     // already agglomeration lines available; no need to recreate them.
     if (!isFirstAgglomeration) {
       correction = false;
-      auto fineAgglomerationLines_array_Idx_size =
-          agglomerationLines_Idx.size();
-      for (CoMMAIndexType i = fineAgglomerationLines_array_Idx_size - 2; i > -1;
-           i--) {
-        CoMMAIndexType ind = agglomerationLines_Idx[i];
-        CoMMAIndexType indPOne = agglomerationLines_Idx[i + 1];
-        deque<CoMMAIndexType> *new_line =
-            new deque<CoMMAIndexType>(agglomerationLines.begin() + ind,
-                                      agglomerationLines.begin() + indPOne);
-        agglomeration_lines.push_back(new_line);
+#if 0
+A brief remark about what follows: It used to be something like:
+for (CoMMAIndexType i = agglomerationLines_Idx.size() - 2; i > -1; i--) {
+  new_line = deque<CoMMAIndexType>(agglomerationLines.begin() + agglomerationLines_Idx[i],
+                                   agglomerationLines.begin() + agglomerationLines_Idx[i + 1]);
+}
+However, if CoMMAIndexType were to be *unsigned*, then i > -1 (or i >=0) would lead
+to an infinite loop. So we had to switch to pointers, and backwards ones since we loop
+starting from the end.
+With indices, we are used to constructions like "from idx[i] to idx[i + 1]". However,
+using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
+#endif
+      for (auto idx_ptr = agglomerationLines_Idx.rbegin() + 1;
+           idx_ptr != agglomerationLines_Idx.rend(); idx_ptr++) {
+        agglomeration_lines.push_back(
+            make_shared<AnisotropicLine>(
+              agglomerationLines.begin() + (*idx_ptr),
+              agglomerationLines.begin() + (*(idx_ptr - 1))
+            )
+        );
         nb_agglomeration_lines++;
       }
     }
-    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType,
-                                        CoMMAIntType>> agg_dyn =
-        dynamic_pointer_cast<Agglomerator_Anisotropic<
-            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(agg1);
+    shared_ptr<AnisotropicAgglomerator> agg_dyn =
+        dynamic_pointer_cast<AnisotropicAgglomerator>(agg1);
     agg_dyn->_v_lines[0] = agglomeration_lines;
     agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
     agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, false);
     // level of the line: WARNING! here 1 it means that we give it back lines in
-    // the new global
-    // index, 0 the old
+    // the new global index, 0 the old
     CoMMAIntType i_level = 1;
     agg_dyn->get_agglo_lines(i_level, agglomerationLines_Idx,
                              agglomerationLines);
   }
+
   // We define here the type of Agglomerator
   IsotropicPtr<CoMMAIndexType, CoMMAWeightType,CoMMAIntType> agg = nullptr;
   // TODO: maybe pass to a switch when another agglomerator will be implemented
