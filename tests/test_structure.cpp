@@ -727,39 +727,36 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     const CoMMAWeightT aniso_thresh{2.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  3);
 
-    using AnisotropicAgglomerator = Agglomerator_Anisotropic<
-            CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
-    using AnisotropicLinePtr = typename AnisotropicAgglomerator::AnisotropicLinePtr;
-
-    shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
-        make_shared<AnisotropicAgglomerator>(fc_graph, cc_graph, aniso_thresh, 3);
-    // I progress with the downcasting to get the anisotropic lines
-    shared_ptr<AnisotropicAgglomerator> agg_dyn =
-                          dynamic_pointer_cast<AnisotropicAgglomerator>(agg1);
-    // We setup the structures to gather the agglomeration lines
-    CoMMAIndexT nb_agglomeration_lines = 0;
-    vector<AnisotropicLinePtr> agglomeration_lines;
-    // We pass the structures to the level 0
-    agg_dyn->_v_lines[0] = agglomeration_lines;
-    agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
-         agg_dyn->agglomerate_one_level(2, 2, 2, false);
-      THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
+         aniso_agg.agglomerate_one_level(2, 2, 2, false);
+      THEN("We have a number of agglomeration lines != 0") {REQUIRE(aniso_agg._nb_lines[0]!=0);}
     }
   };
   GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
     DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
     Seeds_Pool<CoMMAIndexT, CoMMAIntT> seeds_pool(Data.nb_fc, Data.d_is_on_bnd);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
-    auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-            fc_graph, cc_graph, aniso_thresh, Data.dim);
-    agg->agglomerate_one_level(4, 4, 4, false);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  Data.dim);
+    aniso_agg.agglomerate_one_level(4, 4, 4, false);
     WHEN("We agglomerate the mesh") {
       const auto f2c = cc_graph._fc_2_cc;
       THEN("There is only one isotropic coarse cell") {
