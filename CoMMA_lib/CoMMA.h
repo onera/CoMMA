@@ -23,9 +23,16 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <numeric>
+#include <type_traits>
+
 #include "Agglomerator.h"
 #include "templateHelpers.h"
 #include "CoMMATypes.h"
+
+#define check_signed_int_type(intT, label) \
+  static_assert(is_signed<intT>::value && numeric_limits<intT>::is_integer, \
+      "CoMMA works with signed integer types, but " #intT " (" label ") is not")
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -70,6 +77,9 @@ void agglomerate_one_level(  // Dual graph:
 
   // SANITY CHECKS
   //======================================
+  // We sometimes rely on -1 as default parameters (@TODO: could it be changed?)
+  check_signed_int_type(CoMMAIndexType, "first template argument");
+  check_signed_int_type(CoMMAIntT, "third template argument");
   assert(dimension == 2 || dimension == 3);
 
   // SIZES CAST
@@ -171,4 +181,5 @@ void agglomerate_one_level(  // Dual graph:
     fc_to_cc[i_fc] = fccc[i_fc];
   }
 }
+#undef check_signed_int_type
 #endif
