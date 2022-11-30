@@ -137,9 +137,6 @@ void agglomerate_one_level(  // Dual graph:
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
                   dimension);
 
-    if (!isFirstAgglomeration)
-      correction = false; // Not sure about this...
-
     // Agglomerate anisotropic cells only
     aniso_agg.agglomerate_one_level(min_card, goal_card, max_card, false);
 
