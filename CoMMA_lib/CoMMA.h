@@ -63,10 +63,17 @@ void agglomerate_one_level(  // Dual graph:
     // Args with default value
     bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
     CoMMAIntType min_card, CoMMAIntType max_card) {
+  // NOTATION
+  //======================================
+  // fc = Fine Cell
+  // cc = Coarse Cell
+
+  // SANITY CHECKS
+  //======================================
+  assert(dimension == 2 || dimension == 3);
 
   // SIZES CAST
   //======================================
-  // number of faces
   const CoMMAIndexType nb_fc =
       static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
@@ -86,22 +93,29 @@ void agglomerate_one_level(  // Dual graph:
   }
   // ANISOTROPIC COMPLIANT FC
   //======================================
-  // Elements that is checked if they are anisotropic.
-  // e.g : in case of CODA software are passed all the children, and hence all
-  // the source elements of the
-  // previous agglomeration process.
+  // Elements that are checked if they are anisotropic. If an element satisfies
+  // the condition for being anisotropic (typically, AR > threshold) but it not
+  // in this set, it will not considered as anisotropic.
+  // We use a set to ensure uniqueness
   unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(
       arrayOfFineAnisotropicCompliantCells.begin(),
       arrayOfFineAnisotropicCompliantCells.end());
 
+  // SEED POOL
+  //======================================
+  // Object providing the order of agglomeration
+  Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
+
   // DUAL GRAPH
   //======================================
-  // fc = Fine Cells
-  assert(dimension == 2 || dimension == 3);
-  Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
+  // Object containing the graph representation and related info in a convenient structure
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
       volumes, centers, seeds_pool, dimension, s_anisotropic_compliant_fc);
+
+  // COARSE CELL CONTAINER
+  //======================================
+  // Preparing the object that will contain all the coarse cells
   Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cc_graph(
       fc_graph);
 
