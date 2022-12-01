@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <limits>
 #include <climits>
+#include <functional>
 
 #include "Seeds_Pool.h"
 
@@ -72,7 +73,7 @@ class Graph {
         _m_CRS_Values(m_crs_values),
         _volumes(volumes) {
     _visited.resize(_number_of_cells);
-    std::fill(_visited.begin(), _visited.end(), false);
+    fill(_visited.begin(), _visited.end(), false);
   }
 
   ~Graph() {}
@@ -154,7 +155,7 @@ class Graph {
    *  @param[in] i_c index of the cell
    *  @return number of neighbors of the given cell.
    */
-  CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) {
+  inline CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) const {
     // Return the number of neighbours of the ith cell
     return _m_CRS_Row_Ptr[i_c + 1] - _m_CRS_Row_Ptr[i_c];
   }
@@ -258,9 +259,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     _cardinality = nb_c;
   }
 
-  ~Subgraph() {
-    //      cout << "Delete Dual_Graph" << endl;
-  }
+  ~Subgraph() {}
 
   /** @brief it originates from an isotropic cell.*/
   bool _is_isotropic;
@@ -444,7 +443,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    *  @param[in] seeds_pool The seeds pool structure
-   *  @param[in]  s_anisotropic_compliant_fc set of compliant fc cells (in the
+   *  @param[in] s_anisotropic_compliant_fc set of compliant fc cells (in the
    * most of the case all)
    */
   Dual_Graph(const CoMMAIndexType &nb_c,
@@ -452,14 +451,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAIndexType> &m_crs_col_ind,
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
+             const vector<vector<CoMMAWeightType>> &centers,
              const Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+             const CoMMAIntType dimension,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _seeds_pool(seeds_pool) {
-    // We check that effectively in the dictionary we have recorded cells with
-    // boundaries
+        _seeds_pool(seeds_pool), _centers(centers) {
     if (s_anisotropic_compliant_fc.size() > 0) {
       _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
@@ -468,14 +467,18 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         _s_anisotropic_compliant_cells.insert(i);
       }
     }
+
+    // Function to compute the aspect-ratio
+    _compute_AR = dimension == 2 ?
+        [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
+                        -> CoMMAWeightType { return max_s / min_s; } :
+        [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
+                        //-> CoMMAWeightType { return max_s / min_s; };
+                        -> CoMMAWeightType { return sqrt(max_s / min_s); };
   }
 
-  /** @brief Destructor of the class
-   *
-   */
-  ~Dual_Graph() {
-    //        cout << "Delete Dual_Graph" << endl;
-  }
+  /** @brief Destructor of the class */
+  ~Dual_Graph() {}
 
   /** @brief Member seeds pool variable */
   Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _seeds_pool;
@@ -483,208 +486,41 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
 
-  /** @brief Anisotropic lines list size*/
-  CoMMAIntType _lines_size = 0;
+  /** @brief Vector of cell centers */
+  vector<vector<CoMMAWeightType>> _centers;
 
-  /** @brief List of deque containing the anisotropic lines*/
-  vector<deque<CoMMAIndexType> *> _lines;
+  /** @brief Function which computes the aspect-ratio from the minimum and maximum
+   * faces
+   *  In 3D: \f$ AR = sqrt(max_{surf} / min_{surf}) \f$
+   *  In 2D: \f$ AR = max_{surf} / min_{surf} \f$
+   *  (Recall that in 2D a face is actually an edge)
+   */
+  function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
 
-  /** @brief Computes the anisotropic lines at the first level (only called at
-   * the first level of agglomeration)
-   *  @param[in] threshold_anisotropy Value of the aspect ration above which a
-   *  cell is considered anisotropic
-   *  @param[in/out] nb_agglomeration_lines number of the agglomeration lines
-   *  @return a forward list of pointers to the deque representing the lines
-  */
-  vector<deque<CoMMAIndexType> *> compute_anisotropic_line(
-      const CoMMAWeightType threshold_anisotropy,
-      CoMMAIndexType &nb_agglomeration_lines) {
-    /**
-     * The goal of this function is :
-     * - firstly to look for anisotropic cells through the use of
-     * d_anisotropic_fc
-     * - secondly build anisotropic lines
-     */
-
-    // it is computed in d_anisotropic_fc as the max_weight, hence the maximum
-    // area among the faces composing the cell.
-    vector<CoMMAWeightType> maxArray(this->_number_of_cells, 0.0);
-    unordered_map<CoMMAIndexType, CoMMAWeightType> d_anisotropic_fc;
-    unordered_map<CoMMAIndexType, CoMMAWeightType> d_isotropic_fc;
-    // Map to address if the cell has been added to a line
-    unordered_map<CoMMAIndexType, bool> has_been_treated;
-    // Computation of the anisotropic cell , alias of the cells for which the
-    // ratio between the face with maximum area and the face with minimum area
-    // is more than 4. It is a method of the class.
-    compute_d_anisotropic_fc(maxArray, d_anisotropic_fc, d_isotropic_fc,
-                             threshold_anisotropy, 0);
-    // Initialization of the map: for each anisotropic cell
-    // we check if has been analyzed or not
-    for (auto &it : d_anisotropic_fc) {
-      has_been_treated[it.first] = false;
-    }
-    // seed to be considered to add or not a new cell to the line
-    CoMMAIndexType seed = 0;
-    // to determine end of line
-    bool end = false;
-    // to determine if we arrived at the end of an extreme of a line
-    bool opposite_direction_check = false;
-    // size of the line
-    CoMMAIndexType lines_size = 0;
-    // vector of the candidates to continue the line
-    vector<CoMMAIndexType> candidates;
-    // vector of deques containing the lines
-    vector<deque<CoMMAIndexType> *> lines;
-    // vector of neighbours to the seed
-    vector<CoMMAIndexType> v_neighbours;
-    // vector of weight (face area) that connects to the seed neighborhood
-    vector<CoMMAWeightType> v_w_neighbours;
-    // we cycle on all the anisotropic cells identified before
-    for (auto &it : d_anisotropic_fc) {
-      // seed from where we start the deck
-      if (has_been_treated[it.first]) {
-        // If the cell has been already treated, continue to the next
-        // anisotropic cell in the unordered map
-        continue;
-      }
-      // we save the primal seed for the opposite direction check that will
-      // happen later
-      auto primal_seed = it.first;
-      // we initialize the seed at the beginning of each line
-      seed = primal_seed;
-      // Create the new line
-      auto dQue = new deque<CoMMAIndexType>();
-      // we add the first seed
-      (*dQue).push_back(seed);
-      has_been_treated[seed] = true;
-      // Start the check from the seed
-      // while the line is not ended
-      while (!end) {
-        // for the seed (that is updated each time end!= true) we fill the
-        // neighbours and the weights
-        v_neighbours = this->get_neighbours(seed);
-        v_w_neighbours = this->get_weights(seed);
-        for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-          // we check if in the neighbours there is the seed (it should not
-          // happen, but we prevent like this mistakes)
-          if (v_neighbours[i] == seed) {
-            continue;
-          }
-          if (d_anisotropic_fc.count(v_neighbours[i]) != 0
-              // if anisotropic cell...
-                  and v_w_neighbours[i] > 0.75 * maxArray[seed]
-                  // ...and if along the max interface...
-                      and !has_been_treated[v_neighbours[i]]
-                ) {  // ...and if not treated
-            candidates.push_back(v_neighbours[i]);
-          }
-        }  // end for loop
-        // case we have only 1 candidate to continue the line
-        if (candidates.size() == 1) {
-          // we can add to the actual deque
-          if (!opposite_direction_check) {
-            (*dQue).push_back(candidates[0]);
-          } else {
-            (*dQue).push_front(candidates[0]);
-          }
-          // update the seed to the actual candidate
-          seed = candidates[0];
-          // the candidate (new seed) has been treated
-          has_been_treated[seed] = true;
-        }
-        // case we have more than one candidate
-        else if (candidates.size() > 1) {
-          // we cycle on candidates
-          /** @todo Not properly efficient. We risk to do twice the operations
-           * (we
-           * overwrite the seed. This is not proper **/
-          for (auto &element : candidates) {
-            // if has been treated ==> we check the next candidate
-            if (has_been_treated[element]) {
-              continue;
-            } else {
-              // if has not been treated, the opposite direction flag
-              // is not active? ==> push back
-              if (!opposite_direction_check) {
-                (*dQue).push_back(element);
-                seed = element;
-                has_been_treated[element] = true;
-                // It break otherwise we risk to add 2 (problematic with primal
-                // seed)
-                // It is what is done in Mavriplis
-                // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
-                break;
-              } else {  // if it is active push front
-                (*dQue).push_front(element);
-                seed = element;
-                has_been_treated[element] = true;
-                break;
-              }
-              // we update the seed and the has been treated
-            }
-          }
-        }  // end elseif
-        // 0 candidate, we are at the end of the line or at the end of one direction
-        else if (candidates.size() == 0) {
-          if (opposite_direction_check) {
-            end = true;
-          } else {
-            seed = primal_seed;
-            opposite_direction_check = true;
-          }
-        }
-        // we clear the candidates and the neighbours value for the next seed
-        candidates.clear();
-        v_w_neighbours.clear();
-        v_neighbours.clear();
-      }
-      // we initialize the flags
-      end = false;
-      opposite_direction_check = false;
-      // we push the deque to the list if are bigger than 1
-      if ((*dQue).size() > 1) {
-        lines.push_back(dQue);
-        lines_size++;
-      }
-    }
-    nb_agglomeration_lines = lines_size;
-    return lines;
-  };
-
-  /** @brief Computes the dictionary of the anisotropic fine cells eligible for
-   * the agglomeration lines
+  /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
+   * threshold
    *  @param[out] maxArray Array of the maximum weight: the biggest area of the
    * faces composing the given fine cell
-   *  @param[out] d_anisotropic_fc dictionary (unordered_map) storing the
-   * eligible anisotropic cells and the respective ratio between the max_weight
-   * and the min_weight
-   *  @param[out] d_isotropic_fc the same as the anisotropic but for the
-   * isotropic cells
+   *  @param[out] anisotropic_fc Set of fine cells tagged as anisotropic
    *  @param[in] threshold_anisotropy Value of the aspect ration above which a
    *  cell is considered anisotropic
    *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
-  void compute_d_anisotropic_fc(
+  void compute_anisotropic_fc(
       vector<CoMMAWeightType> &maxArray,
-      unordered_map<CoMMAIndexType, CoMMAWeightType> &d_anisotropic_fc,
-      unordered_map<CoMMAIndexType, CoMMAWeightType> &d_isotropic_fc,
+      unordered_set<CoMMAIndexType> &anisotropic_fc,
       const CoMMAWeightType threshold_anisotropy,
       const CoMMAIndexType preserving) {
     // Process of every compliant fine cells (it is a member variable, so it is
     // not passed to the function):
     for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
-      // values are the ratio Max to average (ratioArray[iCell]) and keys
-      // the (global) index of the cell. d_anisotropic_fc[ifc]=
-      // max_weight/min_weight
       CoMMAWeightType min_weight = numeric_limits<CoMMAWeightType>::max();
       CoMMAWeightType max_weight = 0.0;
-      CoMMAWeightType averageWeight = 0.0;
 
-      // computation of min_weight, max_weight and averageWeight for the current
-      // cell i_loc_fc
-      // Process every faces/Neighbours and compute for the current cell the
+      // computation of min_weight, max_weight for the current cell
+      // Process of every faces/Neighbours and compute for the current cell the
       // neighborhood and the area associated with the neighborhood cells
       const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
       const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
@@ -692,11 +528,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       assert(v_neighbours.size() == v_weights.size());
       auto nb_neighbours = v_neighbours.size();
 
-      for (auto i_n = decltype(v_neighbours.size()){0}; i_n < v_neighbours.size(); i_n++) {
-        CoMMAIndexType i_fc_n = v_neighbours[i_n];
-        CoMMAWeightType i_w_fc_n = v_weights[i_n];
-        if (i_fc_n != i_fc) {  // to avoid special case where the boundary value
-                               // are stored
+      for (auto i_n = decltype(nb_neighbours){0}; i_n < nb_neighbours; i_n++) {
+        // to avoid special case where the boundary value are stored
+        if (v_neighbours[i_n] != i_fc) {
+          const CoMMAWeightType i_w_fc_n = v_weights[i_n];
           if (max_weight < i_w_fc_n) {
             max_weight = i_w_fc_n;
           }
@@ -706,46 +541,35 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         } else {
           nb_neighbours--;
         }
-
-        averageWeight += i_w_fc_n / (CoMMAWeightType)(nb_neighbours);
       }
+
       maxArray[i_fc] = max_weight;
+      // Compute the aspect-ratio and add cell to list if necessary
+      const auto ar = _compute_AR(min_weight, max_weight);
       if (preserving == 0) {
         // Anisotropy criteria for the line Admissibility
-        if (max_weight / min_weight >= threshold_anisotropy) {
+        if (ar >= threshold_anisotropy) {
           // If the ratio is more than the given threshold of the biggest with the
-          // smallest cell, add it to the dictionary where I store the ratio between
-          // the max and the average
-          d_anisotropic_fc[i_fc] = max_weight / averageWeight;
-        } else {
-          d_isotropic_fc[i_fc] = max_weight / averageWeight;
+          // smallest cell, add it
+          anisotropic_fc.insert(i_fc);
         }
       } else if (preserving == 2) {
-        if (max_weight / min_weight >= threshold_anisotropy) {
+        if (ar >= threshold_anisotropy) {
           if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 3) {
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+            anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 4) {
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
-          } else {
-            d_isotropic_fc[i_fc] = max_weight / averageWeight;
+            anisotropic_fc.insert(i_fc);
           }
-        } else {
-          d_isotropic_fc[i_fc] = max_weight / averageWeight;
         }
       } else if (preserving == 3) {
-        if (max_weight / min_weight >= threshold_anisotropy) {
+        if (ar >= threshold_anisotropy) {
           if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 5) {
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
+            anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 6) {
-            d_anisotropic_fc[i_fc] = max_weight / averageWeight;
-          } else {
-            d_isotropic_fc[i_fc] = max_weight / averageWeight;
           }
-        } else {
-          d_isotropic_fc[i_fc] = max_weight / averageWeight;
         }
       }
-    }
+    } // End for compliant cells
   }
 
   /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
@@ -753,7 +577,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   *   @return the compactness of the fine cell
   */
   CoMMAIntType compute_min_fc_compactness_inside_a_cc(
-      unordered_set<CoMMAIndexType> &s_fc) {
+      unordered_set<CoMMAIndexType> &s_fc) const {
     // Compute Compactness of a cc
     // Be careful: connectivity is assumed
     if (s_fc.size() > 1) {
@@ -762,7 +586,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       if (dict_fc_compactness.empty()) {
         return 0;
       }
-      CoMMAIntType min_comp = USHRT_MAX;
+      CoMMAIntType min_comp = numeric_limits<CoMMAIntType>::max();
       for (auto &i_k_v : dict_fc_compactness) {
         if (i_k_v.second < min_comp) {
           min_comp = i_k_v.second;
@@ -781,14 +605,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   * compactness
   */
   unordered_map<CoMMAIndexType, CoMMAIntType>
-  compute_fc_compactness_inside_a_cc(unordered_set<CoMMAIndexType> &s_fc) {
+  compute_fc_compactness_inside_a_cc(unordered_set<CoMMAIndexType> &s_fc) const {
     unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
     if (s_fc.size() > 1) {
 
       // for every fc constituting a cc
       for (const CoMMAIndexType &i_fc : s_fc) {
 
-        vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
+        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
         for (const CoMMAIndexType &i_fc_n : v_neighbours) {
           if ((s_fc.count(i_fc_n) > 0) && (i_fc != i_fc_n)) {
             if (dict_fc_compactness.count(i_fc) > 0) {
@@ -805,10 +629,12 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     }
     return dict_fc_compactness;
   }
+
   /** @brief Getter that returns the number of cells
- *    @return number of cells
- */
-  CoMMAIntType get_nb_cells() { return this->_number_of_cells; }
+   *  @return number of cells
+   */
+  inline CoMMAIntType get_nb_cells() const { return this->_number_of_cells; }
+
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
   *   @param[in] s_seeds set of seeds for which the neighborhood must be
@@ -823,7 +649,6 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   *   @param[in] is_fc_agglomerated_tmp vector reporting the already
   * agglomerated cell, useful in the algorithm
   */
-
   void compute_neighbourhood_of_cc(
       const unordered_set<CoMMAIndexType> s_seeds,
       CoMMAIntType &nb_of_order_of_neighbourhood,

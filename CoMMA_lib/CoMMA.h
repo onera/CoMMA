@@ -23,9 +23,16 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <numeric>
+#include <type_traits>
+
 #include "Agglomerator.h"
 #include "templateHelpers.h"
 #include "CoMMATypes.h"
+
+#define check_signed_int_type(intT, label) \
+  static_assert(is_signed<intT>::value && numeric_limits<intT>::is_integer, \
+      "CoMMA works with signed integer types, but " #intT " (" label ") is not")
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -74,11 +81,15 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-void agglomerate_one_level(  // Dual graph:
+void agglomerate_one_level(
+    // Dual graph:
     const vector<CoMMAIndexType> &adjMatrix_row_ptr,
     const vector<CoMMAIndexType> &adjMatrix_col_ind,
     const vector<CoMMAWeightType> &adjMatrix_areaValues,
     const vector<CoMMAWeightType> &volumes,
+    const vector<vector<CoMMAWeightType>> centers,
+
+    // Order related parameter:
     const vector<CoMMAWeightType> &priority_weights,
 
     // Indices of compliant cc
@@ -100,112 +111,94 @@ void agglomerate_one_level(  // Dual graph:
     // Args with default value
     bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
     CoMMAIntType min_card, CoMMAIntType max_card) {
+  // NOTATION
+  //======================================
+  // fc = Fine Cell
+  // cc = Coarse Cell
+
+  // SANITY CHECKS
+  //======================================
+  // We sometimes rely on -1 as default parameters (@TODO: could it be changed?)
+  check_signed_int_type(CoMMAIndexType, "first template argument");
+  check_signed_int_type(CoMMAIntT, "third template argument");
+  assert(dimension == 2 || dimension == 3);
 
   // SIZES CAST
   //======================================
-  // number of faces
   const CoMMAIndexType nb_fc =
       static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
   // ANISOTROPIC COMPLIANT FC
   //======================================
-  // Elements that is checked if they are anisotropic.
-  // e.g : in case of CODA software are passed all the children, and hence all
-  // the source elements of the
-  // previous agglomeration process.
+  // Elements that are checked if they are anisotropic. If an element satisfies
+  // the condition for being anisotropic (typically, AR > threshold) but it not
+  // in this set, it will not considered as anisotropic.
+  // We use a set to ensure uniqueness
   unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(
       arrayOfFineAnisotropicCompliantCells.begin(),
       arrayOfFineAnisotropicCompliantCells.end());
 
+  // SEED POOL
+  //======================================
+  // Object providing the order of agglomeration
+  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> seeds_pool(
+      n_bnd_faces, priority_weights);
+
   // DUAL GRAPH
   //======================================
-  // It is built the dual graph class through the constructor. To see it look at
-  // DualGraph.hpp and DualGraph.cpp
-  // fc = Fine Cells
-  assert(dimension < USHRT_MAX);
-  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> seeds_pool(
-    n_bnd_faces, priority_weights);
+  // Object containing the graph representation and related info in a convenient structure
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, seeds_pool, s_anisotropic_compliant_fc);
-  // Debug
-  //    vector<double> maxArray(nb_fc, 0.0);
-  //    unordered_map<long, double> d_anisotropic_fc;
-  //    unordered_map<long, double> d_isotropic_fc;
-  //    //             // ration between the face with maximum area and the face
-  // with minimum area
-  //    //                 // is more than 4.
-  //    fc_graph.compute_d_anisotropic_fc(maxArray,d_anisotropic_fc,d_isotropic_fc);
+      volumes, centers, seeds_pool, dimension, s_anisotropic_compliant_fc);
+
+  // COARSE CELL CONTAINER
+  //======================================
+  // Preparing the object that will contain all the coarse cells
   Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cc_graph(
       fc_graph);
-  // AGGLOMERATION ANISOTROPIC FOLLOWED BY ISOTROPIC AGGLOMERATION
+
+  // AGGLOMERATION OF ANISOTROPIC CELLS
+  //======================================
   // @todo maybe re-refactor the class agglomerator to allow the implicit upcast
   // like the biconnected case
-  // The agglomerator anisotropic is not called with the  implicit upcasting
+  // The agglomerator anisotropic is not called with the implicit upcasting
   // pointing because of the initialization of
   // the anisotropic lines.
   // for more information look at:
   // https://stackoverflow.com/questions/19682402/initialize-child-object-on-a-pointer-to-parent
-  // About constructors when upcasting :
+  // About constructors when upcasting:
   // https://www.reddit.com/r/learnprogramming/comments/1wopf6/java_which_constructor_is_called_when_upcasting/
   if (is_anisotropic) {
+    // Build anisotropic agglomerator
+    Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        aniso_agg(fc_graph, cc_graph, threshold_anisotropy,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  dimension);
 
-    shared_ptr<Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
-        agg1 = make_shared<Agglomerator_Anisotropic<
-            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            fc_graph, cc_graph, threshold_anisotropy, dimension = dimension);
-    //    Agglomerator* agg1 = new Agglomerator_Anisotropic(fc_graph,
-    //                                    cc_graph,
-    //                                    dimension = dimension);
-    CoMMAIndexType nb_agglomeration_lines = 0;
-    vector<deque<CoMMAIndexType> *> agglomeration_lines;
-    // case in which we have already agglomerated one level and hence we have
-    // already agglomeration
-    // lines available; no need to recreate them.
-    if (!isFirstAgglomeration) {
-      correction = false;
-      auto fineAgglomerationLines_array_Idx_size =
-          agglomerationLines_Idx.size();
-      for (CoMMAIndexType i = fineAgglomerationLines_array_Idx_size - 2; i > -1;
-           i--) {
-        CoMMAIndexType ind = agglomerationLines_Idx[i];
-        CoMMAIndexType indPOne = agglomerationLines_Idx[i + 1];
-        deque<CoMMAIndexType> *dQue =
-            new deque<CoMMAIndexType>(agglomerationLines.begin() + ind,
-                                      agglomerationLines.begin() + indPOne);
-        // for (long j = ind; j < indPOne; j++) {
-        //     (*dQue).push_back(agglomerationLines[j]);
-        // }
-        agglomeration_lines.push_back(dQue);
-        nb_agglomeration_lines++;
-      }
-    }
-    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType,
-                                        CoMMAIntType>> agg_dyn =
-        dynamic_pointer_cast<Agglomerator_Anisotropic<
-            CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(agg1);
-    agg_dyn->_v_lines[0] = agglomeration_lines;
-    agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
-    agg_dyn->agglomerate_one_level(min_card, goal_card, max_card, priority_weights, false);
-    // level of the line: WARNING! here 1 it means that we give it back lines in
-    // the new global
-    // index, 0 the old
-    CoMMAIntType i_level = 1;
-    agg_dyn->get_agglo_lines(i_level, agglomerationLines_Idx,
-                             agglomerationLines);
+    // Agglomerate anisotropic cells only
+    aniso_agg.agglomerate_one_level(min_card, goal_card, max_card, priority_weights, false);
+
+    // Put anisotropic lines computed just above into the out parameters
+    // (Info about level of the line: WARNING! here 1 it means that we give it back
+    // lines in the new global index, 0 the old)
+    const CoMMAIntType i_level{1};
+    aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
   }
+
+  // AGGLOMERATION OF ISOTROPIC CELLS
+  //======================================
   // We define here the type of Agglomerator
   IsotropicPtr<CoMMAIndexType, CoMMAWeightType,CoMMAIntType> agg = nullptr;
   // TODO: maybe pass to a switch when another agglomerator will be implemented
   if (type_of_isotropic_agglomeration==CoMMAAgglT::BICONNECTED){
     agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension = dimension);
+        fc_graph, cc_graph, dimension);
   }
   else {
     agg = make_unique<
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension = dimension);
+        fc_graph, cc_graph, dimension);
   }
   agg->agglomerate_one_level(min_card, goal_card, max_card, priority_weights, correction);
   // Agglomerate
@@ -216,4 +209,5 @@ void agglomerate_one_level(  // Dual graph:
     fc_to_cc[i_fc] = fccc[i_fc];
   }
 }
+#undef check_signed_int_type
 #endif

@@ -1,3 +1,5 @@
+"""/!\ WARNING /!\
+I was not able to reconstruct the cell centers, so this test could be used in the newest CoMMA version"""
 from CoMMA import *
 import numpy as np
 nb_fc = 15

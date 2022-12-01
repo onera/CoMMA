@@ -1,4 +1,7 @@
-"""Create a mesh with the default constructor of dualGPy, agglomerate with CoMMA and export the result."""
+"""Goals: show how to use `dualGPy` to create a Cartesian-like mesh and agglomerate it with `CoMMA`
+
+Create a mesh with the default constructor of `dualGPy, agglomerate with `CoMMA` and export the result.
+"""
 from CoMMA import *
 import meshio
 from dualGPy.Graph import Graph2D
@@ -14,7 +17,7 @@ isotropic_agglo_types = [
 # USER PARAMETERS
 #################
 # Input-related parameters
-dimension = 3
+dimension = 2
 ##
 anisotropic = False
 ## Points per edge of the quad/hex
@@ -25,9 +28,9 @@ if dimension == 3:
     minCard, goalCard, maxCard = 8, 8, 8
 else:
     minCard, goalCard, maxCard = 4, 4, 4
-correction = True
-threshold_anisotropy = .25
-isotropic_agglo = 1 # 0 = Biconnected (standard), 1 = Pure front advancing
+correction = False
+threshold_anisotropy = 4.
+isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 
 # Output-related parameters
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
@@ -83,7 +86,7 @@ agglomerationLines = np.array([0],dtype='long')
 
 print("CoMMA call")
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
-        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, weights,
+        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers, weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy, isotropic_agglo,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,

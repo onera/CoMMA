@@ -7,7 +7,7 @@ int main(int argv, char** argc) {
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
 
   Coarse_Cell_Container cc_graph = Coarse_Cell_Container(fc_graph);

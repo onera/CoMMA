@@ -30,7 +30,7 @@ SCENARIO("Test of a structure", "[structure]") {
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     // Check the effective length
@@ -337,7 +337,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
@@ -434,7 +434,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
@@ -498,7 +498,7 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
@@ -653,7 +653,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 3,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -689,9 +689,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
-      THEN("We obtain the 64 fine cells divided in 9 coarse cells") {
+      THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         auto fccc = cc_PF_graph._fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 6, 1, 1, 1, 1, 0, 2, 3, 3, 8, 8, 8, 3, 4, 8, 8, 5, 1, 8, 5, 5, 2, 2, 3, 3, 2, 2, 7, 3, 4, 4, 7, 5, 4, 4, 5, 5, 2, 2, 3, 3, 2, 7, 7, 7, 4, 7, 7, 5, 4, 4, 7, 5};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = 0; i != Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
@@ -701,7 +701,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_PF_graph._fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 6, 1, 1, 1, 1, 0, 2, 3, 3, 8, 8, 8, 3, 4, 8, 8, 5, 1, 8, 5, 5, 2, 2, 3, 3, 2, 2, 7, 3, 4, 4, 7, 5, 4, 4, 5, 5, 2, 2, 3, 3, 2, 7, 7, 7, 4, 7, 7, 5, 4, 4, 7, 5};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = 0; i != Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
@@ -712,54 +712,42 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       const CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0,1,4,5};
-      CoMMAWeightT tmp_surf{-1.}, tmp_vol{-1.};
-      CoMMAWeightT cc_surf = 12.,
+      CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
+      CoMMAWeightT cc_diam = sqrt(2.),
                    cc_vol  = 4.;
       // Out
       CoMMAIntT shared_faces;
-      CoMMAWeightT ar, ar2, ar3;
-      CoMMAWeightT ref_surf = 16.,
+      CoMMAWeightT ar;
+      CoMMAWeightT ref_diam = sqrt(3.),
                    ref_vol  = 5.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_surf, ref_vol);
-      THEN("Boundary faces are approximated [0 boundary faces]") {
-        agg->compute_next_cc_features(21, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
+      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("New coarse cell has 1 shared face") {
+        agg->compute_next_cc_features(17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
         REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
         REQUIRE(equal_up_to(ref_ar, ar, eps));
       }
-      THEN("Boundary faces are approximated [1 boundary face]") {
-        agg->compute_next_cc_features(6, cc_surf, cc_vol, cc, shared_faces, ar2, tmp_surf, tmp_vol);
-        REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar2, eps));
-      }
-      // If the two above pass, then the following one should pass too, still, better
-      // be safe than sorry
-      THEN("With or without boundary faces, the result is the same") {
-        REQUIRE(equal_up_to(ar, ar2, eps));
-      }
-      THEN("Boundary faces are approximated [2 boundary faces]") {
-        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar3, tmp_surf, tmp_vol);
-        REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar3, eps));
-      }
-      // If the two above pass, then the following one should pass too, still, better
-      // be safe than sorry
-      THEN("With or without boundary faces, the result is the same") {
-        REQUIRE(equal_up_to(ar2, ar3, eps));
-      }
-      cc.erase(0);
-      cc_surf  = 14., cc_vol  = 3.;
-      ref_surf = 16., ref_vol = 4.;
-      ref_ar = agg->_compute_AR(ref_surf, ref_vol);
-      THEN("Boundary faces are approximated [3 boundary faces, 2 shared faces]") {
-        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
+      cc.insert(17);
+      cc_diam = ref_diam, cc_vol = ref_vol;
+      ref_vol = 6.; // ref_diam does not change
+      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("New coarse cell has 2 shared face") {
+        agg->compute_next_cc_features(21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 2);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
+        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
+        REQUIRE(equal_up_to(ref_ar, ar, eps));
+      }
+      cc.insert(21);
+      cc.insert(20);
+      cc_vol = 7.; // cc_diam does not change
+      ref_vol = 8.; // ref_diam does not change
+      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("New coarse cell has 3 shared face") {
+        agg->compute_next_cc_features(16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+        REQUIRE(shared_faces == 3);
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
         REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
         REQUIRE(equal_up_to(ref_ar, ar, eps));
       }
@@ -775,7 +763,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
     auto agg =
@@ -879,57 +867,43 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       }
     }
 
-    WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
+    WHEN("We compute the aspect-ratio of a coarse cell") {
       const CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0,1};
-      CoMMAWeightT cc_surf = 6.,
+      CoMMAWeightT cc_diam = 1.,
                    cc_vol  = 2.;
       // Out
-      CoMMAWeightT tmp_surf{-1.}, tmp_vol{-1.};
+      CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
       CoMMAIntT shared_faces;
-      CoMMAWeightT ar, ar2;
-      CoMMAWeightT ref_surf = 8.,
+      CoMMAWeightT ar;
+      CoMMAWeightT ref_diam = sqrt(2.),
                    ref_vol  = 3.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_surf, ref_vol);
-      THEN("Boundary faces are approximated [0 boundary faces]") {
-        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
+      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("L-shaped coarse cell, 1 shared face") {
+        agg->compute_next_cc_features(5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
         REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
         REQUIRE(equal_up_to(ref_ar, ar, eps));
       }
-      THEN("Boundary faces are approximated [1 boundary face]") {
-        agg->compute_next_cc_features(2, cc_surf, cc_vol, cc, shared_faces, ar2, tmp_surf, tmp_vol);
+      ref_diam = 2.;
+      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("I-shaped coarse cell, 1 shared face") {
+        agg->compute_next_cc_features(2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar2, eps));
-      }
-      // If the two above pass, then the following one should pass too, still, better
-      // be safe than sorry
-      THEN("With or without boundary faces, the result is the same") {
-        REQUIRE(equal_up_to(ar, ar2, eps));
-      }
-      cc.erase(0);
-      cc.insert(2);
-      THEN("Boundary faces are approximated [2 boundary faces]") {
-        agg->compute_next_cc_features(0, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
-        REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
         REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
         REQUIRE(equal_up_to(ref_ar, ar, eps));
       }
-      cc.erase(2);
-      cc.insert(0);
-      cc.insert(4);
-      cc_surf  = 8., cc_vol  = 3.;
-      ref_surf = 8., ref_vol = 4.;
-      ref_ar = agg->_compute_AR(ref_surf, ref_vol);
-      THEN("Boundary faces are approximated [2 shared faces]") {
-        agg->compute_next_cc_features(5, cc_surf, cc_vol, cc, shared_faces, ar, tmp_surf, tmp_vol);
+      cc.insert(5);
+      cc_diam  = sqrt(2.), cc_vol  = 3.;
+      ref_diam = cc_diam,  ref_vol = 4.;
+      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
+      THEN("Squared coarse cell, 2 shared faces") {
+        agg->compute_next_cc_features(4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 2);
-        REQUIRE(equal_up_to(ref_surf, tmp_surf, eps));
+        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
         REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
         REQUIRE(equal_up_to(ref_ar, ar, eps));
       }
@@ -946,39 +920,40 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 3,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
-    shared_ptr<Agglomerator<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>> agg1 =
-        make_shared<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-            fc_graph, cc_graph, 4, 3);
-    // I progress with the downcasting to get the anisotropic lines
-    shared_ptr<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>
-        agg_dyn = dynamic_pointer_cast<
-            Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(agg1);
-    // We setup the structures to gather the agglomeration lines
-    CoMMAIndexT nb_agglomeration_lines = 0;
-    vector<deque<CoMMAIndexT> *> agglomeration_lines;
-    // We pass the structures to the level 0
-    agg_dyn->_v_lines[0] = agglomeration_lines;
-    agg_dyn->_v_nb_lines[0] = nb_agglomeration_lines;
+    const CoMMAWeightT aniso_thresh{2.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  3);
+
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
-         agg_dyn->agglomerate_one_level(2, 2, 2, Data.weights, false);
-      THEN("We have a number of agglomeration lines != 0") { REQUIRE(agg_dyn->_v_nb_lines[0]!=0);}
+         aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+      THEN("We have a number of agglomeration lines != 0") {REQUIRE(aniso_agg._nb_lines[0]!=0);}
     }
   };
   GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
     DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
-    auto agg = make_unique<Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-            fc_graph, cc_graph, aniso_thresh, Data.dim);
-    agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  Data.dim);
+    aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     WHEN("We agglomerate the mesh") {
       const auto f2c = cc_graph._fc_2_cc;
       THEN("There is only one isotropic coarse cell") {
@@ -1009,7 +984,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, seeds_pool,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(

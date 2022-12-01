@@ -24,14 +24,36 @@
 */
 
 #include <assert.h>
-#include <utility>
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <iterator>
+#include <numeric>
 #include <unordered_set>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 using namespace std;
 
 #define CoMMAUnused(var) (void)(var)
+
+/** @brief Compute the Euclidean distance between two points seen as vectors. We use
+ * vectors because we can have both 2- and 3D points (also we can have 3D points even
+ * if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D meshes). The
+ * dimension used as reference is the one of the first point
+ *  @tparam CoMMAWeightType Type for real numbers
+ *  @param[in] a First point
+ *  @param[in] b Second point
+ *  @return The Euclidean distance between the two points
+ */
+template <typename CoMMAWeightType>
+inline CoMMAWeightType euclidean_distance(const vector<CoMMAWeightType> a,
+    const vector<CoMMAWeightType> b) {
+  vector<CoMMAWeightType> diff;
+  transform(a.begin(),a.end(), b.begin(), back_inserter(diff), minus<CoMMAWeightType>());
+  return sqrt(inner_product(diff.begin(), diff.end(), diff.begin(), CoMMAWeightType{0.}));
+}
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
  * 'less than' operator for the second elements and 'greater than' for the first ones.
