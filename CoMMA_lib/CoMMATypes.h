@@ -29,6 +29,7 @@ using CoMMAIndexT = long;
 /// Type of floating-point values (used by agglomerator CoMMA for this edge
 /// weights).
 using CoMMAWeightT = double;
+
 /// Type of integer for cardinality of coarse cells, dimension, distances,
 /// orders...
 using CoMMAIntT = int;
@@ -49,13 +50,14 @@ enum CoMMACellT : CoMMAIntT {
   EXTREME      = 4,
   N_CELL_TYPES = 4
 };
-/** @brief Type of Isotropic Agglomerator 
+
+/** @brief Type of Isotropic Agglomerator
  *  0 : Biconnected from Mavriplis Paper
  *  1 : Pure front where a pure front advancing method is implemented
  */
 enum CoMMAAgglT : CoMMAIntT {
   BICONNECTED     = 0,
-  PURE_FRONT       = 1,
+  PURE_FRONT      = 1,
 };
 
 #endif
