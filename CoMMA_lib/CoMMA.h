@@ -176,7 +176,7 @@ void agglomerate_one_level(
                   dimension);
 
     // Agglomerate anisotropic cells only
-    aniso_agg.agglomerate_one_level(min_card, goal_card, max_card, priority_weights, false);
+    aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
 
     // Put anisotropic lines computed just above into the out parameters
     // (Info about level of the line: WARNING! here 1 it means that we give it back
@@ -200,7 +200,7 @@ void agglomerate_one_level(
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
         fc_graph, cc_graph, dimension);
   }
-  agg->agglomerate_one_level(min_card, goal_card, max_card, priority_weights, correction);
+  agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
   // Agglomerate
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
