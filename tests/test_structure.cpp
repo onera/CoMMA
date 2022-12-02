@@ -47,10 +47,10 @@ SCENARIO("Test of a structure", "[structure]") {
           return (this->_threshold_card);
         };
       };
-      THEN("We see that the agglomeration is not set, hence set to -1") {
+      THEN("We see that the agglomeration is not set, hence set to 0") {
         test *agg = new test(fc_graph, cc_graph, 2);
         CoMMAIntT testing = agg->test_variable();
-        REQUIRE(testing == -1);
+        REQUIRE(testing == 0);
       }
     }
     WHEN("We try to access to Define the cardinality") {
@@ -72,12 +72,12 @@ SCENARIO("Test of a structure", "[structure]") {
           return (_min_card);
         };
       };
-      THEN("We see that the cardinality passes from -1 to 2") {
+      THEN("We see that the cardinality passes from 0 to 2") {
         test *agg = new test(fc_graph, cc_graph, 2);
 
-        REQUIRE(agg->thres() == -1);
-        REQUIRE(agg->max() == -1);
-        REQUIRE(agg->min() == -1);
+        REQUIRE(agg->thres() == 0);
+        REQUIRE(agg->max() == 0);
+        REQUIRE(agg->min() == 0);
         agg->set_agglomeration_parameter(2, 2, 2);
         REQUIRE(agg->thres() == 2);
         REQUIRE(agg->max() == 2);

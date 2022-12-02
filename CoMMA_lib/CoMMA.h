@@ -24,6 +24,7 @@
 */
 
 #include <numeric>
+#include <stdexcept>
 #include <type_traits>
 
 #include "Agglomerator.h"
@@ -78,6 +79,8 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
+ * @throw `invalid_argument` if dimension is not 2 nor 3, or if cardinalities are
+ * smaller than 1 or not in order
  * */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -121,7 +124,12 @@ void agglomerate_one_level(
   // We sometimes rely on -1 as default parameters (@TODO: could it be changed?)
   check_signed_int_type(CoMMAIndexType, "first template argument");
   check_signed_int_type(CoMMAIntT, "third template argument");
-  assert(dimension == 2 || dimension == 3);
+  if ( !(dimension == 2 || dimension == 3) )
+    throw invalid_argument( "CoMMA - Error: dimension must be 2 or 3" );
+  if ( min_card <= 1 || goal_card <= 1 || max_card <= 1 )
+    throw invalid_argument( "CoMMA - Error: Cardinalities must be greater than 1" );
+  if ( !( min_card <= goal_card && goal_card <= max_card ) )
+    throw invalid_argument( "CoMMA - Error: Cardinalities must be in order (min <= goal <= max)" );
 
   // SIZES CAST
   //======================================

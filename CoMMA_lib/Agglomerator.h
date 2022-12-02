@@ -141,18 +141,18 @@ class Agglomerator {
   /** @brief minimum number of neighborhood we extend to search the neighborhood
    * in the greedy algorithm. Set as default to 3.*/
   CoMMAIntType _min_neighbourhood = 3;
-  /** @brief minimum cardinality. Set as default to -1 (meaning the maximum
+  /** @brief minimum cardinality. Set as default to 0 (meaning the maximum
    * possible).*/
-  CoMMAIntType _min_card = -1;
-  /** @brief maximum cardinality. Set as default to -1 (meaning the maximum
+  CoMMAIntType _min_card = 0;
+  /** @brief maximum cardinality. Set as default to 0 (meaning the maximum
    * possible)*/
-  CoMMAIntType _max_card = -1;
-  /** @brief Goal cardinality. Set as default to -1 (meaning the maximum
+  CoMMAIntType _max_card = 0;
+  /** @brief Goal cardinality. Set as default to 0 (meaning the maximum
    * possible)*/
-  CoMMAIntType _goal_card = -1;
-  /** @brief Threshold cardinality. Set as default to -1 (meaning the maximum
+  CoMMAIntType _goal_card = 0;
+  /** @brief Threshold cardinality. Set as default to 0 (meaning the maximum
    * possible)*/
-  CoMMAIntType _threshold_card = -1;
+  CoMMAIntType _threshold_card = 0;
   /** @brief List of number of cells per coarse cell created.*/
   vector<CoMMAIndexType> _l_nb_of_cells;
   /** @brief Dual_Graph object determining Fine cells graph and hence the
@@ -563,17 +563,17 @@ class Agglomerator_Isotropic
   /** @brief The task of the function is to set the parameters of
    * determine the cardinality limits with respect to the parameters passed
    * @param[in] goal_card goal cardinality of the coarse cell (set as default to
-   * -1 indicating in our case
+   * 0 indicating in our case
    * the maximum value)
    * @param[in] min_card minimum cardinality of the coarse cell(set as default
-   * to -1 indicating in our case
+   * to 0 indicating in our case
    * the maximum value)
    * @param[in] max_card maximum cardinality of the coarse cell(set as default
-   * to -1 indicating in our case
+   * to 0 indicating in our case
    * the maximum value)*/
-  void set_agglomeration_parameter(CoMMAIntType goal_card = -1,
-                                   CoMMAIntType min_card  = -1,
-                                   CoMMAIntType max_card  = -1) {
+  void set_agglomeration_parameter(CoMMAIntType goal_card = 0,
+                                   CoMMAIntType min_card  = 0,
+                                   CoMMAIntType max_card  = 0) {
     // Note[RM]: I tried make the following const static but ended up
     // with some SEGFAULT with Intel possibly linked to the following
     // https://stackoverflow.com/a/36406774
@@ -586,20 +586,20 @@ class Agglomerator_Isotropic
     unordered_map<CoMMAIntType, CoMMAIntType>
                           d_default_threshold_card = {{2, 2}, {3, 3}};
     // Definition of _min_card
-    if (min_card == -1) {
+    if (min_card == 0) {
       this->_min_card = d_default_min_card.at(this->_dimension);
     } else {
       this->_min_card = min_card;
     }
 
     // Definition of _max_card
-    if (max_card == -1) {
+    if (max_card == 0) {
       this->_max_card = d_default_max_card.at(this->_dimension);
     } else {
       this->_max_card = max_card;
     }
     // Definition of _goal_card
-    if (goal_card == -1) {
+    if (goal_card == 0) {
       this->_goal_card = d_default_goal_card.at(this->_dimension);
     } else {
       this->_goal_card = goal_card;
@@ -777,7 +777,7 @@ class Agglomerator_Biconnected
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
-    assert(this->_goal_card != -1);  // _goal_card has been initialized
+    assert(this->_goal_card != 0);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
     // Dictionary of the neighborhood of the seed, the key is the global index
@@ -1082,7 +1082,7 @@ class Agglomerator_Pure_Front
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
-    assert(this->_goal_card != -1);  // _goal_card has been initialized
+    assert(this->_goal_card != 0);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
     // Dictionary of the neighborhood of the seed, the key is the global index
