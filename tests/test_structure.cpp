@@ -1,20 +1,26 @@
 #define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
-#include "input/DualGPy.h"
-#include "CoMMATypes.h"
-#include "Queue.h"
-#include "Priority_Pair.h"
+
 #include <algorithm>
 #include <iterator>
+#include <map>
+#include <memory>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-#include <map>
-#include <memory>
-#include <vector>
 #include <utility>
+#include <vector>
+
+#include "catch2/catch.hpp"
+
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
+#include "input/DualGPy.h"
+#include "CoMMATypes.h"
+
+#include "deprecated/Bimap.h"
+#include "deprecated/Priority_Pair.h"
+#include "deprecated/Queue.h"
+#include "deprecated/Tree.h"
 
 using namespace std;
 

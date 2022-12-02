@@ -1,10 +1,7 @@
 #include <memory>
 #include "CoMMATypes.h"
 #include "Agglomerator.h"
-#include "Tree.h"
 #include "CoMMA.h"
-#include "templateHelpers.h"
-#include "Bimap.h"
 
 #ifndef DUALGPY_TEST_H
 #define DUALGPY_TEST_H
@@ -44,7 +41,7 @@ class DualGPy {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
       vector<bool> tmp(nb_fc, false);
@@ -77,7 +74,7 @@ class DualGPy_aniso {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
@@ -108,7 +105,7 @@ class DualGPy_aniso_3cell {
     for (CoMMAIndexT i = 0; i < nb_fc; i++) {
       arrayOfFineAnisotropicCompliantCells[i] = i;
       s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-      // Reversing the index so that the order reflects the numbering 
+      // Reversing the index so that the order reflects the numbering
       weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
     }
     vector<bool> a_is_fc_agglomerated(nb_fc, false);
@@ -141,7 +138,7 @@ class DualGPy_minimal {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
@@ -171,7 +168,7 @@ class DualGPy_quad_4 {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
@@ -205,7 +202,7 @@ class DualGPy_quad_7 {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
@@ -244,7 +241,7 @@ class DualGPy_cube_4 {
       for (CoMMAIndexT i = 0; i < nb_fc; i++) {
         arrayOfFineAnisotropicCompliantCells[i] = i;
         s_anisotropic_compliant_fc.insert(arrayOfFineAnisotropicCompliantCells[i]);
-        // Reversing the index so that the order reflects the numbering 
+        // Reversing the index so that the order reflects the numbering
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
