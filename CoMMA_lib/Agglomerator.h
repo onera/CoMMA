@@ -898,7 +898,8 @@ class Agglomerator_Biconnected
     CoMMAIntType size_current_cc = 1;  // CC contains only one cell: the seed
     // set to 3 as default we set to this value the maximum order to which we
     // search to compose the coarse cell
-    CoMMAIntType max_order_of_neighbourhood = this->_min_neighbourhood;
+    CoMMAIntType max_order_of_neighbourhood =
+      max(this->_min_neighbourhood, this->_max_card / this->_dimension);
 
     // We fill the d_n_of_seeds considering the initial seed passed
     this->_fc_graph.compute_neighbourhood_of_cc(
@@ -1112,7 +1113,8 @@ class Agglomerator_Pure_Front
     CoMMAIntType size_current_cc = 1;  // CC contains only one cell: the seed
     // set to 3 as default we set to this value the maximum order to which we
     // search to compose the coarse cell
-    CoMMAIntType max_order_of_neighbourhood = this->_min_neighbourhood;
+    CoMMAIntType max_order_of_neighbourhood =
+      max(this->_min_neighbourhood, this->_max_card / this->_dimension);
 
     // We fill the d_n_of_seeds considering the initial seed passed
     this->_fc_graph.compute_neighbourhood_of_cc(
