@@ -951,6 +951,8 @@ class Agglomerator_Biconnected
       CoMMAIntType min_size = this->_goal_card;
       // Computation of the initial aspect ratio
       CoMMAWeightType diam_cc{-1.};
+      // CC in construction
+      decltype(s_current_cc) tmp_cc = {seed};
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
@@ -997,7 +999,7 @@ class Agglomerator_Biconnected
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
         this->compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
-                                     vol_cc, s_current_cc, argmin_ar,  // output
+                                     vol_cc, tmp_cc, argmin_ar,  // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
@@ -1006,7 +1008,7 @@ class Agglomerator_Biconnected
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
-        s_current_cc.insert(argmin_ar);
+        tmp_cc.insert(argmin_ar);
 
         // if the constructed cc is eligible, i.e. its size is inside the
         // permitted range we store it inside dict_cc_in_creation This choice is
@@ -1028,7 +1030,7 @@ class Agglomerator_Biconnected
           new_dict[argmin_ar] = d_n_of_seed[argmin_ar];
           pair<unordered_set<CoMMAIndexType>,
                unordered_map<CoMMAIndexType, CoMMAIntType>> p =
-              make_pair(s_current_cc, new_dict);
+              make_pair(tmp_cc, new_dict);
           dict_cc_in_creation[size_current_cc] = p;
         }
 
@@ -1055,6 +1057,9 @@ class Agglomerator_Biconnected
           d_n_of_seed[iKV.first] = iKV.second;
         }
       }
+
+      // Selecting best CC to return
+      s_current_cc = move(dict_cc_in_creation[arg_min_external_faces].first);
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
       // Computes the actual compactness of the coarse cell
       compactness =
@@ -1168,6 +1173,8 @@ class Agglomerator_Pure_Front
       CoMMAIntType min_size = this->_goal_card;
       // Computation of the initial aspect ratio
       CoMMAWeightType diam_cc{-1.};
+      // CC in construction
+      decltype(s_current_cc) tmp_cc = {seed};
       // volume of cc is at first the volume of the seed.
       CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
@@ -1214,7 +1221,7 @@ class Agglomerator_Pure_Front
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
         this->compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
-                                     vol_cc, s_current_cc, argmin_ar,  // output
+                                     vol_cc, tmp_cc, argmin_ar,  // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
@@ -1223,7 +1230,7 @@ class Agglomerator_Pure_Front
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
-        s_current_cc.insert(argmin_ar);
+        tmp_cc.insert(argmin_ar);
 
         // if the constructed cc is eligible, i.e. its size is inside the
         // permitted range we store it inside dict_cc_in_creation This choice is
@@ -1245,7 +1252,7 @@ class Agglomerator_Pure_Front
           new_dict[argmin_ar] = d_n_of_seed[argmin_ar];
           pair<unordered_set<CoMMAIndexType>,
                unordered_map<CoMMAIndexType, CoMMAIntType>> p =
-              make_pair(s_current_cc, new_dict);
+              make_pair(tmp_cc, new_dict);
           dict_cc_in_creation[size_current_cc] = p;
         }
 
@@ -1260,7 +1267,8 @@ class Agglomerator_Pure_Front
             this->_fc_graph.get_neighbours(argmin_ar));
       }
 
-      s_current_cc = dict_cc_in_creation[arg_min_external_faces].first;
+      // Selecting best CC to return
+      s_current_cc = move(dict_cc_in_creation[arg_min_external_faces].first);
 
       // If we do not chose the biggest cc, we put the useless fc back to the
       // pool

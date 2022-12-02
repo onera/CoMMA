@@ -197,7 +197,7 @@ class Coarse_Cell_Container {
           current_cc->remove_node(i_fc);
           // the new it point directly to the next element in the map
           it = remove_cc(it);
-        } 
+        }
        } else {++it;};
         end = _cc_vec.end();
         neigh.clear();

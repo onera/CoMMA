@@ -90,7 +90,7 @@ void agglomerate_one_level(
     const vector<CoMMAIndexType> &adjMatrix_col_ind,
     const vector<CoMMAWeightType> &adjMatrix_areaValues,
     const vector<CoMMAWeightType> &volumes,
-    const vector<vector<CoMMAWeightType>> centers,
+    const vector<vector<CoMMAWeightType>> &centers,
 
     // Order related parameter:
     const vector<CoMMAWeightType> &priority_weights,
