@@ -986,6 +986,10 @@ class Agglomerator_Biconnected
               s_neighbours_of_seed, priority_weights, this->_dimension,false);
       // Generate the set of the first order neighborhood to the given seed
       auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
+      // Container for all the FONs
+      unordered_map<CoMMAIntType, decltype(fon)> prev_fon(max_ind);
+      // Storing fon. We copy it
+      prev_fon[size_current_cc] = fon;
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1043,6 +1047,7 @@ class Agglomerator_Biconnected
 
         fon = f_o_neighbourhood.update(argmin_ar,
             this->_fc_graph.get_neighbours(argmin_ar));
+        prev_fon[size_current_cc] = fon;
       }
 
       s_current_cc = dict_cc_in_creation[arg_min_external_faces].first;
@@ -1060,7 +1065,13 @@ class Agglomerator_Biconnected
 
       // Selecting best CC to return
       s_current_cc = move(dict_cc_in_creation[arg_min_external_faces].first);
+
+      // Updating Seed Pool with (a subset of) neighbors of the final CC
+      // Indeed, the fon contains only those allowed by the max neighborhood order
+      this->_fc_graph._seeds_pool.update(prev_fon[arg_min_external_faces]);
+
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
+
       // Computes the actual compactness of the coarse cell
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
@@ -1208,6 +1219,10 @@ class Agglomerator_Pure_Front
               s_neighbours_of_seed, priority_weights, this->_dimension,true);
       // Generate the set of the first order neighborhood to the given seed
       auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
+      // Container for all the FONs
+      unordered_map<CoMMAIntType, decltype(fon)> prev_fon(max_ind);
+      // Storing fon. We copy it
+      prev_fon[size_current_cc] = fon;
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1265,6 +1280,7 @@ class Agglomerator_Pure_Front
 
         fon = f_o_neighbourhood.update(argmin_ar,
             this->_fc_graph.get_neighbours(argmin_ar));
+        prev_fon[size_current_cc] = fon;
       }
 
       // Selecting best CC to return
@@ -1280,6 +1296,10 @@ class Agglomerator_Pure_Front
           d_n_of_seed[iKV.first] = iKV.second;
         }
       }
+      // Updating Seed Pool with (a subset of) neighbors of the final CC
+      // Indeed, the fon contains only those allowed by the max neighborhood order
+      this->_fc_graph._seeds_pool.update(prev_fon[arg_min_external_faces]);
+
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
       // Computes the actual compactness of the coarse cell
       compactness =

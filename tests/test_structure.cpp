@@ -280,14 +280,22 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     vector<bool> agglomerated(Data.nb_fc, false);
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
-        for (auto i : corners)
+        for (auto i : corners) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : ridges)
+          agglomerated[i] = true;
+        }
+        for (auto i : ridges) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : valleys)
+          agglomerated[i] = true;
+        }
+        for (auto i : valleys) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : interior)
+          agglomerated[i] = true;
+        }
+        for (auto i : interior) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
       }
     }
   }
@@ -318,14 +326,22 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     vector<bool> agglomerated(Data.nb_fc, false);
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
-        for (auto i : corners)
+        for (auto i : corners) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : ridges)
+          agglomerated[i] = true;
+        }
+        for (auto i : ridges) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : valleys)
+          agglomerated[i] = true;
+        }
+        for (auto i : valleys) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : interior)
+          agglomerated[i] = true;
+        }
+        for (auto i : interior) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
       }
     }
   }
