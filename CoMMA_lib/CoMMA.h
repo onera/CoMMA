@@ -41,21 +41,62 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
  * of the agglomerated cells fc2cc.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ * @param[in] adjMatrix_row_ptr the row pointer of the CRS representation
+ * @param[in] adjMatrix_col_ind the column index of the CRS representation
+ * @param[in] adjMatrix_areaValues the weight of the CRS representation (in CoMMA case
+ * will be the area of the faces that in the graph representation are the edges
+ * between two nodes represented by the cell centers.
+ * @param[in] volumes The volumes of the cells
+ * @param[in] priority_weights Weights used to set the order telling where to start
+ * agglomerating. The higher the weight, the higher the priority
+ *  @param[in] arrayOfFineAnisotropicCompliantCells List of cells which have to be looked
+ * for anisotropy
+ * @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
+ * @param[in] isFirstAgglomeration Whether if it's the first level of agglomeration
+ * (it that's the case, the agglomeration lines will be built)
+ * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
+ * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
+ * considered as anisotropic
+ * @param[in] type_of_isotropic_agglomeration Type of algorithm to consider when
+ * agglomerating isotropic cells. Two alternatives: Biconnected: requested with 0,
+ * standard algorithm where we consider every neighbour of the coarse cell as candidate;
+ * Pure Front Advancing: requested with 1, only direct neighbours of the last added
+ * cell are candidates
+ * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
+ * belongs to after agglomeration
+ * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
+ * element points to a particular element in the vector agglomerationLines
+ * @param[in,out] agglomerationLines Vector storing all the elements of the
+ * anisotropic lines
+ * @param[in] correction Whether to apply correction step (avoid isolated cells) after
+ * agglomeration
+ * @param[in] dimension Dimensionality of the problem, 2- or 3D
+ * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
+ * @param[in] min_card Minimum cardinality accepted for the coarse cells
+ * @param[in] max_card Maximum cardinality accepted for the coarse cells
  * */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-void agglomerate_one_level(  // Dual graph:
-    const vector<CoMMAIndexType> adjMatrix_row_ptr,
-    const vector<CoMMAIndexType> adjMatrix_col_ind,
-    const vector<CoMMAWeightType> adjMatrix_areaValues,
-    const vector<CoMMAWeightType> volumes,
+void agglomerate_one_level(
+    // Dual graph:
+    const vector<CoMMAIndexType> &adjMatrix_row_ptr,
+    const vector<CoMMAIndexType> &adjMatrix_col_ind,
+    const vector<CoMMAWeightType> &adjMatrix_areaValues,
+    const vector<CoMMAWeightType> &volumes,
     const vector<vector<CoMMAWeightType>> centers,
 
+    // Order related parameter:
+    const vector<CoMMAWeightType> &priority_weights,
+
     // Indices of compliant cc
-    vector<CoMMAIndexType> &arrayOfFineAnisotropicCompliantCells,
+    const vector<CoMMAIndexType> &arrayOfFineAnisotropicCompliantCells,
 
     // boundaries
-    const vector<CoMMAIndexType> &isOnFineBnd,
+    const vector<CoMMAIntType> &n_bnd_faces,
 
     // Agglomeration argument
     bool isFirstAgglomeration, bool is_anisotropic,
@@ -87,20 +128,6 @@ void agglomerate_one_level(  // Dual graph:
   const CoMMAIndexType nb_fc =
       static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
-  // BOUNDARIES
-  //======================================
-  // initialization of map d_is_on_bnd.
-  // We create a dictionary of the faces on boundary
-  // In particular starting from the vector we pass we store in a map
-  // the key relative to the cell analysed and the relative NUMBER OF FACES on
-  // the boundary
-  unordered_map<CoMMAIndexType, CoMMAIntType> d_is_on_bnd;
-  for (CoMMAIndexType i = 0; i < nb_fc; i++) {
-    if (isOnFineBnd[i] > CoMMACellT::INTERIOR) {
-      fill_value<true, CoMMAIntType, const CoMMAIndexType>(d_is_on_bnd[i],
-                                                           isOnFineBnd[i]);
-    }
-  }
   // ANISOTROPIC COMPLIANT FC
   //======================================
   // Elements that are checked if they are anisotropic. If an element satisfies
@@ -114,7 +141,8 @@ void agglomerate_one_level(  // Dual graph:
   // SEED POOL
   //======================================
   // Object providing the order of agglomeration
-  Seeds_Pool<CoMMAIndexType, CoMMAIntType> seeds_pool(nb_fc, d_is_on_bnd);
+  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> seeds_pool(
+      n_bnd_faces, priority_weights);
 
   // DUAL GRAPH
   //======================================
@@ -148,7 +176,7 @@ void agglomerate_one_level(  // Dual graph:
                   dimension);
 
     // Agglomerate anisotropic cells only
-    aniso_agg.agglomerate_one_level(min_card, goal_card, max_card, false);
+    aniso_agg.agglomerate_one_level(min_card, goal_card, max_card, priority_weights, false);
 
     // Put anisotropic lines computed just above into the out parameters
     // (Info about level of the line: WARNING! here 1 it means that we give it back
@@ -172,7 +200,7 @@ void agglomerate_one_level(  // Dual graph:
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
         fc_graph, cc_graph, dimension);
   }
-  agg->agglomerate_one_level(min_card, goal_card, max_card, correction);
+  agg->agglomerate_one_level(min_card, goal_card, max_card, priority_weights, correction);
   // Agglomerate
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)

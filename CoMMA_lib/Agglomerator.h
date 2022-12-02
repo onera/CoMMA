@@ -24,6 +24,7 @@
 */
 
 #include <cmath>
+#include <deque>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -117,18 +118,20 @@ class Agglomerator {
   inline vector<CoMMAIndexType> get_fc_2_cc() const { return _cc_graph->_fc_2_cc; }
 
   /** @brief Pure virtual function which implementation is specified in the
-   * related child classes
-     * and that defines the agglomeration of one level.
-     * param[in] goal_card goal cardinality of the coarse cell
-     * param[in] min_card minimum cardinality of the coarse cell
-     * param[in] max_card maximum cardinality of the coarse cell
-     * param[in] correction_steps it defines if corrections for the isotropic
+   * related child classes and that defines the agglomeration of one level.
+   * @param[in] goal_card goal cardinality of the coarse cell
+   * @param[in] min_card minimum cardinality of the coarse cell
+   * @param[in] max_card maximum cardinality of the coarse cell
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
+   * @param[in] correction_steps it defines if corrections for the isotropic
    * algorithm are activated or not, for anisotropic algorithm not taken into
    * account.
-     */
+   */
   virtual void agglomerate_one_level(const CoMMAIntType goal_card,
                                      const CoMMAIntType min_card,
                                      const CoMMAIntType max_card,
+                                     const vector<CoMMAWeightType> &priority_weights,
                                      bool correction_steps) = 0;
 
  protected:
@@ -256,16 +259,19 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
-     * We add the override key as a guard to possible mistakes:
-     * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function*/
+   * We add the override key as a guard to possible mistakes:
+   * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
+   **/
   void agglomerate_one_level(const CoMMAIntType goal_card,
                              const CoMMAIntType min_card,
                              const CoMMAIntType max_card,
+                             const vector<CoMMAWeightType> &priority_weights,
                              bool correction_steps) override {
     // Unused parameters
     CoMMAUnused(goal_card);
     CoMMAUnused(min_card);
     CoMMAUnused(max_card);
+    CoMMAUnused(priority_weights);
     CoMMAUnused(correction_steps);
 
     // if the finest agglomeration line is not computed, hence compute it
@@ -566,39 +572,41 @@ class Agglomerator_Isotropic
    * to -1 indicating in our case
    * the maximum value)*/
   void set_agglomeration_parameter(CoMMAIntType goal_card = -1,
-                                   CoMMAIntType min_card = -1,
-                                   CoMMAIntType max_card = -1) {
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_min_card = {{2, 3},
-                                                                    {3, 6}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_max_card = {{2, 5},
-                                                                    {3, 10}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_goal_card = {{2, 4},
-                                                                     {3, 8}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_threshold_card = {
-        {2, 2}, {3, 3}};
-
+                                   CoMMAIntType min_card  = -1,
+                                   CoMMAIntType max_card  = -1) {
+    // Note[RM]: I tried make the following const static but ended up
+    // with some SEGFAULT with Intel possibly linked to the following
+    // https://stackoverflow.com/a/36406774
+    unordered_map<CoMMAIntType, CoMMAIntType>
+                          d_default_min_card = {{2, 3}, {3, 6}};
+    unordered_map<CoMMAIntType, CoMMAIntType>
+                          d_default_max_card = {{2, 5}, {3, 10}};
+    unordered_map<CoMMAIntType, CoMMAIntType>
+                          d_default_goal_card = {{2, 4}, {3, 8}};
+    unordered_map<CoMMAIntType, CoMMAIntType>
+                          d_default_threshold_card = {{2, 2}, {3, 3}};
     // Definition of _min_card
     if (min_card == -1) {
-      this->_min_card = d_default_min_card[this->_dimension];
+      this->_min_card = d_default_min_card.at(this->_dimension);
     } else {
       this->_min_card = min_card;
     }
 
     // Definition of _max_card
     if (max_card == -1) {
-      this->_max_card = d_default_max_card[this->_dimension];
+      this->_max_card = d_default_max_card.at(this->_dimension);
     } else {
       this->_max_card = max_card;
     }
     // Definition of _goal_card
     if (goal_card == -1) {
-      this->_goal_card = d_default_goal_card[this->_dimension];
+      this->_goal_card = d_default_goal_card.at(this->_dimension);
     } else {
       this->_goal_card = goal_card;
     }
 
     // Definition of _threshold_card
-    this->_threshold_card = d_default_threshold_card[this->_dimension];
+    this->_threshold_card = d_default_threshold_card.at(this->_dimension);
   }
 
   /** @brief Specialization of the pure virtual function to the class
@@ -620,6 +628,7 @@ class Agglomerator_Isotropic
   void agglomerate_one_level(const CoMMAIntType goal_card,
                              const CoMMAIntType min_card,
                              const CoMMAIntType max_card,
+                             const vector<CoMMAWeightType> &priority_weights,
                              bool correction_steps) override {
     set_agglomeration_parameter(goal_card, min_card, max_card);
     // We define a while for which we control the number of agglomerated cells
@@ -633,22 +642,21 @@ class Agglomerator_Isotropic
       // algorithm
       // in the children class (triconnected or biconnected)
       unordered_set<CoMMAIndexType> set_current_cc =
-          choose_optimal_cc_and_update_seed_pool(seed, compactness);
+          choose_optimal_cc_and_update_seed_pool(seed, compactness,
+                                                 priority_weights);
       // 3)  Creation of cc:
-      bool is_anistropic =
-          false;  // needed the create_cc of the coarse cell class
+      bool is_anistropic = false;
       // Check if delay the agglomeration based on compactness written during
       // the optimal cc choice process. Remember the compactness is the minimum
-      // degree in
-      // the coarse cell.
-      //    	 bool is_creation_delayed = compactness < _dimension;
+      // degree in the coarse cell.
+      // bool is_creation_delayed = compactness < _dimension;
       bool is_creation_delayed = false;
       this->_cc_graph->cc_create_a_cc(set_current_cc, is_anistropic,
                                       is_creation_delayed);
     }
-    // When we exit from this process all the cell are agglomerated, apart the
-    // delayed one
-    // We proceed in creating the delayed one
+    // When we exit from this process all the cells are agglomerated, apart the
+    // delayed ones
+    // We proceed in creating the delayed ones
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
       this->_cc_graph->correct();
@@ -663,7 +671,7 @@ class Agglomerator_Isotropic
    * @return An approximation of the surface of a boundary face
    */
   inline CoMMAWeightType estimate_boundary_face(
-      const vector<CoMMAWeightType> &int_faces) {
+      const vector<CoMMAWeightType> &int_faces) const {
     // Approximate with an average of the internal faces
     // We could choose many kinds of average, e.g. arithmetic or geometric, I
     // honestly don't know if one is better then the other...
@@ -692,7 +700,7 @@ class Agglomerator_Isotropic
     const unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
     CoMMAIntType &shared_faces, CoMMAWeightType &aspect_ratio,
-    CoMMAWeightType &new_diam, CoMMAWeightType &new_vol) {
+    CoMMAWeightType &new_diam, CoMMAWeightType &new_vol) const {
     // Compute shared faces
     shared_faces = 0;
     const vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
@@ -721,11 +729,13 @@ class Agglomerator_Isotropic
    * define the optimal coarse cell
    *  @param[in] seed the seed cell to start cumulate the other cells
    *  @param[in] compactness the compactness is defined as the minimum number of
-   * neighbour of a fine cell inside
-   *  a coarse cell
+   * neighbour of a fine cell inside a coarse cell
+   *  @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
    */
   virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
-      const CoMMAIndexType seed, CoMMAIntType &compactness) = 0;
+      const CoMMAIndexType seed, CoMMAIntType &compactness,
+      const vector<CoMMAWeightType> &priority_weights) = 0;
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
@@ -762,7 +772,8 @@ class Agglomerator_Biconnected
    * be used in couple with the
    * Agglomerate_one_level of the Agglomerator_Isotropic */
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
-      const CoMMAIndexType seed, CoMMAIntType &compactness) override {
+      const CoMMAIndexType seed, CoMMAIntType &compactness,
+      const vector<CoMMAWeightType> &priority_weights) override {
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
@@ -850,19 +861,19 @@ class Agglomerator_Biconnected
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph._seeds_pool.boundary_value(seed) - 1;
+          nb_neighbours + this->_fc_graph._seeds_pool.get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAIntType> f_o_neighbourhood =
-          First_Order_Neighbourhood<CoMMAIndexType, CoMMAIntType>(
-              s_neighbours_of_seed, this->_dimension,false);
+      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        f_o_neighbourhood = First_Order_Neighbourhood<CoMMAIndexType,
+                                                      CoMMAWeightType, CoMMAIntType>(
+              s_neighbours_of_seed, priority_weights, this->_dimension,false);
       // Generate the set of the first order neighborhood to the given seed
-      unordered_set<CoMMAIndexType> fon =
-        f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
+      auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -881,7 +892,7 @@ class Agglomerator_Biconnected
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph._seeds_pool.boundary_value(argmin_ar) - 1 -
+            this->_fc_graph._seeds_pool.get_n_boundary_faces(argmin_ar) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
@@ -937,62 +948,6 @@ class Agglomerator_Biconnected
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }  // end else
-    // Update seeds
-    // Create of l_of_new_seed:
-    list<CoMMAIndexType> l_of_new_seed;
-    if (!d_n_of_seed.empty()) {
-
-      // CoMMAIntType size = d_n_of_seed.size();
-      // l_of_new_seed.resize(size);
-      // if d_n_of_seed is not empty
-      // Reminder: d_n_of_seed is here the pool of cell neighbouring the
-      // previous seed!
-      for (auto &i_k_v : d_n_of_seed) {
-        if (i_k_v.second <= 2) {
-          l_of_new_seed.push_back(i_k_v.first);
-        }
-      }
-      // if list of new seeds is still empty we go to order 3
-      CoMMAIntType i_k = 3;
-      while (l_of_new_seed.empty()) {
-        // We put FC in the l_of_new_seed according to its order of neighbouring
-        // of previous seed.
-        // order 1 or 2 then 3, then 4 and so on.
-        for (auto &i_k_v : d_n_of_seed) {
-          if (i_k_v.second <= i_k) {
-            l_of_new_seed.push_back(i_k_v.first);
-          }
-        }
-        i_k++;
-      }
-    } else if (this->_fc_graph._seeds_pool.is_empty()) {
-      // else d_n_of_seed is empty: we used every neighbour!
-      // if list_of_seeds is empty, we look for new seeds to add to the
-      // list_of_seeds.
-      // if list_of_seeds is empty we look if there is some neighbour to the
-      // current fc:
-      // s_fc_neighbours_of_cc = set()
-      // we remove seed because we already update its first neighbours.
-      // A copy needed because the set is used inside ccg
-      unordered_set<CoMMAIndexType> tmp_set(s_current_cc);
-      tmp_set.erase(seed);
-
-      // We add to s_fc_neighbours_of_cc all the neighbours of FC included in
-      // s_fc_for_current_cc without seed
-      for (auto &i_fc : tmp_set) {
-        vector<CoMMAIndexType> a_neighbours =
-            this->_fc_graph.get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : a_neighbours) {
-          if (this->_cc_graph->is_fc_not_already_agglomerated(i_fc_n)) {
-            // _a_is_fc_agglomerated is up-to-date.
-            // remark: we don't care i_fc_n == i_fc.
-            l_of_new_seed.push_back(i_fc_n);
-          }
-        }
-      }
-    }
-    // Update of list_of_seeds:
-    (this->_fc_graph._seeds_pool).update(l_of_new_seed);
     return s_current_cc;
   }
 
@@ -1002,13 +957,13 @@ class Agglomerator_Biconnected
    * computes the best fine cells to add to the coarse cell.
    */
   void compute_best_fc_to_add(
-      const unordered_set<CoMMAIndexType> &neighbors,
+      const vector<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
       const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
       CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
-      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) {
+      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) const {
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
@@ -1122,7 +1077,8 @@ class Agglomerator_Pure_Front
    * be used in couple with the
    * Agglomerate_one_level of the Agglomerator_Isotropic */
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
-      const CoMMAIndexType seed, CoMMAIntType &compactness) override {
+      const CoMMAIndexType seed, CoMMAIntType &compactness,
+      const vector<CoMMAWeightType> &priority_weights) override {
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
@@ -1210,19 +1166,19 @@ class Agglomerator_Pure_Front
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph._seeds_pool.boundary_value(seed) - 1;
+          nb_neighbours + this->_fc_graph._seeds_pool.get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAIntType> f_o_neighbourhood =
-          First_Order_Neighbourhood<CoMMAIndexType, CoMMAIntType>(
-              s_neighbours_of_seed, this->_dimension,true);
+      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        f_o_neighbourhood = First_Order_Neighbourhood<CoMMAIndexType,
+                                                      CoMMAWeightType, CoMMAIntType>(
+              s_neighbours_of_seed, priority_weights, this->_dimension,true);
       // Generate the set of the first order neighborhood to the given seed
-      unordered_set<CoMMAIndexType> fon =
-        f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
+      auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1241,7 +1197,7 @@ class Agglomerator_Pure_Front
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph._seeds_pool.boundary_value(argmin_ar) - 1 -
+            this->_fc_graph._seeds_pool.get_n_boundary_faces(argmin_ar) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
@@ -1297,62 +1253,6 @@ class Agglomerator_Pure_Front
       compactness =
           this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }  // end else
-    // Update seeds
-    // Create of l_of_new_seed:
-    list<CoMMAIndexType> l_of_new_seed;
-    if (!d_n_of_seed.empty()) {
-
-      // CoMMAIntType size = d_n_of_seed.size();
-      // l_of_new_seed.resize(size);
-      // if d_n_of_seed is not empty
-      // Reminder: d_n_of_seed is here the pool of cell neighbouring the
-      // previous seed!
-      for (auto &i_k_v : d_n_of_seed) {
-        if (i_k_v.second <= 2) {
-          l_of_new_seed.push_back(i_k_v.first);
-        }
-      }
-      // if list of new seeds is still empty we go to order 3
-      CoMMAIntType i_k = 3;
-      while (l_of_new_seed.empty()) {
-        // We put FC in the l_of_new_seed according to its order of neighbouring
-        // of previous seed.
-        // order 1 or 2 then 3, then 4 and so on.
-        for (auto &i_k_v : d_n_of_seed) {
-          if (i_k_v.second <= i_k) {
-            l_of_new_seed.push_back(i_k_v.first);
-          }
-        }
-        i_k++;
-      }
-    } else if (this->_fc_graph._seeds_pool.is_empty()) {
-      // else d_n_of_seed is empty: we used every neighbour!
-      // if list_of_seeds is empty, we look for new seeds to add to the
-      // list_of_seeds.
-      // if list_of_seeds is empty we look if there is some neighbour to the
-      // current fc:
-      // s_fc_neighbours_of_cc = set()
-      // we remove seed because we already update its first neighbours.
-      // A copy needed because the set is used inside ccg
-      unordered_set<CoMMAIndexType> tmp_set(s_current_cc);
-      tmp_set.erase(seed);
-
-      // We add to s_fc_neighbours_of_cc all the neighbours of FC included in
-      // s_fc_for_current_cc without seed
-      for (auto &i_fc : tmp_set) {
-        vector<CoMMAIndexType> a_neighbours =
-            this->_fc_graph.get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : a_neighbours) {
-          if (this->_cc_graph->is_fc_not_already_agglomerated(i_fc_n)) {
-            // _a_is_fc_agglomerated is up-to-date.
-            // remark: we don't care i_fc_n == i_fc.
-            l_of_new_seed.push_back(i_fc_n);
-          }
-        }
-      }
-    }
-    // Update of list_of_seeds:
-    (this->_fc_graph._seeds_pool).update(l_of_new_seed);
     return s_current_cc;
   }
 
@@ -1362,13 +1262,13 @@ class Agglomerator_Pure_Front
    * computes the best fine cells to add to the coarse cell.
    */
   void compute_best_fc_to_add(
-      const unordered_set<CoMMAIndexType> &neighbors,
+      const vector<CoMMAIndexType> &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
       const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
       CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
-      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) {
+      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) const {
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();

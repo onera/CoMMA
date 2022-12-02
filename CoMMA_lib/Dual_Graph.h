@@ -32,7 +32,6 @@
 #include <climits>
 #include <functional>
 
-#include "Queue.h"
 #include "Seeds_Pool.h"
 
 using namespace std;
@@ -121,20 +120,20 @@ class Graph {
    *  @param[in] root  root of the spanning tree
    */
   void BFS(const CoMMAIndexType &root) {
-    Queue<CoMMAIndexType> coda;
+    deque<CoMMAIndexType> coda;
     vector<CoMMAIndexType> v_neigh;
     vector<CoMMAIndexType> path;
-    coda.push(root);
+    coda.push_back(root);
     vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
     vector<CoMMAIndexType> prev(_number_of_cells, -1);
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
-      coda.pop();
+      coda.pop_front();
       v_neigh = get_neighbours(node);
       for (auto &it : v_neigh) {
         if (!visited[it]) {
-          coda.push(it);
+          coda.push_pack(it);
           visited[it] = true;
           prev[it] = node;
         }
@@ -453,7 +452,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
              const vector<vector<CoMMAWeightType>> &centers,
-             const Seeds_Pool<CoMMAIndexType, CoMMAIntType> &seeds_pool,
+             const Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
              const CoMMAIntType dimension,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
@@ -482,7 +481,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   ~Dual_Graph() {}
 
   /** @brief Member seeds pool variable */
-  Seeds_Pool<CoMMAIndexType, CoMMAIntType> _seeds_pool;
+  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _seeds_pool;
 
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
@@ -556,7 +555,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 2) {
         if (ar >= threshold_anisotropy) {
-          if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 3) {
+          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 3) {
             anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 4) {
             anisotropic_fc.insert(i_fc);
@@ -564,10 +563,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 3) {
         if (ar >= threshold_anisotropy) {
-          if (_seeds_pool._d_is_on_bnd.count(i_fc) && nb_neighbours == 5) {
+          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 5) {
             anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 6) {
-            anisotropic_fc.insert(i_fc);
           }
         }
       }

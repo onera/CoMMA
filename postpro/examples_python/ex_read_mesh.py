@@ -69,6 +69,7 @@ print(f' * {maxCard=}')
 print(f' * {correction=}')
 print(f' * {threshold_anisotropy=}')
 print(f' * isotropic_agglo={isotropic_agglo_types[isotropic_agglo]}')
+print(f' * Priority weights: reversed ID')
 print( ' [Output]')
 renum = renumber_coarse > 1
 print(f' * Coarse cell renumbering={renum}' + (f" (from 0 to {renumber_coarse-1})" if renum else ""))
@@ -87,7 +88,8 @@ adjMatrix_col_ind= np.array(graph.edges, dtype = 'long')
 
 adjMatrix_areaValues = np.array(mesh.area, dtype = 'double')
 volumes = np.array(mesh.volume, dtype = 'double')
-isOnBnd = np.array(mesh.boundary_cells, dtype = 'long')
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = 'double')
+isOnBnd = np.array(mesh.boundary_cells, dtype=int)
 fc_to_cc = np.full(nb_fc, -1, dtype = 'long')
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype= 'long')
 agglomerationLines_Idx = np.array([0], dtype = 'long')
@@ -95,7 +97,7 @@ agglomerationLines = np.array([0], dtype = 'long')
 
 print("CoMMA call")
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
-        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers,
+        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers, weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy, isotropic_agglo,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
