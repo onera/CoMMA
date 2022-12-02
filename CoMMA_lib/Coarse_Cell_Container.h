@@ -28,13 +28,6 @@
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
-/** @brief Create a Coarse Cell Graph, hence it is the
- *  container of the Coarse Cells created and
- *  of the operation we can do on them.
- *  @param[in] Dual_Graph input element Dual_Graph to work on the seeds choice
- * and the seeds pool
- *  @param[in] verbose it defines the verbose parameters
-*/
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -42,6 +35,13 @@ using MapIterator = typename map<
     CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
                                         CoMMAIntType>>>::iterator;
 
+/** @brief Create a Coarse Cell Graph, hence it is the
+ *  container of the Coarse Cells created and
+ *  of the operation we can do on them.
+ *  @param[in] Dual_Graph input element Dual_Graph to work on the seeds choice
+ * and the seeds pool
+ *  @param[in] verbose it defines the verbose parameters
+*/
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Coarse_Cell_Container {
