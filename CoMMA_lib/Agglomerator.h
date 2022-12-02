@@ -1015,7 +1015,9 @@ class Agglomerator_Biconnected
         // satisfied it means we have an eligible cell
         if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
 
-          if (number_of_external_faces_current_cc <= min_external_faces) {
+          if ( (number_of_external_faces_current_cc < min_external_faces) ||
+                ( number_of_external_faces_current_cc == min_external_faces &&
+                  arg_min_external_faces != this->_goal_card) ) {
 
             min_external_faces = number_of_external_faces_current_cc;
             arg_min_external_faces = size_current_cc;
@@ -1230,7 +1232,9 @@ class Agglomerator_Pure_Front
         // satisfied it means we have an eligible cell
         if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
 
-          if (number_of_external_faces_current_cc <= min_external_faces) {
+          if ( (number_of_external_faces_current_cc < min_external_faces) ||
+                ( number_of_external_faces_current_cc == min_external_faces &&
+                  arg_min_external_faces != this->_goal_card) ) {
 
             min_external_faces = number_of_external_faces_current_cc;
             arg_min_external_faces = size_current_cc;
