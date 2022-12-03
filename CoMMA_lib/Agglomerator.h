@@ -948,7 +948,7 @@ class Agglomerator_Biconnected
       // cardinality required
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
-      CoMMAIntType min_size = this->_goal_card;
+      CoMMAIntType min_size = this->_min_card;
       // Computation of the initial aspect ratio
       CoMMAWeightType diam_cc{-1.};
       // CC in construction
@@ -1193,7 +1193,7 @@ class Agglomerator_Pure_Front
       // cardinality required
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
-      CoMMAIntType min_size = this->_goal_card;
+      CoMMAIntType min_size = this->_min_card;
       // Computation of the initial aspect ratio
       CoMMAWeightType diam_cc{-1.};
       // CC in construction
