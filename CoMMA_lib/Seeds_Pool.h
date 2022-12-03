@@ -32,6 +32,7 @@
 #include <queue>
 #include <utility>
 #include <vector>
+#include <optional>
 
 #include "CoMMATypes.h"
 #include "Util.h"
@@ -248,6 +249,26 @@ class Seeds_Pool {
       auto &q = _l_of_seeds[_n_bnd_faces[s]];
       if (find(q.begin(), q.end(), s) == q.end())
         q.push_back(s);
+    }
+  }
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces. The seeds will be ordered considering their priority weights
+   * before being added to the queue
+   * @param[in] new_seeds Vector of seeds to add
+   **/
+  inline void order_new_seeds_and_update(
+      const unordered_set<CoMMAIndexType> &new_seeds) {
+    unordered_map<CoMMAIntT, CoMMASetOfPairType> new_seeds_by_bnd(4);
+    for (const auto s : new_seeds) {
+      new_seeds_by_bnd[_n_bnd_faces[s]].emplace(s, _priority_weights[s]);
+    }
+    for (auto & [n_bnd, seeds] : new_seeds_by_bnd) {
+      auto &q = _l_of_seeds[n_bnd];
+      for (const auto & [s, w] : seeds) {
+        if (find(q.begin(), q.end(), s) == q.end())
+          q.push_back(s);
+      }
     }
   }
 
