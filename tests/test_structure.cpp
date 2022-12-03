@@ -516,6 +516,38 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
       }
     } // WHEN PREVIOUS AGGLOMERATION
 #undef is_in_order
+#define is_in(i,s) s.find(i) != s.end()
+    WHEN("We compute the neighborhood of a coarse cell") {
+      vector<bool> agglomerated = vector<bool>(Data.nb_fc, false);
+      unordered_set<CoMMAIndexT> cc = {16, 17, 18, 23, 24};
+      THEN("The whole neighborhood is returned if no cell is agglomerated") {
+        auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
+        REQUIRE(neighs.size() == 9);
+        REQUIRE(is_in(15, neighs));
+        REQUIRE(is_in(22, neighs));
+        REQUIRE(is_in(30, neighs));
+        REQUIRE(is_in(31, neighs));
+        REQUIRE(is_in(25, neighs));
+        REQUIRE(is_in(19, neighs));
+        REQUIRE(is_in(11, neighs));
+        REQUIRE(is_in(10, neighs));
+        REQUIRE(is_in(9, neighs));
+      }
+      agglomerated[15] = true;
+      agglomerated[9] = true;
+      agglomerated[19] = true;
+      THEN("If some cells are agglomerated, then they do not appear in the neighborhood") {
+        auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
+        REQUIRE(neighs.size() == 6);
+        REQUIRE(is_in(22, neighs));
+        REQUIRE(is_in(30, neighs));
+        REQUIRE(is_in(31, neighs));
+        REQUIRE(is_in(25, neighs));
+        REQUIRE(is_in(11, neighs));
+        REQUIRE(is_in(10, neighs));
+      }
+    }
+#undef is_in
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
  #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
