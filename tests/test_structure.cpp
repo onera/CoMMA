@@ -298,7 +298,84 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
         }
       }
     }
+    WHEN("We simply update the seed pool") {
+      // Spoil all the corners so that the seed is completely void
+      for (auto i : corners) {
+        seeds_pool.choose_new_seed(agglomerated);
+        agglomerated[i] = true;
+      }
+      // In order: Internal, ridge, corner, valley
+      vector<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.update(new_seeds);
+      THEN("The order does not respect the priority but the boundary only") {
+        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[63] = true;
+        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[44] = true;
+        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[30] = true;
+        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[21] = true;
+      }
+      new_seeds = {10, 5, 6, 9};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.update(new_seeds);
+      THEN("The order respects the order of the input if all in the same queue") {
+        for (auto i : new_seeds) {
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
+      }
+    }
+    WHEN("We update the seed pool by asking a reorder") {
+      // Spoil all the corners so that the seed is completely void
+      for (auto i : corners) {
+        seeds_pool.choose_new_seed(agglomerated);
+        agglomerated[i] = true;
+      }
+      // In order: Internal, ridge, corner, valley
+      unordered_set<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.order_new_seeds_and_update(new_seeds);
+      THEN("The order does not respect the priority but the boundary only") {
+        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[63] = true;
+        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[44] = true;
+        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[30] = true;
+        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[21] = true;
+      }
+      new_seeds = {10, 5, 6, 9};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.order_new_seeds_and_update(new_seeds);
+      THEN("The order respects the priority all in the same queue") {
+        REQUIRE(5 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[5] = true;
+        REQUIRE(6 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[6] = true;
+        REQUIRE(9 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[9] = true;
+        REQUIRE(10 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[10] = true;
+      }
+    }
   }
+
   GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
