@@ -996,10 +996,8 @@ class Agglomerator_Biconnected
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
-        f_o_neighbourhood = First_Order_Neighbourhood<CoMMAIndexType,
-                                                      CoMMAWeightType, CoMMAIntType>(
-              s_neighbours_of_seed, priority_weights, this->_dimension,false);
+      First_Order_Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        f_o_neighbourhood(s_neighbours_of_seed, priority_weights);
       // Generate the set of the first order neighborhood to the given seed
       auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
 
@@ -1242,10 +1240,8 @@ class Agglomerator_Pure_Front
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
-        f_o_neighbourhood = First_Order_Neighbourhood<CoMMAIndexType,
-                                                      CoMMAWeightType, CoMMAIntType>(
-              s_neighbours_of_seed, priority_weights, this->_dimension,true);
+      First_Order_Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        f_o_neighbourhood(s_neighbours_of_seed, priority_weights, this->_dimension);
       // Generate the set of the first order neighborhood to the given seed
       auto fon = f_o_neighbourhood.update(seed, this->_fc_graph.get_neighbours(seed));
 
