@@ -280,17 +280,102 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     vector<bool> agglomerated(Data.nb_fc, false);
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
-        for (auto i : corners)
+        for (auto i : corners) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : ridges)
+          agglomerated[i] = true;
+        }
+        for (auto i : ridges) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : valleys)
+          agglomerated[i] = true;
+        }
+        for (auto i : valleys) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : interior)
+          agglomerated[i] = true;
+        }
+        for (auto i : interior) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
+      }
+    }
+    WHEN("We simply update the seed pool") {
+      // Spoil all the corners so that the seed is completely void
+      for (auto i : corners) {
+        seeds_pool.choose_new_seed(agglomerated);
+        agglomerated[i] = true;
+      }
+      // In order: Internal, ridge, corner, valley
+      vector<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.update(new_seeds);
+      THEN("The order does not respect the priority but the boundary only") {
+        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[63] = true;
+        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[44] = true;
+        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[30] = true;
+        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[21] = true;
+      }
+      new_seeds = {10, 5, 6, 9};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.update(new_seeds);
+      THEN("The order respects the order of the input if all in the same queue") {
+        for (auto i : new_seeds) {
+          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
+      }
+    }
+    WHEN("We update the seed pool by asking a reorder") {
+      // Spoil all the corners so that the seed is completely void
+      for (auto i : corners) {
+        seeds_pool.choose_new_seed(agglomerated);
+        agglomerated[i] = true;
+      }
+      // In order: Internal, ridge, corner, valley
+      unordered_set<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.order_new_seeds_and_update(new_seeds);
+      THEN("The order does not respect the priority but the boundary only") {
+        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[63] = true;
+        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[44] = true;
+        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[30] = true;
+        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[21] = true;
+      }
+      new_seeds = {10, 5, 6, 9};
+      fill(agglomerated.begin(), agglomerated.end(), true);
+      for (auto &i : new_seeds) {
+        agglomerated[i] = false;
+      }
+      seeds_pool.order_new_seeds_and_update(new_seeds);
+      THEN("The order respects the priority all in the same queue") {
+        REQUIRE(5 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[5] = true;
+        REQUIRE(6 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[6] = true;
+        REQUIRE(9 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[9] = true;
+        REQUIRE(10 == seeds_pool.choose_new_seed(agglomerated));
+        agglomerated[10] = true;
       }
     }
   }
+
   GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
     DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
@@ -318,14 +403,22 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     vector<bool> agglomerated(Data.nb_fc, false);
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
-        for (auto i : corners)
+        for (auto i : corners) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : ridges)
+          agglomerated[i] = true;
+        }
+        for (auto i : ridges) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : valleys)
+          agglomerated[i] = true;
+        }
+        for (auto i : valleys) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
-        for (auto i : interior)
+          agglomerated[i] = true;
+        }
+        for (auto i : interior) {
           REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          agglomerated[i] = true;
+        }
       }
     }
   }
@@ -423,6 +516,38 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
       }
     } // WHEN PREVIOUS AGGLOMERATION
 #undef is_in_order
+#define is_in(i,s) s.find(i) != s.end()
+    WHEN("We compute the neighborhood of a coarse cell") {
+      vector<bool> agglomerated = vector<bool>(Data.nb_fc, false);
+      unordered_set<CoMMAIndexT> cc = {16, 17, 18, 23, 24};
+      THEN("The whole neighborhood is returned if no cell is agglomerated") {
+        auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
+        REQUIRE(neighs.size() == 9);
+        REQUIRE(is_in(15, neighs));
+        REQUIRE(is_in(22, neighs));
+        REQUIRE(is_in(30, neighs));
+        REQUIRE(is_in(31, neighs));
+        REQUIRE(is_in(25, neighs));
+        REQUIRE(is_in(19, neighs));
+        REQUIRE(is_in(11, neighs));
+        REQUIRE(is_in(10, neighs));
+        REQUIRE(is_in(9, neighs));
+      }
+      agglomerated[15] = true;
+      agglomerated[9] = true;
+      agglomerated[19] = true;
+      THEN("If some cells are agglomerated, then they do not appear in the neighborhood") {
+        auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
+        REQUIRE(neighs.size() == 6);
+        REQUIRE(is_in(22, neighs));
+        REQUIRE(is_in(30, neighs));
+        REQUIRE(is_in(31, neighs));
+        REQUIRE(is_in(25, neighs));
+        REQUIRE(is_in(11, neighs));
+        REQUIRE(is_in(10, neighs));
+      }
+    }
+#undef is_in
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
  #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()

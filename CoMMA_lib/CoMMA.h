@@ -23,9 +23,13 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <iterator>
 #include <numeric>
 #include <stdexcept>
 #include <type_traits>
+#include <unordered_set>
+#include <vector>
 
 #include "Agglomerator.h"
 #include "templateHelpers.h"
@@ -90,7 +94,7 @@ void agglomerate_one_level(
     const vector<CoMMAIndexType> &adjMatrix_col_ind,
     const vector<CoMMAWeightType> &adjMatrix_areaValues,
     const vector<CoMMAWeightType> &volumes,
-    const vector<vector<CoMMAWeightType>> centers,
+    const vector<vector<CoMMAWeightType>> &centers,
 
     // Order related parameter:
     const vector<CoMMAWeightType> &priority_weights,
@@ -136,6 +140,15 @@ void agglomerate_one_level(
   const CoMMAIndexType nb_fc =
       static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
+  // BOUNDARY FACES
+  //======================================
+  // Sometimes partitioners give a number of boundary faces higher than the physical
+  // one. We fix this
+  const CoMMAIntType expected_max_n_bnd = dimension;
+  vector<CoMMAIntType> fixed_n_bnd_faces(n_bnd_faces.size());
+  replace_copy_if(n_bnd_faces.begin(), n_bnd_faces.end(), fixed_n_bnd_faces.begin(),
+      [expected_max_n_bnd](auto n){return n > expected_max_n_bnd;}, expected_max_n_bnd);
+
   // ANISOTROPIC COMPLIANT FC
   //======================================
   // Elements that are checked if they are anisotropic. If an element satisfies
@@ -150,7 +163,7 @@ void agglomerate_one_level(
   //======================================
   // Object providing the order of agglomeration
   Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> seeds_pool(
-      n_bnd_faces, priority_weights);
+      fixed_n_bnd_faces, priority_weights);
 
   // DUAL GRAPH
   //======================================

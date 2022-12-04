@@ -635,6 +635,27 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    */
   inline CoMMAIntType get_nb_cells() const { return this->_number_of_cells; }
 
+  /** @brief Get the fine cells neighbors of a coarse cell
+  *   @param[in] s_seeds set of seeds for which the neighborhood should be
+  * computed. Generally they are the fine cells composing the coarse cell for
+  * which we are trying to compute the neighborhood.
+  *   @param[in] max_card maximum cardinality
+  *   @param[in] is_fc_agglomerated_tmp vector reporting the already
+  * agglomerated cell, useful in the algorithm
+  *   @return The set of neighbors
+  */
+  inline unordered_set<CoMMAIndexType> get_neighbourhood_of_cc(
+      const unordered_set<CoMMAIndexType> &s_seeds,
+      const vector<bool> &is_fc_agglomerated_tmp) const {
+    unordered_set<CoMMAIndexType> cc_neighs{};
+    for (const auto fc : s_seeds)
+      for (const auto n : this->get_neighbours(fc))
+        if ( !is_fc_agglomerated_tmp[n] && s_seeds.find(n) == s_seeds.end())
+          // If not agglomerated and not part of the coarse cell
+          cc_neighs.insert(n);
+    return cc_neighs;
+  }
+
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
   *   @param[in] s_seeds set of seeds for which the neighborhood must be
@@ -650,10 +671,11 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   * agglomerated cell, useful in the algorithm
   */
   void compute_neighbourhood_of_cc(
-      const unordered_set<CoMMAIndexType> s_seeds,
+      const unordered_set<CoMMAIndexType> &s_seeds,
       CoMMAIntType &nb_of_order_of_neighbourhood,
       unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
-      const CoMMAIntType max_card, vector<bool> &is_fc_agglomerated_tmp) {
+      const CoMMAIntType max_card,
+      const vector<bool> &is_fc_agglomerated_tmp) const {
     // Basic checks
     assert(max_card != -1);
     // dict of FC with the order of neighbouring from seed
