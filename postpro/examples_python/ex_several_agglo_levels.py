@@ -138,9 +138,9 @@ for level in range(agglomeration_levels):
     fc_to_cc,agglomerationLines_Idx,agglomerationLines = \
             agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, centers,
                                   arrayOfFineAnisotropicCompliantCells,isOnBnd, level == 0,
-                                  anisotropic, threshold_anisotropy, isotropic_agglo,
+                                  anisotropic, threshold_anisotropy,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
-                                  correction, dimension,goalCard,minCard,maxCard)
+                                  correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
 
     # Update direction from original fine cell to current level coarse cell
     for i in range(len(fc_to_cur_lvl)):

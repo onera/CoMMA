@@ -109,7 +109,6 @@ void agglomerate_one_level(
     // Agglomeration argument
     bool isFirstAgglomeration, bool is_anisotropic,
     CoMMAWeightType threshold_anisotropy,
-    const CoMMAIntType type_of_isotropic_agglomeration,
 
     // Outputs
     vector<CoMMAIndexType> &fc_to_cc,                // Out
@@ -118,7 +117,8 @@ void agglomerate_one_level(
 
     // Args with default value
     bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
-    CoMMAIntType min_card, CoMMAIntType max_card) {
+    CoMMAIntType min_card, CoMMAIntType max_card,
+    const CoMMAIntType type_of_isotropic_agglomeration=CoMMAAgglT::BICONNECTED) {
   // NOTATION
   //======================================
   // fc = Fine Cell
