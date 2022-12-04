@@ -31,9 +31,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Agglomerator.h"
-#include "templateHelpers.h"
 #include "CoMMATypes.h"
+
+#include "Agglomerator.h"
+#include "Coarse_Cell_Container.h"
+#include "Dual_Graph.h"
+#include "Seeds_Pool.h"
 
 #define check_signed_int_type(intT, label) \
   static_assert(is_signed<intT>::value && numeric_limits<intT>::is_integer, \
