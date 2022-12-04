@@ -588,6 +588,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
           if (is_on_boundary(i_fc) > 0 && nb_neighbours == 5) {
             anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 6) {
+            anisotropic_fc.insert(i_fc);
           }
         }
       }
