@@ -171,7 +171,7 @@ void agglomerate_one_level(
   // Object containing the graph representation and related info in a convenient structure
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, centers, seeds_pool, dimension, s_anisotropic_compliant_fc);
+      volumes, centers, fixed_n_bnd_faces, dimension, s_anisotropic_compliant_fc);
 
   // COARSE CELL CONTAINER
   //======================================
@@ -193,7 +193,7 @@ void agglomerate_one_level(
   if (is_anisotropic) {
     // Build anisotropic agglomerator
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
-        aniso_agg(fc_graph, cc_graph, threshold_anisotropy,
+        aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
                   dimension);
 
@@ -215,12 +215,12 @@ void agglomerate_one_level(
   if (type_of_isotropic_agglomeration==CoMMAAgglT::BICONNECTED){
     agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension);
+        fc_graph, cc_graph, seeds_pool, dimension);
   }
   else {
     agg = make_unique<
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, dimension);
+        fc_graph, cc_graph, seeds_pool, dimension);
   }
   agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
   // Agglomerate

@@ -87,13 +87,18 @@ class Agglomerator {
   /** @brief The constructor of the interface
    *  @param[in] graph *Dual Graph* object that determines the connectivity
    * of the matrix
+   *  @param[in] cc_graph Container for the coarse cells
+   *  @param[in] seeds_pool Seed_Pool object giving the order in which the fine cells
+   * should be considered when agglomerating
    *  @param[in] dimension the dimension of the problem
    */
   Agglomerator(Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
                Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                      CoMMAIntType> &cc_graph,
+               Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
                CoMMAIntType dimension = 3)
-      : _dimension(dimension), _fc_graph(graph), _cc_graph(&cc_graph) {
+      : _dimension(dimension), _fc_graph(graph), _cc_graph(&cc_graph),
+      _seeds_pool(seeds_pool) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw range_error("dimension can only be 2 or 3");
     }
@@ -161,6 +166,11 @@ class Agglomerator {
   /** @brief pointer to Coarse Cell Graph element */
   Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *
       _cc_graph;
+  /** @brief Seed_Pool object giving the order in which the fine * cells should
+   * be considered when agglomerating
+   **/
+  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &_seeds_pool;
+  
 };
 
 /** @brief Agglomerator_Anisotropic class is a child class of the Agglomerator
@@ -186,6 +196,9 @@ class Agglomerator_Anisotropic
   /** @brief Constructor.
    *  @param[in] graph *Dual Graph* object that determines the connectivity
    * of the matrix
+   *  @param[in] cc_graph Container for the coarse cells
+   *  @param[in] seeds_pool Seed_Pool object giving the order in which the fine cells
+   * should be considered when agglomerating
    *  @param[in] agglomerationLines_Idx Connectivity for the agglomeration lines: each
    * element points to a particular element in the vector agglomerationLines
    *  @param[in] agglomerationLines Vector storing all the elements of the
@@ -198,13 +211,14 @@ class Agglomerator_Anisotropic
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &
           cc_graph,
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
       const CoMMAWeightType threshold_anisotropy,
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
       const bool is_first_agglomeration,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, dimension) {
+            graph, cc_graph, seeds_pool, dimension) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -336,8 +350,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       // We start agglomerating from the head or the tail of the line according to
       // which of the two has more boundary faces
       const bool forward_line =
-        (this->_fc_graph._seeds_pool).get_n_boundary_faces(line.front()) >=
-          (this->_fc_graph._seeds_pool).get_n_boundary_faces(line.back());
+        this->_fc_graph.get_n_boundary_faces(line.front()) >=
+          this->_fc_graph.get_n_boundary_faces(line.back());
 
       if (forward_line)
         loop_line(line.begin(), line.end());
@@ -549,11 +563,12 @@ class Agglomerator_Isotropic
   **/
   Agglomerator_Isotropic(
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &
-          cc_graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                            CoMMAIntType> &cc_graph,
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, dimension) {
+            graph, cc_graph, seeds_pool, dimension) {
     // no particular constructor
   }
 
@@ -636,7 +651,7 @@ class Agglomerator_Isotropic
     CoMMAIndexType nb_of_fc = this->_l_nb_of_cells[0];
     while (this->_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
       // 1) Choose a new seed
-      CoMMAIndexType seed = (this->_fc_graph._seeds_pool).choose_new_seed(
+      CoMMAIndexType seed = this->_seeds_pool.choose_new_seed(
           this->_cc_graph->_a_is_fc_agglomerated);
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm
@@ -866,11 +881,12 @@ class Agglomerator_Biconnected
    **/
   Agglomerator_Biconnected(
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &
-          cc_graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                            CoMMAIntType> &cc_graph,
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, dimension) {
+            graph, cc_graph, seeds_pool, dimension) {
     // no particular constructor
   }
 
@@ -973,7 +989,7 @@ class Agglomerator_Biconnected
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph._seeds_pool.get_n_boundary_faces(seed) - 1;
+          nb_neighbours + this->_fc_graph.get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
@@ -1004,7 +1020,7 @@ class Agglomerator_Biconnected
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph._seeds_pool.get_n_boundary_faces(argmin_ar) - 1 -
+            this->_fc_graph.get_n_boundary_faces(argmin_ar) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
@@ -1078,9 +1094,9 @@ class Agglomerator_Biconnected
       }      
       for (const auto &[o, neighs] : neighs_by_order)
         if (!neighs.empty())
-          this->_fc_graph._seeds_pool.order_new_seeds_and_update(neighs);
+          this->_seeds_pool.order_new_seeds_and_update(neighs);
       if (!neighs_not_found.empty())
-        this->_fc_graph._seeds_pool.order_new_seeds_and_update(neighs_not_found);
+        this->_seeds_pool.order_new_seeds_and_update(neighs_not_found);
 
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
 
@@ -1111,11 +1127,12 @@ class Agglomerator_Pure_Front
    **/
   Agglomerator_Pure_Front(
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &
-          cc_graph,
+      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                            CoMMAIntType> &cc_graph,
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, dimension) {
+            graph, cc_graph, seeds_pool, dimension) {
     // no particular constructor
   }
 
@@ -1218,7 +1235,7 @@ class Agglomerator_Pure_Front
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph._seeds_pool.get_n_boundary_faces(seed) - 1;
+          nb_neighbours + this->_fc_graph.get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
@@ -1249,7 +1266,7 @@ class Agglomerator_Pure_Front
 
         number_of_external_faces_current_cc +=
             this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph._seeds_pool.get_n_boundary_faces(argmin_ar) - 1 -
+            this->_fc_graph.get_n_boundary_faces(argmin_ar) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
@@ -1323,9 +1340,9 @@ class Agglomerator_Pure_Front
       }
       for (const auto & [o, neighs] : neighs_by_order)
         if (!neighs.empty())
-          this->_fc_graph._seeds_pool.order_new_seeds_and_update(neighs);
+          this->_seeds_pool.order_new_seeds_and_update(neighs);
       if (!neighs_not_found.empty())
-        this->_fc_graph._seeds_pool.order_new_seeds_and_update(neighs_not_found);
+        this->_seeds_pool.order_new_seeds_and_update(neighs_not_found);
 
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
 

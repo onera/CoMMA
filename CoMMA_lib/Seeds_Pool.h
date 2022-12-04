@@ -294,19 +294,5 @@ class Seeds_Pool {
    */
   inline bool is_initialized() const { return !_n_bnd_faces.empty(); }
 
-  /** @brief Return how many boundary faces a certain cell has
-   *  @param[in] idx_f Index of the cell
-   *  @return the number of boundary faces
-   */
-  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexT idx_c) const {
-    return _n_bnd_faces[idx_c];
-  }
-  /** @brief Whether a cell is on the boundary
-   *  @param[in] idx_f Index of the cell
-   *  @return Whether a cell is on the boundary
-   */
-  inline bool is_on_boundary(const CoMMAIndexT idx_c) const {
-    return _n_bnd_faces[idx_c] > 0;
-  }
 };
 #endif  // COMMA_PROJECT_SEEDS_POOL_H

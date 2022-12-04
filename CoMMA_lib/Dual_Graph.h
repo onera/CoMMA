@@ -449,7 +449,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    *  @param[in] centers Cell centers
-   *  @param[in] seeds_pool The seeds pool structure
+   *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
    *  @param[in] dimension Dimensionality of the problem, 2- or 3D
    *  @param[in] s_anisotropic_compliant_fc set of compliant fc cells (in the
    * most of the case all)
@@ -460,13 +460,13 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<CoMMAWeightType> &m_crs_values,
              const vector<CoMMAWeightType> &volumes,
              const vector<vector<CoMMAWeightType>> &centers,
-             const Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+             const vector<CoMMAIntType> &n_bnd_faces,
              const CoMMAIntType dimension,
              const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
                  unordered_set<CoMMAIndexType>({}))
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _seeds_pool(seeds_pool), _centers(centers) {
+        _n_bnd_faces(n_bnd_faces), _centers(centers) {
     if (s_anisotropic_compliant_fc.size() > 0) {
       _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
     } else {
@@ -481,15 +481,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
                         -> CoMMAWeightType { return max_s / min_s; } :
         [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
-                        //-> CoMMAWeightType { return max_s / min_s; };
                         -> CoMMAWeightType { return sqrt(max_s / min_s); };
   }
 
   /** @brief Destructor of the class */
   ~Dual_Graph() {}
 
-  /** @brief Member seeds pool variable */
-  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _seeds_pool;
+  /** @brief Vector telling how many boundary faces each cell has */
+  vector<CoMMAIntType> _n_bnd_faces;
 
   /** @brief Member unordered set of compliant cells*/
   unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
@@ -504,6 +503,21 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  (Recall that in 2D a face is actually an edge)
    */
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
+
+  /** @brief Return how many boundary faces a certain cell has
+   *  @param[in] idx_f Index of the cell
+   *  @return the number of boundary faces
+   */
+  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexT idx_c) const {
+    return _n_bnd_faces[idx_c];
+  }
+  /** @brief Whether a cell is on the boundary
+   *  @param[in] idx_f Index of the cell
+   *  @return Whether a cell is on the boundary
+   */
+  inline bool is_on_boundary(const CoMMAIndexT idx_c) const {
+    return _n_bnd_faces[idx_c] > 0;
+  }
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
    * threshold
@@ -563,7 +577,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 2) {
         if (ar >= threshold_anisotropy) {
-          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 3) {
+          if (is_on_boundary(i_fc) > 0 && nb_neighbours == 3) {
             anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 4) {
             anisotropic_fc.insert(i_fc);
@@ -571,7 +585,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       } else if (preserving == 3) {
         if (ar >= threshold_anisotropy) {
-          if (_seeds_pool.is_on_boundary(i_fc) && nb_neighbours == 5) {
+          if (is_on_boundary(i_fc) > 0 && nb_neighbours == 5) {
             anisotropic_fc.insert(i_fc);
           } else if (nb_neighbours == 6) {
           }
