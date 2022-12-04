@@ -56,6 +56,7 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * will be the area of the faces that in the graph representation are the edges
  * between two nodes represented by the cell centers.
  * @param[in] volumes The volumes of the cells
+ * @param[in] centers Cell centers
  * @param[in] priority_weights Weights used to set the order telling where to start
  * agglomerating. The higher the weight, the higher the priority
  *  @param[in] arrayOfFineAnisotropicCompliantCells List of cells which have to be looked

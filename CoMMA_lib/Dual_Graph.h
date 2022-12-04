@@ -220,19 +220,24 @@ class Graph {
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
  */
-
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
  public:
   /** @brief Constructor of the class
+   *  @param[in] nb_c Cardinality of the CC, that is the number of fine cells
+   * compising the CC
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
    *  @param[in] m_crs_col_ind the column index of the CRS representation
    *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
+   *  @param[in] mapping_l_to_g Mapping between the local (to the CC) numering to
+   * global numbering
+   *  @param[in] is_isotrppic Wheter the cell is isotropic
    */
   Subgraph(const CoMMAIndexType &nb_c,
            const vector<CoMMAIndexType> &m_crs_row_ptr,
@@ -426,9 +431,10 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
 /** @brief A class implementing the CRS global graph representation of the
  * global mesh
- *  @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -442,7 +448,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
+   *  @param[in] centers Cell centers
    *  @param[in] seeds_pool The seeds pool structure
+   *  @param[in] dimension Dimensionality of the problem, 2- or 3D
    *  @param[in] s_anisotropic_compliant_fc set of compliant fc cells (in the
    * most of the case all)
    */
