@@ -1128,5 +1128,41 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
   };
+  GIVEN("A simple 8-cell Cartesian grid") {
+#define fc_in_cc(graph, fc, cc) graph._fc_2_cc[fc] == cc
+    DualGPy_correction Data = DualGPy_correction();
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
+        Data.s_anisotropic_compliant_fc);
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
+      cc_graph.cc_create_a_cc({0,4,5});
+      cc_graph.cc_create_a_cc({1});
+      cc_graph.cc_create_a_cc({2,3,6,7});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 1));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 2));
+      }
+      cc_graph.correct();
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+      }
+    }
+#undef fc_in_cc
+  }
 }
 #undef equal_up_to

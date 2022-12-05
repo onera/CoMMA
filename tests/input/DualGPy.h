@@ -14,6 +14,7 @@ class DualGPy_minimal;
 class DualGPy_cube_4;
 class DualGPy_quad_4;
 class DualGPy_quad_7;
+class DualGPy_correction;
 
 class DualGPy {
 
@@ -245,6 +246,23 @@ class DualGPy_cube_4 {
         weights[i] = static_cast<CoMMAWeightT>(nb_fc - i);
       }
     }
+};
+
+/** @brief 8 cells arranged in 2 rows used for testing correction */
+class DualGPy_correction {
+    public:
+    CoMMAIndexT nb_fc{8};
+    vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 5, 8, 10, 12, 15, 18, 20};
+    vector<CoMMAIndexT> adjMatrix_col_ind = {1, 4, 0, 2, 5, 1, 3, 6, 2, 7, 0, 5, 1, 4, 6, 2, 5, 7, 3, 6};
+    vector<CoMMAIntT> n_bnd_faces = {2, 1, 1, 2, 2, 1, 1, 2};
+    vector<CoMMAWeightT> adjMatrix_areaValues = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    vector<CoMMAWeightT> volumes = {1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00};
+    vector<vector<CoMMAWeightT>> centers = {{0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, {3.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5}, {3.5, 1.5}};
+    vector<CoMMAWeightT> weights = {7., 6., 5., 4., 3., 2., 1., 0.};
+    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7};
+    CoMMAIntT dim{2};
+
+    DualGPy_correction() {}
 };
 
 #endif
