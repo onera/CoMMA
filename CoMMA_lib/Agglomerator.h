@@ -170,7 +170,7 @@ class Agglomerator {
    * be considered when agglomerating
    **/
   Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &_seeds_pool;
-  
+
 };
 
 /** @brief Agglomerator_Anisotropic class is a child class of the Agglomerator
@@ -1106,7 +1106,7 @@ class Agglomerator_Biconnected
           neighs_by_order[d_n_of_seed.at(s)].insert(s);
         else
           neighs_not_found.insert(s);
-      }      
+      }
       for (const auto &[o, neighs] : neighs_by_order)
         if (!neighs.empty())
           this->_seeds_pool.order_new_seeds_and_update(neighs);

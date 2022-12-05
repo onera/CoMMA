@@ -24,6 +24,9 @@
 */
 
 #include <memory>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 #include "Dual_Graph.h"
 
@@ -33,7 +36,6 @@
  * area) of the nodes or edges of the Mesh
  * @tparam CoMMAIntType the CoMMA type for integers
  */
-
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Coarse_Cell {
@@ -51,60 +53,57 @@ class Coarse_Cell {
       Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       bool is_isotropic = true)
-      : _idx(i_cc), _is_isotropic(is_isotropic) {
-    // compactness, degrees are defined in the Subgraph
-    // Other quantities are defined in the cc_graph map (e.h the i_cc)
-    _fc_graph = &fc_graph;
+      : _idx(i_cc), _fc_graph(&fc_graph), _is_isotropic(is_isotropic),
+      _is_connected(false), _is_connectivity_up_to_date(false), _s_fc(s_fc) {
+    // It also initializes _fc_volumes, _adjMatrix_row_ptr, _adjMatrix_col_ind, and
+    // _adjMatrix_areaValues
+    build_local_CRS();
 
-    for (const CoMMAIndexType &i_fc : s_fc) {
-      _s_fc.insert(i_fc);
-    }
-
-    _mapping_g_to_l = build_CRS();
     _cc_graph =
         make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
             s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
             _adjMatrix_areaValues, _fc_volumes, _mapping_g_to_l, is_isotropic);
   }
 
+  /** @brief Destructor of the class */
   ~Coarse_Cell() {};
 
-  /** @brief Index of the coarse cell*/
+  /** @brief Index of the coarse cell (It seems to be unused, but it useful to have) */
   CoMMAIndexType _idx;
 
   /** @brief mapping vector. The position of the index is the local node, the
    * value is the global
-   **/
+   */
   vector<CoMMAIndexType> _mapping_g_to_l;
 
-  /** @brief The row pointer of the CSR representation of the subgraph*/
+  /** @brief The row pointer of the CSR representation of the subgraph */
   vector<CoMMAIndexType> _adjMatrix_row_ptr;
 
-  /** @brief The column index representation of the CSR representation*/
+  /** @brief The column index representation of the CSR representation */
   vector<CoMMAIndexType> _adjMatrix_col_ind;
 
-  /** @brief The area value of the internal fine cells*/
+  /** @brief The area value of the internal fine cells */
   vector<CoMMAWeightType> _adjMatrix_areaValues;
 
-  /** @brief The volumes of the internal fine cells*/
+  /** @brief The volumes of the internal fine cells */
   vector<CoMMAWeightType> _fc_volumes;
 
-  /** @brief shared pointer of the subgraph structure (CSR representation)*/
+  /** @brief shared pointer of the subgraph structure (CSR representation) */
   shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
 
   /** @brief The global dual graph*/
   Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *_fc_graph;
 
-  /** @brief Is the cell isotropic or anisotropic*/
+  /** @brief Is the cell isotropic or anisotropic */
   bool _is_isotropic;
 
-  /** @brief is the cell connected*/
+  /** @brief is the cell connected */
   bool _is_connected;
 
-  /** @brief the connectivity has been checked*/
-  bool _is_connectivity_up_to_date = false;  // TODO useful for is_connected?
+  /** @brief the connectivity has been checked */
+  bool _is_connectivity_up_to_date;
 
-  /** @brief Set of fine cells composing the  Coarse cell*/
+  /** @brief Set of fine cells composing the Coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
 
   /** @brief Method that return a boolean determining if the Coarse Cell is
@@ -112,8 +111,7 @@ class Coarse_Cell {
    *  @return true if the subgraph is connected, false if the subgraph is not
    * connected
    **/
-  bool is_connected() {
-
+  inline bool is_connected() {
     if (!_is_connectivity_up_to_date) {
       _is_connected = _cc_graph->check_connectivity();
       _is_connectivity_up_to_date = true;
@@ -121,46 +119,44 @@ class Coarse_Cell {
     return _is_connected;
   }
 
-  /** @brief function to build the local CSR subgraph representation
-   * @return a vector representing the local to global mapping.
-   **/
-  vector<CoMMAIndexType> build_CRS() {
+  /** @brief function to build the local CSR subgraph representation. It initializes
+   * several members related to the subgraph
+   */
+  inline void build_local_CRS() {
     // initialization vectors
     CoMMAIndexType position = 0;
-    CoMMAIndexType index_weight;
-    vector<CoMMAIndexType> neigh;
-    vector<CoMMAWeightType> weight;
+    vector<CoMMAWeightType> weight{};
     vector<CoMMAIndexType> row_ptr = {0};
-    vector<CoMMAIndexType> col_ind;
-    vector<CoMMAIndexType> mapping;
-    vector<CoMMAWeightType> area;
+    vector<CoMMAIndexType> col_ind{};
+    vector<CoMMAIndexType> mapping{};
     for (const CoMMAIndexType &i_fc : _s_fc) {
       // we add to the mapping the i_fc
       mapping.push_back(i_fc);
       // get neighbours and the weights associated
-      neigh = _fc_graph->get_neighbours(i_fc);
-      area = _fc_graph->get_weights(i_fc);
+      const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
+      const vector<CoMMAWeightType> area = _fc_graph->get_weights(i_fc);
       for (auto it = neigh.begin(); it != neigh.end(); ++it) {
-        index_weight = it - neigh.begin();
-        if (_s_fc.count(*it)) {
+        if (find(_s_fc.begin(), _s_fc.end(), *it) != _s_fc.end()) {
           ++position;
           col_ind.push_back(*it);
-          weight.push_back(area[index_weight]);
+          weight.push_back(area[it - neigh.begin()]);
         }
       }
       row_ptr.push_back(position);
       _fc_volumes.push_back(_fc_graph->_volumes[i_fc]);
     }
-    _adjMatrix_row_ptr = row_ptr;
+
+    _adjMatrix_row_ptr = move(row_ptr);
+
     // Map in the local subgraph
     for (auto it = col_ind.begin(); it != col_ind.end(); ++it) {
       auto indx = find(mapping.begin(), mapping.end(), *it);
-      index_weight = indx - mapping.begin();
-      _adjMatrix_col_ind.push_back(index_weight);
+      _adjMatrix_col_ind.push_back(indx - mapping.begin());
     }
-    _adjMatrix_areaValues = weight;
 
-    return (mapping);
+    _adjMatrix_areaValues = move(weight);
+
+    _mapping_g_to_l = move(mapping);
   }
 };
 
