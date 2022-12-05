@@ -113,7 +113,7 @@ class Coarse_Cell_Container {
     return (result);
   }
 
-  /** @brief Update the member variable of the memebr fc2cc based on the mapping
+  /** @brief Update the member variable of the member fc2cc based on the mapping
    * given
    *  @param[in] mapping mapping on old fc2cc to the new fc2cc
    **/
@@ -155,7 +155,6 @@ class Coarse_Cell_Container {
    **/
   void correct() {
     // initializing vector neigh_cc
-    vector<CoMMAIndexType> neigh;
     // We cycle on the subgraphs of the bimap structure
     auto it = _cc_vec.begin();
     // We use it to understand if we have succeeded in the correction
@@ -171,7 +170,7 @@ class Coarse_Cell_Container {
       if (current_cc->_cardinality == 1 && current_cc->_is_isotropic) {
         // Get the cc neigh of the given fine cell
         auto i_fc = current_cc->_mapping_l_to_g[0];
-        neigh = get_neigh_cc(i_fc, i_cc);
+        const vector<CoMMAIndexType> neigh = get_neigh_cc(i_fc, i_cc);
         if(!neigh.empty()){
         // now we have the neighborhood cc cell, we can access to them and
         // control the characteristics
@@ -210,7 +209,6 @@ class Coarse_Cell_Container {
         }
        } else {++it;};
         end = _cc_vec.end();
-        neigh.clear();
         it_old = it;
       } else {
         ++it;
