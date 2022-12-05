@@ -918,7 +918,7 @@ class Agglomerator_Biconnected
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
-    assert(this->_goal_card != 0);  // _goal_card has been initialized
+    assert(this->_goal_card > 1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
     // Dictionary of the neighborhood of the seed, the key is the global index

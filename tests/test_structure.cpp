@@ -28,6 +28,7 @@ using namespace std;
 
 using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
 using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
+using PairValueTestT = int; // Leave this since we might try something than what usually found in CoMMA
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
@@ -95,7 +96,7 @@ SCENARIO("Test of a structure", "[structure]") {
 
 SCENARIO("Test of the Queue", "[Queue]") {
   GIVEN("A simple Queue of CoMMAIndexT type") {
-    Queue<CoMMAIndexT> st_long;
+    Queue<long> st_long;
     WHEN("We push a certain number of elements") {
       st_long.push(0);
       st_long.push(1);
@@ -143,7 +144,7 @@ SCENARIO("Test of the tree", "[Tree]") {
 
 SCENARIO("Test of Priority Pair", "[Priority Pair]") {
   GIVEN("Some pairs") {
-    Priority_Pair<CoMMAIntT, CoMMAIntT> p1{0,1}, p1bis{0,1},
+    Priority_Pair<PairValueTestT, PairValueTestT> p1{0,1}, p1bis{0,1},
       p2{3,0}, p3{0,0};
     WHEN("We compare two equal pairs") {
       THEN("Equal pairs are identified") {
@@ -162,11 +163,11 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
     }
   }
   GIVEN("A set of pairs") {
-    set<Priority_Pair<CoMMAIntT, CoMMAIntT>> s =
+    set<Priority_Pair<PairValueTestT, PairValueTestT>> s =
       {{0,1}, {0,1}, {3,0}, {0,0}, {2,-1}};
     WHEN("We iterate over the set") {
-      vector<CoMMAIntT> fe1 = {3,  2, 0, 0};
-      vector<CoMMAIntT> se1 = {0, -1, 0, 1};
+      vector<PairValueTestT> fe1 = {3,  2, 0, 0};
+      vector<PairValueTestT> se1 = {0, -1, 0, 1};
       THEN("The expected order is obtained") {
         for (auto it = s.begin(); it != s.end(); ++it) {
           const auto idx = distance(s.begin(), it);
@@ -177,8 +178,8 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
     }
     WHEN("We add an item and iterate on the new set") {
       s.emplace(1,4);
-      vector<CoMMAIntT> fe2 = {3,  2, 1, 0, 0};
-      vector<CoMMAIntT> se2 = {0, -1, 4, 0, 1};
+      vector<int> fe2 = {3,  2, 1, 0, 0};
+      vector<int> se2 = {0, -1, 4, 0, 1};
       THEN("The expected order is obtained") {
         for (auto it = s.begin(); it != s.end(); ++it) {
           const auto idx = distance(s.begin(), it);
@@ -191,7 +192,7 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
 }
 
 SCENARIO("Test custom pair comparison", "[Pair comparison]") {
-  using PairT = pair<CoMMAIntT, CoMMAIntT>;
+  using PairT = pair<PairValueTestT, PairValueTestT>;
   GIVEN("Some (int,int) pairs in a set with custom 'Greater'") {
     set<PairT, CustomPairGreaterFunctor<PairT>> s = {{1,0}, {1,0}, {1,3}, {0,3}};
     WHEN("We have a look at the set:") {
@@ -791,7 +792,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         auto fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
-        for (auto i = 0; i != Data.nb_fc; i++) {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
 
@@ -802,7 +803,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
-        for (auto i = 0; i != Data.nb_fc; i++) {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
       }
@@ -818,7 +819,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         auto fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
-        for (auto i = 0; i != Data.nb_fc; i++) {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
       }
@@ -828,7 +829,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       THEN("Nothing changes with respect to the case without correction") {
         auto fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
-        for (auto i = 0; i != Data.nb_fc; i++) {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
         }
       }

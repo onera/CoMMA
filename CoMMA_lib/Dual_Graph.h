@@ -198,14 +198,14 @@ class Graph {
    * @return True if the graph is connected, false if it is not connected
    */
   bool check_connectivity() {
-    for (CoMMAIntType i = 0; i < _number_of_cells; i++) {
+    for (auto i = decltype(_number_of_cells){0}; i < _number_of_cells; ++i) {
       _visited.push_back(false);
     }
     if (_number_of_cells == 1) {
       return (true);
     }
     DFS(_m_CRS_Col_Ind[0]);
-    for (CoMMAIntType i = 0; i < _number_of_cells; i++) {
+    for (auto i = decltype(_number_of_cells){0}; i < _number_of_cells; ++i) {
       if (_visited[i] == false) {
         return (false);
       }
@@ -235,9 +235,9 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
-   *  @param[in] mapping_l_to_g Mapping between the local (to the CC) numering to
+   *  @param[in] mapping_l_to_g Mapping between the local (to the CC) numbering to
    * global numbering
-   *  @param[in] is_isotrppic Wheter the cell is isotropic
+   *  @param[in] is_isotrppic Whether the cell is isotropic
    */
   Subgraph(const CoMMAIndexType &nb_c,
            const vector<CoMMAIndexType> &m_crs_row_ptr,
@@ -252,9 +252,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         _mapping_l_to_g(mapping_l_to_g) {
     // Definition degree
     CoMMAIndexType pos_old = 0;
-    CoMMAIndexType degree = 0;
     for (const CoMMAIndexType &elem : m_crs_row_ptr) {
-      degree = elem - pos_old;
+      const CoMMAIntType degree = static_cast<CoMMAIntType>(elem - pos_old);
       if (degree > _compactness) {
         _compactness = degree;
       }
@@ -295,12 +294,11 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
                    const vector<CoMMAWeightType> &weight) {
     // Use the mapping
     // local vector of neighborhood
-    vector<CoMMAIndexType> v_l_neigh;
-    typename vector<CoMMAIndexType>::iterator low1;
+    vector<CoMMAIndexType> v_l_neigh{};
     // @todo this solution clearly help in the connection of the subnode BUT can
     // bring to instability and errors.
     for (const auto &elem : v_neigh) {
-      low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
+      const auto low1 = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elem);
       if (low1 != _mapping_l_to_g.end()) {
         v_l_neigh.push_back(low1 - _mapping_l_to_g.begin());
       }
@@ -360,7 +358,6 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     typename vector<CoMMAWeightType>::iterator weight_it;
     auto pos_col = this->_m_CRS_Col_Ind.begin();
     auto pos_Values = this->_m_CRS_Values.begin();
-    CoMMAIndexType k;
     // mapping for the renumbering of the nodes
     vector<CoMMAIndexType> internal_mapping;
     for (const auto &elem : v_neigh) {
@@ -372,8 +369,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
           this->_m_CRS_Col_Ind.erase(it);
           // define the exact position of the element for the processing of the
           // weight later.
-          k = it - pos_col;
-          weight_it = pos_Values + k;
+          weight_it = pos_Values + (it-pos_col);
           this->_m_CRS_Values.erase(weight_it);
           // for each found i decrease the successive of 1 for the offset
           for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
@@ -391,8 +387,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       this->_m_CRS_Col_Ind.erase(it);
       // define the exact position of the element for the processing of the
       // weight later.
-      k = it - pos_col;
-      weight_it = pos_Values + k;
+      weight_it = pos_Values + (it-pos_col);
       this->_m_CRS_Values.erase(weight_it);
       // for each found i decrease the successive of 1 for the offset
       for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
@@ -700,7 +695,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       const CoMMAIntType max_card,
       const vector<bool> &is_fc_agglomerated_tmp) const {
     // Basic checks
-    assert(max_card != -1);
+    assert(max_card > 1);
     // dict of FC with the order of neighbouring from seed
     unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o_m_one;
     // we initialize for seeds where order is 0
