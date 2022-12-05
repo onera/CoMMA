@@ -575,9 +575,8 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n =
-        First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(s_neighbours_of_seed,
-          Data.weights, 2, false);
+    First_Order_Neighbourhood_Extended<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n(
+        s_neighbours_of_seed, Data.weights);
     auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
     WHEN("We check the first FON") {
       THEN("Only direct neighbors are in the FON") {
@@ -638,9 +637,8 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n =
-        First_Order_Neighbourhood<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(s_neighbours_of_seed,
-          Data.weights, 2, true);
+    First_Order_Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n(
+        s_neighbours_of_seed, Data.weights, 2);
     auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
     WHEN("We check the first FON") {
       THEN("Only direct neighbors are in the FON") {

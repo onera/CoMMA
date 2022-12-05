@@ -88,9 +88,9 @@ print("CoMMA call")
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers, weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
-                              anisotropic, threshold_anisotropy, isotropic_agglo,
+                              anisotropic, threshold_anisotropy,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
-                              correction, dimension,goalCard,minCard,maxCard)
+                              correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
 
 print("Finalizing")
 # agglo = [ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)] if renum \
