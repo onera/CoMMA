@@ -92,12 +92,12 @@ class Agglomerator {
    * should be considered when agglomerating
    *  @param[in] dimension the dimension of the problem
    */
-  Agglomerator(Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-               Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
-                                     CoMMAIntType> &cc_graph,
-               Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+  Agglomerator(shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
+               shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                     CoMMAIntType>> cc_graph,
+               shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
                CoMMAIntType dimension = 3)
-      : _dimension(dimension), _fc_graph(graph), _cc_graph(&cc_graph),
+      : _dimension(dimension), _fc_graph(graph), _cc_graph(cc_graph),
       _seeds_pool(seeds_pool) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw range_error("dimension can only be 2 or 3");
@@ -111,7 +111,7 @@ class Agglomerator {
       _compute_AR = [](const CoMMAWeightType diam, const CoMMAWeightType vol)
                         -> CoMMAWeightType { return diam / cbrt(vol); };
     }
-    _l_nb_of_cells.push_back(graph._number_of_cells);
+    _l_nb_of_cells.push_back(graph->_number_of_cells);
   }
 
   /** @brief The destructor of the class */
@@ -162,14 +162,14 @@ class Agglomerator {
   vector<CoMMAIndexType> _l_nb_of_cells;
   /** @brief Dual_Graph object determining Fine cells graph and hence the
    * connectivity.*/
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _fc_graph;
+  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
   /** @brief pointer to Coarse Cell Graph element */
-  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *
-      _cc_graph;
+  shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                   CoMMAIntType>> _cc_graph;
   /** @brief Seed_Pool object giving the order in which the fine * cells should
    * be considered when agglomerating
    **/
-  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &_seeds_pool;
+  shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _seeds_pool;
 
 };
 
@@ -208,10 +208,10 @@ class Agglomerator_Anisotropic
    *  @param[in] dimension the dimension of the problem
    */
   Agglomerator_Anisotropic(
-      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &
-          cc_graph,
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
+      shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                       CoMMAIntType>> cc_graph,
+      shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
       const CoMMAWeightType threshold_anisotropy,
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
@@ -222,14 +222,14 @@ class Agglomerator_Anisotropic
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
-    this->_l_nb_of_cells.push_back(graph._number_of_cells);
+    this->_l_nb_of_cells.push_back(graph->_number_of_cells);
     // For every level, we have a set containing the admissible cells for
     // anisotropy cell number:
     // For level 0, it is the cell number of prism or hexahedron ...
     this->_v_of_s_anisotropic_compliant_fc =
         vector<unordered_set<CoMMAIndexType>>(2);
     this->_v_of_s_anisotropic_compliant_fc[0] =
-        this->_fc_graph._s_anisotropic_compliant_cells;
+        this->_fc_graph->_s_anisotropic_compliant_cells;
 
     this->_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
@@ -350,8 +350,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       // We start agglomerating from the head or the tail of the line according to
       // which of the two has more boundary faces
       const bool forward_line =
-        this->_fc_graph.get_n_boundary_faces(line.front()) >=
-          this->_fc_graph.get_n_boundary_faces(line.back());
+        this->_fc_graph->get_n_boundary_faces(line.front()) >=
+          this->_fc_graph->get_n_boundary_faces(line.back());
 
       if (forward_line)
         loop_line(line.begin(), line.end());
@@ -419,12 +419,12 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     unordered_set<CoMMAIndexType> anisotropic_fc;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
-    vector<CoMMAWeightType> maxArray(this->_fc_graph._number_of_cells, 0.0);
+    vector<CoMMAWeightType> maxArray(this->_fc_graph->_number_of_cells, 0.0);
     // Computation of the anisotropic cell, alias of the cells for which the
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
-    this->_fc_graph.compute_anisotropic_fc(maxArray, anisotropic_fc,
-                                           _threshold_anisotropy, 0);
+    this->_fc_graph->compute_anisotropic_fc(maxArray, anisotropic_fc,
+                                            _threshold_anisotropy, 0);
     // Map to address if the cell has been added to a line
     unordered_map<CoMMAIndexType, bool> has_been_treated;
     for (auto &i_fc : anisotropic_fc) {
@@ -459,8 +459,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       while (!end) {
         // for the seed (that is updated each time end!= true) we fill the
         // neighbours and the weights
-        const vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(seed);
-        const vector<CoMMAWeightType> v_w_neighbours = this->_fc_graph.get_weights(seed);
+        const vector<CoMMAIndexType> v_neighbours = this->_fc_graph->get_neighbours(seed);
+        const vector<CoMMAWeightType> v_w_neighbours = this->_fc_graph->get_weights(seed);
         // vector of the candidates to continue the line
         vector<CoMMAIndexType> candidates;
         for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
@@ -562,10 +562,10 @@ class Agglomerator_Isotropic
   * of the father and in this way activates also the constructor of the base class.
   **/
   Agglomerator_Isotropic(
-      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
-                            CoMMAIntType> &cc_graph,
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
+      shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                       CoMMAIntType>> cc_graph,
+      shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             graph, cc_graph, seeds_pool, dimension) {
@@ -651,7 +651,7 @@ class Agglomerator_Isotropic
     CoMMAIndexType nb_of_fc = this->_l_nb_of_cells[0];
     while (this->_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
       // 1) Choose a new seed
-      CoMMAIndexType seed = this->_seeds_pool.choose_new_seed(
+      CoMMAIndexType seed = this->_seeds_pool->choose_new_seed(
           this->_cc_graph->_a_is_fc_agglomerated);
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm
@@ -718,24 +718,24 @@ class Agglomerator_Isotropic
     CoMMAWeightType &new_diam, CoMMAWeightType &new_vol) const {
     // Compute shared faces
     shared_faces = 0;
-    const vector<CoMMAIndexType> v_neighbours = this->_fc_graph.get_neighbours(i_fc);
+    const vector<CoMMAIndexType> v_neighbours = this->_fc_graph->get_neighbours(i_fc);
     for (const auto i_n : v_neighbours) {
       if (i_n != i_fc && (fc_of_cc.count(i_n) != 0))
         shared_faces++;
     }
 
     // Compute new diameter
-    const vector<CoMMAWeightType>& cen_fc = this->_fc_graph._centers[i_fc];
+    const vector<CoMMAWeightType>& cen_fc = this->_fc_graph->_centers[i_fc];
     CoMMAWeightType max_diam = cc_diam;
     for (const auto i_fc_cc : fc_of_cc) {
       const CoMMAWeightType d = euclidean_distance<CoMMAWeightType>(
-          cen_fc, this->_fc_graph._centers[i_fc_cc]);
+          cen_fc, this->_fc_graph->_centers[i_fc_cc]);
       if (d > max_diam)
         max_diam = d;
     } // for i_fc_cc
     new_diam = max_diam;
 
-    new_vol = cc_vol + this->_fc_graph._volumes[i_fc];
+    new_vol = cc_vol + this->_fc_graph->_volumes[i_fc];
 
     aspect_ratio = this->_compute_AR(new_diam, new_vol);
   }
@@ -880,10 +880,10 @@ class Agglomerator_Biconnected
    * instantiates the base class Agglomerator_Isotropic
    **/
   Agglomerator_Biconnected(
-      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
-                            CoMMAIntType> &cc_graph,
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
+      shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                       CoMMAIntType>> cc_graph,
+      shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             graph, cc_graph, seeds_pool, dimension) {
@@ -934,7 +934,7 @@ class Agglomerator_Biconnected
       max(this->_min_neighbourhood, this->_max_card / this->_dimension);
 
     // We fill the d_n_of_seeds considering the initial seed passed
-    this->_fc_graph.compute_neighbourhood_of_cc(
+    this->_fc_graph->compute_neighbourhood_of_cc(
         s_current_cc, max_order_of_neighbourhood,  // in and out
         d_n_of_seed,  // output, the function fills the dictionary
         this->_max_card,
@@ -943,10 +943,10 @@ class Agglomerator_Biconnected
         this->_cc_graph->_a_is_fc_agglomerated);
 
     // We get the number of neighborhoods
-    CoMMAIntType nb_neighbours = this->_fc_graph.get_nb_of_neighbours(seed);
+    CoMMAIntType nb_neighbours = this->_fc_graph->get_nb_of_neighbours(seed);
     // return the area of the face connected to the seed
     vector<CoMMAWeightType> neighbours_weights =
-        this->_fc_graph.get_weights(seed);
+        this->_fc_graph->get_weights(seed);
 
     // If no neighbour is found for seed: this case happened only when isotropic
     // cell is surrounded by anisotropic cells.
@@ -986,7 +986,7 @@ class Agglomerator_Biconnected
       // CC in construction
       decltype(s_current_cc) tmp_cc = {seed};
       // volume of cc is at first the volume of the seed.
-      CoMMAWeightType vol_cc = this->_fc_graph._volumes[seed];
+      CoMMAWeightType vol_cc = this->_fc_graph->_volumes[seed];
       // This dictionary is used to store the eligible cc: i.e. its size is
       // inside the permitted range. This is useful to track back our step if
       // needed. [size of the current, [cell set, d_n_of seed]]
@@ -1005,7 +1005,7 @@ class Agglomerator_Biconnected
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // We add the faces that are on boundary calling the method of seed pool.
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph.get_n_boundary_faces(seed) - 1;
+          nb_neighbours + this->_fc_graph->get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
@@ -1016,7 +1016,7 @@ class Agglomerator_Biconnected
                                            CoMMAIntType>> f_o_neighbourhood =
           this->get_first_order_neighborhood(s_neighbours_of_seed, priority_weights);
       // Generate the set of the first order neighborhood to the given seed
-      auto fon = f_o_neighbourhood->update(seed, this->_fc_graph.get_neighbours(seed));
+      auto fon = f_o_neighbourhood->update(seed, this->_fc_graph->get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1034,8 +1034,8 @@ class Agglomerator_Biconnected
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
-            this->_fc_graph.get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph.get_n_boundary_faces(argmin_ar) - 1 -
+            this->_fc_graph->get_nb_of_neighbours(argmin_ar) +
+            this->_fc_graph->get_n_boundary_faces(argmin_ar) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
@@ -1073,7 +1073,7 @@ class Agglomerator_Biconnected
         d_n_of_seed.erase(argmin_ar);
 
         fon = f_o_neighbourhood->update(argmin_ar,
-            this->_fc_graph.get_neighbours(argmin_ar));
+            this->_fc_graph->get_neighbours(argmin_ar));
       }
 
       // Selecting best CC to return
@@ -1095,7 +1095,7 @@ class Agglomerator_Biconnected
       // - Insert in the queue starting with those of lowest neighborhood order wrt
       //   to the original seed
       // - If more than one cell with the same order, use priority weights
-      const auto cc_neighs = this->_fc_graph.get_neighbourhood_of_cc(s_current_cc,
+      const auto cc_neighs = this->_fc_graph->get_neighbourhood_of_cc(s_current_cc,
                                      this->_cc_graph->_a_is_fc_agglomerated);
       // Basically, like d_n_of_seed but with key and value swapped
       map<CoMMAIntType, unordered_set<CoMMAIndexType>> neighs_by_order{};
@@ -1109,15 +1109,15 @@ class Agglomerator_Biconnected
       }
       for (const auto &[o, neighs] : neighs_by_order)
         if (!neighs.empty())
-          this->_seeds_pool.order_new_seeds_and_update(neighs);
+          this->_seeds_pool->order_new_seeds_and_update(neighs);
       if (!neighs_not_found.empty())
-        this->_seeds_pool.order_new_seeds_and_update(neighs_not_found);
+        this->_seeds_pool->order_new_seeds_and_update(neighs_not_found);
 
       assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
 
       // Computes the actual compactness of the coarse cell
       compactness =
-          this->_fc_graph.compute_min_fc_compactness_inside_a_cc(s_current_cc);
+          this->_fc_graph->compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }  // end else
     return s_current_cc;
   }
@@ -1141,10 +1141,10 @@ class Agglomerator_Pure_Front
    * instantiates the base class Agglomerator_Isotropic
    **/
   Agglomerator_Pure_Front(
-      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
-      Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
-                            CoMMAIntType> &cc_graph,
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &seeds_pool,
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
+      shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                       CoMMAIntType>> cc_graph,
+      shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
       CoMMAIntType dimension = 3)
       : Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             graph, cc_graph, seeds_pool, dimension) {

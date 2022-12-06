@@ -52,10 +52,10 @@ class Coarse_Cell_Container {
    * and the seeds pool
    */
   Coarse_Cell_Container(
-      const Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph)
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> &fc_graph)
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
-        _fc_2_cc(fc_graph._number_of_cells, -1),
-        _a_is_fc_agglomerated(fc_graph._number_of_cells, false),
+        _fc_2_cc(fc_graph->_number_of_cells, -1),
+        _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
         _nb_of_agglomerated_fc(0), _delayed_cc() {}
 
   /** @brief Destructor*/
@@ -67,7 +67,7 @@ class Coarse_Cell_Container {
       _cc_vec;
 
   /** @brief Dual graph representation */
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _fc_graph;
+  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
 
   /** @brief Number of coarse cells */
   CoMMAIndexType _cc_counter = 0;
@@ -103,7 +103,7 @@ class Coarse_Cell_Container {
    **/
   vector<CoMMAIndexType> get_neigh_cc(const CoMMAIndexType &i_fc,
                                       const CoMMAIndexType &i_cc) const {
-    const vector<CoMMAIndexType> neigh = _fc_graph.get_neighbours(i_fc);
+    const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
     for (const CoMMAIndexType &elem : neigh) {
       if (_fc_2_cc[elem] != i_cc) {
@@ -183,9 +183,9 @@ class Coarse_Cell_Container {
             // first we assign to the fc_2_cc the new cc (later it will be
             // renumbered considering the deleted cc)
             _fc_2_cc[i_fc] = elem;
-            vector<CoMMAIndexType> fine_neigh = _fc_graph.get_neighbours(i_fc);
-            vector<CoMMAWeightType> fine_weights = _fc_graph.get_weights(i_fc);
-            neig_cc->insert_node(fine_neigh, i_fc, _fc_graph._volumes[i_fc],
+            vector<CoMMAIndexType> fine_neigh = _fc_graph->get_neighbours(i_fc);
+            vector<CoMMAWeightType> fine_weights = _fc_graph->get_weights(i_fc);
+            neig_cc->insert_node(fine_neigh, i_fc, _fc_graph->_volumes[i_fc],
                                  fine_weights);
             current_cc->remove_node(i_fc);
             // the new it point directly to the next element in the map
@@ -199,9 +199,9 @@ class Coarse_Cell_Container {
           auto const elem = neigh[0];
           auto neig_cc = _cc_vec[elem];
           _fc_2_cc[i_fc] = elem;
-          vector<CoMMAIndexType> fine_neigh = _fc_graph.get_neighbours(i_fc);
-          vector<CoMMAWeightType> fine_weights = _fc_graph.get_weights(i_fc);
-          neig_cc->insert_node(fine_neigh, i_fc, _fc_graph._volumes[i_fc],
+          vector<CoMMAIndexType> fine_neigh = _fc_graph->get_neighbours(i_fc);
+          vector<CoMMAWeightType> fine_weights = _fc_graph->get_weights(i_fc);
+          neig_cc->insert_node(fine_neigh, i_fc, _fc_graph->_volumes[i_fc],
                                fine_weights);
           current_cc->remove_node(i_fc);
           // the new it point directly to the next element in the map
@@ -240,7 +240,7 @@ class Coarse_Cell_Container {
       }
     }
     for (const auto &i_fc : s_fc) {
-      vol_cc = vol_cc + _fc_graph._volumes[i_fc];
+      vol_cc = vol_cc + _fc_graph->_volumes[i_fc];
       assert(_fc_2_cc[i_fc] == -1);
     }
     // Anisotropic case
