@@ -25,6 +25,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
 #include "Dual_Graph.h"
 #include "Coarse_Cell.h"
