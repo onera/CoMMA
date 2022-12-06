@@ -790,7 +790,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
-        auto fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -801,7 +801,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        auto fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -817,7 +817,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
-        auto fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -827,7 +827,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        auto fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph._fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -900,7 +900,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        auto fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -922,7 +922,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        auto fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -952,7 +952,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         // Nothing changes with respect to the case of the standard Biconnected
         // We have a trick that make it work as it should
-        auto fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -974,7 +974,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        auto fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph._fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);

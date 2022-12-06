@@ -228,8 +228,8 @@ void agglomerate_one_level(
   // Agglomerate
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
-  auto fccc = cc_graph._fc_2_cc;
-  for (CoMMAIndexType i_fc = 0; i_fc < nb_fc; i_fc++) {
+  const auto &fccc = cc_graph._fc_2_cc;
+  for (auto i_fc = decltype(nb_fc){0}; i_fc < nb_fc; i_fc++) {
     fc_to_cc[i_fc] = fccc[i_fc].value();
   }
 }
