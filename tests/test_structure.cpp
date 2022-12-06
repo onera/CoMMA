@@ -1129,7 +1129,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
   };
   GIVEN("A simple 8-cell Cartesian grid") {
-#define fc_in_cc(graph, fc, cc) graph._fc_2_cc[fc] == cc
+#define fc_in_cc(graph, fc, cc) graph._fc_2_cc[fc].value() == cc
     DualGPy_correction Data = DualGPy_correction();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
