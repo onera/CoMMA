@@ -1128,8 +1128,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
   };
-  GIVEN("A simple 8-cell Cartesian grid") {
 #define fc_in_cc(graph, fc, cc) graph._fc_2_cc[fc] == cc
+  GIVEN("A simple 8-cell Cartesian grid") {
     DualGPy_correction Data = DualGPy_correction();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
@@ -1150,7 +1150,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 6, 2));
         REQUIRE(fc_in_cc(cc_graph, 7, 2));
       }
-      cc_graph.correct();
+      cc_graph.correct(4);
       THEN("Once the correction has been performed, the isolated cell has been agglomerated") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
@@ -1162,7 +1162,76 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 7, 1));
       }
     }
-#undef fc_in_cc
   }
+  GIVEN("A simple 3x3 Cartesian grid") {
+    DualGPy_quad_3 Data = DualGPy_quad_3();
+    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
+        Data.s_anisotropic_compliant_fc);
+    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and two coarse cells with cardinality 5 and 3") {
+      cc_graph.cc_create_a_cc({0,1,2});
+      cc_graph.cc_create_a_cc({4});
+      cc_graph.cc_create_a_cc({3,5,6,7,8});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 2));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 2));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+      cc_graph.correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with which it shares the most faces") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and two coarse cells both with cardinality 4") {
+      cc_graph.cc_create_a_cc({0,1,2,3});
+      cc_graph.cc_create_a_cc({4});
+      cc_graph.cc_create_a_cc({5,6,7,8});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 2));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+      cc_graph.correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with lower ID (here, the two coarse cells have equivalent features "
+           "wrt to the fine cell, hence we cannot choose)") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+    }
+  }
+#undef fc_in_cc
 }
 #undef equal_up_to

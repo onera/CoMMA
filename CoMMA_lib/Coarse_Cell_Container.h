@@ -106,8 +106,10 @@ class Coarse_Cell_Container {
     const vector<CoMMAIndexType> neigh = _fc_graph.get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
     for (const CoMMAIndexType &elem : neigh) {
-      if (_fc_2_cc[elem] != i_cc) {
-        result.push_back(_fc_2_cc[elem]);
+      const auto cc = _fc_2_cc[elem];
+      if (cc != i_cc &&
+          find(result.begin(), result.end(), cc) == result.end()) {
+        result.push_back(cc);
       }
     }
     return (result);
@@ -130,7 +132,7 @@ class Coarse_Cell_Container {
    **/
   MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> remove_cc(
       MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> elim) {
-    // we delete the element and we obtainer the pointer to the next element in
+    // we delete the element and we obtained the pointer to the next element in
     // memory
     MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> it =
         _cc_vec.erase(elim);
@@ -152,8 +154,9 @@ class Coarse_Cell_Container {
   /** @brief Implementation of the Correction. In this version it implements the
    * correction of singular cells (if one cell is alone after the agglomeration
    * step is agglomerated to a neighbouring cell)
+   * @param max_card Maximum cardinality allowed
    **/
-  void correct() {
+  void correct(const CoMMAIntType max_card) {
     // initializing vector neigh_cc
     // We cycle on the subgraphs of the bimap structure
     auto it = _cc_vec.begin();
@@ -171,49 +174,134 @@ class Coarse_Cell_Container {
         // Get the cc neigh of the given fine cell
         auto i_fc = current_cc->_mapping_l_to_g[0];
         const vector<CoMMAIndexType> neigh = get_neigh_cc(i_fc, i_cc);
-        if(!neigh.empty()){
-        // now we have the neighborhood cc cell, we can access to them and
-        // control the characteristics
-        for (auto const &elem : neigh) {
-          auto neig_cc = _cc_vec[elem];
-          if (neig_cc->_compactness > 0 && neig_cc->_cardinality >= 2 &&
-              neig_cc->_is_isotropic) {
+        if(!neigh.empty()) {
+          // now we have the neighborhood cc cell, we can access to them and
+          // control the characteristics
+          const auto cc_idx = select_best_cc_to_agglomerate(i_fc, neigh, max_card);
+          if (cc_idx.has_value()) {
             // If the condition is verified we add the cell to the identified cc
             // and we remove it from the current cc
             // first we assign to the fc_2_cc the new cc (later it will be
             // renumbered considering the deleted cc)
-            _fc_2_cc[i_fc] = elem;
-            vector<CoMMAIndexType> fine_neigh = _fc_graph.get_neighbours(i_fc);
-            vector<CoMMAWeightType> fine_weights = _fc_graph.get_weights(i_fc);
-            neig_cc->insert_node(fine_neigh, i_fc, _fc_graph._volumes[i_fc],
-                                 fine_weights);
+            _fc_2_cc[i_fc] = cc_idx.value();
+            auto neig_cc = _cc_vec[cc_idx.value()];
+            neig_cc->insert_node(_fc_graph.get_neighbours(i_fc),
+                                 i_fc, _fc_graph._volumes[i_fc],
+                                 _fc_graph.get_weights(i_fc));
             current_cc->remove_node(i_fc);
             // the new it point directly to the next element in the map
             it = remove_cc(it);
-            break;
+          } else {
+            // if we failed we go on, it is life, so we agglomerate to the nearest
+            // cell (the first one of the vector). At this point, we do not check if
+            // the max cardinality has been reached or not, otherwise we might leave
+            // the isolated cell isolated
+            auto const elem = neigh[0];
+            auto neig_cc = _cc_vec[elem];
+            _fc_2_cc[i_fc] = elem;
+            neig_cc->insert_node(_fc_graph.get_neighbours(i_fc),
+                                 i_fc, _fc_graph._volumes[i_fc],
+                                 _fc_graph.get_weights(i_fc));
+            current_cc->remove_node(i_fc);
+            // the new it point directly to the next element in the map
+            it = remove_cc(it);
           }
+        } else {
+          // The cell has no neighbors. This could happen when the partitioning does
+          // not give a connected partition. Unfortunately, there is nothing that we
+          // can do. We just skip it
+          ++it;
         }
-        // if we failed we go on, it is life, so we agglomerate to the nearest
-        // cell (the first one of the vector
-        if (it == it_old) {
-          auto const elem = neigh[0];
-          auto neig_cc = _cc_vec[elem];
-          _fc_2_cc[i_fc] = elem;
-          vector<CoMMAIndexType> fine_neigh = _fc_graph.get_neighbours(i_fc);
-          vector<CoMMAWeightType> fine_weights = _fc_graph.get_weights(i_fc);
-          neig_cc->insert_node(fine_neigh, i_fc, _fc_graph._volumes[i_fc],
-                               fine_weights);
-          current_cc->remove_node(i_fc);
-          // the new it point directly to the next element in the map
-          it = remove_cc(it);
-        }
-       } else {++it;};
         end = _cc_vec.end();
         it_old = it;
       } else {
         ++it;
       }
     }
+  }
+
+  /** @brief Choose among the neighboring coarse cells, the one to which a fine cell
+   * should be assigned to. We prefer the coarse cell which shares the most faces
+   * with the fine cell. Otherwise, we look at the cardinality and choose the coarse
+   * cell with the smallest one
+   * @param[in] fc Index of the fine cell
+   * @param[in] cc Neighboring coarse cells
+   * @param[in] max_card Maximum cardinality allowed
+   * @return The index of the chosen coarse cell wrt to the given neighborhood
+   */
+  optional<CoMMAIndexType> select_best_cc_to_agglomerate(
+      const CoMMAIndexType fc, const vector<CoMMAIndexType> &neigh,
+      const CoMMAIntType max_card) const {
+    CoMMAUnused(max_card);
+    unordered_map<CoMMAIndexType, CoMMAIntType> card{};
+    unordered_map<CoMMAIndexType, CoMMAIntT> shared_faces{};
+    card.reserve(neigh.size());
+    shared_faces.reserve(neigh.size());
+    CoMMAIntType min_card = numeric_limits<CoMMAIntType>::max();
+    deque<CoMMAIndexType> argmin_card{};
+    CoMMAIntType max_shared_f{0};
+    deque<CoMMAIndexType> argmax_shared_f{};
+    for (auto n_idx = decltype(neigh.size()){0}; n_idx < neigh.size(); ++n_idx) {
+      const auto n_cc = _cc_vec.at(neigh[n_idx]);
+      if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
+          //n_cc->_cardinality < max_card &&
+          n_cc->_cardinality >= 2) {
+        // On second thought, let us consider also cells with max cardinality since
+        // the number of faces could be important to ensure compactness of the coarse
+        // cell
+        const auto cur_card = n_cc->_cardinality;
+        card[n_idx] = cur_card;
+        if (cur_card < min_card) {
+          min_card = cur_card;
+          argmin_card.clear();
+          argmin_card.push_back(n_idx);
+        } else if (cur_card == min_card) {
+          argmin_card.push_back(n_idx);
+        }
+        const auto cur_sf = get_shared_faces(fc, n_cc);
+        shared_faces[n_idx] = cur_sf;
+        if (cur_sf > max_shared_f) {
+          max_shared_f = cur_sf;
+          argmax_shared_f.clear();
+          argmax_shared_f.push_back(n_idx);
+        } else if (cur_sf == max_shared_f) {
+          argmax_shared_f.push_back(n_idx);
+        }
+      }
+    }
+    // Shared faces prevails in order to have more compact cells...
+    if (!argmax_shared_f.empty()) {
+      CoMMAIndexType ret_idx{argmax_shared_f[0]};
+      CoMMAIntType cur_min{card[ret_idx]};
+      // ..but let's see if among all the cells there is one with smaller cardinality
+      for (auto i = decltype(argmax_shared_f.size()){1}; i < argmax_shared_f.size(); ++i)
+        if (card[argmax_shared_f[i]] < cur_min)
+          cur_min = argmax_shared_f[i];
+      return ret_idx;
+    }
+    if (!argmin_card.empty()) {
+      // @TODO: I'm not sure what I could consider here to decide which cell to
+      // return. The aspect-ratio maybe? In the mean time, I return the first one
+      return argmin_card[0];
+    }
+    // If everything failed, return dummy
+    return nullopt;
+  }
+
+  /** @brief Compute the number of faces shared between a fine cell and a coarse one
+   * @param[in] fc Index of the fine cell
+   * @param[in] cc Subgraph representing the coarse cell
+   * @return The number of shared faces
+   */
+  inline CoMMAIntType get_shared_faces(const CoMMAIndexType fc,
+      shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> cc) const {
+    const auto n_fc_cc = cc->_number_of_cells;
+    CoMMAIntType shared_faces{0};
+    for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
+      const auto fc_neighs = _fc_graph.get_neighbours(cc->_mapping_l_to_g[i_fc_cc]);
+      shared_faces += count(fc_neighs.begin(), fc_neighs.end(), fc);
+    }
+    return shared_faces;
   }
 
   /** @brief It creates a coarse cell based on the set of fine cells given as an

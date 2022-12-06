@@ -289,7 +289,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] weight vector of the area of the faces of the given cells to be
    * added.
    */
-  void insert_node(vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
+  void insert_node(const vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
                    const CoMMAWeightType &volume,
                    const vector<CoMMAWeightType> &weight) {
     // Use the mapping
