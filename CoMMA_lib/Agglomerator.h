@@ -34,7 +34,7 @@
 #include "Dual_Graph.h"
 #include "Coarse_Cell_Container.h"
 #include "Util.h"
-#include "First_Order_Neighbourhood.h"
+#include "Neighbourhood.h"
 
 // forward definition to keep the agglomerators in one file
 
@@ -893,19 +893,19 @@ class Agglomerator_Biconnected
   /** @brief Destructor*/
   ~Agglomerator_Biconnected() {};
 
-  /** @brief Build a First Order Neighborhood object a return it
+  /** @brief Build a Neighborhood object a return it
    *  @param[in] neighbours Set of neighbors among which seek the candidates
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
-   *  @return A pointer to a First Order Neighborhood object
+   *  @return A pointer to a Neighborhood object
    **/
   virtual inline
-  unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>>
   get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &neighbours,
                                const vector<CoMMAWeightType> &priority_weights) {
     return make_unique<
-      First_Order_Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
+      Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
         neighbours, priority_weights);
   }
 
@@ -1011,11 +1011,11 @@ class Agglomerator_Biconnected
       // the neighbors of seed until a given order.
       const unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
-      // Build the class first order neighborhood
-      unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+      // Build the class neighborhood
+      unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                            CoMMAIntType>> f_o_neighbourhood =
           this->get_first_order_neighborhood(s_neighbours_of_seed, priority_weights);
-      // Generate the set of the first order neighborhood to the given seed
+      // Generate the set of the neighbors to the given seed
       auto fon = f_o_neighbourhood->update(seed, this->_fc_graph.get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
@@ -1154,19 +1154,19 @@ class Agglomerator_Pure_Front
   /** @brief Destructor*/
   ~Agglomerator_Pure_Front() {};
 
-  /** @brief Build a First Order Neighborhood object a return it
+  /** @brief Build a Neighborhood object a return it
    *  @param[in] neighbours Set of neighbors among which seek the candidates
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
-   *  @return A pointer to a First Order Neighborhood object
+   *  @return A pointer to a Neighborhood object
    **/
   inline
-  unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>>
   get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                                const vector<CoMMAWeightType> &priority_weights) override {
     return make_unique<
-      First_Order_Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
         s_neighbours_of_seed, priority_weights, this->_dimension);
   }
 
