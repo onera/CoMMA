@@ -595,7 +595,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   *   @return the compactness of the fine cell
   */
   CoMMAIntType compute_min_fc_compactness_inside_a_cc(
-      unordered_set<CoMMAIndexType> &s_fc) const {
+      const unordered_set<CoMMAIndexType> &s_fc) const {
     // Compute Compactness of a cc
     // Be careful: connectivity is assumed
     if (s_fc.size() > 1) {
@@ -623,7 +623,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   * compactness
   */
   unordered_map<CoMMAIndexType, CoMMAIntType>
-  compute_fc_compactness_inside_a_cc(unordered_set<CoMMAIndexType> &s_fc) const {
+  compute_fc_compactness_inside_a_cc(const unordered_set<CoMMAIndexType> &s_fc) const {
     unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
     if (s_fc.size() > 1) {
 

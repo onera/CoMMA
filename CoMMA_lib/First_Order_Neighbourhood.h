@@ -66,7 +66,7 @@ a pair with the same index.
    **/
   First_Order_Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                             const vector<CoMMAWeightType> &weights) :
-      _s_neighbours_of_seed(s_neighbours_of_seed), _weights(weights), _s_fc() { }
+      _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc() { }
 
   /** @brief Method that updates the first order neighborhood, by updating the
    * front. Given the new_fc, if is in the neighbours, it is deleted and are
@@ -84,7 +84,7 @@ a pair with the same index.
    * (by default is 3, this means neighbours of neighbours of neighbours) of the
    * initial seed. Hence, it holds the cells allowed to be agglomerated
    */
-  unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
+  const unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 
   /** @brief Priority weights */
   const vector<CoMMAWeightType> &_weights;

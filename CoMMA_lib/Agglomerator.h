@@ -1009,7 +1009,7 @@ class Agglomerator_Biconnected
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
-      unordered_set<CoMMAIndexType> s_neighbours_of_seed =
+      const unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
       unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
