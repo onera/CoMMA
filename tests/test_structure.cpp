@@ -559,8 +559,8 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
  #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
  #define found_(cont, obj) check_(find, !=, cont, obj)
  #define not_found_(cont, obj) check_(find, ==, cont, obj)
- #define found_1stEl_(cont, obj) check_(find_if, !=, (*cont), CoMMAPairFindFirstBasedT(obj))
- #define not_found_1stEl_(cont, obj) check_(find_if, ==, (*cont), CoMMAPairFindFirstBasedT(obj))
+ #define found_1stEl_(cont, obj) check_(find_if, !=, cont, CoMMAPairFindFirstBasedT(obj))
+ #define not_found_1stEl_(cont, obj) check_(find_if, ==, cont, CoMMAPairFindFirstBasedT(obj))
     DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
@@ -576,46 +576,49 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    Neighbourhood_Extended<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n(
+    Neighbourhood_Extended<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> neighborhood(
         s_neighbours_of_seed, Data.weights);
-    auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
-    WHEN("We check the first FON") {
-      THEN("Only direct neighbors are in the FON") {
+    neighborhood.update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first neighborhood") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Only direct neighbors are in the neighborhood") {
         REQUIRE(found_(fon, 17));
         REQUIRE(found_(fon, 23));
         REQUIRE(found_(fon, 25));
         REQUIRE(found_(fon, 31));
       }
     }
-    fon = f_o_n.update(31, fc_graph.get_neighbours(31));
+    neighborhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
-      THEN("Cell 31 is no more in the FON") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Cell 31 is no more in the neighborhood") {
         REQUIRE(not_found_(fon, 31));
       }
-      THEN("Old neighbors are still in the FON") {
+      THEN("Old neighbors are still in the neighborhood") {
         REQUIRE(found_(fon, 17));
         REQUIRE(found_(fon, 23));
         REQUIRE(found_(fon, 25));
       }
-      THEN("Direct neighbors of 31 are in the FON") {
+      THEN("Direct neighbors of 31 are in the neighborhood") {
         REQUIRE(found_(fon, 30));
         REQUIRE(found_(fon, 32));
         REQUIRE(found_(fon, 38));
       }
     }
-    fon = f_o_n.update(38, fc_graph.get_neighbours(38));
+    neighborhood.update(38, fc_graph.get_neighbours(38));
     WHEN("We add cell 38") {
-      THEN("Cell 38 is no more in the FON") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Cell 38 is no more in the neighborhood") {
         REQUIRE(not_found_(fon, 38));
       }
-      THEN("Old neighbors are still in the FON") {
+      THEN("Old neighbors are still in the neighborhood") {
         REQUIRE(found_(fon, 17));
         REQUIRE(found_(fon, 23));
         REQUIRE(found_(fon, 25));
         REQUIRE(found_(fon, 30));
         REQUIRE(found_(fon, 32));
       }
-      THEN("Direct neighbors of 31 are NOT in the FON (max order neighborhood)") {
+      THEN("Direct neighbors of 31 are NOT in the neighborhood (max order neighborhood)") {
         REQUIRE(not_found_(fon, 37));
         REQUIRE(not_found_(fon, 39));
         REQUIRE(not_found_(fon, 45));
@@ -638,59 +641,62 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
         card, agglomerated);
     unordered_set<CoMMAIndexT> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
-    Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> f_o_n(
+    Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> neighborhood(
         s_neighbours_of_seed, Data.weights, 2);
-    auto fon = f_o_n.update(seed, fc_graph.get_neighbours(seed));
-    WHEN("We check the first FON") {
-      THEN("Only direct neighbors are in the FON") {
+    neighborhood.update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first neighborhood") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Only direct neighbors are in the neighborhood") {
         REQUIRE(found_(fon, 17));
         REQUIRE(found_(fon, 23));
         REQUIRE(found_(fon, 25));
         REQUIRE(found_(fon, 31));
       }
     }
-    fon = f_o_n.update(31, fc_graph.get_neighbours(31));
+    neighborhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
-      THEN("Direct neighbors of 31 are in the current FON") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Direct neighbors of 31 are in the current neighborhood") {
         REQUIRE(found_(fon, 30));
         REQUIRE(found_(fon, 32));
         REQUIRE(found_(fon, 38));
       }
-      auto prev_fon = f_o_n._q_fon.begin() + 1;
-      THEN("Cell 31 is no more in the previous FON") {
+      const auto prev_fon = neighborhood.get_neighbors_by_level(1);
+      THEN("Cell 31 is no more in the previous neighborhood") {
         REQUIRE(not_found_1stEl_(prev_fon, 31));
       }
-      THEN("Old neighbors are still in the previous FON") {
+      THEN("Old neighbors are still in the previous neighborhood") {
         REQUIRE(found_1stEl_(prev_fon, 17));
         REQUIRE(found_1stEl_(prev_fon, 23));
         REQUIRE(found_1stEl_(prev_fon, 25));
       }
     }
-    fon = f_o_n.update(38, fc_graph.get_neighbours(38));
+    neighborhood.update(38, fc_graph.get_neighbours(38));
     WHEN("We add cell 38") {
-      THEN("Direct neighbors of 31 are NOT in the FON (max order neighborhood)") {
+      const auto fon = neighborhood.get_candidates();
+      THEN("Direct neighbors of 31 are NOT in the neighborhood (max order neighborhood)") {
         REQUIRE(not_found_(fon, 37));
         REQUIRE(not_found_(fon, 39));
         REQUIRE(not_found_(fon, 45));
       }
-      THEN("First ever computed FON is returned since no direct neighbors were added") {
+      THEN("First ever computed neighborhood is returned since no direct neighbors were added") {
         REQUIRE(found_(fon, 17));
         REQUIRE(found_(fon, 23));
         REQUIRE(found_(fon, 25));
       }
-      auto prev_fon = f_o_n._q_fon.begin() + 1;
-      THEN("Cell 38 is no more in the previous FON") {
+      const auto prev_fon = neighborhood.get_neighbors_by_level(1);
+      THEN("Cell 38 is no more in the previous neighborhood") {
         REQUIRE(not_found_1stEl_(prev_fon, 38));
       }
-      THEN("Old neighbors are still in the previous FON") {
+      THEN("Old neighbors are still in the previous neighborhood") {
         REQUIRE(found_1stEl_(prev_fon, 30));
         REQUIRE(found_1stEl_(prev_fon, 32));
       }
-      prev_fon++;
-      THEN("Older neighbors are still in the second-to-last FON (which happens to be the first ever, hence the current)") {
-        REQUIRE(found_1stEl_(prev_fon, 17));
-        REQUIRE(found_1stEl_(prev_fon, 23));
-        REQUIRE(found_1stEl_(prev_fon, 25));
+      const auto prev_fon_2 = neighborhood.get_neighbors_by_level(2);
+      THEN("Older neighbors are still in the second-to-last neighborhood (which happens to be the first ever, hence the current)") {
+        REQUIRE(found_1stEl_(prev_fon_2, 17));
+        REQUIRE(found_1stEl_(prev_fon_2, 23));
+        REQUIRE(found_1stEl_(prev_fon_2, 25));
       }
     }
 #undef check_

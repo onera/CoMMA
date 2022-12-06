@@ -775,7 +775,8 @@ class Agglomerator_Isotropic
    *  chosen fine cell
    */
   void compute_best_fc_to_add(
-      const vector<CoMMAIndexType> &neighbors,
+      const typename Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                   CoMMAIntType>::CandidatesContainerType &neighbors,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
@@ -790,7 +791,7 @@ class Agglomerator_Isotropic
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
     // we verify that fon is a sub member of the dict of seeds
-    for (const CoMMAIndexType &i_fc : neighbors) {
+    for (const auto &i_fc : neighbors) {
       // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
       if (arg_max_faces_in_common == -1) {
@@ -902,8 +903,8 @@ class Agglomerator_Biconnected
   virtual inline
   unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>>
-  get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &neighbours,
-                               const vector<CoMMAWeightType> &priority_weights) {
+  get_neighborhood(const unordered_set<CoMMAIndexType> &neighbours,
+                   const vector<CoMMAWeightType> &priority_weights) {
     return make_unique<
       Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
         neighbours, priority_weights);
@@ -1013,10 +1014,10 @@ class Agglomerator_Biconnected
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class neighborhood
       unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                           CoMMAIntType>> f_o_neighbourhood =
-          this->get_first_order_neighborhood(s_neighbours_of_seed, priority_weights);
+                               CoMMAIntType>> neighborhood =
+          this->get_neighborhood(s_neighbours_of_seed, priority_weights);
       // Generate the set of the neighbors to the given seed
-      auto fon = f_o_neighbourhood->update(seed, this->_fc_graph.get_neighbours(seed));
+      neighborhood->update(seed, this->_fc_graph.get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1029,7 +1030,8 @@ class Agglomerator_Biconnected
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
-        this->compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
+        this->compute_best_fc_to_add(neighborhood->get_candidates(),
+                                     d_n_of_seed, is_order_primary, diam_cc,
                                      vol_cc, tmp_cc, argmin_ar,  // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
@@ -1072,8 +1074,7 @@ class Agglomerator_Biconnected
         // Remove added fc from the available neighbours
         d_n_of_seed.erase(argmin_ar);
 
-        fon = f_o_neighbourhood->update(argmin_ar,
-            this->_fc_graph.get_neighbours(argmin_ar));
+        neighborhood->update(argmin_ar,this->_fc_graph.get_neighbours(argmin_ar));
       }
 
       // Selecting best CC to return
@@ -1163,8 +1164,8 @@ class Agglomerator_Pure_Front
   inline
   unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>>
-  get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                               const vector<CoMMAWeightType> &priority_weights) override {
+  get_neighborhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+                   const vector<CoMMAWeightType> &priority_weights) override {
     return make_unique<
       Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
         s_neighbours_of_seed, priority_weights, this->_dimension);
