@@ -84,23 +84,16 @@ class Graph {
   /** @brief helper vector for the DFS*/
   vector<bool> _visited;
 
-  /** @brief Vector of row pointer of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of row pointer of CRS representation */
   vector<CoMMAIndexType> _m_CRS_Row_Ptr;
 
-  /** @brief Vector of column index of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of column index of CRS representation */
   vector<CoMMAIndexType> _m_CRS_Col_Ind;
 
-  /** @brief Vector of area weight of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of area weight of CRS representation */
   vector<CoMMAWeightType> _m_CRS_Values;
 
-  /** @brief Vector of volumes (member variable different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of volumes */
   vector<CoMMAWeightType> _volumes;
 
   /** @brief Depth First Search (DFS) recursive function
@@ -457,20 +450,13 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<vector<CoMMAWeightType>> &centers,
              const vector<CoMMAIntType> &n_bnd_faces,
              const CoMMAIntType dimension,
-             const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
-                 unordered_set<CoMMAIndexType>({}))
+             const vector<CoMMAIndexType> &anisotropic_compliant_fc)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _n_bnd_faces(n_bnd_faces), _centers(centers) {
-    if (s_anisotropic_compliant_fc.size() > 0) {
-      _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
-    } else {
-      // Default initialization of s_anisotropic_compliant_cells
-      for (CoMMAIndexType i = 0; i < this->_number_of_cells; i++) {
-        _s_anisotropic_compliant_cells.insert(i);
-      }
-    }
-
+        _n_bnd_faces(n_bnd_faces),
+        _s_anisotropic_compliant_cells(anisotropic_compliant_fc.begin(),
+                                       anisotropic_compliant_fc.end()),
+        _centers(centers) {
     // Function to compute the aspect-ratio
     _compute_AR = dimension == 2 ?
         [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
@@ -483,13 +469,17 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   ~Dual_Graph() {}
 
   /** @brief Vector telling how many boundary faces each cell has */
-  vector<CoMMAIntType> _n_bnd_faces;
+  const vector<CoMMAIntType> &_n_bnd_faces;
 
-  /** @brief Member unordered set of compliant cells*/
-  unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
+  /** @brief Elements that are checked if they are anisotropic. If an element satisfies
+   * the condition for being anisotropic (typically, AR > threshold) but it not
+   * in this set, it will not considered as anisotropic.
+   * We use a set to ensure uniqueness
+   */
+  const unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
 
   /** @brief Vector of cell centers */
-  vector<vector<CoMMAWeightType>> _centers;
+  const vector<vector<CoMMAWeightType>> &_centers;
 
   /** @brief Function which computes the aspect-ratio from the minimum and maximum
    * faces

@@ -35,13 +35,13 @@ using PairValueTestT = int; // Leave this since we might try something than what
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
-    DualGPy Data = DualGPy();
+    const DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     // Check the effective length
     WHEN("We try to access to the member variables") {
@@ -266,7 +266,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
 
 SCENARIO("Test of the seed pool", "[Seed_Pool]") {
   GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the cell numbering") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
     for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
@@ -387,7 +387,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
   }
 
   GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, w);
@@ -436,11 +436,11 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
 
 SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -564,11 +564,11 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
  #define not_found_(cont, obj) check_(find, ==, cont, obj)
  #define found_1stEl_(cont, obj) check_(find_if, !=, (*cont), CoMMAPairFindFirstBasedT(obj))
  #define not_found_1stEl_(cont, obj) check_(find_if, ==, (*cont), CoMMAPairFindFirstBasedT(obj))
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -626,11 +626,11 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     }
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a Pure Front First Order Neighborhood for 24") {
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -779,12 +779,12 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
 SCENARIO("Test the Isotropic agglomeration for small 3D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 3,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -889,12 +889,12 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
 SCENARIO("Test the Isotropic agglomeration for small 2D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    DualGPy_quad_4 Data = DualGPy_quad_4();
+    const DualGPy_quad_4 Data = DualGPy_quad_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -1046,12 +1046,12 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
 SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
-    DualGPy_aniso Data = DualGPy_aniso();
+    const DualGPy_aniso Data = DualGPy_aniso();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 3,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     const CoMMAWeightT aniso_thresh{2.};
     const bool isFirstAgglomeration = true;
@@ -1068,7 +1068,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     }
   };
   GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
-    DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool isFirstAgglomeration = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1077,7 +1077,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
@@ -1110,12 +1110,12 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
-    DualGPy_minimal Data = DualGPy_minimal();
+    const DualGPy_minimal Data = DualGPy_minimal();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
         fc_graph, cc_graph, seeds_pool, 2);
@@ -1133,11 +1133,11 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   };
   GIVEN("A simple 8-cell Cartesian grid") {
 #define fc_in_cc(graph, fc, cc) graph->_fc_2_cc[fc] == cc
-    DualGPy_correction Data = DualGPy_correction();
+    const DualGPy_correction Data = DualGPy_correction();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
       cc_graph->cc_create_a_cc({0,4,5});

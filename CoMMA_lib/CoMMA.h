@@ -104,7 +104,7 @@ void agglomerate_one_level(
     const vector<CoMMAWeightType> &priority_weights,
 
     // Indices of compliant cc
-    const vector<CoMMAIndexType> &arrayOfFineAnisotropicCompliantCells,
+    const vector<CoMMAIndexType> &anisotropicCompliantCells,
 
     // boundaries
     const vector<CoMMAIntType> &n_bnd_faces,
@@ -159,16 +159,6 @@ void agglomerate_one_level(
   replace_copy_if(n_bnd_faces.begin(), n_bnd_faces.end(), fixed_n_bnd_faces.begin(),
       [expected_max_n_bnd](auto n){return n > expected_max_n_bnd;}, expected_max_n_bnd);
 
-  // ANISOTROPIC COMPLIANT FC
-  //======================================
-  // Elements that are checked if they are anisotropic. If an element satisfies
-  // the condition for being anisotropic (typically, AR > threshold) but it not
-  // in this set, it will not considered as anisotropic.
-  // We use a set to ensure uniqueness
-  unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(
-      arrayOfFineAnisotropicCompliantCells.begin(),
-      arrayOfFineAnisotropicCompliantCells.end());
-
   // SEED POOL
   //======================================
   // Object providing the order of agglomeration
@@ -180,7 +170,7 @@ void agglomerate_one_level(
   // Object containing the graph representation and related info in a convenient structure
   shared_ptr<DualGraphType> fc_graph = make_shared<DualGraphType>(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, centers, fixed_n_bnd_faces, dimension, s_anisotropic_compliant_fc);
+      volumes, centers, fixed_n_bnd_faces, dimension, anisotropicCompliantCells);
 
   // COARSE CELL CONTAINER
   //======================================
