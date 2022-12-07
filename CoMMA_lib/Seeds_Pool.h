@@ -24,15 +24,15 @@
 */
 
 #include <algorithm>
-#include <set>
-#include <unordered_map>
-#include <list>
 #include <cassert>
 #include <deque>
+#include <list>
+#include <optional>
 #include <queue>
+#include <set>
+#include <unordered_map>
 #include <utility>
 #include <vector>
-#include <optional>
 
 #include "CoMMATypes.h"
 #include "Util.h"

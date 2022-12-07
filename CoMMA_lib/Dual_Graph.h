@@ -23,15 +23,15 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <cassert>
+#include <climits>
+#include <deque>
+#include <functional>
+#include <limits>
 #include <unordered_map>
 #include <unordered_set>
-#include <deque>
 #include <vector>
-#include <algorithm>
-#include <limits>
-#include <climits>
-#include <functional>
-#include <optional>
 
 #include "Seeds_Pool.h"
 

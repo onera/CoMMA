@@ -24,14 +24,15 @@
 */
 
 #include <algorithm>
+#include <cassert>
 #include <deque>
 #include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "Dual_Graph.h"
 #include "Coarse_Cell.h"
+#include "Dual_Graph.h"
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>

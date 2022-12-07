@@ -23,11 +23,11 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <vector>
-#include <cstddef>
-#include <memory>
-#include <iostream>
 #include <cassert>
+#include <cstddef>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>

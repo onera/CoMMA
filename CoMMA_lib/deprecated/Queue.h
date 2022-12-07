@@ -24,9 +24,9 @@
 */
 
 #include <cassert>
-#include <vector>
 #include <deque>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 /** @brief A template class implementing the Queue data structure **/
