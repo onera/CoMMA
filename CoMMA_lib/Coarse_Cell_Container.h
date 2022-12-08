@@ -58,7 +58,7 @@ class Coarse_Cell_Container {
   Coarse_Cell_Container(
       const Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph)
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
-        _fc_2_cc(fc_graph._number_of_cells, -1),
+        _fc_2_cc(fc_graph._number_of_cells, nullopt),
         _a_is_fc_agglomerated(fc_graph._number_of_cells, false),
         _nb_of_agglomerated_fc(0), _delayed_cc() {}
 
@@ -77,7 +77,7 @@ class Coarse_Cell_Container {
   CoMMAIndexType _cc_counter = 0;
 
   /** @brief Output vector identifying to which coarse cell the fine cell belongs */
-  vector<CoMMAIndexType> _fc_2_cc;
+  vector<optional<CoMMAIndexType>> _fc_2_cc;
 
   /** @brief Vector of boolean telling whether a fine cell has been agglomerated */
   vector<bool> _a_is_fc_agglomerated;
@@ -110,7 +110,7 @@ class Coarse_Cell_Container {
     const vector<CoMMAIndexType> neigh = _fc_graph.get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
     for (const CoMMAIndexType &elem : neigh) {
-      const auto cc = _fc_2_cc[elem];
+      const auto cc = _fc_2_cc[elem].value();
       if (cc != i_cc &&
           find(result.begin(), result.end(), cc) == result.end()) {
         result.push_back(cc);
@@ -392,7 +392,7 @@ class Coarse_Cell_Container {
     }
     for (const auto &i_fc : s_fc) {
       vol_cc = vol_cc + _fc_graph._volumes[i_fc];
-      assert(_fc_2_cc[i_fc] == -1);
+      assert(!_fc_2_cc[i_fc].has_value());
     }
     // Anisotropic case
     bool is_mutable = true;
@@ -436,7 +436,7 @@ class Coarse_Cell_Container {
       // function agglomerate _fc_2_cc is filled with _cc_counter
       for (const auto &i_fc : s_fc) {
         // Only if not isCreationDelayed:
-        assert(_fc_2_cc[i_fc] == -1);
+        assert(!_fc_2_cc[i_fc].has_value());
         _fc_2_cc[i_fc] = _cc_counter;
       }
       // Update of the number of CC

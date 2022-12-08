@@ -31,6 +31,7 @@
 #include <limits>
 #include <climits>
 #include <functional>
+#include <optional>
 
 #include "Seeds_Pool.h"
 
@@ -126,7 +127,7 @@ class Graph {
     coda.push_back(root);
     vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
-    vector<CoMMAIndexType> prev(_number_of_cells, -1);
+    vector<optional<CoMMAIndexType>> prev(_number_of_cells, nullopt);
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
       coda.pop_front();
@@ -141,7 +142,7 @@ class Graph {
     }
     // to print the inverse path
     CoMMAIndexType retro = prev[_number_of_cells - 1];
-    while (retro != -1) {
+    while (retro.has_value()) {
       path.push_back(retro);
       retro = prev[retro];
     }
@@ -416,8 +417,6 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     typename vector<CoMMAWeightType>::iterator weight_it;
     auto pos_col = this->_m_CRS_Col_Ind.begin();
     auto pos_Values = this->_m_CRS_Values.begin();
-    // mapping for the renumbering of the nodes
-    vector<CoMMAIndexType> internal_mapping;
     for (const auto &elem : v_neigh) {
       ind = this->_m_CRS_Row_Ptr[elem];
       ind_p_one = this->_m_CRS_Row_Ptr[elem + 1];
@@ -464,20 +463,22 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     // now we do not have nomore our node, but we must create a mapping between the
     // before and now, and translate it in the col_ind and update the mapping with
     // the global graph
+    // mapping for the renumbering of the nodes
+    vector<optional<CoMMAIndexType>> internal_mapping;
+    internal_mapping.reserve(this->_m_CRS_Row_Ptr.size() + 1);
     CoMMAIndexType indice = 0;
-    // to cycle on the main vector
-    CoMMAIndexType ix = 0;
-    while (ix != static_cast<CoMMAIntType>(this->_m_CRS_Row_Ptr.size()) + 1) {
-      if (ix != i_fc) {
+    for (auto ix = decltype(this->_m_CRS_Row_Ptr.size()){0};
+         ix < this->_m_CRS_Row_Ptr.size() + 1; ++ix) {
+      if (static_cast<decltype(i_fc)>(ix) != i_fc) {
         internal_mapping.push_back(indice);
         indice++;
       } else {
-        internal_mapping.push_back(-1);
+        internal_mapping.push_back(nullopt);
       }
-      ++ix;
     }
     for (auto &actual : this->_m_CRS_Col_Ind) {
-      actual = internal_mapping[actual];
+      assert(internal_mapping[actual].has_value());
+      actual = internal_mapping[actual].value();
     }
   }
 };
