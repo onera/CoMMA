@@ -674,7 +674,7 @@ class Agglomerator_Isotropic
     // We proceed in creating the delayed ones
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
-      this->_cc_graph->correct();
+      this->_cc_graph->correct(this->_max_card);
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
