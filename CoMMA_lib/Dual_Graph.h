@@ -330,7 +330,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * contained*/
   CoMMAIntType _cardinality = 0;
 
-  /** @brief Compactness of the given subgraph */
+  /** @brief Compactness of the given subgraph (in this case is the max number of neighbours) */
   CoMMAIntType _compactness = 0;
 
   /** @brief Mapping from the local number of node to the global. Being a
