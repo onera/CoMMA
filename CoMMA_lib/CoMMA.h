@@ -128,7 +128,6 @@ void agglomerate_one_level(
 
   // SANITY CHECKS
   //======================================
-  // We sometimes rely on -1 as default parameters (@TODO: could it be changed?)
   check_int_type(CoMMAIndexType, "first template argument");
   check_int_type(CoMMAIntT, "third template argument");
   if ( !(dimension == 2 || dimension == 3) )
