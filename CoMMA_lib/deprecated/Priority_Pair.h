@@ -24,6 +24,8 @@
 
 #include <utility>
 
+using namespace std;
+
 /** @brief Wrapper around the STL pair with custom 'less than' operator: as in the
  * standard case, first we compare the first elements, then the second ones; however
  * it relies on the 'greater than' on the first elements, e.g., (4,X) < (3,Y),
@@ -42,8 +44,8 @@ public:
   Priority_Pair() {};
 
   /** @brief Constructor
-   *  @param a First element 
-   *  @param b Second element 
+   *  @param a First element
+   *  @param b Second element
    */
   Priority_Pair(const A &a, const B &b) : _p(a,b) {};
 
@@ -63,10 +65,10 @@ public:
 
   /** @brief Operator 'less than'. It actually relies on the 'greater than' operator
    * for the first elements and 'less than' for the second ones
-   *  @param a First pair 
-   *  @param b Second pair 
+   *  @param a First pair
+   *  @param b Second pair
    *  @return true if a.first > b.first or (a.first == b.first and a.second < b.second);
-   * false otherwise 
+   * false otherwise
    */
   inline friend bool operator< (const Priority_Pair &a, const Priority_Pair &b) {
       if      (a._p.first > b._p.first)   return true;
@@ -75,9 +77,9 @@ public:
   }
 
   /** @brief Operator 'equal'
-   *  @param a First pair 
-   *  @param b Second pair 
-   *  @return true if 
+   *  @param a First pair
+   *  @param b Second pair
+   *  @return true if a and b are equal
    */
   inline friend bool operator== (const Priority_Pair &a, const Priority_Pair &b) {
       return (a._p.first == b._p.first) && (a._p.second == b._p.second);

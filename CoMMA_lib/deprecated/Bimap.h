@@ -24,9 +24,9 @@
 */
 
 #include <cassert>
-#include <type_traits>
-#include <map>
 #include <iostream>
+#include <map>
+#include <type_traits>
 
 using namespace std;
 /** @brief An easy and straight forward implementation of a Bimap.

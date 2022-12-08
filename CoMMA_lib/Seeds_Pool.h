@@ -24,15 +24,15 @@
 */
 
 #include <algorithm>
-#include <set>
-#include <unordered_map>
-#include <list>
 #include <cassert>
 #include <deque>
+#include <list>
+#include <optional>
 #include <queue>
+#include <set>
+#include <unordered_map>
 #include <utility>
 #include <vector>
-#include <optional>
 
 #include "CoMMATypes.h"
 #include "Util.h"
@@ -280,11 +280,14 @@ class Seeds_Pool {
     assert(CoMMACellT::INTERIOR <= i_level);
     assert(i_level <= CoMMACellT::CORNER);
     if (_l_of_seeds.size() > 0) {
-      for (CoMMAIntType i = CoMMACellT::CORNER; i > i_level -1; i--) {
-        if (!_l_of_seeds[i].empty()) {
-          return false;
-        }
-      }
+      if (!_l_of_seeds[CoMMACellT::CORNER].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::RIDGE].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::VALLEY].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::INTERIOR].empty())
+        return false;
     }
     return true;
   }

@@ -32,10 +32,10 @@
 #include <optional>
 #include <stdexcept>
 
-#include "Dual_Graph.h"
 #include "Coarse_Cell_Container.h"
-#include "Util.h"
+#include "Dual_Graph.h"
 #include "First_Order_Neighbourhood.h"
+#include "Util.h"
 
 // forward definition to keep the agglomerators in one file
 
