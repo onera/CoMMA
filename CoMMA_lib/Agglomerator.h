@@ -29,6 +29,7 @@
 #include <iterator>
 #include <memory>
 #include <numeric>
+#include <optional>
 #include <stdexcept>
 
 #include "Dual_Graph.h"
@@ -651,13 +652,14 @@ class Agglomerator_Isotropic
     CoMMAIndexType nb_of_fc = this->_l_nb_of_cells[0];
     while (this->_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
       // 1) Choose a new seed
-      CoMMAIndexType seed = this->_seeds_pool->choose_new_seed(
+      auto seed = this->_seeds_pool->choose_new_seed(
           this->_cc_graph->_a_is_fc_agglomerated);
+      assert(seed.has_value());
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm
       // in the children class (triconnected or biconnected)
       unordered_set<CoMMAIndexType> set_current_cc =
-          choose_optimal_cc_and_update_seed_pool(seed, compactness,
+          choose_optimal_cc_and_update_seed_pool(seed.value(), compactness,
                                                  priority_weights);
       // 3)  Creation of cc:
       bool is_anistropic = false;
@@ -674,7 +676,7 @@ class Agglomerator_Isotropic
     // We proceed in creating the delayed ones
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
-      this->_cc_graph->correct();
+      this->_cc_graph->correct(this->_max_card);
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
@@ -785,7 +787,7 @@ class Agglomerator_Isotropic
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
-    CoMMAIndexType arg_max_faces_in_common = -1;
+    CoMMAIndexType arg_max_faces_in_common = neighbors[0];
 
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
@@ -793,10 +795,6 @@ class Agglomerator_Isotropic
     for (const CoMMAIndexType &i_fc : neighbors) {
       // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
-      if (arg_max_faces_in_common == -1) {
-        arg_max_faces_in_common = i_fc;
-      }
-
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
@@ -1022,7 +1020,7 @@ class Agglomerator_Biconnected
       // anyways all the possible coarse cells (not only the max dimension one)
       while (size_current_cc < max_ind) {
         // argmin_ar is the best fine cell to add
-        CoMMAIndexType argmin_ar = -1;
+        CoMMAIndexType argmin_ar = 0; // Dummy initialization
         CoMMAWeightType min_ar_diam = numeric_limits<CoMMAWeightType>::max();
         CoMMAWeightType min_ar_vol = numeric_limits<CoMMAWeightType>::max();
         CoMMAIntType max_faces_in_common = 0;

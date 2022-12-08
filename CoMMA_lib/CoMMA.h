@@ -27,7 +27,6 @@
 #include <iterator>
 #include <numeric>
 #include <stdexcept>
-#include <type_traits>
 #include <unordered_set>
 #include <vector>
 
@@ -38,9 +37,9 @@
 #include "Dual_Graph.h"
 #include "Seeds_Pool.h"
 
-#define check_signed_int_type(intT, label) \
-  static_assert(is_signed<intT>::value && numeric_limits<intT>::is_integer, \
-      "CoMMA works with signed integer types, but " #intT " (" label ") is not")
+#define check_int_type(intT, label) \
+  static_assert(numeric_limits<intT>::is_integer, \
+      "CoMMA works with integer types, but " #intT " (" label ") is not")
 
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -136,8 +135,8 @@ void agglomerate_one_level(
   // SANITY CHECKS
   //======================================
   // We sometimes rely on -1 as default parameters (@TODO: could it be changed?)
-  check_signed_int_type(CoMMAIndexType, "first template argument");
-  check_signed_int_type(CoMMAIntT, "third template argument");
+  check_int_type(CoMMAIndexType, "first template argument");
+  check_int_type(CoMMAIntT, "third template argument");
   if ( !(dimension == 2 || dimension == 3) )
     throw invalid_argument( "CoMMA - Error: dimension must be 2 or 3" );
   if ( min_card <= 1 || goal_card <= 1 || max_card <= 1 )
@@ -225,9 +224,9 @@ void agglomerate_one_level(
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   const auto &fccc = cc_graph->_fc_2_cc;
-  for (CoMMAIndexType i_fc = 0; i_fc < nb_fc; i_fc++) {
-    fc_to_cc[i_fc] = fccc[i_fc];
+  for (auto i_fc = decltype(nb_fc){0}; i_fc < nb_fc; i_fc++) {
+    fc_to_cc[i_fc] = fccc[i_fc].value();
   }
 }
-#undef check_signed_int_type
+#undef check_int_type
 #endif
