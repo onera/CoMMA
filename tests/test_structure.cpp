@@ -1172,63 +1172,127 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and two coarse cells with cardinality 5 and 3") {
-      cc_graph.cc_create_a_cc({0,1,2});
+      cc_graph.cc_create_a_cc({0,1,2,5,8});
       cc_graph.cc_create_a_cc({4});
-      cc_graph.cc_create_a_cc({3,5,6,7,8});
+      cc_graph.cc_create_a_cc({3,6,7});
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
         REQUIRE(fc_in_cc(cc_graph, 2, 0));
         REQUIRE(fc_in_cc(cc_graph, 3, 2));
         REQUIRE(fc_in_cc(cc_graph, 4, 1));
-        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
         REQUIRE(fc_in_cc(cc_graph, 6, 2));
         REQUIRE(fc_in_cc(cc_graph, 7, 2));
-        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+        REQUIRE(fc_in_cc(cc_graph, 8, 0));
       }
       cc_graph.correct(4);
       THEN("Once the correction has been performed, the isolated cell has been agglomerated "
-           "to the coarse cell with which it shares the most faces") {
+           "to the coarse cell which has an increased in the compactness (no matter the max cardinality)") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
         REQUIRE(fc_in_cc(cc_graph, 2, 0));
         REQUIRE(fc_in_cc(cc_graph, 3, 1));
         REQUIRE(fc_in_cc(cc_graph, 4, 1));
-        REQUIRE(fc_in_cc(cc_graph, 5, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 0));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and three coarse cells with cardinality 4, 2, and 2") {
+      cc_graph.cc_create_a_cc({0,3});
+      cc_graph.cc_create_a_cc({6,7});
+      cc_graph.cc_create_a_cc({4});
+      cc_graph.cc_create_a_cc({1,2,5,8});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+      cc_graph.correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with which it shares the most faces (no matter the max cardinality)") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 2));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and 3 cells with cardinality 4, 2, and 2") {
+      cc_graph.cc_create_a_cc({0,1,3,4});
+      cc_graph.cc_create_a_cc({7,8});
+      cc_graph.cc_create_a_cc({6});
+      cc_graph.cc_create_a_cc({2,5});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+      cc_graph.correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with the lowest cardinality") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
         REQUIRE(fc_in_cc(cc_graph, 6, 1));
         REQUIRE(fc_in_cc(cc_graph, 7, 1));
         REQUIRE(fc_in_cc(cc_graph, 8, 1));
       }
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-         "and two coarse cells both with cardinality 4") {
-      cc_graph.cc_create_a_cc({0,1,2,3});
+         "and four coarse cells with cardinality 2") {
+      cc_graph.cc_create_a_cc({0,3});
+      cc_graph.cc_create_a_cc({6,7});
       cc_graph.cc_create_a_cc({4});
-      cc_graph.cc_create_a_cc({5,6,7,8});
+      cc_graph.cc_create_a_cc({5,8});
+      cc_graph.cc_create_a_cc({1,2});
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
-        REQUIRE(fc_in_cc(cc_graph, 1, 0));
-        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 4));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
         REQUIRE(fc_in_cc(cc_graph, 3, 0));
-        REQUIRE(fc_in_cc(cc_graph, 4, 1));
-        REQUIRE(fc_in_cc(cc_graph, 5, 2));
-        REQUIRE(fc_in_cc(cc_graph, 6, 2));
-        REQUIRE(fc_in_cc(cc_graph, 7, 2));
-        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
       }
       cc_graph.correct(4);
       THEN("Once the correction has been performed, the isolated cell has been agglomerated "
-           "to the coarse cell with lower ID (here, the two coarse cells have equivalent features "
+           "to the coarse cell with lower ID (here, the coarse cells have equivalent features "
            "wrt to the fine cell, hence we cannot choose)") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
-        REQUIRE(fc_in_cc(cc_graph, 1, 0));
-        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
         REQUIRE(fc_in_cc(cc_graph, 3, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
-        REQUIRE(fc_in_cc(cc_graph, 5, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
         REQUIRE(fc_in_cc(cc_graph, 6, 1));
         REQUIRE(fc_in_cc(cc_graph, 7, 1));
-        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
       }
     }
   }
