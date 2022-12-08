@@ -676,7 +676,7 @@ class Agglomerator_Isotropic
     // We proceed in creating the delayed ones
     this->_cc_graph->cc_create_all_delayed_cc();
     if (correction_steps) {
-      this->_cc_graph->correct();
+      this->_cc_graph->correct(this->_max_card);
     }
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
@@ -1007,7 +1007,7 @@ class Agglomerator_Biconnected
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbors of seed until a given order.
-      unordered_set<CoMMAIndexType> s_neighbours_of_seed =
+      const unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class first order neighborhood
       unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
