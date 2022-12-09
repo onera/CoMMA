@@ -355,17 +355,11 @@ class Coarse_Cell_Container {
    */
   inline bool new_cell_increases_compactness(const CoMMAIndexType fc,
       const shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> cc) const {
-    unordered_set<CoMMAIndexType> tmp_cc{};
-    const auto n_fc_cc = cc->_number_of_cells;
-    // I am not 100% sure that mapping is perfect hence I prefer loop using indices
-    for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
-      tmp_cc.insert(cc->_mapping_l_to_g[i_fc_cc]);
-    }
-    // The compactness of the SubGraph is not the one we want, here we want the min one
-    const auto old_comp = _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+    // Set of faces in the CC
+    unordered_set<CoMMAIndexType> tmp_cc{cc->_mapping_l_to_g.begin(),
+                                         cc->_mapping_l_to_g.end()};
     tmp_cc.insert(fc);
-    const auto new_comp = _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
-    return new_comp > old_comp;
+    return _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc) > cc->_compactness;
   }
 
   /** @brief It creates a coarse cell based on the set of fine cells given as an

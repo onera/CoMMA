@@ -300,19 +300,17 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
            const bool &is_isotropic)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _is_isotropic(is_isotropic),
+        _is_isotropic(is_isotropic), _cardinality(static_cast<CoMMAIntType>(nb_c)),
         _mapping_l_to_g(mapping_l_to_g) {
-    // Definition degree
-    CoMMAIndexType pos_old = 0;
-    for (const CoMMAIndexType &elem : m_crs_row_ptr) {
-      const CoMMAIntType degree = static_cast<CoMMAIntType>(elem - pos_old);
-      if (degree > _compactness) {
-        _compactness = degree;
+    // Compactness computation
+    _compactness = static_cast<CoMMAIntType>(nb_c);
+    for (auto c = decltype(nb_c){0}; c < nb_c; ++c) {
+      const CoMMAIntType n_neighs = static_cast<CoMMAIntType>(
+          m_crs_row_ptr[c+1] - m_crs_row_ptr[c]);
+      if (n_neighs < _compactness) {
+        _compactness = n_neighs;
       }
-      pos_old = elem;
     }
-    // Definition cardinality
-    _cardinality = nb_c;
   }
 
   ~Subgraph() {}
@@ -322,10 +320,11 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Cardinality of the given subgraph, alias the number of nodes
    * contained*/
-  CoMMAIntType _cardinality = 0;
+  CoMMAIntType _cardinality;
 
-  /** @brief Compactness of the given subgraph (in this case is the max number of neighbours) */
-  CoMMAIntType _compactness = 0;
+  /** @brief Compactness of the given subgraph. The compactness is the minimum number
+   * of internal neighbours */
+  CoMMAIntType _compactness;
 
   /** @brief Mapping from the local number of node to the global. Being a
    * subgraph this variable connect the local index of the node
