@@ -34,8 +34,8 @@
 
 #include "Coarse_Cell_Container.h"
 #include "Dual_Graph.h"
-#include "First_Order_Neighbourhood.h"
 #include "Util.h"
+#include "Neighbourhood.h"
 
 // forward definition to keep the agglomerators in one file
 
@@ -144,7 +144,7 @@ class Agglomerator {
   /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
   CoMMAIntType _dimension;
-  /** @brief minimum number of neighborhood we extend to search the neighborhood
+  /** @brief minimum number of neighbourhood we extend to search the neighbourhood
    * in the greedy algorithm. Set as default to 3.*/
   CoMMAIntType _min_neighbourhood = 3;
   /** @brief minimum cardinality. Set as default to 0 (meaning the maximum
@@ -756,19 +756,19 @@ class Agglomerator_Isotropic
 
   /** @brief Computes the best fine cells to add to the coarse cell. The choice
    * depends on: the aspect-ratio of the coarse cell (tries to minimize it), the
-   * number of shared faces (tries to maximize it), the neighborhood order (see
+   * number of shared faces (tries to maximize it), the neighbourhood order (see
    * related argument)
-   *  @param[in] neighbors Vector of neighbors of current coarse cell, they are the
+   *  @param[in] neighbours Vector of neighbours of current coarse cell, they are the
    *  candidates where the best fine cell is sought
    *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
-   *  agglomeration with their neighborhood order wrt to the original seed
-   *  @param[in] is_order_primary If true, the neighborhood order prevails on other
+   *  agglomeration with their neighbourhood order wrt to the original seed
+   *  @param[in] is_order_primary If true, the neighbourhood order prevails on other
    *  criteria
    *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse cell
    *  @param[in] vol Volume of the current coarse cell
    *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
    *  agglomerated in the coarse cell
-   *  @param[out] argmin_ar Index wrt to neighbors vector of the chosen fine cell
+   *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine cell
    *  @param[out] max_faces_in_common Number of faces shared between the chosen fine
    *  cell and the coarse cell
    *  @param[out] min_ar_diam (Approximation of the) Diameter of the coarse cell
@@ -777,7 +777,8 @@ class Agglomerator_Isotropic
    *  chosen fine cell
    */
   void compute_best_fc_to_add(
-      const vector<CoMMAIndexType> &neighbors,
+      const typename Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                   CoMMAIntType>::CandidatesContainerType &neighbours,
       const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
       const bool &is_order_primary, const CoMMAWeightType &diam_cc,
       const CoMMAWeightType &vol_cc,
@@ -787,12 +788,12 @@ class Agglomerator_Isotropic
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
-    CoMMAIndexType arg_max_faces_in_common = neighbors[0];
+    CoMMAIndexType arg_max_faces_in_common = neighbours[0];
 
     // For every fc in the neighbourhood:
     // we update the new aspect ratio
     // we verify that fon is a sub member of the dict of seeds
-    for (const CoMMAIndexType &i_fc : neighbors) {
+    for (const auto &i_fc : neighbours) {
       // we test every possible new cells to chose the one that locally
       // minimizes the Aspect Ratio at the first fine cell of the fon.
       // Compute features of the CC obtained by adding i_fc
@@ -804,7 +805,7 @@ class Agglomerator_Isotropic
           // out
           number_faces_in_common, new_ar, new_ar_diam, new_ar_vol);
 
-      // Neighborhood order of i_fc wrt to original seed of CC
+      // Neighbourhood order of i_fc wrt to original seed of CC
       // [i_fc] is not const the method at returns the reference to the value of the
       // key i_fc.
       const CoMMAIntType &order = d_n_of_seed.at(i_fc);
@@ -891,19 +892,19 @@ class Agglomerator_Biconnected
   /** @brief Destructor*/
   ~Agglomerator_Biconnected() {};
 
-  /** @brief Build a First Order Neighborhood object a return it
-   *  @param[in] neighbours Set of neighbors among which seek the candidates
+  /** @brief Build a Neighbourhood object a return it
+   *  @param[in] neighbours Set of neighbours among which seek the candidates
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
-   *  @return A pointer to a First Order Neighborhood object
+   *  @return A pointer to a Neighbourhood object
    **/
   virtual inline
-  unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                       CoMMAIntType>>
-  get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &neighbours,
-                               const vector<CoMMAWeightType> &priority_weights) {
+  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                           CoMMAIntType>>
+  get_neighbourhood(const unordered_set<CoMMAIndexType> &neighbours,
+                   const vector<CoMMAWeightType> &priority_weights) {
     return make_unique<
-      First_Order_Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
+      Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
         neighbours, priority_weights);
   }
 
@@ -919,9 +920,9 @@ class Agglomerator_Biconnected
     assert(this->_goal_card > 1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
     unordered_set<CoMMAIndexType> s_current_cc = {seed};
-    // Dictionary of the neighborhood of the seed, the key is the global index
+    // Dictionary of the neighbourhood of the seed, the key is the global index
     // of the cell and the value the order of distance from the seed (1 order
-    // direct neighborhood, 2 order etc.)
+    // direct neighbourhood, 2 order etc.)
     unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_seed;
     // Number of fine cells constituting the current coarse cell in
     // construction.
@@ -940,7 +941,7 @@ class Agglomerator_Biconnected
         // process)
         this->_cc_graph->_a_is_fc_agglomerated);
 
-    // We get the number of neighborhoods
+    // We get the number of neighbourhoods
     CoMMAIntType nb_neighbours = this->_fc_graph->get_nb_of_neighbours(seed);
     // return the area of the face connected to the seed
     vector<CoMMAWeightType> neighbours_weights =
@@ -967,10 +968,10 @@ class Agglomerator_Biconnected
       if (is_creation_delayed) {
         compactness = 0;  // Return
       } else {
-        // minimum number of neighborhood of a connected cell
+        // minimum number of neighbourhood of a connected cell
         compactness = this->_dimension;
         // TODO: CHECK THAT, it is not better to be substituted with number of
-        // neighborhood?
+        // neighbourhood?
       }
     }
     else {
@@ -997,7 +998,7 @@ class Agglomerator_Biconnected
       // Here we define the exact dimension of the coarse cell as the min
       // between the max cardinality given as an input (remember the constructor
       // choice in case of -1) and the dictionary of the boundary cells, it
-      // means the total number of neighborhood cells until the order we have
+      // means the total number of neighbourhood cells until the order we have
       // given (as default 3, so until the third order)
       CoMMAIntType max_ind =
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
@@ -1006,15 +1007,15 @@ class Agglomerator_Biconnected
           nb_neighbours + this->_fc_graph->get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
-      // the neighbors of seed until a given order.
+      // the neighbours of seed until a given order.
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
-      // Build the class first order neighborhood
-      unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                           CoMMAIntType>> f_o_neighbourhood =
-          this->get_first_order_neighborhood(s_neighbours_of_seed, priority_weights);
-      // Generate the set of the first order neighborhood to the given seed
-      auto fon = f_o_neighbourhood->update(seed, this->_fc_graph->get_neighbours(seed));
+      // Build the class neighbourhood
+      unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                               CoMMAIntType>> neighbourhood =
+          this->get_neighbourhood(s_neighbours_of_seed, priority_weights);
+      // Generate the candidates cells in the neighbourhood of the given seed
+      neighbourhood->update(seed, this->_fc_graph->get_neighbours(seed));
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1027,7 +1028,8 @@ class Agglomerator_Biconnected
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
-        this->compute_best_fc_to_add(fon, d_n_of_seed, is_order_primary, diam_cc,
+        this->compute_best_fc_to_add(neighbourhood->get_candidates(),
+                                     d_n_of_seed, is_order_primary, diam_cc,
                                      vol_cc, tmp_cc, argmin_ar,  // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
@@ -1070,8 +1072,7 @@ class Agglomerator_Biconnected
         // Remove added fc from the available neighbours
         d_n_of_seed.erase(argmin_ar);
 
-        fon = f_o_neighbourhood->update(argmin_ar,
-            this->_fc_graph->get_neighbours(argmin_ar));
+        neighbourhood->update(argmin_ar, this->_fc_graph->get_neighbours(argmin_ar));
       }
 
       // Selecting best CC to return
@@ -1088,16 +1089,16 @@ class Agglomerator_Biconnected
         }
       }
 
-      // Updating Seed Pool with the neighbors of the final CC. Strategy:
-      // - Compute the direct neighbors of the CC (not yet agglomerated)
-      // - Insert in the queue starting with those of lowest neighborhood order wrt
+      // Updating Seed Pool with the neighbours of the final CC. Strategy:
+      // - Compute the direct neighbours of the CC (not yet agglomerated)
+      // - Insert in the queue starting with those of lowest neighbourhood order wrt
       //   to the original seed
       // - If more than one cell with the same order, use priority weights
       const auto cc_neighs = this->_fc_graph->get_neighbourhood_of_cc(s_current_cc,
                                      this->_cc_graph->_a_is_fc_agglomerated);
       // Basically, like d_n_of_seed but with key and value swapped
       map<CoMMAIntType, unordered_set<CoMMAIndexType>> neighs_by_order{};
-      // For those that were outside max neighborhood order
+      // For those that were outside max neighbourhood order
       unordered_set<CoMMAIndexType> neighs_not_found{};
       for (const auto &s : cc_neighs) {
         if (d_n_of_seed.find(s) != d_n_of_seed.end())
@@ -1152,19 +1153,19 @@ class Agglomerator_Pure_Front
   /** @brief Destructor*/
   ~Agglomerator_Pure_Front() {};
 
-  /** @brief Build a First Order Neighborhood object a return it
-   *  @param[in] neighbours Set of neighbors among which seek the candidates
+  /** @brief Build a Neighbourhood object a return it
+   *  @param[in] neighbours Set of neighbours among which seek the candidates
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
-   *  @return A pointer to a First Order Neighborhood object
+   *  @return A pointer to a Neighbourhood object
    **/
   inline
-  unique_ptr<First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                       CoMMAIntType>>
-  get_first_order_neighborhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                               const vector<CoMMAWeightType> &priority_weights) override {
+  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                           CoMMAIntType>>
+  get_neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+                   const vector<CoMMAWeightType> &priority_weights) override {
     return make_unique<
-      First_Order_Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
         s_neighbours_of_seed, priority_weights, this->_dimension);
   }
 

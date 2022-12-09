@@ -147,7 +147,7 @@ class Graph {
 
   /** @brief Retrieve the number of neighbours
    *  @param[in] i_c index of the cell
-   *  @return number of neighbors of the given cell.
+   *  @return number of neighbours of the given cell.
    */
   inline CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) const {
     // Return the number of neighbours of the ith cell
@@ -157,10 +157,10 @@ class Graph {
   /** @brief Based on the CRS representation retrieves the neighbours of the
    * cell given as an input.
    * @param[in] i_c index of the cell to check the neighbours
-   * @return vector of the neighbors.
+   * @return vector of the neighbours.
    */
   vector<CoMMAIndexType> get_neighbours(const CoMMAIndexType &i_c) const {
-    // given the index of a cell return the neighborhoods of this cell
+    // given the index of a cell return the neighbourhoods of this cell
     CoMMAIndexType ind = _m_CRS_Row_Ptr[i_c];
     CoMMAIndexType ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
     // insert the values of the CRS_value from begin+ind (pointed to the face) till
@@ -173,7 +173,7 @@ class Graph {
 
   /** @brief Based on the area of the faces composing the cell given as an
    * input, we retrieve the faces connecting the given cell with the
-   * neighborhood that can be described also as the weight of the graph
+   * neighbourhood that can be described also as the weight of the graph
    * @return vector of weight associated to the cell.
    */
   vector<CoMMAWeightType> get_weights(const CoMMAIndexType &i_c) const {
@@ -334,7 +334,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   vector<CoMMAIndexType> _mapping_l_to_g;
 
   /** @brief Insert a node in the subgraph and add it to the mapping the
-   *  @param[in] v_neigh vector of the neighbors to be added. The neighbors must
+   *  @param[in] v_neigh vector of the neighbours to be added. The neighbours must
    * be given in the global indexing system.
    *  @param[in] i_fc global index of the node
    *  @param[in] volume Volume of the cell
@@ -345,7 +345,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
                    const CoMMAWeightType &volume,
                    const vector<CoMMAWeightType> &weight) {
     // Use the mapping
-    // local vector of neighborhood
+    // local vector of neighbourhood
     vector<CoMMAIndexType> v_l_neigh{};
     // @todo this solution clearly help in the connection of the subnode BUT can
     // bring to instability and errors.
@@ -587,7 +587,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
       // computation of min_weight, max_weight for the current cell
       // Process of every faces/Neighbours and compute for the current cell the
-      // neighborhood and the area associated with the neighborhood cells
+      // neighbourhood and the area associated with the neighbourhood cells
       const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
       const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
 
@@ -644,14 +644,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    */
   inline CoMMAIntType get_nb_cells() const { return this->_number_of_cells; }
 
-  /** @brief Get the fine cells neighbors of a coarse cell
-  *   @param[in] s_seeds set of seeds for which the neighborhood should be
+  /** @brief Get the fine cells neighbours of a coarse cell
+  *   @param[in] s_seeds set of seeds for which the neighbourhood should be
   * computed. Generally they are the fine cells composing the coarse cell for
-  * which we are trying to compute the neighborhood.
+  * which we are trying to compute the neighbourhood.
   *   @param[in] max_card maximum cardinality
   *   @param[in] is_fc_agglomerated_tmp vector reporting the already
   * agglomerated cell, useful in the algorithm
-  *   @return The set of neighbors
+  *   @return The set of neighbours
   */
   inline unordered_set<CoMMAIndexType> get_neighbourhood_of_cc(
       const unordered_set<CoMMAIndexType> &s_seeds,
@@ -667,12 +667,12 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
-  *   @param[in] s_seeds set of seeds for which the neighborhood must be
+  *   @param[in] s_seeds set of seeds for which the neighbourhood must be
   * computed. Generally they are the fine cells composing the coarse cell for
-  * which we are trying to compute the neighborhood.
-  *   @param[in] nb_of_order_of_neighbourhood order of the neighborhood at which
+  * which we are trying to compute the neighbourhood.
+  *   @param[in] nb_of_order_of_neighbourhood order of the neighbourhood at which
   * we want to extend the dictionary
-  *   @param[out] d_n_of_seed dictionary of the neighborhood given as an output.
+  *   @param[out] d_n_of_seed dictionary of the neighbourhood given as an output.
   * The key of the associative structure is the index of the fine cell, the
   * value is the order of the distance.
   *   @param[in] max_card maximum cardinality
@@ -707,7 +707,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       }
 
       for (const auto &i_k_v : d_n_of_order_o_m_one) {
-        // For all the cells in the previous neighborhood order...
+        // For all the cells in the previous neighbourhood order...
 
         CoMMAIndexType seed_tmp = i_k_v.first;
 
@@ -719,10 +719,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
             // If not yet in the final dictionary and not yet agglomerated...
 
             if (d_n_of_order_o.count(i_fc_n) == 0) {
-              // If not yet in the current neighborhood order...
+              // If not yet in the current neighbourhood order...
               // a fc can be access via multiple ways. We look for the quickest
               if (d_n_of_order_o_m_one.count(i_fc_n)) {
-                // If it was already in the previous neighborhood order
+                // If it was already in the previous neighbourhood order
 
                 if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
                   // If current order smaller than the previous one

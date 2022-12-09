@@ -35,8 +35,7 @@
 
 using namespace std;
 
-/** @brief Class representing the first order neighborhood of a given cell in
- * the graph.
+/** @brief Class representing the neighbourhood of a given cell in the graph.
  * Mind that no information about the element being already agglomerated or not
  * is known here.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
@@ -46,8 +45,7 @@ using namespace std;
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class First_Order_Neighbourhood {
-  public:
+class Neighbourhood {
 #if 0
 Some remarks about the implementation. All the work is done in the function "update",
 hence that is where we have to focus on. There are only two constraints for the
@@ -60,26 +58,37 @@ We still use sets, but we have an extra check before inserting whether there alr
 a pair with the same index.
 #endif
 
+  public:
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  /** @brief Type for container of candidates */
+  using CandidatesContainerType = deque<CoMMAIndexType>;
+
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
-  First_Order_Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+  Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                             const vector<CoMMAWeightType> &weights) :
-      _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc() { }
+      _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
+      _candidates() { }
 
-  /** @brief Method that updates the first order neighborhood, by updating the
-   * front. Given the new_fc, if is in the neighbours, it is deleted and are
-   * added the s_new_neighbours in in the set of neighbours given in the
-   * constructor.
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
+   * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
-   * @return A vector of candidates for the fine cell to agglomerate
    */
-  virtual vector<CoMMAIndexType> update(
-      const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) = 0;
+  virtual void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) = 0;
 
+  /** @brief Get candidates that should be consider in the next step of the agglomeration
+   *  @return The candidates
+   */
+  inline const CandidatesContainerType& get_candidates() const { return this->_candidates; }
+
+  protected:
   /** @brief Set of the neighbours of seed given as an input in the constructor.
    * Here, we can find all the neighbours of order up to a user-defined value
    * (by default is 3, this means neighbours of neighbours of neighbours) of the
@@ -92,11 +101,23 @@ a pair with the same index.
 
   /** @brief Set of the fine cells composing the coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
+
+  /** @brief Candidates that should be considered */
+  CandidatesContainerType _candidates;
+
+  /** @brief Get candidates that should be consider in the next step of the agglomeration
+   *  @return The candidates
+   */
+  inline void extract_and_update_candidates(const CoMMASetOfPairType &candidates_w_weights) {
+    for (const auto & [idx, w] : candidates_w_weights)
+      this->_candidates.push_back(idx);
+  }
+
 };
 
-/** @brief Class representing the first order neighborhood of a given cell in
- * the graph. In this derived class the neighborhood is extended, meaning that
- * all the neighbors seen so far are candidates.
+/** @brief Class representing the neighbourhood of a given cell in the graph.
+ * In this derived class the neighbourhood is extended, meaning that
+ * all the neighbours seen so far are candidates.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -104,7 +125,7 @@ a pair with the same index.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class First_Order_Neighbourhood_Extended : public First_Order_Neighbourhood<CoMMAIndexType,
+class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
                                                         CoMMAWeightType, CoMMAIntType> {
   public:
   /** @brief Type of pair */
@@ -117,60 +138,59 @@ class First_Order_Neighbourhood_Extended : public First_Order_Neighbourhood<CoMM
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    *  @param[in] dimension Dimension of the problem
    **/
-  First_Order_Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+  Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                                      const vector<CoMMAWeightType> &weights) :
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights), _first_order_set() {}
+      Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+        s_neighbours_of_seed, weights), _neighs_w_weights() {}
 
-  /** @brief Current neighbors, i.e. candidates */
-  CoMMASetOfPairType _first_order_set;
-
-  /** @brief Method that updates the first order neighborhood, by updating the
-   * front. Given the new_fc, if is in the neighbours, it is deleted and are
-   * added the s_new_neighbours in in the set of neighbours given in the
-   * constructor.
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
+   * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
-   * @return A vector of candidates for the fine cell to agglomerate
    */
-  vector<CoMMAIndexType> update(const CoMMAIndexType new_fc,
-                                const vector<CoMMAIndexType> &new_neighbours) override {
-    // Add new_fc to current CC and remove it from previous neighborhoods
+  void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
+    this->_candidates.clear();
+    // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    if (!this->_first_order_set.empty()) {
+    if (!this->_neighs_w_weights.empty()) {
       // There is erase_if for sets in C++20
-      //erase_if(_first_order_set, [&new_fc](const CoMMAPairType &p){
+      //erase_if(_neighs_w_weights, [&new_fc](const CoMMAPairType &p){
       //                              return p.first == new_fc;});
-      auto it = find_if(this->_first_order_set.begin(), this->_first_order_set.end(),
+      auto it = find_if(this->_neighs_w_weights.begin(), this->_neighs_w_weights.end(),
                      CoMMAPairFindFirstBasedType(new_fc));
                      //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      assert(it != _first_order_set.end()); // It must be there!
-      this->_first_order_set.erase(it);
+      assert(it != _neighs_w_weights.end()); // It must be there!
+      this->_neighs_w_weights.erase(it);
     }
 
-    // Compute the set of direct neighbors allowed by original neighborhood-order
+    // Compute the set of direct neighbours allowed by original neighbourhood-order
     for (const CoMMAIndexType& i_fc : new_neighbours) {
-      if ( (find_if(_first_order_set.begin(), _first_order_set.end(),
+      if ( (find_if(_neighs_w_weights.begin(), _neighs_w_weights.end(),
                    CoMMAPairFindFirstBasedType(i_fc))
                    //[&i_fc](const CoMMAPairType &p){return p.first == i_fc;})
-            == _first_order_set.end()) &&
+            == _neighs_w_weights.end()) &&
            (this->_s_fc.count(i_fc) == 0) &&
            (this->_s_neighbours_of_seed.count(i_fc) > 0) ) {
         // If not yet in the FON, not yet in the coarse cell and among the
         // allowed neighbours, insert
-        this->_first_order_set.emplace(i_fc, this->_weights[i_fc]);
+        this->_neighs_w_weights.emplace(i_fc, this->_weights[i_fc]);
       }
     }
-    return vector_of_first_elements<decltype(this->_first_order_set)>(this->_first_order_set);
+    this->extract_and_update_candidates(this->_neighs_w_weights);
   }
+
+  protected:
+  /** @brief Current neighbours with their weights */
+  CoMMASetOfPairType _neighs_w_weights;
+
 };
 
-/** @brief Class representing the first order neighborhood of a given cell in
- * the graph. In this derived class the neighborhood is 'pure front-advancing',
- * meaning that the next candidates are only the direct neighbors of the last
+/** @brief Class representing the neighbourhood of a given cell in the graph.
+ * In this derived class the neighbourhood is 'pure front-advancing',
+ * meaning that the next candidates are only the direct neighbours of the last
  * added cell
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -179,7 +199,7 @@ class First_Order_Neighbourhood_Extended : public First_Order_Neighbourhood<CoMM
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class First_Order_Neighbourhood_Pure_Front : public First_Order_Neighbourhood<CoMMAIndexType,
+class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
                                                         CoMMAWeightType, CoMMAIntType> {
   public:
   /** @brief Type of pair */
@@ -192,36 +212,25 @@ class First_Order_Neighbourhood_Pure_Front : public First_Order_Neighbourhood<Co
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    *  @param[in] dimension Dimension of the problem
    **/
-  First_Order_Neighbourhood_Pure_Front(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+  Neighbourhood_Pure_Front(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                                        const vector<CoMMAWeightType> &weights,
                                        CoMMAIntType dimension) :
-      First_Order_Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights), _q_fon(), _dimension(dimension) {}
+      Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+        s_neighbours_of_seed, weights), _q_neighs_w_weights(), _dimension(dimension) {}
 
-  /** @brief History of the first-order-neighborhoods of the fine cells recently
-   * agglomerated */
-  deque<CoMMASetOfPairType> _q_fon;
-
-  /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
-   * -> 3D)*/
-  CoMMAIntType _dimension;
-
-  /** @brief Method that updates the first order neighborhood, by updating the
-   * front. Given the new_fc, if is in the neighbours, it is deleted and are
-   * added the s_new_neighbours in in the set of neighbours given in the
-   * constructor.
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
+   * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
-   * @return A vector of candidates for the fine cell to agglomerate
    */
-  vector<CoMMAIndexType> update(const CoMMAIndexType new_fc,
-                                const vector<CoMMAIndexType> &new_neighbours) override {
-    // Add new_fc to current CC and remove it from previous neighborhoods
+  void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
+    this->_candidates.clear();
+    // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    for (auto &fon : this->_q_fon) {
+    for (auto &fon : this->_q_neighs_w_weights) {
       // There is erase_if for sets in C++20
       //erase_if(fon, [&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
       auto it = find_if(fon.begin(), fon.end(),
@@ -231,7 +240,7 @@ class First_Order_Neighbourhood_Pure_Front : public First_Order_Neighbourhood<Co
         fon.erase(it);
     }
 
-    // Compute the set of direct neighbors allowed by original neighborhood-order
+    // Compute the set of direct neighbours allowed by original neighbourhood-order
     CoMMASetOfPairType curr_set = CoMMASetOfPairType();
     for (const CoMMAIndexType& i_fc : new_neighbours) {
       if ( (this->_s_fc.count(i_fc) == 0) &&
@@ -241,39 +250,62 @@ class First_Order_Neighbourhood_Pure_Front : public First_Order_Neighbourhood<Co
       }
     }
 
-    this->_q_fon.push_front(curr_set);
+    this->_q_neighs_w_weights.push_front(curr_set);
 
     // Now, see which FON to return. Here is the strategy:
     // If most recent FON is not empty, return it. If not, check the oldest FON: if
     // not empty return it, otherwise check the previous FON. If empty, check the
     // second oldest, and so on...
     // We grant ourselves one exception...
-    if ( this->_q_fon.size() <= static_cast<decltype(this->_q_fon.size())>(this->_dimension) ) {
+    if ( this->_q_neighs_w_weights.size() <=
+         static_cast<decltype(this->_q_neighs_w_weights.size())>(this->_dimension) ) {
       // If at the (very) beginning of the agglomeration, still consider every
-      // possible neighbor. This will allow to obtain nice quads from quads
+      // possible neighbour. This will allow to obtain nice quads from quads
       // TODO[RM]: I think this workaround is needed because we are not able to
       // compute exactly the AR; if we ever we will be able we should try to remove
       // it
-      for (auto prev_fon = this->_q_fon.begin() + 1; prev_fon != this->_q_fon.end(); ++prev_fon)
+      for (auto prev_fon = this->_q_neighs_w_weights.begin() + 1;
+           prev_fon != this->_q_neighs_w_weights.end(); ++prev_fon)
         curr_set.insert(prev_fon->begin(), prev_fon->end());
-      return vector_of_first_elements<decltype(curr_set)>(curr_set);
+      this->extract_and_update_candidates(curr_set);
     }
     else {
-      auto cur_front = decltype(this->_q_fon.size()){0};
-      auto cur_back  = decltype(this->_q_fon.size()){this->_q_fon.size() - 1};
+      auto cur_front = decltype(this->_q_neighs_w_weights.size()){0};
+      auto cur_back  = decltype(this->_q_neighs_w_weights.size()){this->_q_neighs_w_weights.size() - 1};
       while (cur_front <= cur_back) {
-        typename decltype(this->_q_fon)::iterator it =
-          this->_q_fon.begin() + (cur_front++);
-        if ( !it->empty() )
-          return vector_of_first_elements<typename decltype(this->_q_fon)::value_type>(*it);
-        it =  this->_q_fon.begin() + (cur_back--);
-        if ( !it->empty() )
-          return vector_of_first_elements<typename decltype(this->_q_fon)::value_type>(*it);
+        typename decltype(this->_q_neighs_w_weights)::iterator it =
+          this->_q_neighs_w_weights.begin() + (cur_front++);
+        if ( !it->empty() ) {
+          this->extract_and_update_candidates(*it);
+          break;
+        }
+        it =  this->_q_neighs_w_weights.begin() + (cur_back--);
+        if ( !it->empty() ) {
+          this->extract_and_update_candidates(*it);
+          break;
+        }
       }
     }
-    // If everything fails return an empty set
-    return vector<CoMMAIndexType>();
   }
+
+  /** @brief Get the neighbours from a previous stage
+   *  @param[in] lvl Stage identifier. 0 = current neighbours, 1 = previous neighbours,
+   * 2 = second-to-last neighbours, etc...
+   *  @return A constant reference to a set of pairs of neighbours and weights
+   */
+  inline const CoMMASetOfPairType& get_neighbours_by_level(const CoMMAIntType lvl) const {
+    assert(lvl >= 0 && lvl < static_cast<CoMMAIntType>(this->_q_neighs_w_weights.size()));
+    return this->_q_neighs_w_weights[lvl];
+  }
+
+  protected:
+  /** @brief History of the first-order-neighbourhoods of the fine cells recently
+   * agglomerated */
+  deque<CoMMASetOfPairType> _q_neighs_w_weights;
+
+  /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
+   * -> 3D)*/
+  CoMMAIntType _dimension;
 
 };
 

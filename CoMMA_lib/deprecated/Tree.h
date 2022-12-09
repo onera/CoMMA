@@ -66,7 +66,7 @@ class Node {
 };
 
 /** @brief Tree structure that represent a coarse cell, the fine cell and the
- * neighbors to them
+ * neighbours to them
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
