@@ -60,6 +60,11 @@ renum = renumber_coarse > 1
 print(f' * Coarse cell renumbering={renum}' + (f" (from 0 to {renumber_coarse-1})" if renum else ""))
 print()
 
+# CoMMATypes-like
+CoMMAIndex  = np.uint # Unsigned long
+CoMMAInt    = int
+CoMMAWeight = np.double
+
 outname = 'out_' + \
             ('an' if anisotropic else '') + \
             'iso_' + \
@@ -75,29 +80,30 @@ graph = Graph2D(mesh)
 graph.get_CSR()
 mesh.boundary_detection()
 nb_fc = len(graph.vertex)-1
-adjMatrix_row_ptr= np.array(graph.vertex , dtype='long')
-adjMatrix_col_ind= np.array(graph.edges ,dtype='long')
+adjMatrix_row_ptr= np.array(graph.vertex, dtype = CoMMAIndex)
+adjMatrix_col_ind= np.array(graph.edges, dtype = CoMMAIndex)
 
-adjMatrix_areaValues = np.array(mesh.area,dtype='double')
-volumes = np.array(mesh.volume,dtype='double')
+adjMatrix_areaValues = np.array(mesh.area, dtype = CoMMAWeight)
+volumes = np.array(mesh.volume, dtype = CoMMAWeight)
 centers = mesh.centers.copy()
-isOnBnd = np.array(mesh.boundary_cells,dtype='long')
-fc_to_cc = np.full(nb_fc, -1,dtype='long')
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
-agglomerationLines_Idx = np.array([0],dtype='long')
-agglomerationLines = np.array([0],dtype='long')
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
+isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAIndex)
+fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
+arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
+agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
+agglomerationLines = np.array([0], dtype = CoMMAIndex)
 agglo = []
 fc_to_cur_lvl = list(range(nb_fc))
 for level in range(agglomeration_levels):
     print(f"* Level {level}:")
     if level > 0:
-        print(' - Preparing data')
+        print(' - Preparing data...', flush = True, end = '')
         # This is possibly not the most efficient way to do the following, but it works and it is enough for now
         f2c = np.asarray(fc_to_cc)
         nb_cc = f2c.max() + 1
-        new_isOnBnd = np.empty(nb_cc, dtype='int')
-        new_volumes = np.empty(nb_cc, dtype='double')
-        new_centers = np.empty((nb_cc, centers.shape[-1]), dtype = 'double')
+        new_isOnBnd = np.empty(nb_cc, dtype = CoMMAInt)
+        new_volumes = np.empty(nb_cc, dtype = CoMMAWeight)
+        new_centers = np.empty((nb_cc, centers.shape[-1]), dtype = CoMMAWeight)
         new_adjMatrix_row_ptr = [0]
         new_adjMatrix_col_ind = []
         new_adjMatrix_areaValues = []
@@ -128,30 +134,35 @@ for level in range(agglomeration_levels):
         isOnBnd = new_isOnBnd
         volumes = new_volumes
         centers = new_centers
+        weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
         adjMatrix_col_ind = new_adjMatrix_col_ind
         adjMatrix_row_ptr = new_adjMatrix_row_ptr
         adjMatrix_areaValues = new_adjMatrix_areaValues
-        fc_to_cc = np.full(nb_cc, -1,dtype='long')
-        arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc,dtype='long')
+        fc_to_cc = np.empty(nb_cc, dtype = CoMMAIndex)
+        arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype = CoMMAIndex)
+        print('OK')
 
-    print(" - CoMMA call")
+    print(" - CoMMA call...", flush = True, end = '')
     fc_to_cc,agglomerationLines_Idx,agglomerationLines = \
-            agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, centers,
+            agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+                                  centers, weights,
                                   arrayOfFineAnisotropicCompliantCells,isOnBnd, level == 0,
                                   anisotropic, threshold_anisotropy,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                                   correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
+    print('OK')
 
     # Update direction from original fine cell to current level coarse cell
     for i in range(len(fc_to_cur_lvl)):
         fc_to_cur_lvl[i] = fc_to_cc[fc_to_cur_lvl[i]]
 
-    print(" - Finalizing")
+    print(" - Finalizing...", flush = True, end = '')
     # agglo.append([ut.address_agglomerated_cells(fc_to_cur_lvl, renumber_coarse)] if renum \
                           # else [fc_to_cur_lvl])
     # As long as the data is composed of (integer) IDs, the following is equivalent but much faster
     agglo.append([(np.asarray(fc_to_cur_lvl) % renumber_coarse)] if renum \
                       else [fc_to_cur_lvl])
+    print('OK')
     print()
     if max(fc_to_cc) == 0 and level < agglomeration_levels-1:
         # Only one coarse cell that spans the whole mesh, we should quit now

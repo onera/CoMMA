@@ -50,6 +50,11 @@ mesh = meshio.Mesh(
     # Each item in cell data must match the cells array
 )
 
+# CoMMATypes-like
+CoMMAIndex  = np.uint # Unsigned long
+CoMMAInt    = int
+CoMMAWeight = np.double
+
 Mesh1 = Mesh2D(mesh)
 Mesh1.get_boundary_faces()
 Mesh1.ComputeVolume()
@@ -62,33 +67,32 @@ Graph1.adj_to_csr()
 print(Graph1.adj)
 
 nb_fc = len(Graph1.vertex)-1
-adjMatrix_row_ptr= np.array(Graph1.vertex , dtype='long')
-adjMatrix_col_ind= np.array(Graph1.edges ,dtype='long')
+adjMatrix_row_ptr = np.array(Graph1.vertex, dtype = CoMMAIndex)
+adjMatrix_col_ind = np.array(Graph1.edges, dtype = CoMMAIndex)
 print("row_ptr/vertex:",adjMatrix_row_ptr)
 print("column index/edges:", adjMatrix_col_ind)
-adjMatrix_areaValues=np.array(Mesh1.area,dtype='double')
-volumes = np.array(Mesh1.volume,dtype='double')
+adjMatrix_areaValues = np.array(Mesh1.area, dtype = CoMMAWeight)
+volumes = np.array(Mesh1.volume, dtype = CoMMAWeight)
 print("row ptr len:", len(adjMatrix_row_ptr))
 print("col ind len:", len(adjMatrix_col_ind))
 print("vol len:", len(volumes))
-weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = 'double')
-isOnBnd = np.array(mesh.boundary_cells, dtype=int)
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
+isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAInt)
 print("bound_cells:", len(Mesh1.boundary_cells))
-array_isOnRidge=np.array(Mesh1.onRidge,dtype='long')
-array_isOnValley=np.array(Mesh1.onValley, dtype='long')
-array_isOnCorner=np.array(Mesh1.onCorner, dtype='long')
-fc_to_cc = np.full(nb_fc, -1,dtype='long')
+array_isOnRidge=np.array(Mesh1.onRidge,dtype = CoMMAIndex)
+array_isOnValley=np.array(Mesh1.onValley, dtype = CoMMAIndex)
+array_isOnCorner=np.array(Mesh1.onCorner, dtype = CoMMAIndex)
+fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
 print("onridge",len(array_isOnRidge))
 print("onvalley",len(array_isOnValley))
 print("oncorner",len(array_isOnCorner))
 indCoarseCell = 0
-minCard = -1
-goalCard = -1
-maxCard = -1
-verbose = 0
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc,dtype='long')
-agglomerationLines_Idx = np.zeros(nb_fc,dtype='long')
-agglomerationLines = np.zeros(nb_fc,dtype='long')
+minCard = 4
+goalCard = 4
+maxCard = 4
+arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
+agglomerationLines_Idx = np.zeros(nb_fc, dtype = CoMMAIndex)
+agglomerationLines = np.zeros(nb_fc, dtype = CoMMAIndex)
 isFirstAgglomeration = True
 isAnisotropic = True
 dimension = 2
@@ -97,7 +101,7 @@ threshold_anisotropy = 4.
 iso_agglo_type = 0
 
 
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, Mesh1.centers, weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,iso_agglo_type)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic,threshold_anisotropy,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,iso_agglo_type)
 
 
 fine_cells_triangle = []

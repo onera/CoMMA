@@ -54,6 +54,11 @@ renum = renumber_coarse > 1
 print(f' * Coarse cell renumbering={renum}' + (f" (from 0 to {renumber_coarse-1})" if renum else ""))
 print()
 
+# CoMMATypes-like
+CoMMAIndex  = np.uint # Unsigned long
+CoMMAInt    = int
+CoMMAWeight = np.double
+
 ref_pts = np.zeros((7,2), dtype=float)
 ref_pts[:-1,1] = range(6)
 ref_pts[:-1,1] *= 0.2
@@ -85,26 +90,29 @@ m.boundary_detection()
 g = Graph2D(m)
 g.get_CSR()
 
-adjMatrix_row_ptr= np.array(g.vertex , dtype='long')
-adjMatrix_col_ind= np.array(g.edges ,dtype='long')
-adjMatrix_areaValues = np.array(m.area,dtype='double')
-isOnBnd = np.array(m.boundary_cells,dtype='long')
-volumes = np.array(m.volume,dtype='double')
+adjMatrix_row_ptr= np.array(g.vertex, dtype = CoMMAIndex)
+adjMatrix_col_ind= np.array(g.edges, dtype = CoMMAIndex)
+adjMatrix_areaValues = np.array(m.area,dtype = CoMMAWeight)
+isOnBnd = np.array(m.boundary_cells,dtype = CoMMAIndex)
+volumes = np.array(m.volume, dtype = CoMMAWeight)
 nb_fc = len(g.vertex)-1
-fc_to_cc = np.full(nb_fc, -1, dtype = 'long')
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype= 'long')
-agglomerationLines_Idx = np.array([0], dtype = 'long')
-agglomerationLines = np.array([0], dtype = 'long')
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
+fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
+arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
+agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
+agglomerationLines = np.array([0], dtype = CoMMAIndex)
 
-print("CoMMA call")
+print("CoMMA call...", flush = True, end = '')
 fc_to_cc_res,alines_Idx,alines = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+                              mesh.centers.astype(CoMMAWeight, copy = False), weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
+print('OK')
 
-print("Finalizing")
+print("Finalizing...", flush = True, end = '')
 # fine_cells_renum = ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse) if renum \
         # else fc_to_res
 # As long as the data is composed of (integer) IDs, the following is equivalent but much faster
@@ -140,6 +148,7 @@ dic = { i: np.flatnonzero(
         # mask |= f2c == cc
     # dic[i] = np.flatnonzero(mask)
 
+print('OK')
 line_draw = "test_lines.png"
 print(f"Drawing graph and lines in {line_draw}")
 m.draw_aggl_lines(line_draw, dic, -0.02, 4.02, -0.02, 2.02, show_axes = False)

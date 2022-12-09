@@ -75,6 +75,11 @@ renum = renumber_coarse > 1
 print(f' * Coarse cell renumbering={renum}' + (f" (from 0 to {renumber_coarse-1})" if renum else ""))
 print()
 
+# CoMMATypes-like
+CoMMAIndex  = np.uint # Unsigned long
+CoMMAInt    = int
+CoMMAWeight = np.double
+
 mesh = Mesh2D(mmio) if dimension == 2 \
         else Mesh3D(mmio)
 mesh.get_boundary_faces()
@@ -83,27 +88,29 @@ graph = Graph2D(mesh)
 graph.get_CSR()
 mesh.boundary_detection()
 nb_fc = len(graph.vertex)-1
-adjMatrix_row_ptr= np.array(graph.vertex, dtype = 'long')
-adjMatrix_col_ind= np.array(graph.edges, dtype = 'long')
+adjMatrix_row_ptr= np.array(graph.vertex, dtype = CoMMAIndex)
+adjMatrix_col_ind= np.array(graph.edges, dtype = CoMMAIndex)
 
-adjMatrix_areaValues = np.array(mesh.area, dtype = 'double')
-volumes = np.array(mesh.volume, dtype = 'double')
-weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = 'double')
-isOnBnd = np.array(mesh.boundary_cells, dtype=int)
-fc_to_cc = np.full(nb_fc, -1, dtype = 'long')
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype= 'long')
-agglomerationLines_Idx = np.array([0], dtype = 'long')
-agglomerationLines = np.array([0], dtype = 'long')
+adjMatrix_areaValues = np.array(mesh.area, dtype = CoMMAWeight)
+volumes = np.array(mesh.volume, dtype = CoMMAWeight)
+weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
+isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAInt)
+fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
+arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype= CoMMAIndex)
+agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
+agglomerationLines = np.array([0], dtype = CoMMAIndex)
 
-print("CoMMA call")
+print("CoMMA call...", flush = True, end = '')
 fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
-        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, mesh.centers, weights,
+        agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+                              mesh.centers.astype(CoMMAWeight, copy = False), weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
+print('OK')
 
-print("Finalizing")
+print("Finalizing...", flush = True, end = '')
 # fine_cells_renum = ut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse) if renum \
         # else fc_to_res
 # As long as the data is composed of (integer) IDs, the following is equivalent but much faster
@@ -120,6 +127,7 @@ if len(mesh.mesh.cells) > 1:
         start += n_cell
 else:
     agglo = [fine_cells_renum]
+print('OK')
 
 print(f"Writing in {outname}")
 meshio.Mesh(
