@@ -180,7 +180,7 @@ class Coarse_Cell_Container {
         auto i_fc = current_cc->_mapping_l_to_g[0];
         const vector<CoMMAIndexType> neigh = get_neigh_cc(i_fc, i_cc);
         if(!neigh.empty()) {
-          // now we have the neighborhood cc cell, we can access to them and
+          // now we have the neighbourhood cc cell, we can access to them and
           // control the characteristics
           const auto cc_idx = select_best_cc_to_agglomerate(i_fc, neigh, max_card);
           if (cc_idx.has_value()) {
@@ -212,7 +212,7 @@ class Coarse_Cell_Container {
             it = remove_cc(it);
           }
         } else {
-          // The cell has no neighbors. This could happen when the partitioning does
+          // The cell has no neighbours. This could happen when the partitioning does
           // not give a connected partition. Unfortunately, there is nothing that we
           // can do. We just skip it
           ++it;
@@ -225,12 +225,12 @@ class Coarse_Cell_Container {
     }
   }
 
-  /** @brief Choose among the neighboring coarse cells, the one to which a fine cell
+  /** @brief Choose among the neighbouring coarse cells, the one to which a fine cell
    * should be assigned to. We prefer the coarse cell which shares the most faces
    * with the fine cell. Otherwise, we look at the cardinality and choose the coarse
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
-   * @param[in] cc Neighboring coarse cells
+   * @param[in] cc Neighbouring coarse cells
    * @param[in] max_card Maximum cardinality allowed
    * @return The index of the chosen coarse cell
    */

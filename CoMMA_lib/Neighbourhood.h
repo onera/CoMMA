@@ -35,7 +35,7 @@
 
 using namespace std;
 
-/** @brief Class representing the neighborhood of a given cell in the graph.
+/** @brief Class representing the neighbourhood of a given cell in the graph.
  * Mind that no information about the element being already agglomerated or not
  * is known here.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
@@ -69,14 +69,14 @@ a pair with the same index.
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
   Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                             const vector<CoMMAWeightType> &weights) :
       _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
       _candidates() { }
 
-  /** @brief Method that updates the neighborhood. Given the new_fc, if is in the
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
@@ -115,9 +115,9 @@ a pair with the same index.
 
 };
 
-/** @brief Class representing the neighborhood of a given cell in the graph.
- * In this derived class the neighborhood is extended, meaning that
- * all the neighbors seen so far are candidates.
+/** @brief Class representing the neighbourhood of a given cell in the graph.
+ * In this derived class the neighbourhood is extended, meaning that
+ * all the neighbours seen so far are candidates.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -138,7 +138,7 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
@@ -146,14 +146,14 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _neighs_w_weights() {}
 
-  /** @brief Method that updates the neighborhood. Given the new_fc, if is in the
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
     this->_candidates.clear();
-    // Add new_fc to current CC and remove it from previous neighborhoods
+    // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
     if (!this->_neighs_w_weights.empty()) {
       // There is erase_if for sets in C++20
@@ -166,7 +166,7 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
       this->_neighs_w_weights.erase(it);
     }
 
-    // Compute the set of direct neighbors allowed by original neighborhood-order
+    // Compute the set of direct neighbours allowed by original neighbourhood-order
     for (const CoMMAIndexType& i_fc : new_neighbours) {
       if ( (find_if(_neighs_w_weights.begin(), _neighs_w_weights.end(),
                    CoMMAPairFindFirstBasedType(i_fc))
@@ -183,14 +183,14 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
   }
 
   protected:
-  /** @brief Current neighbors with their weights */
+  /** @brief Current neighbours with their weights */
   CoMMASetOfPairType _neighs_w_weights;
 
 };
 
-/** @brief Class representing the neighborhood of a given cell in the graph.
- * In this derived class the neighborhood is 'pure front-advancing',
- * meaning that the next candidates are only the direct neighbors of the last
+/** @brief Class representing the neighbourhood of a given cell in the graph.
+ * In this derived class the neighbourhood is 'pure front-advancing',
+ * meaning that the next candidates are only the direct neighbours of the last
  * added cell
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -212,7 +212,7 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
-   *  @param[in] weights Weights used to set up the order of the neighbors to visit
+   *  @param[in] weights Weights used to set up the order of the neighbours to visit
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Pure_Front(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
@@ -221,14 +221,14 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _q_neighs_w_weights(), _dimension(dimension) {}
 
-  /** @brief Method that updates the neighborhood. Given the new_fc, if is in the
+  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
    * @param[in] new_neighbours vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
     this->_candidates.clear();
-    // Add new_fc to current CC and remove it from previous neighborhoods
+    // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
     for (auto &fon : this->_q_neighs_w_weights) {
       // There is erase_if for sets in C++20
@@ -240,7 +240,7 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
         fon.erase(it);
     }
 
-    // Compute the set of direct neighbors allowed by original neighborhood-order
+    // Compute the set of direct neighbours allowed by original neighbourhood-order
     CoMMASetOfPairType curr_set = CoMMASetOfPairType();
     for (const CoMMAIndexType& i_fc : new_neighbours) {
       if ( (this->_s_fc.count(i_fc) == 0) &&
@@ -260,7 +260,7 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
     if ( this->_q_neighs_w_weights.size() <=
          static_cast<decltype(this->_q_neighs_w_weights.size())>(this->_dimension) ) {
       // If at the (very) beginning of the agglomeration, still consider every
-      // possible neighbor. This will allow to obtain nice quads from quads
+      // possible neighbour. This will allow to obtain nice quads from quads
       // TODO[RM]: I think this workaround is needed because we are not able to
       // compute exactly the AR; if we ever we will be able we should try to remove
       // it
@@ -288,18 +288,18 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
     }
   }
 
-  /** @brief Get the neighbors from a previous stage
-   *  @param[in] lvl Stage identifier. 0 = current neighbors, 1 = previous neighbors,
-   * 2 = second-to-last neighbors, etc...
-   *  @return A constant reference to a set of pairs of neighbors and weights
+  /** @brief Get the neighbours from a previous stage
+   *  @param[in] lvl Stage identifier. 0 = current neighbours, 1 = previous neighbours,
+   * 2 = second-to-last neighbours, etc...
+   *  @return A constant reference to a set of pairs of neighbours and weights
    */
-  inline const CoMMASetOfPairType& get_neighbors_by_level(const CoMMAIntType lvl) const {
+  inline const CoMMASetOfPairType& get_neighbours_by_level(const CoMMAIntType lvl) const {
     assert(lvl >= 0 && lvl < static_cast<CoMMAIntType>(this->_q_neighs_w_weights.size()));
     return this->_q_neighs_w_weights[lvl];
   }
 
   protected:
-  /** @brief History of the first-order-neighborhoods of the fine cells recently
+  /** @brief History of the first-order-neighbourhoods of the fine cells recently
    * agglomerated */
   deque<CoMMASetOfPairType> _q_neighs_w_weights;
 
