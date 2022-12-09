@@ -57,10 +57,10 @@ class Coarse_Cell_Container {
    * and the seeds pool
    */
   Coarse_Cell_Container(
-      const Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph)
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> &fc_graph)
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
-        _fc_2_cc(fc_graph._number_of_cells, nullopt),
-        _a_is_fc_agglomerated(fc_graph._number_of_cells, false),
+        _fc_2_cc(fc_graph->_number_of_cells, nullopt),
+        _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
         _nb_of_agglomerated_fc(0), _delayed_cc() {}
 
   /** @brief Destructor*/
@@ -72,7 +72,7 @@ class Coarse_Cell_Container {
       _cc_vec;
 
   /** @brief Dual graph representation */
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> _fc_graph;
+  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
 
   /** @brief Number of coarse cells */
   CoMMAIndexType _cc_counter = 0;
@@ -108,7 +108,7 @@ class Coarse_Cell_Container {
    **/
   vector<CoMMAIndexType> get_neigh_cc(const CoMMAIndexType &i_fc,
                                       const CoMMAIndexType &i_cc) const {
-    const vector<CoMMAIndexType> neigh = _fc_graph.get_neighbours(i_fc);
+    const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
     for (const CoMMAIndexType &elem : neigh) {
       const auto cc = _fc_2_cc[elem].value();
@@ -190,9 +190,9 @@ class Coarse_Cell_Container {
             // renumbered considering the deleted cc)
             _fc_2_cc[i_fc] = cc_idx.value();
             auto neig_cc = _cc_vec[cc_idx.value()];
-            neig_cc->insert_node(_fc_graph.get_neighbours(i_fc),
-                                 i_fc, _fc_graph._volumes[i_fc],
-                                 _fc_graph.get_weights(i_fc));
+            neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
+                                 i_fc, _fc_graph->_volumes[i_fc],
+                                 _fc_graph->get_weights(i_fc));
             current_cc->remove_node(i_fc);
             // the new it point directly to the next element in the map
             it = remove_cc(it);
@@ -204,9 +204,9 @@ class Coarse_Cell_Container {
             auto const elem = neigh[0];
             auto neig_cc = _cc_vec[elem];
             _fc_2_cc[i_fc] = elem;
-            neig_cc->insert_node(_fc_graph.get_neighbours(i_fc),
-                                 i_fc, _fc_graph._volumes[i_fc],
-                                 _fc_graph.get_weights(i_fc));
+            neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
+                                 i_fc, _fc_graph->_volumes[i_fc],
+                                 _fc_graph->get_weights(i_fc));
             current_cc->remove_node(i_fc);
             // the new it point directly to the next element in the map
             it = remove_cc(it);
@@ -341,7 +341,7 @@ class Coarse_Cell_Container {
     CoMMAIntType shared_faces{0};
     // I am not 100% sure that mapping is perfect hence I prefer loop using indices
     for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
-      const auto fc_neighs = _fc_graph.get_neighbours(cc->_mapping_l_to_g[i_fc_cc]);
+      const auto fc_neighs = _fc_graph->get_neighbours(cc->_mapping_l_to_g[i_fc_cc]);
       shared_faces += count(fc_neighs.begin(), fc_neighs.end(), fc);
     }
     return shared_faces;
@@ -362,9 +362,9 @@ class Coarse_Cell_Container {
       tmp_cc.insert(cc->_mapping_l_to_g[i_fc_cc]);
     }
     // The compactness of the SubGraph is not the one we want, here we want the min one
-    const auto old_comp = _fc_graph.compute_min_fc_compactness_inside_a_cc(tmp_cc);
+    const auto old_comp = _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
     tmp_cc.insert(fc);
-    const auto new_comp = _fc_graph.compute_min_fc_compactness_inside_a_cc(tmp_cc);
+    const auto new_comp = _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
     return new_comp > old_comp;
   }
 
@@ -392,7 +392,7 @@ class Coarse_Cell_Container {
       }
     }
     for (const auto &i_fc : s_fc) {
-      vol_cc = vol_cc + _fc_graph._volumes[i_fc];
+      vol_cc = vol_cc + _fc_graph->_volumes[i_fc];
       assert(!_fc_2_cc[i_fc].has_value());
     }
     // Anisotropic case

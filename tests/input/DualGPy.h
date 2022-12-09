@@ -155,7 +155,10 @@ class DualGPy_quad_3 {
     vector<CoMMAWeightT> adjMatrix_areaValues = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     vector<CoMMAWeightT> volumes = {1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00};
     vector<vector<CoMMAWeightT>> centers = {{0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5}, {0.5, 2.5}, {1.5, 2.5}, {2.5, 2.5}};
-    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc{
+                                    arrayOfFineAnisotropicCompliantCells.begin(),
+                                    arrayOfFineAnisotropicCompliantCells.end()};
     CoMMAIntT dim{2};
 
     DualGPy_quad_3() {}
@@ -276,6 +279,7 @@ class DualGPy_correction {
     vector<vector<CoMMAWeightT>> centers = {{0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, {3.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5}, {3.5, 1.5}};
     vector<CoMMAWeightT> weights = {7., 6., 5., 4., 3., 2., 1., 0.};
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7};
     CoMMAIntT dim{2};
 
     DualGPy_correction() {}

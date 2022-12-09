@@ -103,7 +103,7 @@ void agglomerate_one_level(
     const vector<CoMMAWeightType> &priority_weights,
 
     // Indices of compliant cc
-    const vector<CoMMAIndexType> &arrayOfFineAnisotropicCompliantCells,
+    const vector<CoMMAIndexType> &anisotropicCompliantCells,
 
     // boundaries
     const vector<CoMMAIntType> &n_bnd_faces,
@@ -125,6 +125,12 @@ void agglomerate_one_level(
   //======================================
   // fc = Fine Cell
   // cc = Coarse Cell
+
+  // USEFUL SHORTCUTS
+  //======================================
+  using SeedsPoolType = Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  using DualGraphType = Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  using CCContainerType = Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
   // SANITY CHECKS
   //======================================
@@ -151,34 +157,23 @@ void agglomerate_one_level(
   replace_copy_if(n_bnd_faces.begin(), n_bnd_faces.end(), fixed_n_bnd_faces.begin(),
       [expected_max_n_bnd](auto n){return n > expected_max_n_bnd;}, expected_max_n_bnd);
 
-  // ANISOTROPIC COMPLIANT FC
-  //======================================
-  // Elements that are checked if they are anisotropic. If an element satisfies
-  // the condition for being anisotropic (typically, AR > threshold) but it not
-  // in this set, it will not considered as anisotropic.
-  // We use a set to ensure uniqueness
-  unordered_set<CoMMAIndexType> s_anisotropic_compliant_fc(
-      arrayOfFineAnisotropicCompliantCells.begin(),
-      arrayOfFineAnisotropicCompliantCells.end());
-
   // SEED POOL
   //======================================
   // Object providing the order of agglomeration
-  Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> seeds_pool(
-      fixed_n_bnd_faces, priority_weights);
+  shared_ptr<SeedsPoolType> seeds_pool =
+    make_shared<SeedsPoolType>(fixed_n_bnd_faces, priority_weights);
 
   // DUAL GRAPH
   //======================================
   // Object containing the graph representation and related info in a convenient structure
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> fc_graph(
+  shared_ptr<DualGraphType> fc_graph = make_shared<DualGraphType>(
       nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, centers, fixed_n_bnd_faces, dimension, s_anisotropic_compliant_fc);
+      volumes, centers, fixed_n_bnd_faces, dimension, anisotropicCompliantCells);
 
   // COARSE CELL CONTAINER
   //======================================
   // Preparing the object that will contain all the coarse cells
-  Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cc_graph(
-      fc_graph);
+  shared_ptr<CCContainerType> cc_graph = make_shared<CCContainerType>(fc_graph);
 
   // AGGLOMERATION OF ANISOTROPIC CELLS
   //======================================
@@ -227,7 +222,7 @@ void agglomerate_one_level(
   // Agglomerate
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
-  const auto &fccc = cc_graph._fc_2_cc;
+  const auto &fccc = cc_graph->_fc_2_cc;
   for (auto i_fc = decltype(nb_fc){0}; i_fc < nb_fc; i_fc++) {
     fc_to_cc[i_fc] = fccc[i_fc].value();
   }
