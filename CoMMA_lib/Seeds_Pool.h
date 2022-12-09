@@ -24,15 +24,15 @@
 */
 
 #include <algorithm>
-#include <set>
-#include <unordered_map>
-#include <list>
 #include <cassert>
 #include <deque>
+#include <list>
+#include <optional>
 #include <queue>
+#include <set>
+#include <unordered_map>
 #include <utility>
 #include <vector>
-#include <optional>
 
 #include "CoMMATypes.h"
 #include "Util.h"
@@ -156,7 +156,7 @@ class Seeds_Pool {
    * agglomerated (true) or not agglomerated (false)
    *  @return New seed
    */
-  CoMMAIndexType choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
+  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
     // Choose a correct seed from the fc pool list_of_seeds beyond not
     // agglomerated fc.
     // We choose preferably the corners, then the ridges, then the valley, and
@@ -188,7 +188,7 @@ class Seeds_Pool {
       // If everything failed, set to null
       _cur_top_queue = nullopt;
     }
-    return -1;
+    return nullopt;
   };
 
   /** @brief Build the weight-ordered queue of seed for a given target level.
@@ -280,11 +280,14 @@ class Seeds_Pool {
     assert(CoMMACellT::INTERIOR <= i_level);
     assert(i_level <= CoMMACellT::CORNER);
     if (_l_of_seeds.size() > 0) {
-      for (CoMMAIntType i = CoMMACellT::CORNER; i > i_level -1; i--) {
-        if (!_l_of_seeds[i].empty()) {
-          return false;
-        }
-      }
+      if (!_l_of_seeds[CoMMACellT::CORNER].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::RIDGE].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::VALLEY].empty())
+        return false;
+      if (!_l_of_seeds[CoMMACellT::INTERIOR].empty())
+        return false;
     }
     return true;
   }

@@ -12,6 +12,7 @@ class DualGPy_aniso;
 class DualGPy_aniso_3cell;
 class DualGPy_minimal;
 class DualGPy_cube_4;
+class DualGPy_quad_3;
 class DualGPy_quad_4;
 class DualGPy_quad_7;
 class DualGPy_correction;
@@ -145,6 +146,24 @@ class DualGPy_minimal {
     }
 };
 
+class DualGPy_quad_3 {
+    public:
+    CoMMAIndexT nb_fc{9};
+    vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 5, 7, 10, 14, 17, 19, 22, 24};
+    vector<CoMMAIndexT> adjMatrix_col_ind = {1, 3, 0, 2, 4, 1, 5, 0, 4, 6, 1, 3, 5, 7, 2, 4, 8, 3, 7, 4, 6, 8, 5, 7};
+    vector<CoMMAIntT> n_bnd_faces = {2, 1, 2, 1, 0, 1, 2, 1, 2};
+    vector<CoMMAWeightT> adjMatrix_areaValues = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    vector<CoMMAWeightT> volumes = {1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00};
+    vector<vector<CoMMAWeightT>> centers = {{0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5}, {0.5, 2.5}, {1.5, 2.5}, {2.5, 2.5}};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc{
+                                    arrayOfFineAnisotropicCompliantCells.begin(),
+                                    arrayOfFineAnisotropicCompliantCells.end()};
+    CoMMAIntT dim{2};
+
+    DualGPy_quad_3() {}
+};
+
 class DualGPy_quad_4 {
 
     public:
@@ -260,6 +279,7 @@ class DualGPy_correction {
     vector<vector<CoMMAWeightT>> centers = {{0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, {3.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5}, {3.5, 1.5}};
     vector<CoMMAWeightT> weights = {7., 6., 5., 4., 3., 2., 1., 0.};
     unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7};
     CoMMAIntT dim{2};
 
     DualGPy_correction() {}

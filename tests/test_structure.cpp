@@ -5,8 +5,8 @@
 #include <map>
 #include <memory>
 #include <set>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -26,27 +26,30 @@ using namespace std;
 
 #define equal_up_to(a,b,eps) (fabs(a - b) < eps)
 
+using SeedsPoolT = Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
+using DualGraphT = Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
+using CCContainerT = Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
 using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
 using PairValueTestT = int; // Leave this since we might try something than what usually found in CoMMA
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
-    DualGPy Data = DualGPy();
+    const DualGPy Data = DualGPy();
     // Construction of the Dual Graph element
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     // Check the effective length
     WHEN("We try to access to the member variables") {
       class test : public Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
        public:
-        test(Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &graph,
-             Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &cc_graph,
-             Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &seeds_pool, CoMMAIntT dimension)
+        test(shared_ptr<DualGraphT> &graph,
+             shared_ptr<CCContainerT> &cc_graph,
+             shared_ptr<SeedsPoolT> &seeds_pool, CoMMAIntT dimension)
             : Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(graph, cc_graph,
                                                                 seeds_pool, dimension) {};
 
@@ -63,9 +66,9 @@ SCENARIO("Test of a structure", "[structure]") {
     WHEN("We try to access to Define the cardinality") {
       class test : public Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
        public:
-        test(Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &graph,
-             Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &cc_graph,
-             Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> &seeds_pool, CoMMAIntT dimension)
+        test(shared_ptr<DualGraphT> &graph,
+             shared_ptr<CCContainerT> &cc_graph,
+             shared_ptr<SeedsPoolT> &seeds_pool, CoMMAIntT dimension)
             : Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(graph, cc_graph,
                                                                 seeds_pool, dimension) {};
 
@@ -263,7 +266,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
 
 SCENARIO("Test of the seed pool", "[Seed_Pool]") {
   GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the cell numbering") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
     for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
@@ -384,7 +387,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
   }
 
   GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
     Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, w);
@@ -433,11 +436,11 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
 
 SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -555,17 +558,17 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
     }
 #undef is_in
   };
-  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard First Order Neighborhood for 24") {
+  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard Neighborhood for 24") {
  #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
  #define found_(cont, obj) check_(find, !=, cont, obj)
  #define not_found_(cont, obj) check_(find, ==, cont, obj)
  #define found_1stEl_(cont, obj) check_(find_if, !=, cont, CoMMAPairFindFirstBasedT(obj))
  #define not_found_1stEl_(cont, obj) check_(find_if, ==, cont, CoMMAPairFindFirstBasedT(obj))
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -625,12 +628,12 @@ SCENARIO("Test dual graph and neighborhood computing", "[Dual graph & Neighborho
       }
     }
   };
-  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a Pure Front First Order Neighborhood for 24") {
-    DualGPy_quad_7 Data = DualGPy_quad_7();
+  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a Pure Front Neighborhood for 24") {
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
     Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
+        Data.arrayOfFineAnisotropicCompliantCells);
     CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -782,13 +785,13 @@ SCENARIO("Test the insertion of a coarse cell and deletion",
 SCENARIO("Test the Isotropic agglomeration for small 3D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    DualGPy_cube_4 Data = DualGPy_cube_4();
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 3,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, seeds_pool, 3);
@@ -796,7 +799,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
-        const auto &fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph->_fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -807,7 +810,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        const auto &fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph->_fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -815,7 +818,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       }
     }
 
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_PF_graph(fc_graph);
+    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
     auto agg_PF =
       make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_PF_graph, seeds_pool, 3);
@@ -823,7 +826,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
-        const auto &fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph->_fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -833,7 +836,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        const auto &fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph->_fc_2_cc;
         vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i]==fc2cc_req[i]);
@@ -892,13 +895,13 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
 SCENARIO("Test the Isotropic agglomeration for small 2D cases",
          "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    DualGPy_quad_4 Data = DualGPy_quad_4();
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> fc_graph(
+    const DualGPy_quad_4 Data = DualGPy_quad_4();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, seeds_pool, 2);
@@ -906,7 +909,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        const auto &fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph->_fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -928,7 +931,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        const auto &fccc = cc_graph._fc_2_cc;
+        const auto &fccc = cc_graph->_fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -948,7 +951,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       }
     }
 
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_PF_graph(fc_graph);
+    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
     auto agg_PF =
       make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_PF_graph, seeds_pool, 2);
@@ -958,7 +961,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         // Nothing changes with respect to the case of the standard Biconnected
         // We have a trick that make it work as it should
-        const auto &fccc = cc_PF_graph._fc_2_cc;
+        const auto &fccc = cc_PF_graph->_fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -980,7 +983,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
-        const auto &fccc = cc_PF_graph._fc_2_cc;
+        const auto fccc = cc_PF_graph->_fc_2_cc;
         REQUIRE(fccc[0]== 0);
         REQUIRE(fccc[1]== 0);
         REQUIRE(fccc[2]== 1);
@@ -1049,13 +1052,13 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
 SCENARIO("Test the anisotropic agglomeration for small cases",
          "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
-    DualGPy_aniso Data = DualGPy_aniso();
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+    const DualGPy_aniso Data = DualGPy_aniso();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 3,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     const CoMMAWeightT aniso_thresh{2.};
     const bool isFirstAgglomeration = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1071,24 +1074,24 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     }
   };
   GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
-    DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool isFirstAgglomeration = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT,CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
                   Data.dim);
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     WHEN("We agglomerate the mesh") {
-      const auto f2c = cc_graph._fc_2_cc;
+      const auto f2c = cc_graph->_fc_2_cc;
       THEN("There is only one isotropic coarse cell") {
         REQUIRE((f2c[5] == f2c[6] && f2c[6] == f2c[17] && f2c[17] == f2c[18]));
       }
@@ -1113,13 +1116,13 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
-    DualGPy_minimal Data = DualGPy_minimal();
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+    const DualGPy_minimal Data = DualGPy_minimal();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
         fc_graph, cc_graph, seeds_pool, 2);
     // COMPLETE THE TEST
@@ -1127,25 +1130,26 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       agg->agglomerate_one_level(2, 2, 2, Data.weights, true);
 
       THEN("No cells are left with cardinality 1") {
-        for (auto i = cc_graph._cc_vec.begin(); i != cc_graph._cc_vec.end();
+        for (auto i = cc_graph->_cc_vec.begin(); i != cc_graph->_cc_vec.end();
              i++) {
           REQUIRE(i->second->_cardinality != 1);
         }
       }
     }
   };
+#define fc_in_cc(graph, fc, cc) graph->_fc_2_cc[fc] == cc
   GIVEN("A simple 8-cell Cartesian grid") {
-#define fc_in_cc(graph, fc, cc) graph._fc_2_cc[fc] == cc
-    DualGPy_correction Data = DualGPy_correction();
-    Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
+
+    const DualGPy_correction Data = DualGPy_correction();
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
-        Data.s_anisotropic_compliant_fc);
-    Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_graph(fc_graph);
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
-      cc_graph.cc_create_a_cc({0,4,5});
-      cc_graph.cc_create_a_cc({1});
-      cc_graph.cc_create_a_cc({2,3,6,7});
+      cc_graph->cc_create_a_cc({0,4,5});
+      cc_graph->cc_create_a_cc({1});
+      cc_graph->cc_create_a_cc({2,3,6,7});
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
@@ -1156,7 +1160,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 6, 2));
         REQUIRE(fc_in_cc(cc_graph, 7, 2));
       }
-      cc_graph.correct();
+      cc_graph->correct(4);
       THEN("Once the correction has been performed, the isolated cell has been agglomerated") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
@@ -1168,7 +1172,140 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 7, 1));
       }
     }
-#undef fc_in_cc
   }
+  GIVEN("A simple 3x3 Cartesian grid") {
+    const DualGPy_quad_3 Data = DualGPy_quad_3();
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, 2,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and two coarse cells with cardinality 5 and 3") {
+      cc_graph->cc_create_a_cc({0,1,2,5,8});
+      cc_graph->cc_create_a_cc({4});
+      cc_graph->cc_create_a_cc({3,6,7});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 2));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 2));
+        REQUIRE(fc_in_cc(cc_graph, 8, 0));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell which has an increased in the compactness (no matter the max cardinality)") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 0));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and three coarse cells with cardinality 4, 2, and 2") {
+      cc_graph->cc_create_a_cc({0,3});
+      cc_graph->cc_create_a_cc({6,7});
+      cc_graph->cc_create_a_cc({4});
+      cc_graph->cc_create_a_cc({1,2,5,8});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with which it shares the most faces (no matter the max cardinality)") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 2));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and 3 cells with cardinality 4, 2, and 2") {
+      cc_graph->cc_create_a_cc({0,1,3,4});
+      cc_graph->cc_create_a_cc({7,8});
+      cc_graph->cc_create_a_cc({6});
+      cc_graph->cc_create_a_cc({2,5});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with the lowest cardinality") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and four coarse cells with cardinality 2") {
+      cc_graph->cc_create_a_cc({0,3});
+      cc_graph->cc_create_a_cc({6,7});
+      cc_graph->cc_create_a_cc({4});
+      cc_graph->cc_create_a_cc({5,8});
+      cc_graph->cc_create_a_cc({1,2});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 4));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse cell with lower ID (here, the coarse cells have equivalent features "
+           "wrt to the fine cell, hence we cannot choose)") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+    }
+  }
+#undef fc_in_cc
 }
 #undef equal_up_to

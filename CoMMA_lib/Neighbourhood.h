@@ -24,11 +24,12 @@
 */
 
 #include <algorithm>
-#include <unordered_set>
-#include <set>
-#include <vector>
+#include <cassert>
 #include <deque>
 #include <queue>
+#include <set>
+#include <unordered_set>
+#include <vector>
 
 #include "Util.h"
 

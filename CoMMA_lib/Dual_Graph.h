@@ -23,14 +23,15 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <cassert>
+#include <climits>
+#include <deque>
+#include <functional>
+#include <limits>
 #include <unordered_map>
 #include <unordered_set>
-#include <deque>
 #include <vector>
-#include <algorithm>
-#include <limits>
-#include <climits>
-#include <functional>
 
 #include "Seeds_Pool.h"
 
@@ -84,23 +85,16 @@ class Graph {
   /** @brief helper vector for the DFS*/
   vector<bool> _visited;
 
-  /** @brief Vector of row pointer of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of row pointer of CRS representation */
   vector<CoMMAIndexType> _m_CRS_Row_Ptr;
 
-  /** @brief Vector of column index of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of column index of CRS representation */
   vector<CoMMAIndexType> _m_CRS_Col_Ind;
 
-  /** @brief Vector of area weight of CRS representation (member variable
-   * different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of area weight of CRS representation */
   vector<CoMMAWeightType> _m_CRS_Values;
 
-  /** @brief Vector of volumes (member variable different from the unordered
-   * set passed as a reference in input) */
+  /** @brief Vector of volumes */
   vector<CoMMAWeightType> _volumes;
 
   /** @brief Depth First Search (DFS) recursive function
@@ -126,7 +120,7 @@ class Graph {
     coda.push_back(root);
     vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
-    vector<CoMMAIndexType> prev(_number_of_cells, -1);
+    vector<optional<CoMMAIndexType>> prev(_number_of_cells, nullopt);
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
       coda.pop_front();
@@ -141,7 +135,7 @@ class Graph {
     }
     // to print the inverse path
     CoMMAIndexType retro = prev[_number_of_cells - 1];
-    while (retro != -1) {
+    while (retro.has_value()) {
       path.push_back(retro);
       retro = prev[retro];
     }
@@ -212,6 +206,64 @@ class Graph {
     }
     return (true);
   }
+
+  /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
+  *   @param[in] s_fc set of fine cells to analyse
+  *   @return the compactness of the fine cell
+  */
+  CoMMAIntType compute_min_fc_compactness_inside_a_cc(
+      const unordered_set<CoMMAIndexType> &s_fc) const {
+    // Compute Compactness of a cc
+    // Be careful: connectivity is assumed
+    if (s_fc.size() > 1) {
+      unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness =
+          compute_fc_compactness_inside_a_cc(s_fc);
+      if (dict_fc_compactness.empty()) {
+        return 0;
+      }
+      CoMMAIntType min_comp = numeric_limits<CoMMAIntType>::max();
+      for (auto &i_k_v : dict_fc_compactness) {
+        if (i_k_v.second < min_comp) {
+          min_comp = i_k_v.second;
+        }
+      }
+      return min_comp;
+    } else {
+      return 0;
+    }
+  }
+
+  /** @brief Compute the dictionary of compactness of fine cells inside a coarse
+  * cell.
+  *   @param[in] s_fc set of fine cells to analyse
+  *   @return the dictionary associating a fine cell in the coarse cell with its
+  * compactness
+  */
+  unordered_map<CoMMAIndexType, CoMMAIntType>
+  compute_fc_compactness_inside_a_cc(const unordered_set<CoMMAIndexType> &s_fc) const {
+    unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
+    if (s_fc.size() > 1) {
+
+      // for every fc constituting a cc
+      for (const CoMMAIndexType &i_fc : s_fc) {
+
+        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
+        for (const CoMMAIndexType &i_fc_n : v_neighbours) {
+          if ((s_fc.count(i_fc_n) > 0) && (i_fc != i_fc_n)) {
+            if (dict_fc_compactness.count(i_fc) > 0) {
+              dict_fc_compactness[i_fc]++;
+            } else {
+              dict_fc_compactness[i_fc] = 1;
+            }
+          }
+        }
+        if (dict_fc_compactness.count(i_fc) == 0) {
+          dict_fc_compactness[i_fc] = 0;
+        }
+      }
+    }
+    return dict_fc_compactness;
+  }
 };
 
 /** @brief A class implementing the CRS subgraph representation. It is used in
@@ -228,7 +280,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
  public:
   /** @brief Constructor of the class
    *  @param[in] nb_c Cardinality of the CC, that is the number of fine cells
-   * compising the CC
+   * composing the CC
    *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
    *  @param[in] m_crs_col_ind the column index of the CRS representation
    *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
@@ -272,7 +324,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * contained*/
   CoMMAIntType _cardinality = 0;
 
-  /** @brief Compactness of the given subgraph */
+  /** @brief Compactness of the given subgraph (in this case is the max number of neighbours) */
   CoMMAIntType _compactness = 0;
 
   /** @brief Mapping from the local number of node to the global. Being a
@@ -289,7 +341,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] weight vector of the area of the faces of the given cells to be
    * added.
    */
-  void insert_node(vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
+  void insert_node(const vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
                    const CoMMAWeightType &volume,
                    const vector<CoMMAWeightType> &weight) {
     // Use the mapping
@@ -358,8 +410,6 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     typename vector<CoMMAWeightType>::iterator weight_it;
     auto pos_col = this->_m_CRS_Col_Ind.begin();
     auto pos_Values = this->_m_CRS_Values.begin();
-    // mapping for the renumbering of the nodes
-    vector<CoMMAIndexType> internal_mapping;
     for (const auto &elem : v_neigh) {
       ind = this->_m_CRS_Row_Ptr[elem];
       ind_p_one = this->_m_CRS_Row_Ptr[elem + 1];
@@ -406,20 +456,22 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     // now we do not have nomore our node, but we must create a mapping between the
     // before and now, and translate it in the col_ind and update the mapping with
     // the global graph
+    // mapping for the renumbering of the nodes
+    vector<optional<CoMMAIndexType>> internal_mapping;
+    internal_mapping.reserve(this->_m_CRS_Row_Ptr.size() + 1);
     CoMMAIndexType indice = 0;
-    // to cycle on the main vector
-    CoMMAIndexType ix = 0;
-    while (ix != static_cast<CoMMAIntType>(this->_m_CRS_Row_Ptr.size()) + 1) {
-      if (ix != i_fc) {
+    for (auto ix = decltype(this->_m_CRS_Row_Ptr.size()){0};
+         ix < this->_m_CRS_Row_Ptr.size() + 1; ++ix) {
+      if (static_cast<decltype(i_fc)>(ix) != i_fc) {
         internal_mapping.push_back(indice);
         indice++;
       } else {
-        internal_mapping.push_back(-1);
+        internal_mapping.push_back(nullopt);
       }
-      ++ix;
     }
     for (auto &actual : this->_m_CRS_Col_Ind) {
-      actual = internal_mapping[actual];
+      assert(internal_mapping[actual].has_value());
+      actual = internal_mapping[actual].value();
     }
   }
 };
@@ -457,20 +509,13 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
              const vector<vector<CoMMAWeightType>> &centers,
              const vector<CoMMAIntType> &n_bnd_faces,
              const CoMMAIntType dimension,
-             const unordered_set<CoMMAIndexType> &s_anisotropic_compliant_fc =
-                 unordered_set<CoMMAIndexType>({}))
+             const vector<CoMMAIndexType> &anisotropic_compliant_fc)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
-        _n_bnd_faces(n_bnd_faces), _centers(centers) {
-    if (s_anisotropic_compliant_fc.size() > 0) {
-      _s_anisotropic_compliant_cells = s_anisotropic_compliant_fc;
-    } else {
-      // Default initialization of s_anisotropic_compliant_cells
-      for (CoMMAIndexType i = 0; i < this->_number_of_cells; i++) {
-        _s_anisotropic_compliant_cells.insert(i);
-      }
-    }
-
+        _n_bnd_faces(n_bnd_faces),
+        _s_anisotropic_compliant_cells(anisotropic_compliant_fc.begin(),
+                                       anisotropic_compliant_fc.end()),
+        _centers(centers) {
     // Function to compute the aspect-ratio
     _compute_AR = dimension == 2 ?
         [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
@@ -483,13 +528,17 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   ~Dual_Graph() {}
 
   /** @brief Vector telling how many boundary faces each cell has */
-  vector<CoMMAIntType> _n_bnd_faces;
+  const vector<CoMMAIntType> &_n_bnd_faces;
 
-  /** @brief Member unordered set of compliant cells*/
-  unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
+  /** @brief Elements that are checked if they are anisotropic. If an element satisfies
+   * the condition for being anisotropic (typically, AR > threshold) but it not
+   * in this set, it will not considered as anisotropic.
+   * We use a set to ensure uniqueness
+   */
+  const unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
 
   /** @brief Vector of cell centers */
-  vector<vector<CoMMAWeightType>> _centers;
+  const vector<vector<CoMMAWeightType>> &_centers;
 
   /** @brief Function which computes the aspect-ratio from the minimum and maximum
    * faces
@@ -588,64 +637,6 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         }
       }
     } // End for compliant cells
-  }
-
-  /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
-  *   @param[in] s_fc set of fine cells to analyse
-  *   @return the compactness of the fine cell
-  */
-  CoMMAIntType compute_min_fc_compactness_inside_a_cc(
-      const unordered_set<CoMMAIndexType> &s_fc) const {
-    // Compute Compactness of a cc
-    // Be careful: connectivity is assumed
-    if (s_fc.size() > 1) {
-      unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness =
-          compute_fc_compactness_inside_a_cc(s_fc);
-      if (dict_fc_compactness.empty()) {
-        return 0;
-      }
-      CoMMAIntType min_comp = numeric_limits<CoMMAIntType>::max();
-      for (auto &i_k_v : dict_fc_compactness) {
-        if (i_k_v.second < min_comp) {
-          min_comp = i_k_v.second;
-        }
-      }
-      return min_comp;
-    } else {
-      return 0;
-    }
-  }
-
-  /** @brief Compute the dictionary of compactness of fine cells inside a coarse
-  * cell.
-  *   @param[in] s_fc set of fine cells to analyse
-  *   @return the dictionary associating a fine cell in the coarse cell with its
-  * compactness
-  */
-  unordered_map<CoMMAIndexType, CoMMAIntType>
-  compute_fc_compactness_inside_a_cc(const unordered_set<CoMMAIndexType> &s_fc) const {
-    unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
-    if (s_fc.size() > 1) {
-
-      // for every fc constituting a cc
-      for (const CoMMAIndexType &i_fc : s_fc) {
-
-        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : v_neighbours) {
-          if ((s_fc.count(i_fc_n) > 0) && (i_fc != i_fc_n)) {
-            if (dict_fc_compactness.count(i_fc) > 0) {
-              dict_fc_compactness[i_fc]++;
-            } else {
-              dict_fc_compactness[i_fc] = 1;
-            }
-          }
-        }
-        if (dict_fc_compactness.count(i_fc) == 0) {
-          dict_fc_compactness[i_fc] = 0;
-        }
-      }
-    }
-    return dict_fc_compactness;
   }
 
   /** @brief Getter that returns the number of cells

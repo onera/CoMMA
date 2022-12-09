@@ -50,10 +50,10 @@ class Coarse_Cell {
    * The default value is set to true.
    */
   Coarse_Cell(
-      Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &fc_graph,
+      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       bool is_isotropic = true)
-      : _idx(i_cc), _fc_graph(&fc_graph), _is_isotropic(is_isotropic),
+      : _idx(i_cc), _fc_graph(fc_graph), _is_isotropic(is_isotropic),
       _is_connected(false), _is_connectivity_up_to_date(false), _s_fc(s_fc) {
     // It also initializes _fc_volumes, _adjMatrix_row_ptr, _adjMatrix_col_ind, and
     // _adjMatrix_areaValues
@@ -92,7 +92,7 @@ class Coarse_Cell {
   shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
 
   /** @brief The global dual graph*/
-  Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> *_fc_graph;
+  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
 
   /** @brief Is the cell isotropic or anisotropic */
   bool _is_isotropic;
