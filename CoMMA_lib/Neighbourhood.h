@@ -76,6 +76,9 @@ a pair with the same index.
       _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
       _candidates() { }
 
+  /** @brief Copy constructor */
+  Neighbourhood(const Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
+
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
    * @param[in] new_fc new fine cell to be added to the set of fine cells
@@ -145,6 +148,9 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
                                      const vector<CoMMAWeightType> &weights) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _neighs_w_weights() {}
+
+  //[>* @brief Copy constructor <]
+  //Neighbourhood_Extended(const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
@@ -220,6 +226,9 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
                                        CoMMAIntType dimension) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _q_neighs_w_weights(), _dimension(dimension) {}
+
+  /** @brief Copy constructor */
+  Neighbourhood_Pure_Front(const Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates

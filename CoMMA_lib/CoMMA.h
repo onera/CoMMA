@@ -81,6 +81,9 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
+ * @param[in] fc_choice_iter Number of iterations allowed for the algorithm choosing
+ * which fine cell to add next. The cost grows exponentially, hence use small values.
+ * Default values: 1
  * @param[in] type_of_isotropic_agglomeration Type of algorithm to consider when
  * agglomerating isotropic cells. Two alternatives: Biconnected: requested with 0,
  * standard algorithm where we consider every neighbour of the coarse cell as candidate;
@@ -120,6 +123,7 @@ void agglomerate_one_level(
     // Args with default value
     bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
     CoMMAIntType min_card, CoMMAIntType max_card,
+    CoMMAIntType fc_choice_iter = 1,
     const CoMMAIntType type_of_isotropic_agglomeration=CoMMAAgglT::BICONNECTED) {
   // NOTATION
   //======================================
@@ -191,7 +195,7 @@ void agglomerate_one_level(
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
-                  dimension);
+                  fc_choice_iter, dimension);
 
     // Agglomerate anisotropic cells only
     aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
@@ -211,12 +215,12 @@ void agglomerate_one_level(
   if (type_of_isotropic_agglomeration==CoMMAAgglT::BICONNECTED){
     agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, dimension);
+        fc_graph, cc_graph, seeds_pool, fc_choice_iter, dimension);
   }
   else {
     agg = make_unique<
         Agglomerator_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, dimension);
+        fc_graph, cc_graph, seeds_pool, fc_choice_iter, dimension);
   }
   agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
   // Agglomerate

@@ -91,15 +91,17 @@ class Agglomerator {
    *  @param[in] cc_graph Container for the coarse cells
    *  @param[in] seeds_pool Seed_Pool object giving the order in which the fine cells
    * should be considered when agglomerating
+   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing
+   *  which fine cell to add next.
    *  @param[in] dimension the dimension of the problem
    */
   Agglomerator(shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
                shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                      CoMMAIntType>> cc_graph,
                shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-               CoMMAIntType dimension = 3)
+               CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : _dimension(dimension), _fc_graph(graph), _cc_graph(cc_graph),
-      _seeds_pool(seeds_pool) {
+      _seeds_pool(seeds_pool), _fc_iter(fc_iter) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw range_error("dimension can only be 2 or 3");
     }
@@ -171,6 +173,10 @@ class Agglomerator {
    * be considered when agglomerating
    **/
   shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _seeds_pool;
+  /** @brief Number of iterations allowed for the algorithm choosing which fine cell
+   * to add next
+   */
+  CoMMAIntType _fc_iter;
 
 };
 
@@ -206,6 +212,8 @@ class Agglomerator_Anisotropic
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
    * considered as anisotropic
+   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing
+   *  which fine cell to add next.
    *  @param[in] dimension the dimension of the problem
    */
   Agglomerator_Anisotropic(
@@ -217,9 +225,9 @@ class Agglomerator_Anisotropic
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
       const bool is_first_agglomeration,
-      CoMMAIntType dimension = 3)
+      CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, fc_iter, dimension) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -567,9 +575,9 @@ class Agglomerator_Isotropic
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType dimension = 3)
+      CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, fc_iter, dimension) {
     // no particular constructor
   }
 
@@ -875,6 +883,10 @@ class Agglomerator_Biconnected
     : public Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType,
                                     CoMMAIntType> {
  public:
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                              CoMMAIntType>;
+  using NeighbourhoodDerivedType = Neighbourhood_Extended<CoMMAIndexType,
+                                                          CoMMAWeightType, CoMMAIntType>;
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Isotropic
    **/
@@ -883,9 +895,9 @@ class Agglomerator_Biconnected
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType dimension = 3)
+      CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, fc_iter, dimension) {
     // no particular constructor
   }
 
@@ -898,14 +910,21 @@ class Agglomerator_Biconnected
    * agglomerating. The higher the weight, the higher the priority
    *  @return A pointer to a Neighbourhood object
    **/
-  virtual inline
-  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                           CoMMAIntType>>
+  virtual inline shared_ptr<NeighbourhoodBaseType>
   get_neighbourhood(const unordered_set<CoMMAIndexType> &neighbours,
-                   const vector<CoMMAWeightType> &priority_weights) {
-    return make_unique<
-      Neighbourhood_Extended<CoMMAIndexType,CoMMAWeightType,CoMMAIntType>>(
-        neighbours, priority_weights);
+                   const vector<CoMMAWeightType> &priority_weights) const {
+    return make_shared<NeighbourhoodDerivedType>(neighbours, priority_weights);
+  }
+
+  /** @brief Copy a Neighbourhood object and return it
+   *  @param[in] neighborhood Neighbourhood to copy
+   *  @return A pointer to a copy of a Neighbourhood object
+   **/
+  virtual inline shared_ptr<NeighbourhoodBaseType>
+  copy_neighbourhood(const shared_ptr<NeighbourhoodBaseType> neighbourhood) const {
+    // Using copy-constructor
+    return make_shared<NeighbourhoodDerivedType>(
+              *dynamic_pointer_cast<NeighbourhoodDerivedType>(neighbourhood));
   }
 
   /** @brief Specialization of the pure virtual function in the parent class, to
@@ -1011,7 +1030,7 @@ class Agglomerator_Biconnected
       unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class neighbourhood
-      unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+      shared_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                CoMMAIntType>> neighbourhood =
           this->get_neighbourhood(s_neighbours_of_seed, priority_weights);
       // Generate the candidates cells in the neighbourhood of the given seed
@@ -1028,10 +1047,12 @@ class Agglomerator_Biconnected
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in argmin_ar. It takes account also
         // the fine cells that has been added until now.
-        this->compute_best_fc_to_add(neighbourhood->get_candidates(),
-                                     d_n_of_seed, is_order_primary, diam_cc,
-                                     vol_cc, tmp_cc, argmin_ar,  // output
-                                     max_faces_in_common, min_ar_diam, min_ar_vol);
+        // min(max_ind - size_current_cc, this->_fc_iter)
+        this->compute_best_fc_to_add_iter(min(max_ind - size_current_cc, this->_fc_iter),
+                                          neighbourhood,
+                                          d_n_of_seed, is_order_primary, diam_cc,
+                                          vol_cc, tmp_cc, argmin_ar,  // output
+                                          max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
             this->_fc_graph->get_nb_of_neighbours(argmin_ar) +
@@ -1120,6 +1141,132 @@ class Agglomerator_Biconnected
     }  // end else
     return s_current_cc;
   }
+
+  /** @brief Computes the best fine cells to add to the coarse cell. The choice
+   * depends on: the aspect-ratio of the coarse cell (tries to minimize it), the
+   * number of shared faces (tries to maximize it), the neighbourhood order (see
+   * related argument)
+   *  @param[in] neighbours Vector of neighbours of current coarse cell, they are the
+   *  candidates where the best fine cell is sought
+   *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
+   *  agglomeration with their neighbourhood order wrt to the original seed
+   *  @param[in] is_order_primary If true, the neighbourhood order prevails on other
+   *  criteria
+   *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse cell
+   *  @param[in] vol Volume of the current coarse cell
+   *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
+   *  agglomerated in the coarse cell
+   *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine cell
+   *  @param[out] max_faces_in_common Number of faces shared between the chosen fine
+   *  cell and the coarse cell
+   *  @param[out] min_ar_diam (Approximation of the) Diameter of the coarse cell
+   *  after the addition of the chosen fine cell
+   *  @param[out] min_ar_vol Volume of the coarse cell after the addition of the
+   *  chosen fine cell
+   */
+  void compute_best_fc_to_add_iter(
+      const CoMMAIntType fc_iter,
+      const shared_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                     CoMMAIntType>> neighbourhood,
+      const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
+      const bool &is_order_primary, const CoMMAWeightType &diam_cc,
+      const CoMMAWeightType &vol_cc,
+      const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
+      CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
+      CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) const {
+    CoMMAIndexType outer_argmax_faces{0};
+    CoMMAWeightType outer_ar = numeric_limits<CoMMAWeightType>::max();
+    for (const auto &i_fc : neighbourhood->get_candidates()) {
+      auto cur_neighbourhood = this->copy_neighbourhood(neighbourhood);
+      CoMMAWeightType inner_ar{-1.};
+      CoMMAIntType inner_max_faces_in_common{0};
+      CoMMAWeightType inner_min_ar_diam = numeric_limits<CoMMAWeightType>::max();
+      CoMMAWeightType inner_min_ar_vol{0.};
+      this->compute_next_cc_features(i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
+              inner_max_faces_in_common, inner_ar, inner_min_ar_diam, inner_min_ar_vol);
+      cur_neighbourhood->update(i_fc, this->_fc_graph->get_neighbours(i_fc));
+      unordered_set<CoMMAIndexType> cur_fc{s_of_fc_for_current_cc.begin(),
+                                           s_of_fc_for_current_cc.end()};
+      cur_fc.insert(i_fc);
+
+      if (fc_iter > 1) {
+        CoMMAIndexType cur_argmin{0};
+        CoMMAIntType cur_max_faces_in_common{0};
+        CoMMAWeightType cur_min_ar_diam = numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType cur_min_ar_vol{0.};
+        CoMMAWeightType cur_min_ar{0.};
+        this->compute_best_fc_to_add_iter(fc_iter-1,cur_neighbourhood, d_n_of_seed, is_order_primary,
+            inner_min_ar_diam, inner_min_ar_vol, cur_fc,
+            // output
+            cur_argmin, cur_max_faces_in_common, cur_min_ar_diam, cur_min_ar_vol);
+        // We just keep the min AR and the max faces in common
+        if (cur_max_faces_in_common > inner_max_faces_in_common) {
+          inner_max_faces_in_common = cur_max_faces_in_common;
+        } else if (cur_max_faces_in_common == inner_max_faces_in_common &&
+                   cur_min_ar < inner_ar) {
+          inner_ar = cur_min_ar;
+        }
+      }
+
+      const CoMMAIntType &order = d_n_of_seed.at(i_fc);
+
+      // TODO This version seems good but refactorisation to do: perhaps it is
+      // not needed to update every new possible coarse cell aspect ratio?
+      // TODO also need to remove the list of min_ar, argmin_ar, etc.
+      if (inner_max_faces_in_common >=
+          max_faces_in_common or
+              is_order_primary) {  // if is_order_primary is True the order of
+                                   // neighbourhood is primary
+        if (inner_max_faces_in_common == max_faces_in_common or is_order_primary) {
+          // If the number of faces in common is the same, let's see whether it's
+          // worth to update or not
+
+          if (order <= d_n_of_seed.at(outer_argmax_faces)) {
+            // [outer_argmax_faces] is not const.
+            if (order == d_n_of_seed.at(outer_argmax_faces)) {
+              if (inner_ar < outer_ar and inner_max_faces_in_common > 0 ) {
+                // The second condition asserts the connectivity of the coarse
+                // element.
+                argmin_ar = i_fc;
+                // Outer AR is the min AR of the children, but since diameter and
+                // volume are used in the next step, we keep those of the mother cell
+                outer_ar = inner_ar;
+                min_ar_diam = inner_min_ar_diam;
+                min_ar_vol = inner_min_ar_vol;
+
+                outer_argmax_faces = i_fc;
+                // The number of face in common is the same no need to touch it
+              }
+            } else {
+              // Case :inner_max_faces_in_common == max_faces_in_common and order <
+              // dict_neighbours_of_seed[outer_argmax_faces]:
+              outer_argmax_faces = i_fc;
+              argmin_ar = i_fc;
+              // Outer AR is the min AR of the children, but since diameter and
+              // volume are used in the next step, we keep those of the mother cell
+              outer_ar = inner_ar;
+              min_ar_diam = inner_min_ar_diam;
+              min_ar_vol = inner_min_ar_vol;
+              // The number of face in common is the same no need to touch it
+            }
+          }
+        } else {
+          // Case inner_max_faces_in_common > max_faces_in_common:
+          // -> Just update and see what comes next
+          max_faces_in_common = inner_max_faces_in_common;
+          outer_argmax_faces = i_fc;
+          argmin_ar = i_fc;
+          // Outer AR is the min AR of the children, but since diameter and
+          // volume are used in the next step, we keep those of the mother cell
+          outer_ar = inner_ar;
+          min_ar_diam = inner_min_ar_diam;
+          min_ar_vol = inner_min_ar_vol;
+        }
+      }
+
+
+    } // for i_fc
+  }
 };
 
 /** @brief Child class of Agglomerator Isotropic where is implemented a specific
@@ -1136,6 +1283,10 @@ class Agglomerator_Pure_Front
     : public Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType,
                                     CoMMAIntType> {
  public:
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                              CoMMAIntType>;
+  using NeighbourhoodDerivedType = Neighbourhood_Pure_Front<CoMMAIndexType,
+                                                          CoMMAWeightType, CoMMAIntType>;
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Isotropic
    **/
@@ -1144,9 +1295,9 @@ class Agglomerator_Pure_Front
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType dimension = 3)
+      CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, fc_iter, dimension) {
     // no particular constructor
   }
 
@@ -1159,14 +1310,22 @@ class Agglomerator_Pure_Front
    * agglomerating. The higher the weight, the higher the priority
    *  @return A pointer to a Neighbourhood object
    **/
-  inline
-  unique_ptr<Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                           CoMMAIntType>>
+  inline shared_ptr<NeighbourhoodBaseType>
   get_neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                   const vector<CoMMAWeightType> &priority_weights) override {
-    return make_unique<
-      Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+                   const vector<CoMMAWeightType> &priority_weights) const override {
+    return make_shared<NeighbourhoodDerivedType>(
         s_neighbours_of_seed, priority_weights, this->_dimension);
+  }
+
+  /** @brief Copy a Neighbourhood object and return it
+   *  @param[in] neighborhood Neighbourhood to copy
+   *  @return A pointer to a copy of a Neighbourhood object
+   **/
+  inline shared_ptr<NeighbourhoodBaseType>
+  copy_neighbourhood(const shared_ptr<NeighbourhoodBaseType> neighbourhood) const override {
+    // Using copy-constructor
+    return make_shared<NeighbourhoodDerivedType>(
+              *dynamic_pointer_cast<NeighbourhoodDerivedType>(neighbourhood));
   }
 
 };

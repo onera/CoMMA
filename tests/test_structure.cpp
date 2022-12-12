@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#define fc_iter 1
+
 #define equal_up_to(a,b,eps) (fabs(a - b) < eps)
 
 using SeedsPoolT = Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
@@ -51,7 +53,7 @@ SCENARIO("Test of a structure", "[structure]") {
              shared_ptr<CCContainerT> &cc_graph,
              shared_ptr<SeedsPoolT> &seeds_pool, CoMMAIntT dimension)
             : Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(graph, cc_graph,
-                                                                seeds_pool, dimension) {};
+                                                                seeds_pool, fc_iter, dimension) {};
 
         CoMMAIntT test_variable() {
           return (this->_threshold_card);
@@ -70,7 +72,7 @@ SCENARIO("Test of a structure", "[structure]") {
              shared_ptr<CCContainerT> &cc_graph,
              shared_ptr<SeedsPoolT> &seeds_pool, CoMMAIntT dimension)
             : Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(graph, cc_graph,
-                                                                seeds_pool, dimension) {};
+                                                                seeds_pool, fc_iter, dimension) {};
 
         CoMMAIntT thres() {
           return (_threshold_card);
@@ -836,7 +838,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-          fc_graph, cc_graph, seeds_pool, 3);
+          fc_graph, cc_graph, seeds_pool, fc_iter, 3);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
@@ -863,7 +865,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
     shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
     auto agg_PF =
       make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-          fc_graph, cc_PF_graph, seeds_pool, 3);
+          fc_graph, cc_PF_graph, seeds_pool, fc_iter, 3);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
@@ -946,7 +948,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-          fc_graph, cc_graph, seeds_pool, 2);
+          fc_graph, cc_graph, seeds_pool, fc_iter, 2);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -996,7 +998,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
     auto agg_PF =
       make_unique<Agglomerator_Pure_Front<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
-          fc_graph, cc_PF_graph, seeds_pool, 2);
+          fc_graph, cc_PF_graph, seeds_pool, fc_iter, 2);
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -1107,7 +1109,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration, fc_iter,
                   3);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
@@ -1129,7 +1131,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration, fc_iter,
                   Data.dim);
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     WHEN("We agglomerate the mesh") {
@@ -1166,7 +1168,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-        fc_graph, cc_graph, seeds_pool, 2);
+        fc_graph, cc_graph, seeds_pool, fc_iter, 2);
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
       agg->agglomerate_one_level(2, 2, 2, Data.weights, true);
