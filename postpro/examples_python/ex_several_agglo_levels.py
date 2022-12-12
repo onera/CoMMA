@@ -70,6 +70,7 @@ outname = 'out_' + \
             'iso_' + \
             ('quad_2D' if dimension == 2 else 'hexa_3D') + \
             ('_corrected' if correction else '') + \
+            f'_{agglomeration_levels}agglolvl'+ \
             '.vtu'
 
 mesh = Mesh2D(n, anisotropic) if dimension == 2 \
