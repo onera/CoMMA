@@ -69,11 +69,6 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
  * considered as anisotropic
- * @param[in] type_of_isotropic_agglomeration Type of algorithm to consider when
- * agglomerating isotropic cells. Two alternatives: Biconnected: requested with 0,
- * standard algorithm where we consider every neighbour of the coarse cell as candidate;
- * Pure Front Advancing: requested with 1, only direct neighbours of the last added
- * cell are candidates
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
  * belongs to after agglomeration
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
@@ -86,6 +81,11 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
+ * @param[in] type_of_isotropic_agglomeration Type of algorithm to consider when
+ * agglomerating isotropic cells. Two alternatives: Biconnected: requested with 0,
+ * standard algorithm where we consider every neighbour of the coarse cell as candidate;
+ * Pure Front Advancing: requested with 1, only direct neighbours of the last added
+ * cell are candidates. Default value: Biconnected
  * @throw `invalid_argument` if dimension is not 2 nor 3, or if cardinalities are
  * smaller than 1 or not in order
  * */
