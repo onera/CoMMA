@@ -291,19 +291,27 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : ridges) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : valleys) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : interior) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
       }
@@ -322,13 +330,21 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
       }
       seeds_pool.update(new_seeds);
       THEN("The order does not respect the priority but the boundary only") {
-        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(63 == opt_seed.value());
         agglomerated[63] = true;
-        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(44 == opt_seed.value());
         agglomerated[44] = true;
-        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(30 == opt_seed.value());
         agglomerated[30] = true;
-        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(21 == opt_seed.value());
         agglomerated[21] = true;
       }
       new_seeds = {10, 5, 6, 9};
@@ -339,7 +355,9 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
       seeds_pool.update(new_seeds);
       THEN("The order respects the order of the input if all in the same queue") {
         for (auto i : new_seeds) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
       }
@@ -358,13 +376,21 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
       }
       seeds_pool.order_new_seeds_and_update(new_seeds);
       THEN("The order does not respect the priority but the boundary only") {
-        REQUIRE(63 == seeds_pool.choose_new_seed(agglomerated));
+        auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(63 == opt_seed.value());
         agglomerated[63] = true;
-        REQUIRE(44 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(44 == opt_seed.value());
         agglomerated[44] = true;
-        REQUIRE(30 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(30 == opt_seed.value());
         agglomerated[30] = true;
-        REQUIRE(21 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(21 == opt_seed.value());
         agglomerated[21] = true;
       }
       new_seeds = {10, 5, 6, 9};
@@ -374,13 +400,21 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
       }
       seeds_pool.order_new_seeds_and_update(new_seeds);
       THEN("The order respects the priority all in the same queue") {
-        REQUIRE(5 == seeds_pool.choose_new_seed(agglomerated));
+        auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(5 == opt_seed.value());
         agglomerated[5] = true;
-        REQUIRE(6 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(6 == opt_seed.value());
         agglomerated[6] = true;
-        REQUIRE(9 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(9 == opt_seed.value());
         agglomerated[9] = true;
-        REQUIRE(10 == seeds_pool.choose_new_seed(agglomerated));
+        opt_seed = seeds_pool.choose_new_seed(agglomerated);
+        REQUIRE(opt_seed.has_value());
+        REQUIRE(10 == opt_seed.value());
         agglomerated[10] = true;
       }
     }
@@ -414,19 +448,27 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : ridges) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : valleys) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
         for (auto i : interior) {
-          REQUIRE(i == seeds_pool.choose_new_seed(agglomerated));
+          const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
+          REQUIRE(opt_seed.has_value());
+          REQUIRE(i == opt_seed.value());
           agglomerated[i] = true;
         }
       }
