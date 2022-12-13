@@ -32,6 +32,8 @@ correction = False
 threshold_anisotropy = 4.
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
 agglomeration_levels = 3
+# Number of iterations for iterative fine-cell research algorithm
+fc_iter = 1
 
 # Output-related parameters
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
@@ -54,6 +56,7 @@ print(f' * {maxCard=}')
 print(f' * {correction=}')
 print(f' * {threshold_anisotropy=}')
 print(f' * isotropic_agglo={isotropic_agglo_types[isotropic_agglo]}')
+print(f' * Fine-cell research iterations={fc_iter}')
 print(f' * {agglomeration_levels=}')
 print( ' [Output]')
 renum = renumber_coarse > 1
@@ -150,7 +153,7 @@ for level in range(agglomeration_levels):
                                   arrayOfFineAnisotropicCompliantCells,isOnBnd, level == 0,
                                   anisotropic, threshold_anisotropy,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
-                                  correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
+                                  correction, dimension,goalCard,minCard,maxCard, fc_iter, isotropic_agglo)
     print('OK')
 
     # Update direction from original fine cell to current level coarse cell
