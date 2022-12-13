@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <cassert>
 #include <deque>
+#include <memory>
 #include <queue>
 #include <set>
 #include <unordered_set>
@@ -34,6 +35,80 @@
 #include "Util.h"
 
 using namespace std;
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Neighbourhood;
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Neighbourhood_Extended;
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Neighbourhood_Pure_Front;
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class NeighbourhoodCreator {
+  public:
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                              CoMMAIntType>;
+  virtual inline shared_ptr<NeighbourhoodBaseType> create(
+      const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+      const vector<CoMMAWeightType> &priority_weights,
+      const CoMMAIntType dimension) const = 0;
+  virtual inline shared_ptr<NeighbourhoodBaseType> clone(
+      shared_ptr<NeighbourhoodBaseType> other) const = 0;
+};
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class NeighbourhoodExtendedCreator
+    : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public:
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                              CoMMAIntType>;
+  using NeighbourhoodDerivedType = Neighbourhood_Extended<CoMMAIndexType,
+                                                          CoMMAWeightType, CoMMAIntType>;
+  inline shared_ptr<NeighbourhoodBaseType> create(
+      const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+      const vector<CoMMAWeightType> &priority_weights,
+      const CoMMAIntType dimension) const override {
+    CoMMAUnused(dimension);
+    return make_shared<NeighbourhoodDerivedType>(s_neighbours_of_seed, priority_weights);
+  }
+  inline shared_ptr<NeighbourhoodBaseType> clone(
+      shared_ptr<NeighbourhoodBaseType> other) const override {
+    // Using copy-constructor
+    return make_shared<NeighbourhoodDerivedType>(
+              *dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
+  }
+};
+
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class NeighbourhoodPureFrontCreator
+    : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public:
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                              CoMMAIntType>;
+  using NeighbourhoodDerivedType = Neighbourhood_Pure_Front<CoMMAIndexType,
+                                                            CoMMAWeightType, CoMMAIntType>;
+  inline shared_ptr<NeighbourhoodBaseType> create(
+      const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+      const vector<CoMMAWeightType> &priority_weights,
+      const CoMMAIntType dimension) const override {
+    return make_shared<NeighbourhoodDerivedType>(
+        s_neighbours_of_seed, priority_weights, dimension);
+  }
+  inline shared_ptr<NeighbourhoodBaseType> clone(
+      shared_ptr<NeighbourhoodBaseType> other) const override {
+    // Using copy-constructor
+    return make_shared<NeighbourhoodDerivedType>(
+              *dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
+  }
+};
 
 /** @brief Class representing the neighbourhood of a given cell in the graph.
  * Mind that no information about the element being already agglomerated or not
