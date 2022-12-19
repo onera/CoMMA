@@ -37,21 +37,6 @@
 #include "Util.h"
 #include "Neighbourhood.h"
 
-// forward definition to keep the agglomerators in one file
-
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Agglomerator_Anisotropic;
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Agglomerator_Isotropic;
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Agglomerator_Biconnected;
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Agglomerator_Pure_Front;
-
 //"""
 // Main Class of the CoMMA library, containing the methods to operate the
 // agglomeration
