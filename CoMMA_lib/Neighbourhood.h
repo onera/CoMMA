@@ -224,8 +224,8 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _neighs_w_weights() {}
 
-  //[>* @brief Copy constructor <]
-  //Neighbourhood_Extended(const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
+  /** @brief Copy constructor */
+  Neighbourhood_Extended(const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
