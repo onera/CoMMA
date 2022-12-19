@@ -48,29 +48,74 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Neighbourhood_Pure_Front;
 
+/** @brief Pure abstract class for a creator of Neighbourhood objects. It can create
+ * from scratch or by copy.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class NeighbourhoodCreator {
   public:
+  /** @brief Shortcut for the Neighborhood object type */
   using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                               CoMMAIntType>;
+
+  /** @brief Create a new Neighbourhood object from scratch using the given
+   * arguments
+   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   * chosen as seed
+   *  @param[in] priority_weights Weights used to set up the order of the
+   * neighbours to visit
+   *  @param[in] dimension Dimension of the problem
+   *  @return a shared pointer to a new Neighborhood object
+   */
   virtual inline shared_ptr<NeighbourhoodBaseType> create(
       const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
       const vector<CoMMAWeightType> &priority_weights,
       const CoMMAIntType dimension) const = 0;
+
+  /** @brief Create a new Neighbourhood object by copy
+   *  @param[in] other Shared pointer to an existing Neighbourhood object
+   *  @return a shared pointer to a new Neighborhood object
+   */
   virtual inline shared_ptr<NeighbourhoodBaseType> clone(
       shared_ptr<NeighbourhoodBaseType> other) const = 0;
 };
 
+/** @brief Creator of Neighbourhood_Extended objects. It can create
+ * from scratch or by copy.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class NeighbourhoodExtendedCreator
     : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
+  /** @brief Shortcut for the Neighborhood object base type */
   using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                               CoMMAIntType>;
+  /** @brief Shortcut for the Neighborhood object derived type (Extended, in this
+   * case)
+   */
   using NeighbourhoodDerivedType = Neighbourhood_Extended<CoMMAIndexType,
                                                           CoMMAWeightType, CoMMAIntType>;
+
+  /** @brief Create a new Neighbourhood object from scratch using the given
+   * arguments
+   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   * chosen as seed
+   *  @param[in] priority_weights Weights used to set up the order of the
+   * neighbours to visit
+   *  @param[in] dimension Dimension of the problem
+   *  @return a shared pointer (base type) to a new Neighborhood (derived type)
+   *  object
+   */
   inline shared_ptr<NeighbourhoodBaseType> create(
       const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
       const vector<CoMMAWeightType> &priority_weights,
@@ -78,6 +123,12 @@ class NeighbourhoodExtendedCreator
     CoMMAUnused(dimension);
     return make_shared<NeighbourhoodDerivedType>(s_neighbours_of_seed, priority_weights);
   }
+
+  /** @brief Create a new Neighbourhood object by copy
+   *  @param[in] other Shared pointer to an existing Neighbourhood object
+   *  @return a shared pointer (base type) to a new Neighborhood (derived type)
+   *  object
+   */
   inline shared_ptr<NeighbourhoodBaseType> clone(
       shared_ptr<NeighbourhoodBaseType> other) const override {
     // Using copy-constructor
@@ -86,15 +137,37 @@ class NeighbourhoodExtendedCreator
   }
 };
 
+/** @brief Creator of Neighbourhood_Extended objects. It can create
+ * from scratch or by copy.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class NeighbourhoodPureFrontCreator
     : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
+  /** @brief Shortcut for the Neighborhood object base type */
   using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                               CoMMAIntType>;
+  /** @brief Shortcut for the Neighborhood object derived type (Pure_Front, in this
+   * case)
+   */
   using NeighbourhoodDerivedType = Neighbourhood_Pure_Front<CoMMAIndexType,
                                                             CoMMAWeightType, CoMMAIntType>;
+
+  /** @brief Create a new Neighbourhood object from scratch using the given
+   * arguments
+   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   * chosen as seed
+   *  @param[in] priority_weights Weights used to set up the order of the
+   * neighbours to visit
+   *  @param[in] dimension Dimension of the problem
+   *  @return a shared pointer (base type) to a new Neighborhood (derived type)
+   *  object
+   */
   inline shared_ptr<NeighbourhoodBaseType> create(
       const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
       const vector<CoMMAWeightType> &priority_weights,
@@ -102,6 +175,12 @@ class NeighbourhoodPureFrontCreator
     return make_shared<NeighbourhoodDerivedType>(
         s_neighbours_of_seed, priority_weights, dimension);
   }
+
+  /** @brief Create a new Neighbourhood object by copy
+   *  @param[in] other Shared pointer to an existing Neighbourhood object
+   *  @return a shared pointer (base type) to a new Neighborhood (derived type)
+   *  object
+   */
   inline shared_ptr<NeighbourhoodBaseType> clone(
       shared_ptr<NeighbourhoodBaseType> other) const override {
     // Using copy-constructor
