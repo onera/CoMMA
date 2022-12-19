@@ -1179,6 +1179,7 @@ class Agglomerator_Iterative
       CoMMAIndexType &argmin_ar, CoMMAIntType &max_faces_in_common,
       CoMMAWeightType &min_ar_diam, CoMMAWeightType &min_ar_vol) const override {
     CoMMAIndexType outer_argmax_faces{0};
+    CoMMAIntType ref_max_faces = max_faces_in_common;
     CoMMAWeightType outer_ar = numeric_limits<CoMMAWeightType>::max();
     for (const auto &i_fc : neighbourhood->get_candidates()) {
       auto cur_neighbourhood = this->_neigh_crtor->clone(neighbourhood);
@@ -1192,6 +1193,8 @@ class Agglomerator_Iterative
       unordered_set<CoMMAIndexType> cur_fc{s_of_fc_for_current_cc.begin(),
                                            s_of_fc_for_current_cc.end()};
       cur_fc.insert(i_fc);
+      // Store value of mother cell
+      const CoMMAIntType ref_inner_faces = inner_max_faces_in_common;
 
       if (fc_iter > 1) {
         CoMMAIndexType cur_argmin{0};
@@ -1220,10 +1223,10 @@ class Agglomerator_Iterative
       // not needed to update every new possible coarse cell aspect ratio?
       // TODO also need to remove the list of min_ar, argmin_ar, etc.
       if (inner_max_faces_in_common >=
-          max_faces_in_common or
+          ref_max_faces or
               is_order_primary) {  // if is_order_primary is True the order of
                                    // neighbourhood is primary
-        if (inner_max_faces_in_common == max_faces_in_common or is_order_primary) {
+        if (inner_max_faces_in_common == ref_max_faces or is_order_primary) {
           // If the number of faces in common is the same, let's see whether it's
           // worth to update or not
 
@@ -1235,38 +1238,42 @@ class Agglomerator_Iterative
                 // element.
                 argmin_ar = i_fc;
                 // Outer AR is the min AR of the children, but since diameter and
-                // volume are used in the next step, we keep those of the mother cell
+                // volume are used in the next step, we keep those of the mother cell...
                 outer_ar = inner_ar;
                 min_ar_diam = inner_min_ar_diam;
                 min_ar_vol = inner_min_ar_vol;
+                // ... same for faces in common
+                max_faces_in_common = ref_inner_faces;
 
                 outer_argmax_faces = i_fc;
-                // The number of face in common is the same no need to touch it
               }
             } else {
-              // Case :inner_max_faces_in_common == max_faces_in_common and order <
+              // Case :inner_max_faces_in_common == ref_max_faces and order <
               // dict_neighbours_of_seed[outer_argmax_faces]:
               outer_argmax_faces = i_fc;
               argmin_ar = i_fc;
               // Outer AR is the min AR of the children, but since diameter and
-              // volume are used in the next step, we keep those of the mother cell
+              // volume are used in the next step, we keep those of the mother cell...
               outer_ar = inner_ar;
               min_ar_diam = inner_min_ar_diam;
               min_ar_vol = inner_min_ar_vol;
-              // The number of face in common is the same no need to touch it
+              // ... same for faces in common
+              max_faces_in_common = ref_inner_faces;
             }
           }
         } else {
-          // Case inner_max_faces_in_common > max_faces_in_common:
+          // Case inner_max_faces_in_common > ref_max_faces:
           // -> Just update and see what comes next
-          max_faces_in_common = inner_max_faces_in_common;
+          ref_max_faces = inner_max_faces_in_common;
           outer_argmax_faces = i_fc;
           argmin_ar = i_fc;
           // Outer AR is the min AR of the children, but since diameter and
-          // volume are used in the next step, we keep those of the mother cell
+          // volume are used in the next step, we keep those of the mother cell...
           outer_ar = inner_ar;
           min_ar_diam = inner_min_ar_diam;
           min_ar_vol = inner_min_ar_vol;
+          // ... same for faces in common
+          max_faces_in_common = ref_inner_faces;
         }
       }
     } // for i_fc
