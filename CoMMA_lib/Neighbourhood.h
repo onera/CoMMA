@@ -105,8 +105,8 @@ a pair with the same index.
   /** @brief Candidates that should be considered */
   CandidatesContainerType _candidates;
 
-  /** @brief Get candidates that should be consider in the next step of the agglomeration
-   *  @return The candidates
+  /** @brief Extract the indices from a list of index-weight pairs and add them at
+   *   the back of the candidates list
    */
   inline void extract_and_update_candidates(const CoMMASetOfPairType &candidates_w_weights) {
     for (const auto & [idx, w] : candidates_w_weights)
