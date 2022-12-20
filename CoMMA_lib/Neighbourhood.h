@@ -144,7 +144,7 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
   Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                                      const vector<CoMMAWeightType> &weights) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights), _neighs_w_weights() {}
+        s_neighbours_of_seed, weights) {}
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
@@ -152,39 +152,26 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
    * @param[in] new_neighbours vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
-    this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    if (!this->_neighs_w_weights.empty()) {
-      // There is erase_if for sets in C++20
-      //erase_if(_neighs_w_weights, [&new_fc](const CoMMAPairType &p){
-      //                              return p.first == new_fc;});
-      auto it = find_if(this->_neighs_w_weights.begin(), this->_neighs_w_weights.end(),
-                     CoMMAPairFindFirstBasedType(new_fc));
-                     //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      assert(it != _neighs_w_weights.end()); // It must be there!
-      this->_neighs_w_weights.erase(it);
-    }
+    auto new_fc_ptr = find(this->_candidates.begin(), this->_candidates.end(), new_fc);
+    if (new_fc_ptr != this->_candidates.end())
+      this->_candidates.erase(new_fc_ptr);
 
     // Compute the set of direct neighbours allowed by original neighbourhood-order
+    CoMMASetOfPairType neighs;
     for (const CoMMAIndexType& i_fc : new_neighbours) {
-      if ( (find_if(_neighs_w_weights.begin(), _neighs_w_weights.end(),
-                   CoMMAPairFindFirstBasedType(i_fc))
-                   //[&i_fc](const CoMMAPairType &p){return p.first == i_fc;})
-            == _neighs_w_weights.end()) &&
+      if ( (find(this->_candidates.begin(), this->_candidates.end(), i_fc)
+            == this->_candidates.end()) &&
            (this->_s_fc.count(i_fc) == 0) &&
            (this->_s_neighbours_of_seed.count(i_fc) > 0) ) {
         // If not yet in the FON, not yet in the coarse cell and among the
         // allowed neighbours, insert
-        this->_neighs_w_weights.emplace(i_fc, this->_weights[i_fc]);
+        neighs.emplace(i_fc, this->_weights[i_fc]);
       }
     }
-    this->extract_and_update_candidates(this->_neighs_w_weights);
+    this->extract_and_update_candidates(neighs);
   }
-
-  protected:
-  /** @brief Current neighbours with their weights */
-  CoMMASetOfPairType _neighs_w_weights;
 
 };
 
