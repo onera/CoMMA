@@ -30,7 +30,9 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <set>
 #include <stdexcept>
+#include <vector>
 
 #include "Coarse_Cell_Container.h"
 #include "Dual_Graph.h"
@@ -417,7 +419,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * 2) Build anisotropic lines
    */
   void compute_anisotropic_line() {
-    unordered_set<CoMMAIndexType> anisotropic_fc;
+    set<CoMMAIndexType> anisotropic_fc;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
     vector<CoMMAWeightType> maxArray(this->_fc_graph->_number_of_cells, 0.0);

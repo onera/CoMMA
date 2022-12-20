@@ -29,6 +29,7 @@
 #include <deque>
 #include <functional>
 #include <limits>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -576,11 +577,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
-  void compute_anisotropic_fc(
-      vector<CoMMAWeightType> &maxArray,
-      unordered_set<CoMMAIndexType> &anisotropic_fc,
-      const CoMMAWeightType threshold_anisotropy,
-      const CoMMAIndexType preserving) {
+  void compute_anisotropic_fc(vector<CoMMAWeightType> &maxArray,
+                              set<CoMMAIndexType> &anisotropic_fc,
+                              const CoMMAWeightType threshold_anisotropy,
+                              const CoMMAIndexType preserving) {
     // Process of every compliant fine cells (it is a member variable, so it is
     // not passed to the function):
     for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
