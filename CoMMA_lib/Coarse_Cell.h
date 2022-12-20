@@ -66,7 +66,7 @@ class Coarse_Cell {
   }
 
   /** @brief Destructor of the class */
-  ~Coarse_Cell() {};
+  ~Coarse_Cell() = default;
 
   /** @brief Index of the coarse cell (It seems to be unused, but it useful to have) */
   CoMMAIndexType _idx;

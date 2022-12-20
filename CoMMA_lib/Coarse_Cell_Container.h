@@ -63,8 +63,8 @@ class Coarse_Cell_Container {
         _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
         _nb_of_agglomerated_fc(0), _delayed_cc() {}
 
-  /** @brief Destructor*/
-  ~Coarse_Cell_Container() {}
+  /** @brief Destructor */
+  ~Coarse_Cell_Container() = default;
 
   /** @brief map container of the CSR representation of the coarse cells */
   map<CoMMAIndexType,

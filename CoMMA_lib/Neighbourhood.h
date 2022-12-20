@@ -74,7 +74,7 @@ a pair with the same index.
   Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                 const vector<CoMMAWeightType> &weights) :
       _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
-      _candidates() { }
+      _candidates() {}
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates

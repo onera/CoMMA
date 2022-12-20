@@ -270,7 +270,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Anisotropic() {};
+  virtual ~Agglomerator_Anisotropic() = default;
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
@@ -574,7 +574,7 @@ class Agglomerator_Isotropic
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Isotropic() {};
+  virtual ~Agglomerator_Isotropic() = default;
 
   /** @brief The task of the function is to set the parameters of
    * determine the cardinality limits with respect to the parameters passed
@@ -890,7 +890,7 @@ class Agglomerator_Biconnected
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Biconnected() {};
+  virtual ~Agglomerator_Biconnected() = default;
 
   /** @brief Build a Neighbourhood object a return it
    *  @param[in] neighbours Set of neighbours among which seek the candidates
@@ -1151,7 +1151,7 @@ class Agglomerator_Pure_Front
   }
 
   /** @brief Destructor*/
-  ~Agglomerator_Pure_Front() {};
+  virtual ~Agglomerator_Pure_Front() = default;
 
   /** @brief Build a Neighbourhood object a return it
    *  @param[in] neighbours Set of neighbours among which seek the candidates
