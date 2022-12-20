@@ -790,12 +790,9 @@ class Agglomerator_Isotropic
     CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
     CoMMAIndexType arg_max_faces_in_common = neighbours[0];
 
-    // For every fc in the neighbourhood:
-    // we update the new aspect ratio
-    // we verify that fon is a sub member of the dict of seeds
     for (const auto &i_fc : neighbours) {
-      // we test every possible new cells to chose the one that locally
-      // minimizes the Aspect Ratio at the first fine cell of the fon.
+      // we test every possible new cell to chose the one that locally maximizes the
+      // number of shared faces and/or minimizes the Aspect Ratio
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
