@@ -77,12 +77,14 @@ class Graph {
     fill(_visited.begin(), _visited.end(), false);
   }
 
-  ~Graph() {}
+  /** @brief Destructor of the class */
+  virtual ~Graph() = default;
+
   /** @brief Number of nodes in the Graph (it corresponds to the number of cells
    * in the subgraph or the dual graph. */
   CoMMAIndexType _number_of_cells;
 
-  /** @brief helper vector for the DFS*/
+  /** @brief helper vector for the DFS */
   vector<bool> _visited;
 
   /** @brief Vector of row pointer of CRS representation */
@@ -313,7 +315,8 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     }
   }
 
-  ~Subgraph() {}
+  /** @brief Destructor of the class */
+  virtual ~Subgraph() = default;
 
   /** @brief it originates from an isotropic cell.*/
   bool _is_isotropic;
@@ -524,7 +527,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   }
 
   /** @brief Destructor of the class */
-  ~Dual_Graph() {}
+  virtual ~Dual_Graph() = default;
 
   /** @brief Vector telling how many boundary faces each cell has */
   const vector<CoMMAIntType> &_n_bnd_faces;

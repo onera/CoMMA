@@ -226,9 +226,9 @@ a pair with the same index.
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
   Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                            const vector<CoMMAWeightType> &weights) :
+                const vector<CoMMAWeightType> &weights) :
       _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
-      _candidates() { }
+      _candidates() {}
 
   /** @brief Copy constructor */
   Neighbourhood(const Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
@@ -262,8 +262,8 @@ a pair with the same index.
   /** @brief Candidates that should be considered */
   CandidatesContainerType _candidates;
 
-  /** @brief Get candidates that should be consider in the next step of the agglomeration
-   *  @return The candidates
+  /** @brief Extract the indices from a list of index-weight pairs and add them at
+   *   the back of the candidates list
    */
   inline void extract_and_update_candidates(const CoMMASetOfPairType &candidates_w_weights) {
     for (const auto & [idx, w] : candidates_w_weights)
@@ -282,8 +282,8 @@ a pair with the same index.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
-                                                        CoMMAWeightType, CoMMAIntType> {
+class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                                    CoMMAIntType> {
   public:
   /** @brief Type of pair */
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
@@ -299,9 +299,9 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                                     const vector<CoMMAWeightType> &weights) :
+                         const vector<CoMMAWeightType> &weights) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights), _neighs_w_weights() {}
+        s_neighbours_of_seed, weights) {}
 
   /** @brief Copy constructor */
   Neighbourhood_Extended(const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
@@ -312,39 +312,28 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
    * @param[in] new_neighbours vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
-    this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    if (!this->_neighs_w_weights.empty()) {
-      // There is erase_if for sets in C++20
-      //erase_if(_neighs_w_weights, [&new_fc](const CoMMAPairType &p){
-      //                              return p.first == new_fc;});
-      auto it = find_if(this->_neighs_w_weights.begin(), this->_neighs_w_weights.end(),
-                     CoMMAPairFindFirstBasedType(new_fc));
-                     //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      assert(it != _neighs_w_weights.end()); // It must be there!
-      this->_neighs_w_weights.erase(it);
-    }
+    auto new_fc_ptr = find(this->_candidates.begin(), this->_candidates.end(), new_fc);
+    if (new_fc_ptr != this->_candidates.end())
+      this->_candidates.erase(new_fc_ptr);
 
     // Compute the set of direct neighbours allowed by original neighbourhood-order
+    CoMMASetOfPairType neighs;
     for (const CoMMAIndexType& i_fc : new_neighbours) {
-      if ( (find_if(_neighs_w_weights.begin(), _neighs_w_weights.end(),
-                   CoMMAPairFindFirstBasedType(i_fc))
-                   //[&i_fc](const CoMMAPairType &p){return p.first == i_fc;})
-            == _neighs_w_weights.end()) &&
+      if ( (find(this->_candidates.begin(), this->_candidates.end(), i_fc)
+            == this->_candidates.end()) &&
            (this->_s_fc.count(i_fc) == 0) &&
            (this->_s_neighbours_of_seed.count(i_fc) > 0) ) {
         // If not yet in the FON, not yet in the coarse cell and among the
         // allowed neighbours, insert
-        this->_neighs_w_weights.emplace(i_fc, this->_weights[i_fc]);
+        neighs.emplace(i_fc, this->_weights[i_fc]);
       }
     }
-    this->extract_and_update_candidates(this->_neighs_w_weights);
+    // Just add new candidates at the back. This will leave candidates closer to the
+    // original seed at the top, hence giving them a slightly higher priority
+    this->extract_and_update_candidates(neighs);
   }
-
-  protected:
-  /** @brief Current neighbours with their weights */
-  CoMMASetOfPairType _neighs_w_weights;
 
 };
 
@@ -359,8 +348,8 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
-                                                        CoMMAWeightType, CoMMAIntType> {
+class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                                      CoMMAIntType> {
   public:
   /** @brief Type of pair */
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
@@ -376,8 +365,8 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Pure_Front(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                                       const vector<CoMMAWeightType> &weights,
-                                       CoMMAIntType dimension) :
+                           const vector<CoMMAWeightType> &weights,
+                           CoMMAIntType dimension) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _q_neighs_w_weights(), _dimension(dimension) {}
 
