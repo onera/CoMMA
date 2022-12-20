@@ -629,8 +629,7 @@ class Agglomerator_Isotropic
    * Agglomerator_Isotropic.
    * We add the override key as a guard to possible mistakes:
    * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
-   * The function must be called later by the derived class
-   * Agglomerator_Biconnected and Agglomerator Triconnected in order to
+   * The function must be called later by the derived class in order to
    * specialize the implementation of the choose optimal_cc. For further
    * information about the structure, have a look at :
    * http://www.cplusplus.com/forum/general/31851/
@@ -657,8 +656,8 @@ class Agglomerator_Isotropic
       assert(seed.has_value());
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm
-      // in the children class (triconnected or biconnected)
-      unordered_set<CoMMAIndexType> set_current_cc =
+      // in the children class
+      const unordered_set<CoMMAIndexType> set_current_cc =
           choose_optimal_cc_and_update_seed_pool(seed.value(), compactness,
                                                  priority_weights);
       // 3)  Creation of cc:
@@ -666,7 +665,7 @@ class Agglomerator_Isotropic
       // Check if delay the agglomeration based on compactness written during
       // the optimal cc choice process. Remember the compactness is the minimum
       // degree in the coarse cell.
-      // bool is_creation_delayed = compactness < _dimension;
+      //bool is_creation_delayed = compactness < this->_dimension;
       bool is_creation_delayed = false;
       this->_cc_graph->cc_create_a_cc(set_current_cc, is_anistropic,
                                       is_creation_delayed);
@@ -675,6 +674,7 @@ class Agglomerator_Isotropic
     // delayed ones
     // We proceed in creating the delayed ones
     this->_cc_graph->cc_create_all_delayed_cc();
+    // Correct if necessary
     if (correction_steps) {
       this->_cc_graph->correct(this->_max_card);
     }

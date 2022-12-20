@@ -72,7 +72,7 @@ a pair with the same index.
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
   Neighbourhood(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                            const vector<CoMMAWeightType> &weights) :
+                const vector<CoMMAWeightType> &weights) :
       _s_neighbours_of_seed(move(s_neighbours_of_seed)), _weights(weights), _s_fc(),
       _candidates() { }
 
@@ -125,8 +125,8 @@ a pair with the same index.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
-                                                        CoMMAWeightType, CoMMAIntType> {
+class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                                    CoMMAIntType> {
   public:
   /** @brief Type of pair */
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
@@ -142,7 +142,7 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                                     const vector<CoMMAWeightType> &weights) :
+                         const vector<CoMMAWeightType> &weights) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights) {}
 
@@ -170,6 +170,8 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
         neighs.emplace(i_fc, this->_weights[i_fc]);
       }
     }
+    // Just add new candidates at the back. This will leave candidates closer to the
+    // original seed at the top, hence giving them a slightly higher priority
     this->extract_and_update_candidates(neighs);
   }
 
@@ -186,8 +188,8 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType,
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
-class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
-                                                        CoMMAWeightType, CoMMAIntType> {
+class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
+                                                      CoMMAIntType> {
   public:
   /** @brief Type of pair */
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
@@ -203,8 +205,8 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType,
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Pure_Front(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-                                       const vector<CoMMAWeightType> &weights,
-                                       CoMMAIntType dimension) :
+                           const vector<CoMMAWeightType> &weights,
+                           CoMMAIntType dimension) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights), _q_neighs_w_weights(), _dimension(dimension) {}
 
