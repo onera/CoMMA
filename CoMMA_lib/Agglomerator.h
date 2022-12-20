@@ -991,7 +991,8 @@ class Agglomerator_Biconnected
                          unordered_map<CoMMAIndexType, CoMMAIntType>>>
           dict_cc_in_creation;
       CoMMAIntType min_external_faces = numeric_limits<CoMMAIntType>::max();
-      CoMMAIntType arg_min_external_faces = min_size;
+      CoMMAIntType max_compact = 0;
+      CoMMAIntType arg_min_card = min_size;
       // Here we define the exact dimension of the coarse cell as the min
       // between the max cardinality given as an input (remember the constructor
       // choice in case of -1) and the dictionary of the boundary cells, it
@@ -1037,6 +1038,8 @@ class Agglomerator_Biconnected
         // we increase the cc
         size_current_cc++;
         tmp_cc.insert(argmin_ar);
+        const CoMMAIntType cur_compact =
+          this->_fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
 
         // if the constructed cc is eligible, i.e. its size is inside the
         // permitted range we store it inside dict_cc_in_creation This choice is
@@ -1045,12 +1048,18 @@ class Agglomerator_Biconnected
         // satisfied it means we have an eligible cell
         if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
 
-          if ( (number_of_external_faces_current_cc < min_external_faces) ||
-                ( number_of_external_faces_current_cc == min_external_faces &&
-                  arg_min_external_faces != this->_goal_card) ) {
-
+          if ( cur_compact > max_compact ) {
+            max_compact = cur_compact;
             min_external_faces = number_of_external_faces_current_cc;
-            arg_min_external_faces = size_current_cc;
+            arg_min_card = size_current_cc;
+
+          } else if (cur_compact == max_compact) {
+            if ( (number_of_external_faces_current_cc < min_external_faces) ||
+                  ( number_of_external_faces_current_cc == min_external_faces &&
+                    arg_min_card != this->_goal_card) ) {
+              min_external_faces = number_of_external_faces_current_cc;
+              arg_min_card = size_current_cc;
+            }
           }
 
           // We update the dictionary of eligible coarse cells
@@ -1073,12 +1082,12 @@ class Agglomerator_Biconnected
       }
 
       // Selecting best CC to return
-      s_current_cc = move(dict_cc_in_creation[arg_min_external_faces].first);
+      s_current_cc = move(dict_cc_in_creation[arg_min_card].first);
 
       // If we do not chose the biggest cc, we put the useless fc back to the
       // pool
-      for (auto i_s = arg_min_external_faces + 1; i_s < max_ind + 1; i_s++) {
-        // for all size of Cell from arg_min_external_faces+1 to  min(max_card,
+      for (auto i_s = arg_min_card + 1; i_s < max_ind + 1; i_s++) {
+        // for all size of Cell from arg_min_card+1 to  min(max_card,
         // len(d_n_of_seed) + 1) + 1
         // d_n_of_seed.
         for (auto iKV : dict_cc_in_creation[i_s].second) {
@@ -1109,7 +1118,7 @@ class Agglomerator_Biconnected
       if (!neighs_not_found.empty())
         this->_seeds_pool->order_new_seeds_and_update(neighs_not_found);
 
-      assert(arg_min_external_faces == static_cast<CoMMAIntType>(s_current_cc.size()));
+      assert(arg_min_card == static_cast<CoMMAIntType>(s_current_cc.size()));
 
       // Computes the actual compactness of the coarse cell
       compactness =
