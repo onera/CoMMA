@@ -244,7 +244,7 @@ class Seeds_Pool {
    * @warning new_seeds is supposed to be already ordered by the priority weight,
    * therefore no check will be performed
    **/
-  inline void update(const vector<CoMMAIndexT> &new_seeds) {
+  inline void update(const vector<CoMMAIndexType> &new_seeds) {
     for (const auto &s : new_seeds) {
       auto &q = _l_of_seeds[_n_bnd_faces[s]];
       if (find(q.begin(), q.end(), s) == q.end())
@@ -259,7 +259,7 @@ class Seeds_Pool {
    **/
   inline void order_new_seeds_and_update(
       const unordered_set<CoMMAIndexType> &new_seeds) {
-    unordered_map<CoMMAIntT, CoMMASetOfPairType> new_seeds_by_bnd(4);
+    unordered_map<CoMMAIntType, CoMMASetOfPairType> new_seeds_by_bnd(4);
     for (const auto s : new_seeds) {
       new_seeds_by_bnd[_n_bnd_faces[s]].emplace(s, _priority_weights[s]);
     }

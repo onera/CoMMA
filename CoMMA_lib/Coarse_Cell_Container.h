@@ -239,7 +239,7 @@ class Coarse_Cell_Container {
       const CoMMAIntType max_card) const {
     CoMMAUnused(max_card);
     unordered_map<CoMMAIndexType, CoMMAIntType> card{};
-    unordered_map<CoMMAIndexType, CoMMAIntT> shared_faces{};
+    unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
     unordered_map<CoMMAIndexType, bool> compact_increase{};
     card.reserve(neigh.size());
     shared_faces.reserve(neigh.size());
