@@ -29,28 +29,28 @@ seed_ordering_types = [
 # Input-related parameters
 # Format is one of those accepted by meshio or None
 # e.g., input_mesh, input_format = "3D_CRM.vtu", None
-input_mesh, input_format = "./2D_raebis.dat", None
+input_mesh, input_format = "../meshes/naca2d_structured_ansys.msh", "ansys"
 ##
 dimension = 2
 ##
-anisotropic = True
+anisotropic = False
 ## CoMMA parameters
 isFirstAgglomeration = True
 if dimension == 3:
     minCard, goalCard, maxCard = 8, 8, 8
 else:
-    minCard, goalCard, maxCard = 4, 4, 6
+    minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 4.
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
-seed_order = 2 # 0 = Boundary priority, 1 = Neighbourhood priority,
+seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
                # 2 = Neighbourhood priority with point initialization
 
 # Output-related parameters
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
 # numbers from 1 to the given value are used (it makes it easier to distinguish the
 # coarse cells in Paraview
-renumber_coarse = -1 # 10 #
+renumber_coarse = 10 # -1 #
 #########
 
 if not os.path.exists(input_mesh):
