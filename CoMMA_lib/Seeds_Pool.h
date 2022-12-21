@@ -117,7 +117,7 @@ class Seeds_Pool {
   };
 
   /** @brief Destructor */
-  ~Seeds_Pool() {};
+  virtual ~Seeds_Pool() = default;
 
   /** @brief Spoil a queue looking for an not-yet-agglomerated seed
    *  @param[in] is_fc_agglomerated Vector of boolean telling whether a face has
