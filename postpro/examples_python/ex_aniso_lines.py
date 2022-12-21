@@ -17,6 +17,12 @@ isotropic_agglo_types = [
         'Pure front advancing'
         ]
 
+seed_ordering_types = [
+        'Boundary priority',
+        'Neighbourhood priority',
+        'Neighbourhood priority with point initialization'
+        ]
+
 # USER PARAMETERS
 #################
 # Input-related parameters
@@ -28,6 +34,8 @@ minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 1.5
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
+seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
+               # 2 = Neighbourhood priority with point initialization
 
 # Output-related parameters
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
@@ -49,6 +57,7 @@ print(f' * {maxCard=}')
 print(f' * {correction=}')
 print(f' * {threshold_anisotropy=}')
 print(f' * isotropic_agglo={isotropic_agglo_types[isotropic_agglo]}')
+print(f' * seed_ordering={seed_ordering_types[seed_order]}')
 print( ' [Output]')
 renum = renumber_coarse > 1
 print(f' * Coarse cell renumbering={renum}' + (f" (from 0 to {renumber_coarse-1})" if renum else ""))
@@ -107,7 +116,7 @@ fc_to_cc_res,alines_Idx,alines = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                               mesh.centers.astype(CoMMAWeight, copy = False), weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
-                              anisotropic, threshold_anisotropy,
+                              anisotropic, threshold_anisotropy, seed_order,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard, isotropic_agglo)
 print('OK')
