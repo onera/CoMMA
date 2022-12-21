@@ -795,9 +795,9 @@ class Agglomerator_Isotropic
       // number of shared faces and/or minimizes the Aspect Ratio
       // Compute features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
-      CoMMAWeightT new_ar = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightT new_ar_diam = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightT new_ar_vol = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar_diam = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar_vol = numeric_limits<CoMMAWeightType>::min();
       this->compute_next_cc_features(i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
           // out
           number_faces_in_common, new_ar, new_ar_diam, new_ar_vol);

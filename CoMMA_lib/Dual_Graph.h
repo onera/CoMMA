@@ -554,14 +554,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] idx_f Index of the cell
    *  @return the number of boundary faces
    */
-  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexT idx_c) const {
+  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c];
   }
   /** @brief Whether a cell is on the boundary
    *  @param[in] idx_f Index of the cell
    *  @return Whether a cell is on the boundary
    */
-  inline bool is_on_boundary(const CoMMAIndexT idx_c) const {
+  inline bool is_on_boundary(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c] > 0;
   }
 
@@ -699,7 +699,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     CoMMAIntType i_order = 1;
 
     while ((i_order < nb_of_order_of_neighbourhood + 1) ||
-           static_cast<CoMMAIntT>(d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
+           static_cast<CoMMAIntType>(d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
 
       unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 

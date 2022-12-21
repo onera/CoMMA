@@ -142,7 +142,7 @@ void agglomerate_one_level(
   // SANITY CHECKS
   //======================================
   check_int_type(CoMMAIndexType, "first template argument");
-  check_int_type(CoMMAIntT, "third template argument");
+  check_int_type(CoMMAIntType, "third template argument");
   if ( !(dimension == 2 || dimension == 3) )
     throw invalid_argument( "CoMMA - Error: dimension must be 2 or 3" );
   if ( min_card <= 1 || goal_card <= 1 || max_card <= 1 )
