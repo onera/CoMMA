@@ -26,7 +26,7 @@ using namespace std;
 
 #define equal_up_to(a,b,eps) (fabs(a - b) < eps)
 
-using SeedsPoolT = Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
+using SeedsPoolT = Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 using DualGraphT = Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 using CCContainerT = Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
@@ -267,7 +267,7 @@ SCENARIO("Subgraph", "[Subgraph]") {
 SCENARIO("Test of the seed pool", "[Seed_Pool]") {
   GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the cell numbering") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
+    Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
     for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
       switch (Data.n_bnd_faces[i]) {
@@ -424,7 +424,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
-    Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, w);
+    Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, w);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
     for (CoMMAIndexT i = 0; i < Data.nb_fc; ++i) {
       switch (Data.n_bnd_faces[i]) {
