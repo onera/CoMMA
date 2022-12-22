@@ -71,10 +71,13 @@ using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMM
  * considered as anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
  * Possible values:
- * 0 : The number of boundary faces has highest priority
- * 1 : The neighbourhood has highest priority (neighbours of coarse cells have
- *     priority)
- * 2 : As above, and initialize with one point only then let evolve
+ *  0  : The number of boundary faces has highest priority
+ *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
+ *       priority)
+ *  10 : The number of boundary faces has highest priority, and initialize with one
+ *       point only then let evolve
+ *  11 : The neighbourhood has highest priority, and initialize with one point only
+ *       then let evolve
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
  * belongs to after agglomeration
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
@@ -172,12 +175,17 @@ void agglomerate_one_level(
     case CoMMASeedsPoolT::BOUNDARY_PRIORITY:
       seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<CoMMAIndexType, CoMMAWeightType,
                                                             CoMMAIntType>>(
-                              fixed_n_bnd_faces, priority_weights);
+                              fixed_n_bnd_faces, priority_weights, false);
       break;
     case CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY:
       seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<CoMMAIndexType, CoMMAWeightType,
                                                                  CoMMAIntType>>(
                               fixed_n_bnd_faces, priority_weights, false);
+      break;
+    case CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT:
+      seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<CoMMAIndexType, CoMMAWeightType,
+                                                            CoMMAIntType>>(
+                              fixed_n_bnd_faces, priority_weights, true);
       break;
     case CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT:
       seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<CoMMAIndexType, CoMMAWeightType,

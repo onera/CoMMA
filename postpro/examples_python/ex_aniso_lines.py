@@ -17,11 +17,12 @@ isotropic_agglo_types = [
         'Pure front advancing'
         ]
 
-seed_ordering_types = [
-        'Boundary priority',
-        'Neighbourhood priority',
-        'Neighbourhood priority with point initialization'
-        ]
+seed_ordering_types = {
+        0:  'Boundary priority',
+        1:  'Neighbourhood priority',
+        10: 'Boundary priority with point initialization',
+        11: 'Neighbourhood priority with point initialization'
+        }
 
 # USER PARAMETERS
 #################
@@ -34,8 +35,9 @@ minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 1.5
 isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
-seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
-               # 2 = Neighbourhood priority with point initialization
+seed_order = 0 # 0  = Boundary priority, 1 = Neighbourhood priority,
+               # 10 = Boundary priority with point initialization
+               # 11 = Neighbourhood priority with point initialization
 
 # Output-related parameters
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only

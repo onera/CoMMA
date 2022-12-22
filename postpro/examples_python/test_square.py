@@ -39,7 +39,8 @@ corrections = True
 threshold_anisotropy = 4.
 iso_agglo_type = 0
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
-               # 2 = Neighbourhood priority with point initialization
+               # 10 = Boundary priority with point initialization
+               # 11 = Neighbourhood priority with point initialization
 
 print("CoMMA call")
 #isotropic

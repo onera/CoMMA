@@ -291,8 +291,10 @@ class DualGPy_correction {
     DualGPy_correction() {}
 };
 
-/** @brief Square mesh of quads with a hole inside. 3 layers of cells */
-class DualGPy_hole {
+/** @brief Square mesh of quads with a hole inside. 3 layers of cells. Two corners are artificially created. See the
+ * drawing
+ **/
+class DualGPy_hole_w_corners {
     public:
     CoMMAIndexT nb_fc{14};
     vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 3, 6, 9, 12, 16, 20, 24, 28, 31, 34, 37, 40, 42, 44};
@@ -307,7 +309,26 @@ class DualGPy_hole {
     vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     CoMMAIntT dim = 2;
 
-    DualGPy_hole() {}
+    DualGPy_hole_w_corners() {}
+};
+
+/** @brief Square mesh of quads with a hole inside. 3 layers of cells. Similar to the one above but without corners */
+class DualGPy_hole_no_corners {
+    public:
+    CoMMAIndexT nb_fc{12};
+    vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 3, 6, 9, 12, 16, 20, 24, 28, 31, 34, 37, 40};
+    vector<CoMMAIndexT> adjMatrix_col_ind = {3, 1, 4, 0, 2, 5, 1, 3, 6, 0, 2, 7, 0, 7, 5, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3, 4, 6, 11, 4, 11, 9, 5, 8, 10, 6, 9, 11, 7, 8, 10};
+    vector<CoMMAIntT> n_bnd_faces = {1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
+    vector<CoMMAWeightT> adjMatrix_areaValues = {1.4142135623730951, 1.4142135623730951, 6.0, 1.4142135623730951, 1.4142135623730951, 6.0, 1.4142135623730951, 1.4142135623730951, 6.0, 1.4142135623730951, 1.4142135623730951, 6.0, 6.0, 1.4142135623730951, 1.4142135623730951, 4.0, 6.0, 1.4142135623730951, 1.4142135623730951, 4.0, 6.0, 1.4142135623730951, 1.4142135623730951, 4.0, 6.0, 1.4142135623730951, 1.4142135623730951, 4.0, 4.0, 1.4142135623730951, 1.4142135623730951, 4.0, 1.4142135623730951, 1.4142135623730951, 4.0, 1.4142135623730951, 1.4142135623730951, 4.0, 1.4142135623730951, 1.4142135623730951};
+    vector<CoMMAWeightT> volumes = {7.00, 7.00, 7.00, 7.00, 5.00, 5.00, 5.00, 5.00, 3.00, 3.00, 3.00, 3.00};
+    vector<vector<CoMMAWeightT>> centers = {{3.5, 0.0}, {0.0, 3.5}, {-3.5, 0.0}, {0.0, -3.5}, {2.5, 0.0}, {0.0, 2.5}, {-2.5, 0.0},
+        {0.0, -2.5}, {1.5, 0.0}, {0.0, 1.5}, {-1.5, 0.0}, {0.0, -1.5}};
+    vector<CoMMAWeightT> weights = {11., 10., 9., 8., 7., 6., 5., 4., 3., 2., 1., 0.};
+    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    CoMMAIntT dim = 2;
+
+    DualGPy_hole_no_corners() {}
 };
 
 #endif

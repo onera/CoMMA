@@ -19,7 +19,7 @@ int main(int argv, char** argc) {
   // Construction of the Dual Graph element
 
   TRACE_EVENT_BEGIN("setup", "Seeds_Pool");
-  Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights);
+  Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights, false);
   TRACE_EVENT_END("setup");
   TRACE_EVENT_BEGIN("setup", "Dual_Graph");
   Dual_Graph<TestIndexT, TestWeightT, TestIntT> fc_graph =
