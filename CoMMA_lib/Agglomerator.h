@@ -296,7 +296,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // the other one are stored only for visualization purpose)
     if (this->_v_lines[0].empty()) {
       // The anisotropic lines are only computed on the original (finest) mesh.
-      this->compute_anisotropic_line();  // finest level!!!
+      this->compute_anisotropic_lines();  // finest level!!!
     }
 
     // In case the if is not realized, this is not the first generation of a
@@ -418,7 +418,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * 1) Look for anisotropic cells (via the dual graph)
    * 2) Build anisotropic lines
    */
-  void compute_anisotropic_line() {
+  void compute_anisotropic_lines() {
     set<CoMMAIndexType> anisotropic_fc;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
