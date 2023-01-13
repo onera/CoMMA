@@ -180,14 +180,14 @@ class Seeds_Pool {
    * @warning new_seeds is supposed to be already ordered by the priority weight,
    * therefore no check will be performed
    **/
-  virtual inline void update(const vector<CoMMAIndexType> &new_seeds) = 0;
+  virtual void update(const vector<CoMMAIndexType> &new_seeds) = 0;
 
   /** @brief Add the provided seeds to a seeds pool queue according to the number of
    * boundary faces. The seeds will be ordered considering their priority weights
    * before being added to the queue
    * @param[in] new_seeds Vector of seeds to add
    **/
-  virtual inline void order_new_seeds_and_update(const unordered_set<CoMMAIndexType> &new_seeds) = 0;
+  virtual void order_new_seeds_and_update(const unordered_set<CoMMAIndexType> &new_seeds) = 0;
 
   /** @brief Build the weight-ordered queue of seed for a given target level.
    * A set of (index, weight) pair with special comparator is used to enforced order, then
