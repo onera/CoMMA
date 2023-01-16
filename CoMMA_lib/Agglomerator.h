@@ -2,25 +2,24 @@
 #define COMMA_PROJECT_AGGLOMERATOR_H
 
 /*
- *  * CoMMA
-    * Copyright © 2023 ONERA
-    *
-    * Authors and Architects : Alberto Remigi and Nicolas Lantos
-    *
-    * Contributors : Riccardo Milani
-    *
-    * This program is free software: you can redistribute it and/or modify
-    * it under the terms of the GNU General Public License as published by
-    * the Free Software Foundation, either version 3 of the License, or
-    * (at your option) any later version.
-    *
-    * This program is distributed in the hope that it will be useful,
-    * but WITHOUT ANY WARRANTY; without even the implied warranty of
-    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    * GNU General Public License for more details.
-    *
-    * You should have received a copy of the GNU General Public License
-    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * CoMMA
+ *
+ * Copyright © 2023 ONERA
+ *
+ * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <cmath>
@@ -39,14 +38,6 @@
 #include "Util.h"
 #include "Neighbourhood.h"
 
-//"""
-// Main Class of the CoMMA library, containing the methods to operate the
-// agglomeration
-// process. The constructor require the following parameters:
-//:param Dual_Graph: the struct Dual Graph
-//:param dimension: dimension of the problem
-//"""
-
 // How to pass parameters from base class
 // https://stackoverflow.com/questions/9692675/c-constructor-where-parameters-are-used-by-base-class-constructor
 // https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-base-class-constructor
@@ -55,7 +46,6 @@
 
 /** @brief A class responsible to do the interface between the different kinds
  * of agglomerator
- *  @author Alberto Remigi and Nicolas Lantos
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -482,7 +472,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         else if (candidates.size() > 1) {
           // we cycle on candidates
           /** @todo Not properly efficient. We risk to do twice the operations
-           * (we overwrite the seed). This is not proper */
+        * (we overwrite the seed). This is not proper */
           for (auto &element : candidates) {
             // if has been treated ==> we check the next candidate
             if (has_been_treated[element]) {

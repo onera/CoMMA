@@ -2,25 +2,24 @@
 #define COMMA_PROJECT_DUAL_GRAPH_H
 
 /*
- *  * CoMMA
-    * Copyright © 2023 ONERA
-    *
-    * Authors and Architects : Alberto Remigi and Nicolas Lantos
-    *
-    * Contributors : Riccardo Milani
-    *
-    * This program is free software: you can redistribute it and/or modify
-    * it under the terms of the GNU General Public License as published by
-    * the Free Software Foundation, either version 3 of the License, or
-    * (at your option) any later version.
-    *
-    * This program is distributed in the hope that it will be useful,
-    * but WITHOUT ANY WARRANTY; without even the implied warranty of
-    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    * GNU General Public License for more details.
-    *
-    * You should have received a copy of the GNU General Public License
-    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * CoMMA
+ *
+ * Copyright © 2023 ONERA
+ *
+ * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <algorithm>
@@ -428,7 +427,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
           // for each found i decrease the successive of 1 for the offset
           for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
                it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
-            *it_bis = *it_bis - 1;
+         *it_bis = *it_bis - 1;
           }
         }
       }
@@ -446,7 +445,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // for each found i decrease the successive of 1 for the offset
       for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
            it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
-        *it_bis = *it_bis - 1;
+     *it_bis = *it_bis - 1;
       }
     }
     // Get rid of the col element
