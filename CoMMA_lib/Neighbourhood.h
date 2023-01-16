@@ -296,7 +296,6 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightT
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
-   *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Extended(const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
                          const vector<CoMMAWeightType> &weights) :

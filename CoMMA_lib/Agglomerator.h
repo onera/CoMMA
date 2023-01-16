@@ -193,6 +193,8 @@ class Agglomerator_Anisotropic
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
    * considered as anisotropic
+   *  @param[in] is_first_agglomeration Whether the current is the first agglomeration
+   * meaning that anisotropic lines should be built
    *  @param[in] dimension the dimension of the problem
    */
   Agglomerator_Anisotropic(
@@ -546,10 +548,13 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Agglomerator_Isotropic
     : public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
  public:
+  /** @brief NeighbourhoodCreator type (base class) */
   using NeighbourhoodCreatorBaseType = NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType,
                                                             CoMMAIntType>;
+  /** @brief NeighbourhoodExtendedCreator type (derived class) */
   using NeighbourhoodCreatorExtType = NeighbourhoodExtendedCreator<CoMMAIndexType, CoMMAWeightType,
                                                                    CoMMAIntType>;
+  /** @brief NeighbourhoodPureFrontCreator type (base class) */
   using NeighbourhoodCreatorPFType = NeighbourhoodPureFrontCreator<CoMMAIndexType, CoMMAWeightType,
                                                                    CoMMAIntType>;
   /** @brief Number of iterations allowed for the algorithm choosing which fine cell
@@ -687,7 +692,7 @@ class Agglomerator_Isotropic
   /** @brief Approximate the value of a boundary face using the known internal
    * faces. It uses a (geometric) average, so the result is correct only if the cell
    * is a regular polygon
-   * @param int_face Vector of the surfaces of the internal faces
+   * @param int_faces Vector of the surfaces of the internal faces
    * @return An approximation of the surface of a boundary face
    */
   inline CoMMAWeightType estimate_boundary_face(
@@ -1026,7 +1031,7 @@ class Agglomerator_Biconnected
    *  @param[in] is_order_primary If true, the neighbourhood order prevails on other
    *  criteria
    *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse cell
-   *  @param[in] vol Volume of the current coarse cell
+   *  @param[in] vol_cc Volume of the current coarse cell
    *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
    *  agglomerated in the coarse cell
    *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine cell
@@ -1164,7 +1169,7 @@ class Agglomerator_Iterative
    *  @param[in] is_order_primary If true, the neighbourhood order prevails on other
    *  criteria
    *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse cell
-   *  @param[in] vol Volume of the current coarse cell
+   *  @param[in] vol_cc Volume of the current coarse cell
    *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
    *  agglomerated in the coarse cell
    *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine cell

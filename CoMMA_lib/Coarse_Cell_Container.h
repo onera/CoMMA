@@ -230,7 +230,7 @@ class Coarse_Cell_Container {
    * with the fine cell. Otherwise, we look at the cardinality and choose the coarse
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
-   * @param[in] cc Neighbouring coarse cells
+   * @param[in] neigh Neighbouring coarse cells
    * @param[in] max_card Maximum cardinality allowed
    * @return The index of the chosen coarse cell
    */

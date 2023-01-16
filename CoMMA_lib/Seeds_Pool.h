@@ -151,10 +151,10 @@ class Seeds_Pool {
    *  @param[out] queue The queue to spoil
    *  @return An optional which contains the new seed if found
    */
-  inline optional<CoMMAIndexType> spoil_queue(const vector<bool> &a_is_fc_agglomerated,
+  inline optional<CoMMAIndexType> spoil_queue(const vector<bool> &is_fc_agglomerated,
                                               CoMMAQueueType &queue) {
 
-    for (; !queue.empty() && a_is_fc_agglomerated[queue.front()];
+    for (; !queue.empty() && is_fc_agglomerated[queue.front()];
          queue.pop_front()) {
         // If there still is something and it's already agglomerated, then keep on searching
         // [Intentionally leaving this empty]

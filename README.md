@@ -8,8 +8,8 @@ CoMMA is a Geometric Agglomerator with the following characteristics:
 - Optimization of the shape of CC w.r.t their aspect ratio;
 - Connectivity of CC;
 - Detection and treatment of anisotropic regions;
-- Isotropic agglomeration with structured-like treatment of structured-
-like regions;
+- Isotropic agglomeration with structured-like treatment of structured-like
+regions.
 
 ## Building the Library
 

@@ -58,9 +58,10 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Graph {
  public:
   /** @brief Constructor of the class
-   *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
-   *  @param[in] m_crs_col_ind the column index of the CRS representation
-   *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
+   *  @param[in] nb_c number of cells
+   *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
+   *  @param[in] m_crs_col_ind The column index of the CRS representation
+   *  @param[in] m_crs_values The weight of the CRS representation (in CoMMA case
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
@@ -284,15 +285,15 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Constructor of the class
    *  @param[in] nb_c Cardinality of the CC, that is the number of fine cells
    * composing the CC
-   *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
-   *  @param[in] m_crs_col_ind the column index of the CRS representation
-   *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
+   *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
+   *  @param[in] m_crs_col_ind The column index of the CRS representation
+   *  @param[in] m_crs_values The weight of the CRS representation (in CoMMA case
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    *  @param[in] mapping_l_to_g Mapping between the local (to the CC) numbering to
    * global numbering
-   *  @param[in] is_isotrppic Whether the cell is isotropic
+   *  @param[in] is_isotropic Whether the cell is isotropic
    */
   Subgraph(const CoMMAIndexType &nb_c,
            const vector<CoMMAIndexType> &m_crs_row_ptr,
@@ -492,16 +493,17 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
  public:
   /** @brief Constructor of the class
-   *  @param[in] m_crs_row_ptr the row pointer of the CRS representation
-   *  @param[in] m_crs_col_ind the column index of the CRS representation
-   *  @param[in] m_crs_value the weight of the CRS representation (in CoMMA case
+   *  @param[in] nb_c Number of cells
+   *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
+   *  @param[in] m_crs_col_ind The column index of the CRS representation
+   *  @param[in] m_crs_values The weight of the CRS representation (in CoMMA case
    * will be the area of the faces that in the graph representation are the edges
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    *  @param[in] centers Cell centers
    *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
    *  @param[in] dimension Dimensionality of the problem, 2- or 3D
-   *  @param[in] s_anisotropic_compliant_fc set of compliant fc cells (in the
+   *  @param[in] anisotropic_compliant_fc Set of compliant fc cells (in the
    * most of the case all)
    */
   Dual_Graph(const CoMMAIndexType &nb_c,
@@ -552,14 +554,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
 
   /** @brief Return how many boundary faces a certain cell has
-   *  @param[in] idx_f Index of the cell
+   *  @param[in] idx_c Index of the cell
    *  @return the number of boundary faces
    */
   inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c];
   }
   /** @brief Whether a cell is on the boundary
-   *  @param[in] idx_f Index of the cell
+   *  @param[in] idx_c Index of the cell
    *  @return Whether a cell is on the boundary
    */
   inline bool is_on_boundary(const CoMMAIndexType idx_c) const {
@@ -647,11 +649,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   inline CoMMAIntType get_nb_cells() const { return this->_number_of_cells; }
 
   /** @brief Get the fine cells neighbours of a coarse cell
-  *   @param[in] s_seeds set of seeds for which the neighbourhood should be
+  *   @param[in] s_seeds Set of seeds for which the neighbourhood should be
   * computed. Generally they are the fine cells composing the coarse cell for
   * which we are trying to compute the neighbourhood.
-  *   @param[in] max_card maximum cardinality
-  *   @param[in] is_fc_agglomerated_tmp vector reporting the already
+  *   @param[in] is_fc_agglomerated_tmp Vector reporting the already
   * agglomerated cell, useful in the algorithm
   *   @return The set of neighbours
   */

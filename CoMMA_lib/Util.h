@@ -58,13 +58,16 @@ inline CoMMAWeightType euclidean_distance(const vector<CoMMAWeightType> a,
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
  * 'less than' operator for the second elements and 'greater than' for the first ones.
  *  @tparam CoMMAPairType type of pair
- *  @param[in] p First pair
- *  @param[in] q Second pair
- *  @return true if p.second < q.second or (p.second == q.second and p.first > q.first);
- * false otherwise
  */
 template<class CoMMAPairType>
 struct CustomPairLessFunctor {
+  /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
+   * 'less than' operator for the second elements and 'greater than' for the first ones.
+   *  @param[in] p First pair
+   *  @param[in] q Second pair
+   *  @return true if p.second < q.second or (p.second == q.second and p.first > q.first);
+   * false otherwise
+   */
   inline bool operator() (CoMMAPairType p, CoMMAPairType q) const {
     if      (p.second < q.second)   return true;
     else if (p.second > q.second)   return false;
@@ -75,13 +78,16 @@ struct CustomPairLessFunctor {
 /** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
  * 'greater than' operator for the second elements and 'less than' for the first ones.
  *  @tparam CoMMAPairType type of pair
- *  @param[in] p First pair
- *  @param[in] q Second pair
- *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
- * false otherwise
  */
 template<typename CoMMAPairType>
 struct CustomPairGreaterFunctor {
+  /** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
+   * 'greater than' operator for the second elements and 'less than' for the first ones.
+   *  @param[in] p First pair
+   *  @param[in] q Second pair
+   *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
+   * false otherwise
+   */
   inline bool operator() (CoMMAPairType p, CoMMAPairType q) const {
     // I tried this: return !CustomPairLessFunctor<CoMMAPairType>()(p,q);
     // but it didn't work well for equality
