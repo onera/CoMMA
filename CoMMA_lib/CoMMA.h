@@ -40,10 +40,6 @@
   static_assert(numeric_limits<intT>::is_integer, \
       "CoMMA works with integer types, but " #intT " (" label ") is not")
 
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-using IsotropicPtr = std::unique_ptr<Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
-
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
  * of the agglomerated cells fc2cc.
@@ -143,7 +139,11 @@ void agglomerate_one_level(
   //======================================
   using SeedsPoolType = Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   using DualGraphType = Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
-  using CCContainerType = Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  using CCContainerType = Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
+                                                CoMMAIntType>;
+  using IsotropicPtr = std::unique_ptr<
+                              Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType,
+                                                     CoMMAIntType>>;
 
   // SANITY CHECKS
   //======================================
@@ -245,7 +245,7 @@ void agglomerate_one_level(
   // AGGLOMERATION OF ISOTROPIC CELLS
   //======================================
   // We define here the type of Agglomerator
-  IsotropicPtr<CoMMAIndexType, CoMMAWeightType,CoMMAIntType> agg = nullptr;
+  IsotropicPtr agg = nullptr;
   // TODO: maybe pass to a switch when another agglomerator will be implemented
   if (fc_choice_iter > 1){
     agg = make_unique<

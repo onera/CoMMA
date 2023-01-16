@@ -63,6 +63,8 @@ a pair with the same index.
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
   /** @brief Type of set of pairs */
   using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  /** @brief Functor used if find-like function relying only on first element of the pair */
+  using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
   /** @brief Type for container of candidates */
   using CandidatesContainerType = deque<CoMMAIndexType>;
 
@@ -131,12 +133,14 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                                     CoMMAIntType> {
   public:
+  /** @brief Base class */
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using typename NeighbourhoodBaseType::CoMMAPairType;
   /** @brief Type of set of pairs */
-  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  using typename NeighbourhoodBaseType::CoMMASetOfPairType;
   /** @brief Functor used if find-like function relying only on first element of the pair */
-  using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
+  using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
@@ -196,12 +200,14 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeightType,
                                                       CoMMAIntType> {
   public:
+  /** @brief Base class */
+  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using typename NeighbourhoodBaseType::CoMMAPairType;
   /** @brief Type of set of pairs */
-  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  using typename NeighbourhoodBaseType::CoMMASetOfPairType;
   /** @brief Functor used if find-like function relying only on first element of the pair */
-  using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
+  using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
@@ -355,9 +361,10 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class NeighbourhoodExtendedCreator
     : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
+  /** @brief Base class */
+  using CreatorBaseType = NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Shortcut for the Neighborhood object base type */
-  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                              CoMMAIntType>;
+  using typename CreatorBaseType::NeighbourhoodBaseType;
   /** @brief Shortcut for the Neighborhood object derived type (Extended, in this
    * case)
    */
@@ -407,9 +414,10 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class NeighbourhoodPureFrontCreator
     : public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
+  /** @brief Base class */
+  using CreatorBaseType = NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Shortcut for the Neighborhood object base type */
-  using NeighbourhoodBaseType = Neighbourhood<CoMMAIndexType, CoMMAWeightType,
-                                              CoMMAIntType>;
+  using typename CreatorBaseType::NeighbourhoodBaseType;
   /** @brief Shortcut for the Neighborhood object derived type (Pure_Front, in this
    * case)
    */

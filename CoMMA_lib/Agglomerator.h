@@ -169,7 +169,7 @@ class Agglomerator_Anisotropic
   using AnisotropicLine = deque<CoMMAIndexType>;
 
   /** @brief (Shared) Pointer to an anisotropic line */
-  using AnisotropicLinePtr = shared_ptr<deque<CoMMAIndexType>>;
+  using AnisotropicLinePtr = shared_ptr<AnisotropicLine>;
 
   /** @brief Constructor.
    *  @param[in] graph *Dual Graph* object that determines the connectivity
@@ -544,7 +544,7 @@ class Agglomerator_Isotropic
   /** @brief NeighbourhoodExtendedCreator type (derived class) */
   using NeighbourhoodCreatorExtType = NeighbourhoodExtendedCreator<CoMMAIndexType, CoMMAWeightType,
                                                                    CoMMAIntType>;
-  /** @brief NeighbourhoodPureFrontCreator type (base class) */
+  /** @brief NeighbourhoodPureFrontCreator type (derived class) */
   using NeighbourhoodCreatorPFType = NeighbourhoodPureFrontCreator<CoMMAIndexType, CoMMAWeightType,
                                                                    CoMMAIntType>;
   /** @brief Number of iterations allowed for the algorithm choosing which fine cell

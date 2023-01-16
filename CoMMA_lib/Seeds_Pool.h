@@ -69,8 +69,6 @@ class Seeds_Pool {
   using CoMMAQueueType = deque<CoMMAIndexType>;
   /** @brief Type of set of pairs */
   using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
-  /** @brief Functor used if find-like function relying only on first element of the pair */
-  using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
 
  protected:
   /** @brief List of deque of seeds. For each identifier we have the available
@@ -275,10 +273,12 @@ class Seeds_Pool_Boundary_Priority
   : public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
 
+  /** @brief Base class */
+  using SeedsPoolBaseType = Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using typename SeedsPoolBaseType::CoMMAPairType;
   /** @brief Type of set of pairs */
-  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  using typename SeedsPoolBaseType::CoMMASetOfPairType;
 
   /** @brief Constructor
    *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
@@ -394,10 +394,12 @@ class Seeds_Pool_Neighbourhood_Priority
   : public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   public:
 
+  /** @brief Base class */
+  using SeedsPoolBaseType = Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using typename SeedsPoolBaseType::CoMMAPairType;
   /** @brief Type of set of pairs */
-  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+  using typename SeedsPoolBaseType::CoMMASetOfPairType;
 
   /** @brief Constructor
    *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
