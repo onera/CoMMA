@@ -3,7 +3,7 @@
 
 /*
  *  * CoMMA
-    * Copyright © 2022 ONERA
+    * Copyright © 2023 ONERA
     *
     * Authors and Architects : Alberto Remigi and Nicolas Lantos
     *
