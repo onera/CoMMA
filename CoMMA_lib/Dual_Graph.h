@@ -29,6 +29,7 @@
 #include <deque>
 #include <functional>
 #include <limits>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -554,14 +555,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] idx_f Index of the cell
    *  @return the number of boundary faces
    */
-  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexT idx_c) const {
+  inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c];
   }
   /** @brief Whether a cell is on the boundary
    *  @param[in] idx_f Index of the cell
    *  @return Whether a cell is on the boundary
    */
-  inline bool is_on_boundary(const CoMMAIndexT idx_c) const {
+  inline bool is_on_boundary(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c] > 0;
   }
 
@@ -576,11 +577,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
-  void compute_anisotropic_fc(
-      vector<CoMMAWeightType> &maxArray,
-      unordered_set<CoMMAIndexType> &anisotropic_fc,
-      const CoMMAWeightType threshold_anisotropy,
-      const CoMMAIndexType preserving) {
+  void compute_anisotropic_fc(vector<CoMMAWeightType> &maxArray,
+                              set<CoMMAIndexType> &anisotropic_fc,
+                              const CoMMAWeightType threshold_anisotropy,
+                              const CoMMAIndexType preserving) {
     // Process of every compliant fine cells (it is a member variable, so it is
     // not passed to the function):
     for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
@@ -699,7 +699,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     CoMMAIntType i_order = 1;
 
     while ((i_order < nb_of_order_of_neighbourhood + 1) ||
-           static_cast<CoMMAIntT>(d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
+           static_cast<CoMMAIntType>(d_n_of_seed.size() + d_n_of_order_o_m_one.size()) < max_card) {
 
       unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 

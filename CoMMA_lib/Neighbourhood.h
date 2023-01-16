@@ -382,14 +382,14 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
     this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    for (auto &fon : this->_q_neighs_w_weights) {
+    for (auto &q : this->_q_neighs_w_weights) {
       // There is erase_if for sets in C++20
-      //erase_if(fon, [&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      auto it = find_if(fon.begin(), fon.end(),
+      //erase_if(q, [&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
+      auto it = find_if(q.begin(), q.end(),
                         CoMMAPairFindFirstBasedType(new_fc));
                         //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      if (it != fon.end())
-        fon.erase(it);
+      if (it != q.end())
+        q.erase(it);
     }
 
     // Compute the set of direct neighbours allowed by original neighbourhood-order
@@ -404,9 +404,9 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
 
     this->_q_neighs_w_weights.push_front(curr_set);
 
-    // Now, see which FON to return. Here is the strategy:
-    // If most recent FON is not empty, return it. If not, check the oldest FON: if
-    // not empty return it, otherwise check the previous FON. If empty, check the
+    // Now, see which neighbours to return. Here is the strategy:
+    // If most recent list is not empty, return it. If not, check the oldest list: if
+    // not empty return it, otherwise check the previous list. If empty, check the
     // second oldest, and so on...
     // We grant ourselves one exception...
     if ( this->_q_neighs_w_weights.size() <=
@@ -416,9 +416,9 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
       // TODO[RM]: I think this workaround is needed because we are not able to
       // compute exactly the AR; if we ever we will be able we should try to remove
       // it
-      for (auto prev_fon = this->_q_neighs_w_weights.begin() + 1;
-           prev_fon != this->_q_neighs_w_weights.end(); ++prev_fon)
-        curr_set.insert(prev_fon->begin(), prev_fon->end());
+      for (auto prev_q = this->_q_neighs_w_weights.begin() + 1;
+           prev_q != this->_q_neighs_w_weights.end(); ++prev_q)
+        curr_set.insert(prev_q->begin(), prev_q->end());
       this->extract_and_update_candidates(curr_set);
     }
     else {

@@ -60,4 +60,20 @@ enum CoMMAAgglT : CoMMAIntT {
   PURE_FRONT      = 1,
 };
 
+/** @brief Type of seeds pool ordering
+ *  0  : The number of boundary faces has highest priority
+ *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
+ *       priority)
+ *  10 : The number of boundary faces has highest priority, and initialize with one
+ *       point only then let evolve
+ *  11 : The neighbourhood has highest priority, and initialize with one point only
+ *       then let evolve
+ */
+enum CoMMASeedsPoolT : CoMMAIntT {
+  BOUNDARY_PRIORITY                     = 0,
+  NEIGHBOURHOOD_PRIORITY                = 1,
+  BOUNDARY_PRIORITY_ONE_POINT_INIT      = 10,
+  NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
+};
+
 #endif

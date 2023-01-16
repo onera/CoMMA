@@ -27,10 +27,10 @@
 #include <cassert>
 #include <deque>
 #include <list>
+#include <map>
 #include <optional>
 #include <queue>
 #include <set>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -46,7 +46,6 @@ using namespace std;
  * area) of the nodes or edges of the Mesh
  * @tparam CoMMAIntType the CoMMA type for integers
  */
-
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Seeds_Pool {
@@ -103,9 +102,12 @@ class Seeds_Pool {
   /** @brief Constructor
    *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
    *  @param[in] priority_weights Weights used to set the order of the seed to choose
+   *  @param[in] one_point_init Whether the initialization should be done for the
+   *  highest boundary level or just for one point
    **/
   Seeds_Pool(const vector<CoMMAIntType> &n_bnd_faces,
-             const vector<CoMMAWeightType> &priority_weights) :
+             const vector<CoMMAWeightType> &priority_weights,
+             const bool one_point_init) :
           _priority_weights(priority_weights), _n_bnd_faces(n_bnd_faces) {
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
     _l_of_seeds = vector<CoMMAQueueType>(CoMMACellT::N_CELL_TYPES);
@@ -114,30 +116,44 @@ class Seeds_Pool {
     // be filled at this initial stage
     const auto max_bnd = *(max_element(_n_bnd_faces.begin(), _n_bnd_faces.end()));
     _cur_top_queue = max_bnd;
-    // Similar to function build_queue but without is_agglomerated
-    // Using set to force order
-    CoMMASetOfPairType tmp_set{};
-    for (auto i_fc = decltype(_n_bnd_faces.size()){0}; i_fc < _n_bnd_faces.size(); ++i_fc) {
-      if (_n_bnd_faces[i_fc] >= max_bnd)
-        tmp_set.emplace(i_fc, priority_weights[i_fc]);
+    auto &top_queue = this->_l_of_seeds[max_bnd];
+    if (one_point_init) {
+      CoMMAPairType cur_max{numeric_limits<CoMMAIndexType>::max(),
+                            numeric_limits<CoMMAWeightType>::min()};
+      const CustomPairGreaterFunctor<CoMMAPairType> comp_op{};
+      for (auto i_fc = decltype(this->_n_bnd_faces.size()){0};
+           i_fc < this->_n_bnd_faces.size(); ++i_fc) {
+        const CoMMAPairType p{i_fc, priority_weights[i_fc]};
+        if (this->_n_bnd_faces[i_fc] >= max_bnd && comp_op(p, cur_max))
+          cur_max = move(p);
+      }
+      top_queue.push_back(cur_max.first);
+    } else {
+      // Similar to function build_queue but without is_agglomerated
+      // Using set to force order
+      CoMMASetOfPairType tmp_set{};
+      for (auto i_fc = decltype(this->_n_bnd_faces.size()){0};
+           i_fc < this->_n_bnd_faces.size(); ++i_fc) {
+        if (this->_n_bnd_faces[i_fc] >= max_bnd)
+          tmp_set.emplace(i_fc, priority_weights[i_fc]);
+      }
+      for (const auto &idx : tmp_set)
+        top_queue.push_back(idx.first);
     }
-    auto &top_queue = _l_of_seeds[max_bnd];
-    for (const auto &idx : tmp_set)
-      top_queue.push_back(idx.first);
-  };
+  }
 
   /** @brief Destructor */
-  ~Seeds_Pool() {};
+  virtual ~Seeds_Pool() = default;
 
   /** @brief Spoil a queue looking for an not-yet-agglomerated seed
    *  @param[in] is_fc_agglomerated Vector of boolean telling whether a face has
    * been agglomerated
-   *  @param[in] i_q Index of the queue to spoil
+   *  @param[out] queue The queue to spoil
    *  @return An optional which contains the new seed if found
    */
   inline optional<CoMMAIndexType> spoil_queue(const vector<bool> &a_is_fc_agglomerated,
-      const CoMMAIntType i_q) {
-    auto &queue = _l_of_seeds[i_q]; // Convenient
+                                              CoMMAQueueType &queue) {
+
     for (; !queue.empty() && a_is_fc_agglomerated[queue.front()];
          queue.pop_front()) {
         // If there still is something and it's already agglomerated, then keep on searching
@@ -156,40 +172,22 @@ class Seeds_Pool {
    * agglomerated (true) or not agglomerated (false)
    *  @return New seed
    */
-  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) {
-    // Choose a correct seed from the fc pool list_of_seeds beyond not
-    // agglomerated fc.
-    // We choose preferably the corners, then the ridges, then the valley, and
-    // finally interior cells:
-    // see NIA (Mavriplis uses Wall and farfield only)
-    // Exactly the inverse of the order of the list. For this reason we proceed
-    // from the back
-    if (_cur_top_queue.has_value()) {
-      auto opt_seed = spoil_queue(a_is_fc_agglomerated, _cur_top_queue.value());
-      if (opt_seed.has_value())
-        return opt_seed.value();
-      auto opt_top = get_highest_n_bnd_yet_to_agglomerate(a_is_fc_agglomerated,
-                                                          _cur_top_queue.value());
-      if (opt_top.has_value()) {
-        const auto cur_queue = opt_top.value();
-        _cur_top_queue = cur_queue;
-        // Could be the same top queue, but that's OK
-        opt_seed = spoil_queue(a_is_fc_agglomerated, cur_queue);
-        if (opt_seed.has_value())
-          return opt_seed.value();
-        // If here, we already used everything that we had in the seed pool but there are still
-        // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
-        build_queue(a_is_fc_agglomerated, cur_queue);
+  virtual optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) = 0;
 
-        const auto seed = _l_of_seeds[cur_queue].front();
-        _l_of_seeds[cur_queue].pop_front();
-        return seed;
-      }
-      // If everything failed, set to null
-      _cur_top_queue = nullopt;
-    }
-    return nullopt;
-  };
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces
+   * @param[in] new_seeds Vector of seeds to add
+   * @warning new_seeds is supposed to be already ordered by the priority weight,
+   * therefore no check will be performed
+   **/
+  virtual void update(const vector<CoMMAIndexType> &new_seeds) = 0;
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces. The seeds will be ordered considering their priority weights
+   * before being added to the queue
+   * @param[in] new_seeds Vector of seeds to add
+   **/
+  virtual void order_new_seeds_and_update(const unordered_set<CoMMAIndexType> &new_seeds) = 0;
 
   /** @brief Build the weight-ordered queue of seed for a given target level.
    * A set of (index, weight) pair with special comparator is used to enforced order, then
@@ -238,40 +236,6 @@ class Seeds_Pool {
     return max_bnd;
   }
 
-  /** @brief Add the provided seeds to a seeds pool queue according to the number of
-   * boundary faces
-   * @param[in] new_seeds Vector of seeds to add
-   * @warning new_seeds is supposed to be already ordered by the priority weight,
-   * therefore no check will be performed
-   **/
-  inline void update(const vector<CoMMAIndexT> &new_seeds) {
-    for (const auto &s : new_seeds) {
-      auto &q = _l_of_seeds[_n_bnd_faces[s]];
-      if (find(q.begin(), q.end(), s) == q.end())
-        q.push_back(s);
-    }
-  }
-
-  /** @brief Add the provided seeds to a seeds pool queue according to the number of
-   * boundary faces. The seeds will be ordered considering their priority weights
-   * before being added to the queue
-   * @param[in] new_seeds Vector of seeds to add
-   **/
-  inline void order_new_seeds_and_update(
-      const unordered_set<CoMMAIndexType> &new_seeds) {
-    unordered_map<CoMMAIntT, CoMMASetOfPairType> new_seeds_by_bnd(4);
-    for (const auto s : new_seeds) {
-      new_seeds_by_bnd[_n_bnd_faces[s]].emplace(s, _priority_weights[s]);
-    }
-    for (auto & [n_bnd, seeds] : new_seeds_by_bnd) {
-      auto &q = _l_of_seeds[n_bnd];
-      for (const auto & [s, w] : seeds) {
-        if (find(q.begin(), q.end(), s) == q.end())
-          q.push_back(s);
-      }
-    }
-  }
-
   /** @brief Given the default levels we define if the list of the targeted
    * level is empty
    * @param[in] i_level level of the defined list
@@ -297,5 +261,248 @@ class Seeds_Pool {
    */
   inline bool is_initialized() const { return !_n_bnd_faces.empty(); }
 
+};
+
+/** @brief Class representing the pool of all the seeds for creating a coarse
+ * cell
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Seeds_Pool_Boundary_Priority
+  : public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public:
+
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+
+  /** @brief Constructor
+   *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
+   *  @param[in] priority_weights Weights used to set the order of the seed to choose
+   *  @param[in] one_point_init Whether the initialization should be done for the
+   *  highest boundary level or just for one point
+   **/
+  Seeds_Pool_Boundary_Priority(const vector<CoMMAIntType> &n_bnd_faces,
+                               const vector<CoMMAWeightType> &priority_weights,
+                               const bool one_point_init) :
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+          n_bnd_faces, priority_weights, one_point_init) {}
+
+  /** @brief Choose a new seed in the pool
+   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
+   * agglomerated (true) or not agglomerated (false)
+   *  @return New seed
+   */
+  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) override {
+    // Choose a correct seed from the fc pool list_of_seeds beyond not
+    // agglomerated fc.
+    // We choose preferably the corners, then the ridges, then the valley, and
+    // finally interior cells:
+    // see NIA (Mavriplis uses Wall and farfield only)
+    // Exactly the inverse of the order of the list. For this reason we proceed
+    // from the back
+    if (this->_cur_top_queue.has_value()) {
+      auto opt_seed = this->spoil_queue(a_is_fc_agglomerated,
+                                        this->_l_of_seeds[this->_cur_top_queue.value()]);
+      if (opt_seed.has_value())
+        return opt_seed.value();
+      auto opt_top = this->get_highest_n_bnd_yet_to_agglomerate(
+                        a_is_fc_agglomerated, this->_cur_top_queue.value());
+      if (opt_top.has_value()) {
+        const auto cur_queue = opt_top.value();
+        this->_cur_top_queue = cur_queue;
+        // Could be the same top queue, but that's OK
+        opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
+        if (opt_seed.has_value())
+          return opt_seed.value();
+        // If here, we already used everything that we had in the seed pool but there are still
+        // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
+        this->build_queue(a_is_fc_agglomerated, cur_queue);
+
+        const auto seed = this->_l_of_seeds[cur_queue].front();
+        this->_l_of_seeds[cur_queue].pop_front();
+        return seed;
+      }
+      // If everything failed, set to null
+      this->_cur_top_queue = nullopt;
+    }
+    return nullopt;
+  }
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces
+   * @param[in] new_seeds Vector of seeds to add
+   * @warning new_seeds is supposed to be already ordered by the priority weight,
+   * therefore no check will be performed
+   **/
+  inline void update(const vector<CoMMAIndexType> &new_seeds) override {
+    if (!new_seeds.empty()) {
+      CoMMAIntType max_bnd{0};
+      for (const auto &s : new_seeds) {
+        const auto n_bnd = this->_n_bnd_faces[s];
+        if (n_bnd > max_bnd)
+          max_bnd = n_bnd;
+        auto &q = this->_l_of_seeds[n_bnd];
+        if (find(q.begin(), q.end(), s) == q.end())
+          q.push_back(s);
+      }
+      if (!this->_cur_top_queue.has_value() || max_bnd > this->_cur_top_queue.value())
+        this->_cur_top_queue = max_bnd;
+    }
+  }
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces. The seeds will be ordered considering their priority weights
+   * before being added to the queue
+   * @param[in] new_seeds Vector of seeds to add
+   **/
+  inline void order_new_seeds_and_update(
+      const unordered_set<CoMMAIndexType> &new_seeds) override {
+    map<CoMMAIntType, CoMMASetOfPairType, greater<>> new_seeds_by_bnd;
+    if (!new_seeds.empty()) {
+      for (const auto s : new_seeds) {
+        new_seeds_by_bnd[this->_n_bnd_faces[s]].emplace(s, this->_priority_weights[s]);
+      }
+      const auto max_bnd = new_seeds_by_bnd.begin()->first;
+      if (!this->_cur_top_queue.has_value() || max_bnd > this->_cur_top_queue.value())
+        this->_cur_top_queue = max_bnd;
+      for (const auto & [n_bnd, seeds] : new_seeds_by_bnd) {
+        auto &q = this->_l_of_seeds[n_bnd];
+        for (const auto & [s, w] : seeds) {
+          if (find(q.begin(), q.end(), s) == q.end())
+            q.push_back(s);
+        }
+      }
+    }
+  }
+};
+
+/** @brief Class representing the pool of all the seeds for creating a coarse
+ * cell
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ */
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+class Seeds_Pool_Neighbourhood_Priority
+  : public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public:
+
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+
+  /** @brief Constructor
+   *  @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
+   *  @param[in] priority_weights Weights used to set the order of the seed to choose
+   *  @param[in] one_point_init Whether the initialization should be done for the
+   *  highest boundary level or just for one point
+   **/
+  Seeds_Pool_Neighbourhood_Priority(const vector<CoMMAIntType> &n_bnd_faces,
+                                    const vector<CoMMAWeightType> &priority_weights,
+                                    const bool one_point_init) :
+      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+          n_bnd_faces, priority_weights, one_point_init) {}
+
+  /** @brief Choose a new seed in the pool
+   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
+   * agglomerated (true) or not agglomerated (false)
+   *  @return New seed
+   */
+  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) override {
+    // Choose a correct seed from the fc pool list_of_seeds beyond not
+    // agglomerated fc.
+    // We choose preferably the corners, then the ridges, then the valley, and
+    // finally interior cells:
+    // see NIA (Mavriplis uses Wall and farfield only)
+    // Exactly the inverse of the order of the list. For this reason we proceed
+    // from the back
+    if (this->_cur_top_queue.has_value()) {
+
+      for (auto q = this->_l_of_seeds.rbegin() +
+                    (this->_l_of_seeds.size() - (this->_cur_top_queue.value() + 1));
+           q != this->_l_of_seeds.rend(); ++q) {
+        const auto opt_seed = this->spoil_queue(a_is_fc_agglomerated, *q);
+        if (opt_seed.has_value()) {
+          this->_cur_top_queue = distance(q, this->_l_of_seeds.rend()) - 1;
+          return opt_seed.value();
+        }
+      }
+
+      // If not found, see which is the highest unfinished level
+      const auto opt_top = this->get_highest_n_bnd_yet_to_agglomerate(
+          a_is_fc_agglomerated, this->_cur_top_queue.value());
+      if (opt_top.has_value()) {
+        const auto cur_queue = opt_top.value();
+        this->_cur_top_queue = cur_queue;
+        // Could be the same top queue, but that's OK
+        const auto opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
+        if (opt_seed.has_value())
+          return opt_seed.value();
+        // If here, we already used everything that we had in the seed pool but there are still
+        // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
+        this->build_queue(a_is_fc_agglomerated, cur_queue);
+
+        const auto seed = this->_l_of_seeds[cur_queue].front();
+        this->_l_of_seeds[cur_queue].pop_front();
+        return seed;
+      }
+      // If everything failed, set to null
+      this->_cur_top_queue = nullopt;
+    }
+    return nullopt;
+  }
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces
+   * @param[in] new_seeds Vector of seeds to add
+   * @warning new_seeds is supposed to be already ordered by the priority weight,
+   * therefore no check will be performed
+   **/
+  inline void update(const vector<CoMMAIndexType> &new_seeds) override {
+    for (const auto &s : new_seeds) {
+      // In order to the neighbourhood priority, we choose to append to the current
+      // top queue, rather than switching queue
+      const auto q_lvl = this->_cur_top_queue.has_value() ? min(this->_n_bnd_faces[s],
+                                                                this->_cur_top_queue.value())
+                                                          : this->_n_bnd_faces[s];
+      auto &q = this->_l_of_seeds[q_lvl];
+      if (find(q.begin(), q.end(), s) == q.end())
+        q.push_back(s);
+    }
+  }
+
+  /** @brief Add the provided seeds to a seeds pool queue according to the number of
+   * boundary faces. The seeds will be ordered considering their priority weights
+   * before being added to the queue
+   * @param[in] new_seeds Vector of seeds to add
+   **/
+  inline void order_new_seeds_and_update(
+      const unordered_set<CoMMAIndexType> &new_seeds) override {
+    map<CoMMAIntType, CoMMASetOfPairType, greater<>> new_seeds_by_bnd;
+    for (const auto s : new_seeds) {
+      new_seeds_by_bnd[this->_n_bnd_faces[s]].emplace(s, this->_priority_weights[s]);
+    }
+    for (auto & [n_bnd, seeds] : new_seeds_by_bnd) {
+      // In order to the neighbourhood priority, we choose to append to the current
+      // top queue, rather than switching queue
+      const auto q_lvl = this->_cur_top_queue.has_value() ? min(n_bnd,
+                                                                this->_cur_top_queue.value())
+                                                          : n_bnd;
+      auto &q = this->_l_of_seeds[q_lvl];
+      for (const auto & [s, w] : seeds) {
+        if (find(q.begin(), q.end(), s) == q.end())
+          q.push_back(s);
+      }
+    }
+  }
 };
 #endif  // COMMA_PROJECT_SEEDS_POOL_H
