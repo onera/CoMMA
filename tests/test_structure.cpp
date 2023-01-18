@@ -26,6 +26,9 @@ using namespace std;
 
 #define FC_ITER 1
 
+#define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
+#define found_(cont, obj) check_(find, !=, cont, obj)
+#define not_found_(cont, obj) check_(find, ==, cont, obj)
 #define equal_up_to(a,b,eps) (fabs(a - b) < eps)
 
 using SeedsPoolT = Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
@@ -776,9 +779,6 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
 #undef is_in
   };
   GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard Neighbourhood for 24") {
- #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
- #define found_(cont, obj) check_(find, !=, cont, obj)
- #define not_found_(cont, obj) check_(find, ==, cont, obj)
  #define found_1stEl_(cont, obj) check_(find_if, !=, cont, CoMMAPairFindFirstBasedT(obj))
  #define not_found_1stEl_(cont, obj) check_(find_if, ==, cont, CoMMAPairFindFirstBasedT(obj))
     const DualGPy_quad_7 Data = DualGPy_quad_7();
@@ -919,9 +919,6 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
         REQUIRE(found_1stEl_(prev_fon_2, 25));
       }
     }
-#undef check_
-#undef found_
-#undef not_found_
 #undef found_1stEl_
 #undef not_found_1stEl_
   };
@@ -1264,6 +1261,50 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
     }
 
   };
+  GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
+    const DualGPy_T_shaped Data = DualGPy_T_shaped();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    const CoMMAIntT card = 4;
+    CoMMAIntT comp = 0;
+#if 0
+The mesh has been created so that an I-shaped CC leads to a higher AR than an
+L-shaped one. However, if the seed is a corner, the additional check in
+choose_best_fc regarding the neighbourhood order, lead us to prefer the L-shaped
+cell. We start here from the bottom middle so that the above check is not strict and
+let the algorithm choose the cell according to the AR.
+The standard algorithm will thus pick the I-shaped CC (leading to a T-shaped final
+CC). The iterative, on the contrary, will pick the L-shaped CC (leading to a square
+final CC)
+#endif
+    const CoMMAIndexT seed = 1;
+    WHEN("We agglomerate from the bottom central cell with a standard agglomerator, we get a T-shaped coarse cell") {
+      const CoMMAIntT fc_iter = 1;
+      auto agg = Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+            fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter, Data.dim);
+      agg.set_agglomeration_parameter(card, card, card);
+      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, comp, Data.weights);
+      REQUIRE(found_(cc, seed));
+      REQUIRE(found_(cc, 0));
+      REQUIRE(found_(cc, 2));
+      REQUIRE(found_(cc, 4));
+    }
+    WHEN("We agglomerate from the bottom central cell with a 2-steps iterative agglomerator, we get a square coarse cell") {
+      const CoMMAIntT fc_iter = 2;
+      auto agg = Agglomerator_Iterative<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+            fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter, Data.dim);
+      agg.set_agglomeration_parameter(card, card, card);
+      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, comp, Data.weights);
+      REQUIRE(found_(cc, seed));
+      REQUIRE(found_(cc, 0));
+      REQUIRE(found_(cc, 3));
+      REQUIRE(found_(cc, 4));
+    }
+  }
 }
 
 SCENARIO("Test the anisotropic agglomeration for small cases",
@@ -1529,3 +1570,6 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
 #undef fc_in_cc
 }
 #undef equal_up_to
+#undef check_
+#undef found_
+#undef not_found_

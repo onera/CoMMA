@@ -331,4 +331,22 @@ class DualGPy_hole_no_corners {
     DualGPy_hole_no_corners() {}
 };
 
+/** @brief 6 slightly stretched (x1.75) rectangles arranged in 2 rows used for testing iterative FC choice */
+class DualGPy_T_shaped {
+    public:
+    CoMMAIndexT nb_fc{6};
+    vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 5, 7, 9, 12, 14};
+    vector<CoMMAIndexT> adjMatrix_col_ind = {1, 3, 0, 2, 4, 1, 5, 0, 4, 1, 3, 5, 2, 4};
+    vector<CoMMAIntT> n_bnd_faces = {2, 1, 2, 2, 1, 2};
+    vector<CoMMAWeightT> adjMatrix_areaValues = {1.75, 1.0, 1.75, 1.75, 1.0, 1.75, 1.0, 1.0, 1.75, 1.0, 1.75, 1.75, 1.0, 1.75};
+    vector<CoMMAWeightT> volumes = {1.75, 1.75, 1.75, 1.75, 1.75, 1.75};
+    vector<vector<CoMMAWeightT>> centers = {{0.5, 0.875}, {1.5, 0.875}, {2.5, 0.875}, {0.5, 2.625}, {1.5, 2.625}, {2.5, 2.625}};
+    vector<CoMMAWeightT> weights = { 5., 4., 3., 2., 1., 0.};
+    unordered_set<CoMMAIndexT> s_anisotropic_compliant_fc = {0, 1, 2, 3, 4, 5};
+    vector<CoMMAIndexT> arrayOfFineAnisotropicCompliantCells = {0, 1, 2, 3, 4};
+    CoMMAIntT dim = 2;
+
+    DualGPy_T_shaped() {}
+};
+
 #endif
