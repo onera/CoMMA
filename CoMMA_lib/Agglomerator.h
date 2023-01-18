@@ -654,7 +654,7 @@ class Agglomerator_Isotropic
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm in the children class
       const unordered_set<CoMMAIndexType> set_current_cc =
-          choose_optimal_cc_and_update_seed_pool(seed.value(), compactness,
+          choose_optimal_cc_and_update_seeds_pool(seed.value(), compactness,
                                                  priority_weights);
       // 3)  Creation of cc:
       bool is_anistropic = false;
@@ -746,7 +746,7 @@ class Agglomerator_Isotropic
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
    */
-  virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
+  virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness,
       const vector<CoMMAWeightType> &priority_weights) = 0;
 
@@ -786,7 +786,7 @@ class Agglomerator_Biconnected
  /** @brief Specialization of the pure virtual function in the parent class, to
    * be used in couple with the Agglomerate_one_level of the Agglomerator_Isotropic
    */
-  unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seed_pool(
+  unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness,
       const vector<CoMMAWeightType> &priority_weights) override {
     bool is_order_primary = false;
@@ -878,7 +878,7 @@ class Agglomerator_Biconnected
       // given (as default 3, so until the third order)
       CoMMAIntType max_ind =
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
-      // We add the faces that are on boundary calling the method of seed pool.
+      // We add the faces that are on boundary calling the method of seeds pool.
       CoMMAIntType number_of_external_faces_current_cc =
           nb_neighbours + this->_fc_graph->get_n_boundary_faces(seed) - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
@@ -975,7 +975,7 @@ class Agglomerator_Biconnected
         }
       }
 
-      // Updating Seed Pool with the neighbours of the final CC. Strategy:
+      // Updating Seeds Pool with the neighbours of the final CC. Strategy:
       // - Compute the direct neighbours of the CC (not yet agglomerated)
       // - Insert in the queue starting with those of lowest neighbourhood order wrt
       //   to the original seed

@@ -319,7 +319,7 @@ class Seeds_Pool_Boundary_Priority
         opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
         if (opt_seed.has_value())
           return opt_seed.value();
-        // If here, we already used everything that we had in the seed pool but there are still
+        // If here, we already used everything that we had in the seeds pool but there are still
         // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
         this->build_queue(a_is_fc_agglomerated, cur_queue);
 
@@ -448,7 +448,7 @@ class Seeds_Pool_Neighbourhood_Priority
         const auto opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
         if (opt_seed.has_value())
           return opt_seed.value();
-        // If here, we already used everything that we had in the seed pool but there are still
+        // If here, we already used everything that we had in the seeds pool but there are still
         // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
         this->build_queue(a_is_fc_agglomerated, cur_queue);
 

@@ -266,8 +266,8 @@ SCENARIO("Subgraph", "[Subgraph]") {
   };
 }
 
-SCENARIO("Test of the seed pool", "[Seed_Pool]") {
-  GIVEN("A 4x4x4 cube and a Seed Pool which should ensure that the order respects the cell numbering") {
+SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
+  GIVEN("A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(Data.n_bnd_faces, Data.weights, false);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
@@ -318,7 +318,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
         }
       }
     }
-    WHEN("We simply update the seed pool") {
+    WHEN("We simply update the seeds pool") {
       // Spoil all the corners so that the seed is completely void
       for (auto i : corners) {
         seeds_pool.choose_new_seed(agglomerated);
@@ -364,7 +364,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
         }
       }
     }
-    WHEN("We update the seed pool by asking a reorder") {
+    WHEN("We update the seeds pool by asking a reorder") {
       // Spoil all the corners so that the seed is completely void
       for (auto i : corners) {
         seeds_pool.choose_new_seed(agglomerated);
@@ -422,7 +422,7 @@ SCENARIO("Test of the seed pool", "[Seed_Pool]") {
     }
   }
 
-  GIVEN("A 4x4x4 cube and a Seed Pool which should force an order reversed wrt the cell numbering") {
+  GIVEN("A 4x4x4 cube and a Seeds Pool which should force an order reversed wrt the cell numbering") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
