@@ -9,8 +9,8 @@ from dualGPy.Mesh import Mesh2D, Mesh3D
 import dualGPy.Utils as ut
 import numpy as np
 
-isotropic_agglo_types = [
-        'Biconnected',
+neigh_type_types = [
+        'Extended',
         'Pure front advancing'
         ]
 
@@ -37,7 +37,7 @@ else:
     minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 4.
-isotropic_agglo = 0 # 0 = Biconnected (standard), 1 = Pure front advancing
+neigh_type = 0 # 0 = Extended (standard), 1 = Pure front advancing
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
                # 10 = Boundary priority with point initialization
                # 11 = Neighbourhood priority with point initialization
@@ -62,7 +62,7 @@ print(f' * {goalCard=}')
 print(f' * {maxCard=}')
 print(f' * {correction=}')
 print(f' * {threshold_anisotropy=}')
-print(f' * isotropic_agglo={isotropic_agglo_types[isotropic_agglo]}')
+print(f' * neigh_type={neigh_type_types[neigh_type]}')
 print(f' * Priority weights: reversed ID')
 print(f' * seed_ordering={seed_ordering_types[seed_order]}')
 print(f' * Fine-cell research iterations={fc_iter}')
@@ -111,7 +111,7 @@ fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, threshold_anisotropy, seed_order,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
-                              correction, dimension,goalCard,minCard,maxCard, fc_iter, isotropic_agglo)
+                              correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)
 print('OK')
 
 print("Finalizing...", flush = True, end = '')

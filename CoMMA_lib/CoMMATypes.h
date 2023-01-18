@@ -50,13 +50,13 @@ enum CoMMACellT : CoMMAIntT {
   N_CELL_TYPES = 4
 };
 
-/** @brief Type of Isotropic Agglomerator
- *  0 : Biconnected from Mavriplis Paper
- *  1 : Pure front where a pure front advancing method is implemented
+/** @brief Type of neighbourhood (of a coarse cell) considered when agglomerating
+ *  0 : Extended, all neighbours of the coarse cell
+ *  1 : Pure front, only neighbours of the last added fine cell
  */
-enum CoMMAAgglT : CoMMAIntT {
-  BICONNECTED     = 0,
-  PURE_FRONT      = 1,
+enum CoMMANeighbourhoodT : CoMMAIntT {
+  EXTENDED   = 0,
+  PURE_FRONT = 1,
 };
 
 /** @brief Type of seeds pool ordering

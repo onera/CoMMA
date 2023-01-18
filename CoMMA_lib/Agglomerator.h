@@ -566,7 +566,7 @@ class Agglomerator_Isotropic
       CoMMAIntType agglo_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             graph, cc_graph, seeds_pool, dimension), _fc_iter(fc_iter) {
-    if (agglo_type == CoMMAAgglT::BICONNECTED)
+    if (agglo_type == CoMMANeighbourhoodT::EXTENDED)
       _neigh_crtor = make_shared<NeighbourhoodCreatorExtType>();
     else
       _neigh_crtor = make_shared<NeighbourhoodCreatorPFType>();

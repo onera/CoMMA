@@ -88,11 +88,11 @@
  * @param[in] fc_choice_iter Number of iterations allowed for the algorithm choosing
  * which fine cell to add next. The cost grows exponentially, hence use small values.
  * Default values: 1
- * @param[in] type_of_isotropic_agglomeration Type of algorithm to consider when
- * agglomerating isotropic cells. Two alternatives: Biconnected: requested with 0,
- * standard algorithm where we consider every neighbour of the coarse cell as candidate;
- * Pure Front Advancing: requested with 1, only direct neighbours of the last added
- * cell are candidates. Default value: Biconnected
+ * @param[in] neighbourhood_type Type of neighbourhood to use when growing a coarse
+ * cell. Two alternatives: Extended: requested with 0, standard algorithm where we
+ * consider every neighbour of the coarse cell as candidate; Pure Front Advancing:
+ * requested with 1, only direct neighbours of the last added cell are candidates.
+ * Default value: Extended. See CoMMANeighbourhoodT
  * @throw `invalid_argument` if dimension is not 2 nor 3, or if cardinalities are
  * smaller than 1 or not in order
  * */
@@ -129,7 +129,7 @@ void agglomerate_one_level(
     bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
     CoMMAIntType min_card, CoMMAIntType max_card,
     CoMMAIntType fc_choice_iter = 1,
-    const CoMMAIntType type_of_isotropic_agglomeration=CoMMAAgglT::BICONNECTED) {
+    const CoMMAIntType neighbourhood_type=CoMMANeighbourhoodT::EXTENDED) {
   // NOTATION
   //======================================
   // fc = Fine Cell
@@ -250,13 +250,13 @@ void agglomerate_one_level(
   if (fc_choice_iter > 1){
     agg = make_unique<
         Agglomerator_Iterative<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, type_of_isotropic_agglomeration, fc_choice_iter,
+        fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
         dimension);
   }
   else {
     agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, type_of_isotropic_agglomeration, fc_choice_iter,
+        fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
         dimension);
   }
   agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
