@@ -40,6 +40,10 @@
   static_assert(numeric_limits<intT>::is_integer, \
       "CoMMA works with integer types, but " #intT " (" label ") is not")
 
+#define MAX_ITER 4
+#define _STRINGFY(x) #x
+#define STRINGFY(x) _STRINGFY(x)
+
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
  * of the agglomerated cells fc2cc.
@@ -157,6 +161,9 @@ void agglomerate_one_level(
     throw invalid_argument( "CoMMA - Error: Cardinalities must be in order (min <= goal <= max)" );
   if ( fc_choice_iter < 1 )
     throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at least 1" );
+  else if ( fc_choice_iter > MAX_ITER )
+    throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at most "
+                            STRINGFY(MAX_ITER));
 
   // SIZES CAST
   //======================================
@@ -269,4 +276,7 @@ void agglomerate_one_level(
   }
 }
 #undef check_int_type
+#undef MAX_ITER
+#undef _STRINGFY
+#undef STRINGFY
 #endif
