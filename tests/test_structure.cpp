@@ -778,7 +778,7 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
     }
 #undef is_in
   };
-  GIVEN("We have a 7x7 Cartesian 2D matrix and set up a standard Neighbourhood for 24") {
+  GIVEN("We have a 7x7 Cartesian 2D matrix, a standard Neighbourhood for 24 a one given by the creator") {
  #define found_1stEl_(cont, obj) check_(find_if, !=, cont, CoMMAPairFindFirstBasedT(obj))
  #define not_found_1stEl_(cont, obj) check_(find_if, ==, cont, CoMMAPairFindFirstBasedT(obj))
     const DualGPy_quad_7 Data = DualGPy_quad_7();
@@ -808,9 +808,60 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
         REQUIRE(found_(fon, 31));
       }
     }
+    // Testing the neighbourhood creator
+    NeighbourhoodExtendedCreator<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+      neigh_crtor{};
+    auto c_neighbourhood = neigh_crtor.create(s_neighbours_of_seed,
+                                              Data.weights, Data.dim);
+    c_neighbourhood->update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first neighbourhood of the one got from the creator") {
+      const auto fon = c_neighbourhood->get_candidates();
+      THEN("Only direct neighbours are in the neighbourhood") {
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+        REQUIRE(found_(fon, 31));
+      }
+    }
     neighbourhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       const auto fon = neighbourhood.get_candidates();
+      THEN("Cell 31 is no more in the neighbourhood") {
+        REQUIRE(not_found_(fon, 31));
+      }
+      THEN("Old neighbours are still in the neighbourhood") {
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+      }
+      THEN("Direct neighbours of 31 are in the neighbourhood") {
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
+      }
+    }
+    c_neighbourhood->update(31, fc_graph.get_neighbours(31));
+    WHEN("We add cell 31 to the creator-provided neighbourhood") {
+      const auto fon = c_neighbourhood->get_candidates();
+      THEN("Cell 31 is no more in the neighbourhood") {
+        REQUIRE(not_found_(fon, 31));
+      }
+      THEN("Old neighbours are still in the neighbourhood") {
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+      }
+      THEN("Direct neighbours of 31 are in the neighbourhood") {
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
+      }
+    }
+    auto copy_c_neighbourhood = neigh_crtor.clone(c_neighbourhood);
+    // We update after the copy to see if that's really a copy
+    c_neighbourhood->update(38, fc_graph.get_neighbours(38));
+    WHEN("We add cell 31 to the copy of the creator-provided neighbourhood") {
+      const auto fon = copy_c_neighbourhood->get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
         REQUIRE(not_found_(fon, 31));
       }
@@ -873,6 +924,21 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
         REQUIRE(found_(fon, 31));
       }
     }
+    // Testing the neighbourhood creator
+    NeighbourhoodPureFrontCreator<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+      neigh_crtor{};
+    auto c_neighbourhood = neigh_crtor.create(s_neighbours_of_seed,
+                                              Data.weights, Data.dim);
+    c_neighbourhood->update(seed, fc_graph.get_neighbours(seed));
+    WHEN("We check the first neighbourhood of the one got from the creator") {
+      const auto fon = c_neighbourhood->get_candidates();
+      THEN("Only direct neighbours are in the neighbourhood") {
+        REQUIRE(found_(fon, 17));
+        REQUIRE(found_(fon, 23));
+        REQUIRE(found_(fon, 25));
+        REQUIRE(found_(fon, 31));
+      }
+    }
     neighbourhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       const auto fon = neighbourhood.get_candidates();
@@ -882,6 +948,48 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
         REQUIRE(found_(fon, 38));
       }
       const auto prev_fon = neighbourhood.get_neighbours_by_level(1);
+      THEN("Cell 31 is no more in the previous neighbourhood") {
+        REQUIRE(not_found_1stEl_(prev_fon, 31));
+      }
+      THEN("Old neighbours are still in the previous neighbourhood") {
+        REQUIRE(found_1stEl_(prev_fon, 17));
+        REQUIRE(found_1stEl_(prev_fon, 23));
+        REQUIRE(found_1stEl_(prev_fon, 25));
+      }
+    }
+    c_neighbourhood->update(31, fc_graph.get_neighbours(31));
+    WHEN("We add cell 31 to the creator-provided neighbourhood") {
+      const auto fon = c_neighbourhood->get_candidates();
+      THEN("Direct neighbours of 31 are in the current neighbourhood") {
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
+      }
+      const auto prev_fon = dynamic_pointer_cast<
+        Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
+          c_neighbourhood)->get_neighbours_by_level(1);
+      THEN("Cell 31 is no more in the previous neighbourhood") {
+        REQUIRE(not_found_1stEl_(prev_fon, 31));
+      }
+      THEN("Old neighbours are still in the previous neighbourhood") {
+        REQUIRE(found_1stEl_(prev_fon, 17));
+        REQUIRE(found_1stEl_(prev_fon, 23));
+        REQUIRE(found_1stEl_(prev_fon, 25));
+      }
+    }
+    auto copy_c_neighbourhood = neigh_crtor.clone(c_neighbourhood);
+    // We update after the copy to see if that's really a copy
+    c_neighbourhood->update(38, fc_graph.get_neighbours(38));
+    WHEN("We add cell 31 to the copy of the creator-provided neighbourhood") {
+      const auto fon = copy_c_neighbourhood->get_candidates();
+      THEN("Direct neighbours of 31 are in the current neighbourhood") {
+        REQUIRE(found_(fon, 30));
+        REQUIRE(found_(fon, 32));
+        REQUIRE(found_(fon, 38));
+      }
+      const auto prev_fon = dynamic_pointer_cast<
+        Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
+          copy_c_neighbourhood)->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
         REQUIRE(not_found_1stEl_(prev_fon, 31));
       }
