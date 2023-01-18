@@ -63,10 +63,10 @@ class Agglomerator {
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
 
   /** @brief The constructor of the interface
-   *  @param[in] graph *Dual Graph* object that determines the connectivity
+   *  @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
    *  @param[in] cc_graph Container for the coarse cells
-   *  @param[in] seeds_pool Seed_Pool object giving the order in which the fine cells
+   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
    * should be considered when agglomerating
    *  @param[in] dimension the dimension of the problem
    */
@@ -144,7 +144,7 @@ class Agglomerator {
   /** @brief pointer to Coarse Cell Graph element */
   shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                    CoMMAIntType>> _cc_graph;
-  /** @brief Seed_Pool object giving the order in which the fine * cells should
+  /** @brief Seeds_Pool object giving the order in which the fine cells should
    * be considered when agglomerating
    **/
   shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _seeds_pool;
@@ -172,13 +172,13 @@ class Agglomerator_Anisotropic
   using AnisotropicLinePtr = shared_ptr<AnisotropicLine>;
 
   /** @brief Constructor.
-   *  @param[in] graph *Dual Graph* object that determines the connectivity
+   *  @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
    *  @param[in] cc_graph Container for the coarse cells
-   *  @param[in] seeds_pool Seed_Pool object giving the order in which the fine cells
+   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
    * should be considered when agglomerating
    *  @param[in] agglomerationLines_Idx Connectivity for the agglomeration lines: each
-   * element points to a particular element in the vector agglomerationLines
+   * element points to a particular element in the vector \p agglomerationLines
    *  @param[in] agglomerationLines Vector storing all the elements of the
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
@@ -578,14 +578,12 @@ class Agglomerator_Isotropic
   /** @brief The task of the function is to set the parameters of
    * determine the cardinality limits with respect to the parameters passed
    * @param[in] goal_card goal cardinality of the coarse cell (set as default to
-   * 0 indicating in our case
-   * the maximum value)
+   * 0 indicating in our case the maximum value)
    * @param[in] min_card minimum cardinality of the coarse cell(set as default
-   * to 0 indicating in our case
-   * the maximum value)
+   * to 0 indicating in our case the maximum value)
    * @param[in] max_card maximum cardinality of the coarse cell(set as default
-   * to 0 indicating in our case
-   * the maximum value)*/
+   * to 0 indicating in our case the maximum value)
+   **/
   void set_agglomeration_parameter(CoMMAIntType goal_card = 0,
                                    CoMMAIntType min_card  = 0,
                                    CoMMAIntType max_card  = 0) {
@@ -698,7 +696,7 @@ class Agglomerator_Isotropic
 
   /** @brief Computes features of the CC obtained by adding a given fine cell. The
    * features are Aspect-Ratio and number of face shared with other cells already
-   * agglomerated (Current coarse cell means without i_fc)
+   * agglomerated (Current coarse cell means without \p i_fc)
    *  @param[in] i_fc Index of the fine cell to add to the coarse cell
    *  @param[in] cc_diam (Approximation of the) Diameter of the current coarse cell
    *  @param[in] cc_vol Volume of the current coarse cell

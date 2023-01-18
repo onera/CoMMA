@@ -65,7 +65,7 @@
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
  * considered as anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
- * Possible values:
+ * Possible values (see CoMMASeedsPoolT):
  *  0  : The number of boundary faces has highest priority
  *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
  *       priority)
