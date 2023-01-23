@@ -198,7 +198,8 @@ class Agglomerator_Anisotropic
       const bool is_first_agglomeration,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, dimension),
+      _aniso_neighbours() {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -298,9 +299,18 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // Here we have to consider a special case when we have an odd number of cells:
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
         unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+        // We update the neighbours. At this stage, we do not check if it is or will
+        // be agglomerated since there will be a cleaning step after the anisotopic
+        // agglomeration
+        for (const auto &n : this->_fc_graph->get_neighbours(*line_it))
+          this->_aniso_neighbours.emplace_back(n);
+        for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+1)))
+          this->_aniso_neighbours.emplace_back(n);
         if (distance(line_it, end) == 3) {
           // If only three cells left, agglomerate them
           s_fc.insert(*(line_it + 2));
+          for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+2)))
+            this->_aniso_neighbours.emplace_back(n);
           line_it++;
         }
         // We create the coarse cell
@@ -339,6 +349,37 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         loop_line(line.rbegin(), line.rend());
 
     }
+  }
+
+  /** @brief Update the seeds pool with the neighbours of the anisotropic cells
+   * agglomerated so far
+   */
+  void update_seeds_pool() {
+    if (!this->_aniso_neighbours.empty()) {
+      // Example of erase taken from
+      // https://en.cppreference.com/w/cpp/container/deque/erase
+      for (auto it = this->_aniso_neighbours.begin();
+           it != this->_aniso_neighbours.end();) {
+        if (this->_cc_graph->_a_is_fc_agglomerated[*it])
+          it = this->_aniso_neighbours.erase(it);
+        else
+          ++it;
+      }
+      if (!this->_aniso_neighbours.empty()) {
+        // The master queue is the one of the first agglomerated cell:
+        // It is important to set it in the case the user asked for neighbourhood
+        // priority
+        this->_seeds_pool->set_top_queue(
+            this->_fc_graph->get_n_boundary_faces(
+              this->_aniso_neighbours.front()));
+        this->_seeds_pool->update(this->_aniso_neighbours);
+      }
+    }
+    // Even if we have updated it, the seeds pool might need initialization, for
+    // instance, if it was set up with boundary priority
+    if (this->_seeds_pool->need_initialization(
+                            this->_cc_graph->_a_is_fc_agglomerated))
+      this->_seeds_pool->initialize();
   }
 
   /** @brief Function that prepares the anisotropic lines for output
@@ -523,6 +564,11 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
   /** @brief Value of the aspect ration above which a cell is considered
    * anisotropic */
   CoMMAWeightType _threshold_anisotropy;
+
+  /** @brief Neighbours of the anisotropic cells agglomerated. They are used to
+   * update the seeds pool
+   */
+  deque<CoMMAIndexType> _aniso_neighbours;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator

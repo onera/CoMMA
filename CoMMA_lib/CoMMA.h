@@ -247,9 +247,12 @@ void agglomerate_one_level(
     // lines in the new global index, 0 the old)
     const CoMMAIntType i_level{1};
     aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
-  }
 
-  seeds_pool->initialize();
+    aniso_agg.update_seeds_pool();
+  }
+  else {
+    seeds_pool->initialize();
+  }
 
   // AGGLOMERATION OF ISOTROPIC CELLS
   //======================================
