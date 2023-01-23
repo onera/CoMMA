@@ -265,7 +265,6 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     CoMMAUnused(goal_card);
     CoMMAUnused(min_card);
     CoMMAUnused(max_card);
-    CoMMAUnused(priority_weights);
     CoMMAUnused(correction_steps);
 
     // if the finest agglomeration line is not computed, hence compute it
@@ -273,7 +272,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // the other one are stored only for visualization purpose)
     if (this->_v_lines[0].empty()) {
       // The anisotropic lines are only computed on the original (finest) mesh.
-      this->compute_anisotropic_lines();  // finest level!!!
+      this->compute_anisotropic_lines(priority_weights);  // finest level!!!
     }
 
     // In case the if is not realized, this is not the first generation of a
@@ -434,9 +433,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * the first level of agglomeration). Two main steps are performed:
    * 1) Look for anisotropic cells (via the dual graph)
    * 2) Build anisotropic lines
+   * @param[in] priority_weights Weights used to set the order telling where to start
    */
-  void compute_anisotropic_lines() {
-    set<CoMMAIndexType> anisotropic_fc;
+  void compute_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
+    deque<CoMMAIndexType> anisotropic_fc;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
     vector<CoMMAWeightType> maxArray(this->_fc_graph->_number_of_cells, 0.0);
@@ -444,7 +444,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
     this->_fc_graph->compute_anisotropic_fc(maxArray, anisotropic_fc,
-                                            _threshold_anisotropy, 0);
+                                            _threshold_anisotropy, priority_weights,
+                                            0);
     // Map to address if the cell has been added to a line
     unordered_map<CoMMAIndexType, bool> has_been_treated;
     for (auto &i_fc : anisotropic_fc) {
@@ -484,15 +485,17 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // vector of the candidates to continue the line
         vector<CoMMAIndexType> candidates;
         for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-          if (v_neighbours[i] != seed
+          const auto n = v_neighbours[i];
+          if (n != seed
               // Avoid the seed (it should not happen, but better safe than sorry)
-                and anisotropic_fc.count(v_neighbours[i]) != 0
+                and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
+                      != anisotropic_fc.end()
                 // if anisotropic cell...
                   and v_w_neighbours[i] > 0.90 * maxArray[seed]
                   // ...and if along the max interface...
-                      and !has_been_treated[v_neighbours[i]]
+                      and !has_been_treated[n]
                 ) {  // ...and if not treated
-            candidates.push_back(v_neighbours[i]);
+            candidates.push_back(n);
           }
         }  // end for loop
         // case we have only 1 candidate to continue the line
