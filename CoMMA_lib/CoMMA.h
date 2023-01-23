@@ -249,6 +249,8 @@ void agglomerate_one_level(
     aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
   }
 
+  seeds_pool->initialize();
+
   // AGGLOMERATION OF ISOTROPIC CELLS
   //======================================
   // We define here the type of Agglomerator

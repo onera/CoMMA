@@ -293,6 +293,12 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       } /* Switch */
     } /* For */
     vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We create the seeds pool") {
+      THEN("It is not initialized") {
+        REQUIRE(seeds_pool.need_initialization(agglomerated));
+      }
+    }
+    seeds_pool.initialize();
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
@@ -328,7 +334,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         agglomerated[i] = true;
       }
       // In order: Internal, ridge, corner, valley
-      vector<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      deque<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
       fill(agglomerated.begin(), agglomerated.end(), true);
       for (auto &i : new_seeds) {
         agglomerated[i] = false;
@@ -450,6 +456,12 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       } /* Switch */
     } /* For */
     vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We create the seeds pool") {
+      THEN("It is not initialized") {
+        REQUIRE(seeds_pool.need_initialization(agglomerated));
+      }
+    }
+    seeds_pool.initialize();
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
@@ -488,6 +500,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12, 13,        // First, corners
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
@@ -503,7 +516,8 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -514,6 +528,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     WHEN("We use a seeds pool with boundary priority and with only one start point") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
 #if 0
 The one-point initialization would not any impact w.r.t. the standard one on this mesh
 #endif
@@ -532,7 +547,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -543,6 +559,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with neighbourhood priority") {
       Seeds_Pool_Neighbourhood_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12, 13,        // First, corners
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
@@ -558,7 +575,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -569,6 +587,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with neighbourhood priority and with only one start point") {
       Seeds_Pool_Neighbourhood_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12,             // Starting point
         0, 3,           // Direct neighbours
@@ -586,7 +605,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -604,6 +624,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         0, 1, 2, 3, 8, 9, 10, 11, // First, outer boundary cells in an order given by the weights
         4, 5, 6, 7};              // ...finally, interior cells in an order given by neighbourhood
@@ -617,7 +638,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -628,6 +650,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         0,             // Starting point,
         1, 3, 2,       // ...then, outer boundary cells in an order given by neighbourhood
@@ -643,7 +666,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -1109,6 +1133,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1219,6 +1244,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_quad_4 Data = DualGPy_quad_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1372,6 +1398,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGPy_T_shaped Data = DualGPy_T_shaped();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1420,6 +1447,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
   GIVEN("We load the anisotropic mesh structure") {
     const DualGPy_aniso Data = DualGPy_aniso();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1445,6 +1473,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1487,6 +1516,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     const DualGPy_minimal Data = DualGPy_minimal();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
