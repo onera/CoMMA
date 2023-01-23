@@ -242,11 +242,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       }
     }
 
-    assert(threshold_anisotropy > 0);
     this->_threshold_anisotropy =
-        (threshold_anisotropy < 1)
-            ? static_cast<CoMMAWeightType>(1. / threshold_anisotropy)
-            : threshold_anisotropy;
+        (threshold_anisotropy > 1 || threshold_anisotropy < 0)
+            ? threshold_anisotropy
+            : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
   }
 
   /** @brief Destructor*/

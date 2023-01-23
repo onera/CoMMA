@@ -67,7 +67,8 @@
  * (it that's the case, the agglomeration lines will be built)
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
- * considered as anisotropic
+ * considered as anisotropic. If negative, all compliant cells are considered as
+ * anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
  * Possible values (see CoMMASeedsPoolT):
  *  0  : The number of boundary faces has highest priority
