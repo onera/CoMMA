@@ -1,6 +1,6 @@
 # Welcome to CoMMA
 
-**CoMMA**(COarse Mesh Multigrid %Agglomerator) is a suite of graph algorithms meant to operate on the graph representation of an **unstructured** computational mesh.
+**CoMMA** (COarse Mesh Multigrid %Agglomerator) is a suite of graph algorithms meant to operate on the graph representation of an **unstructured** computational mesh.
 
 The final objective is to give a map between the fine cells and coarse cells in the object representing the coarse cell graph.
 
@@ -11,3 +11,7 @@ The main features of CoMMA are:
 - Connectivity of coarse cells;
 - Detection and treatment of anisotropic regions;
 - Isotropic agglomeration with structured-like treatment of structured-like regions.
+
+CoMMA is a **header-only library**. A python module can be generated using `pybind11`.
+
+The interface to CoMMA is very simple and consists in only one function [agglomerate_one_level](@ref agglomerate_one_level).
