@@ -35,6 +35,9 @@
 
 using namespace std;
 
+/** @def CoMMAUnused(var)
+ *  @brief Convenient function to avoid unused warnings
+ */
 #define CoMMAUnused(var) (void)(var)
 
 /** @brief Compute the Euclidean distance between two points seen as vectors. We use

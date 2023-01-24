@@ -118,35 +118,38 @@ class Agglomerator {
                                      bool correction_steps) = 0;
 
  protected:
-  /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
+  /** @brief Dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
   CoMMAIntType _dimension;
-  /** @brief minimum number of neighbourhood we extend to search the neighbourhood
-   * in the greedy algorithm. Set as default to 3.*/
+  /** @brief Minimum number of neighbourhood we extend to search the neighbourhood
+   * in the greedy algorithm. Set as default to 3 */
   CoMMAIntType _min_neighbourhood = 3;
-  /** @brief minimum cardinality. Set as default to 0 (meaning the maximum
-   * possible).*/
+  /** @brief Minimum cardinality (default = 0, meaning, equal to the dimension) */
   CoMMAIntType _min_card = 0;
-  /** @brief maximum cardinality. Set as default to 0 (meaning the maximum
-   * possible)*/
+  /** @brief Maximum cardinality (default = 0, meaning, 5 or 10 for, resp.,
+   * 2- and 3D
+   */
   CoMMAIntType _max_card = 0;
-  /** @brief Goal cardinality. Set as default to 0 (meaning the maximum
-   * possible)*/
+  /** @brief Goal cardinality (default = 0, meaning, 4 or 8 for, resp.,
+   * 2- and 3D
+   */
   CoMMAIntType _goal_card = 0;
-  /** @brief Threshold cardinality. Set as default to 0 (meaning the maximum
-   * possible)*/
+  /** @brief Threshold cardinality (default = 0, meaning, equal to the dimension)
+   */
   CoMMAIntType _threshold_card = 0;
-  /** @brief List of number of cells per coarse cell created.*/
+  /** @brief List of number of cells per coarse cell created */
   vector<CoMMAIndexType> _l_nb_of_cells;
   /** @brief Dual_Graph object determining Fine cells graph and hence the
-   * connectivity.*/
+   * connectivity
+   */
   shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
-  /** @brief pointer to Coarse Cell Graph element */
+  /** @brief pointer to Coarse_Cell_Container element
+   */
   shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                    CoMMAIntType>> _cc_graph;
   /** @brief Seeds_Pool object giving the order in which the fine cells should
    * be considered when agglomerating
-   **/
+   */
   shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _seeds_pool;
 
 };
@@ -378,14 +381,14 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     }
   }
 
-  /** @brief Vector of number of Anisotropic agglomeration lines per level*/
+  /** @brief Vector of number of Anisotropic agglomeration lines per level */
   vector<CoMMAIndexType> _nb_lines;
 
   /** @brief _v_lines : Agglomeration lines structure:
-  * vector : level
-  * forward list : identifier of the line
-  * deque : line cells
-  * e.g _v_lines[0] --> agglomeration lines at the finest level*/
+  * - vector : level\n
+  * - forward list : identifier of the line\n
+  * - deque : line cells\n
+  * - e.g., _v_lines[0] --> agglomeration lines at the finest level\n */
   vector<vector<AnisotropicLinePtr>> _v_lines;
 
  protected:

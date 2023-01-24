@@ -35,43 +35,39 @@ using CoMMAIntT = int;
 
 /** @brief Type of an element according to its boundary faces / edges
  *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
- *  to minimizes the too small cells!
- *  0 : interior (no face on the edge of the domain)
- *  1 : valley (one face on the edge of the domain)
- *  2 : ridge (two faces on the edge of the domain)
- *  3 : corner (three faces on the edge of the domain)
  */
 enum CoMMACellT : CoMMAIntT {
-  INTERIOR     = 0,
-  VALLEY       = 1,
-  RIDGE        = 2,
-  CORNER       = 3,
-  EXTREME      = 4,
-  N_CELL_TYPES = 4
+  INTERIOR     = 0, ///< Interior cell, no boundary faces
+  VALLEY       = 1, ///< Valley, one boundary face
+  RIDGE        = 2, ///< Ridge, two boundary faces
+  CORNER       = 3, ///< Corners, three boundary faces
+  EXTREME      = 4, ///< Extreme value, should not be used
+
+  N_CELL_TYPES = 4  ///< Total number of values
 };
 
 /** @brief Type of neighbourhood (of a coarse cell) considered when agglomerating
- *  0 : Extended, all neighbours of the coarse cell
- *  1 : Pure front, only neighbours of the last added fine cell
  */
 enum CoMMANeighbourhoodT : CoMMAIntT {
-  EXTENDED   = 0,
-  PURE_FRONT = 1,
+  EXTENDED   = 0, ///< Extended, all neighbours of the coarse cell
+  PURE_FRONT = 1  ///< Pure front, only neighbours of the last added fine cell
 };
 
-/** @brief Type of seeds pool ordering
- *  0  : The number of boundary faces has highest priority
- *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
- *       priority)
- *  10 : The number of boundary faces has highest priority, and initialize with one
- *       point only then let evolve
- *  11 : The neighbourhood has highest priority, and initialize with one point only
- *       then let evolve
- */
+/** @brief Type of seeds pool ordering */
 enum CoMMASeedsPoolT : CoMMAIntT {
+  /** The number of boundary faces has highest priority */
   BOUNDARY_PRIORITY                     = 0,
+  /** The neighbourhood has highest priority (neighbours of coarse cells have
+   * priority)
+   */
   NEIGHBOURHOOD_PRIORITY                = 1,
+  /** The number of boundary faces has highest priority, and initialize with one
+   * point only then let evolve
+   */
   BOUNDARY_PRIORITY_ONE_POINT_INIT      = 10,
+  /** The neighbourhood has highest priority, and initialize with one point only
+   * then let evolve
+   */
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
 };
 

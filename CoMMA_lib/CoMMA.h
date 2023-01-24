@@ -36,13 +36,20 @@
 #include "Dual_Graph.h"
 #include "Seeds_Pool.h"
 
+/// \cond DO_NOT_DOCUMENT
 #define check_int_type(intT, label) \
   static_assert(numeric_limits<intT>::is_integer, \
       "CoMMA works with integer types, but " #intT " (" label ") is not")
 
-#define MAX_ITER 4
 #define _STRINGFY(x) #x
 #define STRINGFY(x) _STRINGFY(x)
+/// \endcond
+
+/** @def MAX_ITER
+ *  @brief Maximum allowed iterations for the iterative lagorithm, see
+ * \ref Agglomerator_Iterative
+ */
+#define MAX_ITER 4
 
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
@@ -60,7 +67,7 @@
  * @param[in] centers Cell centers
  * @param[in] priority_weights Weights used to set the order telling where to start
  * agglomerating. The higher the weight, the higher the priority
- *  @param[in] arrayOfFineAnisotropicCompliantCells List of cells which have to be looked
+ *  @param[in] anisotropicCompliantCells List of cells which have to be looked
  * for anisotropy
  * @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
  * @param[in] isFirstAgglomeration Whether if it's the first level of agglomeration
@@ -69,18 +76,18 @@
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
  * considered as anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
- * Possible values (see CoMMASeedsPoolT):
- *  0  : The number of boundary faces has highest priority
+ * Possible values (see \ref CoMMASeedsPoolT):\n
+ *  0  : The number of boundary faces has highest priority\n
  *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
- *       priority)
+ *       priority)\n
  *  10 : The number of boundary faces has highest priority, and initialize with one
- *       point only then let evolve
+ *       point only then let evolve\n
  *  11 : The neighbourhood has highest priority, and initialize with one point only
- *       then let evolve
+ *       then let evolve\n
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
  * belongs to after agglomeration
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
- * element points to a particular element in the vector agglomerationLines
+ * element points to a particular element in the vector \p agglomerationLines
  * @param[in,out] agglomerationLines Vector storing all the elements of the
  * anisotropic lines
  * @param[in] correction Whether to apply correction step (avoid isolated cells) after
@@ -89,17 +96,19 @@
  * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
- * @param[in] fc_choice_iter Number of iterations allowed for the algorithm choosing
- * which fine cell to add next. The cost grows exponentially, hence use small values.
- * Default values: 1
- * @param[in] neighbourhood_type Type of neighbourhood to use when growing a coarse
- * cell. Two alternatives: Extended: requested with 0, standard algorithm where we
- * consider every neighbour of the coarse cell as candidate; Pure Front Advancing:
- * requested with 1, only direct neighbours of the last added cell are candidates.
- * Default value: Extended. See CoMMANeighbourhoodT
- * @throw `invalid_argument` if dimension is not 2 nor 3, or if cardinalities are
+ * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed for
+ * the algorithm choosing which fine cell to add next. The cost grows exponentially,
+ * hence use small values.
+ * @param[in] neighbourhood_type (optional, default=EXTENDED) Type of neighbourhood
+ * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details. Two
+ * alternatives:\n
+ * Extended: requested with 0, standard algorithm where we consider every neighbour
+ * of the coarse cell as candidate\n
+ * Pure Front Advancing: requested with 1, only direct neighbours of the last added
+ * cell are candidates.\n
+ * @throw invalid_argument if dimension is not 2 nor 3, or if cardinalities are
  * smaller than 1 or not in order
- * */
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 void agglomerate_one_level(
@@ -120,9 +129,10 @@ void agglomerate_one_level(
     const vector<CoMMAIntType> &n_bnd_faces,
 
     // Agglomeration argument
-    bool isFirstAgglomeration, bool is_anisotropic,
+    bool isFirstAgglomeration,
+    bool is_anisotropic,
     CoMMAWeightType threshold_anisotropy,
-    const CoMMAIntT seed_ordering_type,
+    const CoMMAIntType seed_ordering_type,
 
     // Outputs
     vector<CoMMAIndexType> &fc_to_cc,                // Out
@@ -130,8 +140,11 @@ void agglomerate_one_level(
     vector<CoMMAIndexType> &agglomerationLines,      // In & out
 
     // Args with default value
-    bool correction, CoMMAIntType dimension, CoMMAIntType goal_card,
-    CoMMAIntType min_card, CoMMAIntType max_card,
+    bool correction,
+    CoMMAIntType dimension,
+    CoMMAIntType goal_card,
+    CoMMAIntType min_card,
+    CoMMAIntType max_card,
     CoMMAIntType fc_choice_iter = 1,
     const CoMMAIntType neighbourhood_type=CoMMANeighbourhoodT::EXTENDED) {
   // NOTATION
