@@ -1447,7 +1447,6 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
   GIVEN("We load the anisotropic mesh structure") {
     const DualGPy_aniso Data = DualGPy_aniso();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
-    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
