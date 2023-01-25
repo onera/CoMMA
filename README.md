@@ -1,6 +1,7 @@
 # CoMMA (COarse Mesh Multigrid Agglomerator)
 [![coverage report](https://gitlab.com/albiremo/CoMMA/badges/main/coverage.svg)](https://gitlab.com/albiremo/CoMMA/-/commits/main)
-[Documentation](https://albiremo.gitlab.io/CoMMA/)
+
+:book: [**DOCUMENTATION**](https://albiremo.gitlab.io/CoMMA/) :book:
 
 **CoMMA** is a suite of graph algorithms meant to operate on the graph
 representation of an **unstructured** computational mesh.
