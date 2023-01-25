@@ -53,7 +53,7 @@
 
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
- * of the agglomerated cells fc2cc.
+ * of the agglomerated cells \p fc_to_cc.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -76,14 +76,14 @@
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
  * considered as anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
- * Possible values (see \ref CoMMASeedsPoolT):\n
- *  0  : The number of boundary faces has highest priority\n
- *  1  : The neighbourhood has highest priority (neighbours of coarse cells have
- *       priority)\n
- *  10 : The number of boundary faces has highest priority, and initialize with one
- *       point only then let evolve\n
- *  11 : The neighbourhood has highest priority, and initialize with one point only
- *       then let evolve\n
+ * Possible values (see \ref CoMMASeedsPoolT):
+ * - 0: The number of boundary faces has highest priority
+ * - 1: The neighbourhood has highest priority (neighbours of coarse cells have
+ *      priority)
+ * - 10: The number of boundary faces has highest priority, and initialize with one
+ *       point only then let evolve
+ * - 11: The neighbourhood has highest priority, and initialize with one point only
+ *       then let evolve
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
  * belongs to after agglomeration
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
@@ -99,13 +99,13 @@
  * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed for
  * the algorithm choosing which fine cell to add next. The cost grows exponentially,
  * hence use small values.
- * @param[in] neighbourhood_type (optional, default=EXTENDED) Type of neighbourhood
+ * @param[in] neighbourhood_type (optional, default=Extended) Type of neighbourhood
  * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details. Two
- * alternatives:\n
- * Extended: requested with 0, standard algorithm where we consider every neighbour
- * of the coarse cell as candidate\n
- * Pure Front Advancing: requested with 1, only direct neighbours of the last added
- * cell are candidates.\n
+ * alternatives:
+ * - Extended: requested with 0, standard algorithm where we consider every neighbour
+ * of the coarse cell as candidate.
+ * - Pure Front Advancing: requested with 1, only direct neighbours of the last added
+ * cell are candidates.
  * @throw invalid_argument if dimension is not 2 nor 3, or if cardinalities are
  * smaller than 1 or not in order
  */

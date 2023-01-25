@@ -45,7 +45,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          const vector<CoMMAIntT> &n_bnd_faces,
 
          // Agglomeration argument
-         bool isFirstAgglomeration, bool is_anisotropic,
+         bool isFirstAgglomeration,
+         bool is_anisotropic,
          CoMMAWeightT threshold_anisotropy,
          const CoMMAIntT seed_ordering_type,
 
@@ -55,8 +56,11 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          vector<CoMMAIndexT> agglomerationLines,      // In & out
 
          // Args with default value
-         bool correction, CoMMAIntT dimension, CoMMAIntT goal_card,
-         CoMMAIntT min_card, CoMMAIntT max_card,
+         bool correction,
+         CoMMAIntT dimension,
+         CoMMAIntT goal_card,
+         CoMMAIntT min_card,
+         CoMMAIntT max_card,
          CoMMAIntT fc_choice_iter,
          const CoMMAIntT type_of_isotropic_agglomeration) {
         agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(

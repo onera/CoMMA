@@ -94,7 +94,7 @@ class Seeds_Pool {
    *  @param[in] priority_weights Weights used to set the order of the seed to choose
    *  @param[in] one_point_init Whether the initialization should be done for the
    *  highest boundary level or just for one point
-   **/
+   */
   Seeds_Pool(const vector<CoMMAIntType> &n_bnd_faces,
              const vector<CoMMAWeightType> &priority_weights,
              const bool one_point_init) :
@@ -254,7 +254,7 @@ class Seeds_Pool {
 };
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell
+ * cell. This derived class gives higher priority to cells that are on the border.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -375,7 +375,8 @@ class Seeds_Pool_Boundary_Priority
 };
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell
+ * cell. This derived class gives higher priority to cells that are neighbours of
+ * already existing coarse cells
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh

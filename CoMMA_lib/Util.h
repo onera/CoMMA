@@ -44,24 +44,23 @@ using namespace std;
  * vectors because we can have both 2- and 3D points (also we can have 3D points even
  * if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D meshes). The
  * dimension used as reference is the one of the first point
- *  @tparam CoMMAWeightType Type for real numbers
+ *  @tparam T Type for real numbers
  *  @param[in] a First point
  *  @param[in] b Second point
  *  @return The Euclidean distance between the two points
  */
-template <typename CoMMAWeightType>
-inline CoMMAWeightType euclidean_distance(const vector<CoMMAWeightType> a,
-    const vector<CoMMAWeightType> b) {
-  vector<CoMMAWeightType> diff;
-  transform(a.begin(),a.end(), b.begin(), back_inserter(diff), minus<CoMMAWeightType>());
-  return sqrt(inner_product(diff.begin(), diff.end(), diff.begin(), CoMMAWeightType{0.}));
+template <typename T>
+inline T euclidean_distance(const vector<T> a, const vector<T> b) {
+  vector<T> diff;
+  transform(a.begin(),a.end(), b.begin(), back_inserter(diff), minus<T>());
+  return sqrt(inner_product(diff.begin(), diff.end(), diff.begin(), T{0.}));
 }
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
  * 'less than' operator for the second elements and 'greater than' for the first ones.
- *  @tparam CoMMAPairType type of pair
+ *  @tparam PairT Type for pairs
  */
-template<class CoMMAPairType>
+template<class PairT>
 struct CustomPairLessFunctor {
   /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
    * 'less than' operator for the second elements and 'greater than' for the first ones.
@@ -70,7 +69,7 @@ struct CustomPairLessFunctor {
    *  @return true if p.second < q.second or (p.second == q.second and p.first > q.first);
    * false otherwise
    */
-  inline bool operator() (CoMMAPairType p, CoMMAPairType q) const {
+  inline bool operator() (PairT p, PairT q) const {
     if      (p.second < q.second)   return true;
     else if (p.second > q.second)   return false;
     else /* p.second == q.second */ return p.first > q.first;
@@ -79,9 +78,9 @@ struct CustomPairLessFunctor {
 
 /** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
  * 'greater than' operator for the second elements and 'less than' for the first ones.
- *  @tparam CoMMAPairType type of pair
+ *  @tparam PairT Type for pairs
  */
-template<typename CoMMAPairType>
+template<typename PairT>
 struct CustomPairGreaterFunctor {
   /** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
    * 'greater than' operator for the second elements and 'less than' for the first ones.
@@ -90,8 +89,8 @@ struct CustomPairGreaterFunctor {
    *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
    * false otherwise
    */
-  inline bool operator() (CoMMAPairType p, CoMMAPairType q) const {
-    // I tried this: return !CustomPairLessFunctor<CoMMAPairType>()(p,q);
+  inline bool operator() (PairT p, PairT q) const {
+    // I tried this: return !CustomPairLessFunctor<PairT>()(p,q);
     // but it didn't work well for equality
     if      (p.second > q.second)   return true;
     else if (p.second < q.second)   return false;
@@ -116,9 +115,9 @@ vector_of_first_elements(const CoMMAContainerPairType &c) {
 
 /** @brief Functor implementing an operator telling if a given value if the first
  * one of pair
- *  @tparam CoMMAPairType Type of pair
+ *  @tparam PairT Type for pairs
  */
-template<typename CoMMAPairType>
+template<typename PairT>
 class PairFindFirstBasedFunctor {
   public:
   /** @brief Constructor */
@@ -126,7 +125,7 @@ class PairFindFirstBasedFunctor {
   /** @brief Constructor
    *  @param target Reference value that will be sought
    */
-  PairFindFirstBasedFunctor(const typename CoMMAPairType::first_type &target) :
+  PairFindFirstBasedFunctor(const typename PairT::first_type &target) :
     _target(target) {};
   /** @brief Destructor */
   ~PairFindFirstBasedFunctor() {};
@@ -135,22 +134,22 @@ class PairFindFirstBasedFunctor {
    *  @param[in] p The pair
    *  @return a bool
    */
-  inline bool operator() (const CoMMAPairType &p) const {return p.first == _target;}
+  inline bool operator() (const PairT &p) const {return p.first == _target;}
   private:
   /** @brief Reference value to be sought */
-  typename CoMMAPairType::first_type _target;
+  typename PairT::first_type _target;
 };
 
 /** @brief Utility function for creating a set out of the keys of a map
- *  @tparam KeyType Type of the keys of the map
- *  @tparam ValueType Type of the values of the map
+ *  @tparam KeyT Type of the keys of the map
+ *  @tparam ValueT Type of the values of the map
  *  @param[in] dict A map
  *  @return a set
  */
-template <typename KeyType, typename ValueType>
-inline unordered_set<KeyType> d_keys_to_set(
-    const unordered_map<KeyType, ValueType> &dict) {
-  unordered_set<KeyType> s_neighbours_of_seed = {};
+template <typename KeyT, typename ValueT>
+inline unordered_set<KeyT> d_keys_to_set(
+    const unordered_map<KeyT, ValueT> &dict) {
+  unordered_set<KeyT> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);
   }

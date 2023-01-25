@@ -29,13 +29,14 @@
 
 using namespace std;
 /** @brief An easy and straight forward implementation of a Bimap.
- *  @todo implement and understand the use of iterators**/
+ *  @deprecated Not used anymore
+ */
 template <typename A, typename B>
 class Bimap {
  public:
-  /** @brief Constructor **/
+  /** @brief Constructor */
   Bimap() {};
-  /** @brief Destructor **/
+  /** @brief Destructor */
   ~Bimap() {};
 
   //  using container= map<A, const B*>;
@@ -44,9 +45,9 @@ class Bimap {
   //  inline iterator end() noexcept { return _mapB.end(); }
 
   /** @brief Insertion function in the Bimap
-*     @param[in] a element A to add
-*     @param[in] b element B to add**/
-
+   *  @param[in] a element A to add
+   *  @param[in] b element B to add
+   */
   void insert(const A &a, const B &b) {
     auto aitr = _mapA.insert({b, nullptr}).first;  // creates first pair
     const B *bp = &(aitr->first);  // get pointer of our stored copy of b
@@ -64,9 +65,10 @@ class Bimap {
   }
 
   /** @brief Update of the key of the map B and hence the value of the node A
-* @param[in] a_old the old value of the node A (in case you do not know you can
-* find it through the find.
-* @param[in] a_new the new value we want to attribute to the node A. */
+   * @param[in] a_old the old value of the node A (in case you do not know you can
+   * find it through the find.
+   * @param[in] a_new the new value we want to attribute to the node A.
+   */
   void update_nodeB(const A &a_old, const A &a_new) {
     auto node = _mapB.extract(a_old);
     if (!node.empty()) {
@@ -75,9 +77,10 @@ class Bimap {
     }
   }
   /** @brief Update of the key of the map A and hence the value of the node B
-* @param[in] b_old the old value of the node B (in case you do not know you can
-* find it through the find.
-* @param[in] b_new the new value we want to attribute to the node B. */
+   * @param[in] b_old the old value of the node B (in case you do not know you can
+   * find it through the find.
+   * @param[in] b_new the new value we want to attribute to the node B.
+   */
   void update_nodeA(const B &b_old, const B &b_new) {
     auto node = _mapA.extract(b_old);
     if (!node.empty()) {
@@ -86,7 +89,9 @@ class Bimap {
     }
   }
   /**@brief Getter of the B value starting from a A value
-*     @param[in] a the associated value we want to search*/
+   * @param[in] a the associated value we want to search
+   * @return the value associated to \p a
+   */
   B get_B(const A &a) {
     // We pass the associated value we want to search to the member
     // variable
@@ -95,7 +100,9 @@ class Bimap {
   }
 
   /**@brief Getter of the A value starting from a B value
-*     @param[in] b the associated value we want to search*/
+   * @param[in] b the associated value we want to search
+   * @return the value associated to \p b
+   */
   A get_A(const B &b) {
     // We pass the associated value we want to search to the member
     // variable
@@ -104,8 +111,9 @@ class Bimap {
   }
 
   /**@brief Eraser of the  value starting from a A value
-*     @param[in] a the associated value we want to search in order to delete the
-* relative entry*/
+   * @param[in] a the associated value we want to search in order to delete the
+   * relative entry
+   */
   void erase_B(const A &a) {
     // We pass the associated value we want to search to the member
     // variable
@@ -115,15 +123,19 @@ class Bimap {
     _mapB.erase(itB);
     _mapA.erase(itA);
   }
-  /** @brief Check if the Bimap is empty*/
+  /** @brief Check if the Bimap is empty
+   *  @return a boolan
+   */
   inline bool empty() { return (_mapA.empty()); }
-  /** @brief Returns the size of the container*/
+  /** @brief Returns the size of the container
+   *  @return the size
+   */
   inline size_t lung() { return (_mapB.size()); }
 
  protected:
-  /** @brief Left map **/
+  /** @brief Left map  */
   map<B, const A *> _mapA;
-  /** @brief Right map*/
+  /** @brief Right map */
   map<A, const B *> _mapB;
 };
 #endif

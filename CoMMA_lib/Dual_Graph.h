@@ -45,7 +45,7 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Dual_Graph;
 
 /** @brief An interface class responsible of storing the cell centered dual
- * graph and of acting on it (it is an interface for the global Dual Graph and
+ * graph and of acting on it (it is an interface for the global Dual_Graph and
  * the Subgraph)
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -57,7 +57,7 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Graph {
  public:
   /** @brief Constructor of the class
-   *  @param[in] nb_c number of cells
+   *  @param[in] nb_c Number of cells
    *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
    *  @param[in] m_crs_col_ind The column index of the CRS representation
    *  @param[in] m_crs_values The weight of the CRS representation (in CoMMA case
@@ -85,7 +85,7 @@ class Graph {
    * in the subgraph or the dual graph. */
   CoMMAIndexType _number_of_cells;
 
-  /** @brief helper vector for the DFS */
+  /** @brief Helper vector for the DFS */
   vector<bool> _visited;
 
   /** @brief Vector of row pointer of CRS representation */
@@ -101,7 +101,8 @@ class Graph {
   vector<CoMMAWeightType> _volumes;
 
   /** @brief Depth First Search (DFS) recursive function
-   *  @param[in] i_fc index of the node to print*/
+   *  @param[in] i_fc Index of the node to print
+   */
   void DFS(const CoMMAIndexType &i_fc) {
     _visited[i_fc] = true;
     vector<CoMMAIndexType> v_neigh;
@@ -114,7 +115,7 @@ class Graph {
   }
 
   /** @brief Breadth First Search (BFS) function
-   *  @param[in] root  root of the spanning tree
+   *  @param[in] root Root of the spanning tree
    */
   void BFS(const CoMMAIndexType &root) {
     deque<CoMMAIndexType> coda;
@@ -149,8 +150,8 @@ class Graph {
   }
 
   /** @brief Retrieve the number of neighbours
-   *  @param[in] i_c index of the cell
-   *  @return number of neighbours of the given cell.
+   *  @param[in] i_c Index of the cell
+   *  @return Number of neighbours of the given cell.
    */
   inline CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) const {
     // Return the number of neighbours of the ith cell
@@ -159,7 +160,7 @@ class Graph {
 
   /** @brief Based on the CRS representation retrieves the neighbours of the
    * cell given as an input.
-   * @param[in] i_c index of the cell to check the neighbours
+   * @param[in] i_c Index of the cell
    * @return vector of the neighbours.
    */
   vector<CoMMAIndexType> get_neighbours(const CoMMAIndexType &i_c) const {
@@ -177,7 +178,8 @@ class Graph {
   /** @brief Based on the area of the faces composing the cell given as an
    * input, we retrieve the faces connecting the given cell with the
    * neighbourhood that can be described also as the weight of the graph
-   * @return vector of weight associated to the cell.
+   * @param[in] i_c Index of the cell
+   * @return Vector of weights associated to the cell.
    */
   vector<CoMMAWeightType> get_weights(const CoMMAIndexType &i_c) const {
     // Given the index of a cell, return the value of the faces connected
@@ -191,7 +193,7 @@ class Graph {
     return result;
   }
 
-  /** @brief Check the connectivity of the given Graph.
+  /** @brief Check the connectivity of the graph.
    * @return True if the graph is connected, false if it is not connected
    */
   bool check_connectivity() {
@@ -211,7 +213,7 @@ class Graph {
   }
 
   /** @brief Compute the minimum compactness of fine cells inside a coarse cell.
-  *   @param[in] s_fc set of fine cells to analyse
+  *   @param[in] s_fc Set of fine cells to analyse
   *   @return the compactness of the fine cell
   */
   CoMMAIntType compute_min_fc_compactness_inside_a_cc(
@@ -238,7 +240,7 @@ class Graph {
 
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
-  *   @param[in] s_fc set of fine cells to analyse
+  *   @param[in] s_fc Set of fine cells to analyse
   *   @return the dictionary associating a fine cell in the coarse cell with its
   * compactness
   */
@@ -319,15 +321,17 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Destructor of the class */
   virtual ~Subgraph() = default;
 
-  /** @brief it originates from an isotropic cell.*/
+  /** @brief Whether it originates from an isotropic cell. */
   bool _is_isotropic;
 
   /** @brief Cardinality of the given subgraph, alias the number of nodes
-   * contained*/
+   * contained
+   */
   CoMMAIntType _cardinality;
 
   /** @brief Compactness of the given subgraph. The compactness is the minimum number
-   * of internal neighbours */
+   * of internal neighbours
+   */
   CoMMAIntType _compactness;
 
   /** @brief Mapping from the local number of node to the global. Being a
@@ -337,11 +341,11 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   vector<CoMMAIndexType> _mapping_l_to_g;
 
   /** @brief Insert a node in the subgraph and add it to the mapping the
-   *  @param[in] v_neigh vector of the neighbours to be added. The neighbours must
+   *  @param[in] v_neigh Vector of the neighbours to be added. The neighbours must
    * be given in the global indexing system.
-   *  @param[in] i_fc global index of the node
+   *  @param[in] i_fc Global index of the node
    *  @param[in] volume Volume of the cell
-   *  @param[in] weight vector of the area of the faces of the given cells to be
+   *  @param[in] weight Vector of the area of the faces of the given cells to be
    * added.
    */
   void insert_node(const vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
@@ -397,7 +401,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Remove a node from the CRS representation and automatically adjust
    * the mapping
-   *  @param[in] elemento global index of the node to be deleted.
+   *  @param[in] elemento Global index of the node to be deleted.
    */
   void remove_node(const CoMMAIndexType &elemento) {
     // Pass to the local
@@ -536,8 +540,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Elements that are checked if they are anisotropic. If an element satisfies
    * the condition for being anisotropic (typically, AR > threshold) but it not
-   * in this set, it will not considered as anisotropic.
-   * We use a set to ensure uniqueness
+   * in this set, it will not considered as anisotropic. We use a set to ensure uniqueness
    */
   const unordered_set<CoMMAIndexType> _s_anisotropic_compliant_cells;
 
@@ -545,9 +548,9 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   const vector<vector<CoMMAWeightType>> &_centers;
 
   /** @brief Function which computes the aspect-ratio from the minimum and maximum
-   * faces
-   *  In 3D: \f$ AR = sqrt(max_{surf} / min_{surf}) \f$
-   *  In 2D: \f$ AR = max_{surf} / min_{surf} \f$
+   * faces\n
+   *  In 3D: \f$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) \f$\n
+   *  In 2D: \f$ AR = \frac{max_{surf}}{min_{surf}} \f$\n
    *  (Recall that in 2D a face is actually an edge)
    */
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
@@ -574,7 +577,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[out] anisotropic_fc Set of fine cells tagged as anisotropic
    *  @param[in] threshold_anisotropy Value of the aspect ration above which a
    *  cell is considered anisotropic
-   *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
+   *  @param[in] preserving If 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
@@ -669,16 +672,16 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
   * cell.
-  *   @param[in] s_seeds set of seeds for which the neighbourhood must be
+  *   @param[in] s_seeds Set of seeds for which the neighbourhood must be
   * computed. Generally they are the fine cells composing the coarse cell for
   * which we are trying to compute the neighbourhood.
-  *   @param[in] nb_of_order_of_neighbourhood order of the neighbourhood at which
+  *   @param[in] nb_of_order_of_neighbourhood order Of the neighbourhood at which
   * we want to extend the dictionary
-  *   @param[out] d_n_of_seed dictionary of the neighbourhood given as an output.
+  *   @param[out] d_n_of_seed Dictionary of the neighbourhood given as an output.
   * The key of the associative structure is the index of the fine cell, the
   * value is the order of the distance.
-  *   @param[in] max_card maximum cardinality
-  *   @param[in] is_fc_agglomerated_tmp vector reporting the already
+  *   @param[in] max_card Maximum cardinality
+  *   @param[in] is_fc_agglomerated_tmp Vector reporting the already
   * agglomerated cell, useful in the algorithm
   */
   void compute_neighbourhood_of_cc(

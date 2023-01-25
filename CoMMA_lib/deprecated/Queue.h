@@ -28,23 +28,28 @@
 #include <vector>
 
 using namespace std;
-/** @brief A template class implementing the Queue data structure **/
+/** @brief A template class implementing a custom queue data structure
+ *  @tparam T Type of the elements
+ *  @deprecated Not used anymore
+ */
 template <typename T>
 class Queue {
  private:
-  /** @brief The vector of elements **/
+  /** @brief The vector of elements */
   deque<T> _elems;
 
  public:
-  /** @brief Constructor **/
-  Queue() {};
-  /** @brief Destructor **/
-  ~Queue() {};
-  /** @brief push an element on the top of the Queue.
-  *   philosophy **/
+  /** @brief Constructor */
+  Queue() {}
+  /** @brief Destructor */
+  ~Queue() {}
+  /** @brief Push an element on the top of the queue.
+   *  @param elem The element to add
+   */
   void push(T const& elem) { _elems.push_back(elem); }
-  /** @brief pop an element from the bottom of the Queue
-   *  @return The element popped**/
+  /** @brief pop an element from the bottom of the queue
+   *  @return The element popped
+   */
   T pop() {
     if (_elems.empty()) {
       return static_cast<T>(-1);
@@ -52,15 +57,19 @@ class Queue {
     T elem = _elems.front();  // Copy last element
     _elems.pop_front();       // remove last element
     return elem;
-  };
-  /** @brief Scope to the element on the bottom of the Queue
-   *  @return The bottom element of the queue**/
+  }
+  /** @brief Scope to the element on the bottom of the queue
+   *  @return The bottom element of the queue
+   */
   T top() const {
     if (_elems.empty()) {
       return static_cast<T>(-1);
     }
     return _elems.front();
   }
+  /** @brief Whether the queue is empty
+   *  @return a bool
+   */
   inline bool empty() const {return _elems.empty(); }
 };
 #endif

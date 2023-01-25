@@ -55,11 +55,11 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Agglomerator {
  public:
-  /** @brief Function which computes the aspect-ratio from a diameter and a volume
-   *  In 3D: \f$ AR = diam_{CC} / \sqrt{vol_{CC}} \f$
-   *  In 2D: \f$ AR = diam_{CC} / \sqrt[3]{vol_{CC}} \f$
+  /** @brief Function which computes the aspect-ratio from a diameter and a volume\n
+   *  In 3D: \f$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} \f$ \n
+   *  In 2D: \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ \n
    *  (Recall that in 2D the volume is the surface)
-  */
+   */
   function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)> _compute_AR;
 
   /** @brief The constructor of the interface
@@ -68,7 +68,7 @@ class Agglomerator {
    *  @param[in] cc_graph Container for the coarse cells
    *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
    * should be considered when agglomerating
-   *  @param[in] dimension the dimension of the problem
+   *  @param[in] dimension Dimension of the problem
    */
   Agglomerator(shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
                shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
@@ -161,7 +161,7 @@ class Agglomerator {
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
  * @tparam CoMMAIntType the CoMMA type for integers
- **/
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Agglomerator_Anisotropic
@@ -188,7 +188,7 @@ class Agglomerator_Anisotropic
    * considered as anisotropic
    *  @param[in] is_first_agglomeration Whether the current is the first agglomeration
    * meaning that anisotropic lines should be built
-   *  @param[in] dimension the dimension of the problem
+   *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
@@ -258,7 +258,18 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * Agglomerator_Anisotropic.
    * We add the override key as a guard to possible mistakes:
    * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
-   **/
+   * @param[in] goal_card goal cardinality of the coarse cell
+   * @param[in] min_card minimum cardinality of the coarse cell
+   * @param[in] max_card maximum cardinality of the coarse cell
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
+   * @param[in] correction_steps it defines if corrections for the isotropic
+   * algorithm are activated or not, for anisotropic algorithm not taken into
+   * account.
+   * @note The input arguments are not used since the structure of the anisotropic
+   * agglomerator is fixed: cells belonging to the same anisotropic lines are
+   * agglomerated pairwise (by 3 on some rare occasions).
+   */
   void agglomerate_one_level(const CoMMAIntType goal_card,
                              const CoMMAIntType min_card,
                              const CoMMAIntType max_card,
@@ -350,7 +361,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * element in the vector agglo_lines_array. This is due to the storing structure.
    *  @param[out] agglo_lines_array Array storing all the element of the
    * anisotropic lines.
-   **/
+   */
   void get_agglo_lines(CoMMAIntType level,
                        vector<CoMMAIndexType> &agglo_lines_array_idx,
                        vector<CoMMAIndexType> &agglo_lines_array) const {
@@ -388,15 +399,16 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
   * - vector : level\n
   * - forward list : identifier of the line\n
   * - deque : line cells\n
-  * - e.g., _v_lines[0] --> agglomeration lines at the finest level\n */
+  * - e.g., _v_lines[0] --> agglomeration lines at the finest level
+  */
   vector<vector<AnisotropicLinePtr>> _v_lines;
 
  protected:
 
   /** @brief Computes the anisotropic lines at the first level (only called at
    * the first level of agglomeration). Two main steps are performed:
-   * 1) Look for anisotropic cells (via the dual graph)
-   * 2) Build anisotropic lines
+   * 1. Look for anisotropic cells (via the dual graph)
+   * 2. Build anisotropic lines
    */
   void compute_anisotropic_lines() {
     set<CoMMAIndexType> anisotropic_fc;
@@ -474,8 +486,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // case we have more than one candidate
         else if (candidates.size() > 1) {
           // we cycle on candidates
-          /** @todo Not properly efficient. We risk to do twice the operations
-        * (we overwrite the seed). This is not proper */
+          /** @todo Not properly efficient. We risk to do twice the operations (we
+           * overwrite the seed), so optimization might be needed. However, that is
+           * what Mavriplis did.
+           */
           for (auto &element : candidates) {
             // if has been treated ==> we check the next candidate
             if (has_been_treated[element]) {
@@ -520,11 +534,12 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     }
   }
 
-  /** @brief Vector of set of the anisotropic compliant of fine cells*/
+  /** @brief Vector of set of the anisotropic compliant of fine cells */
   vector<unordered_set<CoMMAIndexType>> _v_of_s_anisotropic_compliant_fc;
 
   /** @brief Value of the aspect ration above which a cell is considered
-   * anisotropic */
+   * anisotropic
+   */
   CoMMAWeightType _threshold_anisotropy;
 };
 
@@ -535,7 +550,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
  * @tparam CoMMAIntType the CoMMA type for integers
- **/
+ */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Agglomerator_Isotropic
@@ -559,17 +574,27 @@ class Agglomerator_Isotropic
   shared_ptr<NeighbourhoodCreatorBaseType> _neigh_crtor;
 
   /** @brief Constructor. The constructor takes as arguments the same arguments
-  * of the father and in this way activates also the constructor of the base class.
-  **/
+   * of the father and in this way activates also the constructor of the base class.
+   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * of the matrix
+   *  @param[in] cc_graph Container for the coarse cells
+   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
+   * should be considered when agglomerating
+   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * coarse cell. See \ref CoMMANeighbourhoodT for more details.
+   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing which
+   * fine cell to add next. The cost grows exponentially, hence use small values.
+   *  @param[in] dimension Dimension of the problem
+   */
   Agglomerator_Isotropic(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType agglo_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
+      CoMMAIntType neighbourhood_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             graph, cc_graph, seeds_pool, dimension), _fc_iter(fc_iter) {
-    if (agglo_type == CoMMANeighbourhoodT::EXTENDED)
+    if (neighbourhood_type == CoMMANeighbourhoodT::EXTENDED)
       _neigh_crtor = make_shared<NeighbourhoodCreatorExtType>();
     else
       _neigh_crtor = make_shared<NeighbourhoodCreatorPFType>();
@@ -586,7 +611,7 @@ class Agglomerator_Isotropic
    * to 0 indicating in our case the maximum value)
    * @param[in] max_card maximum cardinality of the coarse cell(set as default
    * to 0 indicating in our case the maximum value)
-   **/
+   */
   void set_agglomeration_parameter(CoMMAIntType goal_card = 0,
                                    CoMMAIntType min_card  = 0,
                                    CoMMAIntType max_card  = 0) {
@@ -628,17 +653,25 @@ class Agglomerator_Isotropic
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Isotropic.
    * We add the override key as a guard to possible mistakes:
-   * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function
-   * The function must be called later by the derived class in order to
-   * specialize the implementation of the choose optimal_cc. For further
-   * information about the structure, have a look at :
-   * http://www.cplusplus.com/forum/general/31851/
+   * https://stackoverflow.com/questions/46446652/is-there-any-point-in-using-override-when-overriding-a-pure-virtual-function \n
+   * The function calls function \ref choose_optimal_cc_and_update_seeds_pool of the
+   * derived class. For further information about the structure, have a look at:
+   * http://www.cplusplus.com/forum/general/31851/ \n
    * The pseudo-code considers the while function and the agglomeration
-   * process is not completed until all the cells are not agglomerated. Hence:
-   * - we choose a new seed
-   * - we check with a specific algorithm the neighbouring cells to
+   * process is not completed until all the cells are not agglomerated. Hence, while
+   * there are still non agglomerate fine cells, repeat the following steps:
+   * 1. Choose a new seed
+   * 2. Check with a specific algorithm the neighbouring cells to
    * agglomerate to the seed
-   * - we create a new coarse cell (using the apposite method in cc_graph)
+   * 3. Create a new coarse cell (using the apposite method in cc_graph)
+   * @param[in] goal_card goal cardinality of the coarse cell
+   * @param[in] min_card minimum cardinality of the coarse cell
+   * @param[in] max_card maximum cardinality of the coarse cell
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
+   * @param[in] correction_steps it defines if corrections for the isotropic
+   * algorithm are activated or not, for anisotropic algorithm not taken into
+   * account.
    */
   void agglomerate_one_level(const CoMMAIntType goal_card,
                              const CoMMAIntType min_card,
@@ -755,7 +788,7 @@ class Agglomerator_Isotropic
 
 };
 
-/** @brief Child class of Agglomerator Isotropic where is implemented a specific
+/** @brief Child class of Agglomerator_Isotropic where is implemented a specific
  * biconnected algorithm for the agglomeration. We call it biconnected case, but
  * it is the greedy algorithm in reality.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
@@ -770,24 +803,39 @@ class Agglomerator_Biconnected
                                     CoMMAIntType> {
  public:
   /** @brief Constructor of the class. No specific implementation, it
-   * instantiates the base class Agglomerator_Isotropic
-   **/
+   * instantiates the base class Agglomerator_Isotropic.
+   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * of the matrix
+   *  @param[in] cc_graph Container for the coarse cells
+   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
+   * should be considered when agglomerating
+   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * coarse cell. See \ref CoMMANeighbourhoodT for more details.
+   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing which
+   * fine cell to add next. The cost grows exponentially, hence use small values.
+   *  @param[in] dimension Dimension of the problem
+   */
   Agglomerator_Biconnected(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType agglo_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
+      CoMMAIntType neighbourhood_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, agglo_type, fc_iter, dimension) {
+            graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension) {
     // no particular constructor
   }
 
   /** @brief Destructor*/
   virtual ~Agglomerator_Biconnected() = default;
 
- /** @brief Specialization of the pure virtual function in the parent class, to
-   * be used in couple with the Agglomerate_one_level of the Agglomerator_Isotropic
+  /** @brief Specialization of the pure virtual function in the parent class, to
+   * be used in couple with the agglomerate_one_level of the Agglomerator_Isotropic.
+   *  @param[in] seed the seed cell to start cumulate the other cells
+   *  @param[in] compactness the compactness is defined as the minimum number of
+   * neighbour of a fine cell inside a coarse cell
+   *  @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
    */
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
       const CoMMAIndexType seed, CoMMAIntType &compactness,
@@ -1010,11 +1058,11 @@ class Agglomerator_Biconnected
     return s_current_cc;
   }
 
-  /** @brief Computes the best fine cells to add to the coarse cell. The choice
-   * depends on: the aspect-ratio of the coarse cell (tries to minimize it), the
-   * number of shared faces (tries to maximize it), the neighbourhood order (see
-   * related argument)
-   *  @param[in] fc_iter (Possibly unused) Number of iteration for the fine-cell
+  /** @brief Computes the best fine cell to add to the coarse cell. The choice
+   * depends on: the number of shared faces (tries to maximize it), the neighbourhood
+   * order (tries to minimize it), and the aspect-ratio of the coarse cell (tries to
+   * minimize it).
+   *  @param[in] fc_iter (Unused) Number of iteration for the fine cell
    *  research algorithm
    *  @param[in] neighbourhood Neighborhood object
    *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
@@ -1118,7 +1166,7 @@ class Agglomerator_Biconnected
   }
 };
 
-/** @brief Child class of Agglomerator Isotropic where is implemented a specific
+/** @brief Child class of Agglomerator_Isotropic which implements a specialized
  * iterative algorithm for the search of fine cells
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -1132,28 +1180,38 @@ class Agglomerator_Iterative
                                       CoMMAIntType> {
  public:
   /** @brief Constructor of the class. No specific implementation, it
-   * instantiates the base class Agglomerator_Isotropic
-   **/
+   * instantiates the base class Agglomerator_Biconnected
+   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * of the matrix
+   *  @param[in] cc_graph Container for the coarse cells
+   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine cells
+   * should be considered when agglomerating
+   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * coarse cell. See \ref CoMMANeighbourhoodT for more details.
+   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing which
+   * fine cell to add next. The cost grows exponentially, hence use small values.
+   *  @param[in] dimension Dimension of the problem
+   */
   Agglomerator_Iterative(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
       shared_ptr<Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
                                        CoMMAIntType>> cc_graph,
       shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> seeds_pool,
-      CoMMAIntType agglo_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
+      CoMMAIntType neighbourhood_type, CoMMAIntType fc_iter, CoMMAIntType dimension = 3)
       : Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, agglo_type, fc_iter, dimension) {
+            graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension) {
     // no particular constructor
   }
 
   /** @brief Destructor*/
   virtual ~Agglomerator_Iterative() = default;
 
-  /** @brief Computes the best fine cells to add to the coarse cell. The choice
-   * depends on: the aspect-ratio of the coarse cell (tries to minimize it), the
-   * number of shared faces (tries to maximize it), the neighbourhood order (see
-   * related argument)
-   *  @param[in] fc_iter (Possibly unused) Number of iteration for the fine-cell
-   *  research algorithm
+  /** @brief Specialization of the parent function. This is an iterative version.
+   * Computes the best fine cell to add to the coarse cell. The choice depends on:
+   * the number of shared faces (tries to maximize it), the neighbourhood order
+   * (tries to minimize it), and the aspect-ratio of the coarse cell (tries to
+   * minimize it).
+   *  @param[in] fc_iter Number of iteration for the fine-cell research algorithm
    *  @param[in] neighbourhood Neighborhood object
    *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
    *  agglomeration with their neighbourhood order wrt to the original seed
