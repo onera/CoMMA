@@ -495,6 +495,11 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
  public:
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+
   /** @brief Constructor of the class
    *  @param[in] nb_c Number of cells
    *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
@@ -571,78 +576,94 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   }
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
-   * threshold
+   * threshold and order them according to given priority
    *  @param[out] maxArray Array of the maximum weight: the biggest area of the
    * faces composing the given fine cell
    *  @param[out] anisotropic_fc Set of fine cells tagged as anisotropic
-   *  @param[in] threshold_anisotropy Value of the aspect ration above which a
-   *  cell is considered anisotropic
-   *  @param[in] preserving If 0 does not hit only the BL prism to preserve the
+   *  @param[in] threshold_anisotropy Value of the aspect ratio above which a
+   *  cell is considered anisotropic. If negative, all compliant cells are
+   *  considered as anisotropic
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
+   *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
   void compute_anisotropic_fc(vector<CoMMAWeightType> &maxArray,
-                              set<CoMMAIndexType> &anisotropic_fc,
+                              deque<CoMMAIndexType> &anisotropic_fc,
                               const CoMMAWeightType threshold_anisotropy,
+                              const vector<CoMMAWeightType> &priority_weights,
                               const CoMMAIndexType preserving) {
-    // Process of every compliant fine cells (it is a member variable, so it is
-    // not passed to the function):
-    for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
-      CoMMAWeightType min_weight = numeric_limits<CoMMAWeightType>::max();
-      CoMMAWeightType max_weight = 0.0;
-
-      // computation of min_weight, max_weight for the current cell
-      // Process of every faces/Neighbours and compute for the current cell the
-      // neighbourhood and the area associated with the neighbourhood cells
-      const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
-      const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
-
-      assert(v_neighbours.size() == v_weights.size());
-      auto nb_neighbours = v_neighbours.size();
-
-      for (auto i_n = decltype(nb_neighbours){0}; i_n < nb_neighbours; i_n++) {
-        // to avoid special case where the boundary value are stored
-        if (v_neighbours[i_n] != i_fc) {
-          const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-          if (max_weight < i_w_fc_n) {
-            max_weight = i_w_fc_n;
-          }
-          if (min_weight > i_w_fc_n) {
-            min_weight = i_w_fc_n;
-          }
-        } else {
-          nb_neighbours--;
-        }
+    CoMMASetOfPairType aniso_w_weights{};
+    if (threshold_anisotropy < 0) {
+      for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
+        aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+        const auto weights = this->get_weights(i_fc);
+        maxArray[i_fc] = *(max_element(weights.begin(), weights.end()));
       }
+    }
+    else {
+      for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
+        CoMMAWeightType min_weight = numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType max_weight = 0.0;
 
-      maxArray[i_fc] = max_weight;
-      // Compute the aspect-ratio and add cell to list if necessary
-      const auto ar = _compute_AR(min_weight, max_weight);
-      if (preserving == 0) {
-        // Anisotropy criteria for the line Admissibility
-        if (ar >= threshold_anisotropy) {
-          // If the ratio is more than the given threshold of the biggest with the
-          // smallest cell, add it
-          anisotropic_fc.insert(i_fc);
-        }
-      } else if (preserving == 2) {
-        if (ar >= threshold_anisotropy) {
-          if (is_on_boundary(i_fc) > 0 && nb_neighbours == 3) {
-            anisotropic_fc.insert(i_fc);
-          } else if (nb_neighbours == 4) {
-            anisotropic_fc.insert(i_fc);
+        // computation of min_weight, max_weight for the current cell
+        // Process of every faces/Neighbours and compute for the current cell the
+        // neighbourhood and the area associated with the neighbourhood cells
+        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
+        const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
+
+        assert(v_neighbours.size() == v_weights.size());
+        auto nb_neighbours = v_neighbours.size();
+
+        for (auto i_n = decltype(nb_neighbours){0}; i_n < nb_neighbours; i_n++) {
+          // to avoid special case where the boundary value are stored
+          if (v_neighbours[i_n] != i_fc) {
+            const CoMMAWeightType i_w_fc_n = v_weights[i_n];
+            if (max_weight < i_w_fc_n) {
+              max_weight = i_w_fc_n;
+            }
+            if (min_weight > i_w_fc_n) {
+              min_weight = i_w_fc_n;
+            }
+          } else {
+            nb_neighbours--;
           }
         }
-      } else if (preserving == 3) {
-        if (ar >= threshold_anisotropy) {
-          if (is_on_boundary(i_fc) > 0 && nb_neighbours == 5) {
-            anisotropic_fc.insert(i_fc);
-          } else if (nb_neighbours == 6) {
-            anisotropic_fc.insert(i_fc);
+
+        maxArray[i_fc] = max_weight;
+        // Compute the aspect-ratio and add cell to list if necessary
+        const auto ar = _compute_AR(min_weight, max_weight);
+        if (preserving == 0) {
+          // Anisotropy criteria for the line Admissibility
+          if (ar >= threshold_anisotropy) {
+            // If the ratio is more than the given threshold of the biggest with the
+            // smallest cell, add it
+            aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+          }
+        } else if (preserving == 2) {
+          if (ar >= threshold_anisotropy) {
+            if (is_on_boundary(i_fc) > 0 && nb_neighbours == 3) {
+              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            } else if (nb_neighbours == 4) {
+              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            }
+          }
+        } else if (preserving == 3) {
+          if (ar >= threshold_anisotropy) {
+            if (is_on_boundary(i_fc) > 0 && nb_neighbours == 5) {
+              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            } else if (nb_neighbours == 6) {
+              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            }
           }
         }
-      }
-    } // End for compliant cells
+      } // End for compliant cells
+    } // End if threshold
+
+    // Build result
+    for (const auto &[i_fc, w] : aniso_w_weights)
+      anisotropic_fc.emplace_back(i_fc);
   }
 
   /** @brief Getter that returns the number of cells

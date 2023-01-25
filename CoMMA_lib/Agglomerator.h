@@ -244,11 +244,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       }
     }
 
-    assert(threshold_anisotropy > 0);
     this->_threshold_anisotropy =
-        (threshold_anisotropy < 1)
-            ? static_cast<CoMMAWeightType>(1. / threshold_anisotropy)
-            : threshold_anisotropy;
+        (threshold_anisotropy > 1 || threshold_anisotropy < 0)
+            ? threshold_anisotropy
+            : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
   }
 
   /** @brief Destructor*/
@@ -279,7 +278,6 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     CoMMAUnused(goal_card);
     CoMMAUnused(min_card);
     CoMMAUnused(max_card);
-    CoMMAUnused(priority_weights);
     CoMMAUnused(correction_steps);
 
     // if the finest agglomeration line is not computed, hence compute it
@@ -287,7 +285,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // the other one are stored only for visualization purpose)
     if (this->_v_lines[0].empty()) {
       // The anisotropic lines are only computed on the original (finest) mesh.
-      this->compute_anisotropic_lines();  // finest level!!!
+      this->compute_anisotropic_lines(priority_weights);  // finest level!!!
     }
 
     // In case the if is not realized, this is not the first generation of a
@@ -312,9 +310,18 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // Here we have to consider a special case when we have an odd number of cells:
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
         unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+        // We update the neighbours. At this stage, we do not check if it is or will
+        // be agglomerated since there will be a cleaning step after the anisotopic
+        // agglomeration
+        for (const auto &n : this->_fc_graph->get_neighbours(*line_it))
+          this->_aniso_neighbours.emplace_back(n);
+        for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+1)))
+          this->_aniso_neighbours.emplace_back(n);
         if (distance(line_it, end) == 3) {
           // If only three cells left, agglomerate them
           s_fc.insert(*(line_it + 2));
+          for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+2)))
+            this->_aniso_neighbours.emplace_back(n);
           line_it++;
         }
         // We create the coarse cell
@@ -353,6 +360,37 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         loop_line(line.rbegin(), line.rend());
 
     }
+  }
+
+  /** @brief Update the seeds pool with the neighbours of the anisotropic cells
+   * agglomerated so far
+   */
+  void update_seeds_pool() {
+    if (!this->_aniso_neighbours.empty()) {
+      // Example of erase taken from
+      // https://en.cppreference.com/w/cpp/container/deque/erase
+      for (auto it = this->_aniso_neighbours.begin();
+           it != this->_aniso_neighbours.end();) {
+        if (this->_cc_graph->_a_is_fc_agglomerated[*it])
+          it = this->_aniso_neighbours.erase(it);
+        else
+          ++it;
+      }
+      if (!this->_aniso_neighbours.empty()) {
+        // The master queue is the one of the first agglomerated cell:
+        // It is important to set it in the case the user asked for neighbourhood
+        // priority
+        this->_seeds_pool->set_top_queue(
+            this->_fc_graph->get_n_boundary_faces(
+              this->_aniso_neighbours.front()));
+        this->_seeds_pool->update(this->_aniso_neighbours);
+      }
+    }
+    // Even if we have updated it, the seeds pool might need initialization, for
+    // instance, if it was set up with boundary priority
+    if (this->_seeds_pool->need_initialization(
+                            this->_cc_graph->_a_is_fc_agglomerated))
+      this->_seeds_pool->initialize();
   }
 
   /** @brief Function that prepares the anisotropic lines for output
@@ -409,9 +447,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * the first level of agglomeration). Two main steps are performed:
    * 1. Look for anisotropic cells (via the dual graph)
    * 2. Build anisotropic lines
+   * @param[in] priority_weights Weights used to set the order telling where to start
    */
-  void compute_anisotropic_lines() {
-    set<CoMMAIndexType> anisotropic_fc;
+  void compute_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
+    deque<CoMMAIndexType> anisotropic_fc;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
     vector<CoMMAWeightType> maxArray(this->_fc_graph->_number_of_cells, 0.0);
@@ -419,7 +458,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
     this->_fc_graph->compute_anisotropic_fc(maxArray, anisotropic_fc,
-                                            _threshold_anisotropy, 0);
+                                            _threshold_anisotropy, priority_weights,
+                                            0);
     // Map to address if the cell has been added to a line
     unordered_map<CoMMAIndexType, bool> has_been_treated;
     for (auto &i_fc : anisotropic_fc) {
@@ -459,15 +499,17 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // vector of the candidates to continue the line
         vector<CoMMAIndexType> candidates;
         for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-          if (v_neighbours[i] != seed
+          const auto n = v_neighbours[i];
+          if (n != seed
               // Avoid the seed (it should not happen, but better safe than sorry)
-                and anisotropic_fc.count(v_neighbours[i]) != 0
+                and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
+                      != anisotropic_fc.end()
                 // if anisotropic cell...
                   and v_w_neighbours[i] > 0.90 * maxArray[seed]
                   // ...and if along the max interface...
-                      and !has_been_treated[v_neighbours[i]]
+                      and !has_been_treated[n]
                 ) {  // ...and if not treated
-            candidates.push_back(v_neighbours[i]);
+            candidates.push_back(n);
           }
         }  // end for loop
         // case we have only 1 candidate to continue the line
@@ -541,6 +583,11 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * anisotropic
    */
   CoMMAWeightType _threshold_anisotropy;
+
+  /** @brief Neighbours of the anisotropic cells agglomerated. They are used to
+   * update the seeds pool
+   */
+  deque<CoMMAIndexType> _aniso_neighbours;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator

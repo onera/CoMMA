@@ -293,6 +293,12 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       } /* Switch */
     } /* For */
     vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We create the seeds pool") {
+      THEN("It is not initialized") {
+        REQUIRE(seeds_pool.need_initialization(agglomerated));
+      }
+    }
+    seeds_pool.initialize();
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
@@ -328,7 +334,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         agglomerated[i] = true;
       }
       // In order: Internal, ridge, corner, valley
-      vector<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
+      deque<CoMMAIndexT> new_seeds = {21, 44, 63, 30};
       fill(agglomerated.begin(), agglomerated.end(), true);
       for (auto &i : new_seeds) {
         agglomerated[i] = false;
@@ -450,6 +456,12 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       } /* Switch */
     } /* For */
     vector<bool> agglomerated(Data.nb_fc, false);
+    WHEN("We create the seeds pool") {
+      THEN("It is not initialized") {
+        REQUIRE(seeds_pool.need_initialization(agglomerated));
+      }
+    }
+    seeds_pool.initialize();
     WHEN("We spoil the seed") {
       THEN("The order is respected") {
         for (auto i : corners) {
@@ -488,6 +500,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12, 13,        // First, corners
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
@@ -503,7 +516,8 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -514,6 +528,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     WHEN("We use a seeds pool with boundary priority and with only one start point") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
 #if 0
 The one-point initialization would not any impact w.r.t. the standard one on this mesh
 #endif
@@ -532,7 +547,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -543,6 +559,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with neighbourhood priority") {
       Seeds_Pool_Neighbourhood_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12, 13,        // First, corners
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
@@ -558,7 +575,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -569,6 +587,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with neighbourhood priority and with only one start point") {
       Seeds_Pool_Neighbourhood_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         12,             // Starting point
         0, 3,           // Direct neighbours
@@ -586,7 +605,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -604,6 +624,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         0, 1, 2, 3, 8, 9, 10, 11, // First, outer boundary cells in an order given by the weights
         4, 5, 6, 7};              // ...finally, interior cells in an order given by neighbourhood
@@ -617,7 +638,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -628,6 +650,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, true);
+      seeds_pool.initialize();
       const vector<CoMMAIndexT> expected_order = {
         0,             // Starting point,
         1, 3, 2,       // ...then, outer boundary cells in an order given by neighbourhood
@@ -643,7 +666,8 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         agglomerated[s] = true;
         auto neighs = fc_graph.get_neighbours(s);
         sort(neighs.begin(), neighs.end()); // Simulates order by weights
-        seeds_pool.update(neighs);
+        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
         for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
@@ -1109,6 +1133,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1219,6 +1244,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_quad_4 Data = DualGPy_quad_4();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1372,6 +1398,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGPy_T_shaped Data = DualGPy_T_shaped();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
@@ -1438,7 +1465,13 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
       THEN("We have a number of agglomeration lines != 0") {REQUIRE(aniso_agg._nb_lines[0]!=0);}
     }
   };
-  GIVEN("We load a 4by6 quad 2D mesh which has 4 anisotropic lines each of length 5 cells") {
+
+#define check2cells(a,b)     (f2c[a].value() == f2c[b].value())
+#define check3cells(a,b,c)   (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value())
+#define check4cells(a,b,c,d) (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value() \
+                              && f2c[c].value() == f2c[d].value())
+  GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
+        " a seeds pool with boundary priority with full initialization") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool isFirstAgglomeration = true;
@@ -1454,39 +1487,124 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
                   Data.dim);
-    aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
-    iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     WHEN("We agglomerate the mesh") {
+      aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      aniso_agg.update_seeds_pool();
+      THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
+        REQUIRE(!seeds_pool->is_empty());
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+      }
+      THEN("Having chosen a priority by boundary, the seed is a corner who is not a neighbour") {
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 24);
+      }
+      iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
-      THEN("There is only one isotropic coarse cell") {
-        REQUIRE((f2c[5].value() == f2c[6].value() && f2c[6].value() == f2c[17].value()
-                 && f2c[17].value() == f2c[18].value()));
+      THEN("There are two isotropic coarse cells") {
+        REQUIRE(check4cells(5,6,24,25));
+        REQUIRE(check4cells(17,18,27,26));
       }
       THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(f2c[0].value()  == f2c[1].value());
-        REQUIRE(f2c[11].value() == f2c[10].value());
-        REQUIRE(f2c[16].value() == f2c[14].value());
-        REQUIRE(f2c[20].value() == f2c[22].value());
+        REQUIRE(check2cells(0,1));
+        REQUIRE(check2cells(11,10));
+        REQUIRE(check2cells(16,14));
+        REQUIRE(check2cells(20,22));
       }
       THEN("The interior anisotropic coarse cells are of cardinality 3") {
-#define check3cells(a,b,c) (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value())
         REQUIRE(check3cells(2,3,4));
         REQUIRE(check3cells(9,8,7));
         REQUIRE(check3cells(12,13,15));
         REQUIRE(check3cells(23,21,19));
-#undef check3cells
+      }
+      THEN("The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
+           " and the priority weights") {
+        REQUIRE(f2c[ 0].value() == 0);
+        REQUIRE(f2c[ 2].value() == 1);
+        REQUIRE(f2c[ 9].value() == 3);
+        REQUIRE(f2c[11].value() == 2);
+        REQUIRE(f2c[13].value() == 5);
+        REQUIRE(f2c[16].value() == 4);
+        REQUIRE(f2c[20].value() == 6);
+        REQUIRE(f2c[23].value() == 7);
       }
     }
-
   };
+
+  GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
+        " a seeds pool with neighbourhood priority and priority weights for inverse numbering") {
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const CoMMAWeightT aniso_thresh{4.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    vector<CoMMAWeightT> w(Data.nb_fc);
+    iota(w.begin(), w.end(), 0);
+    shared_ptr<Seeds_Pool<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>> seeds_pool = make_shared<
+      Seeds_Pool_Neighbourhood_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(Data.n_bnd_faces, w, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  Data.dim);
+    Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+    WHEN("We agglomerate the mesh") {
+      aniso_agg.agglomerate_one_level(4, 4, 4, w, false);
+      aniso_agg.update_seeds_pool();
+      THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
+        REQUIRE(!seeds_pool->is_empty());
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+      }
+      THEN("Having chosen a neighbourhood by boundary, the seed is a neighbour of the first line") {
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 18);
+      }
+      iso_agg.agglomerate_one_level(4, 4, 4, w, false);
+      const auto f2c = cc_graph->_fc_2_cc;
+      THEN("There are two isotropic coarse cells") {
+        REQUIRE(check4cells(5,6,24,25));
+        REQUIRE(check4cells(17,18,27,26));
+      }
+      THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
+        REQUIRE(check2cells(0,1));
+        REQUIRE(check2cells(11,10));
+        REQUIRE(check2cells(16,14));
+        REQUIRE(check2cells(20,22));
+      }
+      THEN("The interior anisotropic coarse cells are of cardinality 3") {
+        REQUIRE(check3cells(2,3,4));
+        REQUIRE(check3cells(9,8,7));
+        REQUIRE(check3cells(12,13,15));
+        REQUIRE(check3cells(23,21,19));
+      }
+      THEN("The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
+           " and the priority weights") {
+        REQUIRE(f2c[ 0].value() == 6);
+        REQUIRE(f2c[ 2].value() == 7);
+        REQUIRE(f2c[ 9].value() == 5);
+        REQUIRE(f2c[11].value() == 4);
+        REQUIRE(f2c[13].value() == 3);
+        REQUIRE(f2c[16].value() == 2);
+        REQUIRE(f2c[20].value() == 0);
+        REQUIRE(f2c[23].value() == 1);
+      }
+    }
+  };
+
+#undef check2cells
+#undef check3cells
+#undef check4cells
 }
 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     const DualGPy_minimal Data = DualGPy_minimal();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,

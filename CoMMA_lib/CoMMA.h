@@ -74,7 +74,8 @@
  * (it that's the case, the agglomeration lines will be built)
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
- * considered as anisotropic
+ * considered as anisotropic. If negative, all compliant cells are considered as
+ * anisotropic
  * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
  * Possible values (see \ref CoMMASeedsPoolT):
  * - 0: The number of boundary faces has highest priority
@@ -260,6 +261,11 @@ void agglomerate_one_level(
     // lines in the new global index, 0 the old)
     const CoMMAIntType i_level{1};
     aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
+
+    aniso_agg.update_seeds_pool();
+  }
+  else {
+    seeds_pool->initialize();
   }
 
   // AGGLOMERATION OF ISOTROPIC CELLS
