@@ -181,23 +181,16 @@ class Seeds_Pool {
 
  protected:
   /** @brief List of deque of seeds. For each identifier we have the available
-   * seeds
-   *  We want the seed to be chosen preferably in the corner, then ridges,
-   * valleys and then interiors.
-   *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
-   *  to minimizes the too small cells!
-   *  0 : interior (no face on the edge of the domain)
-   *  1 : valley (one face on the edge of the domain)
-   *  2 : ridge (two faces on the edge of the domain)
-   *  3 : corner (three faces on the edge of the domain)
-  */
+   * seeds. We want the seed to be chosen preferably in the corner, then ridges,
+   * valleys and then interiors, see \ref CoMMACellT
+   */
   vector<CoMMAQueueType> _l_of_seeds;
 
   /** @brief Weights used to set the order of the seed to choose */
   const vector<CoMMAWeightType> &_priority_weights;
 
-  /** @brief Optional possibly containing the level (0,1,2,3, see above) of the
-   * queue currently being spoiled
+  /** @brief Optional possibly containing the level (0,1,2,3, see
+   * \ref Seeds_Pool._l_of_seeds) of the queue currently being spoiled
    */
   optional<CoMMAIntType> _cur_top_queue;
 
@@ -214,7 +207,7 @@ class Seeds_Pool {
    *  @param[in] priority_weights Weights used to set the order of the seed to choose
    *  @param[in] one_point_init Whether the initialization should be done for the
    *  highest boundary level or just for one point
-   **/
+   */
   Seeds_Pool(const vector<CoMMAIntType> &n_bnd_faces,
              const vector<CoMMAWeightType> &priority_weights,
              const bool one_point_init) :
@@ -381,7 +374,7 @@ class Seeds_Pool {
 };
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell
+ * cell. This derived class gives higher priority to cells that are on the border.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -519,7 +512,8 @@ class Seeds_Pool_Boundary_Priority
 };
 
 /** @brief Class representing the pool of all the seeds for creating a coarse
- * cell
+ * cell. This derived class gives higher priority to cells that are neighbours of
+ * already existing coarse cells
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh

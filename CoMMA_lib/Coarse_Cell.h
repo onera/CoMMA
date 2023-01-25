@@ -29,7 +29,7 @@
 
 #include "Dual_Graph.h"
 
-/** @brief Class implementing a Coarse_Cell object.
+/** @brief Class describing a coarse cell.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -43,10 +43,9 @@ class Coarse_Cell {
    * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
    * cells to create the coarse cell.
    * @param[in] i_cc Index of the coarse cell
-   * @param[in] s_fc unordered set of fine cells constituting the coarse cell
-   * @param[in] is_isotropic boolean describing if the cell is coming from an
+   * @param[in] s_fc Unordered set of fine cells constituting the coarse cell
+   * @param[in] is_isotropic (default = true) boolean describing if the cell is coming from an
    * isotropic agglomeration process or an anisotropic agglomeration process.
-   * The default value is set to true.
    */
   Coarse_Cell(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> fc_graph,
@@ -90,26 +89,26 @@ class Coarse_Cell {
   /** @brief shared pointer of the subgraph structure (CSR representation) */
   shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
 
-  /** @brief The global dual graph*/
+  /** @brief The global dual graph */
   shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
 
-  /** @brief Is the cell isotropic or anisotropic */
+  /** @brief Whether the cell isotropic or anisotropic */
   bool _is_isotropic;
 
-  /** @brief is the cell connected */
+  /** @brief Whether the cell connected */
   bool _is_connected;
 
-  /** @brief the connectivity has been checked */
+  /** @brief Whether the connectivity has been checked */
   bool _is_connectivity_up_to_date;
 
   /** @brief Set of fine cells composing the Coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
 
-  /** @brief Method that return a boolean determining if the Coarse Cell is
+  /** @brief Method that return a boolean determining if the coarse cell is
    * defined by a connected sub-graph or not.
    *  @return true if the subgraph is connected, false if the subgraph is not
    * connected
-   **/
+   */
   inline bool is_connected() {
     if (!_is_connectivity_up_to_date) {
       _is_connected = _cc_graph->check_connectivity();
@@ -118,7 +117,7 @@ class Coarse_Cell {
     return _is_connected;
   }
 
-  /** @brief function to build the local CSR subgraph representation. It initializes
+  /** @brief Build the local CSR subgraph representation. It initializes
    * several members related to the subgraph
    */
   inline void build_local_CRS() {

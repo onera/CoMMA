@@ -45,7 +45,6 @@ correction = False
 threshold_anisotropy = 4.
 neigh_type = 0 # 0 = Extended (standard), 1 = Pure front advancing
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
-               # 2 = Neighbourhood priority with point initialization
                # 10 = Boundary priority with point initialization
                # 11 = Neighbourhood priority with point initialization
 # Number of iterations for iterative fine-cell research algorithm

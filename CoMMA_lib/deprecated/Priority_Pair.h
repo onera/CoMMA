@@ -32,7 +32,8 @@ using namespace std;
  * whereas standard rules apply to second elements, e.g., (4,3) < (4,4).
  * @tparam A Type of the first element of the pair
  * @tparam B Type of the second element of the pair
- **/
+ * @deprecated Not used anymore
+ */
 template< typename A, typename B>
 class Priority_Pair {
 private:

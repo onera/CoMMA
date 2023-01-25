@@ -28,48 +28,43 @@
 #include <memory>
 #include <vector>
 
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Node;
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Tree;
-
 using namespace std;
 
 /** @brief Node data structure that represent a node of the tree
- * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ *  @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ *  @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
- * @tparam CoMMAIntType the CoMMA type for integers
+ *  @tparam CoMMAIntType the CoMMA type for integers
+ *  @deprecated Not used anymore
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Node {
   public:
   Node(CoMMAIndexType index, CoMMAWeightType volume) : _index(index), _volume(volume) {};
-  /** @brief index of the cell*/
+  /** @brief Index of the cell*/
   CoMMAIndexType _index;
-  /** @brief volume*/
+  /** @brief Volume*/
   CoMMAWeightType _volume;
-  /** @brief number of son*/
+  /** @brief Number of son*/
   CoMMAIntType _sonc = 0;
-  /** @brief shared pointer to the father node */
+  /** @brief Shared pointer to the father node */
   shared_ptr<Node> _father;
-  /** @brief shared pointer to the left element */
+  /** @brief Shared pointer to the left element */
   shared_ptr<Node> _left_idx;
-  /** @brief shared pointer to the right element */
+  /** @brief Shared pointer to the right element */
   shared_ptr<Node> _right_idx;
-  /** @brief shared pointer to the left element */
+  /** @brief Shared pointer to the left element */
   shared_ptr<Node> _left_son_idx;
 };
 
 /** @brief Tree structure that represent a coarse cell, the fine cell and the
  * neighbours to them
- * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
- * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ *  @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ *  @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
- * @tparam CoMMAIntType the CoMMA type for integers
+ *  @tparam CoMMAIntType the CoMMA type for integers
+ *  @deprecated Not used anymore
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -78,13 +73,23 @@ class Tree {
   /** @brief Type of node for the current tree */
   using NodeType = Node<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
-  /** @brief Constructor*/
+  /** @brief Constructor
+   *  @param[in] root A Node which is the root of the Tree
+   */
   Tree(shared_ptr<NodeType> &root) : _root(root) {}
 
+  /** @brief Destructor */
   ~Tree() {};
 
+  /** @brief The Node at the root of the tree */
   shared_ptr<NodeType> _root;
 
+  /** @brief Insert a node as child of a given node
+   *  @param[in] father_index Index of the parent node
+   *  @param[in] index Index of the child
+   *  @param[in] volume Volume of the child
+   *  @param[in] root Whether it is at the root
+   */
   void insertSon(const CoMMAIndexType &father_index, const CoMMAIndexType &index,
                  const CoMMAWeightType &volume, const CoMMAIntType &root) {
     shared_ptr<NodeType> insertion(new NodeType(index, volume));
@@ -108,6 +113,11 @@ class Tree {
     u_p_father->_sonc = u_p_father->_sonc + 1;
     //cout << u_p_father->_sonc << endl;
   }
+  /** @brief Look for a node
+   *  @param[in] node Starting point
+   *  @param[in] value Target
+   *  @return a pointer (possibly null) to the target
+   */
   shared_ptr<NodeType> search(shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
     if (node->_index == value && node->_father != nullptr) {
       return node;
@@ -118,6 +128,10 @@ class Tree {
     return (search(node->_right_idx, value));
   }
 
+  /** @brief Traverse the tree
+   *  @param[in] node Where to start the search
+   *  @return a pointer to a leaf
+   */
   shared_ptr<NodeType> transverse(shared_ptr<NodeType> &node) {
     if (node == nullptr || node->_right_idx == nullptr) {
       return node;
@@ -125,8 +139,15 @@ class Tree {
     return (transverse(node->_right_idx));
   }
 
+  /** @brief Delete a node
+   *  @param[in] value Target
+   */
   void deleteNode(const CoMMAIndexType &value) {delete_node(_root->_left_son_idx, value);}
 
+  /** @brief Delete a node
+   *  @param[in] searched_node Where to look
+   *  @param[in] value Target
+   */
   void delete_node(shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
     if (searched_node == nullptr) {
       return;
@@ -152,8 +173,12 @@ class Tree {
     delete_node(searched_node->_right_idx, value);
   }
 
+  /** @brief Print the tree */
   void print() { print_nodes(_root); }
 
+  /** @brief Print the branches starting from a given node
+   *  @param[in] node Where to start
+   */
   void print_nodes(shared_ptr<NodeType> &node) {
     if (node == nullptr) {
       return;

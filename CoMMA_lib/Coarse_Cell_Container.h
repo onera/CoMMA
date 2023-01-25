@@ -39,8 +39,7 @@ using MapIterator = typename map<
     CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
                                         CoMMAIntType>>>::iterator;
 
-/** @brief Class implementing a Coarse_Cell_Container object, that is where
- * the coarse cells are stored.
+/** @brief Class implementing a custom container where the coarse cells are stored.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -65,7 +64,7 @@ class Coarse_Cell_Container {
   /** @brief Destructor */
   ~Coarse_Cell_Container() = default;
 
-  /** @brief map container of the CSR representation of the coarse cells */
+  /** @brief Map container of the CSR representation of the coarse cells */
   map<CoMMAIndexType,
       shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>
       _cc_vec;
@@ -85,14 +84,14 @@ class Coarse_Cell_Container {
   /** @brief Helper to get the member variable that defines the number of
    * agglomerated fine cells
    *  @return The number of fine cells agglomerated so far
-   **/
+   */
   inline CoMMAIndexType get_number_of_fc_agglomerated() const {
     return (_nb_of_agglomerated_fc);
   }
 
   /** @brief Helper to get the number of coarse cells
    *  @return The number of coarse cells created so far
-   **/
+   */
   inline CoMMAIndexType get_nb_of_cc() const {
     return _cc_counter;
   }
@@ -104,7 +103,7 @@ class Coarse_Cell_Container {
    * analysed
    *  @param[in] i_cc index of the coarse cell in which the fine cell is in
    *  @return vector of the index of the coarse cells
-   **/
+   */
   vector<CoMMAIndexType> get_neigh_cc(const CoMMAIndexType &i_fc,
                                       const CoMMAIndexType &i_cc) const {
     const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
@@ -119,21 +118,23 @@ class Coarse_Cell_Container {
     return (result);
   }
 
+#if 0
   /** @brief Update the member variable of the member fc2cc based on the mapping
    * given
    *  @param[in] mapping mapping on old fc2cc to the new fc2cc
-   **/
+   */
   void update_fc_2_cc(const vector<CoMMAIndexType> &mapping) const {
     for (auto &elem : _fc_2_cc) {
       // we substitute in elem the mapped element
       elem = mapping[elem];
     }
   }
+#endif
 
   /** @brief Remove a coarse cell from the mapping
-   * @param[in] elim iterator to the element to eliminate
-   * @return iterator to the next element
-   **/
+   * @param[in] elim Iterator to the element to eliminate
+   * @return Iterator to the next element
+   */
   MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> remove_cc(
       MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> elim) {
     // we delete the element and we obtained the pointer to the next element in
@@ -155,11 +156,12 @@ class Coarse_Cell_Container {
     return (it);
   }
 
-  /** @brief Implementation of the Correction. In this version it implements the
+  /** @brief Implementation of the correction. In this version it implements the
    * correction of singular cells (if one cell is alone after the agglomeration
    * step is agglomerated to a neighbouring cell)
-   * @param max_card Maximum cardinality allowed
-   **/
+   * @param max_card Maximum cardinality allowed (CoMMA might still be beyond this
+   * value)
+   */
   void correct(const CoMMAIntType max_card) {
     // initializing vector neigh_cc
     // We cycle on the subgraphs of the bimap structure
@@ -230,7 +232,8 @@ class Coarse_Cell_Container {
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
    * @param[in] neigh Neighbouring coarse cells
-   * @param[in] max_card Maximum cardinality allowed
+   * @param[in] max_card Maximum cardinality allowed (CoMMA might still be beyond this
+   * value)
    * @return The index of the chosen coarse cell
    */
   optional<CoMMAIndexType> select_best_cc_to_agglomerate(
@@ -363,13 +366,13 @@ class Coarse_Cell_Container {
 
   /** @brief It creates a coarse cell based on the set of fine cells given as an
    * input
-   * @param[in] s_fc set of fine cells passed as a reference
-   * @param[in] is_anisotropic boolean that tells if we are in an anisotropic
+   * @param[in] s_fc Set of fine cells passed as a reference
+   * @param[in] is_anisotropic Boolean that tells if we are in an anisotropic
    * case or not
-   * @param[in] is_creation_delayed based on the agglomerator instruction we
+   * @param[in] is_creation_delayed Based on the agglomerator instruction we
    * define if we delay or not the agglomeration
-   * @return a long with the global identifier of the coarse cell
-   **/
+   * @return Global identifier of the coarse cell
+   */
   CoMMAIndexType cc_create_a_cc(
       const unordered_set<CoMMAIndexType> &s_fc, bool is_anisotropic = false,
       bool is_creation_delayed = false) {
@@ -449,7 +452,7 @@ class Coarse_Cell_Container {
 
   /** @brief Creates all the delayed coarse cell. It works only when the delayed
    * cell flag is activated in the agglomerator
-   **/
+   */
   inline void cc_create_all_delayed_cc() {
     for (const unordered_set<CoMMAIndexType> &s_fc : _delayed_cc) {
       cc_create_a_cc(s_fc);
@@ -457,10 +460,10 @@ class Coarse_Cell_Container {
     _delayed_cc.clear();
   }
 
-  /** @brief checks if the fine cell is already or not agglomerated
-   * @param[in] i_fc global index of the fine cell to analyse
+  /** @brief Checks if the fine cell is already or not agglomerated
+   * @param[in] i_fc Global index of the fine cell to analyse
    * @return true or false with respect to the answer
-   **/
+   */
   inline bool is_fc_not_already_agglomerated(const CoMMAIndexType &i_fc) const {
     return !_a_is_fc_agglomerated[i_fc];
   }
@@ -469,9 +472,9 @@ class Coarse_Cell_Container {
   /** @brief Number of agglomerated fine cells */
   CoMMAIndexType _nb_of_agglomerated_fc = 0;
 
-  /** @brief vector of the set of fine cells composing the too small coarse
+  /** @brief Vector of the set of fine cells composing the too small coarse
    * cells that will be built at the end of the agglomeration process
-   **/
+   */
   vector<unordered_set<CoMMAIndexType>> _delayed_cc;
 };
 

@@ -69,7 +69,7 @@ a pair with the same index.
   using CandidatesContainerType = deque<CoMMAIndexType>;
 
   /** @brief Constructor
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
@@ -81,10 +81,10 @@ a pair with the same index.
   /** @brief Copy constructor */
   Neighbourhood(const Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
 
-  /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
+  /** @brief Method that updates the neighbourhood. Given the \p new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
-   * @param[in] new_fc new fine cell to be added to the set of fine cells
-   * @param[in] new_neighbours vector of the new neighbours to be analysed
+   * @param[in] new_fc Index of the new fine cell to be added to the set of fine cells
+   * @param[in] new_neighbours Vector of the new neighbours to be analysed
    */
   virtual void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) = 0;
 
@@ -96,8 +96,7 @@ a pair with the same index.
   protected:
   /** @brief Set of the neighbours of seed given as an input in the constructor.
    * Here, we can find all the neighbours of order up to a user-defined value
-   * (by default is 3, this means neighbours of neighbours of neighbours) of the
-   * initial seed. Hence, it holds the cells allowed to be agglomerated
+   * of the initial seed. Hence, it holds the cells allowed to be agglomerated
    */
   const unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 
@@ -107,7 +106,9 @@ a pair with the same index.
   /** @brief Set of the fine cells composing the coarse cell */
   unordered_set<CoMMAIndexType> _s_fc;
 
-  /** @brief Candidates that should be considered */
+  /** @brief Candidates that should be considered when choosing the next fine cell to
+   * add to the coarse one
+   */
   CandidatesContainerType _candidates;
 
   /** @brief Extract the indices from a list of index-weight pairs and add them at
@@ -121,8 +122,8 @@ a pair with the same index.
 };
 
 /** @brief Class representing the neighbourhood of a given cell in the graph.
- * In this derived class the neighbourhood is extended, meaning that
- * all the neighbours seen so far are candidates.
+ * In this derived class the neighbourhood is extended, meaning that all the
+ * neighbours seen so far are candidates.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -143,7 +144,7 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightT
   using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
 
   /** @brief Constructor
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
    **/
@@ -157,8 +158,8 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightT
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
    * neighbours, it is deleted. Then, the new neighbours are added as candidates
-   * @param[in] new_fc new fine cell to be added to the set of fine cells
-   * @param[in] new_neighbours vector of the new neighbours to be analysed
+   * @param[in] new_fc Index of the new fine cell to be added to the set of fine cells
+   * @param[in] new_neighbours Vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
     // Add new_fc to current CC and remove it from previous neighbourhoods
@@ -187,9 +188,9 @@ class Neighbourhood_Extended : public Neighbourhood<CoMMAIndexType, CoMMAWeightT
 };
 
 /** @brief Class representing the neighbourhood of a given cell in the graph.
- * In this derived class the neighbourhood is 'pure front-advancing',
+ * In this derived class, the neighbourhood is 'pure front-advancing',
  * meaning that the next candidates are only the direct neighbours of the last
- * added cell
+ * added cell.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
  * area) of the nodes or edges of the Mesh
@@ -210,7 +211,7 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
   using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
 
   /** @brief Constructor
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] weights Weights used to set up the order of the neighbours to visit
    *  @param[in] dimension Dimension of the problem
@@ -225,9 +226,9 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
   Neighbourhood_Pure_Front(const Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in the
-   * neighbours, it is deleted. Then, the new neighbours are added as candidates
-   * @param[in] new_fc new fine cell to be added to the set of fine cells
-   * @param[in] new_neighbours vector of the new neighbours to be analysed
+   * neighbours, it is deleted. Then, the new neighbours are considered as candidates
+   * @param[in] new_fc Index of the new fine cell to be added to the set of fine cells
+   * @param[in] new_neighbours Vector of the new neighbours to be analysed
    */
   void update(const CoMMAIndexType new_fc, const vector<CoMMAIndexType> &new_neighbours) override {
     this->_candidates.clear();
@@ -306,7 +307,7 @@ class Neighbourhood_Pure_Front : public Neighbourhood<CoMMAIndexType, CoMMAWeigh
    * agglomerated */
   deque<CoMMASetOfPairType> _q_neighs_w_weights;
 
-  /** @brief dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
+  /** @brief Dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
   CoMMAIntType _dimension;
 
@@ -329,7 +330,7 @@ class NeighbourhoodCreator {
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] priority_weights Weights used to set up the order of the
    * neighbours to visit
@@ -373,7 +374,7 @@ class NeighbourhoodExtendedCreator
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] priority_weights Weights used to set up the order of the
    * neighbours to visit
@@ -426,7 +427,7 @@ class NeighbourhoodPureFrontCreator
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
-   *  @param[in] s_neighbours_of_seed set of the neighbours of the given cell
+   *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
    * chosen as seed
    *  @param[in] priority_weights Weights used to set up the order of the
    * neighbours to visit
