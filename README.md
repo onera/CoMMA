@@ -49,6 +49,17 @@ installed in standard location.
 The interface to CoMMA is very simple and consists in only one function
 [`agglomerate_one_level`](CoMMA_lib/CoMMA.h).
 
+## Documentation
+CoMMA is documented via `doxygen`. If you have it and wished to have the full
+documentation, just run from the main directory:
+```bash
+doxygen Documentation/Doxyfile
+```
+and related html pages will be build in `documentation`.
+
+An [online version](https://albiremo.gitlab.io/CoMMA/) of the doc hosted by
+GitLab is available.
+
 ## Submodules
 To handle the `python` binding and the tests, we take advantage of two
 thirdparty libraries here included as submodules.
