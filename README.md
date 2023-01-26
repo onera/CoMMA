@@ -55,7 +55,7 @@ documentation, just run from the main directory:
 ```bash
 doxygen Documentation/Doxyfile
 ```
-and related html pages will be build in `documentation`.
+and related html pages will be built in `documentation`.
 
 An [online version](https://albiremo.gitlab.io/CoMMA/) of the doc hosted by
 GitLab is available.
