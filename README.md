@@ -1,7 +1,7 @@
 # CoMMA (COarse Mesh Multigrid Agglomerator)
-[![coverage report](https://gitlab.com/albiremo/CoMMA/badges/main/coverage.svg)](https://gitlab.com/albiremo/CoMMA/-/commits/main)
+<!--[![coverage report](https://gitlab.com/albiremo/CoMMA/badges/main/coverage.svg)](https://gitlab.com/albiremo/CoMMA/-/commits/main)-->
 
-:book: [**DOCUMENTATION**](https://albiremo.gitlab.io/CoMMA/) :book:
+<!--:book: [**DOCUMENTATION**](https://albiremo.gitlab.io/CoMMA/) :book:-->
 
 **CoMMA** is a suite of graph algorithms meant to operate on the graph
 representation of an **unstructured** computational mesh.
@@ -16,7 +16,7 @@ representation of an **unstructured** computational mesh.
   regions.
 
 ## Building the Library
-CoMMA is a `C++` **header-only library** hence it does nod need compilation, per
+CoMMA is a `C++` **header-only library** hence it does not need compilation, per
 se. Nonetheless, a `python` module can be generated using `pybind11`: this is
 very convenient for testing and debugging purposes. Moreover, some tests via
 `Catch2` have been written to check the integrity of CoMMA. Both the `python`
@@ -26,8 +26,9 @@ To build this library you need:
 - A fairly recent `cmake` (3.14+)
 
 You should be able to install them with your distribution package manager or
-you can checkout [spack](https://spack.readthedocs.io/en/latest/) .
-In order to build it just create a directory named `build` and do an
+you can checkout [spack](https://spack.readthedocs.io/en/latest/).
+
+In order to build them, just create a directory named `build` and do an
 out-of-source build with `cmake`
 
 ```shell
@@ -50,15 +51,15 @@ The interface to CoMMA is very simple and consists in only one function
 [`agglomerate_one_level`](CoMMA_lib/CoMMA.h).
 
 ## Documentation
-CoMMA is documented via `doxygen`. If you have it and wished to have the full
+CoMMA is documented via `doxygen`. If you have it and wish to have the full
 documentation, just run from the main directory:
-```bash
+```shell
 doxygen Documentation/Doxyfile
 ```
 and related html pages will be built in `documentation`.
 
-An [online version](https://albiremo.gitlab.io/CoMMA/) of the doc hosted by
-GitLab is available.
+<!--An [online version](https://albiremo.gitlab.io/CoMMA/) of the doc hosted by-->
+<!--GitLab is available.-->
 
 ## Submodules
 To handle the `python` binding and the tests, we take advantage of two
@@ -73,8 +74,3 @@ git submodule update
 
 ## Convenient scripts
 The file `CODA_transfer.sh` help for the installation in the CODA-CFD library.
-
-## To understand the templatization and other features
-- [The use of this in the child classes](https://stackoverflow.com/questions/7076169/not-declared-in-this-scope-error-with-templates-and-inheritance)
-- [The runtime vs the compile time](https://stackoverflow.com/questions/7076169/not-declared-in-this-scope-error-with-templates-and-inheritance)
-- [The constexpr bool vs macro](https://stackoverflow.com/questions/67454808/c-constexpr-boolean-vs-macro)
