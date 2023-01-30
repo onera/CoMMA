@@ -1,3 +1,9 @@
+# Prevent duplicated pipeline by removing MR pipelines
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: always
 variables:
   GIT_STRATEGY: none
   GIT_SUBMODULE_STRATEGY: none
@@ -25,6 +31,10 @@ job:init:
         # Load git-lfs otherwise, cloning fails
         # - source /scratchm/sonics/dist/spiro_el8_spack.sh && module load git-lfs-3.1.2-gcc-8.3.1-3mp4krr # CentOS8
         - source /scratchm/sonics/prod/spacky_2022-05-30/spacky.sh && module load git-lfs-3.1.2-gcc-11.2.0-kg4euxm
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
     script: # Set a commun directory and make it available
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - (cd CoMMA_CI && git fetch) || (git clone git@gitlab.onera.net:numerics/solver/comma.git CoMMA_CI)
@@ -38,6 +48,10 @@ job:init:
 CoMMA:
     stage: build
     needs: ['job:init']
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
     script:
         - echo "Dir $CUSTOM_CI_DIR"
         - cd $CUSTOM_CI_DIR/CoMMA_CI
@@ -51,6 +65,10 @@ CoMMA:
 test_a:
     stage: test
     needs: ['job:init', CoMMA]
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
     script:
         - cd $CUSTOM_CI_DIR/CoMMA_CI
         - mkdir -p build_CI
@@ -78,6 +96,11 @@ pages:
         expire_in: 1 month
         paths:
             - ./public
+    rules:
+        - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+          changes:
+            - CoMMA_lib/*.{cpp,h}
+
 
 
 
