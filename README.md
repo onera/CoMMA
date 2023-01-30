@@ -1,7 +1,7 @@
 # CoMMA (COarse Mesh Multigrid Agglomerator)
 <!--[![coverage report](https://gitlab.com/albiremo/CoMMA/badges/main/coverage.svg)](https://gitlab.com/albiremo/CoMMA/-/commits/main)-->
 
-<!--:book: [**DOCUMENTATION**](https://albiremo.gitlab.io/CoMMA/) :book:-->
+:book: [**DOCUMENTATION**](https://numerics.gitlab-pages.onera.net/solver/comma/) :book:
 
 **CoMMA** is a suite of graph algorithms meant to operate on the graph
 representation of an **unstructured** computational mesh.
@@ -58,8 +58,8 @@ doxygen Documentation/Doxyfile
 ```
 and related html pages will be built in `documentation`.
 
-<!--An [online version](https://albiremo.gitlab.io/CoMMA/) of the doc hosted by-->
-<!--GitLab is available.-->
+An [online version](https://numerics.gitlab-pages.onera.net/solver/comma/) of the doc hosted by
+GitLab is available.
 
 ## Submodules
 To handle the `python` binding and the tests, we take advantage of two
