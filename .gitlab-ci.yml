@@ -1,55 +1,83 @@
 variables:
-  GIT_STRATEGY: clone
-  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_STRATEGY: none
+  GIT_SUBMODULE_STRATEGY: none
+#Common to all stages
+default:
+  tags: # Use shell instead of submitting pipeline to slurm
+    - shell
+  before_script:
+    # Load python version, compilers and modify path to get local python packages (gcovr)
+    - source /stck/rmilani/GitLab_CI_envs/CoMMA_env_el7.sh
+
 stages:
+    - init
     - build 
     - test
-    - performance
     - documentation
-image: gcc
-before_script:
- - apt-get update 
- - apt-get -y install cmake 
- - apt-get -y install libpython3.9-dev
- - apt-get -y install doxygen
- - apt-get -y install gcovr
+
+job:init:
+    stage: init
+    variables: # Do it manually beacause we do not have git-lfs and that will cause problem
+        GIT_STRATEGY: none
+        GIT_SUBMODULE_STRATEGY: none
+    before_script:
+        - module purge
+        # Load git-lfs otherwise, cloning fails
+        # - source /scratchm/sonics/dist/spiro_el8_spack.sh && module load git-lfs-3.1.2-gcc-8.3.1-3mp4krr # CentOS8
+        - source /scratchm/sonics/prod/spacky_2022-05-30/spacky.sh && module load git-lfs-3.1.2-gcc-11.2.0-kg4euxm
+    script: # Set a commun directory and make it available
+        - echo "CUSTOM_CI_DIR=$PWD" >> build.env
+        - (cd CoMMA_CI && git fetch) || (git clone git@gitlab.onera.net:numerics/solver/comma.git CoMMA_CI)
+        - cd CoMMA_CI
+        - git submodule update --init Catch2
+        - git submodule update --init pybind11
+    artifacts:
+        reports:
+            dotenv: build.env
+
 CoMMA:
     stage: build
+    needs: ['job:init']
     script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - make
+        - echo "Dir $CUSTOM_CI_DIR"
+        - cd $CUSTOM_CI_DIR/CoMMA_CI
+        - mkdir -p build_CI && cd build_CI
+        - cmake -DCODAFLAGS=On ..
+        - make -j
     artifacts:
         expire_in: 1 month
         paths:
-        - build/
+        - build_CI/
 test_a:
     stage: test
-    needs: [CoMMA]
+    needs: ['job:init', CoMMA]
     script:
-        - cd build
+        - cd $CUSTOM_CI_DIR/CoMMA_CI
+        - mkdir -p build_CI
+        - cd build_CI
         - ./Comma_test -r junit > test_a.xml
-        - gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month
         reports:
-            junit: build/test_a.xml
+            junit: $CUSTOM_CI_DIR/CoMMA_CI/build_CI/test_a.xml
             coverage_report:
                 coverage_format: cobertura
-                path: build/coverage.xml
+                path: $CUSTOM_CI_DIR/CoMMA_CI/build_CI/coverage.xml
 pages:
     stage: documentation
+    needs: ['job:init'] #job:init is needed to get dotenv artifacts
     script:
+        - export cur_dir=$PWD
+        - cd $CUSTOM_CI_DIR/CoMMA_CI
         - doxygen Documentation/Doxyfile
-        - mv documentation/html/ public/
+        - cd $cur_dir
+        - cp -r $CUSTOM_CI_DIR/CoMMA_CI/documentation/html/ public/
     artifacts:
         expire_in: 1 month
         paths:
-            - public
-    rules:
-           - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+            - ./public
 
 
 
