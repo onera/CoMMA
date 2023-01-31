@@ -49,7 +49,7 @@ installed in standard location.
 
 ## :construction_worker: Usage
 The interface to CoMMA is very simple and consists in only one function
-[`agglomerate_one_level`](CoMMA_lib/CoMMA.h).
+[`agglomerate_one_level`](https://numerics.gitlab-pages.onera.net/solver/comma/_co_m_m_a_8h.html#abfb7a4b061c35873233941bb1329ea09).
 
 ## :book: Documentation
 CoMMA is documented via `doxygen`. If you have it and wish to have the full
