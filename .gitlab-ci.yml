@@ -1,12 +1,13 @@
-# Prevent duplicated pipeline by removing MR pipelines
+# Prevent duplicated pipeline by removing MR pipelines # We leave it so that the pipeline badge is good
 #workflow:
 #  rules:
 #    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 #      when: never
 #    - when: always
 variables:
-  GIT_STRATEGY: none
+  GIT_STRATEGY: none # Do nothing by default. It will be done once in init, then other we reuse it
   GIT_SUBMODULE_STRATEGY: none
+
 #Common to all stages
 default:
   tags: # Use shell instead of submitting pipeline to slurm
@@ -24,14 +25,11 @@ stages:
 
 job:init:
     stage: init
-    variables: # Do it manually beacause we do not have git-lfs and that will cause problem
-        GIT_STRATEGY: none
-        GIT_SUBMODULE_STRATEGY: none
+    variables:
+        GIT_STRATEGY: clone
+        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
     before_script:
         - module purge
-        # Load git-lfs otherwise, cloning fails
-        # - source /scratchm/sonics/dist/spiro_el8_spack.sh && module load git-lfs-3.1.2-gcc-8.3.1-3mp4krr # CentOS8
-        - source /scratchm/sonics/prod/spacky_2022-05-30/spacky.sh && module load git-lfs-3.1.2-gcc-11.2.0-kg4euxm # Centos7
         # Load python version, compilers
         - source /stck/rmilani/GitLab_CI_envs/CoMMA_env_el7.sh
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
@@ -40,16 +38,13 @@ job:init:
             - CoMMA_lib/*.{cpp,h}
             - tests/**/*.{cpp,h}
             - .gitlab-ci.yml
-    script: # Set a commun directory and make it available
+    script:
+        # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
-        # Create it at the root dir, so that it is found
-        - echo "CUSTOM_CI_DIR=$PWD/CoMMA" >> build.env
-        - (cd CoMMA && git fetch) ||
-          (git clone --depth 5 git@gitlab.onera.net:numerics/solver/comma.git CoMMA)
-        - cd CoMMA # Necessary even if the first cd CoMMA_CI completed
-        - git submodule update --init Catch2
-        - git submodule update --init pybind11
-        - git pull --rebase
+        - echo "CUSTOM_CI_DIR=$PWD" >> build.env
+        # We do it manually since there is also perfetto which, however, is not used
+        - git submodule update --init --depth 5 Catch2
+        - git submodule update --init --depth 5 pybind11
     artifacts:
         reports:
             dotenv: ./build.env
@@ -68,11 +63,11 @@ CoMMA:
         - cd build
         - cmake -DCODAFLAGS=On ..
         - make -j
-    artifacts:
-        expire_in: 1 month
-        paths:
-            # The path is taken from the initial directory, hence we specify the full path
-            - $CUSTOM_CI_DIR/build
+    #artifacts:
+    #    expire_in: 1 month
+    #    paths:
+    #        # The path is taken from the initial directory, hence we specify the full path
+    #        - $CUSTOM_CI_DIR/build
 test_a:
     stage: test
     needs: ['job:init', CoMMA]
@@ -90,6 +85,7 @@ test_a:
     artifacts:
         expire_in: 1 month
         reports:
+            # The path is taken from the initial directory, hence we specify the full path
             junit: $CUSTOM_CI_DIR/build/test_a.xml
             coverage_report:
                 coverage_format: cobertura
@@ -106,9 +102,8 @@ pages:
         expire_in: 1 month
         paths:
             - ./public
-    #rules:
-    #    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    only:
+    rules:
+        - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
           changes:
             - CoMMA_lib/*.{cpp,h,md}
             - .gitlab-ci.yml
