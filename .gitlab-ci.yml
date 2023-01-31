@@ -19,7 +19,7 @@ default:
 
 stages:
     - init
-    - build 
+    - build
     - test
     - documentation
 
@@ -38,6 +38,7 @@ job:init:
             - CoMMA_lib/*.{cpp,h}
             - tests/**/*.{cpp,h}
             - .gitlab-ci.yml
+            - Documentation/Doxyfile
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
@@ -57,6 +58,7 @@ CoMMA:
             - CoMMA_lib/*.{cpp,h}
             - tests/**/*.{cpp,h}
             - .gitlab-ci.yml
+            - Documentation/Doxyfile
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
@@ -107,6 +109,7 @@ pages:
           changes:
             - CoMMA_lib/*.{cpp,h,md}
             - .gitlab-ci.yml
+            - Documentation/Doxyfile
 
 
 
