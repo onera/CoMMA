@@ -59,8 +59,29 @@ doxygen Documentation/Doxyfile
 ```
 and related html pages will be built in `documentation`.
 
-An [online version](https://numerics.gitlab-pages.onera.net/solver/comma/) of the doc hosted by
-GitLab is available.
+An [online version](https://numerics.gitlab-pages.onera.net/solver/comma/) of the
+doc hosted by GitLab is available.
+
+# :bulb: Examples
+Here are two animations about the agglomeration on a 2D mesh of a ring for two
+different option settings:
+* Seeds pool with
+  [full initialization](https://numerics.gitlab-pages.onera.net/solver/comma/struct_s_p_full_initializator.html)
+  and
+  [boundary priority](https://numerics.gitlab-pages.onera.net/solver/comma/class_seeds___pool___boundary___priority.html)
+
+<div align="center">
+    <img src="images/videos/bnd_full_init.gif" alt="" width="512" height="auto"/>
+</div>
+
+* Seeds pool with
+  [one-point initialization](https://numerics.gitlab-pages.onera.net/solver/comma/struct_s_p_one_point_initializator.html)
+  and
+  [neighbourhood priority](https://numerics.gitlab-pages.onera.net/solver/comma/class_seeds___pool___neighbourhood___priority.html)
+
+<div align="center">
+    <img src="images/videos/neigh_pt_init.gif" alt="" width="512" height="auto"/>
+</div>
 
 ## :link: Submodules
 To handle the `python` binding and the tests, we take advantage of two
