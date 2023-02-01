@@ -26,6 +26,7 @@
 #include <iterator>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -40,16 +41,14 @@
 #define check_int_type(intT, label) \
   static_assert(numeric_limits<intT>::is_integer, \
       "CoMMA works with integer types, but " #intT " (" label ") is not")
-
-#define _STRINGFY(x) #x
-#define STRINGFY(x) _STRINGFY(x)
 /// \endcond
 
-/** @def MAX_ITER
- *  @brief Maximum allowed iterations for the iterative lagorithm, see
+/** @brief Maximum allowed iterations for the iterative algorithm, see
  * \ref Agglomerator_Iterative
  */
-#define MAX_ITER 4
+constexpr unsigned short max_iter = 4;
+
+using namespace std;
 
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
@@ -104,11 +103,12 @@
  * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details. Two
  * alternatives:
  * - Extended: requested with 0, standard algorithm where we consider every neighbour
- * of the coarse cell as candidate.
+ *      of the coarse cell as candidate.
  * - Pure Front Advancing: requested with 1, only direct neighbours of the last added
- * cell are candidates.
- * @throw invalid_argument if dimension is not 2 nor 3, or if cardinalities are
- * smaller than 1 or not in order
+ *      cell are candidates.
+ * @throw invalid_argument whenever dimension is not 2 nor 3, cardinalities are
+ * smaller than 1 or not in order, or number of iterations is negative or greater
+ * than \ref max_iter.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
@@ -175,9 +175,9 @@ void agglomerate_one_level(
     throw invalid_argument( "CoMMA - Error: Cardinalities must be in order (min <= goal <= max)" );
   if ( fc_choice_iter < 1 )
     throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at least 1" );
-  else if ( fc_choice_iter > MAX_ITER )
+  else if ( fc_choice_iter > static_cast<CoMMAIntType>(max_iter) )
     throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at most "
-                            STRINGFY(MAX_ITER));
+                            + to_string(max_iter));
 
   // SIZES CAST
   //======================================
