@@ -201,7 +201,7 @@ class Agglomerator_Anisotropic
       const bool is_first_agglomeration,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension) {
+            graph, cc_graph, seeds_pool, dimension), _aniso_neighbours() {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -363,7 +363,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
   }
 
   /** @brief Update the seeds pool with the neighbours of the anisotropic cells
-   * agglomerated so far
+   * agglomerated so far.
    */
   void update_seeds_pool() {
     if (!this->_aniso_neighbours.empty()) {
@@ -462,6 +462,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
                                             0);
     // Map to address if the cell has been added to a line
     unordered_map<CoMMAIndexType, bool> has_been_treated;
+    has_been_treated.reserve(anisotropic_fc.size());
     for (auto &i_fc : anisotropic_fc) {
       has_been_treated[i_fc] = false;
     }
