@@ -38,6 +38,8 @@
 #include "Util.h"
 #include "Neighbourhood.h"
 
+using namespace std;
+
 // How to pass parameters from base class
 // https://stackoverflow.com/questions/9692675/c-constructor-where-parameters-are-used-by-base-class-constructor
 // https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-base-class-constructor

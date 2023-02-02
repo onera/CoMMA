@@ -33,6 +33,8 @@
 #include "Coarse_Cell.h"
 #include "Dual_Graph.h"
 
+using namespace std;
+
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 using MapIterator = typename map<
