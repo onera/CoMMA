@@ -35,12 +35,6 @@
 
 using namespace std;
 
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-using MapIterator = typename map<
-    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
-                                        CoMMAIntType>>>::iterator;
-
 /** @brief Class implementing a custom container where the coarse cells are stored.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -52,6 +46,12 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Coarse_Cell_Container {
 
  public:
+
+  /** @brief Type for a custom map */
+  using CustomMapItT = typename map<
+    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
+                                        CoMMAIntType>>>::iterator;
+
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
@@ -137,12 +137,10 @@ class Coarse_Cell_Container {
    * @param[in] elim Iterator to the element to eliminate
    * @return Iterator to the next element
    */
-  MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> remove_cc(
-      MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> elim) {
+  CustomMapItT remove_cc(CustomMapItT elim) {
     // we delete the element and we obtained the pointer to the next element in
     // memory
-    MapIterator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> it =
-        _cc_vec.erase(elim);
+    CustomMapItT it = _cc_vec.erase(elim);
     // update value of the other nodes
     for (auto i = it; i != _cc_vec.end(); i++) {
       for (auto const &i_fc : i->second->_mapping_l_to_g) {
