@@ -29,6 +29,8 @@
 
 #include "Dual_Graph.h"
 
+using namespace std;
+
 /** @brief Class describing a coarse cell.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
