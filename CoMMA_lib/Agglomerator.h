@@ -361,10 +361,20 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         continue;
       }
       // We start agglomerating from the head or the tail of the line according to
-      // which of the two has more boundary faces
-      const bool forward_line =
-        this->_fc_graph->get_n_boundary_faces(line.front()) >=
-          this->_fc_graph->get_n_boundary_faces(line.back());
+      // which of the two has more boundary faces, or priority or ID
+      const auto l_fr = line.front(),
+                 l_bk = line.back();
+      const auto bnd_fr = this->_fc_graph->get_n_boundary_faces(l_fr),
+                 bnd_bk = this->_fc_graph->get_n_boundary_faces(l_bk);
+      const auto w_fr = priority_weights[l_fr],
+                 w_bk = priority_weights[l_bk];
+      const bool forward_line = bnd_fr > bnd_bk          // Greater boundaries...
+                                  || (bnd_fr == bnd_bk
+                                        && (w_fr > w_bk  // ...or greater priority...
+                                              || (w_fr == w_bk
+                                                    && l_fr < l_bk) // ..or smaller index
+                                            )
+                                      );
 
       if (forward_line)
         loop_line(line.cbegin(), line.cend());
