@@ -24,7 +24,7 @@
 
 using namespace std;
 
-#define FC_ITER 1
+constexpr CoMMAIntT FC_ITER  = 1;
 
 constexpr bool ODD_LINE_LENGTH = true;
 
