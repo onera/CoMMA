@@ -118,21 +118,19 @@ void agglomerate_one_level(
     const vector<CoMMAIndexType> &adjMatrix_col_ind,
     const vector<CoMMAWeightType> &adjMatrix_areaValues,
     const vector<CoMMAWeightType> &volumes,
+
+    // Additional info about the mesh
     const vector<vector<CoMMAWeightType>> &centers,
-
-    // Order related parameter:
     const vector<CoMMAWeightType> &priority_weights,
-
-    // Indices of compliant cc
     const vector<CoMMAIndexType> &anisotropicCompliantCells,
-
-    // boundaries
     const vector<CoMMAIntType> &n_bnd_faces,
 
-    // Agglomeration argument
+    // Anisotropy related info
     bool isFirstAgglomeration,
     bool is_anisotropic,
     CoMMAWeightType threshold_anisotropy,
+
+    // Seed ordering
     const CoMMAIntType seed_ordering_type,
 
     // Outputs
@@ -140,7 +138,7 @@ void agglomerate_one_level(
     vector<CoMMAIndexType> &agglomerationLines_Idx,  // In & out
     vector<CoMMAIndexType> &agglomerationLines,      // In & out
 
-    // Args with default value
+    // Tuning of the algorithms
     bool correction,
     CoMMAIntType dimension,
     CoMMAIntType goal_card,
