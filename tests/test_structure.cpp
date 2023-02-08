@@ -1596,6 +1596,109 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     }
   }
 
+  GIVEN("We load a 4by7 quad 2D mesh [stretched wrt other similar cases] and consider all cells as anisotropic") {
+#if 0
+We stretch a little the top two layer of cells so that they are a rectangle (instead of a square) with the height
+greater than the width. This implies that the max connection would be horizontal, whereas the anisotropic lines grow
+vertically: in this case, we test that the construction take into account the direction.
+We also have to modify the weights so that the seeds of the lines are at the bottom of the mesh which will ensure that
+the line grows vertically
+#endif
+    DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const vector<CoMMAIndexT> bottom_layer = {0,11,16,20};
+    const vector<CoMMAIndexT> first_stretched_layer = {5,6,17,18};
+    const vector<CoMMAIndexT> second_stretched_layer = {24,25,26,27};
+    for (const auto &idx : first_stretched_layer) {
+      // Stretching center
+      Data.centers[idx][1] += 0.5;
+      for (CoMMAIndexT i = Data.adjMatrix_row_ptr[idx];
+           i < Data.adjMatrix_row_ptr[idx+1]; ++i) {
+        const auto neigh = Data.adjMatrix_col_ind[i];
+        if (find(first_stretched_layer.begin(),
+                 first_stretched_layer.end(), neigh)
+              != first_stretched_layer.end()) {
+          // Stretch the face
+          Data.adjMatrix_areaValues[i] += 0.5;
+        }
+      }
+    }
+    // Same for second layer
+    for (const auto &idx : second_stretched_layer) {
+      // Stretching center
+      Data.centers[idx][1] += 1.0;
+      for (CoMMAIndexT i = Data.adjMatrix_row_ptr[idx];
+           i < Data.adjMatrix_row_ptr[idx+1]; ++i) {
+        const auto neigh = Data.adjMatrix_col_ind[i];
+        if (find(second_stretched_layer.begin(),
+                 second_stretched_layer.end(), neigh)
+              != second_stretched_layer.end()) {
+          // Stretch the face
+          Data.adjMatrix_areaValues[i] += 0.5;
+        }
+      }
+    }
+    const auto max_w = *max_element(Data.weights.begin(), Data.weights.end());
+    for (const auto idx : bottom_layer)
+      Data.weights[idx] = max_w + 1.;
+    const CoMMAWeightT aniso_thresh{-4.}; // Negative so that every cell is considered
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  ODD_LINE_LENGTH, Data.dim);
+    Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+    WHEN("We agglomerate the mesh") {
+      aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      THEN("All cells have been agglomerated") {
+        REQUIRE(Data.nb_fc ==
+            static_cast<CoMMAIndexT>(
+              count(cc_graph->_a_is_fc_agglomerated.begin(),
+                    cc_graph->_a_is_fc_agglomerated.end(),
+                    true)));
+      }
+      const auto f2c = cc_graph->_fc_2_cc;
+      THEN("The anisotropic coarse cells at the bottom are of cardinality 2") {
+        REQUIRE(check2cells(0,1));
+        REQUIRE(check2cells(2,3));
+        REQUIRE(check2cells(9,8));
+        REQUIRE(check2cells(11,10));
+        REQUIRE(check2cells(12,13));
+        REQUIRE(check2cells(16,14));
+        REQUIRE(check2cells(20,22));
+        REQUIRE(check2cells(23,21));
+      }
+      THEN("The anisotropic coarse cells at the top are of cardinality 3") {
+        REQUIRE(check3cells(4,5,24));
+        REQUIRE(check3cells(7,6,25));
+        REQUIRE(check3cells(15,17,26));
+        REQUIRE(check3cells(19,18,27));
+      }
+      THEN("The coarse-cell numbering the anisotropy and the priority weights") {
+        REQUIRE(f2c[ 0].value() == 0);
+        REQUIRE(f2c[ 2].value() == 1);
+        REQUIRE(f2c[ 4].value() == 2);
+        REQUIRE(f2c[11].value() == 3);
+        REQUIRE(f2c[ 9].value() == 4);
+        REQUIRE(f2c[ 7].value() == 5);
+        REQUIRE(f2c[16].value() == 6);
+        REQUIRE(f2c[12].value() == 7);
+        REQUIRE(f2c[15].value() == 8);
+        REQUIRE(f2c[20].value() == 9);
+        REQUIRE(f2c[21].value() == 10);
+        REQUIRE(f2c[19].value() == 11);
+      }
+    }
+  }
+
   GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
         " a seeds pool with neighbourhood priority and priority weights for inverse numbering") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
