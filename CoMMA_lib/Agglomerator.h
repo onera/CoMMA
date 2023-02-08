@@ -357,9 +357,9 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
           this->_fc_graph->get_n_boundary_faces(line.back());
 
       if (forward_line)
-        loop_line(line.begin(), line.end());
+        loop_line(line.cbegin(), line.cend());
       else
-        loop_line(line.rbegin(), line.rend());
+        loop_line(line.crbegin(), line.crend());
 
     }
   }
