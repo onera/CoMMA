@@ -37,6 +37,7 @@ isAnisotropic = True
 dimension = 2
 corrections = True
 threshold_anisotropy = 4.
+odd_line_length = True
 neigh_type = 0
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
                # 10 = Boundary priority with point initialization
@@ -45,7 +46,7 @@ fc_iter = 1
 
 print("CoMMA call")
 #isotropic
-fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,isFirstAgglomeration,False,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard, fc_iter,neigh_type)
+fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,isFirstAgglomeration,False, odd_line_length,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard, fc_iter,neigh_type)
 
 print("end CoMMA")
 fine_cells_iso = [value for j,value in enumerate(fc_to_cc_res1)]

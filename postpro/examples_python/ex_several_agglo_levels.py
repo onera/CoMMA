@@ -37,6 +37,7 @@ else:
     minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 4.
+odd_line_length = True
 neigh_type = 0 # 0 = Extended (standard), 1 = Pure front advancing
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
                # 10 = Boundary priority with point initialization
@@ -65,6 +66,7 @@ print(f' * {goalCard=}')
 print(f' * {maxCard=}')
 print(f' * {correction=}')
 print(f' * {threshold_anisotropy=}')
+print(f' * {odd_line_length=}')
 print(f' * neigh_type={neigh_type_types[neigh_type]}')
 print(f' * seed_ordering={seed_ordering_types[seed_order]}')
 print(f' * Fine-cell research iterations={fc_iter}')
@@ -162,7 +164,7 @@ for level in range(agglomeration_levels):
             agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                                   centers, weights,
                                   arrayOfFineAnisotropicCompliantCells,isOnBnd, level == 0,
-                                  anisotropic, threshold_anisotropy, seed_order,
+                                  anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                                   correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)
     print('OK')
