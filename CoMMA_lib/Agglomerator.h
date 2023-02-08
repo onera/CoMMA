@@ -176,6 +176,11 @@ class Agglomerator_Anisotropic
   /** @brief (Shared) Pointer to an anisotropic line */
   using AnisotropicLinePtr = shared_ptr<AnisotropicLine>;
 
+  /** @brief Type of pair */
+  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  /** @brief Type of set of pairs */
+  using CoMMASetOfPairType = set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+
   /** @brief Constructor.
    *  @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
@@ -486,6 +491,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       // we save the primal seed for the opposite direction check that will
       // happen later
       const auto primal_seed = i_fc;
+      optional<vector<CoMMAWeightType>> primal_dir = nullopt;
       // seed to be considered to add or not a new cell to the line
       CoMMAIndexType seed = primal_seed;
       // Create the new line
@@ -497,6 +503,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       bool end = false;
       // Flag to determine if we arrived at the end of an extreme of a line
       bool opposite_direction_check = false;
+      // Info about growth direction
+      vector<CoMMAWeightType> prev_cen = this->_fc_graph->_centers[seed]; // OK copy
+      vector<CoMMAWeightType> prev_dir(prev_cen.size()); // Size might not be the dimension
+      bool empty_line = true;
       // Start the check from the seed
       // while the line is not ended
       while (!end) {
@@ -505,83 +515,139 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         const vector<CoMMAIndexType> v_neighbours = this->_fc_graph->get_neighbours(seed);
         const vector<CoMMAWeightType> v_w_neighbours = this->_fc_graph->get_weights(seed);
         // vector of the candidates to continue the line
-        vector<CoMMAIndexType> candidates;
-        for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-          const auto n = v_neighbours[i];
-          if (n != seed
-              // Avoid the seed (it should not happen, but better safe than sorry)
-                and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
-                      != anisotropic_fc.end()
-                // if anisotropic cell...
-                  and v_w_neighbours[i] > 0.90 * maxArray[seed]
-                  // ...and if along the max interface...
-                      and !has_been_treated[n]
-                ) {  // ...and if not treated
-            candidates.push_back(n);
-          }
-        }  // end for loop
-        // case we have only 1 candidate to continue the line
-        if (candidates.size() == 1) {
-          // we can add to the actual deque
-          if (!opposite_direction_check) {
-            cur_line->push_back(candidates[0]);
-          } else {
-            cur_line->push_front(candidates[0]);
-          }
-          // update the seed to the actual candidate
-          seed = candidates[0];
-          // the candidate (new seed) has been treated
-          has_been_treated[seed] = true;
-        }
-        // case we have more than one candidate
-        else if (candidates.size() > 1) {
-          // we cycle on candidates
-          /** @todo Not properly efficient. We risk to do twice the operations (we
-           * overwrite the seed), so optimization might be needed. However, that is
-           * what Mavriplis did.
-           */
-          for (auto &element : candidates) {
-            // if has been treated ==> we check the next candidate
-            if (has_been_treated[element]) {
-              continue;
-            } else {
-              // if has not been treated, the opposite direction flag
-              // is not active? ==> push back
-              if (!opposite_direction_check) {
-                cur_line->push_back(element);
-                seed = element;
-                has_been_treated[element] = true;
-                // It break otherwise we risk to add 2 (problematic with primal
-                // seed)
-                // It is what is done in Mavriplis
-                // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
-                break;
-              } else {  // if it is active push front
-                cur_line->push_front(element);
-                seed = element;
-                has_been_treated[element] = true;
-                break;
-              }
-              // we update the seed and the has been treated
+        CoMMASetOfPairType candidates;
+        // If the line is long enough, we use the direction. Otherwise, we use the
+        // weight.
+        // Putting a high level if to reduce the branching inside the loop over the
+        // neighbours.
+        if (empty_line) {
+          for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
+            const auto n = v_neighbours[i];
+            if (n != seed
+                // Avoid the seed (it should not happen, but better safe than sorry)
+                  and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
+                        != anisotropic_fc.end()
+                  // if anisotropic cell...
+                    and !has_been_treated[n]
+                    // ...and if not treated...
+                      and v_w_neighbours[i] > 0.90 * maxArray[seed]
+                ) {   // ...and on the edge with highest coupling
+              candidates.emplace(v_w_neighbours[i], n);
             }
+          }  // end for loop
+        }
+        else {
+          // If not an empty line, we check the direction, see
+          // !dot_deviate below
+          for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
+            const auto n = v_neighbours[i];
+            if (n != seed
+                // Avoid the seed (it should not happen, but better safe than sorry)
+                  and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
+                        != anisotropic_fc.end()
+                  // if anisotropic cell...
+                    and !has_been_treated[n]
+                    // ...and if not treated...
+                      and v_w_neighbours[i] > 0.90 * maxArray[seed]
+                ) {   // ...and on the edge with highest coupling
+              vector<CoMMAWeightType> cur_dir(prev_cen.size());
+              get_direction<CoMMAWeightType>(
+                  prev_cen, this->_fc_graph->_centers[n], cur_dir);
+              const CoMMAWeightType dot = inner_product(
+                  prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
+                  CoMMAWeightType{0.});
+              if (!dot_deviate<CoMMAWeightType>(dot))
+                candidates.emplace(fabs(dot), n);
+            }
+          }  // end for loop
+        }
+        if (!candidates.empty()) {
+          // Even if we have more than one candidate, we choose just one
+          // otherwise we risk to add 2 (problematic with primal seed)
+          // It is what is done in Mavriplis
+          // https://scicomp.stackexchange.com/questions/41830/anisotropic-lines-identification-algorithm
+          /** @todo Not properly efficient. We risk to do twice the operations
+           * (we overwrite the seed). This is not proper
+           */
+          // update the seed to the actual candidate
+          seed = candidates.begin()->second;
+          if (!opposite_direction_check) {
+            cur_line->push_back(seed);
+          } else {
+            cur_line->push_front(seed);
           }
-        }  // end elseif
+          has_been_treated[seed] = true;
+          empty_line = false;
+          const auto &cur_cen = this->_fc_graph->_centers[seed];
+          get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
+          prev_cen = cur_cen; //this->_fc_graph->_centers[seed];
+          if (!primal_dir.has_value())
+            primal_dir = prev_dir;
+        }
         // 0 candidate, we are at the end of the line or at the end of one direction
         else /*if (candidates.size() == 0)*/ {
-          if (opposite_direction_check) {
+          // Before giving up, let's try another thing: Doing the same things as
+          // above with the only difference that we allow to move through any faces
+          // and not only the maximum one but still checking for direction
+          if (!empty_line) {
+            // If not an empty line, we check the direction, see is_parallel below
+            for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
+              const auto n = v_neighbours[i];
+              if (n != seed
+                  // Avoid the seed (it should not happen, but better safe than sorry)
+                    and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
+                          != anisotropic_fc.end()
+                    // if anisotropic cell...
+                      and !has_been_treated[n]
+                  ) { // ...and if not treated...
+                vector<CoMMAWeightType> cur_dir(prev_cen.size());
+                get_direction<CoMMAWeightType>(
+                    prev_cen, this->_fc_graph->_centers[n], cur_dir);
+                const CoMMAWeightType dot = inner_product(
+                    prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
+                    CoMMAWeightType{0.});
+                if (!dot_deviate<CoMMAWeightType>(dot))
+                  candidates.emplace(fabs(dot), n);
+              }
+            }  // end for loop
+            if (!candidates.empty()) {
+              // We found one! Keep going!
+              seed = candidates.begin()->second;
+              if (!opposite_direction_check) {
+                cur_line->push_back(seed);
+              } else {
+                cur_line->push_front(seed);
+              }
+              has_been_treated[seed] = true;
+              empty_line = false;
+              const auto &cur_cen = this->_fc_graph->_centers[seed];
+              get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
+              prev_cen = cur_cen; //this->_fc_graph->_centers[seed];
+              if (!primal_dir.has_value())
+                primal_dir = prev_dir;
+            }
+            else {
+              if (opposite_direction_check) {
+                end = true;
+              } else {
+                seed = primal_seed;
+                prev_dir = primal_dir.value();
+                prev_cen = this->_fc_graph->_centers[seed];
+                opposite_direction_check = true;
+              }
+            }
+          } // End last step check on neighbours
+          else {
             end = true;
-          } else {
-            seed = primal_seed;
-            opposite_direction_check = true;
           }
-        }
-      }
+        } // End of no candidates case
+      } // End of a line
       // we push the deque to the list if are bigger than 1
       if (cur_line->size() > 1) {
         this->_v_lines[0].push_back(cur_line);
         this->_nb_lines[0] += 1;
       }
-    }
+    } // End of loop over anisotropic cells
   }
 
   /** @brief Vector of set of the anisotropic compliant of fine cells */
