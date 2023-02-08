@@ -26,6 +26,8 @@ using namespace std;
 
 #define FC_ITER 1
 
+constexpr bool ODD_LINE_LENGTH = true;
+
 #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
 #define found_(cont, obj) check_(find, !=, cont, obj)
 #define not_found_(cont, obj) check_(find, ==, cont, obj)
@@ -1458,7 +1460,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  ODD_LINE_LENGTH, Data.dim);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
@@ -1486,7 +1489,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
-                  Data.dim);
+                  ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
