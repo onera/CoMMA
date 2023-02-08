@@ -58,14 +58,6 @@ fc_iter = 1
 renumber_coarse = 10 # -1 #
 #########
 
-if not os.path.exists(input_mesh):
-    raise OSError(f'Cannot find mesh', filename = input_mesh)
-mmio = meshio.read(input_mesh, file_format = input_format)
-mio_dim = mmio.points.shape[-1]
-if dimension != mio_dim:
-    raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
-Reminder: VTK mesh are read as 3D by meshio even if they are 2D. See dualGPy ex_dualize.py for more info''')
-
 basename = os.path.basename(input_mesh)
 basename, ext = os.path.splitext(basename)
 outname = basename + '.vtu'
@@ -96,6 +88,15 @@ CoMMAIndex  = np.uint # Unsigned long
 CoMMAInt    = int
 CoMMAWeight = np.double
 
+print("Reading mesh and creating dual graph...", flush = True, end = '')
+if not os.path.exists(input_mesh):
+    raise OSError(f'Cannot find mesh', filename = input_mesh)
+mmio = meshio.read(input_mesh, file_format = input_format)
+mio_dim = mmio.points.shape[-1]
+if dimension != mio_dim:
+    raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
+Reminder: VTK mesh are read as 3D by meshio even if they are 2D. See dualGPy ex_dualize.py for more info''')
+
 mesh = Mesh2D(mmio) if dimension == 2 \
         else Mesh3D(mmio)
 mesh.get_boundary_faces()
@@ -103,6 +104,7 @@ mesh.ComputeGeometry()
 graph = Graph2D(mesh)
 graph.get_CSR()
 mesh.boundary_detection()
+print('OK')
 nb_fc = len(graph.vertex)-1
 adjMatrix_row_ptr= np.array(graph.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(graph.edges, dtype = CoMMAIndex)

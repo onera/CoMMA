@@ -81,6 +81,7 @@ CoMMAIndex  = np.uint # Unsigned long
 CoMMAInt    = int
 CoMMAWeight = np.double
 
+print("Creating mesh and dual graph...", flush = True, end = '')
 outname = 'out_' + \
             ('an' if anisotropic else '') + \
             'iso_' + \
@@ -96,6 +97,7 @@ mesh.ComputeGeometry()
 graph = Graph2D(mesh)
 graph.get_CSR()
 mesh.boundary_detection()
+print('OK')
 nb_fc = len(graph.vertex)-1
 adjMatrix_row_ptr= np.array(graph.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(graph.edges, dtype = CoMMAIndex)

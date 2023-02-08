@@ -75,6 +75,7 @@ CoMMAIndex  = np.uint # Unsigned long
 CoMMAInt    = int
 CoMMAWeight = np.double
 
+print("Creating mesh and dual graph...", flush = True, end = '')
 ref_pts = np.zeros((7,2), dtype=float)
 ref_pts[:-1,1] = range(6)
 ref_pts[:-1,1] *= 0.2
@@ -105,6 +106,7 @@ m.boundary_detection()
 
 g = Graph2D(m)
 g.get_CSR()
+print('OK')
 
 adjMatrix_row_ptr= np.array(g.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(g.edges, dtype = CoMMAIndex)
