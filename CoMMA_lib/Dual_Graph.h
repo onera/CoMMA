@@ -431,7 +431,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
           // for each found i decrease the successive of 1 for the offset
           for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
                it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
-         *it_bis = *it_bis - 1;
+            *it_bis = *it_bis - 1;
           }
         }
       }
@@ -449,7 +449,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       // for each found i decrease the successive of 1 for the offset
       for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
            it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
-     *it_bis = *it_bis - 1;
+        *it_bis = *it_bis - 1;
       }
     }
     // Get rid of the col element
