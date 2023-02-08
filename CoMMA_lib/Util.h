@@ -40,6 +40,45 @@ using namespace std;
  */
 #define CoMMAUnused(var) (void)(var)
 
+/** @brief Threshold used in combination with a dot product to tell whether two
+ * vector deviate. It is set to \f$ \cos(20^\circ) \f$.
+ */
+constexpr double deviate_thresh = 0.9396926207859084;
+
+/** @brief Tell whether the dot product given as input comes from two parallel
+ * vectors. Compared against \ref parallel_thresh.
+ * @tparam T Input type
+ * @param[in] dot Dot product
+ * @return true if higher than a reference threshold
+ */
+template<typename T>
+inline bool dot_deviate(const T dot) {
+  return fabs(dot) < decltype(fabs(dot)){deviate_thresh};
+}
+
+/** @brief Compute the direction from point \p a to point \p b and store it as unit
+ * vector in \p dir.
+ * @tparam T Input type
+ * @param[in] a Starting point
+ * @param[in] b End point
+ * @param[out] dir Unit vector of the direction
+ * @return the distance from the two points (the norm used for the normalization)
+ */
+template<typename T>
+inline T get_direction(const vector<T>& a, const vector<T>& b, vector<T>& dir) {
+  T norm{0.};
+  for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
+    const T di = b[i] - a[i];
+    dir[i] = di;
+    norm += di*di;
+  }
+  norm = sqrt(norm);
+  const T ov_norm = T{1.} / norm;
+  for (auto& di : dir)
+    di *= ov_norm;
+  return norm;
+}
+
 /** @brief Compute the Euclidean distance between two points seen as vectors. We use
  * vectors because we can have both 2- and 3D points (also we can have 3D points even
  * if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D meshes). The
