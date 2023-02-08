@@ -195,6 +195,7 @@ class Agglomerator_Anisotropic
    * considered as anisotropic
    *  @param[in] is_first_agglomeration Whether the current is the first agglomeration
    * meaning that anisotropic lines should be built
+   * @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
@@ -206,9 +207,11 @@ class Agglomerator_Anisotropic
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
       const bool is_first_agglomeration,
+      const bool odd_line_length,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-            graph, cc_graph, seeds_pool, dimension), _aniso_neighbours() {
+            graph, cc_graph, seeds_pool, dimension), _aniso_neighbours(),
+      _odd_line_length(odd_line_length) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -318,18 +321,20 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
         unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
         // We update the neighbours. At this stage, we do not check if it is or will
-        // be agglomerated since there will be a cleaning step after the anisotopic
+        // be agglomerated since there will be a cleaning step after the anisotropic
         // agglomeration
         for (const auto &n : this->_fc_graph->get_neighbours(*line_it))
           this->_aniso_neighbours.emplace_back(n);
         for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+1)))
           this->_aniso_neighbours.emplace_back(n);
         if (distance(line_it, end) == 3) {
-          // If only three cells left, agglomerate them
-          s_fc.insert(*(line_it + 2));
-          for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+2)))
-            this->_aniso_neighbours.emplace_back(n);
-          line_it++;
+          if (this->_odd_line_length) {
+            // If only three cells left, agglomerate them
+            s_fc.insert(*(line_it + 2));
+            for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+2)))
+              this->_aniso_neighbours.emplace_back(n);
+          }
+          line_it++; // Ensure to break the loop after current iteration
         }
         // We create the coarse cell
         const CoMMAIndexType i_cc =
@@ -657,6 +662,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * update the seeds pool
    */
   deque<CoMMAIndexType> _aniso_neighbours;
+
+  /** @brief Whether anisotropic lines with odd length are allowed. */
+  bool _odd_line_length;
+
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator

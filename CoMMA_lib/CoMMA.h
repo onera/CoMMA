@@ -72,6 +72,7 @@ using namespace std;
  * @param[in] isFirstAgglomeration Whether if it's the first level of agglomeration
  * (it that's the case, the agglomeration lines will be built)
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
+ * @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
  * considered as anisotropic. If negative, all compliant cells are considered as
  * anisotropic
@@ -128,6 +129,7 @@ void agglomerate_one_level(
     // Anisotropy related info
     bool isFirstAgglomeration,
     bool is_anisotropic,
+    bool odd_line_length,
     CoMMAWeightType threshold_anisotropy,
 
     // Seed ordering
@@ -249,7 +251,7 @@ void agglomerate_one_level(
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
-                  dimension);
+                  odd_line_length, dimension);
 
     // Agglomerate anisotropic cells only
     aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);

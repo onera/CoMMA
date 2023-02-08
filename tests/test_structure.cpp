@@ -26,6 +26,8 @@ using namespace std;
 
 #define FC_ITER 1
 
+constexpr bool ODD_LINE_LENGTH = true;
+
 #define check_(fun, op, cont, obj) fun(cont.begin(), cont.end(), obj) op cont.end()
 #define found_(cont, obj) check_(find, !=, cont, obj)
 #define not_found_(cont, obj) check_(find, ==, cont, obj)
@@ -1458,7 +1460,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  ODD_LINE_LENGTH, Data.dim);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
@@ -1486,7 +1489,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
-                  Data.dim);
+                  ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
@@ -1529,7 +1532,69 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         REQUIRE(f2c[23].value() == 7);
       }
     }
-  };
+  }
+
+  GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
+        " a seeds pool with boundary priority with full initialization but we forbid odd lines") {
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const CoMMAWeightT aniso_thresh{4.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  false, Data.dim);
+    Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+    WHEN("We agglomerate the mesh") {
+      aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      aniso_agg.update_seeds_pool();
+      THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
+        REQUIRE(!seeds_pool->is_empty());
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+      }
+      THEN("Having chosen a priority by boundary, the seed is a corner who is not a neighbour") {
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 24);
+      }
+      iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      const auto f2c = cc_graph->_fc_2_cc;
+      THEN("There are three isotropic coarse cells") {
+        REQUIRE(check4cells(5,6,24,25));
+        REQUIRE(check4cells(17,18,27,26));
+        REQUIRE(check4cells(4,7,15,19));
+      }
+      THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
+        REQUIRE(check2cells(0,1));
+        REQUIRE(check2cells(2,3));
+        REQUIRE(check2cells(9,8));
+        REQUIRE(check2cells(11,10));
+        REQUIRE(check2cells(12,13));
+        REQUIRE(check2cells(16,14));
+        REQUIRE(check2cells(20,22));
+        REQUIRE(check2cells(23,21));
+      }
+      THEN("The coarse-cell numbering the anisotropy and the priority weights") {
+        REQUIRE(f2c[ 0].value() == 0);
+        REQUIRE(f2c[ 2].value() == 1);
+        REQUIRE(f2c[ 4].value() == 10);
+        REQUIRE(f2c[ 9].value() == 3);
+        REQUIRE(f2c[11].value() == 2);
+        REQUIRE(f2c[13].value() == 5);
+        REQUIRE(f2c[16].value() == 4);
+        REQUIRE(f2c[20].value() == 6);
+        REQUIRE(f2c[23].value() == 7);
+        REQUIRE(f2c[24].value() == 8);
+        REQUIRE(f2c[27].value() == 9);
+      }
+    }
+  }
 
   GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
         " a seeds pool with neighbourhood priority and priority weights for inverse numbering") {
