@@ -86,7 +86,7 @@ using namespace std;
  * - 11: The neighbourhood has highest priority, and initialize with one point only
  *       then let evolve
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
- * belongs to after agglomeration
+ * belongs after agglomeration
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
  * element points to a particular element in the vector \p agglomerationLines
  * @param[in,out] agglomerationLines Vector storing all the elements of the
