@@ -167,7 +167,7 @@ configuration). The workflow performs several steps:
 4. Build the documentation (same as [above](#book-documentation)) and deploy it
    on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/)
 
-### :exclamation: Things to be aware
+### :exclamation: Things to be aware of
 The CI on the ONERA-hosted runs on **`spiro-commun`**.
 
 Two ways of running are available, directly as shell or through a `slurm` job.
