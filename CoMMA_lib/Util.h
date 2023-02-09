@@ -46,7 +46,7 @@ using namespace std;
 constexpr double deviate_thresh = 0.9396926207859084;
 
 /** @brief Tell whether the dot product given as input comes from two parallel
- * vectors. Compared against \ref parallel_thresh.
+ * vectors. Compared against \ref deviate_thresh.
  * @tparam T Input type
  * @param[in] dot Dot product
  * @return true if higher than a reference threshold
