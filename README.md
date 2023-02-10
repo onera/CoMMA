@@ -168,7 +168,11 @@ configuration). The workflow performs several steps:
    on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/)
 
 ### :exclamation: Things to be aware of
-The CI on the ONERA-hosted runs on **`spiro-commun`**.
+A presentation of the ONERA-hosted CI is available
+[here](https://gitlab.onera.net/numerics/mesh/maia/-/wikis/GitLab-CI-ONERA), we
+give below some insights.
+
+The CI on the ONERA-hosted repo runs on **`spiro-commun`**.
 
 Two ways of running are available, directly as shell or through a `slurm` job.
 The workflow being simple and not needing many resources, we force the shell
@@ -182,7 +186,7 @@ default:
 At the time of writing (February 2023), `spiro-commun` is still on **`CentOS
 7`**. In order to successfully build and test, an environment (available in
 Riccardo's storage and accessible to anyone) is sourced and some checks are
-done. A version of the environment for `CentOS8` is also available in the same
+done. A version of the environment for `CentOS 8` is also available in the same
 directory as the other.
 ```yaml
 job:init:
