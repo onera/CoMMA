@@ -469,6 +469,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
    * the first level of agglomeration). Two main steps are performed:
    * 1. Tag anisotropic cells (via the dual graph)
    * 2. Build anisotropic lines
+   *
    * @param[in] priority_weights Weights used to set the order telling where to start
    */
   void build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
