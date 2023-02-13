@@ -577,9 +577,12 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
    * threshold and order them according to given priority
-   *  @param[out] maxArray Array of the maximum weight: the biggest area of the
+   *  @param[out] max_weights Array of the maximum weight: the biggest area of the
    * faces composing the given fine cell
-   *  @param[out] anisotropic_fc Set of fine cells tagged as anisotropic
+   *  @param[out] is_anisotropic Vector of length equal to the total number of cell
+   *  telling whether a cell is anisotropic
+   *  @param[out] aniso_seeds_pool Container containing the anisotropic cells in the
+   *  order they should be considered when computing the lines
    *  @param[in] threshold_anisotropy Value of the aspect ratio above which a
    *  cell is considered anisotropic. If negative, all compliant cells are
    *  considered as anisotropic
@@ -589,17 +592,18 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
-  void compute_anisotropic_fc(vector<CoMMAWeightType> &maxArray,
-                              deque<CoMMAIndexType> &anisotropic_fc,
-                              const CoMMAWeightType threshold_anisotropy,
-                              const vector<CoMMAWeightType> &priority_weights,
-                              const CoMMAIndexType preserving) {
+  void tag_anisotropic_cells(vector<CoMMAWeightType> &max_weights,
+                             vector<bool> &is_anisotropic,
+                             deque<CoMMAIndexType> &aniso_seeds_pool,
+                             const CoMMAWeightType threshold_anisotropy,
+                             const vector<CoMMAWeightType> &priority_weights,
+                             const CoMMAIndexType preserving) {
     CoMMASetOfPairType aniso_w_weights{};
     if (threshold_anisotropy < 0) {
       for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
         aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
         const auto weights = this->get_weights(i_fc);
-        maxArray[i_fc] = *(max_element(weights.begin(), weights.end()));
+        max_weights[i_fc] = *(max_element(weights.begin(), weights.end()));
       }
     }
     else {
@@ -631,7 +635,7 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
           }
         }
 
-        maxArray[i_fc] = max_weight;
+        max_weights[i_fc] = max_weight;
         // Compute the aspect-ratio and add cell to list if necessary
         const auto ar = _compute_AR(min_weight, max_weight);
         if (preserving == 0) {
@@ -662,8 +666,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     } // End if threshold
 
     // Build result
-    for (const auto &[i_fc, w] : aniso_w_weights)
-      anisotropic_fc.emplace_back(i_fc);
+    for (const auto &[i_fc, w] : aniso_w_weights) {
+      is_anisotropic[i_fc] = true;
+      aniso_seeds_pool.emplace_back(i_fc);
+    }
   }
 
   /** @brief Getter that returns the number of cells

@@ -295,7 +295,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
     // the other one are stored only for visualization purpose)
     if (this->_v_lines[0].empty()) {
       // The anisotropic lines are only computed on the original (finest) mesh.
-      this->compute_anisotropic_lines(priority_weights);  // finest level!!!
+      this->build_anisotropic_lines(priority_weights);  // finest level!!!
     }
 
     // In case the if is not realized, this is not the first generation of a
@@ -465,34 +465,38 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
 
  protected:
 
-  /** @brief Computes the anisotropic lines at the first level (only called at
+  /** @brief Build the anisotropic lines at the first level (only called at
    * the first level of agglomeration). Two main steps are performed:
-   * 1. Look for anisotropic cells (via the dual graph)
+   * 1. Tag anisotropic cells (via the dual graph)
    * 2. Build anisotropic lines
    * @param[in] priority_weights Weights used to set the order telling where to start
    */
-  void compute_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
-    deque<CoMMAIndexType> anisotropic_fc;
+  void build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
+    deque<CoMMAIndexType> aniso_seeds_pool;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
-    vector<CoMMAWeightType> maxArray(this->_fc_graph->_number_of_cells, 0.0);
+    vector<CoMMAWeightType> max_weights(this->_fc_graph->_number_of_cells, 0.0);
+    vector<bool> is_anisotropic(this->_fc_graph->_number_of_cells, false);
     // Computation of the anisotropic cell, alias of the cells for which the
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
-    this->_fc_graph->compute_anisotropic_fc(maxArray, anisotropic_fc,
-                                            _threshold_anisotropy, priority_weights,
-                                            0);
+    this->_fc_graph->tag_anisotropic_cells(max_weights, is_anisotropic,
+                                           aniso_seeds_pool,
+                                           _threshold_anisotropy,
+                                           priority_weights, 0);
     // Map to address if the cell has been added to a line
     unordered_map<CoMMAIndexType, bool> has_been_treated;
-    has_been_treated.reserve(anisotropic_fc.size());
-    for (auto &i_fc : anisotropic_fc) {
+    has_been_treated.reserve(aniso_seeds_pool.size());
+    for (auto &i_fc : aniso_seeds_pool) {
       has_been_treated[i_fc] = false;
     }
+    // Size might not be the dimension
+    const auto pts_dim = this->_fc_graph->_centers[0].size();
     // size of the line
     this->_nb_lines[0] = 0;
     // we cycle on all the anisotropic cells identified before
-    for (auto &i_fc : anisotropic_fc) {
-      // seed from where we start the deck
+    for (auto &i_fc : aniso_seeds_pool) {
+      // seed from where we start building the line
       if (has_been_treated[i_fc]) {
         // If the cell has been already treated, continue to the next
         // anisotropic cell in the unordered map
@@ -515,7 +519,7 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
       bool opposite_direction_check = false;
       // Info about growth direction
       vector<CoMMAWeightType> prev_cen = this->_fc_graph->_centers[seed]; // OK copy
-      vector<CoMMAWeightType> prev_dir(prev_cen.size()); // Size might not be the dimension
+      vector<CoMMAWeightType> prev_dir(pts_dim);
       bool empty_line = true;
       // Start the check from the seed
       // while the line is not ended
@@ -528,19 +532,13 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         CoMMASetOfPairType candidates;
         // If the line is long enough, we use the direction. Otherwise, we use the
         // weight.
-        // Putting a high level if to reduce the branching inside the loop over the
+        // Putting a high-level if to reduce the branching inside the loop over the
         // neighbours.
         if (empty_line) {
           for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
             const auto n = v_neighbours[i];
-            if (n != seed
-                // Avoid the seed (it should not happen, but better safe than sorry)
-                  and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
-                        != anisotropic_fc.end()
-                  // if anisotropic cell...
-                    and !has_been_treated[n]
-                    // ...and if not treated...
-                      and v_w_neighbours[i] > 0.90 * maxArray[seed]
+            if (is_anisotropic[n] && !has_been_treated[n]
+                && v_w_neighbours[i] > 0.90 * max_weights[seed]
                 ) {   // ...and on the edge with highest coupling
               candidates.emplace(v_w_neighbours[i], n);
             }
@@ -551,16 +549,10 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
           // !dot_deviate below
           for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
             const auto n = v_neighbours[i];
-            if (n != seed
-                // Avoid the seed (it should not happen, but better safe than sorry)
-                  and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
-                        != anisotropic_fc.end()
-                  // if anisotropic cell...
-                    and !has_been_treated[n]
-                    // ...and if not treated...
-                      and v_w_neighbours[i] > 0.90 * maxArray[seed]
+            if (is_anisotropic[n] && !has_been_treated[n]
+                && v_w_neighbours[i] > 0.90 * max_weights[seed]
                 ) {   // ...and on the edge with highest coupling
-              vector<CoMMAWeightType> cur_dir(prev_cen.size());
+              vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
                   prev_cen, this->_fc_graph->_centers[n], cur_dir);
               const CoMMAWeightType dot = inner_product(
@@ -603,14 +595,9 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
             // If not an empty line, we check the direction, see is_parallel below
             for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
               const auto n = v_neighbours[i];
-              if (n != seed
-                  // Avoid the seed (it should not happen, but better safe than sorry)
-                    and find(anisotropic_fc.begin(), anisotropic_fc.end(), n)
-                          != anisotropic_fc.end()
-                    // if anisotropic cell...
-                      and !has_been_treated[n]
+              if (is_anisotropic[n] && !has_been_treated[n]
                   ) { // ...and if not treated...
-                vector<CoMMAWeightType> cur_dir(prev_cen.size());
+                vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
                     prev_cen, this->_fc_graph->_centers[n], cur_dir);
                 const CoMMAWeightType dot = inner_product(
