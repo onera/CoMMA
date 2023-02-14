@@ -112,7 +112,7 @@ class Coarse_Cell_Container {
         result.push_back(cc);
       }
     }
-    return (result);
+    return result;
   }
 
 #if 0
@@ -195,8 +195,9 @@ Not used anymore but we leave it for example purposes
       // Starting from the CC just after the first removed singular cell, update all
       // cells. Looking for new_ID-1 than doing ++ avoid case of consecutive singular
       // cells
-      for(auto &it_cc = ++_cc_vec.find(new_ID - 1); it_cc != _cc_vec.end();
-          ++it_cc, ++new_ID) {
+      auto it_cc = _cc_vec.find(new_ID - 1);
+      ++it_cc;
+      for (; it_cc != _cc_vec.end(); ++it_cc, ++new_ID) {
         // Update fine cells
         for (auto const &i_fc : it_cc->second->_mapping_l_to_g) {
           _fc_2_cc[i_fc] = new_ID;
