@@ -61,7 +61,7 @@ class Coarse_Cell_Container {
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
         _fc_2_cc(fc_graph->_number_of_cells, nullopt),
         _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
-        _nb_of_agglomerated_fc(0), _delayed_cc() {}
+        _nb_of_agglomerated_fc(0), _delayed_cc(), _singular_cc(0) {}
 
   /** @brief Destructor */
   ~Coarse_Cell_Container() = default;
@@ -106,8 +106,8 @@ class Coarse_Cell_Container {
    *  @param[in] i_cc index of the coarse cell in which the fine cell is in
    *  @return vector of the index of the coarse cells
    */
-  vector<CoMMAIndexType> get_neigh_cc(const CoMMAIndexType &i_fc,
-                                      const CoMMAIndexType &i_cc) const {
+  vector<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
+                                       const CoMMAIndexType &i_cc) const {
     const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
     for (const CoMMAIndexType &elem : neigh) {
@@ -121,18 +121,7 @@ class Coarse_Cell_Container {
   }
 
 #if 0
-  /** @brief Update the member variable of the member fc2cc based on the mapping
-   * given
-   *  @param[in] mapping mapping on old fc2cc to the new fc2cc
-   */
-  void update_fc_2_cc(const vector<CoMMAIndexType> &mapping) const {
-    for (auto &elem : _fc_2_cc) {
-      // we substitute in elem the mapped element
-      elem = mapping[elem];
-    }
-  }
-#endif
-
+Not used anymore but we leave it for example purposes
   /** @brief Remove a coarse cell from the mapping
    * @param[in] elim Iterator to the element to eliminate
    * @return Iterator to the next element
@@ -155,6 +144,7 @@ class Coarse_Cell_Container {
     // return pointer to the next element
     return (it);
   }
+#endif
 
   /** @brief Implementation of the correction. In this version it implements the
    * correction of singular cells (if one cell is alone after the agglomeration
@@ -163,67 +153,63 @@ class Coarse_Cell_Container {
    * value)
    */
   void correct(const CoMMAIntType max_card) {
-    // initializing vector neigh_cc
-    // We cycle on the subgraphs of the bimap structure
-    auto it = _cc_vec.begin();
     // We use it to understand if we have succeeded in the correction
-    auto it_old = _cc_vec.begin();
-    auto end = _cc_vec.end();
-    while (it != end) {
+    set<typename decltype(_singular_cc)::value_type> removed_cc{};
+    for (const auto& i_cc : _singular_cc) {
       // We enter in the property of the subgraph of being 1
       // and we consider what happens. Remember that second because
       // we are checking the subgraph
-      auto current_cc = it->second;
-      auto i_cc = it->first;
-      // check the isotropic cells with cardinality 1
-      if (current_cc->_cardinality == 1 && current_cc->_is_isotropic) {
-        // Get the cc neigh of the given fine cell
-        auto i_fc = current_cc->_mapping_l_to_g[0];
-        const vector<CoMMAIndexType> neigh = get_neigh_cc(i_fc, i_cc);
-        if(!neigh.empty()) {
-          // now we have the neighbourhood cc cell, we can access to them and
-          // control the characteristics
-          const auto cc_idx = select_best_cc_to_agglomerate(i_fc, neigh, max_card);
-          if (cc_idx.has_value()) {
-            // If the condition is verified we add the cell to the identified cc
-            // and we remove it from the current cc
-            // first we assign to the fc_2_cc the new cc (later it will be
-            // renumbered considering the deleted cc)
-            _fc_2_cc[i_fc] = cc_idx.value();
-            auto neig_cc = _cc_vec[cc_idx.value()];
-            neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
-                                 i_fc, _fc_graph->_volumes[i_fc],
-                                 _fc_graph->get_weights(i_fc));
-            current_cc->remove_node(i_fc);
-            // the new it point directly to the next element in the map
-            it = remove_cc(it);
-          } else {
-            // if we failed we go on, it is life, so we agglomerate to the nearest
-            // cell (the first one of the vector). At this point, we do not check if
-            // the max cardinality has been reached or not, otherwise we might leave
-            // the isolated cell isolated
-            auto const elem = neigh[0];
-            auto neig_cc = _cc_vec[elem];
-            _fc_2_cc[i_fc] = elem;
-            neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
-                                 i_fc, _fc_graph->_volumes[i_fc],
-                                 _fc_graph->get_weights(i_fc));
-            current_cc->remove_node(i_fc);
-            // the new it point directly to the next element in the map
-            it = remove_cc(it);
-          }
-        } else {
-          // The cell has no neighbours. This could happen when the partitioning does
-          // not give a connected partition. Unfortunately, there is nothing that we
-          // can do. We just skip it
-          ++it;
+      //auto current_cc = _cc_vec[i_cc];
+      auto i_fc = _cc_vec[i_cc]->_mapping_l_to_g[0];
+      // Get the cc neighs of the given fine cell
+      const vector<CoMMAIndexType> neighs = get_neighs_cc(i_fc, i_cc);
+      if(!neighs.empty()) {
+        // now we have the neighbourhood cc cell, we can access to them and
+        // control the characteristics
+        const auto cc_idx = select_best_cc_to_agglomerate(i_fc, neighs, max_card);
+        // If the condition is verified we add the cell to the identified cc
+        // and we remove it from the current cc
+        // if we failed we go on, it is life, so we agglomerate to the nearest
+        // cell (the first one of the vector). At this point, we do not check if
+        // the max cardinality has been reached or not, otherwise we might leave
+        // the isolated cell isolated
+        const auto new_cc = cc_idx.has_value() ? cc_idx.value() : neighs[0];
+        auto neig_cc = _cc_vec[new_cc];
+        // first we assign to the fc_2_cc the new cc (later it will be
+        // renumbered considering the deleted cc)
+        _fc_2_cc[i_fc] = new_cc;
+        neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
+                             i_fc, _fc_graph->_volumes[i_fc],
+                             _fc_graph->get_weights(i_fc));
+        _cc_vec.erase(i_cc);
+        removed_cc.emplace(i_cc);
+      }
+      // If the cell has no neighbour (this could happen when the partitioning does
+      // not give a connected partition), unfortunately, there is nothing that we
+      // can do. We just skip it
+    }
+
+    // Now update the ID if necessary
+    if (!removed_cc.empty()) {
+      auto new_ID = *removed_cc.begin();
+      // Starting from the CC just after the first removed singular cell, update all
+      // cells. Looking for new_ID-1 than doing ++ avoid case of consecutive singular
+      // cells
+      for(auto &it_cc = ++_cc_vec.find(new_ID - 1); it_cc != _cc_vec.end();
+          ++it_cc, ++new_ID) {
+        // Update fine cells
+        for (auto const &i_fc : it_cc->second->_mapping_l_to_g) {
+          _fc_2_cc[i_fc] = new_ID;
         }
-        end = _cc_vec.end();
-        it_old = it;
-      } else {
-        ++it;
+        // Update coarse cell ID
+        auto node = _cc_vec.extract(it_cc);
+        if (!node.empty()) {
+          node.key() = new_ID;
+          _cc_vec.insert(move(node));
+        }
       }
     }
+
   }
 
   /** @brief Choose among the neighbouring coarse cells, the one to which a fine cell
@@ -424,6 +410,8 @@ class Coarse_Cell_Container {
                  shared_ptr<
                      Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>(
                 _cc_counter, new_cc->_cc_graph));
+        if (s_fc.size() == 1)
+          _singular_cc.emplace_back(_cc_counter);
 
         // Update of compactness informations:
         //####################################
@@ -476,6 +464,9 @@ class Coarse_Cell_Container {
    * cells that will be built at the end of the agglomeration process
    */
   vector<unordered_set<CoMMAIndexType>> _delayed_cc;
+
+  /** @brief Set of singular coarse cells, that is, composed of only one fine cell */
+  deque<CoMMAIndexType> _singular_cc;
 };
 
 #endif  // COMMA_PROJECT_COARSE_CELL_GRAPH_H
