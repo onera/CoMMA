@@ -20,8 +20,8 @@ default:
 stages:
     - init
     - build
-    - build_rel
     - test
+    - build_rel
     - test_rel
     - documentation
 
@@ -74,22 +74,6 @@ CoMMA:
     #    paths:
     #        # The path is taken from the initial directory, hence we specify the full path
     #        - $CUSTOM_CI_DIR/build
-CoMMA_rel:
-    stage: build_rel
-    needs: ['job:init']
-    only:
-        changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - Documentation/Doxyfile
-    script:
-        - cd $CUSTOM_CI_DIR
-        - mkdir -p build_rel
-        - cd build_rel
-        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
-        - make -j
 test_a:
     stage: test
     needs: ['job:init', CoMMA]
@@ -113,7 +97,23 @@ test_a:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
-test_rel:
+CoMMA_rel:
+    stage: build_rel
+    needs: ['job:init', test_a]
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build
+        - cd build
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+        - make -j
+test_b:
     stage: test_rel
     needs: ['job:init', CoMMA_rel]
     only:
@@ -124,7 +124,7 @@ test_rel:
             - .gitlab-ci.yml
     script:
         - cd $CUSTOM_CI_DIR
-        - cd build_rel
+        - cd build
         - ./Comma_test
 pages:
     stage: documentation
