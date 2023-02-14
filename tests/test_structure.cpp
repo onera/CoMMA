@@ -1960,6 +1960,94 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 8, 2));
       }
     }
+    WHEN("We agglomerate (manually) leaving two coarse cells with cardinality 1") {
+      cc_graph->cc_create_a_cc({0,1});
+      cc_graph->cc_create_a_cc({2});
+      cc_graph->cc_create_a_cc({6});
+      cc_graph->cc_create_a_cc({3,4,7});
+      cc_graph->cc_create_a_cc({5,8});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph, 3, 3));
+        REQUIRE(fc_in_cc(cc_graph, 4, 3));
+        REQUIRE(fc_in_cc(cc_graph, 5, 4));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 3));
+        REQUIRE(fc_in_cc(cc_graph, 8, 4));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cells have been agglomerated") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+    }
+  }
+  GIVEN("A simple 3x3 Cartesian grid to which we add an extra unconnected cell to"
+        " simulate pathological partitions") {
+    DualGPy_quad_3 Data = DualGPy_quad_3();
+    // Adding the extra cell
+    Data.nb_fc = 10;
+    Data.adjMatrix_row_ptr.push_back(24);
+    Data.n_bnd_faces.push_back(0);
+    Data.volumes.push_back(1.);
+    Data.centers.push_back({-10, -10});
+    Data.weights.push_back(-1.);
+    Data.arrayOfFineAnisotropicCompliantCells.push_back(9);
+    //
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    seeds_pool->initialize();
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    WHEN("We agglomerate (without correction)") {
+      auto agg =
+        make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+            fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+      agg->agglomerate_one_level(4, 2, 6, Data.weights, false);
+      const auto &unconnected_cell = cc_graph->_fc_2_cc.back();
+      THEN("The isolated cell is singular") {
+        REQUIRE(unconnected_cell.has_value());
+        REQUIRE(count_if(cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+                         [&](const auto &fc){
+                              return fc.has_value()
+                                     && fc.value() == unconnected_cell.value();
+                          }) == 1);
+      }
+      THEN("If we try to correct, the cell remain isolated") {
+        cc_graph->correct(4);
+        REQUIRE(count_if(cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+                         [&](const auto &fc){
+                              return fc.has_value()
+                                     && fc.value() == unconnected_cell.value();
+                          }) == 1);
+      }
+    }
+    WHEN("We agglomerate (with correction)") {
+      auto agg =
+        make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
+            fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+      agg->agglomerate_one_level(4, 2, 6, Data.weights, true);
+      const auto &unconnected_cell = cc_graph->_fc_2_cc.back();
+      THEN("The isolated cell is singular") {
+        REQUIRE(unconnected_cell.has_value());
+        REQUIRE(count_if(cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+                         [&](const auto &fc){
+                              return fc.has_value()
+                                     && fc.value() == unconnected_cell.value();
+                          }) == 1);
+      }
+    }
   }
 #undef fc_in_cc
 }
