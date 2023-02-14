@@ -226,13 +226,9 @@ class Graph {
       if (dict_fc_compactness.empty()) {
         return 0;
       }
-      CoMMAIntType min_comp = numeric_limits<CoMMAIntType>::max();
-      for (auto &i_k_v : dict_fc_compactness) {
-        if (i_k_v.second < min_comp) {
-          min_comp = i_k_v.second;
-        }
-      }
-      return min_comp;
+      return min_element(
+          dict_fc_compactness.begin(), dict_fc_compactness.end(),
+          [](const auto &p, const auto &q){ return p.second < q.second; })->second;
     } else {
       return 0;
     }
@@ -247,23 +243,17 @@ class Graph {
   unordered_map<CoMMAIndexType, CoMMAIntType>
   compute_fc_compactness_inside_a_cc(const unordered_set<CoMMAIndexType> &s_fc) const {
     unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
-    if (s_fc.size() > 1) {
-
-      // for every fc constituting a cc
-      for (const CoMMAIndexType &i_fc : s_fc) {
-
-        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
-        for (const CoMMAIndexType &i_fc_n : v_neighbours) {
-          if ((s_fc.count(i_fc_n) > 0) && (i_fc != i_fc_n)) {
-            if (dict_fc_compactness.count(i_fc) > 0) {
-              dict_fc_compactness[i_fc]++;
-            } else {
-              dict_fc_compactness[i_fc] = 1;
-            }
-          }
-        }
-        if (dict_fc_compactness.count(i_fc) == 0) {
-          dict_fc_compactness[i_fc] = 0;
+    if (!s_fc.empty()) {
+      if (s_fc.size() == 1) {
+        dict_fc_compactness[*s_fc.begin()] = 0;
+      }
+      else {
+        for (const CoMMAIndexType &i_fc : s_fc) {
+          dict_fc_compactness[i_fc] = count_if(
+               this->_m_CRS_Col_Ind.cbegin() + this->_m_CRS_Row_Ptr[i_fc],
+               this->_m_CRS_Col_Ind.cbegin() + this->_m_CRS_Row_Ptr[i_fc + 1],
+               [&](const auto &neigh){ return s_fc.count(neigh) > 0; }
+              );
         }
       }
     }
