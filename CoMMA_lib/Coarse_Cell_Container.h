@@ -61,7 +61,7 @@ class Coarse_Cell_Container {
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
         _fc_2_cc(fc_graph->_number_of_cells, nullopt),
         _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
-        _nb_of_agglomerated_fc(0), _delayed_cc(), _singular_cc(0) {}
+        _nb_of_agglomerated_fc(0), _delayed_cc(), _singular_cc() {}
 
   /** @brief Destructor */
   ~Coarse_Cell_Container() = default;
