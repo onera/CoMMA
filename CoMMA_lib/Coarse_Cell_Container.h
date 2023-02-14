@@ -47,11 +47,6 @@ class Coarse_Cell_Container {
 
  public:
 
-  /** @brief Type for a custom map */
-  using CustomMapItT = typename map<
-    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
-                                        CoMMAIntType>>>::iterator;
-
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
@@ -122,6 +117,11 @@ class Coarse_Cell_Container {
 
 #if 0
 Not used anymore but we leave it for example purposes
+
+  /** @brief Type for a custom map */
+  using CustomMapItT = typename map<
+    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
+                                        CoMMAIntType>>>::iterator;
   /** @brief Remove a coarse cell from the mapping
    * @param[in] elim Iterator to the element to eliminate
    * @return Iterator to the next element
