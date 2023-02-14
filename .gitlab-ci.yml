@@ -20,7 +20,9 @@ default:
 stages:
     - init
     - build
+    - build_rel
     - test
+    - test_rel
     - documentation
 
 job:init:
@@ -72,6 +74,22 @@ CoMMA:
     #    paths:
     #        # The path is taken from the initial directory, hence we specify the full path
     #        - $CUSTOM_CI_DIR/build
+CoMMA_rel:
+    stage: build_rel
+    needs: ['job:init']
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build_rel
+        - cd build_rel
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+        - make -j
 test_a:
     stage: test
     needs: ['job:init', CoMMA]
@@ -95,6 +113,19 @@ test_a:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
+test_rel:
+    stage: test_rel
+    needs: ['job:init', CoMMA_rel]
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build_rel
+        - ./Comma_test
 pages:
     stage: documentation
     needs: ['job:init'] #job:init is needed to get dotenv artifacts
