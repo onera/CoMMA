@@ -1065,6 +1065,14 @@ class Agglomerator_Biconnected
           s_neighbours_of_seed, priority_weights, this->_dimension);
       // Generate the candidates cells in the neighbourhood of the given seed
       neighbourhood->update(seed, this->_fc_graph->get_neighbours(seed));
+      // Compactness is used when choosing the best cell. We compute it iteratively
+      // as the agglomeration advances.
+      unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
+      cur_compact_by_fc.reserve(max_ind);
+      cur_compact_by_fc[seed] = 0;
+      const auto second_less = [](const auto &p, const auto &q) {
+        return p.second < q.second;
+      };
 
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
@@ -1092,8 +1100,23 @@ class Agglomerator_Biconnected
         // we increase the cc
         size_current_cc++;
         tmp_cc.insert(argmin_ar);
+
+        // Update compactness
+        CoMMAIntType argmin_compact{0};
+        for(const auto &neigh : this->_fc_graph->get_neighbours(argmin_ar)) {
+          if (tmp_cc.find(neigh) != tmp_cc.end()) {
+            ++argmin_compact;
+            ++cur_compact_by_fc[neigh];
+          }
+        }
+        cur_compact_by_fc[argmin_ar] = argmin_compact;
         const CoMMAIntType cur_compact =
-          this->_fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+                              min_element(cur_compact_by_fc.begin(),
+                                          cur_compact_by_fc.end(),
+                                          second_less
+                                          )->second;
+        // Equivalent to:
+        //this->_fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
 
         // if the constructed cc is eligible, i.e. its size is inside the
         // permitted range we store it inside dict_cc_in_creation This choice is
@@ -1174,9 +1197,7 @@ class Agglomerator_Biconnected
 
       assert(arg_min_card == static_cast<CoMMAIntType>(s_current_cc.size()));
 
-      // Computes the actual compactness of the coarse cell
-      compactness =
-          this->_fc_graph->compute_min_fc_compactness_inside_a_cc(s_current_cc);
+      compactness = max_compact;
     }  // end else
     return s_current_cc;
   }
