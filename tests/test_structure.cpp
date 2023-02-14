@@ -1107,6 +1107,68 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
   };
 }
 
+SCENARIO("Test compactness computation", "[Compactness]") {
+  GIVEN("A simple 3x3 Cartesian grid") {
+    const DualGPy_quad_3 Data = DualGPy_quad_3();
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    WHEN("We consider an empty coarse cell") {
+      const unordered_set<CoMMAIndexT> cc = {};
+      THEN("The single compactness value are right") {
+        REQUIRE(fc_graph->compute_fc_compactness_inside_a_cc(cc).empty());
+      }
+      THEN("The minimum is well identified") {
+        REQUIRE(fc_graph->compute_min_fc_compactness_inside_a_cc(cc) == 0);
+      }
+    }
+    WHEN("We consider a singular coarse cell") {
+      const unordered_set<CoMMAIndexT> cc = {1};
+      THEN("The single compactness value are right") {
+        const auto cpt = fc_graph->compute_fc_compactness_inside_a_cc(cc);
+        REQUIRE(cpt.size() == 1);
+        REQUIRE(cpt.at(1) == 0);
+      }
+      THEN("The minimum is well identified") {
+        REQUIRE(fc_graph->compute_min_fc_compactness_inside_a_cc(cc) == 0);
+      }
+    }
+    WHEN("We consider an L-shaped coarse cell") {
+      const unordered_set<CoMMAIndexT> cc = {6, 3, 0, 1, 2};
+      THEN("The single compactness values are right") {
+        const auto cpt = fc_graph->compute_fc_compactness_inside_a_cc(cc);
+        REQUIRE(cpt.at(6) == 1);
+        REQUIRE(cpt.at(3) == 2);
+        REQUIRE(cpt.at(0) == 2);
+        REQUIRE(cpt.at(1) == 2);
+        REQUIRE(cpt.at(2) == 1);
+      }
+      THEN("The minimum is well identified") {
+        REQUIRE(fc_graph->compute_min_fc_compactness_inside_a_cc(cc) == 1);
+      }
+    }
+    WHEN("We consider the whole mesh as coarse cell") {
+      const unordered_set<CoMMAIndexT> cc = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+      THEN("The single compactness values are right") {
+        const auto cpt = fc_graph->compute_fc_compactness_inside_a_cc(cc);
+        REQUIRE(cpt.at(0) == 2);
+        REQUIRE(cpt.at(1) == 3);
+        REQUIRE(cpt.at(2) == 2);
+        REQUIRE(cpt.at(3) == 3);
+        REQUIRE(cpt.at(4) == 4);
+        REQUIRE(cpt.at(5) == 3);
+        REQUIRE(cpt.at(6) == 2);
+        REQUIRE(cpt.at(7) == 3);
+        REQUIRE(cpt.at(8) == 2);
+      }
+      THEN("The minimum is well identified") {
+        REQUIRE(fc_graph->compute_min_fc_compactness_inside_a_cc(cc) == 2);
+      }
+    }
+  }
+}
+
 SCENARIO("Test the insertion of a coarse cell and deletion",
          "[Insertion Deletion]") {
   GIVEN("We have a Bimap of CoMMAIndexT and shared_ptr") {
