@@ -130,17 +130,19 @@ pages:
     stage: documentation
     needs: ['job:init'] #job:init is needed to get dotenv artifacts
     script:
-        - export cur_dir=$PWD
         - cd $CUSTOM_CI_DIR
+        - rm -rf documentation
         - doxygen Documentation/Doxyfile
-        - cp -r documentation/html/ ${cur_dir}/public/
+        - cd -
+        - rm -rf public
+        - cp -r ${CUSTOM_CI_DIR}/documentation/html public
     artifacts:
         expire_in: 1 month
         paths:
-            - ./public
+            - public
     rules:
-        - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-          changes:
+         - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+         - changes:
             - CoMMA_lib/*.{cpp,h,md}
             - .gitlab-ci.yml
             - Documentation/Doxyfile
