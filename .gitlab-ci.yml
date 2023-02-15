@@ -67,7 +67,7 @@ CoMMA:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
         - cd build
-        - cmake -DCODAFLAGS=On ..
+        - cmake -DCODAFLAGS=On -DCOVERAGE=On ..
         - make -j
     #artifacts:
     #    expire_in: 1 month
@@ -87,7 +87,7 @@ test_a:
         - cd $CUSTOM_CI_DIR
         - cd build
         - ./Comma_test -r junit > test_a.xml
-        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month
@@ -99,7 +99,7 @@ test_a:
                 path: $CUSTOM_CI_DIR/build/coverage.xml
 CoMMA_rel:
     stage: build_rel
-    needs: ['job:init', test_a]
+    needs: ['job:init']
     only:
         changes:
             - CoMMA_lib/*.{cpp,h}
@@ -109,8 +109,8 @@ CoMMA_rel:
             - Documentation/Doxyfile
     script:
         - cd $CUSTOM_CI_DIR
-        - mkdir -p build
-        - cd build
+        - mkdir -p build_rel
+        - cd build_rel
         - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
         - make -j
 test_b:
@@ -124,7 +124,7 @@ test_b:
             - .gitlab-ci.yml
     script:
         - cd $CUSTOM_CI_DIR
-        - cd build
+        - cd build_rel
         - ./Comma_test
 pages:
     stage: documentation

@@ -100,9 +100,14 @@ SET(TESTS
 
 # Generate a test executable with covergae report
 include_directories(Catch2/single_include)
-add_compile_options("--coverage")
+if ( COVERAGE )
+  message("Compiling with coverage support")
+  add_compile_options("--coverage")
+endif()
 add_executable("Comma_test" ${TESTS})
-target_link_libraries(Comma_test gcov)
+if ( COVERAGE )
+  target_link_libraries(Comma_test gcov)
+endif()
 #target_link_libraries(Comma_test Boost)
 #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################
