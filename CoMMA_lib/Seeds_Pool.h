@@ -251,11 +251,11 @@ class Seeds_Pool {
   }
 
   /** @brief Choose a new seed in the pool
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
-   * agglomerated (true) or not agglomerated (false)
+   *  @param[in] is_agglomerated Vector of booleans telling whether fine cells are
+   *  agglomerated
    *  @return New seed
    */
-  virtual optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) = 0;
+  virtual optional<CoMMAIndexType> choose_new_seed(const vector<bool> &is_agglomerated) = 0;
 
   /** @brief Add the provided seeds to a seeds pool queue according to the number of
    * boundary faces
@@ -350,10 +350,11 @@ class Seeds_Pool {
   }
 
   /** @brief Whether the seeds pool need to be initialized
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
+   *  @param[in] is_agglomerated Vector of booleans telling whether fine cells are
+   *  agglomerated
    *  @return A bool
    */
-  virtual bool need_initialization(const vector<bool> &a_is_fc_agglomerated) = 0;
+  virtual bool need_initialization(const vector<bool> &is_agglomerated) = 0;
 
   /** @brief Initialize the seeds pool via a call to its initializator */
   inline void initialize() {
@@ -406,11 +407,11 @@ class Seeds_Pool_Boundary_Priority
           n_bnd_faces, priority_weights, one_point_init) {}
 
   /** @brief Choose a new seed in the pool
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
-   * agglomerated (true) or not agglomerated (false)
+   *  @param[in] is_agglomerated Vector of booleans telling whether fine cells are
+   *  agglomerated
    *  @return New seed
    */
-  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) override {
+  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &is_agglomerated) override {
     // Choose a correct seed from the fc pool list_of_seeds beyond not
     // agglomerated fc.
     // We choose preferably the corners, then the ridges, then the valley, and
@@ -419,22 +420,22 @@ class Seeds_Pool_Boundary_Priority
     // Exactly the inverse of the order of the list. For this reason we proceed
     // from the back
     if (this->_cur_top_queue.has_value()) {
-      auto opt_seed = this->spoil_queue(a_is_fc_agglomerated,
+      auto opt_seed = this->spoil_queue(is_agglomerated,
                                         this->_l_of_seeds[this->_cur_top_queue.value()]);
       if (opt_seed.has_value())
         return opt_seed.value();
       auto opt_top = this->get_highest_n_bnd_yet_to_agglomerate(
-                        a_is_fc_agglomerated, this->_cur_top_queue.value());
+                        is_agglomerated, this->_cur_top_queue.value());
       if (opt_top.has_value()) {
         const auto cur_queue = opt_top.value();
         this->_cur_top_queue = cur_queue;
         // Could be the same top queue, but that's OK
-        opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
+        opt_seed = this->spoil_queue(is_agglomerated, this->_l_of_seeds[cur_queue]);
         if (opt_seed.has_value())
           return opt_seed.value();
         // If here, we already used everything that we had in the seeds pool but there are still
         // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
-        this->build_queue(a_is_fc_agglomerated, cur_queue);
+        this->build_queue(is_agglomerated, cur_queue);
 
         const auto seed = this->_l_of_seeds[cur_queue].front();
         this->_l_of_seeds[cur_queue].pop_front();
@@ -495,13 +496,14 @@ class Seeds_Pool_Boundary_Priority
 
   /** @brief Whether the seeds pool need to be initialized. It updates the top queue
    * if necessary
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
+   *  @param[in] is_agglomerated Vector of booleans telling whether fine cells are
+   *  agglomerated
    *  @return A bool
    */
-  bool need_initialization(const vector<bool> &a_is_fc_agglomerated) override {
+  bool need_initialization(const vector<bool> &is_agglomerated) override {
     if (this->is_empty() || (!this->_cur_top_queue.has_value()) )
       return true;
-    const auto max_bnd = this->get_highest_n_bnd_yet_to_agglomerate(a_is_fc_agglomerated);
+    const auto max_bnd = this->get_highest_n_bnd_yet_to_agglomerate(is_agglomerated);
     if (max_bnd.has_value() && max_bnd.value() > this->_cur_top_queue.value() ) {
       this->_cur_top_queue = max_bnd.value();
       return true;
@@ -545,11 +547,11 @@ class Seeds_Pool_Neighbourhood_Priority
           n_bnd_faces, priority_weights, one_point_init) {}
 
   /** @brief Choose a new seed in the pool
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
-   * agglomerated (true) or not agglomerated (false)
+   *  @param[in] is_agglomerated Vector of booleans telling whether fine cells are
+   *  agglomerated
    *  @return New seed
    */
-  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &a_is_fc_agglomerated) override {
+  optional<CoMMAIndexType> choose_new_seed(const vector<bool> &is_agglomerated) override {
     // Choose a correct seed from the fc pool list_of_seeds beyond not
     // agglomerated fc.
     // We choose preferably the corners, then the ridges, then the valley, and
@@ -562,7 +564,7 @@ class Seeds_Pool_Neighbourhood_Priority
       for (auto q = this->_l_of_seeds.rbegin() +
                     (this->_l_of_seeds.size() - (this->_cur_top_queue.value() + 1));
            q != this->_l_of_seeds.rend(); ++q) {
-        const auto opt_seed = this->spoil_queue(a_is_fc_agglomerated, *q);
+        const auto opt_seed = this->spoil_queue(is_agglomerated, *q);
         if (opt_seed.has_value()) {
           this->_cur_top_queue = distance(q, this->_l_of_seeds.rend()) - 1;
           return opt_seed.value();
@@ -571,17 +573,17 @@ class Seeds_Pool_Neighbourhood_Priority
 
       // If not found, see which is the highest unfinished level
       const auto opt_top = this->get_highest_n_bnd_yet_to_agglomerate(
-          a_is_fc_agglomerated, this->_cur_top_queue.value());
+          is_agglomerated, this->_cur_top_queue.value());
       if (opt_top.has_value()) {
         const auto cur_queue = opt_top.value();
         this->_cur_top_queue = cur_queue;
         // Could be the same top queue, but that's OK
-        const auto opt_seed = this->spoil_queue(a_is_fc_agglomerated, this->_l_of_seeds[cur_queue]);
+        const auto opt_seed = this->spoil_queue(is_agglomerated, this->_l_of_seeds[cur_queue]);
         if (opt_seed.has_value())
           return opt_seed.value();
         // If here, we already used everything that we had in the seeds pool but there are still
         // cells to agglomerate of the same type, hence we need to rebuild the queue from scratch
-        this->build_queue(a_is_fc_agglomerated, cur_queue);
+        this->build_queue(is_agglomerated, cur_queue);
 
         const auto seed = this->_l_of_seeds[cur_queue].front();
         this->_l_of_seeds[cur_queue].pop_front();
@@ -638,11 +640,11 @@ class Seeds_Pool_Neighbourhood_Priority
   }
 
   /** @brief Whether the seeds pool need to be initialized
-   *  @param[in] a_is_fc_agglomerated vector of boolean with fine cells
+   *  @param[in] is_agglomerated vector of boolean with fine cells
    *  @return A bool
    */
-  bool need_initialization(const vector<bool> &a_is_fc_agglomerated) override {
-    CoMMAUnused(a_is_fc_agglomerated);
+  bool need_initialization(const vector<bool> &is_agglomerated) override {
+    CoMMAUnused(is_agglomerated);
     return this->is_empty() || (!this->_cur_top_queue.has_value());
   }
 
