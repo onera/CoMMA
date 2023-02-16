@@ -37,13 +37,6 @@
 
 using namespace std;
 
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Subgraph;
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
-class Dual_Graph;
-
 /** @brief An interface class responsible of storing the cell centered dual
  * graph and of acting on it (it is an interface for the global Dual_Graph and
  * the Subgraph)
