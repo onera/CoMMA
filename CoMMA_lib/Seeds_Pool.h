@@ -460,9 +460,9 @@ class Seeds_Pool_Boundary_Priority
         const auto n_bnd = this->_n_bnd_faces[s];
         if (n_bnd > max_bnd)
           max_bnd = n_bnd;
-        auto &q = this->_l_of_seeds[n_bnd];
-        if (find(q.begin(), q.end(), s) == q.end())
-          q.push_back(s);
+        // We add even if already present. Worst case scenario, a check if
+        // agglomerated is done when choosing new seed
+        this->_l_of_seeds[n_bnd].push_back(s);
       }
       if (!this->_cur_top_queue.has_value() || max_bnd > this->_cur_top_queue.value())
         this->_cur_top_queue = max_bnd;
@@ -485,11 +485,11 @@ class Seeds_Pool_Boundary_Priority
       if (!this->_cur_top_queue.has_value() || max_bnd > this->_cur_top_queue.value())
         this->_cur_top_queue = max_bnd;
       for (const auto & [n_bnd, seeds] : new_seeds_by_bnd) {
-        auto &q = this->_l_of_seeds[n_bnd];
-        for (const auto & [s, w] : seeds) {
-          if (find(q.begin(), q.end(), s) == q.end())
-            q.push_back(s);
-        }
+        // We add even if already present. Worst case scenario, a check if
+        // agglomerated is done when choosing new seed
+        transform(seeds.cbegin(), seeds.cend(),
+                  back_inserter(this->_l_of_seeds[n_bnd]),
+                  [](const auto& p){ return p.first; });
       }
     }
   }
@@ -608,9 +608,9 @@ class Seeds_Pool_Neighbourhood_Priority
       const auto q_lvl = this->_cur_top_queue.has_value() ? min(this->_n_bnd_faces[s],
                                                                 this->_cur_top_queue.value())
                                                           : this->_n_bnd_faces[s];
-      auto &q = this->_l_of_seeds[q_lvl];
-      if (find(q.begin(), q.end(), s) == q.end())
-        q.push_back(s);
+      // We add even if already present. Worst case scenario, a check if
+      // agglomerated is done when choosing new seed
+      this->_l_of_seeds[q_lvl].push_back(s);
     }
   }
 
@@ -631,11 +631,11 @@ class Seeds_Pool_Neighbourhood_Priority
       const auto q_lvl = this->_cur_top_queue.has_value() ? min(n_bnd,
                                                                 this->_cur_top_queue.value())
                                                           : n_bnd;
-      auto &q = this->_l_of_seeds[q_lvl];
-      for (const auto & [s, w] : seeds) {
-        if (find(q.begin(), q.end(), s) == q.end())
-          q.push_back(s);
-      }
+      // We add even if already present. Worst case scenario, a check if
+      // agglomerated is done when choosing new seed
+      transform(seeds.cbegin(), seeds.cend(),
+                back_inserter(this->_l_of_seeds[q_lvl]),
+                [](const auto& p){ return p.first; });
     }
   }
 
