@@ -90,9 +90,19 @@ inline T get_direction(const vector<T>& a, const vector<T>& b, vector<T>& dir) {
  */
 template <typename T>
 inline T euclidean_distance(const vector<T> a, const vector<T> b) {
-  vector<T> diff;
-  transform(a.begin(),a.end(), b.begin(), back_inserter(diff), minus<T>());
-  return sqrt(inner_product(diff.begin(), diff.end(), diff.begin(), T{0.}));
+#if 0
+  return sqrt(
+      transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
+                       [](const auto sum, const auto val){return sum + val*val;},
+                       minus<T>())
+      );
+#endif
+  T ret{0.};
+  for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
+    const auto d = a[i] - b[i];
+    ret += d*d;
+  }
+  return sqrt(ret);
 }
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
