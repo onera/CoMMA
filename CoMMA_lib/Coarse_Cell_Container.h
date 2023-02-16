@@ -387,10 +387,7 @@ Not used anymore but we leave it for example purposes
           _fc_graph, _cc_counter, s_fc, false);
       // we collect the various cc_graph, where the index in the vector is the
       // i_cc
-      _cc_vec.insert(pair<
-          CoMMAIndexType,
-          shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>(
-          _cc_counter, new_cc->_cc_graph));
+      _cc_vec[_cc_counter] = new_cc->_cc_graph;
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -406,11 +403,7 @@ Not used anymore but we leave it for example purposes
             _fc_graph, _cc_counter, s_fc);
         // we collect the various cc_graph, where the index in the vector is the
         // i_cc
-        _cc_vec.insert(
-            pair<CoMMAIndexType,
-                 shared_ptr<
-                     Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>(
-                _cc_counter, new_cc->_cc_graph));
+        _cc_vec[_cc_counter] = new_cc->_cc_graph;
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
 
