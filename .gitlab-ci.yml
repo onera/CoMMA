@@ -87,7 +87,7 @@ test_a:
         - cd $CUSTOM_CI_DIR
         - cd build
         - ./Comma_test -r junit > test_a.xml
-        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./CoMMA_lib/CoMMA.cpp' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month

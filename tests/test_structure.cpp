@@ -15,6 +15,7 @@
 // I input with DualGPy configuration the configuration you can
 // find in the README of the library
 #include "input/DualGPy.h"
+#include "CoMMA.h"
 #include "CoMMATypes.h"
 
 #include "deprecated/Bimap.h"
@@ -298,6 +299,11 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     vector<bool> agglomerated(Data.nb_fc, false);
     WHEN("We create the seeds pool") {
       THEN("It is not initialized") {
+        REQUIRE(seeds_pool.is_empty(0));
+        REQUIRE(seeds_pool.is_empty(1));
+        REQUIRE(seeds_pool.is_empty(2));
+        REQUIRE(seeds_pool.is_empty(3));
+        REQUIRE(seeds_pool.is_empty());
         REQUIRE(seeds_pool.need_initialization(agglomerated));
       }
     }
@@ -1526,11 +1532,38 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
                   agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
                   ODD_LINE_LENGTH, Data.dim);
 
-    WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate") {
+    WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate)") {
          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
-      THEN("We have a number of agglomeration lines != 0") {REQUIRE(aniso_agg._nb_lines[0]!=0);}
+      THEN("We have a number of agglomeration lines != 0") {
+        REQUIRE(aniso_agg._nb_lines[0]!=0);
+      }
     }
-  };
+  }
+  GIVEN("We load the anisotropic mesh structure, but only a cell is anisotropic") {
+    const DualGPy_aniso Data = DualGPy_aniso();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    vector<CoMMAIndexT> v_aniso = {0};
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        v_aniso);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    const CoMMAWeightT aniso_thresh{-2.};
+    const bool isFirstAgglomeration = true;
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  ODD_LINE_LENGTH, Data.dim);
+
+    WHEN("We proceed with the agglomeration of the anisotropic lines") {
+         aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+      THEN("No lines are built") {
+        REQUIRE(aniso_agg._nb_lines[0]==0);
+      }
+    }
+  }
 
 #define check2cells(a,b)     (f2c[a].value() == f2c[b].value())
 #define check3cells(a,b,c)   (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value())
@@ -2113,6 +2146,287 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
   }
 #undef fc_in_cc
+}
+
+SCENARIO("Test of main function", "[structure]") {
+  // The following are basically a copy of previous tests but with the main function
+  GIVEN("A simple 4x4 Cartesian mesh") {
+    const DualGPy_quad_4 Data = DualGPy_quad_4();
+    WHEN("We agglomerate with neighbourhood priority") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = false,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = -4.;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+          Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+          Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+          first_agglo, aniso, odd_length, aniso_thr,
+          seed,
+          fc2cc, alines_idx, alines,
+          correction, Data.dim, goal_card, min_card, max_card);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        REQUIRE(fc2cc[0]== 0);
+        REQUIRE(fc2cc[1]== 0);
+        REQUIRE(fc2cc[2]== 1);
+        REQUIRE(fc2cc[3]== 1);
+        REQUIRE(fc2cc[4]== 0);
+        REQUIRE(fc2cc[5]== 0);
+        REQUIRE(fc2cc[6]== 1);
+        REQUIRE(fc2cc[7]== 1);
+        REQUIRE(fc2cc[8]== 2);
+        REQUIRE(fc2cc[9]== 2);
+        REQUIRE(fc2cc[10]== 3);
+        REQUIRE(fc2cc[11]== 3);
+        REQUIRE(fc2cc[12]== 2);
+        REQUIRE(fc2cc[13]== 2);
+        REQUIRE(fc2cc[14]== 3);
+        REQUIRE(fc2cc[15]== 3);
+      }
+    }
+    WHEN("We agglomerate with boundary priority") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = false,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = -4.;
+      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+          Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+          Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+          first_agglo, aniso, odd_length, aniso_thr,
+          seed,
+          fc2cc, alines_idx, alines,
+          correction, Data.dim, goal_card, min_card, max_card);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        REQUIRE(fc2cc[0]== 0);
+        REQUIRE(fc2cc[1]== 0);
+        REQUIRE(fc2cc[2]== 1);
+        REQUIRE(fc2cc[3]== 1);
+        REQUIRE(fc2cc[4]== 0);
+        REQUIRE(fc2cc[5]== 0);
+        REQUIRE(fc2cc[6]== 1);
+        REQUIRE(fc2cc[7]== 1);
+        REQUIRE(fc2cc[8]== 2);
+        REQUIRE(fc2cc[9]== 2);
+        REQUIRE(fc2cc[10]== 3);
+        REQUIRE(fc2cc[11]== 3);
+        REQUIRE(fc2cc[12]== 2);
+        REQUIRE(fc2cc[13]== 2);
+        REQUIRE(fc2cc[14]== 3);
+        REQUIRE(fc2cc[15]== 3);
+      }
+    }
+    WHEN("We agglomerate with neighbourhood priority one point initialization") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = false,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = -4.;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+          Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+          Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+          first_agglo, aniso, odd_length, aniso_thr,
+          seed,
+          fc2cc, alines_idx, alines,
+          correction, Data.dim, goal_card, min_card, max_card);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        REQUIRE(fc2cc[0]== 0);
+        REQUIRE(fc2cc[1]== 0);
+        REQUIRE(fc2cc[2]== 1);
+        REQUIRE(fc2cc[3]== 1);
+        REQUIRE(fc2cc[4]== 0);
+        REQUIRE(fc2cc[5]== 0);
+        REQUIRE(fc2cc[6]== 1);
+        REQUIRE(fc2cc[7]== 1);
+        REQUIRE(fc2cc[8]== 2);
+        REQUIRE(fc2cc[9]== 2);
+        REQUIRE(fc2cc[10]== 3);
+        REQUIRE(fc2cc[11]== 3);
+        REQUIRE(fc2cc[12]== 2);
+        REQUIRE(fc2cc[13]== 2);
+        REQUIRE(fc2cc[14]== 3);
+        REQUIRE(fc2cc[15]== 3);
+      }
+    }
+    WHEN("We agglomerate with boundary priority one point initialization") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = false,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = -4.;
+      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+          Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+          Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+          first_agglo, aniso, odd_length, aniso_thr,
+          seed,
+          fc2cc, alines_idx, alines,
+          correction, Data.dim, goal_card, min_card, max_card);
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        REQUIRE(fc2cc[0]== 0);
+        REQUIRE(fc2cc[1]== 0);
+        REQUIRE(fc2cc[2]== 1);
+        REQUIRE(fc2cc[3]== 1);
+        REQUIRE(fc2cc[4]== 0);
+        REQUIRE(fc2cc[5]== 0);
+        REQUIRE(fc2cc[6]== 1);
+        REQUIRE(fc2cc[7]== 1);
+        REQUIRE(fc2cc[8]== 2);
+        REQUIRE(fc2cc[9]== 2);
+        REQUIRE(fc2cc[10]== 3);
+        REQUIRE(fc2cc[11]== 3);
+        REQUIRE(fc2cc[12]== 2);
+        REQUIRE(fc2cc[13]== 2);
+        REQUIRE(fc2cc[14]== 3);
+        REQUIRE(fc2cc[15]== 3);
+      }
+    }
+  }
+#define outcheck2cells(a,b)     (fc2cc[a] == fc2cc[b])
+#define outcheck3cells(a,b,c)   (fc2cc[a] == fc2cc[b] && fc2cc[b] == fc2cc[c])
+#define outcheck4cells(a,b,c,d) (fc2cc[a] == fc2cc[b] && fc2cc[b] == fc2cc[c] && fc2cc[c] == fc2cc[d])
+  GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    WHEN("We agglomerate with bad argument") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = true,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = 4.;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      THEN("There are two isotropic coarse cells") {
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr,
+              seed,
+              fc2cc, alines_idx, alines,
+              correction, 5, goal_card, min_card, max_card)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr,
+              seed,
+              fc2cc, alines_idx, alines,
+              correction, Data.dim, goal_card, 8, max_card)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr,
+              seed,
+              fc2cc, alines_idx, alines,
+              correction, Data.dim, 0, min_card, max_card)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr,
+              seed,
+              fc2cc, alines_idx, alines,
+              correction, Data.dim, goal_card, min_card, max_card, 0)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr,
+              seed,
+              fc2cc, alines_idx, alines,
+              correction, Data.dim, goal_card, min_card, max_card, 100)
+        );
+      }
+    }
+    WHEN("We agglomerate with neighbourhood priority") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc),
+                          alines_idx{},
+                          alines{};
+      const bool aniso = true,
+                 first_agglo = true,
+                 odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4,
+                      min_card = 4,
+                      max_card = 4;
+      const CoMMAWeightT aniso_thr = 4.;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+          Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+          Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+          first_agglo, aniso, odd_length, aniso_thr,
+          seed,
+          fc2cc, alines_idx, alines,
+          correction, Data.dim, goal_card, min_card, max_card);
+      THEN("There are two isotropic coarse cells") {
+        REQUIRE(outcheck4cells(5,6,24,25));
+        REQUIRE(outcheck4cells(17,18,27,26));
+      }
+      THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
+        REQUIRE(outcheck2cells(0,1));
+        REQUIRE(outcheck2cells(11,10));
+        REQUIRE(outcheck2cells(16,14));
+        REQUIRE(outcheck2cells(20,22));
+      }
+      THEN("The interior anisotropic coarse cells are of cardinality 3") {
+        REQUIRE(outcheck3cells(2,3,4));
+        REQUIRE(outcheck3cells(9,8,7));
+        REQUIRE(outcheck3cells(12,13,15));
+        REQUIRE(outcheck3cells(23,21,19));
+      }
+      THEN("The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
+           " and the priority weights") {
+        REQUIRE(fc2cc[ 0] == 0);
+        REQUIRE(fc2cc[ 2] == 1);
+        REQUIRE(fc2cc[ 9] == 3);
+        REQUIRE(fc2cc[11] == 2);
+        REQUIRE(fc2cc[13] == 5);
+        REQUIRE(fc2cc[16] == 4);
+        REQUIRE(fc2cc[20] == 6);
+        REQUIRE(fc2cc[23] == 7);
+      }
+    }
+  }
+#undef outcheck2cells
+#undef outcheck3cells
+#undef outcheck4cells
 }
 #undef equal_up_to
 #undef check_
