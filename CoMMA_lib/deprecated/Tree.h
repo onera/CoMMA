@@ -92,18 +92,12 @@ class Tree {
    */
   void insertSon(const CoMMAIndexType &father_index, const CoMMAIndexType &index,
                  const CoMMAWeightType &volume, const CoMMAIntType &root) {
-    shared_ptr<NodeType> insertion(new NodeType(index, volume));
-    shared_ptr<NodeType> u_p_father;
-    if (root == 1) {
-      u_p_father = _root;
-      assert(u_p_father->_index == father_index);
-    } else {
-      u_p_father = search(_root->_left_son_idx, father_index);
-    }
+    shared_ptr<NodeType> insertion = make_shared<NodeType>(index, volume);
+    auto u_p_father = root == 1 ? _root :
+                                  search(_root->_left_son_idx, father_index);
     assert(u_p_father != nullptr);
     insertion->_father = u_p_father;
-    shared_ptr<NodeType> left_idx;
-    left_idx = transverse(u_p_father->_left_son_idx);
+    auto left_idx = transverse(u_p_father->_left_son_idx);
     if (left_idx == nullptr) {
       u_p_father->_left_son_idx = insertion;
     } else {
@@ -113,6 +107,7 @@ class Tree {
     u_p_father->_sonc = u_p_father->_sonc + 1;
     //cout << u_p_father->_sonc << endl;
   }
+
   /** @brief Look for a node
    *  @param[in] node Starting point
    *  @param[in] value Target

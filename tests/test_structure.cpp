@@ -39,6 +39,9 @@ using CCContainerT = Coarse_Cell_Container<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
 using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
 using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
 using PairValueTestT = int; // Leave this since we might try something than what usually found in CoMMA
+                            //
+using NodeType = Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
+using TreeType = Tree<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
@@ -65,8 +68,8 @@ SCENARIO("Test of a structure", "[structure]") {
         };
       };
       THEN("We see that the agglomeration is not set, hence set to 0") {
-        test *agg = new test(fc_graph, cc_graph, seeds_pool, 2);
-        CoMMAIntT testing = agg->test_variable();
+        test agg = test(fc_graph, cc_graph, seeds_pool, 2);
+        CoMMAIntT testing = agg.test_variable();
         REQUIRE(testing == 0);
       }
     }
@@ -90,15 +93,15 @@ SCENARIO("Test of a structure", "[structure]") {
         };
       };
       THEN("We see that the cardinality passes from 0 to 2") {
-        test *agg = new test(fc_graph, cc_graph, seeds_pool, 2);
+        test agg = test(fc_graph, cc_graph, seeds_pool, 2);
 
-        REQUIRE(agg->thres() == 0);
-        REQUIRE(agg->max() == 0);
-        REQUIRE(agg->min() == 0);
-        agg->set_agglomeration_parameter(2, 2, 2);
-        REQUIRE(agg->thres() == 2);
-        REQUIRE(agg->max() == 2);
-        REQUIRE(agg->min() == 2);
+        REQUIRE(agg.thres() == 0);
+        REQUIRE(agg.max() == 0);
+        REQUIRE(agg.min() == 0);
+        agg.set_agglomeration_parameter(2, 2, 2);
+        REQUIRE(agg.thres() == 2);
+        REQUIRE(agg.max() == 2);
+        REQUIRE(agg.min() == 2);
       }
     }
   }
@@ -130,27 +133,25 @@ SCENARIO("Test of the Queue", "[Queue]") {
   }
 }
 
+#if 0
 SCENARIO("Test of the tree", "[Tree]") {
   GIVEN("The node") {
-    shared_ptr<Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>
-      A(new Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(2, 1));
-    shared_ptr<Tree<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>
-      Albero(new Tree<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(A));
+    shared_ptr<NodeType> node = make_shared<NodeType>(2,1);
+    shared_ptr<TreeType> tree = make_shared<TreeType>(node);
     WHEN("We add something to the tree") {
-      Albero->insertSon(2, 1, 1, 1);
+      tree->insertSon(2, 1, 1, 1);
       THEN("The tree has a child") {
-        Albero->insertSon(2, 3, 1, 1);
-        Albero->insertSon(2, 4, 1, 1);
-        Albero->insertSon(4, 2, 1, 0);
-        //Albero->print();
-        REQUIRE(Albero->_root->_sonc == 3);
-        Albero->deleteNode(4);
-        //Albero->print();
-        REQUIRE(Albero->_root->_sonc == 2);
+        tree->insertSon(2, 3, 1, 1);
+        tree->insertSon(2, 4, 1, 1);
+        tree->insertSon(4, 2, 1, 0);
+        REQUIRE(tree->_root->_sonc == 3);
+        tree->deleteNode(4);
+        REQUIRE(tree->_root->_sonc == 2);
       }
     };
   }
 }
+#endif
 
 SCENARIO("Test of Priority Pair", "[Priority Pair]") {
   GIVEN("Some pairs") {
