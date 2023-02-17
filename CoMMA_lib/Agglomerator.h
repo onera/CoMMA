@@ -230,27 +230,16 @@ class Agglomerator_Anisotropic
     if (!is_first_agglomeration) {
       // case in which we have already agglomerated one level and hence we have
       // already agglomeration lines available; no need to recreate them.
-#if 0
-A brief remark about what follows: It used to be something like:
-for (CoMMAIndexType i = agglomerationLines_Idx.size() - 2; i > -1; i--) {
-  new_line = deque<CoMMAIndexType>(agglomerationLines.begin() + agglomerationLines_Idx[i],
-                                   agglomerationLines.begin() + agglomerationLines_Idx[i + 1]);
-}
-However, if CoMMAIndexType were to be *unsigned*, then i > -1 (or i >=0) would lead
-to an infinite loop. So we had to switch to pointers, and backwards ones since we loop
-starting from the end.
-With indices, we are used to constructions like "from idx[i] to idx[i + 1]". However,
-using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
-#endif
-      for (auto idx_ptr = agglomerationLines_Idx.rbegin() + 1;
-           idx_ptr != agglomerationLines_Idx.rend(); idx_ptr++) {
+      this->_nb_lines[0] = static_cast<CoMMAIndexType>(
+          agglomerationLines_Idx.size() - 1);
+      for (auto idx_ptr = agglomerationLines_Idx.cbegin() + 1;
+           idx_ptr != agglomerationLines_Idx.cend(); ++idx_ptr) {
         this->_v_lines[0].push_back(
             make_shared<AnisotropicLine>(
-              agglomerationLines.begin() + (*idx_ptr),
-              agglomerationLines.begin() + (*(idx_ptr - 1))
+              agglomerationLines.cbegin() + (*(idx_ptr - 1)),
+              agglomerationLines.cbegin() + (*idx_ptr)
             )
         );
-        this->_nb_lines[0] += 1;
       }
     }
 
