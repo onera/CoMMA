@@ -1066,8 +1066,6 @@ class Agglomerator_Biconnected
       // Build the class neighbourhood
       auto neighbourhood = this->_neigh_crtor->create(
           s_neighbours_of_seed, priority_weights, this->_dimension);
-      // Generate the candidates cells in the neighbourhood of the given seed
-      neighbourhood->update(seed, this->_fc_graph->get_neighbours(seed));
       // Compactness is used when choosing the best cell. We compute it iteratively
       // as the agglomeration advances.
       unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
@@ -1076,44 +1074,46 @@ class Agglomerator_Biconnected
       const auto second_less = [](const auto &p, const auto &q) {
         return p.second < q.second;
       };
-
+      CoMMAIndexType next_cell = seed; // Dummy initialization
       // Choice of the fine cells to agglomerate we enter in a while, we store
       // anyways all the possible coarse cells (not only the max dimension one)
       while (size_current_cc < max_ind) {
-        // argmin_ar is the best fine cell to add
-        CoMMAIndexType argmin_ar = 0; // Dummy initialization
+        // Update the neighbourhood and generate the candidates
+        neighbourhood->update(next_cell,
+            this->_fc_graph->get_neighbours(next_cell));
+        next_cell = 0; // Dummy initialization
         CoMMAWeightType min_ar_diam = numeric_limits<CoMMAWeightType>::max();
         CoMMAWeightType min_ar_vol = numeric_limits<CoMMAWeightType>::max();
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
-        // ratio and is given back in argmin_ar. It takes account also
+        // ratio and is given back in next_cell. It takes account also
         // the fine cells that has been added until now.
         // min(max_ind - size_current_cc, this->_fc_iter)
         this->compute_best_fc_to_add(min(max_ind - size_current_cc, this->_fc_iter),
                                      neighbourhood,
                                      d_n_of_seed, is_order_primary, diam_cc,
-                                     vol_cc, tmp_cc, argmin_ar,
+                                     vol_cc, tmp_cc, next_cell,
                                      // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
         number_of_external_faces_current_cc +=
-            this->_fc_graph->get_nb_of_neighbours(argmin_ar) +
-            this->_fc_graph->get_n_boundary_faces(argmin_ar) - 1 -
+            this->_fc_graph->get_nb_of_neighbours(next_cell) +
+            this->_fc_graph->get_n_boundary_faces(next_cell) - 1 -
             2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
-        tmp_cc.insert(argmin_ar);
+        tmp_cc.insert(next_cell);
 
         // Update compactness
         CoMMAIntType argmin_compact{0};
-        for (auto neigh = this->_fc_graph->neighbours_cbegin(argmin_ar);
-             neigh != this->_fc_graph->neighbours_cend(argmin_ar); ++neigh) {
+        for (auto neigh = this->_fc_graph->neighbours_cbegin(next_cell);
+             neigh != this->_fc_graph->neighbours_cend(next_cell); ++neigh) {
           if (tmp_cc.find(*neigh) != tmp_cc.end()) {
             ++argmin_compact;
             ++cur_compact_by_fc[*neigh];
           }
         }
-        cur_compact_by_fc[argmin_ar] = argmin_compact;
+        cur_compact_by_fc[next_cell] = argmin_compact;
         const CoMMAIntType cur_compact =
                               min_element(cur_compact_by_fc.begin(),
                                           cur_compact_by_fc.end(),
@@ -1145,7 +1145,7 @@ class Agglomerator_Biconnected
 
           // We update the dictionary of eligible coarse cells
           unordered_map<CoMMAIndexType, CoMMAIntType> new_dict;
-          new_dict[argmin_ar] = d_n_of_seed[argmin_ar];
+          new_dict[next_cell] = d_n_of_seed[next_cell];
           pair<unordered_set<CoMMAIndexType>,
                unordered_map<CoMMAIndexType, CoMMAIntType>> p =
               make_pair(tmp_cc, new_dict);
@@ -1157,9 +1157,7 @@ class Agglomerator_Biconnected
         vol_cc = min_ar_vol;
 
         // Remove added fc from the available neighbours
-        d_n_of_seed.erase(argmin_ar);
-
-        neighbourhood->update(argmin_ar, this->_fc_graph->get_neighbours(argmin_ar));
+        d_n_of_seed.erase(next_cell);
       }
 
       // Selecting best CC to return
