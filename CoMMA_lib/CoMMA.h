@@ -295,7 +295,4 @@ void agglomerate_one_level(
   }
 }
 #undef check_int_type
-#undef MAX_ITER
-#undef _STRINGFY
-#undef STRINGFY
 #endif
