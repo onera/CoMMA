@@ -323,16 +323,19 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // We update the neighbours. At this stage, we do not check if it is or will
         // be agglomerated since there will be a cleaning step after the anisotropic
         // agglomeration
-        for (const auto &n : this->_fc_graph->get_neighbours(*line_it))
-          this->_aniso_neighbours.emplace_back(n);
-        for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+1)))
-          this->_aniso_neighbours.emplace_back(n);
+        this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                       this->_fc_graph->neighbours_cbegin(*line_it),
+                                       this->_fc_graph->neighbours_cend(*line_it));
+        this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                       this->_fc_graph->neighbours_cbegin(*(line_it+1)),
+                                       this->_fc_graph->neighbours_cend(*(line_it+1)));
         if (distance(line_it, end) == 3) {
           if (this->_odd_line_length) {
             // If only three cells left, agglomerate them
             s_fc.insert(*(line_it + 2));
-            for (const auto &n : this->_fc_graph->get_neighbours(*(line_it+2)))
-              this->_aniso_neighbours.emplace_back(n);
+            this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                           this->_fc_graph->neighbours_cbegin(*(line_it+2)),
+                                           this->_fc_graph->neighbours_cend(*(line_it+2)));
           }
           line_it++; // Ensure to break the loop after current iteration
         }
@@ -529,6 +532,8 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // neighbours and the weights
         const vector<CoMMAIndexType> v_neighbours = this->_fc_graph->get_neighbours(seed);
         const vector<CoMMAWeightType> v_w_neighbours = this->_fc_graph->get_weights(seed);
+        auto n_it = this->_fc_graph->neighbours_cbegin(seed);
+        auto w_it = this->_fc_graph->weights_cbegin(seed);
         // vector of the candidates to continue the line
         CoMMASetOfPairType candidates;
         // If the line is long enough, we use the direction. Otherwise, we use the
@@ -536,31 +541,29 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
         // Putting a high-level if to reduce the branching inside the loop over the
         // neighbours.
         if (empty_line) {
-          for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-            const auto n = v_neighbours[i];
-            if (is_anisotropic[n] && !has_been_treated[n]
-                && v_w_neighbours[i] > 0.90 * max_weights[seed]
+          for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
+            if (is_anisotropic[*n_it] && !has_been_treated[*n_it]
+                && *w_it > 0.90 * max_weights[seed]
                 ) {   // ...and on the edge with highest coupling
-              candidates.emplace(v_w_neighbours[i], n);
+              candidates.emplace(*w_it, *n_it);
             }
           }  // end for loop
         }
         else {
           // If not an empty line, we check the direction, see
           // !dot_deviate below
-          for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-            const auto n = v_neighbours[i];
-            if (is_anisotropic[n] && !has_been_treated[n]
-                && v_w_neighbours[i] > 0.90 * max_weights[seed]
+          for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
+            if (is_anisotropic[*n_it] && !has_been_treated[*n_it]
+                && *w_it > 0.90 * max_weights[seed]
                 ) {   // ...and on the edge with highest coupling
               vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
-                  prev_cen, this->_fc_graph->_centers[n], cur_dir);
+                  prev_cen, this->_fc_graph->_centers[*n_it], cur_dir);
               const CoMMAWeightType dot = inner_product(
                   prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
                   CoMMAWeightType{0.});
               if (!dot_deviate<CoMMAWeightType>(dot))
-                candidates.emplace(fabs(dot), n);
+                candidates.emplace(fabs(dot), *n_it);
             }
           }  // end for loop
         }
@@ -594,18 +597,18 @@ using *backwards* pointers that translates into "from (*ptr) to (*(ptr - 1))"
           // and not only the maximum one but still checking for direction
           if (!empty_line) {
             // If not an empty line, we check the direction, see is_parallel below
-            for (auto i = decltype(v_neighbours.size()){0}; i < v_neighbours.size(); i++) {
-              const auto n = v_neighbours[i];
-              if (is_anisotropic[n] && !has_been_treated[n]
-                  ) { // ...and if not treated...
+            for (auto it = this->_fc_graph->neighbours_cbegin(seed);
+                 it != this->_fc_graph->neighbours_cend(seed); ++it) {
+              if (is_anisotropic[*it] && !has_been_treated[*it]
+                  ) {
                 vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
-                    prev_cen, this->_fc_graph->_centers[n], cur_dir);
+                    prev_cen, this->_fc_graph->_centers[*it], cur_dir);
                 const CoMMAWeightType dot = inner_product(
                     prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
                     CoMMAWeightType{0.});
                 if (!dot_deviate<CoMMAWeightType>(dot))
-                  candidates.emplace(fabs(dot), n);
+                  candidates.emplace(fabs(dot), *it);
               }
             }  // end for loop
             if (!candidates.empty()) {
@@ -875,9 +878,9 @@ class Agglomerator_Isotropic
     CoMMAWeightType &new_diam, CoMMAWeightType &new_vol) const {
     // Compute shared faces
     shared_faces = 0;
-    const vector<CoMMAIndexType> v_neighbours = this->_fc_graph->get_neighbours(i_fc);
-    for (const auto i_n : v_neighbours) {
-      if (i_n != i_fc && (fc_of_cc.count(i_n) != 0))
+    for (auto it = this->_fc_graph->neighbours_cbegin(i_fc);
+         it != this->_fc_graph->neighbours_cend(i_fc); ++it) {
+      if (*it != i_fc && (fc_of_cc.count(*it) != 0))
         shared_faces++;
     }
 
@@ -1103,10 +1106,11 @@ class Agglomerator_Biconnected
 
         // Update compactness
         CoMMAIntType argmin_compact{0};
-        for(const auto &neigh : this->_fc_graph->get_neighbours(argmin_ar)) {
-          if (tmp_cc.find(neigh) != tmp_cc.end()) {
+        for (auto neigh = this->_fc_graph->neighbours_cbegin(argmin_ar);
+             neigh != this->_fc_graph->neighbours_cend(argmin_ar); ++neigh) {
+          if (tmp_cc.find(*neigh) != tmp_cc.end()) {
             ++argmin_compact;
-            ++cur_compact_by_fc[neigh];
+            ++cur_compact_by_fc[*neigh];
           }
         }
         cur_compact_by_fc[argmin_ar] = argmin_compact;

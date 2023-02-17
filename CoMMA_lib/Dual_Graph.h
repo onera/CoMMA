@@ -49,6 +49,15 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Graph {
  public:
+  /** @brief Type for containers of indices */
+  using ContainerIndexType = vector<CoMMAIndexType>;
+  /** @brief Type for containers of weights */
+  using ContainerWeightType = vector<CoMMAWeightType>;
+  /** @brief Type for constant iterators of containers of indices */
+  using ContainerIndexConstIt = typename ContainerIndexType::const_iterator;
+  /** @brief Type for constant iterators of containers of weights */
+  using ContainerWeightConstIt = typename ContainerWeightType::const_iterator;
+
   /** @brief Constructor of the class
    *  @param[in] nb_c Number of cells
    *  @param[in] m_crs_row_ptr The row pointer of the CRS representation
@@ -58,10 +67,10 @@ class Graph {
    * between two nodes represented by the cell centers.
    *  @param[in] volumes The volumes of the cells
    */
-  Graph(const CoMMAIndexType &nb_c, const vector<CoMMAIndexType> &m_crs_row_ptr,
-        const vector<CoMMAIndexType> &m_crs_col_ind,
-        const vector<CoMMAWeightType> &m_crs_values,
-        const vector<CoMMAWeightType> &volumes)
+  Graph(const CoMMAIndexType &nb_c, const ContainerIndexType &m_crs_row_ptr,
+        const ContainerIndexType &m_crs_col_ind,
+        const ContainerWeightType &m_crs_values,
+        const ContainerWeightType &volumes)
       : _number_of_cells(nb_c),
         _m_CRS_Row_Ptr(m_crs_row_ptr),
         _m_CRS_Col_Ind(m_crs_col_ind),
@@ -82,27 +91,25 @@ class Graph {
   vector<bool> _visited;
 
   /** @brief Vector of row pointer of CRS representation */
-  vector<CoMMAIndexType> _m_CRS_Row_Ptr;
+  ContainerIndexType _m_CRS_Row_Ptr;
 
   /** @brief Vector of column index of CRS representation */
-  vector<CoMMAIndexType> _m_CRS_Col_Ind;
+  ContainerIndexType _m_CRS_Col_Ind;
 
   /** @brief Vector of area weight of CRS representation */
-  vector<CoMMAWeightType> _m_CRS_Values;
+  ContainerWeightType _m_CRS_Values;
 
   /** @brief Vector of volumes */
-  vector<CoMMAWeightType> _volumes;
+  ContainerWeightType _volumes;
 
   /** @brief Depth First Search (DFS) recursive function
    *  @param[in] i_fc Index of the node to print
    */
   void DFS(const CoMMAIndexType &i_fc) {
     _visited[i_fc] = true;
-    vector<CoMMAIndexType> v_neigh;
-    v_neigh = get_neighbours(i_fc);
-    for (auto &it : v_neigh) {
-      if (!_visited[it]) {
-        DFS(it);
+    for (auto it = neighbours_cbegin(i_fc); it != neighbours_cend(i_fc); ++it) {
+      if (!_visited[*it]) {
+        DFS(*it);
       }
     }
   }
@@ -112,8 +119,7 @@ class Graph {
    */
   void BFS(const CoMMAIndexType &root) {
     deque<CoMMAIndexType> coda;
-    vector<CoMMAIndexType> v_neigh;
-    vector<CoMMAIndexType> path;
+    ContainerIndexType path;
     coda.push_back(root);
     vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
@@ -121,11 +127,10 @@ class Graph {
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
       coda.pop_front();
-      v_neigh = get_neighbours(node);
-      for (auto &it : v_neigh) {
-        if (!visited[it]) {
-          coda.push_pack(it);
-          visited[it] = true;
+      for (auto it = neighbours_cbegin(node); it != neighbours_cend(node); ++it) {
+        if (!visited[*it]) {
+          coda.push_pack(*it);
+          visited[*it] = true;
           prev[it] = node;
         }
       }
@@ -156,16 +161,33 @@ class Graph {
    * @param[in] i_c Index of the cell
    * @return vector of the neighbours.
    */
-  vector<CoMMAIndexType> get_neighbours(const CoMMAIndexType &i_c) const {
+  ContainerIndexType get_neighbours(const CoMMAIndexType &i_c) const {
     // given the index of a cell return the neighbourhoods of this cell
     CoMMAIndexType ind = _m_CRS_Row_Ptr[i_c];
     CoMMAIndexType ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
     // insert the values of the CRS_value from begin+ind (pointed to the face) till
     // the next pointed one, so related to all the connected areas (and hence to the
     // faces)
-    vector<CoMMAIndexType> result(_m_CRS_Col_Ind.begin() + ind,
-                                  _m_CRS_Col_Ind.begin() + ind_p_one);
+    ContainerIndexType result(_m_CRS_Col_Ind.begin() + ind,
+                            _m_CRS_Col_Ind.begin() + ind_p_one);
     return result;
+  }
+
+  /** @brief Get constant pointer to the first neighbour of cell \p i_c
+   *  @param[in] i_c Index of the cell
+   *  @return The pointer
+   */
+  inline ContainerIndexConstIt neighbours_cbegin(const CoMMAIndexType &i_c) const {
+    return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c];
+  }
+
+  /** @brief Get constant pointer to the element following the last neighbour of
+   * cell \p i_c
+   *  @param[in] i_c Index of the cell
+   *  @return The pointer
+   */
+  inline ContainerIndexConstIt neighbours_cend(const CoMMAIndexType &i_c) const {
+    return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c + 1];
   }
 
   /** @brief Based on the area of the faces composing the cell given as an
@@ -174,16 +196,33 @@ class Graph {
    * @param[in] i_c Index of the cell
    * @return Vector of weights associated to the cell.
    */
-  vector<CoMMAWeightType> get_weights(const CoMMAIndexType &i_c) const {
+  ContainerWeightType get_weights(const CoMMAIndexType &i_c) const {
     // Given the index of a cell, return the value of the faces connected
     CoMMAIndexType ind = _m_CRS_Row_Ptr[i_c];
     CoMMAIndexType ind_p_one = _m_CRS_Row_Ptr[i_c + 1];
     // insert the values of the CRS_value from begin+ind (pointed to the face) till
     // the next pointed one, so related to all the connected areas (and hence to the
     // faces)
-    vector<CoMMAWeightType> result(_m_CRS_Values.begin() + ind,
-                                   _m_CRS_Values.begin() + ind_p_one);
+    ContainerWeightType result(_m_CRS_Values.begin() + ind,
+                             _m_CRS_Values.begin() + ind_p_one);
     return result;
+  }
+
+  /** @brief Get constant pointer to the first neighbour of cell \p i_c
+   *  @param[in] i_c Index of the cell
+   *  @return The pointer
+   */
+  inline ContainerWeightConstIt weights_cbegin(const CoMMAIndexType &i_c) const {
+    return _m_CRS_Values.cbegin() + _m_CRS_Row_Ptr[i_c];
+  }
+
+  /** @brief Get constant pointer to the element following the last neighbour of
+   * cell \p i_c
+   *  @param[in] i_c Index of the cell
+   *  @return The pointer
+   */
+  inline ContainerWeightConstIt weights_cend(const CoMMAIndexType &i_c) const {
+    return _m_CRS_Values.cbegin() + _m_CRS_Row_Ptr[i_c + 1];
   }
 
   /** @brief Check the connectivity of the graph.
@@ -266,6 +305,12 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
  public:
+  /** @brief Parent class */
+  using BaseClass = Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  /** @brief Type for containers of indices */
+  using typename BaseClass::ContainerIndexType;
+  /** @brief Type for containers of weights */
+  using typename BaseClass::ContainerWeightType;
   /** @brief Constructor of the class
    *  @param[in] nb_c Cardinality of the CC, that is the number of fine cells
    * composing the CC
@@ -280,11 +325,11 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] is_isotropic Whether the cell is isotropic
    */
   Subgraph(const CoMMAIndexType &nb_c,
-           const vector<CoMMAIndexType> &m_crs_row_ptr,
-           const vector<CoMMAIndexType> &m_crs_col_ind,
-           const vector<CoMMAWeightType> &m_crs_values,
-           const vector<CoMMAWeightType> &volumes,
-           const vector<CoMMAIndexType> &mapping_l_to_g,
+           const ContainerIndexType &m_crs_row_ptr,
+           const ContainerIndexType &m_crs_col_ind,
+           const ContainerWeightType &m_crs_values,
+           const ContainerWeightType &volumes,
+           const ContainerIndexType &mapping_l_to_g,
            const bool &is_isotropic)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
@@ -321,7 +366,7 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * subgraph this variable connect the local index of the node
    * with the global one
    */
-  vector<CoMMAIndexType> _mapping_l_to_g;
+  ContainerIndexType _mapping_l_to_g;
 
   /** @brief Insert a node in the subgraph and add it to the mapping the
    *  @param[in] v_neigh Vector of the neighbours to be added. The neighbours must
@@ -331,12 +376,12 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    *  @param[in] weight Vector of the area of the faces of the given cells to be
    * added.
    */
-  void insert_node(const vector<CoMMAIndexType> &v_neigh, const CoMMAIndexType &i_fc,
+  void insert_node(const ContainerIndexType &v_neigh, const CoMMAIndexType &i_fc,
                    const CoMMAWeightType &volume,
-                   const vector<CoMMAWeightType> &weight) {
+                   const ContainerWeightType &weight) {
     // Use the mapping
     // local vector of neighbourhood
-    vector<CoMMAIndexType> v_l_neigh{};
+    ContainerIndexType v_l_neigh{};
     // @todo this solution clearly help in the connection of the subnode BUT can
     // bring to instability and errors.
     for (const auto &elem : v_neigh) {
@@ -389,28 +434,23 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   void remove_node(const CoMMAIndexType &elemento) {
     // Pass to the local
     auto low = find(_mapping_l_to_g.begin(), _mapping_l_to_g.end(), elemento);
-    CoMMAIndexType i_fc = low - _mapping_l_to_g.begin();
-    // initialize starting indices
-    CoMMAIndexType ind;
-    CoMMAIndexType ind_p_one;
-    // getting neighbours
-    vector<CoMMAIndexType> v_neigh = this->get_neighbours(i_fc);
+    const CoMMAIndexType i_fc = low - _mapping_l_to_g.begin();
+    // Getting neighbours, store them before erasing
+    ContainerIndexType v_neigh = this->get_neighbours(i_fc);
 
     // weight iterator for erasing in the weight vector
-    typename vector<CoMMAWeightType>::iterator weight_it;
     auto pos_col = this->_m_CRS_Col_Ind.begin();
     auto pos_Values = this->_m_CRS_Values.begin();
     for (const auto &elem : v_neigh) {
-      ind = this->_m_CRS_Row_Ptr[elem];
-      ind_p_one = this->_m_CRS_Row_Ptr[elem + 1];
+      CoMMAIndexType ind = this->_m_CRS_Row_Ptr[elem];
+      CoMMAIndexType ind_p_one = this->_m_CRS_Row_Ptr[elem + 1];
       // Constant to keep track and erase the weight
       for (auto it = pos_col + ind; it != pos_col + ind_p_one; ++it) {
         if (*it == i_fc) {
           this->_m_CRS_Col_Ind.erase(it);
           // define the exact position of the element for the processing of the
           // weight later.
-          weight_it = pos_Values + (it-pos_col);
-          this->_m_CRS_Values.erase(weight_it);
+          this->_m_CRS_Values.erase(pos_Values + (it-pos_col));
           // for each found i decrease the successive of 1 for the offset
           for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
                it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
@@ -421,14 +461,13 @@ class Subgraph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
     }
     // reduce the row ptr value of the deleted value
     // do the same with i_fc
-    ind = this->_m_CRS_Row_Ptr[i_fc];
-    ind_p_one = this->_m_CRS_Row_Ptr[i_fc + 1];
+    CoMMAIndexType ind = this->_m_CRS_Row_Ptr[i_fc];
+    CoMMAIndexType ind_p_one = this->_m_CRS_Row_Ptr[i_fc + 1];
     for (auto it = pos_col + ind; it != pos_col + ind_p_one; ++it) {
       this->_m_CRS_Col_Ind.erase(it);
       // define the exact position of the element for the processing of the
       // weight later.
-      weight_it = pos_Values + (it-pos_col);
-      this->_m_CRS_Values.erase(weight_it);
+      this->_m_CRS_Values.erase(pos_Values + (it-pos_col));
       // for each found i decrease the successive of 1 for the offset
       for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
            it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
@@ -478,6 +517,12 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
  public:
+  /** @brief Parent class */
+  using BaseClass = Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  /** @brief Type for containers of indices */
+  using typename BaseClass::ContainerIndexType;
+  /** @brief Type for containers of weights */
+  using typename BaseClass::ContainerWeightType;
   /** @brief Type of pair */
   using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
   /** @brief Type of set of pairs */
@@ -498,14 +543,14 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * most of the case all)
    */
   Dual_Graph(const CoMMAIndexType &nb_c,
-             const vector<CoMMAIndexType> &m_crs_row_ptr,
-             const vector<CoMMAIndexType> &m_crs_col_ind,
-             const vector<CoMMAWeightType> &m_crs_values,
-             const vector<CoMMAWeightType> &volumes,
+             const ContainerIndexType &m_crs_row_ptr,
+             const ContainerIndexType &m_crs_col_ind,
+             const ContainerWeightType &m_crs_values,
+             const ContainerWeightType &volumes,
              const vector<vector<CoMMAWeightType>> &centers,
              const vector<CoMMAIntType> &n_bnd_faces,
              const CoMMAIntType dimension,
-             const vector<CoMMAIndexType> &anisotropic_compliant_fc)
+             const ContainerIndexType &anisotropic_compliant_fc)
       : Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
             nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
         _n_bnd_faces(n_bnd_faces),
@@ -575,18 +620,18 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
-  void tag_anisotropic_cells(vector<CoMMAWeightType> &max_weights,
+  void tag_anisotropic_cells(ContainerWeightType &max_weights,
                              vector<bool> &is_anisotropic,
                              deque<CoMMAIndexType> &aniso_seeds_pool,
                              const CoMMAWeightType threshold_anisotropy,
-                             const vector<CoMMAWeightType> &priority_weights,
+                             const ContainerWeightType &priority_weights,
                              const CoMMAIndexType preserving) {
     CoMMASetOfPairType aniso_w_weights{};
     if (threshold_anisotropy < 0) {
       for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
         aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-        const auto weights = this->get_weights(i_fc);
-        max_weights[i_fc] = *(max_element(weights.begin(), weights.end()));
+        max_weights[i_fc] = *(max_element(this->weights_cbegin(i_fc),
+                                          this->weights_cend(i_fc)));
       }
     }
     else {
@@ -597,8 +642,8 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
         // computation of min_weight, max_weight for the current cell
         // Process of every faces/Neighbours and compute for the current cell the
         // neighbourhood and the area associated with the neighbourhood cells
-        const vector<CoMMAIndexType> v_neighbours = this->get_neighbours(i_fc);
-        const vector<CoMMAWeightType> v_weights = this->get_weights(i_fc);
+        const ContainerIndexType v_neighbours = this->get_neighbours(i_fc);
+        const ContainerWeightType v_weights = this->get_weights(i_fc);
 
         assert(v_neighbours.size() == v_weights.size());
         auto nb_neighbours = v_neighbours.size();
@@ -673,10 +718,10 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
       const vector<bool> &is_fc_agglomerated_tmp) const {
     unordered_set<CoMMAIndexType> cc_neighs{};
     for (const auto fc : s_seeds)
-      for (const auto n : this->get_neighbours(fc))
-        if ( !is_fc_agglomerated_tmp[n] && s_seeds.find(n) == s_seeds.end())
+      for (auto n = this->neighbours_cbegin(fc); n != this->neighbours_cend(fc); ++n)
+        if ( !is_fc_agglomerated_tmp[*n] && s_seeds.find(*n) == s_seeds.end() )
           // If not agglomerated and not part of the coarse cell
-          cc_neighs.insert(n);
+          cc_neighs.insert(*n);
     return cc_neighs;
   }
 
@@ -726,27 +771,28 @@ class Dual_Graph : public Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 
         CoMMAIndexType seed_tmp = i_k_v.first;
 
-        for (const CoMMAIndexType &i_fc_n : this->get_neighbours(seed_tmp)) {
+        for (auto i_fc_n = this->neighbours_cbegin(seed_tmp);
+             i_fc_n != this->neighbours_cend(seed_tmp); ++i_fc_n) {
           // For all the neighbours of current seed...
 
-          if ((d_n_of_seed.count(i_fc_n) == 0) &&
-              ((!is_fc_agglomerated_tmp[i_fc_n]))) {
+          if ((d_n_of_seed.count(*i_fc_n) == 0) &&
+              ((!is_fc_agglomerated_tmp[*i_fc_n]))) {
             // If not yet in the final dictionary and not yet agglomerated...
 
-            if (d_n_of_order_o.count(i_fc_n) == 0) {
+            if (d_n_of_order_o.count(*i_fc_n) == 0) {
               // If not yet in the current neighbourhood order...
               // a fc can be access via multiple ways. We look for the quickest
-              if (d_n_of_order_o_m_one.count(i_fc_n)) {
+              if (d_n_of_order_o_m_one.count(*i_fc_n)) {
                 // If it was already in the previous neighbourhood order
 
-                if (i_order < d_n_of_order_o_m_one[i_fc_n]) {
+                if (i_order < d_n_of_order_o_m_one[*i_fc_n]) {
                   // If current order smaller than the previous one
                   // ...update the order
-                  d_n_of_order_o[i_fc_n] = i_order;
+                  d_n_of_order_o[*i_fc_n] = i_order;
                 }
               } else {
                 // ...add the neighbour
-                d_n_of_order_o[i_fc_n] = i_order;
+                d_n_of_order_o[*i_fc_n] = i_order;
               }
             }
           }
