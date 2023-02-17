@@ -1859,6 +1859,80 @@ the line grows vertically
     }
   };
 
+  GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
+        " we simulate a restart (not first agglomeration)") {
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const CoMMAWeightT aniso_thresh{2.};
+    const bool isFirstAgglomeration = false;
+    vector<CoMMAIndexT> agglomerationLines_Idx = {0,5,10,15,20};
+    vector<CoMMAIndexT> agglomerationLines = {0,1,2,3,4,
+                                              11,10,9,8,7,
+                                              16,14,12,13,15,
+                                              20,22,23,21,19};
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        Data.arrayOfFineAnisotropicCompliantCells);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  ODD_LINE_LENGTH, Data.dim);
+    Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
+    WHEN("We initialize the agglomerator") {
+      THEN("The anisotropic lines have been read correctly and in order") {
+        const auto n_lines = agglomerationLines_Idx.size() - 1;
+        REQUIRE(n_lines == aniso_agg._nb_lines[0]);
+        auto read_line = aniso_agg._v_lines[0].cbegin();
+        for (auto ref_line = agglomerationLines_Idx.cbegin() + 1;
+             ref_line != agglomerationLines_Idx.cend();
+             ++ref_line, ++read_line) {
+          for (auto ref_fc = agglomerationLines.cbegin() + (*(ref_line - 1));
+               ref_fc != agglomerationLines.cbegin() + (*ref_line);
+               ++ref_fc) {
+            REQUIRE(find((*read_line)->cbegin(), (*read_line)->cend(), *ref_fc)
+                    != (*read_line)->cend());
+          }
+        }
+      }
+    }
+    WHEN("We agglomerate the mesh") {
+      aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      aniso_agg.update_seeds_pool();
+      iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
+      const auto f2c = cc_graph->_fc_2_cc;
+      THEN("There are two isotropic coarse cells") {
+        REQUIRE(check4cells(5,6,24,25));
+        REQUIRE(check4cells(17,18,27,26));
+      }
+      THEN("The anisotropic coarse cells at the boundary are of cardinality 2") {
+        REQUIRE(check2cells(0,1));
+        REQUIRE(check2cells(11,10));
+        REQUIRE(check2cells(16,14));
+        REQUIRE(check2cells(20,22));
+      }
+      THEN("The interior anisotropic coarse cells are of cardinality 3") {
+        REQUIRE(check3cells(2,3,4));
+        REQUIRE(check3cells(9,8,7));
+        REQUIRE(check3cells(12,13,15));
+        REQUIRE(check3cells(23,21,19));
+      }
+      THEN("The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
+           " and the priority weights") {
+        REQUIRE(f2c[ 0].value() == 0);
+        REQUIRE(f2c[ 2].value() == 1);
+        REQUIRE(f2c[ 9].value() == 3);
+        REQUIRE(f2c[11].value() == 2);
+        REQUIRE(f2c[13].value() == 5);
+        REQUIRE(f2c[16].value() == 4);
+        REQUIRE(f2c[20].value() == 6);
+        REQUIRE(f2c[23].value() == 7);
+      }
+    }
+  }
+
 #undef check2cells
 #undef check3cells
 #undef check4cells
@@ -2327,51 +2401,55 @@ SCENARIO("Test of main function", "[structure]") {
                       max_card = 4;
       const CoMMAWeightT aniso_thr = 4.;
       const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
-      THEN("There are two isotropic coarse cells") {
+      THEN("CoMMA throws if invalid arguments") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr,
-              seed,
-              fc2cc, alines_idx, alines,
-              correction, 5, goal_card, min_card, max_card)
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              5,
+              goal_card, min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr,
-              seed,
-              fc2cc, alines_idx, alines,
-              correction, Data.dim, goal_card, 8, max_card)
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim, goal_card,
+              8,
+              max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr,
-              seed,
-              fc2cc, alines_idx, alines,
-              correction, Data.dim, 0, min_card, max_card)
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim,
+              0,
+              min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr,
-              seed,
-              fc2cc, alines_idx, alines,
-              correction, Data.dim, goal_card, min_card, max_card, 0)
+              false,
+              aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
+              goal_card, min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr,
-              seed,
-              fc2cc, alines_idx, alines,
-              correction, Data.dim, goal_card, min_card, max_card, 100)
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim, goal_card, min_card, max_card,
+              0)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim, goal_card, min_card, max_card, 100)
         );
       }
     }

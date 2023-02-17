@@ -178,6 +178,9 @@ void agglomerate_one_level(
   else if ( fc_choice_iter > static_cast<CoMMAIntType>(max_iter) )
     throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at most "
                             + to_string(max_iter));
+  if ( !isFirstAgglomeration
+      && (agglomerationLines_Idx.size() < 2 || agglomerationLines.empty()) )
+    throw invalid_argument( "CoMMA - Error: you requested to use input anisotropic lines, but arguments are not enough / invalid to define them");
 
   // SIZES CAST
   //======================================
