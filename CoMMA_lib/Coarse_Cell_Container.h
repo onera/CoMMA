@@ -103,10 +103,10 @@ class Coarse_Cell_Container {
    */
   vector<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
                                        const CoMMAIndexType &i_cc) const {
-    const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
     vector<CoMMAIndexType> result;
-    for (const CoMMAIndexType &elem : neigh) {
-      const auto cc = _fc_2_cc[elem].value();
+    for (auto elem = _fc_graph->neighbours_cbegin(i_fc);
+         elem != _fc_graph->neighbours_cend(i_fc); ++elem) {
+      const auto cc = _fc_2_cc[*elem].value();
       if (cc != i_cc &&
           find(result.begin(), result.end(), cc) == result.end()) {
         result.push_back(cc);
@@ -330,8 +330,9 @@ Not used anymore but we leave it for example purposes
     CoMMAIntType shared_faces{0};
     // I am not 100% sure that mapping is perfect hence I prefer loop using indices
     for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
-      const auto fc_neighs = _fc_graph->get_neighbours(cc->_mapping_l_to_g[i_fc_cc]);
-      shared_faces += count(fc_neighs.begin(), fc_neighs.end(), fc);
+      const auto i_fc = cc->_mapping_l_to_g[i_fc_cc];
+      shared_faces += count(_fc_graph->neighbours_cbegin(i_fc),
+                            _fc_graph->neighbours_cend(i_fc), fc);
     }
     return shared_faces;
   }
