@@ -2408,7 +2408,43 @@ SCENARIO("Test of main function", "[structure]") {
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               5,
-              goal_card, min_card, max_card)
+              Data.dim, goal_card, min_card, max_card)
+        );
+        vector<CoMMAIndexT> tmp = {};
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              tmp,
+              Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim, min_card, goal_card, min_card, max_card)
+        );
+        tmp.push_back(2);
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              tmp,
+              Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes, Data.centers,
+              Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, first_agglo,
+              aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
+              min_card, goal_card, min_card, max_card)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr,
+              tmp,
+              Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
+              Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, first_agglo, aniso,
+              odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim, goal_card,
+              min_card, max_card)
+        );
+        vector<CoMMAWeightT> tmp_w = {};
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+              tmp_w,
+              Data.volumes, Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells,
+              Data.n_bnd_faces, first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
+              alines, correction, Data.dim, goal_card, min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(

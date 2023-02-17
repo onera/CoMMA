@@ -178,9 +178,16 @@ void agglomerate_one_level(
   else if ( fc_choice_iter > static_cast<CoMMAIntType>(max_iter) )
     throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at most "
                             + to_string(max_iter));
-  if ( !isFirstAgglomeration
-      && (agglomerationLines_Idx.size() < 2 || agglomerationLines.empty()) )
-    throw invalid_argument( "CoMMA - Error: you requested to use input anisotropic lines, but arguments are not enough / invalid to define them");
+  if ( adjMatrix_row_ptr.empty()
+       || adjMatrix_row_ptr.back() != adjMatrix_col_ind.size()
+       || adjMatrix_row_ptr.back() != adjMatrix_areaValues.size() )
+    throw invalid_argument( "CoMMA - Error: bad CRS graph (sizes do not match)");
+  if ( !isFirstAgglomeration ) {
+    if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() )
+      throw invalid_argument( "CoMMA - Error: usage of input anisotropic line requested, but arguments are not enough / invalid to define them");
+    if ( agglomerationLines_Idx.back() != agglomerationLines.size() )
+      throw invalid_argument( "CoMMA - Error: bad anisotropic lines definition (sizes do not match)" );
+  }
 
   // SIZES CAST
   //======================================
