@@ -87,3 +87,62 @@ simple int only.
              " The distance for these cells are negative")
 
     return dist
+
+def dump_graph(
+        filename       : str,
+        CSR_row        : npt.ArrayLike,
+        CSR_col        : npt.ArrayLike,
+        CSR_val        : npt.ArrayLike,
+        volumes        : npt.ArrayLike,
+        n_bnd_faces    : npt.ArrayLike,
+        centers        : npt.ArrayLike,
+        precision      : int = 15,
+        integer_format : [str, None] = None,
+        float_format   : [str, None] = None) \
+    -> None:
+    """Dump a graph in a format readable by CoMMA `test_util.h`
+
+Parameters
+----------
+filename : str
+    File where to dump the data
+CSR_row : array-like
+    The row pointer of the CRS representation
+CSR_col : array-like
+    The column index of the CRS representation
+CSR_val : array-like
+    The values of the CRS representation
+volumes : array-like
+    The volumes of the cells
+n_bnd_faces : array-like
+    Vector telling how many boundary faces each cell has
+centers : array-like
+    Cell centers
+float_precision : int, default: 15
+    Precision for float numbers
+integer_format : str or None, default None
+    Format for integer numbers
+float_format : str or None, default None
+    Format for float numbers
+"""
+    with open(filename, 'w') as outfile:
+        args = {"sep": ","}
+        int_args, float_args = args.copy(), args.copy()
+        if integer_format is not None:
+            int_args["format"] = integer_format
+        if float_format is not None:
+            float_args["format"] = float_format
+        cnt_ar = np.asarray(centers)
+        outfile.write(f"{cnt_ar.shape[1]}\n")
+        np.asarray(CSR_row).tofile(outfile, **int_args)
+        outfile.write("\n")
+        np.asarray(CSR_col).tofile(outfile, **int_args)
+        outfile.write("\n")
+        np.asarray(CSR_val).round(precision).tofile(outfile, **float_args)
+        outfile.write("\n")
+        np.asarray(volumes).round(precision).tofile(outfile, **float_args)
+        outfile.write("\n")
+        np.asarray(n_bnd_faces).round(precision).tofile(outfile, **int_args)
+        outfile.write("\n")
+        cnt_ar.round(precision).tofile(outfile, **float_args)
+        outfile.write("\n")
