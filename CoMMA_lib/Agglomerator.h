@@ -538,9 +538,8 @@ class Agglomerator_Anisotropic
               vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
                   prev_cen, this->_fc_graph->_centers[*n_it], cur_dir);
-              const CoMMAWeightType dot = inner_product(
-                  prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
-                  CoMMAWeightType{0.});
+              const CoMMAWeightType dot =
+                dot_product<CoMMAWeightType>(prev_dir, cur_dir);
               if (!dot_deviate<CoMMAWeightType>(dot))
                 candidates.emplace(fabs(dot), *n_it);
             }
@@ -582,9 +581,8 @@ class Agglomerator_Anisotropic
                 vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
                     prev_cen, this->_fc_graph->_centers[*it], cur_dir);
-                const CoMMAWeightType dot = inner_product(
-                    prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
-                    CoMMAWeightType{0.});
+              const CoMMAWeightType dot =
+                dot_product<CoMMAWeightType>(prev_dir, cur_dir);
                 if (!dot_deviate<CoMMAWeightType>(dot))
                   candidates.emplace(fabs(dot), *it);
               }

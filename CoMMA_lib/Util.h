@@ -56,6 +56,25 @@ inline bool dot_deviate(const T dot) {
   return fabs(dot) < decltype(fabs(dot)){deviate_thresh};
 }
 
+/** @brief Compute the dot product between two vectors. No check on size is performed
+ * @tparam T Input type
+ * @param[in] a First vector
+ * @param[in] b Second vector
+ * @return the dot product
+ */
+template<typename T>
+inline T dot_product(const vector<T> &a, const vector<T> &b) {
+#if 0
+  const CoMMAWeightType dot = inner_product(
+      prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
+      CoMMAWeightType{0.});
+#endif
+  T dot{0.};
+  for (auto i = decltype(a.size()){0}; i < a.size(); ++i)
+    dot += a[i]*b[i];
+  return dot;
+}
+
 /** @brief Compute the direction from point \p a to point \p b and store it as unit
  * vector in \p dir.
  * @tparam T Input type
