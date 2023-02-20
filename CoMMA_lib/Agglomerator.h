@@ -469,20 +469,14 @@ class Agglomerator_Anisotropic
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
     vector<CoMMAWeightType> max_weights(this->_fc_graph->_number_of_cells, 0.0);
-    vector<bool> is_anisotropic(this->_fc_graph->_number_of_cells, false);
+    vector<bool> to_treat(this->_fc_graph->_number_of_cells, false);
     // Computation of the anisotropic cell, alias of the cells for which the
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
-    this->_fc_graph->tag_anisotropic_cells(max_weights, is_anisotropic,
+    this->_fc_graph->tag_anisotropic_cells(max_weights, to_treat,
                                            aniso_seeds_pool,
                                            _threshold_anisotropy,
                                            priority_weights, 0);
-    // Map to address if the cell has been added to a line
-    unordered_map<CoMMAIndexType, bool> has_been_treated;
-    has_been_treated.reserve(aniso_seeds_pool.size());
-    for (auto &i_fc : aniso_seeds_pool) {
-      has_been_treated[i_fc] = false;
-    }
     // Size might not be the dimension
     const auto pts_dim = this->_fc_graph->_centers[0].size();
     // size of the line
@@ -490,9 +484,9 @@ class Agglomerator_Anisotropic
     // we cycle on all the anisotropic cells identified before
     for (auto &i_fc : aniso_seeds_pool) {
       // seed from where we start building the line
-      if (has_been_treated[i_fc]) {
+      if (!to_treat[i_fc]) {
         // If the cell has been already treated, continue to the next
-        // anisotropic cell in the unordered map
+        // anisotropic cell
         continue;
       }
       // we save the primal seed for the opposite direction check that will
@@ -505,7 +499,7 @@ class Agglomerator_Anisotropic
       AnisotropicLinePtr cur_line = make_shared<AnisotropicLine>();
       // we add the first seed
       cur_line->push_back(seed);
-      has_been_treated[seed] = true;
+      to_treat[seed] = false;
       // Flag to determine end of line
       bool end = false;
       // Flag to determine if we arrived at the end of an extreme of a line
@@ -531,9 +525,7 @@ class Agglomerator_Anisotropic
         // neighbours.
         if (empty_line) {
           for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
-            if (is_anisotropic[*n_it] && !has_been_treated[*n_it]
-                && *w_it > 0.90 * max_weights[seed]
-                ) {   // ...and on the edge with highest coupling
+            if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               candidates.emplace(*w_it, *n_it);
             }
           }  // end for loop
@@ -542,9 +534,7 @@ class Agglomerator_Anisotropic
           // If not an empty line, we check the direction, see
           // !dot_deviate below
           for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
-            if (is_anisotropic[*n_it] && !has_been_treated[*n_it]
-                && *w_it > 0.90 * max_weights[seed]
-                ) {   // ...and on the edge with highest coupling
+            if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
                   prev_cen, this->_fc_graph->_centers[*n_it], cur_dir);
@@ -571,7 +561,7 @@ class Agglomerator_Anisotropic
           } else {
             cur_line->push_front(seed);
           }
-          has_been_treated[seed] = true;
+          to_treat[seed] = false;
           empty_line = false;
           const auto &cur_cen = this->_fc_graph->_centers[seed];
           get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
@@ -588,8 +578,7 @@ class Agglomerator_Anisotropic
             // If not an empty line, we check the direction, see is_parallel below
             for (auto it = this->_fc_graph->neighbours_cbegin(seed);
                  it != this->_fc_graph->neighbours_cend(seed); ++it) {
-              if (is_anisotropic[*it] && !has_been_treated[*it]
-                  ) {
+              if (to_treat[*it]) {
                 vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
                     prev_cen, this->_fc_graph->_centers[*it], cur_dir);
@@ -608,7 +597,7 @@ class Agglomerator_Anisotropic
               } else {
                 cur_line->push_front(seed);
               }
-              has_been_treated[seed] = true;
+              to_treat[seed] = false;
               empty_line = false;
               const auto &cur_cen = this->_fc_graph->_centers[seed];
               get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
