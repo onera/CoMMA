@@ -19,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <type_traits>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
@@ -26,6 +28,8 @@
 #include "CoMMA.h"
 
 #include "CoMMATypes.h"
+
+using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
 
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() = "CoMMA is an agglomeration library";
@@ -73,5 +77,15 @@ PYBIND11_MODULE(CoMMA, module_handle) {
             dimension, goal_card, min_card, max_card, fc_choice_iter, type_of_isotropic_agglomeration);
         return std::make_tuple(fc_to_cc, agglomerationLines_Idx,
                                agglomerationLines);
+      });
+  module_handle.def(
+      "compute_neighbourhood_based_wall_distance",
+      [](const vector<CoMMAIndexT>& neigh_idxs,
+         const vector<CoMMAIndexT>& neighs,
+         const vector<CoMMAIndexT>& wall) {
+        vector<CoMMASignedIndexT> dist{};
+        compute_neighbourhood_based_wall_distance<CoMMAIndexT,CoMMASignedIndexT>(
+                neigh_idxs, neighs, wall, dist);
+        return dist;
       });
 }

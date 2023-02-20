@@ -1065,6 +1065,120 @@ SCENARIO("Test dual graph and neighbourhood computing", "[Dual graph & Neighbour
   };
 }
 
+SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
+  GIVEN("A 7x7 Cartesian 2D matrix") {
+    const DualGPy_quad_7 Data = DualGPy_quad_7();
+    const vector<CoMMAIndexT> wall = {0,1,2,3,4,5,6,7,14,21,28,35,42};
+    WHEN("We compute the neighbourhood-based wall-distance") {
+      vector<CoMMAIntT> dist{};
+      compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr,
+              Data.adjMatrix_col_ind,
+              wall,
+              dist);
+      THEN("Wall") {
+        for (const auto & cell : wall) {
+          REQUIRE(dist[cell] == 0);
+        }
+      }
+      THEN("First set of neighbours") {
+        const vector<CoMMAIndexT> cells = {8,9,10,11,12,13,15,22,29,36,43};
+        for (const auto & cell : cells) {
+          REQUIRE(dist[cell] == 1);
+        }
+      }
+      THEN("Second set of neighbours") {
+        const vector<CoMMAIndexT> cells = {16,17,18,19,20,23,30,37,44};
+        for (const auto & cell : cells) {
+          REQUIRE(dist[cell] == 2);
+        }
+      }
+      THEN("Third set of neighbours") {
+        const vector<CoMMAIndexT> cells = {24,25,26,27,31,38,45};
+        for (const auto & cell : cells) {
+          REQUIRE(dist[cell] == 3);
+        }
+      }
+      THEN("Fourth set of neighbours") {
+        const vector<CoMMAIndexT> cells = {32,33,34,39,46};
+        for (const auto & cell : cells) {
+          REQUIRE(dist[cell] == 4);
+        }
+      }
+      THEN("Fifth set of neighbours") {
+        const vector<CoMMAIndexT> cells = {40,41,47};
+        for (const auto & cell : cells) {
+          REQUIRE(dist[cell] == 5);
+        }
+      }
+      THEN("Sixth set of neighbours") {
+        REQUIRE(dist[48] == 6);
+      }
+    }
+
+    WHEN("We compute the neighbourhood-based wall-distance (double type)") {
+      vector<CoMMAWeightT> dist{};
+      compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
+              Data.adjMatrix_row_ptr,
+              Data.adjMatrix_col_ind,
+              wall,
+              dist);
+      THEN("Wall") {
+        for (const auto & cell : wall) {
+          REQUIRE(equal_up_to(dist[cell], 0, 1e-10));
+        }
+      }
+      THEN("First set of neighbours") {
+        const vector<CoMMAIndexT> cells = {8,9,10,11,12,13,15,22,29,36,43};
+        for (const auto & cell : cells) {
+          REQUIRE(equal_up_to(dist[cell], 1, 1e-10));
+        }
+      }
+      THEN("Second set of neighbours") {
+        const vector<CoMMAIndexT> cells = {16,17,18,19,20,23,30,37,44};
+        for (const auto & cell : cells) {
+          REQUIRE(equal_up_to(dist[cell], 2, 1e-10));
+        }
+      }
+      THEN("Third set of neighbours") {
+        const vector<CoMMAIndexT> cells = {24,25,26,27,31,38,45};
+        for (const auto & cell : cells) {
+          REQUIRE(equal_up_to(dist[cell], 3, 1e-10));
+        }
+      }
+      THEN("Fourth set of neighbours") {
+        const vector<CoMMAIndexT> cells = {32,33,34,39,46};
+        for (const auto & cell : cells) {
+          REQUIRE(equal_up_to(dist[cell], 4, 1e-10));
+        }
+      }
+      THEN("Fifth set of neighbours") {
+        const vector<CoMMAIndexT> cells = {40,41,47};
+        for (const auto & cell : cells) {
+          REQUIRE(equal_up_to(dist[cell], 5, 1e-10));
+        }
+      }
+      THEN("Sixth set of neighbours") {
+        REQUIRE(equal_up_to(dist[48], 6, 1e-10));
+      }
+    }
+    WHEN("We compute the neighbourhood-based wall-distance wrt to an empty wall") {
+      const vector<CoMMAIndexT> empty_wall{};
+      vector<CoMMAWeightT> dist{};
+      compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
+              Data.adjMatrix_row_ptr,
+              Data.adjMatrix_col_ind,
+              empty_wall,
+              dist);
+      THEN("All the distances are negative") {
+        for (const auto & d : dist) {
+          REQUIRE(d < 0);
+        }
+      }
+    }
+  }
+}
+
 SCENARIO("Test of the in-house Bimap", "[Bimap]") {
   GIVEN(
       "We have a 4x4 square 2D matrix of 16 elements that we consider divided "
