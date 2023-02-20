@@ -302,7 +302,8 @@ class Agglomerator_Anisotropic
       AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
       // TODO here is necessary for the create_cc but maybe we need in
       // some way to change that.
-      const bool is_anisotropic = true;
+      constexpr bool is_anisotropic = true;
+      constexpr CoMMAIntType compactness = 1;
       for (auto line_it = begin; line_it != end; line_it += 2) {
         // we agglomerate cells along the agglomeration line, hence we have to
         // go through the faces and agglomerate two faces together
@@ -329,7 +330,8 @@ class Agglomerator_Anisotropic
           line_it++; // Ensure to break the loop after current iteration
         }
         // We create the coarse cell
-        const CoMMAIndexType i_cc = this->_cc_graph->create_cc(s_fc, 1, is_anisotropic);
+        const CoMMAIndexType i_cc =
+          this->_cc_graph->create_cc(s_fc, compactness, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
         this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
       }
@@ -794,7 +796,7 @@ class Agglomerator_Isotropic
           choose_optimal_cc_and_update_seeds_pool(seed.value(), compactness,
                                                   priority_weights);
       // 3)  Creation of cc:
-      bool is_anistropic = false;
+      constexpr bool is_anistropic = false;
       // Check if delay the agglomeration based on compactness written during
       // the optimal cc choice process. Remember the compactness is the minimum
       // degree in the coarse cell.

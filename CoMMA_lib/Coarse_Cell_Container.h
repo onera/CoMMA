@@ -358,6 +358,7 @@ Not used anymore but we leave it for example purposes
   /** @brief It creates a coarse cell based on the set of fine cells given as
    * input
    * @param[in] s_fc Set of fine cells passed as a reference
+   * @param[in] compactness Compactness degree of the CC
    * @param[in] is_anisotropic Boolean that tells if we are in an anisotropic
    * case or not
    * @param[in] is_creation_delayed Based on the agglomerator instruction we
