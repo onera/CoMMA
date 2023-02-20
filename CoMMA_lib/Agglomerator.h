@@ -330,7 +330,7 @@ class Agglomerator_Anisotropic
         }
         // We create the coarse cell
         const CoMMAIndexType i_cc =
-          this->_cc_graph->cc_create_a_cc(s_fc, is_anisotropic);
+          this->_cc_graph->cc_create_a_cc(s_fc, 1, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
         this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
       }
@@ -801,7 +801,7 @@ class Agglomerator_Isotropic
       // degree in the coarse cell.
       //bool is_creation_delayed = compactness < this->_dimension;
       bool is_creation_delayed = false;
-      this->_cc_graph->cc_create_a_cc(set_current_cc, is_anistropic,
+      this->_cc_graph->cc_create_a_cc(set_current_cc, compactness, is_anistropic,
                                       is_creation_delayed);
     }
     // When we exit from this process all the cells are agglomerated, apart the

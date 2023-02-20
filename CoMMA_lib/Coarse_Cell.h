@@ -46,15 +46,18 @@ class Coarse_Cell {
    * cells to create the coarse cell.
    * @param[in] i_cc Index of the coarse cell
    * @param[in] s_fc Unordered set of fine cells constituting the coarse cell
+   * @param[in] compactness Compactness degree of the CC
    * @param[in] is_isotropic (default = true) boolean describing if the cell is coming from an
    * isotropic agglomeration process or an anisotropic agglomeration process.
    */
   Coarse_Cell(
       shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
-      bool is_isotropic = true)
-      : _idx(i_cc), _fc_graph(fc_graph), _is_isotropic(is_isotropic),
-      _is_connected(false), _is_connectivity_up_to_date(false), _s_fc(s_fc) {
+      CoMMAIntType compactness, bool is_isotropic = true)
+      : _idx(i_cc), _fc_graph(fc_graph), _compactness(compactness),
+      _is_isotropic(is_isotropic), _is_connected(false),
+      _is_connectivity_up_to_date(false), _s_fc(s_fc) {
+    _cardinality = static_cast<CoMMAIntType>(s_fc.size());
     // initialization vectors
     CoMMAIndexType position = 0;
     vector<CoMMAWeightType> volumes;
@@ -104,6 +107,12 @@ class Coarse_Cell {
   /** @brief The global dual graph */
   shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
 
+  /** @brief Compactness degree of the CC */
+  CoMMAIntType _compactness;
+
+  /** @brief Number of FC in the CC */
+  CoMMAIntType _cardinality;
+
   /** @brief Whether the cell isotropic or anisotropic */
   bool _is_isotropic;
 
@@ -134,9 +143,11 @@ class Coarse_Cell {
    */
   inline void insert_cell(const CoMMAIndexType i_fc) {
     _s_fc.insert(i_fc);
+    ++_cardinality;
     _cc_graph->insert_node(_fc_graph->get_neighbours(i_fc),
                            i_fc, _fc_graph->_volumes[i_fc],
                            _fc_graph->get_weights(i_fc));
+    _compactness = _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
   }
 
 };

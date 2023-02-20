@@ -2071,7 +2071,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph->_cc_vec.begin(); i != cc_graph->_cc_vec.end();
              i++) {
-          REQUIRE(i->second->_cc_graph->_cardinality != 1);
+          REQUIRE(i->second->_cardinality != 1);
         }
       }
     }
@@ -2086,9 +2086,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
-      cc_graph->cc_create_a_cc({0,4,5});
-      cc_graph->cc_create_a_cc({1});
-      cc_graph->cc_create_a_cc({2,3,6,7});
+      cc_graph->cc_create_a_cc({0,4,5}, 1);
+      cc_graph->cc_create_a_cc({1}, 0);
+      cc_graph->cc_create_a_cc({2,3,6,7}, 2);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
@@ -2121,9 +2121,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and two coarse cells with cardinality 5 and 3") {
-      cc_graph->cc_create_a_cc({0,1,2,5,8});
-      cc_graph->cc_create_a_cc({4});
-      cc_graph->cc_create_a_cc({3,6,7});
+      cc_graph->cc_create_a_cc({0,1,2,5,8}, 1);
+      cc_graph->cc_create_a_cc({4}, 0);
+      cc_graph->cc_create_a_cc({3,6,7}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
@@ -2151,10 +2151,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and three coarse cells with cardinality 4, 2, and 2") {
-      cc_graph->cc_create_a_cc({0,3});
-      cc_graph->cc_create_a_cc({6,7});
-      cc_graph->cc_create_a_cc({4});
-      cc_graph->cc_create_a_cc({1,2,5,8});
+      cc_graph->cc_create_a_cc({0,3}, 1);
+      cc_graph->cc_create_a_cc({6,7}, 1);
+      cc_graph->cc_create_a_cc({4}, 0);
+      cc_graph->cc_create_a_cc({1,2,5,8}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 3));
@@ -2182,10 +2182,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and 3 cells with cardinality 4, 2, and 2") {
-      cc_graph->cc_create_a_cc({0,1,3,4});
-      cc_graph->cc_create_a_cc({7,8});
-      cc_graph->cc_create_a_cc({6});
-      cc_graph->cc_create_a_cc({2,5});
+      cc_graph->cc_create_a_cc({0,1,3,4}, 2);
+      cc_graph->cc_create_a_cc({7,8}, 1);
+      cc_graph->cc_create_a_cc({6}, 0);
+      cc_graph->cc_create_a_cc({2,5}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
@@ -2213,11 +2213,11 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and four coarse cells with cardinality 2") {
-      cc_graph->cc_create_a_cc({0,3});
-      cc_graph->cc_create_a_cc({6,7});
-      cc_graph->cc_create_a_cc({4});
-      cc_graph->cc_create_a_cc({5,8});
-      cc_graph->cc_create_a_cc({1,2});
+      cc_graph->cc_create_a_cc({0,3}, 1);
+      cc_graph->cc_create_a_cc({6,7}, 1);
+      cc_graph->cc_create_a_cc({4}, 0);
+      cc_graph->cc_create_a_cc({5,8}, 1);
+      cc_graph->cc_create_a_cc({1,2}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 4));
@@ -2245,11 +2245,11 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN("We agglomerate (manually) leaving two coarse cells with cardinality 1") {
-      cc_graph->cc_create_a_cc({0,1});
-      cc_graph->cc_create_a_cc({2});
-      cc_graph->cc_create_a_cc({6});
-      cc_graph->cc_create_a_cc({3,4,7});
-      cc_graph->cc_create_a_cc({5,8});
+      cc_graph->cc_create_a_cc({0,1}, 1);
+      cc_graph->cc_create_a_cc({2}, 0);
+      cc_graph->cc_create_a_cc({6}, 0);
+      cc_graph->cc_create_a_cc({3,4,7}, 1);
+      cc_graph->cc_create_a_cc({5,8}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));

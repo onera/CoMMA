@@ -180,7 +180,6 @@ Not used anymore but we leave it for example purposes
         // the isolated cell isolated
         const auto new_cc = cc_idx.has_value() ? cc_idx.value()
                                                : *(neighs.begin());
-        auto neig_cc = _cc_vec[new_cc]->_cc_graph;
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
         _fc_2_cc[i_fc] = new_cc;
@@ -247,7 +246,7 @@ Not used anymore but we leave it for example purposes
     deque<CoMMAIndexType> argtrue_compact{};
     // Loop on neighbours to compute their features
     for (const auto & cc_idx : neighs) {
-      const auto n_cc = _cc_vec.at(cc_idx)->_cc_graph;
+      const auto n_cc = _cc_vec.at(cc_idx);
       if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
           //n_cc->_cardinality < max_card &&
           n_cc->_cardinality >= 2) {
@@ -328,16 +327,13 @@ Not used anymore but we leave it for example purposes
 
   /** @brief Compute the number of faces shared between a fine cell and a coarse one
    * @param[in] fc Index of the fine cell
-   * @param[in] cc Subgraph representing the coarse cell
+   * @param[in] cc Pointer to the coarse cell
    * @return The number of shared faces
    */
   inline CoMMAIntType get_shared_faces(const CoMMAIndexType fc,
-                                       const SubGraphPtr cc) const {
-    const auto n_fc_cc = cc->_number_of_cells;
+                                       const CoarseCellPtr cc) const {
     CoMMAIntType shared_faces{0};
-    // I am not 100% sure that mapping is perfect hence I prefer loop using indices
-    for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
-      const auto i_fc = cc->_mapping_l_to_g[i_fc_cc];
+    for (const auto &i_fc : cc->_s_fc) {
       shared_faces += count(_fc_graph->neighbours_cbegin(i_fc),
                             _fc_graph->neighbours_cend(i_fc), fc);
     }
@@ -347,14 +343,13 @@ Not used anymore but we leave it for example purposes
   /** @brief Tell if the addition of a new fine cell increase the compactness degree
    * of a coarse cell
    * @param[in] fc Index of the fine cell
-   * @param[in] cc Subgraph representing the coarse cell
+   * @param[in] cc Pointer to the coarse cell
    * @return A boolean
    */
   inline bool new_cell_increases_compactness(const CoMMAIndexType fc,
-                                             const SubGraphPtr cc) const {
+                                             const CoarseCellPtr cc) const {
     // Set of faces in the CC
-    unordered_set<CoMMAIndexType> tmp_cc{cc->_mapping_l_to_g.begin(),
-                                         cc->_mapping_l_to_g.end()};
+    unordered_set<CoMMAIndexType> tmp_cc = cc->_s_fc; // OK copy
     tmp_cc.insert(fc);
     return _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc) > cc->_compactness;
   }
@@ -370,6 +365,7 @@ Not used anymore but we leave it for example purposes
    */
   CoMMAIndexType cc_create_a_cc(
       const unordered_set<CoMMAIndexType> &s_fc,
+      const CoMMAIntType compactness,
       bool is_anisotropic = false,
       bool is_creation_delayed = false) {
     // Create a course cell from the fine cells and update the fc_2_cc tree.
@@ -393,9 +389,8 @@ Not used anymore but we leave it for example purposes
       assert(!is_creation_delayed);
       auto new_cc = make_shared<
           Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-          _fc_graph, _cc_counter, s_fc, false);
-      // we collect the various cc_graph, where the index in the vector is the
-      // i_cc
+          _fc_graph, _cc_counter, s_fc, compactness, false);
+      // we collect the various cc, where the index in the vector is the i_cc
       _cc_vec[_cc_counter] = new_cc;
       is_mutable = false;
     }
@@ -409,9 +404,8 @@ Not used anymore but we leave it for example purposes
         //==================
         auto new_cc = make_shared<
             Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            _fc_graph, _cc_counter, s_fc);
-        // we collect the various cc_graph, where the index in the vector is the
-        // i_cc
+            _fc_graph, _cc_counter, s_fc, compactness);
+        // we collect the various cc, where the index in the vector is the i_cc
         _cc_vec[_cc_counter] = new_cc;
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
@@ -436,7 +430,7 @@ Not used anymore but we leave it for example purposes
       // be the greater possible.
       // Only isFineCellAgglomerated_tmp, number_of_fine_agglomerated_cells_tmp
       // and dict_DistributionOfCardinalOfCoarseElements are modified!
-      _delayed_cc.push_back(s_fc);
+      _delayed_cc.emplace_back(s_fc, compactness);
     }
     return (_cc_counter - 1);
   }
@@ -445,8 +439,8 @@ Not used anymore but we leave it for example purposes
    * cell flag is activated in the agglomerator
    */
   inline void cc_create_all_delayed_cc() {
-    for (const unordered_set<CoMMAIndexType> &s_fc : _delayed_cc) {
-      cc_create_a_cc(s_fc);
+    for (const auto &[s_fc, cpt] : _delayed_cc) {
+      cc_create_a_cc(s_fc, cpt);
     }
     _delayed_cc.clear();
   }
@@ -464,9 +458,10 @@ Not used anymore but we leave it for example purposes
   CoMMAIndexType _nb_of_agglomerated_fc = 0;
 
   /** @brief Vector of the set of fine cells composing the too small coarse
-   * cells that will be built at the end of the agglomeration process
+   * cells that will be built at the end of the agglomeration process and their
+   * compactness degree
    */
-  vector<unordered_set<CoMMAIndexType>> _delayed_cc;
+  vector<pair<unordered_set<CoMMAIndexType>, CoMMAIntType>> _delayed_cc;
 
   /** @brief Set of singular coarse cells, that is, composed of only one fine cell */
   deque<CoMMAIndexType> _singular_cc;
