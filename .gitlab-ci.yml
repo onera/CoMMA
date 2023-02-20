@@ -88,8 +88,7 @@ test_a:
         - cd build
         - ./Comma_test -r junit > test_a.xml
         - python3 -m gcovr --xml-pretty \
-          --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' \
-          --exclude '\.\./CoMMA_lib/CoMMA.cpp' --exclude '\.\./tests/' \
+          --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./CoMMA_lib/CoMMA.cpp' \
           --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
