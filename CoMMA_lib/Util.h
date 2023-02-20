@@ -28,6 +28,7 @@
 #include <functional>
 #include <iterator>
 #include <numeric>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -222,6 +223,66 @@ inline unordered_set<KeyT> d_keys_to_set(
     s_neighbours_of_seed.insert(i_k_v.first);
   }
   return s_neighbours_of_seed;
+}
+
+/** @brief Compute a neighbourhood-base wall-distance, that is, the distance of a
+ * given cell from a wall is the number of cells though which the minimum path
+ * starting from the cell and ending at the wall. For example, in a Cartesian grids
+ * this is equivalent to the minimum of the Manhattan distance.\n
+ * If the vector defining the wall is empty, return negative values.\n
+ * If a cell is unconnected to the domain with the wall, its distance will be
+ * negative.\n
+ * It takes a compressed version of the connectivity of the mesh. It uses a BFS
+ * algorithm to visit all the cells.
+ * @tparam IndexT Type for cell indices
+ * @tparam DistT Type for distance (should be signed)
+ * @param[in] neigh_idxs Indices used to recover the neighbours of each cells
+ * provided in \p neighs. The length is \f$ N_{cells} + 1 \f$
+ * @param[in] neighs Neighbours of the cells
+ * @param[in] wall Cells composing the wall from which the distance is computed
+ * @param[out] dist Distance from the wall. This vector is resized inside the
+ * function to hold all the cells
+ * @warning This function is \b experimental. Moreover, since CoMMA has knoledge of
+ * the current domain only, this function might not give the right result if the
+ * domain hab been partitioned. It is advised to use this function only when
+ * considering one domain only.
+ */
+template <typename IndexT, typename DistT>
+void compute_neighbourhood_based_wall_distance(
+    const vector<IndexT>& neigh_idxs,
+    const vector<IndexT>& neighs,
+    const vector<IndexT>& wall,
+    vector<DistT>& dist) {
+  static_assert(is_signed<DistT>::value,
+                "The distance type should be signed to allow flags (negative values)");
+  dist.resize(neigh_idxs.size() - 1);
+  fill(dist.begin(), dist.end(), DistT{-1});
+  queue<IndexT> to_visit{};
+  for (const auto & cell : wall) {
+    dist[cell] = DistT{0};
+    to_visit.emplace(cell);
+  }
+  while (!to_visit.empty()) {
+    // If you get wrong results, this could might be to the fact that one should
+    // consider not specially the first of the queue, but the one with lowest
+    // distance visited so far. So, the definition of `cur` below should be changed,
+    // and with that, another container should be used instead of a queue, since one
+    // might pop from whenever and not only the front (a deque should work).
+    const auto cur = to_visit.front();
+    to_visit.pop();
+    const auto d = dist[cur] + DistT{1};
+    for (auto neigh = neighs.cbegin() + neigh_idxs[cur];
+         neigh < neighs.cbegin() + neigh_idxs[cur + 1];
+         ++neigh) {
+      if (dist[*neigh] < DistT{0}) {
+        dist[*neigh] = d;
+        to_visit.emplace(*neigh);
+      }
+      else if (dist[*neigh] > d) {
+        dist[*neigh] = d;
+      }
+    }
+  }
 }
 
 #endif  // COMMA_PROJECT_UTIL_H
