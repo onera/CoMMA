@@ -62,19 +62,19 @@ class Coarse_Cell {
     _cc_graph =
         make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
             s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
-            _adjMatrix_areaValues, _fc_volumes, _mapping_g_to_l, is_isotropic);
+            _adjMatrix_areaValues, _fc_volumes, _mapping_l_to_g, is_isotropic);
   }
 
   /** @brief Destructor of the class */
   ~Coarse_Cell() = default;
 
-  /** @brief Index of the coarse cell (It seems to be unused, but it useful to have) */
+  /** @brief Index of the coarse cell (It seems to be unused, but useful to have) */
   CoMMAIndexType _idx;
 
-  /** @brief mapping vector. The position of the index is the local node, the
+  /** @brief Mapping vector. The position of the index is the local node, the
    * value is the global
    */
-  vector<CoMMAIndexType> _mapping_g_to_l;
+  vector<CoMMAIndexType> _mapping_l_to_g;
 
   /** @brief The row pointer of the CSR representation of the subgraph */
   vector<CoMMAIndexType> _adjMatrix_row_ptr;
@@ -156,7 +156,7 @@ class Coarse_Cell {
 
     _adjMatrix_areaValues = move(weight);
 
-    _mapping_g_to_l = move(mapping);
+    _mapping_l_to_g = move(mapping);
   }
 };
 
