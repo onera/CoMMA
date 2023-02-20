@@ -101,16 +101,14 @@ class Coarse_Cell_Container {
    *  @param[in] i_cc index of the coarse cell in which the fine cell is in
    *  @return vector of the index of the coarse cells
    */
-  vector<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
-                                       const CoMMAIndexType &i_cc) const {
-    vector<CoMMAIndexType> result;
+  set<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
+                                    const CoMMAIndexType &i_cc) const {
+    set<CoMMAIndexType> result;
     for (auto elem = _fc_graph->neighbours_cbegin(i_fc);
          elem != _fc_graph->neighbours_cend(i_fc); ++elem) {
       const auto cc = _fc_2_cc[*elem].value();
-      if (cc != i_cc &&
-          find(result.begin(), result.end(), cc) == result.end()) {
-        result.push_back(cc);
-      }
+      if (cc != i_cc)
+        result.insert(cc);
     }
     return result;
   }
@@ -162,7 +160,7 @@ Not used anymore but we leave it for example purposes
       //auto current_cc = _cc_vec[i_cc];
       auto i_fc = _cc_vec[i_cc]->_mapping_l_to_g[0];
       // Get the cc neighs of the given fine cell
-      const vector<CoMMAIndexType> neighs = get_neighs_cc(i_fc, i_cc);
+      const auto neighs = get_neighs_cc(i_fc, i_cc);
       if(!neighs.empty()) {
         // now we have the neighbourhood cc cell, we can access to them and
         // control the characteristics
@@ -173,7 +171,8 @@ Not used anymore but we leave it for example purposes
         // cell (the first one of the vector). At this point, we do not check if
         // the max cardinality has been reached or not, otherwise we might leave
         // the isolated cell isolated
-        const auto new_cc = cc_idx.has_value() ? cc_idx.value() : neighs[0];
+        const auto new_cc = cc_idx.has_value() ? cc_idx.value()
+                                               : *(neighs.begin());
         auto neig_cc = _cc_vec[new_cc];
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
@@ -218,28 +217,31 @@ Not used anymore but we leave it for example purposes
    * with the fine cell. Otherwise, we look at the cardinality and choose the coarse
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
-   * @param[in] neigh Neighbouring coarse cells
+   * @param[in] neighs Neighbouring coarse cells
    * @param[in] max_card Maximum cardinality allowed (CoMMA might still be beyond this
    * value)
    * @return The index of the chosen coarse cell
    */
   optional<CoMMAIndexType> select_best_cc_to_agglomerate(
-      const CoMMAIndexType fc, const vector<CoMMAIndexType> &neigh,
+      const CoMMAIndexType fc,
+      const set<CoMMAIndexType> &neighs,
       const CoMMAIntType max_card) const {
     CoMMAUnused(max_card);
     unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
     unordered_map<CoMMAIndexType, bool> compact_increase{};
-    card.reserve(neigh.size());
-    shared_faces.reserve(neigh.size());
-    compact_increase.reserve(neigh.size());
+    const auto n_neighs = neighs.size();
+    card.reserve(n_neighs);
+    shared_faces.reserve(n_neighs);
+    compact_increase.reserve(n_neighs);
     CoMMAIntType min_card = numeric_limits<CoMMAIntType>::max();
-    deque<CoMMAIndexType> argmin_card{};
     CoMMAIntType max_shared_f{0};
+    // Since in the end we sort, wouldn't it be better to just use set instead of deque?
+    deque<CoMMAIndexType> argmin_card{};
     deque<CoMMAIndexType> argmax_shared_f{};
     deque<CoMMAIndexType> argtrue_compact{};
     // Loop on neighbours to compute their features
-    for (const auto & cc_idx : neigh) {
+    for (const auto & cc_idx : neighs) {
       const auto n_cc = _cc_vec.at(cc_idx);
       if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
           //n_cc->_cardinality < max_card &&
