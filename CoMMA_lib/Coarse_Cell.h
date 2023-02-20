@@ -55,14 +55,41 @@ class Coarse_Cell {
       bool is_isotropic = true)
       : _idx(i_cc), _fc_graph(fc_graph), _is_isotropic(is_isotropic),
       _is_connected(false), _is_connectivity_up_to_date(false), _s_fc(s_fc) {
-    // It also initializes _fc_volumes, _adjMatrix_row_ptr, _adjMatrix_col_ind, and
-    // _adjMatrix_areaValues
-    build_local_CRS();
+    // initialization vectors
+    CoMMAIndexType position = 0;
+    vector<CoMMAWeightType> volumes;
+    vector<CoMMAWeightType> CSR_vals{};
+    vector<CoMMAIndexType> CSR_row = {0};
+    vector<CoMMAIndexType> CSR_col{};
+    vector<CoMMAIndexType> col_ind{};
+    vector<CoMMAIndexType> mapping{};
+    for (const CoMMAIndexType &i_fc : _s_fc) {
+      // we add to the mapping the i_fc
+      mapping.push_back(i_fc);
+      // get neighbours and the weights associated
+      const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
+      const vector<CoMMAWeightType> area = _fc_graph->get_weights(i_fc);
+      for (auto it = neigh.begin(); it != neigh.end(); ++it) {
+        if (find(_s_fc.begin(), _s_fc.end(), *it) != _s_fc.end()) {
+          ++position;
+          col_ind.push_back(*it);
+          CSR_vals.push_back(area[it - neigh.begin()]);
+        }
+      }
+      CSR_row.push_back(position);
+      volumes.push_back(_fc_graph->_volumes[i_fc]);
+    }
+
+    // Map in the local subgraph
+    for (auto it = col_ind.begin(); it != col_ind.end(); ++it) {
+      auto indx = find(mapping.begin(), mapping.end(), *it);
+      CSR_col.push_back(indx - mapping.begin());
+    }
 
     _cc_graph =
         make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            s_fc.size(), _adjMatrix_row_ptr, _adjMatrix_col_ind,
-            _adjMatrix_areaValues, _fc_volumes, _mapping_l_to_g, is_isotropic);
+            s_fc.size(), CSR_row, CSR_col,
+            CSR_vals, volumes, mapping, is_isotropic);
   }
 
   /** @brief Destructor of the class */
@@ -70,23 +97,6 @@ class Coarse_Cell {
 
   /** @brief Index of the coarse cell (It seems to be unused, but useful to have) */
   CoMMAIndexType _idx;
-
-  /** @brief Mapping vector. The position of the index is the local node, the
-   * value is the global
-   */
-  vector<CoMMAIndexType> _mapping_l_to_g;
-
-  /** @brief The row pointer of the CSR representation of the subgraph */
-  vector<CoMMAIndexType> _adjMatrix_row_ptr;
-
-  /** @brief The column index representation of the CSR representation */
-  vector<CoMMAIndexType> _adjMatrix_col_ind;
-
-  /** @brief The area value of the internal fine cells */
-  vector<CoMMAWeightType> _adjMatrix_areaValues;
-
-  /** @brief The volumes of the internal fine cells */
-  vector<CoMMAWeightType> _fc_volumes;
 
   /** @brief shared pointer of the subgraph structure (CSR representation) */
   shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
@@ -119,45 +129,16 @@ class Coarse_Cell {
     return _is_connected;
   }
 
-  /** @brief Build the local CSR subgraph representation. It initializes
-   * several members related to the subgraph
+  /** @brief Insert a FC in the CC (and update sub-graph if necessary)
+   *  @param[in] i_fc Index of the fine cell to add
    */
-  inline void build_local_CRS() {
-    // initialization vectors
-    CoMMAIndexType position = 0;
-    vector<CoMMAWeightType> weight{};
-    vector<CoMMAIndexType> row_ptr = {0};
-    vector<CoMMAIndexType> col_ind{};
-    vector<CoMMAIndexType> mapping{};
-    for (const CoMMAIndexType &i_fc : _s_fc) {
-      // we add to the mapping the i_fc
-      mapping.push_back(i_fc);
-      // get neighbours and the weights associated
-      const vector<CoMMAIndexType> neigh = _fc_graph->get_neighbours(i_fc);
-      const vector<CoMMAWeightType> area = _fc_graph->get_weights(i_fc);
-      for (auto it = neigh.begin(); it != neigh.end(); ++it) {
-        if (find(_s_fc.begin(), _s_fc.end(), *it) != _s_fc.end()) {
-          ++position;
-          col_ind.push_back(*it);
-          weight.push_back(area[it - neigh.begin()]);
-        }
-      }
-      row_ptr.push_back(position);
-      _fc_volumes.push_back(_fc_graph->_volumes[i_fc]);
-    }
-
-    _adjMatrix_row_ptr = move(row_ptr);
-
-    // Map in the local subgraph
-    for (auto it = col_ind.begin(); it != col_ind.end(); ++it) {
-      auto indx = find(mapping.begin(), mapping.end(), *it);
-      _adjMatrix_col_ind.push_back(indx - mapping.begin());
-    }
-
-    _adjMatrix_areaValues = move(weight);
-
-    _mapping_l_to_g = move(mapping);
+  inline void insert_cell(const CoMMAIndexType i_fc) {
+    _s_fc.insert(i_fc);
+    _cc_graph->insert_node(_fc_graph->get_neighbours(i_fc),
+                           i_fc, _fc_graph->_volumes[i_fc],
+                           _fc_graph->get_weights(i_fc));
   }
+
 };
 
 #endif  // COMMA_PROJECT_COARSE_CELL_H

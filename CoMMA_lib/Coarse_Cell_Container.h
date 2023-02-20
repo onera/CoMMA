@@ -164,8 +164,8 @@ Not used anymore but we leave it for example purposes
       // We enter in the property of the subgraph of being 1
       // and we consider what happens. Remember that second because
       // we are checking the subgraph
-      //auto current_cc = _cc_vec[i_cc];
-      auto i_fc = _cc_vec[i_cc]->_cc_graph->_mapping_l_to_g[0];
+      // Take the only FC in the CC
+      const auto i_fc = *(_cc_vec[i_cc]->_s_fc.begin());
       // Get the cc neighs of the given fine cell
       const auto neighs = get_neighs_cc(i_fc, i_cc);
       if(!neighs.empty()) {
@@ -184,9 +184,7 @@ Not used anymore but we leave it for example purposes
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
         _fc_2_cc[i_fc] = new_cc;
-        neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
-                             i_fc, _fc_graph->_volumes[i_fc],
-                             _fc_graph->get_weights(i_fc));
+        _cc_vec[new_cc]->insert_cell(i_fc);
         _cc_vec.erase(i_cc);
         removed_cc.emplace(i_cc);
       }
@@ -205,7 +203,7 @@ Not used anymore but we leave it for example purposes
       ++it_cc;
       for (; it_cc != _cc_vec.end(); ++it_cc, ++new_ID) {
         // Update fine cells
-        for (auto const &i_fc : it_cc->second->_cc_graph->_mapping_l_to_g) {
+        for (auto const &i_fc : it_cc->second->_s_fc) {
           _fc_2_cc[i_fc] = new_ID;
         }
         // Update coarse cell ID
