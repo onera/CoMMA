@@ -48,6 +48,10 @@ class Coarse_Cell_Container {
  public:
 
   /** @brief Type for a shared pointer to a Dual_Graph object */
+  using CoarseCellPtr = shared_ptr<
+    Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+
+  /** @brief Type for a shared pointer to a Dual_Graph object */
   using DualGraphPtr = shared_ptr<
     Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
 
@@ -69,7 +73,7 @@ class Coarse_Cell_Container {
   ~Coarse_Cell_Container() = default;
 
   /** @brief Map container of the CSR representation of the coarse cells */
-  map<CoMMAIndexType, SubGraphPtr> _cc_vec;
+  map<CoMMAIndexType, CoarseCellPtr> _cc_vec;
 
   /** @brief Dual graph representation */
   DualGraphPtr _fc_graph;
@@ -161,7 +165,7 @@ Not used anymore but we leave it for example purposes
       // and we consider what happens. Remember that second because
       // we are checking the subgraph
       //auto current_cc = _cc_vec[i_cc];
-      auto i_fc = _cc_vec[i_cc]->_mapping_l_to_g[0];
+      auto i_fc = _cc_vec[i_cc]->_cc_graph->_mapping_l_to_g[0];
       // Get the cc neighs of the given fine cell
       const auto neighs = get_neighs_cc(i_fc, i_cc);
       if(!neighs.empty()) {
@@ -176,7 +180,7 @@ Not used anymore but we leave it for example purposes
         // the isolated cell isolated
         const auto new_cc = cc_idx.has_value() ? cc_idx.value()
                                                : *(neighs.begin());
-        auto neig_cc = _cc_vec[new_cc];
+        auto neig_cc = _cc_vec[new_cc]->_cc_graph;
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
         _fc_2_cc[i_fc] = new_cc;
@@ -201,7 +205,7 @@ Not used anymore but we leave it for example purposes
       ++it_cc;
       for (; it_cc != _cc_vec.end(); ++it_cc, ++new_ID) {
         // Update fine cells
-        for (auto const &i_fc : it_cc->second->_mapping_l_to_g) {
+        for (auto const &i_fc : it_cc->second->_cc_graph->_mapping_l_to_g) {
           _fc_2_cc[i_fc] = new_ID;
         }
         // Update coarse cell ID
@@ -245,7 +249,7 @@ Not used anymore but we leave it for example purposes
     deque<CoMMAIndexType> argtrue_compact{};
     // Loop on neighbours to compute their features
     for (const auto & cc_idx : neighs) {
-      const auto n_cc = _cc_vec.at(cc_idx);
+      const auto n_cc = _cc_vec.at(cc_idx)->_cc_graph;
       if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
           //n_cc->_cardinality < max_card &&
           n_cc->_cardinality >= 2) {
@@ -394,7 +398,7 @@ Not used anymore but we leave it for example purposes
           _fc_graph, _cc_counter, s_fc, false);
       // we collect the various cc_graph, where the index in the vector is the
       // i_cc
-      _cc_vec[_cc_counter] = new_cc->_cc_graph;
+      _cc_vec[_cc_counter] = new_cc;
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -410,7 +414,7 @@ Not used anymore but we leave it for example purposes
             _fc_graph, _cc_counter, s_fc);
         // we collect the various cc_graph, where the index in the vector is the
         // i_cc
-        _cc_vec[_cc_counter] = new_cc->_cc_graph;
+        _cc_vec[_cc_counter] = new_cc;
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
 

@@ -2071,7 +2071,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       THEN("No cells are left with cardinality 1") {
         for (auto i = cc_graph->_cc_vec.begin(); i != cc_graph->_cc_vec.end();
              i++) {
-          REQUIRE(i->second->_cardinality != 1);
+          REQUIRE(i->second->_cc_graph->_cardinality != 1);
         }
       }
     }
