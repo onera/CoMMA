@@ -47,12 +47,19 @@ class Coarse_Cell_Container {
 
  public:
 
+  /** @brief Type for a shared pointer to a Dual_Graph object */
+  using DualGraphPtr = shared_ptr<
+    Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+
+  /** @brief Type for a shared pointer to a Subgraph object */
+  using SubGraphPtr = shared_ptr<
+    Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
    */
-  Coarse_Cell_Container(
-      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> &fc_graph)
+  Coarse_Cell_Container(DualGraphPtr &fc_graph)
       : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
         _fc_2_cc(fc_graph->_number_of_cells, nullopt),
         _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
@@ -62,12 +69,10 @@ class Coarse_Cell_Container {
   ~Coarse_Cell_Container() = default;
 
   /** @brief Map container of the CSR representation of the coarse cells */
-  map<CoMMAIndexType,
-      shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>>
-      _cc_vec;
+  map<CoMMAIndexType, SubGraphPtr> _cc_vec;
 
   /** @brief Dual graph representation */
-  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
+  DualGraphPtr _fc_graph;
 
   /** @brief Number of coarse cells */
   CoMMAIndexType _cc_counter = 0;
@@ -117,9 +122,7 @@ class Coarse_Cell_Container {
 Not used anymore but we leave it for example purposes
 
   /** @brief Type for a custom map */
-  using CustomMapItT = typename map<
-    CoMMAIndexType, shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType,
-                                        CoMMAIntType>>>::iterator;
+  using CustomMapItT = typename map<CoMMAIndexType, SubGraphPtr>::iterator;
   /** @brief Remove a coarse cell from the mapping
    * @param[in] elim Iterator to the element to eliminate
    * @return Iterator to the next element
@@ -327,7 +330,7 @@ Not used anymore but we leave it for example purposes
    * @return The number of shared faces
    */
   inline CoMMAIntType get_shared_faces(const CoMMAIndexType fc,
-      const shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> cc) const {
+                                       const SubGraphPtr cc) const {
     const auto n_fc_cc = cc->_number_of_cells;
     CoMMAIntType shared_faces{0};
     // I am not 100% sure that mapping is perfect hence I prefer loop using indices
@@ -346,7 +349,7 @@ Not used anymore but we leave it for example purposes
    * @return A boolean
    */
   inline bool new_cell_increases_compactness(const CoMMAIndexType fc,
-      const shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> cc) const {
+                                             const SubGraphPtr cc) const {
     // Set of faces in the CC
     unordered_set<CoMMAIndexType> tmp_cc{cc->_mapping_l_to_g.begin(),
                                          cc->_mapping_l_to_g.end()};
@@ -364,7 +367,8 @@ Not used anymore but we leave it for example purposes
    * @return Global identifier of the coarse cell
    */
   CoMMAIndexType cc_create_a_cc(
-      const unordered_set<CoMMAIndexType> &s_fc, bool is_anisotropic = false,
+      const unordered_set<CoMMAIndexType> &s_fc,
+      bool is_anisotropic = false,
       bool is_creation_delayed = false) {
     // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
