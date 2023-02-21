@@ -385,11 +385,10 @@ Not used anymore but we leave it for example purposes
     bool is_mutable = true;
     if (is_anisotropic) {
       assert(!is_creation_delayed);
-      auto new_cc = make_shared<
-          Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-          _fc_graph, _cc_counter, s_fc, compactness, false);
       // we collect the various cc, where the index in the vector is the i_cc
-      _ccs[_cc_counter] = new_cc;
+      _ccs[_cc_counter] =  make_shared<
+          Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+          _fc_graph, _cc_counter, s_fc, compactness, !is_anisotropic);
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -400,17 +399,12 @@ Not used anymore but we leave it for example purposes
         // and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
         // Update of dict_cc:
         //==================
-        auto new_cc = make_shared<
+        // we collect the various cc, where the index in the vector is the i_cc
+        _ccs[_cc_counter] = make_shared<
             Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
             _fc_graph, _cc_counter, s_fc, compactness);
-        // we collect the various cc, where the index in the vector is the i_cc
-        _ccs[_cc_counter] = new_cc;
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
-
-        // Update of compactness informations:
-        //####################################
-        assert(new_cc->is_connected());
       }
       // Update of _associatedCoarseCellNumber the output of the current
       // function agglomerate _fc_2_cc is filled with _cc_counter
