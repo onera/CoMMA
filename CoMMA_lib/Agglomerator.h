@@ -300,7 +300,7 @@ class Agglomerator_Anisotropic
     // See, e.g., https://stackoverflow.com/a/56133699/12152457
     auto loop_line = [&](auto begin, auto end) {
       AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
-      // TODO here is necessary for the cc_create_a_cc but maybe we need in
+      // TODO here is necessary for the create_cc but maybe we need in
       // some way to change that.
       const bool is_anisotropic = true;
       for (auto line_it = begin; line_it != end; line_it += 2) {
@@ -329,8 +329,7 @@ class Agglomerator_Anisotropic
           line_it++; // Ensure to break the loop after current iteration
         }
         // We create the coarse cell
-        const CoMMAIndexType i_cc =
-          this->_cc_graph->cc_create_a_cc(s_fc, 1, is_anisotropic);
+        const CoMMAIndexType i_cc = this->_cc_graph->create_cc(s_fc, 1, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
         this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
       }
@@ -385,7 +384,7 @@ class Agglomerator_Anisotropic
       // https://en.cppreference.com/w/cpp/container/deque/erase
       for (auto it = this->_aniso_neighbours.begin();
            it != this->_aniso_neighbours.end();) {
-        if (this->_cc_graph->_a_is_fc_agglomerated[*it])
+        if (this->_cc_graph->_is_fc_agglomerated[*it])
           it = this->_aniso_neighbours.erase(it);
         else
           ++it;
@@ -403,7 +402,7 @@ class Agglomerator_Anisotropic
     // Even if we have updated it, the seeds pool might need initialization, for
     // instance, if it was set up with boundary priority
     if (this->_seeds_pool->need_initialization(
-                            this->_cc_graph->_a_is_fc_agglomerated))
+                            this->_cc_graph->_is_fc_agglomerated))
       this->_seeds_pool->initialize();
   }
 
@@ -787,13 +786,13 @@ class Agglomerator_Isotropic
     while (this->_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
       // 1) Choose a new seed
       auto seed = this->_seeds_pool->choose_new_seed(
-          this->_cc_graph->_a_is_fc_agglomerated);
+          this->_cc_graph->_is_fc_agglomerated);
       assert(seed.has_value());
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm in the children class
       const unordered_set<CoMMAIndexType> set_current_cc =
           choose_optimal_cc_and_update_seeds_pool(seed.value(), compactness,
-                                                 priority_weights);
+                                                  priority_weights);
       // 3)  Creation of cc:
       bool is_anistropic = false;
       // Check if delay the agglomeration based on compactness written during
@@ -801,8 +800,8 @@ class Agglomerator_Isotropic
       // degree in the coarse cell.
       //bool is_creation_delayed = compactness < this->_dimension;
       bool is_creation_delayed = false;
-      this->_cc_graph->cc_create_a_cc(set_current_cc, compactness, is_anistropic,
-                                      is_creation_delayed);
+      this->_cc_graph->create_cc(set_current_cc, compactness, is_anistropic,
+                                 is_creation_delayed);
     }
     // When we exit from this process all the cells are agglomerated, apart the
     // delayed ones
@@ -967,7 +966,7 @@ class Agglomerator_Biconnected
         this->_max_card,
         // anisotropic cells agglomerated (not to take into account in the
         // process)
-        this->_cc_graph->_a_is_fc_agglomerated);
+        this->_cc_graph->_is_fc_agglomerated);
 
     // We get the number of neighbourhoods
     CoMMAIntType nb_neighbours = this->_fc_graph->get_nb_of_neighbours(seed);
@@ -1156,7 +1155,7 @@ class Agglomerator_Biconnected
       //   to the original seed
       // - If more than one cell with the same order, use priority weights
       const auto cc_neighs = this->_fc_graph->get_neighbourhood_of_cc(s_current_cc,
-                                     this->_cc_graph->_a_is_fc_agglomerated);
+                                     this->_cc_graph->_is_fc_agglomerated);
       // Basically, like d_n_of_seed but with key and value swapped
       map<CoMMAIntType, unordered_set<CoMMAIndexType>> neighs_by_order{};
       // For those that were outside max neighbourhood order

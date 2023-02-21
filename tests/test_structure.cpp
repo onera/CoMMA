@@ -1707,10 +1707,10 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
       aniso_agg.update_seeds_pool();
       THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
         REQUIRE(!seeds_pool->is_empty());
-        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
       }
       THEN("Having chosen a priority by boundary, the seed is a corner who is not a neighbour") {
-        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 24);
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_is_fc_agglomerated).value() == 24);
       }
       iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
@@ -1768,10 +1768,10 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
       aniso_agg.update_seeds_pool();
       THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
         REQUIRE(!seeds_pool->is_empty());
-        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
       }
       THEN("Having chosen a priority by boundary, the seed is a corner who is not a neighbour") {
-        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 24);
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_is_fc_agglomerated).value() == 24);
       }
       iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
@@ -1871,8 +1871,8 @@ the line grows vertically
       THEN("All cells have been agglomerated") {
         REQUIRE(Data.nb_fc ==
             static_cast<CoMMAIndexT>(
-              count(cc_graph->_a_is_fc_agglomerated.begin(),
-                    cc_graph->_a_is_fc_agglomerated.end(),
+              count(cc_graph->_is_fc_agglomerated.begin(),
+                    cc_graph->_is_fc_agglomerated.end(),
                     true)));
       }
       const auto f2c = cc_graph->_fc_2_cc;
@@ -1936,10 +1936,10 @@ the line grows vertically
       aniso_agg.update_seeds_pool();
       THEN("After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization") {
         REQUIRE(!seeds_pool->is_empty());
-        REQUIRE(!seeds_pool->need_initialization(cc_graph->_a_is_fc_agglomerated));
+        REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
       }
       THEN("Having chosen a neighbourhood by boundary, the seed is a neighbour of the first line") {
-        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_a_is_fc_agglomerated).value() == 18);
+        REQUIRE(seeds_pool->choose_new_seed(cc_graph->_is_fc_agglomerated).value() == 18);
       }
       iso_agg.agglomerate_one_level(4, 4, 4, w, false);
       const auto f2c = cc_graph->_fc_2_cc;
@@ -2069,8 +2069,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       agg->agglomerate_one_level(2, 2, 2, Data.weights, true);
 
       THEN("No cells are left with cardinality 1") {
-        for (auto i = cc_graph->_cc_vec.begin(); i != cc_graph->_cc_vec.end();
-             i++) {
+        for (auto i = cc_graph->_ccs.begin(); i != cc_graph->_ccs.end(); i++) {
           REQUIRE(i->second->_cardinality != 1);
         }
       }
@@ -2086,9 +2085,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
-      cc_graph->cc_create_a_cc({0,4,5}, 1);
-      cc_graph->cc_create_a_cc({1}, 0);
-      cc_graph->cc_create_a_cc({2,3,6,7}, 2);
+      cc_graph->create_cc({0,4,5}, 1);
+      cc_graph->create_cc({1}, 0);
+      cc_graph->create_cc({2,3,6,7}, 2);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
@@ -2121,9 +2120,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and two coarse cells with cardinality 5 and 3") {
-      cc_graph->cc_create_a_cc({0,1,2,5,8}, 1);
-      cc_graph->cc_create_a_cc({4}, 0);
-      cc_graph->cc_create_a_cc({3,6,7}, 1);
+      cc_graph->create_cc({0,1,2,5,8}, 1);
+      cc_graph->create_cc({4}, 0);
+      cc_graph->create_cc({3,6,7}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
@@ -2151,10 +2150,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and three coarse cells with cardinality 4, 2, and 2") {
-      cc_graph->cc_create_a_cc({0,3}, 1);
-      cc_graph->cc_create_a_cc({6,7}, 1);
-      cc_graph->cc_create_a_cc({4}, 0);
-      cc_graph->cc_create_a_cc({1,2,5,8}, 1);
+      cc_graph->create_cc({0,3}, 1);
+      cc_graph->create_cc({6,7}, 1);
+      cc_graph->create_cc({4}, 0);
+      cc_graph->create_cc({1,2,5,8}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 3));
@@ -2182,10 +2181,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and 3 cells with cardinality 4, 2, and 2") {
-      cc_graph->cc_create_a_cc({0,1,3,4}, 2);
-      cc_graph->cc_create_a_cc({7,8}, 1);
-      cc_graph->cc_create_a_cc({6}, 0);
-      cc_graph->cc_create_a_cc({2,5}, 1);
+      cc_graph->create_cc({0,1,3,4}, 2);
+      cc_graph->create_cc({7,8}, 1);
+      cc_graph->create_cc({6}, 0);
+      cc_graph->create_cc({2,5}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
@@ -2213,11 +2212,11 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and four coarse cells with cardinality 2") {
-      cc_graph->cc_create_a_cc({0,3}, 1);
-      cc_graph->cc_create_a_cc({6,7}, 1);
-      cc_graph->cc_create_a_cc({4}, 0);
-      cc_graph->cc_create_a_cc({5,8}, 1);
-      cc_graph->cc_create_a_cc({1,2}, 1);
+      cc_graph->create_cc({0,3}, 1);
+      cc_graph->create_cc({6,7}, 1);
+      cc_graph->create_cc({4}, 0);
+      cc_graph->create_cc({5,8}, 1);
+      cc_graph->create_cc({1,2}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 4));
@@ -2245,11 +2244,11 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN("We agglomerate (manually) leaving two coarse cells with cardinality 1") {
-      cc_graph->cc_create_a_cc({0,1}, 1);
-      cc_graph->cc_create_a_cc({2}, 0);
-      cc_graph->cc_create_a_cc({6}, 0);
-      cc_graph->cc_create_a_cc({3,4,7}, 1);
-      cc_graph->cc_create_a_cc({5,8}, 1);
+      cc_graph->create_cc({0,1}, 1);
+      cc_graph->create_cc({2}, 0);
+      cc_graph->create_cc({6}, 0);
+      cc_graph->create_cc({3,4,7}, 1);
+      cc_graph->create_cc({5,8}, 1);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
