@@ -41,6 +41,16 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
 class Coarse_Cell {
  public:
+  /** @brief Type for a shared pointer to a Dual_Graph object */
+  using DualGraphPtr = shared_ptr<
+    Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+
+  /** @brief Type for a Subgraph object */
+  using SubGraphType = Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+
+  /** @brief Type for a shared pointer to a Subgraph object */
+  using SubGraphPtr = shared_ptr<SubGraphType>;
+
   /** @brief Constructor of the class
    * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
    * cells to create the coarse cell.
@@ -51,7 +61,7 @@ class Coarse_Cell {
    * isotropic agglomeration process or an anisotropic agglomeration process.
    */
   Coarse_Cell(
-      shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> fc_graph,
+      DualGraphPtr fc_graph,
       CoMMAIndexType i_cc, const unordered_set<CoMMAIndexType> &s_fc,
       CoMMAIntType compactness, bool is_isotropic = true)
       : _idx(i_cc), _fc_graph(fc_graph), _compactness(compactness),
@@ -89,10 +99,8 @@ class Coarse_Cell {
       CSR_col.push_back(indx - mapping.begin());
     }
 
-    _cc_graph =
-        make_shared<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            s_fc.size(), CSR_row, CSR_col,
-            CSR_vals, volumes, mapping, is_isotropic);
+    _cc_graph = make_shared<SubGraphType>(s_fc.size(), CSR_row, CSR_col, CSR_vals,
+                                          volumes, mapping, is_isotropic);
   }
 
   /** @brief Destructor of the class */
@@ -102,10 +110,10 @@ class Coarse_Cell {
   CoMMAIndexType _idx;
 
   /** @brief shared pointer of the subgraph structure (CSR representation) */
-  shared_ptr<Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _cc_graph;
+  SubGraphPtr _cc_graph;
 
   /** @brief The global dual graph */
-  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> _fc_graph;
+  DualGraphPtr _fc_graph;
 
   /** @brief Compactness degree of the CC */
   CoMMAIntType _compactness;

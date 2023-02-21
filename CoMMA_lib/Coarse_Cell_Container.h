@@ -46,18 +46,14 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Coarse_Cell_Container {
 
  public:
+  /** @brief Type for a Coarse_Cell object */
+  using CoarseCellType = Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
   /** @brief Type for a shared pointer to a Dual_Graph object */
-  using CoarseCellPtr = shared_ptr<
-    Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+  using CoarseCellPtr = shared_ptr<CoarseCellType>;
 
   /** @brief Type for a shared pointer to a Dual_Graph object */
-  using DualGraphPtr = shared_ptr<
-    Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
-
-  /** @brief Type for a shared pointer to a Subgraph object */
-  using SubGraphPtr = shared_ptr<
-    Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+  using DualGraphPtr = typename CoarseCellType::DualGraphPtr;
 
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
