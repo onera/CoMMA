@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -92,11 +93,17 @@ class Coarse_Cell {
 
   /** @brief Insert a FC in the CC (and update sub-graph if necessary)
    *  @param[in] i_fc Index of the fine cell to add
+   *  @param[in] new_compactness Optional, default void, giving the compactness of
+   *  the CC after the addition
    */
-  virtual void insert_cell(const CoMMAIndexType i_fc) {
+  virtual void insert_cell(
+      const CoMMAIndexType i_fc,
+      const optional<CoMMAIntType> new_compactness = nullopt) {
     _s_fc.insert(i_fc);
     ++_cardinality;
-    _compactness = _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
+    _compactness = new_compactness.has_value() ?
+                   new_compactness.value() :
+                   _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
   }
 
 };
@@ -179,12 +186,19 @@ class Coarse_Cell_Subgraph : Coarse_Cell<CoMMAIndexType, CoMMAWeightType,
 
   /** @brief Insert a FC in the CC (and update sub-graph if necessary)
    *  @param[in] i_fc Index of the fine cell to add
+   *  @param[in] new_compactness Optional, default void, giving the compactness of
+   *  the CC after the addition
    */
-  void insert_cell(const CoMMAIndexType i_fc) override {
+  void insert_cell(
+      const CoMMAIndexType i_fc,
+      const optional<CoMMAIntType> new_compactness = nullopt) override {
     // As base class...
     this->_s_fc.insert(i_fc);
     ++this->_cardinality;
-    this->_compactness = this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
+    this->_compactness =
+      new_compactness.has_value() ?
+      new_compactness.value() :
+      this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
     // ...but now add to the subgraph
     _cc_graph->insert_node(this->_fc_graph->get_neighbours(i_fc),
                            i_fc, this->_fc_graph->_volumes[i_fc],

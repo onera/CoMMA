@@ -75,7 +75,7 @@ class Coarse_Cell_Container {
   DualGraphPtr _fc_graph;
 
   /** @brief Number of coarse cells */
-  CoMMAIndexType _cc_counter = 0;
+  CoMMAIndexType _cc_counter;
 
   /** @brief Output vector identifying to which coarse cell the fine cell belongs */
   vector<optional<CoMMAIndexType>> _fc_2_cc;
@@ -167,8 +167,9 @@ Not used anymore but we leave it for example purposes
       if(!neighs.empty()) {
         // now we have the neighbourhood cc cell, we can access to them and
         // control the characteristics
+        optional<CoMMAIntType> new_compactness = nullopt;
         const auto hint_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
-                                                           max_card);
+                                                           max_card, new_compactness);
         // If the condition is verified we add the cell to the identified cc
         // and we remove it from the current cc
         // if we failed we go on, it is life, so we agglomerate to the nearest
@@ -180,7 +181,7 @@ Not used anymore but we leave it for example purposes
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
         _fc_2_cc[isolated_fc] = new_cc;
-        _ccs[new_cc]->insert_cell(isolated_fc);
+        _ccs[new_cc]->insert_cell(isolated_fc, new_compactness);
         _ccs.erase(old_cc);
         removed_cc.emplace(old_cc);
       }
@@ -219,18 +220,23 @@ Not used anymore but we leave it for example purposes
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
    * @param[in] neighs Neighbouring coarse cells
-   * @param[in] max_card Maximum cardinality allowed (CoMMA might still be beyond this
-   * value)
+   * @param[in] max_card Maximum cardinality allowed (CoMMA might still go beyond
+   * this value)
+   * @param[out] new_compactness Compactness degree of the CC if the result would to
+   * be added
    * @return The index of the chosen coarse cell
+   * @warning \p max_card might not be honored
    */
   optional<CoMMAIndexType> select_best_cc_to_agglomerate(
       const CoMMAIndexType fc,
       const set<CoMMAIndexType> &neighs,
-      const CoMMAIntType max_card) const {
+      const CoMMAIntType max_card,
+      optional<CoMMAIntType> &new_compactness) const {
     CoMMAUnused(max_card);
     unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
     unordered_map<CoMMAIndexType, bool> compact_increase{};
+    unordered_map<CoMMAIndexType, CoMMAIntType> compact{};
     const auto n_neighs = neighs.size();
     card.reserve(n_neighs);
     shared_faces.reserve(n_neighs);
@@ -269,7 +275,13 @@ Not used anymore but we leave it for example purposes
         } else if (cur_sf == max_shared_f) {
           argmax_shared_f.push_back(cc_idx);
         }
-        if (new_cell_increases_compactness(fc, n_cc)) {
+        // Analysing compactness
+        auto tmp_cc = n_cc->_s_fc; // OK copy
+        tmp_cc.insert(fc);
+        const auto new_cpt =
+          _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+        compact[cc_idx] = new_cpt;
+        if (new_cpt > n_cc->_compactness) {
           compact_increase[cc_idx] = true;
           argtrue_compact.push_back(cc_idx);
         } else {
@@ -294,6 +306,7 @@ Not used anymore but we leave it for example purposes
           ret_cc = idx;
         }
       }
+      new_compactness = compact.at(ret_cc);
       return ret_cc;
     }
     // 2 - Maximize the number of shared faces
@@ -309,6 +322,7 @@ Not used anymore but we leave it for example purposes
           cur_min = card[ret_cc];
         }
       }
+      new_compactness = compact.at(ret_cc);
       return ret_cc;
     }
     // 3 - Minimize the cardinality
@@ -316,7 +330,9 @@ Not used anymore but we leave it for example purposes
       // We should never need to come here...
       // @TODO: I'm not sure what I could consider here to decide which cell to
       // return. The aspect-ratio maybe? In the mean time, I return the one with the lowest ID
-      return *min_element(argmin_card.begin(), argmin_card.end());
+      const auto ret_cc = *(min_element(argmin_card.begin(), argmin_card.end()));
+      new_compactness = compact.at(ret_cc);
+      return ret_cc;
     }
     // If everything failed, return dummy
     return nullopt;
@@ -335,20 +351,6 @@ Not used anymore but we leave it for example purposes
                             _fc_graph->neighbours_cend(i_fc), fc);
     }
     return shared_faces;
-  }
-
-  /** @brief Tell if the addition of a new fine cell increase the compactness degree
-   * of a coarse cell
-   * @param[in] fc Index of the fine cell
-   * @param[in] cc Pointer to the coarse cell
-   * @return A boolean
-   */
-  inline bool new_cell_increases_compactness(const CoMMAIndexType fc,
-                                             const CoarseCellPtr cc) const {
-    // Set of faces in the CC
-    unordered_set<CoMMAIndexType> tmp_cc = cc->_s_fc; // OK copy
-    tmp_cc.insert(fc);
-    return _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc) > cc->_compactness;
   }
 
   /** @brief It creates a coarse cell based on the set of fine cells given as
