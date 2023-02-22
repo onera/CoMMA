@@ -93,8 +93,10 @@ CoMMAIntType read_mesh_from_file(
     // Dimension
     getline(file, line);
     dim = convert_to<CoMMAIntType>(line);
-    if ( !(dim == 2 || dim == 3) )
+    if ( !(dim == 2 || dim == 3) ) {
+      file.close();
       throw invalid_argument( "Error: dimension must be 2 or 3" );
+    }
 
     // CSR_row
     // The only one which is pushed back
@@ -161,6 +163,7 @@ CoMMAIntType read_mesh_from_file(
   else {
     throw invalid_argument("File not found");
   }
+  file.close();
   return dim;
 
 }
