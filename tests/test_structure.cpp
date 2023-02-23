@@ -1607,22 +1607,32 @@ final CC)
       auto agg = Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
             fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter, Data.dim);
       agg.set_agglomeration_parameter(card, card, card);
-      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, comp, Data.weights);
-      REQUIRE(found_(cc, seed));
-      REQUIRE(found_(cc, 0));
-      REQUIRE(found_(cc, 2));
-      REQUIRE(found_(cc, 4));
+      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
+      THEN("Compactness is well computed") {
+        REQUIRE(comp == 1);
+      }
+      THEN("The cell is T-shaped") {
+        REQUIRE(found_(cc, seed));
+        REQUIRE(found_(cc, 0));
+        REQUIRE(found_(cc, 2));
+        REQUIRE(found_(cc, 4));
+      }
     }
     WHEN("We agglomerate from the bottom central cell with a 2-steps iterative agglomerator, we get a square coarse cell") {
       const CoMMAIntT fc_iter = 2;
       auto agg = Agglomerator_Iterative<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
             fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter, Data.dim);
       agg.set_agglomeration_parameter(card, card, card);
-      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, comp, Data.weights);
-      REQUIRE(found_(cc, seed));
-      REQUIRE(found_(cc, 0));
-      REQUIRE(found_(cc, 3));
-      REQUIRE(found_(cc, 4));
+      auto cc = agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
+      THEN("Compactness is well computed") {
+        REQUIRE(comp == 2);
+      }
+      THEN("The cell is a square") {
+        REQUIRE(found_(cc, seed));
+        REQUIRE(found_(cc, 0));
+        REQUIRE(found_(cc, 3));
+        REQUIRE(found_(cc, 4));
+      }
     }
   }
 }

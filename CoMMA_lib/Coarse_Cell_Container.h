@@ -370,26 +370,19 @@ Not used anymore but we leave it for example purposes
       bool is_creation_delayed = false) {
     // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
-    // error handling
-    CoMMAWeightType vol_cc = 0;
     for (const auto &i_fc : s_fc) {
+      assert(!_fc_2_cc[i_fc].has_value());
       if (!_is_fc_agglomerated[i_fc]) {
         // Rq: initialise to False pour chaque niveau dans agglomerate(...)
         _is_fc_agglomerated[i_fc] = true;
         _nb_of_agglomerated_fc++;
       }
     }
-    for (const auto &i_fc : s_fc) {
-      vol_cc = vol_cc + _fc_graph->_volumes[i_fc];
-      assert(!_fc_2_cc[i_fc].has_value());
-    }
     // Anisotropic case
     bool is_mutable = true;
     if (is_anisotropic) {
-      assert(!is_creation_delayed);
       // we collect the various cc, where the index in the vector is the i_cc
-      _ccs[_cc_counter] =  make_shared<
-          Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      _ccs[_cc_counter] =  make_shared<CoarseCellType>(
           _fc_graph, _cc_counter, s_fc, compactness, !is_anisotropic);
       is_mutable = false;
     }
@@ -402,8 +395,7 @@ Not used anymore but we leave it for example purposes
         // Update of dict_cc:
         //==================
         // we collect the various cc, where the index in the vector is the i_cc
-        _ccs[_cc_counter] = make_shared<
-            Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        _ccs[_cc_counter] = make_shared<CoarseCellType>(
             _fc_graph, _cc_counter, s_fc, compactness);
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
