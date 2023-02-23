@@ -862,14 +862,14 @@ class Agglomerator_Isotropic
 
     // Compute new diameter
     const vector<CoMMAWeightType>& cen_fc = this->_fc_graph->_centers[i_fc];
-    CoMMAWeightType max_diam = cc_diam;
+    CoMMAWeightType max_diam = cc_diam*cc_diam;
     for (const auto i_fc_cc : fc_of_cc) {
-      const CoMMAWeightType d = euclidean_distance<CoMMAWeightType>(
+      const CoMMAWeightType d = squared_euclidean_distance<CoMMAWeightType>(
           cen_fc, this->_fc_graph->_centers[i_fc_cc]);
       if (d > max_diam)
         max_diam = d;
     } // for i_fc_cc
-    new_diam = max_diam;
+    new_diam = sqrt(max_diam);
 
     new_vol = cc_vol + this->_fc_graph->_volumes[i_fc];
 
