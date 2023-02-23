@@ -969,12 +969,6 @@ class Agglomerator_Biconnected
         // process)
         this->_cc_graph->_a_is_fc_agglomerated);
 
-    // We get the number of neighbourhoods
-    CoMMAIntType nb_neighbours = this->_fc_graph->get_nb_of_neighbours(seed);
-    // return the area of the face connected to the seed
-    vector<CoMMAWeightType> neighbours_weights =
-        this->_fc_graph->get_weights(seed);
-
     // If no neighbour is found for seed: this case happened only when isotropic
     // cell is surrounded by anisotropic cells.
     if (d_n_of_seed.empty()) {
@@ -1029,15 +1023,17 @@ class Agglomerator_Biconnected
       // choice in case of -1) and the dictionary of the boundary cells, it
       // means the total number of neighbourhood cells until the order we have
       // given (as default 3, so until the third order)
-      CoMMAIntType max_ind =
+      const CoMMAIntType max_ind =
           min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
-      // We add the faces that are on boundary calling the method of seeds pool.
+      // This formula does not work
       CoMMAIntType number_of_external_faces_current_cc =
-          nb_neighbours + this->_fc_graph->get_n_boundary_faces(seed) - 1;
+          this->_fc_graph->get_nb_of_neighbours(seed)
+          + this->_fc_graph->get_n_boundary_faces(seed)
+          - 1;
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbours of seed until a given order.
-      unordered_set<CoMMAIndexType> s_neighbours_of_seed =
+      const unordered_set<CoMMAIndexType> s_neighbours_of_seed =
           d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class neighbourhood
       auto neighbourhood = this->_neigh_crtor->create(
@@ -1047,7 +1043,7 @@ class Agglomerator_Biconnected
       unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
       cur_compact_by_fc.reserve(max_ind);
       cur_compact_by_fc[seed] = 0;
-      const auto second_less = [](const auto &p, const auto &q) {
+      constexpr auto second_less = [](const auto &p, const auto &q) {
         return p.second < q.second;
       };
       CoMMAIndexType next_cell = seed; // Dummy initialization
@@ -1072,10 +1068,12 @@ class Agglomerator_Biconnected
                                      // output
                                      max_faces_in_common, min_ar_diam, min_ar_vol);
 
+        // This formula does not work
         number_of_external_faces_current_cc +=
-            this->_fc_graph->get_nb_of_neighbours(next_cell) +
-            this->_fc_graph->get_n_boundary_faces(next_cell) - 1 -
-            2 * max_faces_in_common;
+            this->_fc_graph->get_nb_of_neighbours(next_cell)
+            + this->_fc_graph->get_n_boundary_faces(next_cell)
+            - 1
+            - 2 * max_faces_in_common;
         // we increase the cc
         size_current_cc++;
         tmp_cc.insert(next_cell);
@@ -1091,8 +1089,8 @@ class Agglomerator_Biconnected
         }
         cur_compact_by_fc[next_cell] = argmin_compact;
         const CoMMAIntType cur_compact =
-                              min_element(cur_compact_by_fc.begin(),
-                                          cur_compact_by_fc.end(),
+                              min_element(cur_compact_by_fc.cbegin(),
+                                          cur_compact_by_fc.cend(),
                                           second_less
                                           )->second;
         // Equivalent to:
