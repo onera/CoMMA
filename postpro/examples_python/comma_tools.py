@@ -146,3 +146,101 @@ float_format : str or None, default None
         outfile.write("\n")
         cnt_ar.round(precision).tofile(outfile, **float_args)
         outfile.write("\n")
+
+def build_coarse_graph(
+        fc2cc   : npt.ArrayLike,
+        CSR_row : npt.ArrayLike,
+        CSR_col : npt.ArrayLike,
+        CSR_val : npt.ArrayLike,
+        volumes : npt.ArrayLike,
+        n_bnd   : npt.ArrayLike,
+        centers : npt.ArrayLike) \
+    -> typing.Tuple[
+        npt.NDArray[int],
+        npt.NDArray[int],
+        npt.NDArray[float],
+        npt.NDArray[float],
+        npt.NDArray[int],
+        npt.NDArray[float]
+       ]:
+    """ Starting to the description of a fine mesh / graph and the result of an
+agglomeration (`fc2cc`), build the description of the coarse graph
+
+Parameters
+----------
+fc2cc : array-like
+    Result of an agglomeration telling giving the relation FC to CC
+CSR_row : array-like
+    The row pointer of the CSR representation of the fine graph
+CSR_col : array-like
+    The column index of the CSR representation of the fine graph
+CSR_val : array-like
+    The values of the CSR representation of the fine graph
+volumes : array-like
+    The volumes of the cells of the fine graph
+n_bnd_faces : array-like
+    Vector telling how many boundary faces each cell of the fine graph has
+centers : array-like
+    Cell centers of the fine graph
+
+Returns
+-------
+:obj:`np.ndarray` of `int`
+    The row pointer of the CSR representation of the coarse graph
+:obj:`np.ndarray` of `int`
+    The column index of the CSR representation of the coarse graph
+:obj:`np.ndarray` of `float`
+    The values of the CSR representation of the coarse graph
+:obj:`np.ndarray` of `float`
+    The volumes of the cells of the coarse graph
+:obj:`np.ndarray` of `int`
+    Vector telling how many boundary faces each cell of the coarse graph has
+:obj:`np.ndarray` of `float`
+    Cell centers of the coarse graph
+"""
+    fc2cc = np.asarray(fc2cc, dtype=int)
+    CSR_row = np.asarray(CSR_row, dtype=int)
+    CSR_col = np.asarray(CSR_col, dtype=int)
+    CSR_val = np.asarray(CSR_val, dtype=float)
+    volumes = np.asarray(volumes, dtype=float)
+    n_bnd = np.asarray(n_bnd, dtype=int)
+    centers = np.asarray(centers, dtype=float)
+
+    # This is possibly not the most efficient way to do the following, but it works and it is enough for now
+    nb_cc = fc2cc.max() + 1
+    coarse_n_bnd = np.empty(nb_cc, dtype = int)
+    coarse_volumes = np.empty(nb_cc, dtype = float)
+    coarse_centers = np.empty((nb_cc, centers.shape[-1]), dtype = float)
+    coarse_CSR_row = [0]
+    coarse_CSR_col = []
+    coarse_CSR_val = []
+    for cc in range(nb_cc):
+        mask_fc = fc2cc == cc
+        assert(mask_fc.any())
+        # (Previous) fine cells in current coarse cells
+        fcs = np.flatnonzero(mask_fc)
+        coarse_n_bnd[cc] = np.max(n_bnd[mask_fc])
+        coarse_volumes[cc] = np.sum(volumes[mask_fc])
+        # This is not actually very good, but still...
+        coarse_centers[cc,:] = centers[mask_fc,:].mean(axis = 0)
+        neighs_cc = {}
+        # for every (previous) fine cell composing the current coarse cell...
+        for fc in fcs:
+            # ...loop over its neighbours
+            for neigh_fc in CSR_col[CSR_row[fc]:CSR_row[fc+1]]:
+                # ...and if they are not in the same coarse cell...
+                if neigh_fc not in fcs:
+                    # ...update the interface with the coarse cell to which the neighbours belongs
+                    neigh_cc = fc2cc[neigh_fc]
+                    neighs_cc[neigh_cc] = neighs_cc.get(neigh_cc, 0.) + CSR_val[neigh_fc]
+        coarse_CSR_col.extend(neighs_cc.keys())
+        coarse_CSR_val.extend(neighs_cc.values())
+        coarse_CSR_row.append(coarse_CSR_row[-1] + len(neighs_cc))
+    return (
+        np.array(coarse_CSR_row, dtype=int),
+        np.array(coarse_CSR_col, dtype=int),
+        np.array(coarse_CSR_val, dtype=float),
+        coarse_volumes,
+        coarse_n_bnd,
+        coarse_centers
+    )
