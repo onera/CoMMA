@@ -6,8 +6,9 @@ from CoMMA import *
 import meshio
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D, Mesh3D
-import dualGPy.Utils as ut
+# import dualGPy.Utils as ut
 import numpy as np
+from comma_tools import build_coarse_graph
 
 neigh_type_types = [
         'Extended',
@@ -119,44 +120,23 @@ for level in range(agglomeration_levels):
         print(' - Preparing data...', flush = True, end = '')
         # This is possibly not the most efficient way to do the following, but it works and it is enough for now
         f2c = np.asarray(fc_to_cc)
-        nb_cc = f2c.max() + 1
-        new_isOnBnd = np.empty(nb_cc, dtype = CoMMAInt)
-        new_volumes = np.empty(nb_cc, dtype = CoMMAWeight)
-        new_centers = np.empty((nb_cc, centers.shape[-1]), dtype = CoMMAWeight)
-        new_adjMatrix_row_ptr = [0]
-        new_adjMatrix_col_ind = []
-        new_adjMatrix_areaValues = []
-        # For every coarse cell...
-        for cc in range(nb_cc):
-            mask_fc = f2c == cc
-            assert(mask_fc.any())
-            # (Previous) fine cells in current coarse cells
-            fcs = np.flatnonzero(mask_fc)
-            new_isOnBnd[cc] = np.max(isOnBnd[mask_fc])
-            new_volumes[cc] = np.sum(volumes[mask_fc])
-            # This is not actually very good, but still...
-            new_centers[cc,:] = centers[mask_fc,:].mean(axis = 0)
-            neighs_cc = {}
-            # for every (previous) fine cell composing the current coarse cell...
-            for fc in fcs:
-                # ...loop over its neighbours
-                for neigh_fc in adjMatrix_col_ind[adjMatrix_row_ptr[fc]:adjMatrix_row_ptr[fc+1]]:
-                    # ...and if they are not in the same coarse cell...
-                    if neigh_fc not in fcs:
-                        # ...update the interface with the coarse cell to which the neighbours belongs
-                        neigh_cc = fc_to_cc[neigh_fc]
-                        cur_area = neighs_cc.get(neigh_cc, 0.) # Use default value in order to avoid errors
-                        neighs_cc[neigh_cc] = cur_area + adjMatrix_areaValues[neigh_fc]
-            new_adjMatrix_col_ind.extend(neighs_cc.keys())
-            new_adjMatrix_areaValues.extend(neighs_cc.values())
-            new_adjMatrix_row_ptr.append(new_adjMatrix_row_ptr[-1] + len(neighs_cc))
-        isOnBnd = new_isOnBnd
-        volumes = new_volumes
-        centers = new_centers
-        weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
-        adjMatrix_col_ind = new_adjMatrix_col_ind
-        adjMatrix_row_ptr = new_adjMatrix_row_ptr
-        adjMatrix_areaValues = new_adjMatrix_areaValues
+        (
+            adjMatrix_row_ptr,
+            adjMatrix_col_ind,
+            adjMatrix_areaValues,
+            volumes,
+            isOnBnd,
+            centers
+        ) = build_coarse_graph(
+            fc_to_cc,
+            adjMatrix_row_ptr,
+            adjMatrix_col_ind,
+            adjMatrix_areaValues,
+            volumes,
+            isOnBnd,
+            centers)
+        nb_cc = isOnBnd.shape[0]
+        weights = np.arange(start = nb_cc-1, stop = 0, step = -1, dtype = CoMMAWeight)
         fc_to_cc = np.empty(nb_cc, dtype = CoMMAIndex)
         arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype = CoMMAIndex)
         print('OK')
