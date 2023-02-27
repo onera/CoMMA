@@ -337,7 +337,7 @@ class NeighbourhoodCreator {
    *  @param[in] dimension Dimension of the problem
    *  @return a shared pointer to a new Neighborhood object
    */
-  virtual inline shared_ptr<NeighbourhoodBaseType> create(
+  virtual shared_ptr<NeighbourhoodBaseType> create(
       const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
       const vector<CoMMAWeightType> &priority_weights,
       const CoMMAIntType dimension) const = 0;
@@ -346,7 +346,7 @@ class NeighbourhoodCreator {
    *  @param[in] other Shared pointer to an existing Neighbourhood object
    *  @return a shared pointer to a new Neighborhood object
    */
-  virtual inline shared_ptr<NeighbourhoodBaseType> clone(
+  virtual shared_ptr<NeighbourhoodBaseType> clone(
       shared_ptr<NeighbourhoodBaseType> other) const = 0;
 };
 
