@@ -2120,6 +2120,58 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 7, 1));
       }
     }
+    WHEN("We perform the same test as above, but test whats happens if the singular cell is the first one") {
+      cc_graph->cc_create_a_cc({1});
+      cc_graph->cc_create_a_cc({0,4,5});
+      cc_graph->cc_create_a_cc({2,3,6,7});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 0, 1));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 1));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph, 7, 2));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+      }
+    }
+    WHEN("We perform the same test as above, but test whats happens if the singular cell is the last one") {
+      cc_graph->cc_create_a_cc({0,4,5});
+      cc_graph->cc_create_a_cc({2,3,6,7});
+      cc_graph->cc_create_a_cc({1});
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 1, 2));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph, 3, 1));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+      }
+    }
   }
   GIVEN("A simple 3x3 Cartesian grid") {
     const DualGPy_quad_3 Data = DualGPy_quad_3();

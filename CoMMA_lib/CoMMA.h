@@ -182,7 +182,7 @@ void agglomerate_one_level(
        || adjMatrix_row_ptr.back() != adjMatrix_col_ind.size()
        || adjMatrix_row_ptr.back() != adjMatrix_areaValues.size() )
     throw invalid_argument( "CoMMA - Error: bad CRS graph (sizes do not match)");
-  if ( !isFirstAgglomeration ) {
+  if ( is_anisotropic && !isFirstAgglomeration ) {
     if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() )
       throw invalid_argument( "CoMMA - Error: usage of input anisotropic line requested, but arguments are not enough / invalid to define them");
     if ( agglomerationLines_Idx.back() != agglomerationLines.size() )

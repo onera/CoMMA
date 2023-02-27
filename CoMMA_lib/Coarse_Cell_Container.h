@@ -195,9 +195,12 @@ Not used anymore but we leave it for example purposes
       auto new_ID = *(removed_cc.begin());
       // Starting from the CC just after the first removed singular cell, update all
       // cells. Looking for new_ID-1 than doing ++ avoid case of consecutive singular
-      // cells
-      auto it_cc = _ccs.find(new_ID - 1);
-      ++it_cc;
+      // cells. If the first removed cell was cell 0, then start from the beginning
+      auto it_cc = _ccs.begin();
+      if (new_ID > 0) {
+        it_cc = _ccs.find(new_ID - 1);
+        ++it_cc;
+      }
       for (; it_cc != _ccs.end(); ++it_cc, ++new_ID) {
         // Update fine cells
         for (auto const &i_fc : it_cc->second->_s_fc) {

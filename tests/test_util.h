@@ -23,6 +23,8 @@
 */
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <set>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -64,9 +66,9 @@ inline T convert_to(const string &str) {
  * area) of the nodes or edges of the Mesh
  * @tparam CoMMAIntType the CoMMA type for integers
  * @param[in] fname Name of the file to read
- * @param[out] CSR_row The row pointer of the CRS representation
- * @param[out] CSR_col The column index of the CRS representation
- * @param[out] CSR_val The values of the CRS representation
+ * @param[out] CSR_row The row pointer of the CSR representation
+ * @param[out] CSR_col The column index of the CSR representation
+ * @param[out] CSR_val The values of the CSR representation
  * @param[out] volumes The volumes of the cells
  * @param[out] n_bnd_faces Vector telling how many boundary faces each cell has
  * @param[out] centers Cell centers
@@ -93,8 +95,10 @@ CoMMAIntType read_mesh_from_file(
     // Dimension
     getline(file, line);
     dim = convert_to<CoMMAIntType>(line);
-    if ( !(dim == 2 || dim == 3) )
+    if ( !(dim == 2 || dim == 3) ) {
+      file.close();
       throw invalid_argument( "Error: dimension must be 2 or 3" );
+    }
 
     // CSR_row
     // The only one which is pushed back
@@ -161,7 +165,100 @@ CoMMAIntType read_mesh_from_file(
   else {
     throw invalid_argument("File not found");
   }
+  file.close();
   return dim;
 
+}
+
+/** @brief Starting to the description of a fine mesh / graph and the result of an
+ * agglomeration (\p fc2cc), build the description of the coarse graph
+ * @param[in] fc2cc Result of an agglomeration telling giving the relation FC to CC
+ * @param[in] fine_CSR_row The row pointer of the CSR representation of the fine
+ * graph
+ * @param[in] fine_CSR_col The column index of the CSR representation of the fine
+ * graph
+ * @param[in] fine_CSR_val The values of the CSR representation of the fine graph
+ * @param[in] fine_volumes The volumes of the cells of the fine graph
+ * @param[in] fine_n_bnd_faces Vector telling how many boundary faces each cell of
+ * the fine graph has
+ * @param[in] fine_centers Cell centers of the fine graph
+ * @param[out] fine_CSR_row The row pointer of the CSR representation of the coarse
+ * graph
+ * @param[out] fine_CSR_col The column index of the CSR representation of the coarse
+ * graph
+ * @param[out] fine_CSR_val The values of the CSR representation of the coarse graph
+ * @param[out] fine_volumes The volumes of the cells of the coarse graph
+ * @param[out] fine_n_bnd_faces Vector telling how many boundary faces each cell of
+ * the coarse graph has
+ * @param[out] fine_centers Cell centers of the coarse graph
+ */
+template <typename CoMMAIndexType, typename CoMMAWeightType,
+          typename CoMMAIntType>
+void build_coarse_CSR(
+    const vector<CoMMAIndexType> &fc2cc,
+    const vector<CoMMAIndexType> &fine_CSR_row,
+    const vector<CoMMAIndexType> &fine_CSR_col,
+    const vector<CoMMAWeightType> &fine_CSR_val,
+    const vector<CoMMAWeightType> &fine_volumes,
+    const vector<CoMMAIntType> &fine_n_bnd_faces,
+    const vector<vector<CoMMAWeightType>> &fine_centers,
+    vector<CoMMAIndexType> &coarse_CSR_row,
+    vector<CoMMAIndexType> &coarse_CSR_col,
+    vector<CoMMAWeightType> &coarse_CSR_val,
+    vector<CoMMAWeightType> &coarse_volumes,
+    vector<CoMMAIntType> &coarse_n_bnd_faces,
+    vector<vector<CoMMAWeightType>> &coarse_centers) {
+  const auto dim_pts = fine_centers[0].size();
+  const CoMMAIndexType n_fc = static_cast<CoMMAIndexType>(fc2cc.size());
+  CoMMAIndexType n_cc = 0;
+  // Building the CC
+  map<CoMMAIndexType, set<CoMMAIndexType>> ccs{};
+  for (CoMMAIndexType i = 0; i < n_fc; ++i) {
+    const auto cc = fc2cc[i];
+    if (cc > n_cc)
+      n_cc = cc;
+    ccs[cc].insert(i);
+  }
+  ++n_cc; // From index to number
+  // Preparing outputs
+  coarse_CSR_row.resize(n_cc+1);
+  coarse_volumes.resize(n_cc);
+  coarse_n_bnd_faces.resize(n_cc);
+  coarse_centers.resize(n_cc);
+  coarse_CSR_row[0] = 0;
+  for (const auto &[cc, fcs] : ccs) {
+    CoMMAWeightType vol{0.};
+    vector<CoMMAWeightType> cen(dim_pts, 0.);
+    CoMMAIntType n_bnd = 0;
+    map<CoMMAIndexType, CoMMAWeightType> coarse_val;
+    for (const auto &fc : fcs) {
+      vol += fine_volumes[fc];
+      if (fine_n_bnd_faces[fc] > n_bnd)
+        n_bnd = fine_n_bnd_faces[fc];
+      for (auto i = decltype(dim_pts){0}; i < dim_pts; ++i)
+        cen[i] += fine_centers[fc][i];
+      auto fine_neigh = fine_CSR_col.cbegin() + fine_CSR_row[fc];
+      auto fine_val = fine_CSR_val.cbegin() + fine_CSR_row[fc];
+      for (; fine_neigh != fine_CSR_col.cbegin() + fine_CSR_row[fc + 1];
+           ++fine_neigh, ++fine_val) {
+        if (fcs.find(*fine_neigh) == fcs.end()) {
+          const auto coarse_neigh = fc2cc[*fine_neigh];
+          // Here we rely on the fact that operator[] inserts 0 if does not exist
+          coarse_val[coarse_neigh] = coarse_val[coarse_neigh] + *fine_val;
+        }
+      }
+    }
+    // Setting output
+    for (const auto &[idx, val] : coarse_val) {
+      coarse_CSR_col.push_back(idx);
+      coarse_CSR_val.push_back(val);
+    }
+    coarse_CSR_row[cc + 1] = coarse_CSR_row[cc] + coarse_val.size();
+    coarse_volumes[cc] = vol;
+    coarse_n_bnd_faces[cc] = n_bnd;
+    coarse_centers[cc].resize(dim_pts);
+    for (auto i = decltype(dim_pts){0}; i < dim_pts; ++i)
+      coarse_centers[cc][i] = cen[i] / fcs.size();
+  }
 }
 #endif

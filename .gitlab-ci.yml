@@ -14,8 +14,7 @@ default:
     - shell
   before_script:
     # Load python version, compilers
-    - source /stck/rmilani/GitLab_CI_envs/CoMMA_env_el7.sh  # Centos7
-    #- source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh  # Centos8
+    - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
 
 stages:
     - init
@@ -33,7 +32,7 @@ job:init:
     before_script:
         - module purge
         # Load python version, compilers
-        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env_el7.sh
+        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
     only:
         changes:

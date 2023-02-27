@@ -99,17 +99,17 @@ inline T get_direction(const vector<T>& a, const vector<T>& b, vector<T>& dir) {
   return norm;
 }
 
-/** @brief Compute the Euclidean distance between two points seen as vectors. We use
- * vectors because we can have both 2- and 3D points (also we can have 3D points even
- * if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D meshes). The
- * dimension used as reference is the one of the first point
+/** @brief Compute the squared Euclidean distance between two points seen as vectors.
+ * We use vectors because we can have both 2- and 3D points (also we can have 3D
+ * points even if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D
+ * meshes). The dimension used as reference is the one of the first point
  *  @tparam T Type for real numbers
  *  @param[in] a First point
  *  @param[in] b Second point
- *  @return The Euclidean distance between the two points
+ *  @return The squared Euclidean distance between the two points
  */
 template <typename T>
-inline T euclidean_distance(const vector<T> a, const vector<T> b) {
+inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
 #if 0
   return sqrt(
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
@@ -122,7 +122,7 @@ inline T euclidean_distance(const vector<T> a, const vector<T> b) {
     const auto d = a[i] - b[i];
     ret += d*d;
   }
-  return sqrt(ret);
+  return ret;
 }
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
@@ -138,7 +138,7 @@ struct CustomPairLessFunctor {
    *  @return true if p.second < q.second or (p.second == q.second and p.first > q.first);
    * false otherwise
    */
-  inline bool operator() (PairT p, PairT q) const {
+  inline bool operator() (const PairT &p, const PairT &q) const {
     if      (p.second < q.second)   return true;
     else if (p.second > q.second)   return false;
     else /* p.second == q.second */ return p.first > q.first;
@@ -158,12 +158,29 @@ struct CustomPairGreaterFunctor {
    *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
    * false otherwise
    */
-  inline bool operator() (PairT p, PairT q) const {
+  inline bool operator() (const PairT &p, const PairT &q) const {
     // I tried this: return !CustomPairLessFunctor<PairT>()(p,q);
     // but it didn't work well for equality
     if      (p.second > q.second)   return true;
     else if (p.second < q.second)   return false;
     else /* p.second == q.second */ return p.first < q.first;
+  }
+};
+
+/** @brief Functor for pairs implementing a less operator based only on the second
+ * element of the pair.
+ *  @tparam PairT Type for pairs
+ */
+template<typename PairT>
+struct PairSecondBasedLessFunctor {
+  /** @brief Functor for pairs implementing a less operator based only on the second
+ * element of the pair
+   *  @param[in] p First pair
+   *  @param[in] q Second pair
+   *  @return true if p.second < q.second; false otherwise
+   */
+  inline bool operator() (const PairT &p, const PairT &q) const {
+    return p.second < q.second;
   }
 };
 
