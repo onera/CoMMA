@@ -12,6 +12,7 @@ from dualGPy.Mesh import Mesh2D, Mesh3D
 import dualGPy.Utils as ut
 import numpy as np
 import os.path
+import comma_tools
 
 neigh_type_types = [
         'Extended',
@@ -30,7 +31,7 @@ seed_ordering_types = {
 # Input-related parameters
 # Format is one of those accepted by meshio or None
 # e.g., input_mesh, input_format = "3D_CRM.vtu", None
-input_mesh, input_format = "../meshes/naca2d_structured_ansys.msh", "ansys"
+input_mesh, input_format = "./2D_refine1.msh", "gmsh"
 ##
 dimension = 2
 ##
@@ -88,14 +89,30 @@ CoMMAIndex  = np.uint # Unsigned long
 CoMMAInt    = int
 CoMMAWeight = np.double
 
-print("Reading mesh and creating dual graph...", flush = True, end = '')
-if not os.path.exists(input_mesh):
-    raise OSError(f'Cannot find mesh', filename = input_mesh)
-mmio = meshio.read(input_mesh, file_format = input_format)
-mio_dim = mmio.points.shape[-1]
-if dimension != mio_dim:
-    raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
-Reminder: VTK mesh are read as 3D by meshio even if they are 2D. See dualGPy ex_dualize.py for more info''')
+# print("Reading mesh and creating dual graph...", flush = True, end = '')
+# if not os.path.exists(input_mesh):
+    # raise OSError(f'Cannot find mesh', filename = input_mesh)
+# mmio = meshio.read(input_mesh, file_format = input_format)
+# mio_dim = mmio.points.shape[-1]
+# if dimension != mio_dim:
+    # raise ValueError(f'''You requested dimension {dimension}, but mesh is of dimension {mio_dim}. Please, change one of the two
+# Reminder: VTK mesh are read as 3D by meshio even if they are 2D. See dualGPy ex_dualize.py for more info''')
+tmp_mio = meshio.read(input_mesh, file_format = input_format)
+quads = []
+trias = []
+for clblk in tmp_mio.cells:
+    for pts in clblk.data:
+        unq_args = np.unique(pts, return_index=True)[1]
+        if unq_args.shape[0] == 3:
+            trias.append(pts[np.sort(unq_args)])
+        elif unq_args.shape[0] == 4:
+            quads.append(pts[np.sort(unq_args)])
+        else:
+            print("Cell of length {}, skipped".format(unq_args.shape[0]))
+mmio = meshio.Mesh(
+    points=tmp_mio.points[:,:-1],
+    cells={'quad':quads, 'triangle':trias}
+)
 
 mesh = Mesh2D(mmio) if dimension == 2 \
         else Mesh3D(mmio)
@@ -108,6 +125,10 @@ print('OK')
 nb_fc = len(graph.vertex)-1
 adjMatrix_row_ptr= np.array(graph.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(graph.edges, dtype = CoMMAIndex)
+comma_tools.dump_graph("new_ref_1_dump.txt",
+                       graph.vertex, graph.edges, mesh.area,
+                       mesh.volume, mesh.boundary_cells, mesh.centers)
+raise ValueError
 
 adjMatrix_areaValues = np.array(mesh.area, dtype = CoMMAWeight)
 volumes = np.array(mesh.volume, dtype = CoMMAWeight)
