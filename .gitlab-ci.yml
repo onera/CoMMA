@@ -24,8 +24,6 @@ stages:
     - init
     - build
     - test
-    - build_rel
-    - test_rel
     - documentation
 
 job:init:
@@ -51,7 +49,7 @@ job:init:
         reports:
             dotenv: ./build.env
 
-CoMMA:
+job:build_dbg:
     stage: build
     needs: ['job:init']
     only:
@@ -72,9 +70,9 @@ CoMMA:
     #    paths:
     #        # The path is taken from the initial directory, hence we specify the full path
     #        - $CUSTOM_CI_DIR/build
-test_a:
+job:test_dbg:
     stage: test
-    needs: ['job:init', CoMMA]
+    needs: ['job:init', 'job:build_dbg']
     only:
         changes:
             - CoMMA_lib/*.{cpp,h}
@@ -95,8 +93,8 @@ test_a:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
-CoMMA_rel:
-    stage: build_rel
+job:build_rel:
+    stage: build
     needs: ['job:init']
     only:
         changes:
@@ -111,9 +109,9 @@ CoMMA_rel:
         - cd build_rel
         - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
         - make -j
-test_b:
-    stage: test_rel
-    needs: ['job:init', CoMMA_rel]
+job:test_rel:
+    stage: test
+    needs: ['job:init', 'job:build_rel']
     only:
         changes:
             - CoMMA_lib/*.{cpp,h}
@@ -126,7 +124,7 @@ test_b:
         - ./Comma_test
 pages:
     stage: documentation
-    needs: ['job:init'] #job:init is needed to get dotenv artifacts
+    needs: ['job:init', 'job:build_dbg', 'job:test_dbg'] #job:init is needed to get dotenv artifacts
     script:
         - cd $CUSTOM_CI_DIR
         - rm -rf documentation
