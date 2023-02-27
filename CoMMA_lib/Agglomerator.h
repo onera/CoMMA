@@ -295,14 +295,16 @@ class Agglomerator_Anisotropic
 
     this->_v_of_s_anisotropic_compliant_fc[1] = {};
 
+    // Necessary for the create_cc but maybe we need in
+    // some way to change that.
+    constexpr bool is_anisotropic = true;
+    constexpr CoMMAIntType compactness = 1;
+
     // Setting up lambda function that will perform the loop. This is needed since we
     // want to loop forwards or backwards according to some runtime value
     // See, e.g., https://stackoverflow.com/a/56133699/12152457
     auto loop_line = [&](auto begin, auto end) {
       AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
-      // TODO here is necessary for the cc_create_a_cc but maybe we need in
-      // some way to change that.
-      const bool is_anisotropic = true;
       for (auto line_it = begin; line_it != end; line_it += 2) {
         // we agglomerate cells along the agglomeration line, hence we have to
         // go through the faces and agglomerate two faces together
@@ -330,7 +332,7 @@ class Agglomerator_Anisotropic
         }
         // We create the coarse cell
         const CoMMAIndexType i_cc =
-          this->_cc_graph->cc_create_a_cc(s_fc, is_anisotropic);
+          this->_cc_graph->create_cc(s_fc, compactness, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
         this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
       }
@@ -385,7 +387,7 @@ class Agglomerator_Anisotropic
       // https://en.cppreference.com/w/cpp/container/deque/erase
       for (auto it = this->_aniso_neighbours.begin();
            it != this->_aniso_neighbours.end();) {
-        if (this->_cc_graph->_a_is_fc_agglomerated[*it])
+        if (this->_cc_graph->_is_fc_agglomerated[*it])
           it = this->_aniso_neighbours.erase(it);
         else
           ++it;
@@ -403,29 +405,29 @@ class Agglomerator_Anisotropic
     // Even if we have updated it, the seeds pool might need initialization, for
     // instance, if it was set up with boundary priority
     if (this->_seeds_pool->need_initialization(
-                            this->_cc_graph->_a_is_fc_agglomerated))
+                            this->_cc_graph->_is_fc_agglomerated))
       this->_seeds_pool->initialize();
   }
 
   /** @brief Function that prepares the anisotropic lines for output
    *  @param[in] level of the agglomeration process into the Multigrid algorithm
-   *  @param[out] agglo_lines_array_idx Each element points to a particular
-   * element in the vector agglo_lines_array. This is due to the storing structure.
-   *  @param[out] agglo_lines_array Array storing all the element of the
-   * anisotropic lines.
+   *  @param[out] agglo_lines_idx Connectivity for the agglomeration lines: each
+   * element points to a particular element in the vector \p agglo_lines
+   *  @param[out] agglo_lines Vector storing all the elements of the anisotropic
+   * lines
    */
   void get_agglo_lines(CoMMAIntType level,
-                       vector<CoMMAIndexType> &agglo_lines_array_idx,
-                       vector<CoMMAIndexType> &agglo_lines_array) const {
+                       vector<CoMMAIndexType> &agglo_lines_idx,
+                       vector<CoMMAIndexType> &agglo_lines) const {
     // If at the level of agglomeration "level" the vector containing the number of
     // lines is empty, hence it means no line has been found at the current
     // level.
     // variable cumulating the number of fine cells in the agglomeration lines
     // of the current level
     CoMMAIndexType number_of_fc_in_agglomeration_lines = 0;
-    agglo_lines_array_idx.clear();
-    agglo_lines_array.clear();
-    agglo_lines_array_idx.push_back(0);
+    agglo_lines_idx.clear();
+    agglo_lines.clear();
+    agglo_lines_idx.push_back(0);
     // We cycle over the line (in _v_lines)
     for (const auto &line_ptr : this->_v_lines[level]) {
       const auto line = *line_ptr; // Convenience
@@ -434,11 +436,11 @@ class Agglomerator_Anisotropic
       // line
       // WARNING! We are storing the anisotropic lines in a vector so we need a
       // way to point to the end of a line and the starting of a new one.
-      agglo_lines_array_idx.push_back(size_of_line +
-                                      number_of_fc_in_agglomeration_lines);
+      agglo_lines_idx.push_back(size_of_line +
+                                number_of_fc_in_agglomeration_lines);
       // Here we store the index of the cell.
       for (const auto cell : line) {
-        agglo_lines_array.push_back(cell);
+        agglo_lines.push_back(cell);
       }
       number_of_fc_in_agglomeration_lines += size_of_line;
     }
@@ -781,28 +783,28 @@ class Agglomerator_Isotropic
                              const vector<CoMMAWeightType> &priority_weights,
                              bool correction_steps) override {
     set_agglomeration_parameter(goal_card, min_card, max_card);
+    constexpr bool is_anistropic = false;
     // We define a while for which we control the number of agglomerated cells
-    CoMMAIntType compactness = 0;
-    CoMMAIndexType nb_of_fc = this->_l_nb_of_cells[0];
+    const CoMMAIndexType nb_of_fc = this->_l_nb_of_cells[0];
     while (this->_cc_graph->get_number_of_fc_agglomerated() < nb_of_fc) {
       // 1) Choose a new seed
-      auto seed = this->_seeds_pool->choose_new_seed(
-          this->_cc_graph->_a_is_fc_agglomerated);
+      const auto seed = this->_seeds_pool->choose_new_seed(
+          this->_cc_graph->_is_fc_agglomerated);
       assert(seed.has_value());
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm in the children class
+      CoMMAIntType compactness = 0;
       const unordered_set<CoMMAIndexType> set_current_cc =
-          choose_optimal_cc_and_update_seeds_pool(seed.value(), compactness,
-                                                 priority_weights);
-      // 3)  Creation of cc:
-      bool is_anistropic = false;
-      // Check if delay the agglomeration based on compactness written during
-      // the optimal cc choice process. Remember the compactness is the minimum
-      // degree in the coarse cell.
-      //bool is_creation_delayed = compactness < this->_dimension;
-      bool is_creation_delayed = false;
-      this->_cc_graph->cc_create_a_cc(set_current_cc, is_anistropic,
-                                      is_creation_delayed);
+          choose_optimal_cc_and_update_seeds_pool(seed.value(), priority_weights,
+                                                  compactness);
+      // 3)  Creation of cc
+      // We check that threshold cardinality is reached
+      //const bool creation_delayed = (static_cast<CoMMAIntType>(s_current_cc.size()) <= this->_threshold_card);
+      // @TODO: We prefer to have coarse cells created right now, it might be
+      // interesting to explore if delaying was allowed
+      constexpr bool is_creation_delayed = false;
+      this->_cc_graph->create_cc(set_current_cc, compactness, is_anistropic,
+                                 is_creation_delayed);
     }
     // When we exit from this process all the cells are agglomerated, apart the
     // delayed ones
@@ -878,15 +880,17 @@ class Agglomerator_Isotropic
 
   /** @brief Pure virtual function that must be implemented in child classes to
    * define the optimal coarse cell
-   *  @param[in] seed the seed cell to start cumulate the other cells
-   *  @param[in] compactness the compactness is defined as the minimum number of
-   * neighbour of a fine cell inside a coarse cell
+   *  @param[in] seed Cell from which the agglomeration of the CC starts
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
+   *  @param[out] compactness Compactness of the final CC, that is, the minimum number of
+   * neighbours of a fine cell inside a coarse cell
+   *  @return the (unordered) set of the fine cells composing the coarse cell
    */
   virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
-      const CoMMAIndexType seed, CoMMAIntType &compactness,
-      const vector<CoMMAWeightType> &priority_weights) = 0;
+      const CoMMAIndexType seed,
+      const vector<CoMMAWeightType> &priority_weights,
+      CoMMAIntType &compactness) = 0;
 
 };
 
@@ -933,15 +937,17 @@ class Agglomerator_Biconnected
 
   /** @brief Specialization of the pure virtual function in the parent class, to
    * be used in couple with the agglomerate_one_level of the Agglomerator_Isotropic.
-   *  @param[in] seed the seed cell to start cumulate the other cells
-   *  @param[in] compactness the compactness is defined as the minimum number of
-   * neighbour of a fine cell inside a coarse cell
+   *  @param[in] seed Cell from which the agglomeration of the CC starts
    *  @param[in] priority_weights Weights used to set the order telling where to start
    * agglomerating. The higher the weight, the higher the priority
+   *  @param[out] compactness Compactness of the final CC, that is, the minimum number of
+   * neighbours of a fine cell inside a coarse cell
+   *  @return the (unordered) set of the fine cells composing the coarse cell
    */
   unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
-      const CoMMAIndexType seed, CoMMAIntType &compactness,
-      const vector<CoMMAWeightType> &priority_weights) override {
+      const CoMMAIndexType seed,
+      const vector<CoMMAWeightType> &priority_weights,
+      CoMMAIntType &compactness) override {
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
@@ -967,7 +973,7 @@ class Agglomerator_Biconnected
         this->_max_card,
         // anisotropic cells agglomerated (not to take into account in the
         // process)
-        this->_cc_graph->_a_is_fc_agglomerated);
+        this->_cc_graph->_is_fc_agglomerated);
 
     // If no neighbour is found for seed: this case happened only when isotropic
     // cell is surrounded by anisotropic cells.
@@ -977,6 +983,7 @@ class Agglomerator_Biconnected
       compactness = 0;
     }
     else if (static_cast<CoMMAIntType>(d_n_of_seed.size() + s_current_cc.size()) < this->_goal_card) {
+
       // Not enough available neighbour, the dictionary of the available cells
       // size summed with the current cell size is not enough to reach the goal
       // cardinality: creation of a (too small) coarse cell.
@@ -984,24 +991,14 @@ class Agglomerator_Biconnected
       for (auto &i_k_v : d_n_of_seed) {
         s_current_cc.insert(i_k_v.first);
       }
-      // We check as a consequence the threshold cardinality that is a minimum
-      // limit
-      bool is_creation_delayed = (static_cast<CoMMAIntType>(s_current_cc.size()) <= this->_threshold_card);
-      if (is_creation_delayed) {
-        compactness = 0;  // Return
-      } else {
-        // minimum number of neighbourhood of a connected cell
-        compactness = this->_dimension;
-        // TODO: CHECK THAT, it is not better to be substituted with number of
-        // neighbourhood?
-      }
+      compactness =
+        this->_fc_graph->compute_min_fc_compactness_inside_a_cc(s_current_cc);
     }
     else {
       // If we passed the two previous checks, the minimum size is the goal
       // cardinality required
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
-      CoMMAIntType min_size = this->_min_card;
       // Computation of the initial aspect ratio
       CoMMAWeightType diam_cc{-1.};
       // CC in construction
@@ -1017,7 +1014,7 @@ class Agglomerator_Biconnected
           dict_cc_in_creation;
       CoMMAIntType min_external_faces = numeric_limits<CoMMAIntType>::max();
       CoMMAIntType max_compact = 0;
-      CoMMAIntType arg_min_card = min_size;
+      CoMMAIntType arg_min_card = this->_min_card;
       // Here we define the exact dimension of the coarse cell as the min
       // between the max cardinality given as an input (remember the constructor
       // choice in case of -1) and the dictionary of the boundary cells, it
@@ -1101,7 +1098,7 @@ class Agglomerator_Biconnected
         // based on the idea that the smallest cc (w.r.t. card) is may be not
         // the one that minimized the number of external faces. If this if is
         // satisfied it means we have an eligible cell
-        if ((min_size <= size_current_cc) || size_current_cc == max_ind) {
+        if ((this->_min_card <= size_current_cc) || size_current_cc == max_ind) {
 
           if ( cur_compact > max_compact ) {
             max_compact = cur_compact;
@@ -1154,7 +1151,7 @@ class Agglomerator_Biconnected
       //   to the original seed
       // - If more than one cell with the same order, use priority weights
       const auto cc_neighs = this->_fc_graph->get_neighbourhood_of_cc(s_current_cc,
-                                     this->_cc_graph->_a_is_fc_agglomerated);
+                                     this->_cc_graph->_is_fc_agglomerated);
       // Basically, like d_n_of_seed but with key and value swapped
       map<CoMMAIntType, unordered_set<CoMMAIndexType>> neighs_by_order{};
       // For those that were outside max neighbourhood order

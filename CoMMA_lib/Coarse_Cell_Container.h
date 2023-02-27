@@ -46,42 +46,42 @@ template <typename CoMMAIndexType, typename CoMMAWeightType,
 class Coarse_Cell_Container {
 
  public:
+  /** @brief Type for a Coarse_Cell object */
+  using CoarseCellType = Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
   /** @brief Type for a shared pointer to a Dual_Graph object */
-  using DualGraphPtr = shared_ptr<
-    Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+  using CoarseCellPtr = shared_ptr<CoarseCellType>;
 
-  /** @brief Type for a shared pointer to a Subgraph object */
-  using SubGraphPtr = shared_ptr<
-    Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+  /** @brief Type for a shared pointer to a Dual_Graph object */
+  using DualGraphPtr = typename CoarseCellType::DualGraphPtr;
 
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
    */
   Coarse_Cell_Container(DualGraphPtr &fc_graph)
-      : _cc_vec(), _fc_graph(fc_graph), _cc_counter(0),
+      : _ccs(), _fc_graph(fc_graph), _cc_counter(0),
         _fc_2_cc(fc_graph->_number_of_cells, nullopt),
-        _a_is_fc_agglomerated(fc_graph->_number_of_cells, false),
+        _is_fc_agglomerated(fc_graph->_number_of_cells, false),
         _nb_of_agglomerated_fc(0), _delayed_cc(), _singular_cc() {}
 
   /** @brief Destructor */
   ~Coarse_Cell_Container() = default;
 
-  /** @brief Map container of the CSR representation of the coarse cells */
-  map<CoMMAIndexType, SubGraphPtr> _cc_vec;
+  /** @brief Map containing the CC and their ID */
+  map<CoMMAIndexType, CoarseCellPtr> _ccs;
 
   /** @brief Dual graph representation */
   DualGraphPtr _fc_graph;
 
   /** @brief Number of coarse cells */
-  CoMMAIndexType _cc_counter = 0;
+  CoMMAIndexType _cc_counter;
 
   /** @brief Output vector identifying to which coarse cell the fine cell belongs */
   vector<optional<CoMMAIndexType>> _fc_2_cc;
 
   /** @brief Vector of boolean telling whether a fine cell has been agglomerated */
-  vector<bool> _a_is_fc_agglomerated;
+  vector<bool> _is_fc_agglomerated;
 
   /** @brief Helper to get the member variable that defines the number of
    * agglomerated fine cells
@@ -130,16 +130,16 @@ Not used anymore but we leave it for example purposes
   CustomMapItT remove_cc(CustomMapItT elim) {
     // we delete the element and we obtained the pointer to the next element in
     // memory
-    CustomMapItT it = _cc_vec.erase(elim);
+    CustomMapItT it = _ccs.erase(elim);
     // update value of the other nodes
-    for (auto i = it; i != _cc_vec.end(); i++) {
+    for (auto i = it; i != _ccs.end(); i++) {
       for (auto const &i_fc : i->second->_mapping_l_to_g) {
         _fc_2_cc[i_fc] = (i->first) - 1;
       }
-      auto node = _cc_vec.extract(i);
+      auto node = _ccs.extract(i);
       if (!node.empty()) {
         node.key() = (i->first) - 1;
-        _cc_vec.insert(move(node));
+        _ccs.insert(move(node));
       }
     }
     // return pointer to the next element
@@ -156,35 +156,34 @@ Not used anymore but we leave it for example purposes
   void correct(const CoMMAIntType max_card) {
     // We use it to understand if we have succeeded in the correction
     set<typename decltype(_singular_cc)::value_type> removed_cc{};
-    for (const auto& i_cc : _singular_cc) {
+    for (const auto& old_cc : _singular_cc) {
       // We enter in the property of the subgraph of being 1
       // and we consider what happens. Remember that second because
       // we are checking the subgraph
-      //auto current_cc = _cc_vec[i_cc];
-      auto i_fc = _cc_vec[i_cc]->_mapping_l_to_g[0];
+      // Take the only FC in the CC
+      const auto isolated_fc = *(_ccs[old_cc]->_s_fc.begin());
       // Get the cc neighs of the given fine cell
-      const auto neighs = get_neighs_cc(i_fc, i_cc);
+      const auto neighs = get_neighs_cc(isolated_fc, old_cc);
       if(!neighs.empty()) {
         // now we have the neighbourhood cc cell, we can access to them and
         // control the characteristics
-        const auto cc_idx = select_best_cc_to_agglomerate(i_fc, neighs, max_card);
+        optional<CoMMAIntType> new_compactness = nullopt;
+        const auto hint_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
+                                                           max_card, new_compactness);
         // If the condition is verified we add the cell to the identified cc
         // and we remove it from the current cc
         // if we failed we go on, it is life, so we agglomerate to the nearest
         // cell (the first one of the vector). At this point, we do not check if
         // the max cardinality has been reached or not, otherwise we might leave
         // the isolated cell isolated
-        const auto new_cc = cc_idx.has_value() ? cc_idx.value()
-                                               : *(neighs.begin());
-        auto neig_cc = _cc_vec[new_cc];
+        const auto new_cc = hint_cc.has_value() ? hint_cc.value()
+                                                : *(neighs.begin());
         // first we assign to the fc_2_cc the new cc (later it will be
         // renumbered considering the deleted cc)
-        _fc_2_cc[i_fc] = new_cc;
-        neig_cc->insert_node(_fc_graph->get_neighbours(i_fc),
-                             i_fc, _fc_graph->_volumes[i_fc],
-                             _fc_graph->get_weights(i_fc));
-        _cc_vec.erase(i_cc);
-        removed_cc.emplace(i_cc);
+        _fc_2_cc[isolated_fc] = new_cc;
+        _ccs[new_cc]->insert_cell(isolated_fc, new_compactness);
+        _ccs.erase(old_cc);
+        removed_cc.emplace(old_cc);
       }
       // If the cell has no neighbour (this could happen when the partitioning does
       // not give a connected partition), unfortunately, there is nothing that we
@@ -193,25 +192,25 @@ Not used anymore but we leave it for example purposes
 
     // Now update the ID if necessary
     if (!removed_cc.empty()) {
-      auto new_ID = *removed_cc.begin();
+      auto new_ID = *(removed_cc.begin());
       // Starting from the CC just after the first removed singular cell, update all
       // cells. Looking for new_ID-1 than doing ++ avoid case of consecutive singular
-      // cells. If the first removed was cell 0, then starts from the beginning
-      auto it_cc = _cc_vec.begin();
+      // cells. If the first removed cell was cell 0, then start from the beginning
+      auto it_cc = _ccs.begin();
       if (new_ID > 0) {
-        it_cc = _cc_vec.find(new_ID - 1);
+        it_cc = _ccs.find(new_ID - 1);
         ++it_cc;
       }
-      for (; it_cc != _cc_vec.end(); ++it_cc, ++new_ID) {
+      for (; it_cc != _ccs.end(); ++it_cc, ++new_ID) {
         // Update fine cells
-        for (auto const &i_fc : it_cc->second->_mapping_l_to_g) {
+        for (auto const &i_fc : it_cc->second->_s_fc) {
           _fc_2_cc[i_fc] = new_ID;
         }
         // Update coarse cell ID
-        auto node = _cc_vec.extract(it_cc);
+        auto node = _ccs.extract(it_cc);
         if (!node.empty()) {
           node.key() = new_ID;
-          _cc_vec.insert(move(node));
+          _ccs.insert(move(node));
         }
       }
     }
@@ -224,18 +223,23 @@ Not used anymore but we leave it for example purposes
    * cell with the smallest one
    * @param[in] fc Index of the fine cell
    * @param[in] neighs Neighbouring coarse cells
-   * @param[in] max_card Maximum cardinality allowed (CoMMA might still be beyond this
-   * value)
+   * @param[in] max_card Maximum cardinality allowed (CoMMA might still go beyond
+   * this value)
+   * @param[out] new_compactness Compactness degree of the CC if the result would to
+   * be added
    * @return The index of the chosen coarse cell
+   * @warning \p max_card might not be honored
    */
   optional<CoMMAIndexType> select_best_cc_to_agglomerate(
       const CoMMAIndexType fc,
       const set<CoMMAIndexType> &neighs,
-      const CoMMAIntType max_card) const {
+      const CoMMAIntType max_card,
+      optional<CoMMAIntType> &new_compactness) const {
     CoMMAUnused(max_card);
     unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
     unordered_map<CoMMAIndexType, bool> compact_increase{};
+    unordered_map<CoMMAIndexType, CoMMAIntType> compact{};
     const auto n_neighs = neighs.size();
     card.reserve(n_neighs);
     shared_faces.reserve(n_neighs);
@@ -248,7 +252,7 @@ Not used anymore but we leave it for example purposes
     deque<CoMMAIndexType> argtrue_compact{};
     // Loop on neighbours to compute their features
     for (const auto & cc_idx : neighs) {
-      const auto n_cc = _cc_vec.at(cc_idx);
+      const auto n_cc = _ccs.at(cc_idx);
       if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
           //n_cc->_cardinality < max_card &&
           n_cc->_cardinality >= 2) {
@@ -274,7 +278,13 @@ Not used anymore but we leave it for example purposes
         } else if (cur_sf == max_shared_f) {
           argmax_shared_f.push_back(cc_idx);
         }
-        if (new_cell_increases_compactness(fc, n_cc)) {
+        // Analysing compactness
+        auto tmp_cc = n_cc->_s_fc; // OK copy
+        tmp_cc.insert(fc);
+        const auto new_cpt =
+          _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+        compact[cc_idx] = new_cpt;
+        if (new_cpt > n_cc->_compactness) {
           compact_increase[cc_idx] = true;
           argtrue_compact.push_back(cc_idx);
         } else {
@@ -299,6 +309,7 @@ Not used anymore but we leave it for example purposes
           ret_cc = idx;
         }
       }
+      new_compactness = compact.at(ret_cc);
       return ret_cc;
     }
     // 2 - Maximize the number of shared faces
@@ -314,6 +325,7 @@ Not used anymore but we leave it for example purposes
           cur_min = card[ret_cc];
         }
       }
+      new_compactness = compact.at(ret_cc);
       return ret_cc;
     }
     // 3 - Minimize the cardinality
@@ -321,7 +333,9 @@ Not used anymore but we leave it for example purposes
       // We should never need to come here...
       // @TODO: I'm not sure what I could consider here to decide which cell to
       // return. The aspect-ratio maybe? In the mean time, I return the one with the lowest ID
-      return *min_element(argmin_card.begin(), argmin_card.end());
+      const auto ret_cc = *(min_element(argmin_card.begin(), argmin_card.end()));
+      new_compactness = compact.at(ret_cc);
+      return ret_cc;
     }
     // If everything failed, return dummy
     return nullopt;
@@ -329,75 +343,50 @@ Not used anymore but we leave it for example purposes
 
   /** @brief Compute the number of faces shared between a fine cell and a coarse one
    * @param[in] fc Index of the fine cell
-   * @param[in] cc Subgraph representing the coarse cell
+   * @param[in] cc Pointer to the coarse cell
    * @return The number of shared faces
    */
   inline CoMMAIntType get_shared_faces(const CoMMAIndexType fc,
-                                       const SubGraphPtr cc) const {
-    const auto n_fc_cc = cc->_number_of_cells;
+                                       const CoarseCellPtr cc) const {
     CoMMAIntType shared_faces{0};
-    // I am not 100% sure that mapping is perfect hence I prefer loop using indices
-    for (auto i_fc_cc = decltype(n_fc_cc){0}; i_fc_cc < n_fc_cc; ++i_fc_cc) {
-      const auto i_fc = cc->_mapping_l_to_g[i_fc_cc];
+    for (const auto &i_fc : cc->_s_fc) {
       shared_faces += count(_fc_graph->neighbours_cbegin(i_fc),
                             _fc_graph->neighbours_cend(i_fc), fc);
     }
     return shared_faces;
   }
 
-  /** @brief Tell if the addition of a new fine cell increase the compactness degree
-   * of a coarse cell
-   * @param[in] fc Index of the fine cell
-   * @param[in] cc Subgraph representing the coarse cell
-   * @return A boolean
-   */
-  inline bool new_cell_increases_compactness(const CoMMAIndexType fc,
-                                             const SubGraphPtr cc) const {
-    // Set of faces in the CC
-    unordered_set<CoMMAIndexType> tmp_cc{cc->_mapping_l_to_g.begin(),
-                                         cc->_mapping_l_to_g.end()};
-    tmp_cc.insert(fc);
-    return _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc) > cc->_compactness;
-  }
-
-  /** @brief It creates a coarse cell based on the set of fine cells given as an
+  /** @brief It creates a coarse cell based on the set of fine cells given as
    * input
    * @param[in] s_fc Set of fine cells passed as a reference
+   * @param[in] compactness Compactness degree of the CC
    * @param[in] is_anisotropic Boolean that tells if we are in an anisotropic
    * case or not
    * @param[in] is_creation_delayed Based on the agglomerator instruction we
    * define if we delay or not the agglomeration
    * @return Global identifier of the coarse cell
    */
-  CoMMAIndexType cc_create_a_cc(
+  CoMMAIndexType create_cc(
       const unordered_set<CoMMAIndexType> &s_fc,
+      const CoMMAIntType compactness,
       bool is_anisotropic = false,
       bool is_creation_delayed = false) {
     // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
-    // error handling
-    CoMMAWeightType vol_cc = 0;
     for (const auto &i_fc : s_fc) {
-      if (!_a_is_fc_agglomerated[i_fc]) {
+      assert(!_fc_2_cc[i_fc].has_value());
+      if (!_is_fc_agglomerated[i_fc]) {
         // Rq: initialise to False pour chaque niveau dans agglomerate(...)
-        _a_is_fc_agglomerated[i_fc] = true;
+        _is_fc_agglomerated[i_fc] = true;
         _nb_of_agglomerated_fc++;
       }
-    }
-    for (const auto &i_fc : s_fc) {
-      vol_cc = vol_cc + _fc_graph->_volumes[i_fc];
-      assert(!_fc_2_cc[i_fc].has_value());
     }
     // Anisotropic case
     bool is_mutable = true;
     if (is_anisotropic) {
-      assert(!is_creation_delayed);
-      auto new_cc = make_shared<
-          Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-          _fc_graph, _cc_counter, s_fc, false);
-      // we collect the various cc_graph, where the index in the vector is the
-      // i_cc
-      _cc_vec[_cc_counter] = new_cc->_cc_graph;
+      // we collect the various cc, where the index in the vector is the i_cc
+      _ccs[_cc_counter] =  make_shared<CoarseCellType>(
+          _fc_graph, _cc_counter, s_fc, compactness, !is_anisotropic);
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -408,18 +397,11 @@ Not used anymore but we leave it for example purposes
         // and dict_card_cc, dict_compactness_2_cc, dict_cc_to_compactness
         // Update of dict_cc:
         //==================
-        auto new_cc = make_shared<
-            Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-            _fc_graph, _cc_counter, s_fc);
-        // we collect the various cc_graph, where the index in the vector is the
-        // i_cc
-        _cc_vec[_cc_counter] = new_cc->_cc_graph;
+        // we collect the various cc, where the index in the vector is the i_cc
+        _ccs[_cc_counter] = make_shared<CoarseCellType>(
+            _fc_graph, _cc_counter, s_fc, compactness);
         if (s_fc.size() == 1)
           _singular_cc.emplace_back(_cc_counter);
-
-        // Update of compactness informations:
-        //####################################
-        assert(new_cc->is_connected());
       }
       // Update of _associatedCoarseCellNumber the output of the current
       // function agglomerate _fc_2_cc is filled with _cc_counter
@@ -437,7 +419,7 @@ Not used anymore but we leave it for example purposes
       // be the greater possible.
       // Only isFineCellAgglomerated_tmp, number_of_fine_agglomerated_cells_tmp
       // and dict_DistributionOfCardinalOfCoarseElements are modified!
-      _delayed_cc.push_back(s_fc);
+      _delayed_cc.emplace_back(s_fc, compactness);
     }
     return (_cc_counter - 1);
   }
@@ -446,18 +428,10 @@ Not used anymore but we leave it for example purposes
    * cell flag is activated in the agglomerator
    */
   inline void cc_create_all_delayed_cc() {
-    for (const unordered_set<CoMMAIndexType> &s_fc : _delayed_cc) {
-      cc_create_a_cc(s_fc);
+    for (const auto &[s_fc, cpt] : _delayed_cc) {
+      create_cc(s_fc, cpt);
     }
     _delayed_cc.clear();
-  }
-
-  /** @brief Checks if the fine cell is already or not agglomerated
-   * @param[in] i_fc Global index of the fine cell to analyse
-   * @return true or false with respect to the answer
-   */
-  inline bool is_fc_not_already_agglomerated(const CoMMAIndexType &i_fc) const {
-    return !_a_is_fc_agglomerated[i_fc];
   }
 
  protected:
@@ -465,9 +439,10 @@ Not used anymore but we leave it for example purposes
   CoMMAIndexType _nb_of_agglomerated_fc = 0;
 
   /** @brief Vector of the set of fine cells composing the too small coarse
-   * cells that will be built at the end of the agglomeration process
+   * cells that will be built at the end of the agglomeration process and their
+   * compactness degree
    */
-  vector<unordered_set<CoMMAIndexType>> _delayed_cc;
+  vector<pair<unordered_set<CoMMAIndexType>, CoMMAIntType>> _delayed_cc;
 
   /** @brief Set of singular coarse cells, that is, composed of only one fine cell */
   deque<CoMMAIndexType> _singular_cc;
