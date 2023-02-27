@@ -183,18 +183,16 @@ default:
     - shell
 ```
 
-At the time of writing (February 2023), `spiro-commun` is still on **`CentOS
-7`**. In order to successfully build and test, an environment (available in
+In order to successfully build and test, an environment (available in
 Riccardo's storage and accessible to anyone) is sourced and some checks are
-done. A version of the environment for `CentOS 8` is also available in the same
-directory as the other.
+done
 ```yaml
 job:init:
     stage: init
     before_script:
         - module purge
         # Load python version, compilers
-        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env_el7.sh
+        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
 ```
 
