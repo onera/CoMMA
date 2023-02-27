@@ -216,13 +216,6 @@ class Agglomerator_Anisotropic
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
     this->_l_nb_of_cells.push_back(graph->_number_of_cells);
-    // For every level, we have a set containing the admissible cells for
-    // anisotropy cell number:
-    // For level 0, it is the cell number of prism or hexahedron ...
-    this->_v_of_s_anisotropic_compliant_fc =
-        vector<unordered_set<CoMMAIndexType>>(2);
-    this->_v_of_s_anisotropic_compliant_fc[0] =
-        this->_fc_graph->_s_anisotropic_compliant_cells;
 
     this->_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
@@ -287,14 +280,6 @@ class Agglomerator_Anisotropic
       this->build_anisotropic_lines(priority_weights);  // finest level!!!
     }
 
-    // In case the if is not realized, this is not the first generation of a
-    // coarse level.
-    // The anisotropic lines are given as input.
-    // Copy of the current agglomeration_lines as a backup for visualization
-    // purpose.
-
-    this->_v_of_s_anisotropic_compliant_fc[1] = {};
-
     // Necessary for the create_cc but maybe we need in
     // some way to change that.
     constexpr bool is_anisotropic = true;
@@ -334,7 +319,6 @@ class Agglomerator_Anisotropic
         const CoMMAIndexType i_cc =
           this->_cc_graph->create_cc(s_fc, compactness, is_anisotropic);
         line_lvl_p_one->push_back(i_cc);
-        this->_v_of_s_anisotropic_compliant_fc[1].insert(i_cc);
       }
 
       this->_v_lines[1].push_back(line_lvl_p_one);
@@ -628,9 +612,6 @@ class Agglomerator_Anisotropic
       }
     } // End of loop over anisotropic cells
   }
-
-  /** @brief Vector of set of the anisotropic compliant of fine cells */
-  vector<unordered_set<CoMMAIndexType>> _v_of_s_anisotropic_compliant_fc;
 
   /** @brief Value of the aspect ration above which a cell is considered
    * anisotropic
