@@ -2121,9 +2121,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN("We perform the same test as above, but test whats happens if the singular cell is the first one") {
-      cc_graph->cc_create_a_cc({1});
-      cc_graph->cc_create_a_cc({0,4,5});
-      cc_graph->cc_create_a_cc({2,3,6,7});
+      cc_graph->create_cc({1}, 0);
+      cc_graph->create_cc({0,4,5}, 1);
+      cc_graph->create_cc({2,3,6,7}, 2);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 1, 0));
         REQUIRE(fc_in_cc(cc_graph, 0, 1));
@@ -2147,9 +2147,9 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN("We perform the same test as above, but test whats happens if the singular cell is the last one") {
-      cc_graph->cc_create_a_cc({0,4,5});
-      cc_graph->cc_create_a_cc({2,3,6,7});
-      cc_graph->cc_create_a_cc({1});
+      cc_graph->create_cc({0,4,5}, 1);
+      cc_graph->create_cc({2,3,6,7}, 2);
+      cc_graph->create_cc({1}, 0);
       THEN("We recover the forced order") {
         REQUIRE(fc_in_cc(cc_graph, 0, 0));
         REQUIRE(fc_in_cc(cc_graph, 4, 0));
