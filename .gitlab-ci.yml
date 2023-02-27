@@ -7,14 +7,18 @@
 variables:
   GIT_STRATEGY: none # Do nothing by default. It will be done once in init, then other we reuse it
   GIT_SUBMODULE_STRATEGY: none
+  SCHEDULER_PARAMETERS: "--clusters c1 --qos=c1_test_giga --ntasks=1 --time=00:15:00" # Attention c1 is DAAA partition, hence this works only with DAAA users
 
 #Common to all stages
 default:
   tags: # Use shell instead of submitting pipeline to slurm
-    - shell
+  #  - shell
+    - slurm
   before_script:
+    - module purge
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
+    - python3 -c "import gcovr" || python3 -m pip install --user gcovr
 
 stages:
     - init
@@ -28,12 +32,7 @@ job:init:
     stage: init
     variables:
         GIT_STRATEGY: clone
-        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
-    before_script:
-        - module purge
-        # Load python version, compilers
-        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
-        - python3 -c "import gcovr" || python3 -m pip install --user gcovr
+        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules  
     only:
         changes:
             - CoMMA_lib/*.{cpp,h}
