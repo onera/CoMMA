@@ -23,19 +23,29 @@ very convenient for testing and debugging purposes. Moreover, some tests via
 `Catch2` have been written to check the integrity of CoMMA. Both the `python`
 module and the tests need compilation.
 
-To build this library you need:
-- A fairly recent `cmake` (3.14+)
-
-You should be able to install them with your distribution package manager or
-you can checkout [spack](https://spack.readthedocs.io/en/latest/).
-
-In order to build them, just create a directory named `build` and do an
-out-of-source build with `cmake`
-
+To build this library you just need a fairly recent `cmake` (3.14+). It should
+be easy to obtain via your distribution package manager, otherwise you can
+checkout [spack](https://spack.readthedocs.io/en/latest/). Then, a standard In
+out-of-source build with `cmake` in a freshly created directory will suffice to
+compile
 ```shell
 mkdir build
 cd build
 cmake ..
+```
+`cmake` should be able to find the simple dependencies by itself if they're
+installed in standard location.
+
+The compilation of the tests and the generation of the `python` bindings are
+activated by default, but they can be switched off
+```shell
+cmake -DBUILD_TESTS=Off .. # No tests
+cmake -DBUILD_PYTHON_BINDINGS=Off .. # No python bindings
+```
+An additional `cmake` option might be passed to build the tests with coverage
+support (default is off)
+```shell
+cmake -DCOVERAGE=On ..
 ```
 
 An option is available to use the flags usually considered when compiling the
@@ -43,9 +53,6 @@ CODA-CFD library:
 ```shell
 cmake -DCODAFLAGS=ON ..
 ```
-
-`cmake` should be able to find the simple dependencies by itself if they're
-installed in standard location.
 
 ## :construction_worker: Usage
 The interface to CoMMA is very simple and consists in only one function
