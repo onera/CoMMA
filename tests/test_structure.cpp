@@ -515,7 +515,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
         8, 9, 10, 11,  // ...then, inner boundary cells in an order given by the weights (new queue)
         4, 7, 5, 6};   // ...finally, interior cells in an order given by neighbourhood
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -546,7 +546,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
         8, 9, 10, 11,  // ...then, inner boundary cells in an order given by the weights (new queue)
         4, 7, 5, 6};   // ...finally, interior cells in an order given by neighbourhood
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -574,7 +574,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         0, 3, 1, 2,    // ...then, outer boundary cells in an order given by neighbourhood
         4, 7, 5, 6,    // ...then, interior cells in an order given by neighbourhood
         8, 11, 9, 10}; // ...finally, inner boundary cells in an order given by neighbourhood
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -604,7 +604,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         2, 1,           // Outer boundary cells
         4, 7, 6, 5,     // Interior cells
         8, 11, 10, 9};  // Inner boundary cells
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -637,7 +637,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       const vector<CoMMAIndexT> expected_order = {
         0, 1, 2, 3, 8, 9, 10, 11, // First, outer boundary cells in an order given by the weights
         4, 5, 6, 7};              // ...finally, interior cells in an order given by neighbourhood
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -665,7 +665,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         1, 3, 2,       // ...then, outer boundary cells in an order given by neighbourhood
         8, 9, 10, 11,  // ...then, inner boundary cells in an order given by the weights (new queue)
         4, 5, 7, 6};   // ...finally, interior cells in an order given by neighbourhood
-      assert(expected_order.size() == Data.nb_fc);
+      assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
       for (auto & s : res_seeds) {
@@ -2008,7 +2008,7 @@ the line grows vertically
     WHEN("We initialize the agglomerator") {
       THEN("The anisotropic lines have been read correctly and in order") {
         const auto n_lines = agglomerationLines_Idx.size() - 1;
-        REQUIRE(n_lines == aniso_agg._nb_lines[0]);
+        REQUIRE(static_cast<CoMMAIndexT>(n_lines) == aniso_agg._nb_lines[0]);
         auto read_line = aniso_agg._v_lines[0].cbegin();
         for (auto ref_line = agglomerationLines_Idx.cbegin() + 1;
              ref_line != agglomerationLines_Idx.cend();
