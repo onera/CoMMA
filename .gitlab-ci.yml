@@ -7,13 +7,13 @@
 variables:
   GIT_STRATEGY: none # Do nothing by default. It will be done once in init, then other we reuse it
   GIT_SUBMODULE_STRATEGY: none
-  SCHEDULER_PARAMETERS: "--clusters c1 --qos=c1_test_giga --ntasks=1 --time=00:15:00" # Attention c1 is DAAA partition, hence this works only with DAAA users
+ # SCHEDULER_PARAMETERS: "--clusters c1 --qos=c1_test_giga --ntasks=1 --time=00:15:00" # Attention c1 is DAAA partition, hence this works only with DAAA users
 
 #Common to all stages
 default:
   tags: # Use shell instead of submitting pipeline to slurm
-  #  - shell
-    - slurm
+    - shell
+  #  - slurm
   before_script:
     - module purge
     # Load python version, compilers
