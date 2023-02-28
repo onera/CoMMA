@@ -30,7 +30,7 @@ job:init:
     stage: init
     variables:
         GIT_STRATEGY: clone
-        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules  
+        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
     only:
         changes:
             - CoMMA_lib/*.{cpp,h}
@@ -107,7 +107,7 @@ job:build_rel:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build_rel
         - cd build_rel
-        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON_BINDINGS=Off ..
         - make -j
 job:test_rel:
     stage: test
@@ -124,7 +124,7 @@ job:test_rel:
         - ./Comma_test
 pages:
     stage: documentation
-    needs: ['job:init', 'job:build_dbg', 'job:test_dbg'] #job:init is needed to get dotenv artifacts
+    needs: ['job:init', 'job:build_dbg', 'job:test_dbg']
     script:
         - cd $CUSTOM_CI_DIR
         - rm -rf documentation
@@ -142,9 +142,3 @@ pages:
             - CoMMA_lib/*.{cpp,h,md}
             - .gitlab-ci.yml
             - Documentation/Doxyfile
-
-
-
-
-
-

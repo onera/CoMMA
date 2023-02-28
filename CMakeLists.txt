@@ -15,7 +15,13 @@ set(CMAKE_CXX_STANDARD 17)
 # https://github.com/catchorg/Catch2/issues/1204
 
 ###################################  PROJECT #################################
-project(CoMMA_Project)
+project(CoMMA VERSION 1.1)
+
+# https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
+set(BUILD_TESTS On CACHE BOOL "Build tests")
+set(CoMMA_TEST "Comma_test")
+
+set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
 
 if ( CODAFLAGS )
    # We just do not set the optimization flags nor the parallelism-related ones
@@ -97,19 +103,24 @@ SET(TESTS
 #############################  TEST with CATCH2 BUILDING #########################
 # Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
-
 # Generate a test executable with covergae report
-include_directories(Catch2/single_include)
-if ( COVERAGE )
-  message("Compiling with coverage support")
-  add_compile_options("--coverage")
-endif()
-add_executable("Comma_test" ${TESTS})
-if ( COVERAGE )
-  target_link_libraries(Comma_test gcov)
+if ( BUILD_TESTS )
+  message("Tests enabled")
+  include_directories(Catch2/single_include)
+  if ( COVERAGE )
+    message("Coverage support enabled")
+    add_compile_options("--coverage")
+  endif()
+  add_executable(${CoMMA_TEST} ${TESTS})
+  if ( COVERAGE )
+    target_link_libraries(${CoMMA_TEST} gcov)
+  endif()
 endif()
 #target_link_libraries(Comma_test Boost)
 #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
 ######################## Pybind11 bindings ####################################
-add_subdirectory(pybind11)
-pybind11_add_module(CoMMA ${PYTHONBIND})
+if ( BUILD_PYTHON_BINDINGS )
+  message("Python bindings enabled")
+  add_subdirectory(pybind11)
+  pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
+endif()
