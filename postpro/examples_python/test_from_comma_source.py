@@ -13,7 +13,7 @@ adjMatrix_col_ind= np.array([0, 1, 2, 0, 1, 3, 0, 2, 5, 6, 1, 3, 6, 4, 5, 7, 2, 
 adjMatrix_areaValues=np.array([6.82842712, 2., 2., 2., 4.23606798, 1., 2., 4., 2.23606798, 2.23606798, 1., 4., 2.23606798,6.82842712, 2., 2., 2.23606798, 2., 2., 1., 2.23606798, 2.23606798, 4., 2., 2., 2., 1.,2.23606798, 1., 1., 1., 1.41421356, 2.23606798, 4., 2., 3.60555128, 1.41421356, 2., 2.,3.16227766, 2., 6., 3.16227766, 3.16227766, 3.60555128, 11., 3.16227766, 3.16227766, 8.,3.16227766, 7.],dtype = CoMMAWeight)
 volumes = np.array([2., 1., 2., 1., 2., 1., 2., 1., 0.5, 2., 1., 3., 3., 3., 1.5], dtype = CoMMAWeight)
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
-isOnBnd = np.array([1, 1, 0, 1, 1,0, 0, 0, 0, 0,0,0, 2, 1, 2])
+isOnBnd = np.array([1, 1, 0, 1, 1,0, 0, 0, 0, 0,0,0, 2, 1, 2], dtype = CoMMAInt)
 array_isOnRidge=np.array([0, 1, 3, 4, 13])
 array_isOnValley=np.array([12,14])
 array_isOnCorner=np.array([], dtype = CoMMAIndex)

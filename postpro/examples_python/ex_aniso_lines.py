@@ -111,7 +111,7 @@ print('OK')
 adjMatrix_row_ptr= np.array(g.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(g.edges, dtype = CoMMAIndex)
 adjMatrix_areaValues = np.array(m.area,dtype = CoMMAWeight)
-isOnBnd = np.array(m.boundary_cells,dtype = CoMMAIndex)
+isOnBnd = np.array(m.boundary_cells,dtype = CoMMAInt)
 volumes = np.array(m.volume, dtype = CoMMAWeight)
 nb_fc = len(g.vertex)-1
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
@@ -123,7 +123,7 @@ agglomerationLines = np.array([0], dtype = CoMMAIndex)
 print("CoMMA call...", flush = True, end = '')
 fc_to_cc_res,alines_Idx,alines = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-                              mesh.centers.astype(CoMMAWeight, copy = False), weights,
+                              m.centers.astype(CoMMAWeight, copy = False), weights,
                               arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
                               anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
