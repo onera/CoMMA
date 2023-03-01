@@ -59,8 +59,8 @@ using namespace std;
  * @tparam CoMMAIntType the CoMMA type for integers
  * @param[in] adjMatrix_row_ptr the row pointer of the CRS representation
  * @param[in] adjMatrix_col_ind the column index of the CRS representation
- * @param[in] adjMatrix_areaValues the weight of the CRS representation (in CoMMA case
- * will be the area of the faces that in the graph representation are the edges
+ * @param[in] adjMatrix_areaValues the weight of the CRS representation (in CoMMA
+ * case will be the area of the faces that in the graph representation are the edges
  * between two nodes represented by the cell centers.
  * @param[in] volumes The volumes of the cells
  * @param[in] centers Cell centers
@@ -88,29 +88,30 @@ using namespace std;
  *       then let evolve
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
  * belongs after agglomeration
- * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines: each
- * element points to a particular element in the vector \p agglomerationLines
+ * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines:
+ * each element points to a particular element in the vector \p agglomerationLines
  * @param[in,out] agglomerationLines Vector storing all the elements of the
  * anisotropic lines
- * @param[in] correction Whether to apply correction step (avoid isolated cells) after
- * agglomeration
+ * @param[in] correction Whether to apply correction step (avoid isolated cells)
+ * after agglomeration
  * @param[in] dimension Dimensionality of the problem, 2- or 3D
- * @param[in] goal_card Expected cardinality of the coarse cells (might not be ensured)
+ * @param[in] goal_card Expected cardinality of the coarse cells (might not be
+ * ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
  * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed for
  * the algorithm choosing which fine cell to add next. The cost grows exponentially,
  * hence use small values.
  * @param[in] neighbourhood_type (optional, default=Extended) Type of neighbourhood
- * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details. Two
- * alternatives:
+ * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details.
+ * Two alternatives:
  * - Extended: requested with 0, standard algorithm where we consider every neighbour
  *      of the coarse cell as candidate.
  * - Pure Front Advancing: requested with 1, only direct neighbours of the last added
  *      cell are candidates.
  * @throw invalid_argument whenever dimension is not 2 nor 3, cardinalities are
- * smaller than 1 or not in order, or number of iterations is negative or greater
- * than \ref max_iter.
+ * smaller than 1 or not in order, line building is disabled but lines are not
+ * provided, or number of iterations is negative or greater than \ref max_iter.
  */
 template <typename CoMMAIndexType, typename CoMMAWeightType,
           typename CoMMAIntType>
