@@ -30,9 +30,22 @@
 #include "CoMMATypes.h"
 
 using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
+using namespace pybind11::literals; // Use _a for args literals
 
 PYBIND11_MODULE(CoMMA, module_handle) {
-  module_handle.doc() = "CoMMA is an agglomeration library";
+  module_handle.doc() =
+    "CoMMA is an agglomeration library\n"
+    "Functions:\n"
+    " - agglomerate_one_level: agglomerate a fine mesh\n"
+    " - compute_neighbourhood_based_wall_distance: compute distance from a given wall\n"
+    "\n"
+    "Types to use with numpy:\n"
+    " - IndexType: type for indices\n"
+    " - WeightType: type for weights\n"
+    " - IntType: type for integers";
+  module_handle.attr("IndexType") = "ulong",
+  module_handle.attr("WeightType") = "double",
+  module_handle.attr("IntType") = "int",
   module_handle.def(
       "agglomerate_one_level",
       [](// Dual graph
@@ -77,7 +90,17 @@ PYBIND11_MODULE(CoMMA, module_handle) {
             dimension, goal_card, min_card, max_card, fc_choice_iter, type_of_isotropic_agglomeration);
         return std::make_tuple(fc_to_cc, agglomerationLines_Idx,
                                agglomerationLines);
-      });
+      },
+      "Given a CSR graph-representation of a fine mesh, agglomerate it",
+      // Register arguments
+      "adjMatrix_row_ptr"_a, "adjMatrix_col_ind"_a, "adjMatrix_areaValues"_a,
+      "volumes"_a, "centers"_a, "priority_weights"_a, "anisotropicCompliantCells"_a,
+      "n_bnd_faces"_a, "build_anisotropic_lines"_a, "is_anisotropic"_a,
+      "odd_line_length"_a, "threshold_anisotropy"_a, "seed_ordering_type"_a,
+      "fc_to_cc"_a, "agglomerationLines_Idx"_a, "agglomerationLines"_a,
+      "correction"_a, "dimension"_a, "goal_card"_a, "min_card"_a, "max_card"_a,
+      "fc_choice_iter"_a = 1, "type_of_isotropic_agglomeration"_a = 0
+      );
   module_handle.def(
       "compute_neighbourhood_based_wall_distance",
       [](const vector<CoMMAIndexT>& neigh_idxs,
@@ -87,5 +110,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         compute_neighbourhood_based_wall_distance<CoMMAIndexT,CoMMASignedIndexT>(
                 neigh_idxs, neighs, wall, dist);
         return dist;
-      });
+      },
+      "Compute the neighbourhood-based distance from a given wall",
+      "neigh_idxs"_a, "neighs"_a, "wall"_a);
 }
