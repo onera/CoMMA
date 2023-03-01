@@ -195,7 +195,7 @@ class Agglomerator_Anisotropic
    * considered as anisotropic
    *  @param[in] is_first_agglomeration Whether the current is the first agglomeration
    * meaning that anisotropic lines should be built
-   *  @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
+   * @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
