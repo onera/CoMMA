@@ -44,11 +44,11 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          // Additional info about the mesh
          const vector<vector<CoMMAWeightT>> centers,
          const vector<CoMMAWeightT> &priority_weights,
-         const vector<CoMMAIndexT> &arrayOfFineAnisotropicCompliantCells,
+         const vector<CoMMAIndexT> &anisotropicCompliantCells,
          const vector<CoMMAIntT> &n_bnd_faces,
 
          // Anisotropy related info
-         bool isFirstAgglomeration,
+         bool build_anisotropic_lines,
          bool is_anisotropic,
          bool odd_line_length,
          CoMMAWeightT threshold_anisotropy,
@@ -71,8 +71,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          const CoMMAIntT type_of_isotropic_agglomeration) {
         agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
             adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, centers,
-            priority_weights, arrayOfFineAnisotropicCompliantCells, n_bnd_faces,
-            isFirstAgglomeration, is_anisotropic, odd_line_length, threshold_anisotropy, seed_ordering_type,
+            priority_weights, anisotropicCompliantCells, n_bnd_faces,
+            build_anisotropic_lines, is_anisotropic, odd_line_length, threshold_anisotropy, seed_ordering_type,
             fc_to_cc, agglomerationLines_Idx, agglomerationLines, correction,
             dimension, goal_card, min_card, max_card, fc_choice_iter, type_of_isotropic_agglomeration);
         return std::make_tuple(fc_to_cc, agglomerationLines_Idx,

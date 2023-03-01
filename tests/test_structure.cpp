@@ -1648,12 +1648,12 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.arrayOfFineAnisotropicCompliantCells);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     const CoMMAWeightT aniso_thresh{2.};
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   ODD_LINE_LENGTH, Data.dim);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate)") {
@@ -1673,12 +1673,12 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         v_aniso);
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     const CoMMAWeightT aniso_thresh{-2.};
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   ODD_LINE_LENGTH, Data.dim);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines") {
@@ -1697,7 +1697,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         " a seeds pool with boundary priority with full initialization") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -1708,7 +1708,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1758,7 +1758,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         " a seeds pool with boundary priority with full initialization but we forbid odd lines") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -1769,7 +1769,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   false, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1861,7 +1861,7 @@ the line grows vertically
     for (const auto idx : bottom_layer)
       Data.weights[idx] = max_w + 1.;
     const CoMMAWeightT aniso_thresh{-4.}; // Negative so that every cell is considered
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -1872,7 +1872,7 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1923,7 +1923,7 @@ the line grows vertically
         " a seeds pool with neighbourhood priority and priority weights for inverse numbering") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
-    const bool isFirstAgglomeration = true;
+    const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
     vector<CoMMAIndexT> agglomerationLines{};
     vector<CoMMAWeightT> w(Data.nb_fc);
@@ -1937,7 +1937,7 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1984,10 +1984,10 @@ the line grows vertically
   };
 
   GIVEN("We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
-        " we simulate a restart (not first agglomeration)") {
+        " we simulate a restart (not first agglomeration, we already have the liens)") {
     const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
     const CoMMAWeightT aniso_thresh{2.};
-    const bool isFirstAgglomeration = false;
+    const bool build_lines = false;
     vector<CoMMAIndexT> agglomerationLines_Idx = {0,5,10,15,20};
     vector<CoMMAIndexT> agglomerationLines = {0,1,2,3,4,
                                               11,10,9,8,7,
@@ -2001,7 +2001,7 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_lines,
                   ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -2406,7 +2406,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = false,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2417,7 +2417,7 @@ SCENARIO("Test of main function", "[structure]") {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
           Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
           Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-          first_agglo, aniso, odd_length, aniso_thr,
+          build_lines, aniso, odd_length, aniso_thr,
           seed,
           fc2cc, alines_idx, alines,
           correction, Data.dim, goal_card, min_card, max_card);
@@ -2445,7 +2445,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = false,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2456,7 +2456,7 @@ SCENARIO("Test of main function", "[structure]") {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
           Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
           Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-          first_agglo, aniso, odd_length, aniso_thr,
+          build_lines, aniso, odd_length, aniso_thr,
           seed,
           fc2cc, alines_idx, alines,
           correction, Data.dim, goal_card, min_card, max_card);
@@ -2484,7 +2484,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = false,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2495,7 +2495,7 @@ SCENARIO("Test of main function", "[structure]") {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
           Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
           Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-          first_agglo, aniso, odd_length, aniso_thr,
+          build_lines, aniso, odd_length, aniso_thr,
           seed,
           fc2cc, alines_idx, alines,
           correction, Data.dim, goal_card, min_card, max_card);
@@ -2523,7 +2523,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = false,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2534,7 +2534,7 @@ SCENARIO("Test of main function", "[structure]") {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
           Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
           Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-          first_agglo, aniso, odd_length, aniso_thr,
+          build_lines, aniso, odd_length, aniso_thr,
           seed,
           fc2cc, alines_idx, alines,
           correction, Data.dim, goal_card, min_card, max_card);
@@ -2568,7 +2568,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = true,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2581,7 +2581,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               5,
               Data.dim, goal_card, min_card, max_card)
         );
@@ -2591,7 +2591,7 @@ SCENARIO("Test of main function", "[structure]") {
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, min_card, goal_card, min_card, max_card)
         );
         tmp.push_back(2);
@@ -2599,7 +2599,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes, Data.centers,
-              Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, first_agglo,
+              Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, build_lines,
               aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
               min_card, goal_card, min_card, max_card)
         );
@@ -2608,7 +2608,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr,
               tmp,
               Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-              Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, first_agglo, aniso,
+              Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, build_lines, aniso,
               odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim, goal_card,
               min_card, max_card)
         );
@@ -2618,14 +2618,14 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
               tmp_w,
               Data.volumes, Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells,
-              Data.n_bnd_faces, first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
+              Data.n_bnd_faces, build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
               alines, correction, Data.dim, goal_card, min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card,
               8,
               max_card)
@@ -2634,7 +2634,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim,
               0,
               min_card, max_card)
@@ -2651,7 +2651,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card,
               0)
         );
@@ -2659,7 +2659,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-              first_agglo, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, 100)
         );
       }
@@ -2669,7 +2669,7 @@ SCENARIO("Test of main function", "[structure]") {
                           alines_idx{},
                           alines{};
       const bool aniso = true,
-                 first_agglo = true,
+                 build_lines = true,
                  odd_length = true,
                  correction = true;
       const CoMMAIntT goal_card = 4,
@@ -2680,7 +2680,7 @@ SCENARIO("Test of main function", "[structure]") {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
           Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
           Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-          first_agglo, aniso, odd_length, aniso_thr,
+          build_lines, aniso, odd_length, aniso_thr,
           seed,
           fc2cc, alines_idx, alines,
           correction, Data.dim, goal_card, min_card, max_card);

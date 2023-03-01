@@ -193,9 +193,10 @@ class Agglomerator_Anisotropic
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
    * considered as anisotropic
-   *  @param[in] is_first_agglomeration Whether the current is the first agglomeration
-   * meaning that anisotropic lines should be built
-   *  @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
+   *  @param[in] build_lines Whether lines joining the anisotropic cells should be
+   * built
+   *  @param[in] odd_line_length Whether anisotropic lines with odd length are
+   * allowed
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
@@ -206,7 +207,7 @@ class Agglomerator_Anisotropic
       const CoMMAWeightType threshold_anisotropy,
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
-      const bool is_first_agglomeration,
+      const bool build_lines,
       const bool odd_line_length,
       CoMMAIntType dimension = 3)
       : Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
@@ -220,7 +221,7 @@ class Agglomerator_Anisotropic
     this->_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
 
-    if (!is_first_agglomeration) {
+    if (!build_lines) {
       // case in which we have already agglomerated one level and hence we have
       // already agglomeration lines available; no need to recreate them.
       this->_nb_lines[0] = static_cast<CoMMAIndexType>(

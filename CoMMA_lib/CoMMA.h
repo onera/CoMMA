@@ -69,8 +69,9 @@ using namespace std;
  *  @param[in] anisotropicCompliantCells List of cells which have to be looked
  * for anisotropy
  * @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
- * @param[in] isFirstAgglomeration Whether if it's the first level of agglomeration
- * (it that's the case, the agglomeration lines will be built)
+ * @param[in] build_anisotropic_lines Whether lines joining the anisotropic cells
+ * should be built, otherwise, if the anisotropic agglomeration is activated, the
+ * lines should be provided, see \p agglomerationLines_Idx and \p agglomerationLines
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
  * @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
  * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
@@ -127,7 +128,7 @@ void agglomerate_one_level(
     const vector<CoMMAIntType> &n_bnd_faces,
 
     // Anisotropy related info
-    bool isFirstAgglomeration,
+    bool build_anisotropic_lines,
     bool is_anisotropic,
     bool odd_line_length,
     CoMMAWeightType threshold_anisotropy,
@@ -182,7 +183,7 @@ void agglomerate_one_level(
        || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
        || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size()) )
     throw invalid_argument( "CoMMA - Error: bad CRS graph (sizes do not match)");
-  if ( is_anisotropic && !isFirstAgglomeration ) {
+  if ( is_anisotropic && !build_anisotropic_lines ) {
     if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() )
       throw invalid_argument( "CoMMA - Error: usage of input anisotropic line requested, but arguments are not enough / invalid to define them");
     if ( agglomerationLines_Idx.back() != static_cast<CoMMAIndexType>(agglomerationLines.size()) )
@@ -260,7 +261,7 @@ void agglomerate_one_level(
     // Build anisotropic agglomerator
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
-                  agglomerationLines_Idx, agglomerationLines, isFirstAgglomeration,
+                  agglomerationLines_Idx, agglomerationLines, build_anisotropic_lines,
                   odd_line_length, dimension);
 
     // Agglomerate anisotropic cells only
