@@ -31,7 +31,7 @@ anisotropic = False
 ## Points per edge of the quad/hex
 n = 21
 ## CoMMA parameters
-isFirstAgglomeration = True
+build_lines = True
 if dimension == 3:
     minCard, goalCard, maxCard = 8, 8, 8
 else:
@@ -61,7 +61,7 @@ print( ' [Input]')
 print(f' * {dimension=}')
 print(f' * {anisotropic=}')
 print(f' * {n=}')
-print(f' * {isFirstAgglomeration=}')
+print(f' * {build_lines=}')
 print(f' * {minCard=}')
 print(f' * {goalCard=}')
 print(f' * {maxCard=}')
@@ -107,7 +107,7 @@ adjMatrix_areaValues = np.array(mesh.area, dtype = CoMMAWeight)
 volumes = np.array(mesh.volume, dtype = CoMMAWeight)
 centers = mesh.centers.copy()
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
-isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAInt)
+n_bnd_faces = np.array(mesh.boundary_cells, dtype = CoMMAInt)
 fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
@@ -125,7 +125,7 @@ for level in range(agglomeration_levels):
             adjMatrix_col_ind,
             adjMatrix_areaValues,
             volumes,
-            isOnBnd,
+            n_bnd_faces,
             centers
         ) = build_coarse_graph(
             fc_to_cc,
@@ -133,9 +133,9 @@ for level in range(agglomeration_levels):
             adjMatrix_col_ind,
             adjMatrix_areaValues,
             volumes,
-            isOnBnd,
+            n_bnd_faces,
             centers)
-        nb_cc = isOnBnd.shape[0]
+        nb_cc = n_bnd_faces.shape[0]
         weights = np.arange(start = nb_cc-1, stop = 0, step = -1, dtype = CoMMAWeight)
         fc_to_cc = np.empty(nb_cc, dtype = CoMMAIndex)
         arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype = CoMMAIndex)
@@ -145,7 +145,7 @@ for level in range(agglomeration_levels):
     fc_to_cc,agglomerationLines_Idx,agglomerationLines = \
             agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                                   centers, weights,
-                                  arrayOfFineAnisotropicCompliantCells,isOnBnd, level == 0,
+                                  arrayOfFineAnisotropicCompliantCells,n_bnd_faces, level == 0,
                                   anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                                   correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)

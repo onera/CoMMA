@@ -22,7 +22,7 @@ adjMatrix_col_ind = np.array(Graph1.edges, dtype = CoMMAIndex)
 adjMatrix_areaValues =np.array(Mesh1.area, dtype = CoMMAWeight)
 volumes = np.array(Mesh1.volume, dtype = CoMMAWeight)
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
-isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAInt)
+n_bnd_faces = np.array(mesh.boundary_cells, dtype = CoMMAInt)
 fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
 indCoarseCell = 0
 minCard = 4
@@ -32,7 +32,7 @@ verbose = 0
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
 agglomerationLines = np.array([0], dtype = CoMMAIndex)
-isFirstAgglomeration = True
+build_lines = True
 isAnisotropic = True
 dimension = 2
 corrections = True
@@ -46,7 +46,7 @@ fc_iter = 1
 
 print("CoMMA call")
 #isotropic
-fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,isFirstAgglomeration,False, odd_line_length,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard, fc_iter,neigh_type)
+fc_to_cc_res1,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,n_bnd_faces,build_lines,False, odd_line_length,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard, fc_iter,neigh_type)
 
 print("end CoMMA")
 fine_cells_iso = [value for j,value in enumerate(fc_to_cc_res1)]

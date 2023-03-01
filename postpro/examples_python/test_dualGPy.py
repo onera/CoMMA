@@ -77,7 +77,7 @@ print("row ptr len:", len(adjMatrix_row_ptr))
 print("col ind len:", len(adjMatrix_col_ind))
 print("vol len:", len(volumes))
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
-isOnBnd = np.array(mesh.boundary_cells, dtype = CoMMAInt)
+n_bnd_faces = np.array(mesh.boundary_cells, dtype = CoMMAInt)
 print("bound_cells:", len(Mesh1.boundary_cells))
 array_isOnRidge=np.array(Mesh1.onRidge,dtype = CoMMAIndex)
 array_isOnValley=np.array(Mesh1.onValley, dtype = CoMMAIndex)
@@ -93,7 +93,7 @@ maxCard = 4
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
 agglomerationLines_Idx = np.zeros(nb_fc, dtype = CoMMAIndex)
 agglomerationLines = np.zeros(nb_fc, dtype = CoMMAIndex)
-isFirstAgglomeration = True
+build_lines = True
 isAnisotropic = True
 dimension = 2
 corrections = True
@@ -106,7 +106,7 @@ seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
 fc_iter = 1
 
 
-fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,isOnBnd,array_isOnValley,array_isOnRidge,array_isOnCorner,isFirstAgglomeration,isAnisotropic, odd_line_length,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,fc_iter,neigh_type)
+fc_to_cc_res,agglomerationLines_Idx_res,agglomerationLines_res=agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes, Mesh1.centers.astype(CoMMAWeight, copy = False), weights, arrayOfFineAnisotropicCompliantCells,n_bnd_faces,array_isOnValley,array_isOnRidge,array_isOnCorner,build_lines,isAnisotropic, odd_line_length,threshold_anisotropy, seed_order,fc_to_cc,agglomerationLines_Idx,agglomerationLines,corrections,dimension,goalCard,minCard,maxCard,fc_iter,neigh_type)
 
 
 fine_cells_triangle = []

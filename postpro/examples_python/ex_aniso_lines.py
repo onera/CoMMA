@@ -30,7 +30,7 @@ seed_ordering_types = {
 dimension = 2
 anisotropic = True
 ## CoMMA parameters
-isFirstAgglomeration = True
+build_lines = True
 minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 1.5
@@ -55,7 +55,7 @@ outname = basename + '.vtu'
 print('Requested arguments:')
 print( ' [Input]')
 print(f' * {anisotropic=}')
-print(f' * {isFirstAgglomeration=}')
+print(f' * {build_lines=}')
 print(f' * {minCard=}')
 print(f' * {goalCard=}')
 print(f' * {maxCard=}')
@@ -111,7 +111,7 @@ print('OK')
 adjMatrix_row_ptr= np.array(g.vertex, dtype = CoMMAIndex)
 adjMatrix_col_ind= np.array(g.edges, dtype = CoMMAIndex)
 adjMatrix_areaValues = np.array(m.area,dtype = CoMMAWeight)
-isOnBnd = np.array(m.boundary_cells,dtype = CoMMAInt)
+n_bnd_faces = np.array(m.boundary_cells,dtype = CoMMAInt)
 volumes = np.array(m.volume, dtype = CoMMAWeight)
 nb_fc = len(g.vertex)-1
 weights = np.arange(start = nb_fc-1, stop = 0, step = -1, dtype = CoMMAWeight)
@@ -124,7 +124,7 @@ print("CoMMA call...", flush = True, end = '')
 fc_to_cc_res,alines_Idx,alines = \
         agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                               m.centers.astype(CoMMAWeight, copy = False), weights,
-                              arrayOfFineAnisotropicCompliantCells,isOnBnd, isFirstAgglomeration,
+                              arrayOfFineAnisotropicCompliantCells,n_bnd_faces, build_lines,
                               anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                               correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)
