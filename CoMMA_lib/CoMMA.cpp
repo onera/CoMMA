@@ -43,6 +43,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     " - IndexType: type for indices\n"
     " - WeightType: type for weights\n"
     " - IntType: type for integers";
+  module_handle.attr("__version__") = "1.2",
   module_handle.attr("IndexType") = "ulong",
   module_handle.attr("WeightType") = "double",
   module_handle.attr("IntType") = "int",

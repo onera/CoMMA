@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 # https://github.com/catchorg/Catch2/issues/1204
 
 ###################################  PROJECT #################################
-project(CoMMA VERSION 1.1)
+project(CoMMA VERSION 1.2)
 
 # https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
 set(BUILD_TESTS On CACHE BOOL "Build tests")
