@@ -18,10 +18,15 @@ set(CMAKE_CXX_STANDARD 17)
 project(CoMMA VERSION 1.2)
 
 # https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
-set(BUILD_TESTS On CACHE BOOL "Build tests")
+# For the current application, better to use an `option`:
+# https://stackoverflow.com/questions/36358217/what-is-the-difference-between-option-and-set-cache-bool-for-a-cmake-variabl
+#set(BUILD_TESTS On CACHE BOOL "Build tests")
+option(BUILD_TESTS "Build tests" ON)
 set(CoMMA_TEST "Comma_test")
+option(COVERAGE "Build tests with coverage support" OFF)
 
-set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
+#set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
+option(BUILD_PYTHON_BINDINGS "Build python bindings via pybind11" ON)
 
 if ( CODAFLAGS )
    # We just do not set the optimization flags nor the parallelism-related ones
@@ -46,16 +51,6 @@ include_directories(${SOURCE_DIR})
 SET(PROFILING_DIR "tests")
 
 SET(TEST_DIR "tests")
-
-SET(DEPRECATED_DIR ${SOURCE_DIR}/deprecated)
-
-set(DEPRECATED_SRC
-    ${DEPRECATED_DIR}/Bimap.h
-    ${DEPRECATED_DIR}/Queue.h
-    ${DEPRECATED_DIR}/Tree.h
-    ${DEPRECATED_DIR}/Priority_Pair.h
-    ${DEPRECATED_DIR}/templateHelpers.h
-)
 
 set(PYTHONBIND
     ${SOURCE_DIR}/CoMMA.cpp
@@ -83,7 +78,6 @@ SET(TESTING_FILES
 )
 
 SET(TESTS
-    ${DEPRECATED_SRC}
     ${TEST_DIR}/input/DualGPy.h
     ${TESTING_FILES}
 )
