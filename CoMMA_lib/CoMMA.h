@@ -23,6 +23,7 @@
 */
 
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <numeric>
 #include <stdexcept>
@@ -182,13 +183,25 @@ void agglomerate_one_level(
                             + to_string(max_iter));
   if ( adjMatrix_row_ptr.empty()
        || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
-       || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size()) )
+       || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size())
+     )
     throw invalid_argument( "CoMMA - Error: bad CRS graph (sizes do not match)");
-  if ( is_anisotropic && !build_anisotropic_lines ) {
-    if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() )
-      throw invalid_argument( "CoMMA - Error: usage of input anisotropic line requested, but arguments are not enough / invalid to define them");
-    if ( agglomerationLines_Idx.back() != static_cast<CoMMAIndexType>(agglomerationLines.size()) )
-      throw invalid_argument( "CoMMA - Error: bad anisotropic lines definition (sizes do not match)" );
+  if (is_anisotropic) {
+    if (build_anisotropic_lines) {
+      if (anisotropicCompliantCells.empty()) {
+        cout << "CoMMA - Warning: building anisotropic line requested, no compliant cells provided. Switching off anisotropy." << endl;
+      }
+    }
+    else {
+      // Anisotropic lines are provided
+      if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() ) {
+        cout << "CoMMA - Warning: usage of input anisotropic line requested, but arguments are not enough / invalid to define them. Switching off anisotropy." << endl;
+        is_anisotropic = false;
+      }
+      else if ( agglomerationLines_Idx.back() != static_cast<CoMMAIndexType>(agglomerationLines.size()) ) {
+        throw invalid_argument( "CoMMA - Error: bad anisotropic lines definition (sizes do not match)" );
+      }
+    }
   }
 
   // SIZES CAST
@@ -262,19 +275,27 @@ void agglomerate_one_level(
     // Build anisotropic agglomerator
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
-                  agglomerationLines_Idx, agglomerationLines, build_anisotropic_lines,
-                  odd_line_length, dimension);
+                  agglomerationLines_Idx, agglomerationLines, priority_weights,
+                  build_anisotropic_lines, odd_line_length, dimension);
 
-    // Agglomerate anisotropic cells only
-    aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
+    if (aniso_agg._should_agglomerate) {
+      // Agglomerate anisotropic cells only
+      aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
 
-    // Put anisotropic lines computed just above into the out parameters
-    // (Info about level of the line: WARNING! here 1 it means that we give it back
-    // lines in the new global index, 0 the old)
-    const CoMMAIntType i_level{1};
-    aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
+      // Put anisotropic lines computed just above into the out parameters
+      // (Info about level of the line: WARNING! here 1 it means that we give it back
+      // lines in the new global index, 0 the old)
+      const CoMMAIntType i_level{1};
+      aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
 
-    aniso_agg.update_seeds_pool();
+      aniso_agg.update_seeds_pool();
+    }
+    else {
+      // Reset lines
+      agglomerationLines_Idx.clear();
+      agglomerationLines.clear();
+      seeds_pool->initialize();
+    }
   }
   else {
     seeds_pool->initialize();

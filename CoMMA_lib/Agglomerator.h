@@ -25,6 +25,7 @@
 #include <cmath>
 #include <deque>
 #include <functional>
+#include <iostream>
 #include <iterator>
 #include <memory>
 #include <numeric>
@@ -193,6 +194,8 @@ class Agglomerator_Anisotropic
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
    * considered as anisotropic
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
    *  @param[in] build_lines Whether lines joining the anisotropic cells should be
    * built
    *  @param[in] odd_line_length Whether anisotropic lines with odd length are
@@ -207,6 +210,7 @@ class Agglomerator_Anisotropic
       const CoMMAWeightType threshold_anisotropy,
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
+      const vector<CoMMAWeightType> &priority_weights,
       const bool build_lines,
       const bool odd_line_length,
       CoMMAIntType dimension = 3)
@@ -221,7 +225,19 @@ class Agglomerator_Anisotropic
     this->_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
 
-    if (!build_lines) {
+    this->_threshold_anisotropy =
+        (threshold_anisotropy > 1 || threshold_anisotropy < 0)
+            ? threshold_anisotropy
+            : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
+
+    this->_should_agglomerate = true;
+    if (build_lines) {
+      // if the finest agglomeration line is not computed, hence compute it
+      // (REMEMBER! We compute the agglomeration lines only on the (original)
+      // finest level
+      this->_should_agglomerate = this->build_anisotropic_lines(priority_weights);
+    }
+    else {
       // case in which we have already agglomerated one level and hence we have
       // already agglomeration lines available; no need to recreate them.
       this->_nb_lines[0] = static_cast<CoMMAIndexType>(
@@ -236,11 +252,6 @@ class Agglomerator_Anisotropic
         );
       }
     }
-
-    this->_threshold_anisotropy =
-        (threshold_anisotropy > 1 || threshold_anisotropy < 0)
-            ? threshold_anisotropy
-            : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
   }
 
   /** @brief Destructor*/
@@ -272,14 +283,6 @@ class Agglomerator_Anisotropic
     CoMMAUnused(min_card);
     CoMMAUnused(max_card);
     CoMMAUnused(correction_steps);
-
-    // if the finest agglomeration line is not computed, hence compute it
-    // (REMEMBER! We compute the agglomeration lines only on the finest level,
-    // the other one are stored only for visualization purpose)
-    if (this->_v_lines[0].empty()) {
-      // The anisotropic lines are only computed on the original (finest) mesh.
-      this->build_anisotropic_lines(priority_weights);  // finest level!!!
-    }
 
     // Necessary for the create_cc but maybe we need in
     // some way to change that.
@@ -442,6 +445,11 @@ class Agglomerator_Anisotropic
   */
   vector<vector<AnisotropicLinePtr>> _v_lines;
 
+  /** @brief Whether agglomeration is possible: for instance, if anisotropy
+   * requested but no anisotropic cells found, there is no actual need.
+   */
+  bool _should_agglomerate;
+
  protected:
 
   /** @brief Build the anisotropic lines at the first level (only called at
@@ -450,8 +458,9 @@ class Agglomerator_Anisotropic
    * 2. Build anisotropic lines
    *
    * @param[in] priority_weights Weights used to set the order telling where to start
+   * @return whether at least one line was built
    */
-  void build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
+  bool build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
     deque<CoMMAIndexType> aniso_seeds_pool;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
@@ -464,6 +473,10 @@ class Agglomerator_Anisotropic
                                            aniso_seeds_pool,
                                            _threshold_anisotropy,
                                            priority_weights, 0);
+    if (aniso_seeds_pool.empty()) {
+      cout << "CoMMA - No anisotropic cell found. Skipping anisotropic agglomeration" << endl;
+      return false;
+    }
     // Size might not be the dimension
     const auto pts_dim = this->_fc_graph->_centers[0].size();
     // size of the line
@@ -612,6 +625,12 @@ class Agglomerator_Anisotropic
         this->_nb_lines[0] += 1;
       }
     } // End of loop over anisotropic cells
+
+    if (this->_nb_lines[0] == 0) {
+      cout << "CoMMA - No anisotropic line was built (e.g., only isolated anisotropic cells). Skipping anisotropic agglomeration" << endl;
+      return false;
+    }
+    return true;
   }
 
   /** @brief Value of the aspect ration above which a cell is considered

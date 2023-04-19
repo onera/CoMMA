@@ -1653,8 +1653,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  ODD_LINE_LENGTH, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
 
     WHEN("We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate)") {
          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
@@ -1663,7 +1663,63 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
       }
     }
   }
+  GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell") {
+    /* ATTENTION: This test produces (prints) a warning, twice */
+    const DualGPy_aniso Data = DualGPy_aniso();
+    WHEN("We consider no anisotropic compliant cell") {
+      shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+      vector<CoMMAIndexT> v_aniso = {};
+      shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+          Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+          Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+          v_aniso);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      const CoMMAWeightT aniso_thresh{-2.};
+      const bool build_lines = true;
+      vector<CoMMAIndexT> agglomerationLines_Idx{};
+      vector<CoMMAIndexT> agglomerationLines{};
+      Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+          aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                    agglomerationLines_Idx, agglomerationLines, Data.weights,
+                    build_lines, ODD_LINE_LENGTH, Data.dim);
+
+      THEN("There is no need to agglomerate anisotropically since no line can be built") {
+        REQUIRE(!aniso_agg._should_agglomerate);
+        REQUIRE(aniso_agg._nb_lines[0]==0);
+        THEN("Even if one tries to agglomerate anisotropically, nothing happens") {
+          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+          REQUIRE(cc_graph->get_number_of_fc_agglomerated() == 0);
+        }
+      }
+    }
+    WHEN("We consider a too high threshold") {
+      shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+      shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+          Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+          Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+          Data.arrayOfFineAnisotropicCompliantCells);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      const CoMMAWeightT aniso_thresh{10000.};
+      const bool build_lines = true;
+      vector<CoMMAIndexT> agglomerationLines_Idx{};
+      vector<CoMMAIndexT> agglomerationLines{};
+      Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+          aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                    agglomerationLines_Idx, agglomerationLines, Data.weights,
+                    build_lines, ODD_LINE_LENGTH, Data.dim);
+
+      THEN("There is no need to agglomerate anisotropically since no line can be built") {
+        REQUIRE(!aniso_agg._should_agglomerate);
+        REQUIRE(aniso_agg._nb_lines[0]==0);
+        THEN("Even if one tries to agglomerate anisotropically, nothing happens") {
+          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+          REQUIRE(cc_graph->get_number_of_fc_agglomerated() == 0);
+        }
+      }
+    }
+  }
   GIVEN("We load the anisotropic mesh structure, but only a cell is anisotropic") {
+    /* ATTENTION: This test produces (prints) a warning */
     const DualGPy_aniso Data = DualGPy_aniso();
     shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     vector<CoMMAIndexT> v_aniso = {0};
@@ -1678,13 +1734,15 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  ODD_LINE_LENGTH, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
 
-    WHEN("We proceed with the agglomeration of the anisotropic lines") {
-         aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
-      THEN("No lines are built") {
-        REQUIRE(aniso_agg._nb_lines[0]==0);
+    THEN("There is no need to agglomerate anisotropically since no line can be built") {
+      REQUIRE(!aniso_agg._should_agglomerate);
+      REQUIRE(aniso_agg._nb_lines[0]==0);
+      THEN("Even if one tries to agglomerate anisotropically, nothing happens") {
+        aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+        REQUIRE(cc_graph->get_number_of_fc_agglomerated() == 0);
       }
     }
   }
@@ -1708,8 +1766,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  ODD_LINE_LENGTH, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
@@ -1769,8 +1827,8 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  false, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, false, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
@@ -1872,8 +1930,8 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  ODD_LINE_LENGTH, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
@@ -1937,8 +1995,8 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, w,
+                  build_lines, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We agglomerate the mesh") {
@@ -2001,8 +2059,8 @@ the line grows vertically
     shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
-                  agglomerationLines_Idx, agglomerationLines, build_lines,
-                  ODD_LINE_LENGTH, Data.dim);
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         iso_agg(fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     WHEN("We initialize the agglomerator") {
@@ -2639,13 +2697,16 @@ SCENARIO("Test of main function", "[structure]") {
               0,
               min_card, max_card)
         );
+        vector<CoMMAIndexT> tmp_idx = {0, 0},
+                            tmp_lines = {4};
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               false,
-              aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
-              goal_card, min_card, max_card)
+              aniso, odd_length, aniso_thr, seed, fc2cc,
+              tmp_idx, tmp_lines,
+              correction, Data.dim, goal_card, min_card, max_card)
         );
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
