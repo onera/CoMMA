@@ -278,24 +278,16 @@ void agglomerate_one_level(
                   agglomerationLines_Idx, agglomerationLines, priority_weights,
                   build_anisotropic_lines, odd_line_length, dimension);
 
-    if (aniso_agg._should_agglomerate) {
-      // Agglomerate anisotropic cells only
-      aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
+    // Agglomerate anisotropic cells only
+    aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
 
-      // Put anisotropic lines computed just above into the out parameters
-      // (Info about level of the line: WARNING! here 1 it means that we give it back
-      // lines in the new global index, 0 the old)
-      const CoMMAIntType i_level{1};
-      aniso_agg.get_agglo_lines(i_level, agglomerationLines_Idx, agglomerationLines);
+    // Put anisotropic lines into the output parameters
+    // (Info about level of the line: WARNING! here 1 it means that we give it back
+    // lines in the new global index, 0 the old)
+    const CoMMAIntType i_level{1};
+    aniso_agg.export_anisotropic_lines(i_level, agglomerationLines_Idx, agglomerationLines);
 
-      aniso_agg.update_seeds_pool();
-    }
-    else {
-      // Reset lines
-      agglomerationLines_Idx.clear();
-      agglomerationLines.clear();
-      seeds_pool->initialize();
-    }
+    aniso_agg.update_seeds_pool();
   }
   else {
     seeds_pool->initialize();
