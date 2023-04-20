@@ -118,6 +118,7 @@ for level in range(agglomeration_levels):
     print(f"* Level {level}:")
     if level > 0:
         print(' - Preparing data...', flush = True, end = '')
+        build_lines = False
         # This is possibly not the most efficient way to do the following, but it works and it is enough for now
         f2c = np.asarray(fc_to_cc)
         (
@@ -145,7 +146,7 @@ for level in range(agglomeration_levels):
     fc_to_cc,agglomerationLines_Idx,agglomerationLines = \
             agglomerate_one_level(adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
                                   centers, weights,
-                                  arrayOfFineAnisotropicCompliantCells,n_bnd_faces, level == 0,
+                                  arrayOfFineAnisotropicCompliantCells,n_bnd_faces, build_lines,
                                   anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                                   fc_to_cc,agglomerationLines_Idx,agglomerationLines,
                                   correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)
@@ -159,8 +160,8 @@ for level in range(agglomeration_levels):
     # agglo.append([ut.address_agglomerated_cells(fc_to_cur_lvl, renumber_coarse)] if renum \
                           # else [fc_to_cur_lvl])
     # As long as the data is composed of (integer) IDs, the following is equivalent but much faster
-    agglo.append([(np.asarray(fc_to_cur_lvl) % renumber_coarse)] if renum \
-                      else [fc_to_cur_lvl])
+    agglo.append([(np.asarray(fc_to_cur_lvl.copy()) % renumber_coarse)] if renum \
+                      else [fc_to_cur_lvl.copy()])
     print('OK')
     print()
     if max(fc_to_cc) == 0 and level < agglomeration_levels-1:
