@@ -1717,6 +1717,36 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         }
       }
     }
+    WHEN("We consider only anisotropic lines composed of only one cell") {
+      shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+      shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+          Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+          Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+          Data.arrayOfFineAnisotropicCompliantCells);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      const CoMMAWeightT aniso_thresh{10000.};
+      const bool build_lines = false;
+      vector<CoMMAIndexT> agglomerationLines_Idx{0,1,2};
+      vector<CoMMAIndexT> agglomerationLines{1,2};
+      Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+          aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                    agglomerationLines_Idx, agglomerationLines, Data.weights,
+                    build_lines, ODD_LINE_LENGTH, Data.dim);
+
+      THEN("There is no need to agglomerate anisotropically since no line can be built") {
+        REQUIRE(!aniso_agg._should_agglomerate);
+        REQUIRE(aniso_agg._nb_lines[0]==0);
+        THEN("Even if one tries to agglomerate anisotropically, nothing happens") {
+          aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+          REQUIRE(cc_graph->get_number_of_fc_agglomerated() == 0);
+        }
+        THEN("Even if one tries to get the output lines, they come back empty") {
+          aniso_agg.export_anisotropic_lines(1, agglomerationLines_Idx, agglomerationLines);
+          REQUIRE(agglomerationLines_Idx.empty());
+          REQUIRE(agglomerationLines.empty());
+        }
+      }
+    }
   }
   GIVEN("We load the anisotropic mesh structure, but only a cell is anisotropic") {
     /* ATTENTION: This test produces (prints) a warning */
@@ -1744,6 +1774,33 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
         REQUIRE(cc_graph->get_number_of_fc_agglomerated() == 0);
       }
+    }
+  }
+  GIVEN("We load a 4by7 quad 2D mesh, we provide 4 lines but one is just 1-cell long") {
+    /* ATTENTION: This test produces (prints) a warning */
+    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    shared_ptr<SeedsPoolT> seeds_pool = make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    vector<CoMMAIndexT> v_aniso = {0};
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+        Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
+        v_aniso);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    const CoMMAWeightT aniso_thresh{-2.};
+    const bool build_lines = false;
+    vector<CoMMAIndexT> agglomerationLines_Idx{0,1,6,11,16};
+    vector<CoMMAIndexT> agglomerationLines{0,
+                                           11,10, 9, 8, 7,
+                                           16,14,12,13,15,
+                                           20,22,23,21,19};
+    Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+        aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
+                  agglomerationLines_Idx, agglomerationLines, Data.weights,
+                  build_lines, ODD_LINE_LENGTH, Data.dim);
+
+    THEN("Only 3 lines are built") {
+      REQUIRE(aniso_agg._nb_lines[0]==3);
+      REQUIRE(aniso_agg._should_agglomerate);
     }
   }
 

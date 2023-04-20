@@ -241,17 +241,23 @@ class Agglomerator_Anisotropic
     else {
       // case in which we have already agglomerated one level and hence we have
       // already agglomeration lines available; no need to recreate them.
-      this->_nb_lines[0] = static_cast<CoMMAIndexType>(
-          agglomerationLines_Idx.size() - 1);
+      this->_nb_lines[0] = 0;
       for (auto idx_ptr = agglomerationLines_Idx.cbegin() + 1;
            idx_ptr != agglomerationLines_Idx.cend(); ++idx_ptr) {
-        this->_v_lines[0].push_back(
-            make_shared<AnisotropicLine>(
-              agglomerationLines.cbegin() + (*(idx_ptr - 1)),
-              agglomerationLines.cbegin() + (*idx_ptr)
-            )
-        );
+        const auto ln_sz = *idx_ptr - (*(idx_ptr-1));
+        if (ln_sz > 1) {
+          this->_v_lines[0].push_back(
+              make_shared<AnisotropicLine>(
+                agglomerationLines.cbegin() + (*(idx_ptr - 1)),
+                agglomerationLines.cbegin() + (*idx_ptr)
+              )
+          );
+          this->_nb_lines[0]++;
+        }
       }
+      this->_should_agglomerate = this->_nb_lines[0] > 0;
+      if (!this->_should_agglomerate)
+        cout << "CoMMA - No anisotropic line was built (e.g., only one-cell lines). Skipping anisotropic agglomeration" << endl;
     }
   }
 
@@ -418,7 +424,7 @@ class Agglomerator_Anisotropic
     // Reset lines
     aniso_lines_idx.clear();
     aniso_lines.clear();
-    if ( this->_should_agglomerate ) {
+    if ( this->_should_agglomerate && this->_v_lines[level].size() > 0 ) {
       // If at the level of agglomeration "level" the vector containing the number of
       // lines is empty, hence it means no line has been found at the current
       // level.
