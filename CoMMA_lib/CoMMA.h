@@ -286,8 +286,6 @@ void agglomerate_one_level(
     // lines in the new global index, 0 the old)
     const CoMMAIntType i_level{1};
     aniso_agg.export_anisotropic_lines(i_level, agglomerationLines_Idx, agglomerationLines);
-
-    aniso_agg.update_seeds_pool();
   }
   else {
     seeds_pool->initialize();
@@ -310,8 +308,8 @@ void agglomerate_one_level(
         fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
         dimension);
   }
-  agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
   // Agglomerate
+  agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   const auto &fccc = cc_graph->_fc_2_cc;

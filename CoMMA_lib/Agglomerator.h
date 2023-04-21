@@ -372,42 +372,43 @@ class Agglomerator_Anisotropic
           loop_line(line.crbegin(), line.crend());
 
       } // End loop on lines
+
+      this->update_seeds_pool();
+
     } // End if should agglomerate
+    else
+      // If it didn't agglomerate, initialize for sure
+      this->_seeds_pool->initialize();
   }
 
   /** @brief Update the seeds pool with the neighbours of the anisotropic cells
    * agglomerated so far.
    */
   void update_seeds_pool() {
-    if (this->_should_agglomerate) {
-      if (!this->_aniso_neighbours.empty()) {
-        // Example of erase taken from
-        // https://en.cppreference.com/w/cpp/container/deque/erase
-        for (auto it = this->_aniso_neighbours.begin();
-             it != this->_aniso_neighbours.end();) {
-          if (this->_cc_graph->_is_fc_agglomerated[*it])
-            it = this->_aniso_neighbours.erase(it);
-          else
-            ++it;
-        }
-        if (!this->_aniso_neighbours.empty()) {
-          // The master queue is the one of the first agglomerated cell:
-          // It is important to set it in the case the user asked for neighbourhood
-          // priority
-          this->_seeds_pool->set_top_queue(
-              this->_fc_graph->get_n_boundary_faces(
-                this->_aniso_neighbours.front()));
-          this->_seeds_pool->update(this->_aniso_neighbours);
-        }
+    if (!this->_aniso_neighbours.empty()) {
+      // Example of erase taken from
+      // https://en.cppreference.com/w/cpp/container/deque/erase
+      for (auto it = this->_aniso_neighbours.begin();
+           it != this->_aniso_neighbours.end();) {
+        if (this->_cc_graph->_is_fc_agglomerated[*it])
+          it = this->_aniso_neighbours.erase(it);
+        else
+          ++it;
       }
-      // Even if we have updated it, the seeds pool might need initialization, for
-      // instance, if it was set up with boundary priority
-      if (this->_seeds_pool->need_initialization(
-                              this->_cc_graph->_is_fc_agglomerated))
-        this->_seeds_pool->initialize();
+      if (!this->_aniso_neighbours.empty()) {
+        // The master queue is the one of the first agglomerated cell:
+        // It is important to set it in the case the user asked for neighbourhood
+        // priority
+        this->_seeds_pool->set_top_queue(
+            this->_fc_graph->get_n_boundary_faces(
+              this->_aniso_neighbours.front()));
+        this->_seeds_pool->update(this->_aniso_neighbours);
+      }
     }
-    else
-      // If it didn't agglomerate, initialize for sure
+    // Even if we have updated it, the seeds pool might need initialization, for
+    // instance, if it was set up with boundary priority
+    if (this->_seeds_pool->need_initialization(
+                            this->_cc_graph->_is_fc_agglomerated))
       this->_seeds_pool->initialize();
   }
 
