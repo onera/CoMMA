@@ -168,22 +168,22 @@ Not used anymore but we leave it for example purposes
         // now we have the neighbourhood cc cell, we can access to them and
         // control the characteristics
         optional<CoMMAIntType> new_compactness = nullopt;
-        const auto hint_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
-                                                           max_card, new_compactness);
+        const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
+                                                          max_card, new_compactness);
         // If the condition is verified we add the cell to the identified cc
         // and we remove it from the current cc
         // if we failed we go on, it is life, so we agglomerate to the nearest
         // cell (the first one of the vector). At this point, we do not check if
         // the max cardinality has been reached or not, otherwise we might leave
         // the isolated cell isolated
-        const auto new_cc = hint_cc.has_value() ? hint_cc.value()
-                                                : *(neighs.begin());
-        // first we assign to the fc_2_cc the new cc (later it will be
-        // renumbered considering the deleted cc)
-        _fc_2_cc[isolated_fc] = new_cc;
-        _ccs[new_cc]->insert_cell(isolated_fc, new_compactness);
-        _ccs.erase(old_cc);
-        removed_cc.emplace(old_cc);
+        if (new_cc.has_value()) {
+          // first we assign to the fc_2_cc the new cc (later it will be
+          // renumbered considering the deleted cc)
+          _fc_2_cc[isolated_fc] = new_cc.value();
+          _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
+          _ccs.erase(old_cc);
+          removed_cc.emplace(old_cc);
+        }
       }
       // If the cell has no neighbour (this could happen when the partitioning does
       // not give a connected partition), unfortunately, there is nothing that we
@@ -250,47 +250,51 @@ Not used anymore but we leave it for example purposes
     deque<CoMMAIndexType> argmin_card{};
     deque<CoMMAIndexType> argmax_shared_f{};
     deque<CoMMAIndexType> argtrue_compact{};
+    deque<CoMMAIndexType> iso_neighs{};
     // Loop on neighbours to compute their features
     for (const auto & cc_idx : neighs) {
       const auto n_cc = _ccs.at(cc_idx);
-      if (n_cc->_compactness > 0 && n_cc->_is_isotropic &&
-          //n_cc->_cardinality < max_card &&
-          n_cc->_cardinality >= 2) {
-        // On second thought, let us consider also cells with max cardinality since
-        // the number of faces could be important to ensure compactness of the coarse
-        // cell
-        const auto cur_card = n_cc->_cardinality;
-        card[cc_idx] = cur_card;
-        if (cur_card < min_card) {
-          min_card = cur_card;
-          argmin_card.clear();
-          argmin_card.push_back(cc_idx);
-        } else if (cur_card == min_card) {
-          argmin_card.push_back(cc_idx);
-        }
-        // @TODO: merge computation of shared faces and compactness?
-        const auto cur_sf = get_shared_faces(fc, n_cc);
-        shared_faces[cc_idx] = cur_sf;
-        if (cur_sf > max_shared_f) {
-          max_shared_f = cur_sf;
-          argmax_shared_f.clear();
-          argmax_shared_f.push_back(cc_idx);
-        } else if (cur_sf == max_shared_f) {
-          argmax_shared_f.push_back(cc_idx);
-        }
-        // Analysing compactness
-        auto tmp_cc = n_cc->_s_fc; // OK copy
-        tmp_cc.insert(fc);
-        const auto new_cpt =
-          _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
-        compact[cc_idx] = new_cpt;
-        if (new_cpt > n_cc->_compactness) {
-          compact_increase[cc_idx] = true;
-          argtrue_compact.push_back(cc_idx);
-        } else {
-          compact_increase[cc_idx] = false;
-        }
-      }
+      if (n_cc->_is_isotropic) {
+        iso_neighs.push_back(cc_idx);
+        if (n_cc->_compactness > 0 &&
+            //n_cc->_cardinality < max_card &&
+            n_cc->_cardinality >= 2) {
+          // On second thought, let us consider also cells with max cardinality since
+          // the number of faces could be important to ensure compactness of the coarse
+          // cell
+          const auto cur_card = n_cc->_cardinality;
+          card[cc_idx] = cur_card;
+          if (cur_card < min_card) {
+            min_card = cur_card;
+            argmin_card.clear();
+            argmin_card.push_back(cc_idx);
+          } else if (cur_card == min_card) {
+            argmin_card.push_back(cc_idx);
+          }
+          // @TODO: merge computation of shared faces and compactness?
+          const auto cur_sf = get_shared_faces(fc, n_cc);
+          shared_faces[cc_idx] = cur_sf;
+          if (cur_sf > max_shared_f) {
+            max_shared_f = cur_sf;
+            argmax_shared_f.clear();
+            argmax_shared_f.push_back(cc_idx);
+          } else if (cur_sf == max_shared_f) {
+            argmax_shared_f.push_back(cc_idx);
+          }
+          // Analysing compactness
+          auto tmp_cc = n_cc->_s_fc; // OK copy
+          tmp_cc.insert(fc);
+          const auto new_cpt =
+            _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+          compact[cc_idx] = new_cpt;
+          if (new_cpt > n_cc->_compactness) {
+            compact_increase[cc_idx] = true;
+            argtrue_compact.push_back(cc_idx);
+          } else {
+            compact_increase[cc_idx] = false;
+          }
+        } // End compactness and cardinality
+      } // End if isotropic
     }
     // Now, it's time to choose the best neighbours. Priority is given to those which:
     // 1 - Increase the degree of compactness
@@ -337,7 +341,10 @@ Not used anymore but we leave it for example purposes
       new_compactness = compact.at(ret_cc);
       return ret_cc;
     }
-    // If everything failed, return dummy
+    // If everything failed, look through the neighbours
+    if (!iso_neighs.empty())
+      return iso_neighs[0];
+    // otherwise, there is nothing we can do
     return nullopt;
   }
 

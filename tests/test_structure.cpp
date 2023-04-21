@@ -2420,6 +2420,69 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 8, 2));
       }
     }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and four coarse cells with cardinality 2, one of which is anisotropic") {
+      cc_graph->create_cc({0,3}, 1, true);
+      cc_graph->create_cc({6,7}, 1);
+      cc_graph->create_cc({4}, 0);
+      cc_graph->create_cc({5,8}, 1);
+      cc_graph->create_cc({1,2}, 1);
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 4));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cell has been agglomerated "
+           "to the coarse ISOTROPIC cell with lower ID") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 3));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 1));
+        REQUIRE(fc_in_cc(cc_graph, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 2));
+      }
+    }
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
+         "and four coarse cells with cardinality 2, all of which are anisotropic") {
+      cc_graph->create_cc({0,3}, 1, true);
+      cc_graph->create_cc({6,7}, 1, true);
+      cc_graph->create_cc({4}, 0);
+      cc_graph->create_cc({5,8}, 1, true);
+      cc_graph->create_cc({1,2}, 1, true);
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 4));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+      cc_graph->correct(4);
+      THEN("Nothing changes after correction because we do not agglomerate to anisotropic cells") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph, 1, 4));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph, 5, 3));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 3));
+      }
+    }
     WHEN("We agglomerate (manually) leaving two coarse cells with cardinality 1") {
       cc_graph->create_cc({0,1}, 1);
       cc_graph->create_cc({2}, 0);
