@@ -25,6 +25,7 @@
 #include <cmath>
 #include <deque>
 #include <functional>
+#include <iostream>
 #include <iterator>
 #include <memory>
 #include <numeric>
@@ -193,6 +194,8 @@ class Agglomerator_Anisotropic
    * anisotropic lines
    *  @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
    * considered as anisotropic
+   * @param[in] priority_weights Weights used to set the order telling where to start
+   * agglomerating. The higher the weight, the higher the priority
    *  @param[in] build_lines Whether lines joining the anisotropic cells should be
    * built
    *  @param[in] odd_line_length Whether anisotropic lines with odd length are
@@ -207,6 +210,7 @@ class Agglomerator_Anisotropic
       const CoMMAWeightType threshold_anisotropy,
       const vector<CoMMAIndexType> &agglomerationLines_Idx,
       const vector<CoMMAIndexType> &agglomerationLines,
+      const vector<CoMMAWeightType> &priority_weights,
       const bool build_lines,
       const bool odd_line_length,
       CoMMAIntType dimension = 3)
@@ -221,26 +225,40 @@ class Agglomerator_Anisotropic
     this->_nb_lines = vector<CoMMAIndexType>(2);
     this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
 
-    if (!build_lines) {
-      // case in which we have already agglomerated one level and hence we have
-      // already agglomeration lines available; no need to recreate them.
-      this->_nb_lines[0] = static_cast<CoMMAIndexType>(
-          agglomerationLines_Idx.size() - 1);
-      for (auto idx_ptr = agglomerationLines_Idx.cbegin() + 1;
-           idx_ptr != agglomerationLines_Idx.cend(); ++idx_ptr) {
-        this->_v_lines[0].push_back(
-            make_shared<AnisotropicLine>(
-              agglomerationLines.cbegin() + (*(idx_ptr - 1)),
-              agglomerationLines.cbegin() + (*idx_ptr)
-            )
-        );
-      }
-    }
+    this->_should_agglomerate = true;
 
-    this->_threshold_anisotropy =
+    if (build_lines) {
+      const CoMMAWeightType thr =
         (threshold_anisotropy > 1 || threshold_anisotropy < 0)
             ? threshold_anisotropy
             : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
+      // if the finest agglomeration line is not computed, hence compute it
+      // (REMEMBER! We compute the agglomeration lines only on the (original)
+      // finest level
+      this->_should_agglomerate =
+        this->build_anisotropic_lines(priority_weights, thr);
+    }
+    else {
+      // case in which we have already agglomerated one level and hence we have
+      // already agglomeration lines available; no need to recreate them.
+      this->_nb_lines[0] = 0;
+      for (auto idx_ptr = agglomerationLines_Idx.cbegin() + 1;
+           idx_ptr != agglomerationLines_Idx.cend(); ++idx_ptr) {
+        const auto ln_sz = *idx_ptr - (*(idx_ptr-1));
+        if (ln_sz > 1) {
+          this->_v_lines[0].push_back(
+              make_shared<AnisotropicLine>(
+                agglomerationLines.cbegin() + (*(idx_ptr - 1)),
+                agglomerationLines.cbegin() + (*idx_ptr)
+              )
+          );
+          this->_nb_lines[0]++;
+        }
+      }
+      this->_should_agglomerate = this->_nb_lines[0] > 0;
+      if (!this->_should_agglomerate)
+        cout << "CoMMA - No anisotropic line was built (e.g., only one-cell lines). Skipping anisotropic agglomeration" << endl;
+    }
   }
 
   /** @brief Destructor*/
@@ -273,94 +291,94 @@ class Agglomerator_Anisotropic
     CoMMAUnused(max_card);
     CoMMAUnused(correction_steps);
 
-    // if the finest agglomeration line is not computed, hence compute it
-    // (REMEMBER! We compute the agglomeration lines only on the finest level,
-    // the other one are stored only for visualization purpose)
-    if (this->_v_lines[0].empty()) {
-      // The anisotropic lines are only computed on the original (finest) mesh.
-      this->build_anisotropic_lines(priority_weights);  // finest level!!!
-    }
+    if (this->_should_agglomerate) {
+      // Necessary for the create_cc but maybe we need in
+      // some way to change that.
+      constexpr bool is_anisotropic = true;
+      constexpr CoMMAIntType compactness = 1;
 
-    // Necessary for the create_cc but maybe we need in
-    // some way to change that.
-    constexpr bool is_anisotropic = true;
-    constexpr CoMMAIntType compactness = 1;
-
-    // Setting up lambda function that will perform the loop. This is needed since we
-    // want to loop forwards or backwards according to some runtime value
-    // See, e.g., https://stackoverflow.com/a/56133699/12152457
-    auto loop_line = [&](auto begin, auto end) {
-      AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
-      for (auto line_it = begin; line_it != end; line_it += 2) {
-        // we agglomerate cells along the agglomeration line, hence we have to
-        // go through the faces and agglomerate two faces together
-        // Here we have to consider a special case when we have an odd number of cells:
-        // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
-        unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
-        // We update the neighbours. At this stage, we do not check if it is or will
-        // be agglomerated since there will be a cleaning step after the anisotropic
-        // agglomeration
-        this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
-                                       this->_fc_graph->neighbours_cbegin(*line_it),
-                                       this->_fc_graph->neighbours_cend(*line_it));
-        this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
-                                       this->_fc_graph->neighbours_cbegin(*(line_it+1)),
-                                       this->_fc_graph->neighbours_cend(*(line_it+1)));
-        if (distance(line_it, end) == 3) {
-          if (this->_odd_line_length) {
-            // If only three cells left, agglomerate them
-            s_fc.insert(*(line_it + 2));
-            this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
-                                           this->_fc_graph->neighbours_cbegin(*(line_it+2)),
-                                           this->_fc_graph->neighbours_cend(*(line_it+2)));
+      // Setting up lambda function that will perform the loop. This is needed since we
+      // want to loop forwards or backwards according to some runtime value
+      // See, e.g., https://stackoverflow.com/a/56133699/12152457
+      auto loop_line = [&](auto begin, auto end) {
+        AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
+        for (auto line_it = begin; line_it != end; line_it += 2) {
+          // we agglomerate cells along the agglomeration line, hence we have to
+          // go through the faces and agglomerate two faces together
+          // Here we have to consider a special case when we have an odd number of cells:
+          // THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID ALGORITHM
+          unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+          // We update the neighbours. At this stage, we do not check if it is or will
+          // be agglomerated since there will be a cleaning step after the anisotropic
+          // agglomeration
+          this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                         this->_fc_graph->neighbours_cbegin(*line_it),
+                                         this->_fc_graph->neighbours_cend(*line_it));
+          this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                         this->_fc_graph->neighbours_cbegin(*(line_it+1)),
+                                         this->_fc_graph->neighbours_cend(*(line_it+1)));
+          if (distance(line_it, end) == 3) {
+            if (this->_odd_line_length) {
+              // If only three cells left, agglomerate them
+              s_fc.insert(*(line_it + 2));
+              this->_aniso_neighbours.insert(this->_aniso_neighbours.end(),
+                                             this->_fc_graph->neighbours_cbegin(*(line_it+2)),
+                                             this->_fc_graph->neighbours_cend(*(line_it+2)));
+            }
+            line_it++; // Ensure to break the loop after current iteration
           }
-          line_it++; // Ensure to break the loop after current iteration
+          // We create the coarse cell
+          const CoMMAIndexType i_cc =
+            this->_cc_graph->create_cc(s_fc, compactness, is_anisotropic);
+          line_lvl_p_one->push_back(i_cc);
         }
-        // We create the coarse cell
-        const CoMMAIndexType i_cc =
-          this->_cc_graph->create_cc(s_fc, compactness, is_anisotropic);
-        line_lvl_p_one->push_back(i_cc);
-      }
 
-      this->_v_lines[1].push_back(line_lvl_p_one);
-    }; // End lambda def
+        this->_v_lines[1].push_back(line_lvl_p_one);
+      }; // End lambda def
 
-    // Process of every agglomeration lines:
-    for (auto line_ptr = this->_v_lines[0].begin(); line_ptr != this->_v_lines[0].end();
-         line_ptr++) {
-      // We iterate on the anisotropic lines of a particular level (the level 1,
-      // where they were copied from level 0).
-      // We create a pointer to an empty deque for the line + 1, and hence for
-      // the next level of agglomeration
-      auto line = **line_ptr;
-      if (line.size() <= 1) {
-        // the agglomeration_line is empty and hence the iterator points again
-        // to the empty deque, updating what is pointed by it and hence __v_lines[1]
-        // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
-        continue;
-      }
-      // We start agglomerating from the head or the tail of the line according to
-      // which of the two has more boundary faces, or priority or ID
-      const auto l_fr = line.front(),
-                 l_bk = line.back();
-      const auto bnd_fr = this->_fc_graph->get_n_boundary_faces(l_fr),
-                 bnd_bk = this->_fc_graph->get_n_boundary_faces(l_bk);
-      const auto w_fr = priority_weights[l_fr],
-                 w_bk = priority_weights[l_bk];
-      const bool forward_line = bnd_fr > bnd_bk          // Greater boundaries...
-                                  || (bnd_fr == bnd_bk
-                                        && (w_fr > w_bk  // ...or greater priority...
-                                              || (w_fr == w_bk
-                                                    && l_fr < l_bk) // ..or smaller index
-                                            )
-                                      );
+      // Process of every agglomeration lines:
+      for (auto line_ptr = this->_v_lines[0].begin(); line_ptr != this->_v_lines[0].end();
+           line_ptr++) {
+        // We iterate on the anisotropic lines of a particular level (the level 1,
+        // where they were copied from level 0).
+        // We create a pointer to an empty deque for the line + 1, and hence for
+        // the next level of agglomeration
+        auto line = **line_ptr;
+        if (line.size() <= 1) {
+          // the agglomeration_line is empty and hence the iterator points again
+          // to the empty deque, updating what is pointed by it and hence __v_lines[1]
+          // (each time we iterate on the line, a new deque line_lvl_p_one is defined)
+          continue;
+        }
+        // We start agglomerating from the head or the tail of the line according to
+        // which of the two has more boundary faces, or priority or ID
+        const auto l_fr = line.front(),
+                   l_bk = line.back();
+        const auto bnd_fr = this->_fc_graph->get_n_boundary_faces(l_fr),
+                   bnd_bk = this->_fc_graph->get_n_boundary_faces(l_bk);
+        const auto w_fr = priority_weights[l_fr],
+                   w_bk = priority_weights[l_bk];
+        const bool forward_line = bnd_fr > bnd_bk          // Greater boundaries...
+                                    || (bnd_fr == bnd_bk
+                                          && (w_fr > w_bk  // ...or greater priority...
+                                                || (w_fr == w_bk
+                                                      && l_fr < l_bk) // ..or smaller index
+                                              )
+                                        );
 
-      if (forward_line)
-        loop_line(line.cbegin(), line.cend());
-      else
-        loop_line(line.crbegin(), line.crend());
+        if (forward_line)
+          loop_line(line.cbegin(), line.cend());
+        else
+          loop_line(line.crbegin(), line.crend());
 
-    }
+      } // End loop on lines
+
+      this->update_seeds_pool();
+
+    } // End if should agglomerate
+    else
+      // If it didn't agglomerate, initialize for sure
+      this->_seeds_pool->initialize();
   }
 
   /** @brief Update the seeds pool with the neighbours of the anisotropic cells
@@ -396,38 +414,41 @@ class Agglomerator_Anisotropic
 
   /** @brief Function that prepares the anisotropic lines for output
    *  @param[in] level of the agglomeration process into the Multigrid algorithm
-   *  @param[out] agglo_lines_idx Connectivity for the agglomeration lines: each
-   * element points to a particular element in the vector \p agglo_lines
-   *  @param[out] agglo_lines Vector storing all the elements of the anisotropic
+   *  @param[out] aniso_lines_idx Connectivity for the agglomeration lines: each
+   * element points to a particular element in the vector \p aniso_lines
+   *  @param[out] aniso_lines Vector storing all the elements of the anisotropic
    * lines
    */
-  void get_agglo_lines(CoMMAIntType level,
-                       vector<CoMMAIndexType> &agglo_lines_idx,
-                       vector<CoMMAIndexType> &agglo_lines) const {
-    // If at the level of agglomeration "level" the vector containing the number of
-    // lines is empty, hence it means no line has been found at the current
-    // level.
-    // variable cumulating the number of fine cells in the agglomeration lines
-    // of the current level
-    CoMMAIndexType number_of_fc_in_agglomeration_lines = 0;
-    agglo_lines_idx.clear();
-    agglo_lines.clear();
-    agglo_lines_idx.push_back(0);
-    // We cycle over the line (in _v_lines)
-    for (const auto &line_ptr : this->_v_lines[level]) {
-      const auto line = *line_ptr; // Convenience
-      const CoMMAIndexType size_of_line = line.size();
-      // This vector store the end of a line and the start of a new anisotropic
-      // line
-      // WARNING! We are storing the anisotropic lines in a vector so we need a
-      // way to point to the end of a line and the starting of a new one.
-      agglo_lines_idx.push_back(size_of_line +
-                                number_of_fc_in_agglomeration_lines);
-      // Here we store the index of the cell.
-      for (const auto cell : line) {
-        agglo_lines.push_back(cell);
+  void export_anisotropic_lines(CoMMAIntType level,
+                                vector<CoMMAIndexType> &aniso_lines_idx,
+                                vector<CoMMAIndexType> &aniso_lines) const {
+    // Reset lines
+    aniso_lines_idx.clear();
+    aniso_lines.clear();
+    if ( this->_should_agglomerate && this->_v_lines[level].size() > 0 ) {
+      // If at the level of agglomeration "level" the vector containing the number of
+      // lines is empty, hence it means no line has been found at the current
+      // level.
+      // variable cumulating the number of fine cells in the agglomeration lines
+      // of the current level
+      CoMMAIndexType number_of_fc_in_agglomeration_lines = 0;
+      aniso_lines_idx.push_back(0);
+      // We cycle over the line (in _v_lines)
+      for (const auto &line_ptr : this->_v_lines[level]) {
+        const auto line = *line_ptr; // Convenience
+        const CoMMAIndexType size_of_line = line.size();
+        // This vector store the end of a line and the start of a new anisotropic
+        // line
+        // WARNING! We are storing the anisotropic lines in a vector so we need a
+        // way to point to the end of a line and the starting of a new one.
+        aniso_lines_idx.push_back(size_of_line +
+                                  number_of_fc_in_agglomeration_lines);
+        // Here we store the index of the cell.
+        for (const auto cell : line) {
+          aniso_lines.push_back(cell);
+        }
+        number_of_fc_in_agglomeration_lines += size_of_line;
       }
-      number_of_fc_in_agglomeration_lines += size_of_line;
     }
   }
 
@@ -442,6 +463,11 @@ class Agglomerator_Anisotropic
   */
   vector<vector<AnisotropicLinePtr>> _v_lines;
 
+  /** @brief Whether agglomeration is possible: for instance, if anisotropy
+   * requested but no anisotropic cells found, there is no actual need.
+   */
+  bool _should_agglomerate;
+
  protected:
 
   /** @brief Build the anisotropic lines at the first level (only called at
@@ -450,8 +476,11 @@ class Agglomerator_Anisotropic
    * 2. Build anisotropic lines
    *
    * @param[in] priority_weights Weights used to set the order telling where to start
+   * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
+   * @return whether at least one line was built
    */
-  void build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights) {
+  bool build_anisotropic_lines(const vector<CoMMAWeightType> &priority_weights,
+                               const CoMMAWeightType threshold_anisotropy) {
     deque<CoMMAIndexType> aniso_seeds_pool;
     // It is the max_weight, hence the maximum area among the faces composing the cell.
     // Used to recognized the face
@@ -462,8 +491,12 @@ class Agglomerator_Anisotropic
     // is more than a given threshold.
     this->_fc_graph->tag_anisotropic_cells(max_weights, to_treat,
                                            aniso_seeds_pool,
-                                           _threshold_anisotropy,
+                                           threshold_anisotropy,
                                            priority_weights, 0);
+    if (aniso_seeds_pool.empty()) {
+      cout << "CoMMA - No anisotropic cell found. Skipping anisotropic agglomeration" << endl;
+      return false;
+    }
     // Size might not be the dimension
     const auto pts_dim = this->_fc_graph->_centers[0].size();
     // size of the line
@@ -612,12 +645,13 @@ class Agglomerator_Anisotropic
         this->_nb_lines[0] += 1;
       }
     } // End of loop over anisotropic cells
-  }
 
-  /** @brief Value of the aspect ration above which a cell is considered
-   * anisotropic
-   */
-  CoMMAWeightType _threshold_anisotropy;
+    if (this->_nb_lines[0] == 0) {
+      cout << "CoMMA - No anisotropic line was built (e.g., only isolated anisotropic cells). Skipping anisotropic agglomeration" << endl;
+      return false;
+    }
+    return true;
+  }
 
   /** @brief Neighbours of the anisotropic cells agglomerated. They are used to
    * update the seeds pool
