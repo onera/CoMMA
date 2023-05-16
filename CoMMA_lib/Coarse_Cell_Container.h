@@ -157,37 +157,38 @@ Not used anymore but we leave it for example purposes
     // We use it to understand if we have succeeded in the correction
     set<typename decltype(_singular_cc)::value_type> removed_cc{};
     for (const auto& old_cc : _singular_cc) {
-      // We enter in the property of the subgraph of being 1
-      // and we consider what happens. Remember that second because
-      // we are checking the subgraph
-      // Take the only FC in the CC
-      const auto isolated_fc = *(_ccs[old_cc]->_s_fc.begin());
-      // Get the cc neighs of the given fine cell
-      const auto neighs = get_neighs_cc(isolated_fc, old_cc);
-      if(!neighs.empty()) {
-        // now we have the neighbourhood cc cell, we can access to them and
-        // control the characteristics
-        optional<CoMMAIntType> new_compactness = nullopt;
-        const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
-                                                          max_card, new_compactness);
-        // If the condition is verified we add the cell to the identified cc
-        // and we remove it from the current cc
-        // if we failed we go on, it is life, so we agglomerate to the nearest
-        // cell (the first one of the vector). At this point, we do not check if
-        // the max cardinality has been reached or not, otherwise we might leave
-        // the isolated cell isolated
-        if (new_cc.has_value()) {
-          // first we assign to the fc_2_cc the new cc (later it will be
-          // renumbered considering the deleted cc)
-          _fc_2_cc[isolated_fc] = new_cc.value();
-          _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
-          _ccs.erase(old_cc);
-          removed_cc.emplace(old_cc);
+      if (_ccs[old_cc]->_cardinality == 1) {
+        // It might happen that we agglomerate to a singular cell so that the new
+        // cell was singular when it was created but it is not any more
+        // Take the only FC in the CC
+        const auto isolated_fc = *(_ccs[old_cc]->_s_fc.begin());
+        // Get the cc neighs of the given fine cell
+        const auto neighs = get_neighs_cc(isolated_fc, old_cc);
+        if(!neighs.empty()) {
+          // now we have the neighbourhood cc cell, we can access to them and
+          // control the characteristics
+          optional<CoMMAIntType> new_compactness = nullopt;
+          const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
+                                                            max_card, new_compactness);
+          // If the condition is verified we add the cell to the identified cc
+          // and we remove it from the current cc
+          // if we failed we go on, it is life, so we agglomerate to the nearest
+          // cell (the first one of the vector). At this point, we do not check if
+          // the max cardinality has been reached or not, otherwise we might leave
+          // the isolated cell isolated
+          if (new_cc.has_value()) {
+            // first we assign to the fc_2_cc the new cc (later it will be
+            // renumbered considering the deleted cc)
+            _fc_2_cc[isolated_fc] = new_cc.value();
+            _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
+            _ccs.erase(old_cc);
+            removed_cc.emplace(old_cc);
+          }
         }
+        // If the cell has no neighbour (this could happen when the partitioning does
+        // not give a connected partition), unfortunately, there is nothing that we
+        // can do. We just skip it
       }
-      // If the cell has no neighbour (this could happen when the partitioning does
-      // not give a connected partition), unfortunately, there is nothing that we
-      // can do. We just skip it
     }
 
     // Now update the ID if necessary
@@ -256,9 +257,7 @@ Not used anymore but we leave it for example purposes
       const auto n_cc = _ccs.at(cc_idx);
       if (n_cc->_is_isotropic) {
         iso_neighs.push_back(cc_idx);
-        if (n_cc->_compactness > 0 &&
-            //n_cc->_cardinality < max_card &&
-            n_cc->_cardinality >= 2) {
+        if (true /* n_cc->_cardinality < max_card */) {
           // On second thought, let us consider also cells with max cardinality since
           // the number of faces could be important to ensure compactness of the coarse
           // cell

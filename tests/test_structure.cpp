@@ -2513,6 +2513,36 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 8, 2));
       }
     }
+    WHEN("We agglomerate (manually) leaving three coarse cells with cardinality 1") {
+      cc_graph->create_cc({3,4,5}, 1);
+      cc_graph->create_cc({6,7,8}, 1);
+      cc_graph->create_cc({0}, 0);
+      cc_graph->create_cc({1}, 0);
+      cc_graph->create_cc({2}, 0);
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 2));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cells have been agglomerated together") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 2));
+        REQUIRE(fc_in_cc(cc_graph, 1, 2));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+    }
   }
   GIVEN("A simple 3x3 Cartesian grid to which we add an extra unconnected cell to"
         " simulate pathological partitions") {
