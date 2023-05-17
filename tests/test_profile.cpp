@@ -28,7 +28,7 @@ int main(int argv, char** argc) {
         Data.s_anisotropic_compliant_fc);
 
   TRACE_EVENT_END("setup");
-  Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph = Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>(fc_graph);
+  Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT> cc_graph = Coarse_Cell_Container<TestIndexT, TestWeightT, TestIntT>(fc_graph, 1);
 
   // Check the effective length
 

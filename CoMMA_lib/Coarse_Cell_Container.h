@@ -59,10 +59,12 @@ class Coarse_Cell_Container {
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
    */
-  Coarse_Cell_Container(DualGraphPtr &fc_graph)
+  Coarse_Cell_Container(DualGraphPtr &fc_graph,
+                        const CoMMAIntType singular_card_thresh)
       : _ccs(), _fc_graph(fc_graph), _cc_counter(0),
         _fc_2_cc(fc_graph->_number_of_cells, nullopt),
         _is_fc_agglomerated(fc_graph->_number_of_cells, false),
+        _sing_card_thresh(singular_card_thresh),
         _nb_of_agglomerated_fc(0), _delayed_cc(), _singular_cc() {}
 
   /** @brief Destructor */
@@ -82,6 +84,9 @@ class Coarse_Cell_Container {
 
   /** @brief Vector of boolean telling whether a fine cell has been agglomerated */
   vector<bool> _is_fc_agglomerated;
+
+  /** @brief Minimum cardinality for receiver CC when correcting */
+  CoMMAIntType _sing_card_thresh;
 
   /** @brief Helper to get the member variable that defines the number of
    * agglomerated fine cells
@@ -157,37 +162,40 @@ Not used anymore but we leave it for example purposes
     // We use it to understand if we have succeeded in the correction
     set<typename decltype(_singular_cc)::value_type> removed_cc{};
     for (const auto& old_cc : _singular_cc) {
-      if (_ccs[old_cc]->_cardinality == 1) {
-        // It might happen that we agglomerate to a singular cell so that the new
-        // cell was singular when it was created but it is not any more
-        // Take the only FC in the CC
-        const auto isolated_fc = *(_ccs[old_cc]->_s_fc.begin());
-        // Get the cc neighs of the given fine cell
-        const auto neighs = get_neighs_cc(isolated_fc, old_cc);
-        if(!neighs.empty()) {
-          // now we have the neighbourhood cc cell, we can access to them and
-          // control the characteristics
-          optional<CoMMAIntType> new_compactness = nullopt;
-          const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
-                                                            max_card, new_compactness);
-          // If the condition is verified we add the cell to the identified cc
-          // and we remove it from the current cc
-          // if we failed we go on, it is life, so we agglomerate to the nearest
-          // cell (the first one of the vector). At this point, we do not check if
-          // the max cardinality has been reached or not, otherwise we might leave
-          // the isolated cell isolated
-          if (new_cc.has_value()) {
-            // first we assign to the fc_2_cc the new cc (later it will be
-            // renumbered considering the deleted cc)
-            _fc_2_cc[isolated_fc] = new_cc.value();
-            _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
-            _ccs.erase(old_cc);
-            removed_cc.emplace(old_cc);
+      // It might happen that we agglomerate to a singular cell so that the new
+      // cell was singular when it was created but it is not any more
+      if (_ccs[old_cc]->_cardinality <= _sing_card_thresh) {
+        bool should_remove = false;
+        for (const auto& isolated_fc : _ccs[old_cc]->_s_fc) {
+          // Get the cc neighs of the given fine cell
+          const auto neighs = get_neighs_cc(isolated_fc, old_cc);
+          if(!neighs.empty()) {
+            // now we have the neighbourhood cc cell, we can access to them and
+            // control the characteristics
+            optional<CoMMAIntType> new_compactness = nullopt;
+            const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
+                                                              max_card, new_compactness);
+            // If the condition is verified we add the cell to the identified cc
+            // and we remove it from the current cc
+            // if we failed we go on, it is life, so we agglomerate to the nearest
+            // cell (the first one of the vector). At this point, we do not check if
+            // the max cardinality has been reached or not, otherwise we might leave
+            // the isolated cell isolated
+            if (new_cc.has_value()) {
+              // first we assign to the fc_2_cc the new cc (later it will be
+              // renumbered considering the deleted cc)
+              _fc_2_cc[isolated_fc] = new_cc.value();
+              _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
+              should_remove = true;
+              removed_cc.emplace(old_cc);
+            }
           }
+          // If the cell has no neighbour (this could happen when the partitioning does
+          // not give a connected partition), unfortunately, there is nothing that we
+          // can do. We just skip it
         }
-        // If the cell has no neighbour (this could happen when the partitioning does
-        // not give a connected partition), unfortunately, there is nothing that we
-        // can do. We just skip it
+        if (should_remove)
+          _ccs.erase(old_cc);
       }
     }
 
@@ -406,7 +414,8 @@ Not used anymore but we leave it for example purposes
         // we collect the various cc, where the index in the vector is the i_cc
         _ccs[_cc_counter] = make_shared<CoarseCellType>(
             _fc_graph, _cc_counter, s_fc, compactness);
-        if (s_fc.size() == 1)
+        if (!is_anisotropic &&
+            static_cast<decltype(_sing_card_thresh)>(s_fc.size()) <= _sing_card_thresh)
           _singular_cc.emplace_back(_cc_counter);
       }
       // Update of _associatedCoarseCellNumber the output of the current

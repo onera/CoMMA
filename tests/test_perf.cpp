@@ -10,7 +10,7 @@ int main(int argv, char** argc) {
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
         Data.s_anisotropic_compliant_fc);
 
-  Coarse_Cell_Container cc_graph = Coarse_Cell_Container(fc_graph);
+  Coarse_Cell_Container cc_graph = Coarse_Cell_Container(fc_graph, 1);
 
   // Check the effective length
 

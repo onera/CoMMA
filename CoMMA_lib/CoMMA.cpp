@@ -81,6 +81,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
          CoMMAIntT goal_card,
          CoMMAIntT min_card,
          CoMMAIntT max_card,
+         CoMMAIntT singular_card_thresh,
          CoMMAIntT fc_choice_iter,
          const CoMMAIntT type_of_isotropic_agglomeration) {
         agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
@@ -88,7 +89,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
             priority_weights, anisotropicCompliantCells, n_bnd_faces,
             build_anisotropic_lines, is_anisotropic, odd_line_length, threshold_anisotropy, seed_ordering_type,
             fc_to_cc, agglomerationLines_Idx, agglomerationLines, correction,
-            dimension, goal_card, min_card, max_card, fc_choice_iter, type_of_isotropic_agglomeration);
+            dimension, goal_card, min_card, max_card, singular_card_thresh, fc_choice_iter, type_of_isotropic_agglomeration);
         return std::make_tuple(fc_to_cc, agglomerationLines_Idx,
                                agglomerationLines);
       },
@@ -100,7 +101,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       "odd_line_length"_a, "threshold_anisotropy"_a, "seed_ordering_type"_a,
       "fc_to_cc"_a, "agglomerationLines_Idx"_a, "agglomerationLines"_a,
       "correction"_a, "dimension"_a, "goal_card"_a, "min_card"_a, "max_card"_a,
-      "fc_choice_iter"_a = 1, "type_of_isotropic_agglomeration"_a = 0
+      "singular_card_thresh"_a = 1, "fc_choice_iter"_a = 1, "type_of_isotropic_agglomeration"_a = 0
       );
   module_handle.def(
       "compute_neighbourhood_based_wall_distance",
