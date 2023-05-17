@@ -9,6 +9,7 @@ from dualGPy.Mesh import Mesh2D, Mesh3D
 # import dualGPy.Utils as ut
 import numpy as np
 from comma_tools import build_coarse_graph
+from copy import deepcopy
 
 neigh_type_types = [
         'Extended',
@@ -112,7 +113,7 @@ fc_to_cc = np.empty(nb_fc, dtype = CoMMAIndex)
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype = CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype = CoMMAIndex)
 agglomerationLines = np.array([0], dtype = CoMMAIndex)
-agglo = []
+out_data = {}
 fc_to_cur_lvl = list(range(nb_fc))
 for level in range(agglomeration_levels):
     print(f"* Level {level}:")
@@ -157,11 +158,22 @@ for level in range(agglomeration_levels):
         fc_to_cur_lvl[i] = fc_to_cc[fc_to_cur_lvl[i]]
 
     print(" - Finalizing...", flush = True, end = '')
-    # agglo.append([ut.address_agglomerated_cells(fc_to_cur_lvl, renumber_coarse)] if renum \
-                          # else [fc_to_cur_lvl])
+    # fine_cells_renum = ut.address_agglomerated_cells(fc_to_cur_lvl, renumber_coarse) if renum \
+                    # else fc_to_cur_lvl
     # As long as the data is composed of (integer) IDs, the following is equivalent but much faster
-    agglo.append([(np.asarray(fc_to_cur_lvl.copy()) % renumber_coarse)] if renum \
-                      else [fc_to_cur_lvl.copy()])
+    fine_cells_renum = (np.asarray(fc_to_cur_lvl) % renumber_coarse) if renum \
+            else fc_to_cur_lvl
+    agglo = []
+    if len(mesh.mesh.cells) > 1:
+        # More than one element type -> Adapt cell_data to meshio cellblock format
+        start = 0
+        for cells_by_type in mesh.mesh.cells:
+            n_cell = cells_by_type.data.shape[0]
+            agglo.append( fine_cells_renum[start:start+n_cell] )
+            start += n_cell
+    else:
+        agglo.append(fine_cells_renum)
+    out_data[f"agglomerate_{level}"] = deepcopy(agglo)
     print('OK')
     print()
     if max(fc_to_cc) == 0 and level < agglomeration_levels-1:
@@ -170,7 +182,6 @@ for level in range(agglomeration_levels):
         print()
         break
 
-out_data = { f'agglomerate_{i}': data for i, data in enumerate(agglo)}
 print(f"Writing in {outname}")
 meshio.Mesh(
     mesh.mesh.points,
