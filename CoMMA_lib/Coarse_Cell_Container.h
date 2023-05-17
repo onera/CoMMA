@@ -111,8 +111,8 @@ class Coarse_Cell_Container {
    *  @param[in] i_cc index of the coarse cell in which the fine cell is in
    *  @return vector of the index of the coarse cells
    */
-  set<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
-                                    const CoMMAIndexType &i_cc) const {
+  inline set<CoMMAIndexType> get_neighs_cc(const CoMMAIndexType &i_fc,
+                                           const CoMMAIndexType &i_cc) const {
     set<CoMMAIndexType> result;
     for (auto elem = _fc_graph->neighbours_cbegin(i_fc);
          elem != _fc_graph->neighbours_cend(i_fc); ++elem) {
@@ -164,40 +164,63 @@ Not used anymore but we leave it for example purposes
     for (const auto& old_cc : _singular_cc) {
       // It might happen that we agglomerate to a singular cell so that the new
       // cell was singular when it was created but it is not any more
-      if (_ccs[old_cc]->_cardinality <= _sing_card_thresh) {
+      auto & cur_cc = _ccs.at(old_cc);
+      if (cur_cc->_cardinality <= _sing_card_thresh) {
+        const auto& fcs = cur_cc->_s_fc;
         bool should_remove = false;
-        for (const auto& isolated_fc : _ccs[old_cc]->_s_fc) {
-          // Get the cc neighs of the given fine cell
-          const auto neighs = get_neighs_cc(isolated_fc, old_cc);
-          if(!neighs.empty()) {
-            // now we have the neighbourhood cc cell, we can access to them and
-            // control the characteristics
+        unordered_map<CoMMAIndexType, set<CoMMAIndexType>> neighs_by_fc{};
+        neighs_by_fc.reserve(cur_cc->_cardinality);
+        for (const auto& i_fc : fcs) {
+          neighs_by_fc.emplace(i_fc, get_neighs_cc(i_fc, old_cc));
+        }
+        if (cur_cc->_cardinality > 1) {
+          // First try: agglomerate the whole coarse cell to another one
+          set<CoMMAIndexType> glob_neighs = {};
+          for (const auto& [i_fc, neighs] : neighs_by_fc) {
+            glob_neighs.insert(neighs.begin(), neighs.end());
+          }
+          if(!glob_neighs.empty()) {
             optional<CoMMAIntType> new_compactness = nullopt;
-            const auto new_cc = select_best_cc_to_agglomerate(isolated_fc, neighs,
-                                                              max_card, new_compactness);
-            // If the condition is verified we add the cell to the identified cc
-            // and we remove it from the current cc
-            // if we failed we go on, it is life, so we agglomerate to the nearest
-            // cell (the first one of the vector). At this point, we do not check if
-            // the max cardinality has been reached or not, otherwise we might leave
-            // the isolated cell isolated
+            const auto new_cc = select_best_cc_to_agglomerate_whole(
+                fcs, glob_neighs, max_card, new_compactness);
             if (new_cc.has_value()) {
               // first we assign to the fc_2_cc the new cc (later it will be
               // renumbered considering the deleted cc)
-              _fc_2_cc[isolated_fc] = new_cc.value();
-              _ccs[new_cc.value()]->insert_cell(isolated_fc, new_compactness);
+              for (const auto& i_fc : fcs) {
+                _fc_2_cc[i_fc] = new_cc.value();
+              }
+              _ccs[new_cc.value()]->insert_cells(fcs, new_compactness);
               should_remove = true;
-              removed_cc.emplace(old_cc);
             }
           }
-          // If the cell has no neighbour (this could happen when the partitioning does
-          // not give a connected partition), unfortunately, there is nothing that we
-          // can do. We just skip it
+
         }
-        if (should_remove)
+        if (!should_remove) {
+          // If here, we could not agglomerate the whole cell, hence we look fine
+          // cell by fine cell
+          for (const auto& [i_fc, neighs] : neighs_by_fc) {
+            if(!neighs.empty()) {
+              optional<CoMMAIntType> new_compactness = nullopt;
+              const auto new_cc = select_best_cc_to_agglomerate(
+                  i_fc, neighs, max_card, new_compactness);
+              if (new_cc.has_value()) {
+                _fc_2_cc[i_fc] = new_cc.value();
+                _ccs[new_cc.value()]->insert_cell(i_fc, new_compactness);
+                should_remove = true;
+              }
+            }
+            // If the cell has no neighbour (this could happen when the partitioning does
+            // not give a connected partition), unfortunately, there is nothing that we
+            // can do. We just skip it
+          }
+        }
+
+        if (should_remove) {
           _ccs.erase(old_cc);
-      }
-    }
+          removed_cc.emplace(old_cc);
+        }
+      } // End if still singular
+    } // End loop over singular cells
 
     // Now update the ID if necessary
     if (!removed_cc.empty()) {
@@ -226,6 +249,72 @@ Not used anymore but we leave it for example purposes
 
   }
 
+  /** @brief Choose among the neighbouring coarse cells, the one to which a singular
+   * coarse cell should be assigned to. This function is similar
+   * to \ref select_best_cc_to_agglomerate but considers only the compactness and the
+   * cardinality
+   * @param[in] fcs Set of indices of the fine cells composing the coarse cell to be
+   * agglomerated
+   * @param[in] neighs Neighbouring coarse cells
+   * @param[in] max_card Maximum cardinality allowed (CoMMA might still go beyond
+   * this value)
+   * @param[out] new_compactness Compactness degree of the CC if the result would to
+   * be added
+   * @return The index of the chosen coarse cell
+   * @warning \p max_card might not be honored
+   */
+  optional<CoMMAIndexType> select_best_cc_to_agglomerate_whole(
+      const unordered_set<CoMMAIndexType> &fcs,
+      const set<CoMMAIndexType> &neighs,
+      const CoMMAIntType max_card,
+      optional<CoMMAIntType> &new_compactness) const {
+    CoMMAUnused(max_card);
+    unordered_map<CoMMAIndexType, CoMMAIntType> card{};
+    unordered_map<CoMMAIndexType, CoMMAIntType> compact{};
+    const auto n_neighs = neighs.size();
+    card.reserve(n_neighs);
+    // Since in the end we sort, wouldn't it be better to just use set instead of deque?
+    deque<CoMMAIndexType> argtrue_compact{};
+    // Loop on neighbours to compute their features
+    for (const auto & cc_idx : neighs) {
+      const auto n_cc = _ccs.at(cc_idx);
+      if (n_cc->_is_isotropic) {
+        if (true /* n_cc->_cardinality < max_card */) {
+          // On second thought, let us consider also cells with max cardinality since
+          // the number of faces could be important to ensure compactness of the coarse
+          // cell
+          card[cc_idx] = n_cc->_cardinality;
+          // Analysing compactness
+          auto tmp_cc = n_cc->_s_fc; // OK copy
+          tmp_cc.insert(fcs.begin(), fcs.end());
+          const auto new_cpt =
+            _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
+          compact[cc_idx] = new_cpt;
+          if (new_cpt > n_cc->_compactness) {
+            argtrue_compact.push_back(cc_idx);
+          }
+        } // End compactness and cardinality
+      } // End if isotropic
+    }
+    if (!argtrue_compact.empty()) {
+      // Sort so that, in the end, if nothing worked, we rely on ID numbering
+      sort(argtrue_compact.begin(), argtrue_compact.end());
+      CoMMAIndexType ret_cc{argtrue_compact[0]};
+      CoMMAIntType cur_min{card[ret_cc]};
+      // If more than one, maximize shared faces and/or minimize cardinality
+      for (const auto & idx : argtrue_compact) {
+        const auto cur_card = card[idx];
+        if (cur_card < cur_min) {
+          cur_min = cur_card;
+          ret_cc = idx;
+        }
+      }
+      new_compactness = compact.at(ret_cc);
+      return ret_cc;
+    }
+    return nullopt;
+  }
+
   /** @brief Choose among the neighbouring coarse cells, the one to which a fine cell
    * should be assigned to. We prefer the coarse cell which shares the most faces
    * with the fine cell. Otherwise, we look at the cardinality and choose the coarse
@@ -247,12 +336,10 @@ Not used anymore but we leave it for example purposes
     CoMMAUnused(max_card);
     unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
-    unordered_map<CoMMAIndexType, bool> compact_increase{};
     unordered_map<CoMMAIndexType, CoMMAIntType> compact{};
     const auto n_neighs = neighs.size();
     card.reserve(n_neighs);
     shared_faces.reserve(n_neighs);
-    compact_increase.reserve(n_neighs);
     CoMMAIntType min_card = numeric_limits<CoMMAIntType>::max();
     CoMMAIntType max_shared_f{0};
     // Since in the end we sort, wouldn't it be better to just use set instead of deque?
@@ -295,10 +382,7 @@ Not used anymore but we leave it for example purposes
             _fc_graph->compute_min_fc_compactness_inside_a_cc(tmp_cc);
           compact[cc_idx] = new_cpt;
           if (new_cpt > n_cc->_compactness) {
-            compact_increase[cc_idx] = true;
             argtrue_compact.push_back(cc_idx);
-          } else {
-            compact_increase[cc_idx] = false;
           }
         } // End compactness and cardinality
       } // End if isotropic

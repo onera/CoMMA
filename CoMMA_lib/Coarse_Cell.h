@@ -106,6 +106,21 @@ class Coarse_Cell {
                    _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
   }
 
+  /** @brief Insert several FC in the CC (and update sub-graph if necessary)
+   *  @param[in] fcs Set of indices of the fine cells to add
+   *  @param[in] new_compactness Optional, default void, giving the compactness of
+   *  the CC after the addition
+   */
+  virtual void insert_cells(
+      const unordered_set<CoMMAIndexType> &fcs,
+      const optional<CoMMAIntType> new_compactness = nullopt) {
+    _s_fc.insert(fcs.begin(), fcs.end());
+    _cardinality += fcs.size();
+    _compactness = new_compactness.has_value() ?
+                   new_compactness.value() :
+                   _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
+  }
+
 };
 
 /** @brief Class describing a coarse cell with a full description, that is, it also
@@ -203,6 +218,29 @@ class Coarse_Cell_Subgraph : Coarse_Cell<CoMMAIndexType, CoMMAWeightType,
     _cc_graph->insert_node(this->_fc_graph->get_neighbours(i_fc),
                            i_fc, this->_fc_graph->_volumes[i_fc],
                            this->_fc_graph->get_weights(i_fc));
+  }
+
+  /** @brief Insert several FC in the CC (and update sub-graph if necessary)
+   *  @param[in] fcs Set of indices of the fine cells to add
+   *  @param[in] new_compactness Optional, default void, giving the compactness of
+   *  the CC after the addition
+   */
+  void insert_cells(
+      const unordered_set<CoMMAIndexType> &fcs,
+      const optional<CoMMAIntType> new_compactness = nullopt) override {
+    // As base class...
+    this->_s_fc.insert(fcs.begin(), fcs.end());
+    this->_cardinality += fcs.size();
+    this->_compactness =
+      new_compactness.has_value() ?
+      new_compactness.value() :
+      this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
+    // ...but now add to the subgraph
+    for (const auto & i_fc : fcs) {
+      _cc_graph->insert_node(this->_fc_graph->get_neighbours(i_fc),
+                             i_fc, this->_fc_graph->_volumes[i_fc],
+                             this->_fc_graph->get_weights(i_fc));
+    }
   }
 
   /** @brief Analyse subgraph and update the connectivity */
