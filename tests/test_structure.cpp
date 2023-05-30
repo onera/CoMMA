@@ -25,7 +25,9 @@
 
 using namespace std;
 
-constexpr CoMMAIntT FC_ITER  = 1;
+constexpr CoMMAIntT SING_CARD_THRESH = 1;
+
+constexpr CoMMAIntT FC_ITER = 1;
 
 constexpr bool ODD_LINE_LENGTH = true;
 
@@ -53,7 +55,7 @@ SCENARIO("Test of a structure", "[structure]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     // Check the effective length
     WHEN("We try to access to the member variables") {
       class test : public Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
@@ -1323,7 +1325,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1350,7 +1352,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases",
       }
     }
 
-    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_PF_graph, seeds_pool, CoMMANeighbourhoodT::PURE_FRONT, FC_ITER, Data.dim);
@@ -1434,7 +1436,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
@@ -1484,7 +1486,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
       }
     }
 
-    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_PF_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF =
       make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
           fc_graph, cc_PF_graph, seeds_pool, CoMMANeighbourhoodT::PURE_FRONT, FC_ITER, Data.dim);
@@ -1588,7 +1590,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAIntT card = 4;
     CoMMAIntT comp = 0;
 #if 0
@@ -1646,7 +1648,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAWeightT aniso_thresh{2.};
     const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1673,7 +1675,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
           Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
           Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
           v_aniso);
-      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
       const CoMMAWeightT aniso_thresh{-2.};
       const bool build_lines = true;
       vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1698,7 +1700,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
           Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
           Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
           Data.arrayOfFineAnisotropicCompliantCells);
-      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
       const CoMMAWeightT aniso_thresh{10000.};
       const bool build_lines = true;
       vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1723,7 +1725,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
           Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
           Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
           Data.arrayOfFineAnisotropicCompliantCells);
-      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+      shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
       const CoMMAWeightT aniso_thresh{10000.};
       const bool build_lines = false;
       vector<CoMMAIndexT> agglomerationLines_Idx{0,1,2};
@@ -1757,7 +1759,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         v_aniso);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAWeightT aniso_thresh{-2.};
     const bool build_lines = true;
     vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -1785,7 +1787,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         v_aniso);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAWeightT aniso_thresh{-2.};
     const bool build_lines = false;
     vector<CoMMAIndexT> agglomerationLines_Idx{0,1,6,11,16};
@@ -1820,7 +1822,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, Data.weights,
@@ -1881,7 +1883,7 @@ SCENARIO("Test the anisotropic agglomeration for small cases",
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, Data.weights,
@@ -1984,7 +1986,7 @@ the line grows vertically
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, Data.weights,
@@ -2049,7 +2051,7 @@ the line grows vertically
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, w,
@@ -2113,7 +2115,7 @@ the line grows vertically
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         aniso_agg(fc_graph, cc_graph, seeds_pool, aniso_thresh,
                   agglomerationLines_Idx, agglomerationLines, Data.weights,
@@ -2186,7 +2188,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
         fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER, Data.dim);
     // COMPLETE THE TEST
@@ -2208,7 +2210,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1") {
       cc_graph->create_cc({0,4,5}, 1);
       cc_graph->create_cc({1}, 0);
@@ -2294,7 +2296,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1 "
          "and two coarse cells with cardinality 5 and 3") {
       cc_graph->create_cc({0,1,2,5,8}, 1);
@@ -2513,6 +2515,65 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(fc_in_cc(cc_graph, 8, 2));
       }
     }
+    WHEN("We agglomerate (manually) leaving three coarse cells with cardinality 1") {
+      cc_graph->create_cc({3,4,5}, 1);
+      cc_graph->create_cc({6,7,8}, 1);
+      cc_graph->create_cc({0}, 0);
+      cc_graph->create_cc({1}, 0);
+      cc_graph->create_cc({2}, 0);
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 2));
+        REQUIRE(fc_in_cc(cc_graph, 1, 3));
+        REQUIRE(fc_in_cc(cc_graph, 2, 4));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+      cc_graph->correct(4);
+      THEN("Once the correction has been performed, the isolated cells have been agglomerated together") {
+        REQUIRE(fc_in_cc(cc_graph, 0, 2));
+        REQUIRE(fc_in_cc(cc_graph, 1, 2));
+        REQUIRE(fc_in_cc(cc_graph, 2, 2));
+        REQUIRE(fc_in_cc(cc_graph, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph, 6, 1));
+        REQUIRE(fc_in_cc(cc_graph, 7, 1));
+        REQUIRE(fc_in_cc(cc_graph, 8, 1));
+      }
+    }
+    WHEN("We agglomerate (manually) and request a high singular threshold") {
+      shared_ptr<CCContainerT> cc_graph_3thresh = make_shared<CCContainerT>(fc_graph, 3);
+      cc_graph_3thresh->create_cc({0,1}, 1);
+      cc_graph_3thresh->create_cc({2}, 0);
+      cc_graph_3thresh->create_cc({3,4,5,6,7,8}, 2);
+      THEN("We recover the forced order") {
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 2, 1));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 3, 2));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 4, 2));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 5, 2));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 6, 2));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 7, 2));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 8, 2));
+      }
+      cc_graph_3thresh->correct(9);
+      THEN("Once the correction has been performed, we got only one cell") {
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 0, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 1, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 2, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 3, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 4, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 5, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 6, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 7, 0));
+        REQUIRE(fc_in_cc(cc_graph_3thresh, 8, 0));
+      }
+    }
   }
   GIVEN("A simple 3x3 Cartesian grid to which we add an extra unconnected cell to"
         " simulate pathological partitions") {
@@ -2532,7 +2593,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces, Data.dim,
         Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph);
+    shared_ptr<CCContainerT> cc_graph = make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN("We agglomerate (without correction)") {
       auto agg =
         make_unique<Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT,CoMMAIntT>>(
@@ -2841,7 +2902,16 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card, 100)
+              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH,
+              0)
+        );
+        REQUIRE_THROWS(
+          agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+              Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
+              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH,
+              100)
         );
       }
     }

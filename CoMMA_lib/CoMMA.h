@@ -100,6 +100,8 @@ using namespace std;
  * ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
+ * @param[in] singular_card_thresh (optional, default=1) Cardinality below which a
+ * coarse is considered as singular, hence, compliant for correction
  * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed for
  * the algorithm choosing which fine cell to add next. The cost grows exponentially,
  * hence use small values.
@@ -149,6 +151,7 @@ void agglomerate_one_level(
     CoMMAIntType goal_card,
     CoMMAIntType min_card,
     CoMMAIntType max_card,
+    CoMMAIntType singular_card_thresh = 1,
     CoMMAIntType fc_choice_iter = 1,
     const CoMMAIntType neighbourhood_type=CoMMANeighbourhoodT::EXTENDED) {
   // NOTATION
@@ -202,6 +205,14 @@ void agglomerate_one_level(
         throw invalid_argument( "CoMMA - Error: bad anisotropic lines definition (sizes do not match)" );
       }
     }
+  }
+  auto sing_thresh = singular_card_thresh;
+  if (singular_card_thresh <= 0) {
+    throw invalid_argument( "CoMMA - Error: Threshold cardinality for singular cells should be greater than zero" );
+  }
+  else if (singular_card_thresh >= min_card) {
+    cout << "CoMMA - Warning: Threshold cardinality is equal or larger than minimum cardinality. Changing it to this latter value." << endl;
+    sing_thresh = min_card - 1;
   }
 
   // SIZES CAST
@@ -258,7 +269,8 @@ void agglomerate_one_level(
   // COARSE CELL CONTAINER
   //======================================
   // Preparing the object that will contain all the coarse cells
-  shared_ptr<CCContainerType> cc_graph = make_shared<CCContainerType>(fc_graph);
+  shared_ptr<CCContainerType> cc_graph = make_shared<CCContainerType>(fc_graph,
+      sing_thresh);
 
   // AGGLOMERATION OF ANISOTROPIC CELLS
   //======================================

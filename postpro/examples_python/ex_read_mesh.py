@@ -48,6 +48,8 @@ neigh_type = 0 # 0 = Extended (standard), 1 = Pure front advancing
 seed_order = 0 # 0 = Boundary priority, 1 = Neighbourhood priority,
                # 10 = Boundary priority with point initialization
                # 11 = Neighbourhood priority with point initialization
+# Threshold cardinality for a coarse cell to be considered singular
+sing_card = 1
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 
@@ -77,6 +79,7 @@ print(f' * {odd_line_length=}')
 print(f' * neigh_type={neigh_type_types[neigh_type]}')
 print(f' * Priority weights: reversed ID')
 print(f' * seed_ordering={seed_ordering_types[seed_order]}')
+print(f' * Threshold cardinality for singular cells={sing_card}')
 print(f' * Fine-cell research iterations={fc_iter}')
 print( ' [Output]')
 renum = renumber_coarse > 1
@@ -125,7 +128,7 @@ fc_to_cc_res,agglomerationLines_Idx_res_iso,agglomerationLines_res_iso = \
                               arrayOfFineAnisotropicCompliantCells,n_bnd_faces, build_lines,
                               anisotropic, odd_line_length, threshold_anisotropy, seed_order,
                               fc_to_cc,agglomerationLines_Idx,agglomerationLines,
-                              correction, dimension,goalCard,minCard,maxCard, fc_iter, neigh_type)
+                              correction, dimension,goalCard,minCard,maxCard, sing_card, fc_iter, neigh_type)
 print('OK')
 
 print("Finalizing...", flush = True, end = '')
