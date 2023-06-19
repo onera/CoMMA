@@ -74,11 +74,20 @@ set(PROFILING_PERF
 )
 
 SET(TESTING_FILES
+    ${TEST_DIR}/test_anisoagglo.cpp
+    ${TEST_DIR}/test_correction.cpp
+    ${TEST_DIR}/test_deprecated.cpp
+    ${TEST_DIR}/test_graph.cpp
+    ${TEST_DIR}/test_isoagglo.cpp
+    ${TEST_DIR}/test_neighbourhood.cpp
+    ${TEST_DIR}/test_seedspool.cpp
     ${TEST_DIR}/test_structure.cpp
+    ${TEST_DIR}/test_utils.cpp
 )
 
 SET(TESTS
     ${TEST_DIR}/input/DualGPy.h
+    ${TEST_DIR}/test_defs.h
     ${TESTING_FILES}
 )
 
