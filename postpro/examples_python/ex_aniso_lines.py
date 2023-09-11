@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 """Goals: show how to draw with `dualGPy` anisotropic lines obtained by `CoMMA`.
 
 This script creates a small handmade 2D mesh with a block of anisotropic cells

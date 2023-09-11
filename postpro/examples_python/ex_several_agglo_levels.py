@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 """Goals: show how to agglomerate several consecutive times the same mesh.
 
 Create a mesh with the default constructor of `dualGPy`, apply several levels of agglomeration with `CoMMA` and export the result.

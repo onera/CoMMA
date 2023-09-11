@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 """Goals: show how to read an existing mesh with `meshio` and agglomerate it with
 `CoMMA`; show how to treat meshes with more than one element-type
 

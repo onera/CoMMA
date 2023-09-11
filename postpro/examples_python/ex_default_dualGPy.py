@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 """Goals: show how to use `dualGPy` to create a Cartesian-like mesh and agglomerate it with `CoMMA`
 
 Create a mesh with the default constructor of `dualGPy, agglomerate with `CoMMA` and export the result.

@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 # Created by Alberto Remigi 27/08
 # Parser for the debugging output file of CoMMA
 

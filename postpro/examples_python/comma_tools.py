@@ -1,3 +1,13 @@
+# CoMMA
+#
+# Copyright © 2023 ONERA
+#
+# Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+# Contributors: Karim Anemiche
+#
+# Any copyright is dedicated to the Public Domain.
+# https://creativecommons.org/publicdomain/zero/1.0/
+
 """A collection of useful functions"""
 import numpy as np
 import typing
@@ -21,14 +31,14 @@ Parameters
 neigh_idxs : array-like
     Indices used to recover the neighbours of each cells provided in `neighs`. The
     length is `N_cells + 1`
-neighs: array-like
+neighs : array-like
     Neighbours of each cell.
 wall : array-like
     IDs of the cells composing the wall from which we compute the distance.
 
 Returns
 -------
-:obj:`np.ndarray` of `int`
+:obj: `np.ndarray` of `int`
     Wall distance
 
 Notes
@@ -163,7 +173,7 @@ def build_coarse_graph(
         npt.NDArray[int],
         npt.NDArray[float]
        ]:
-    """ Starting to the description of a fine mesh / graph and the result of an
+    """ Starting from the description of a fine mesh / graph and the result of an
 agglomeration (`fc2cc`), build the description of the coarse graph
 
 Parameters

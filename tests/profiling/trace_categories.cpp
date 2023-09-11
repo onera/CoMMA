@@ -1,17 +1,13 @@
 /*
- * Copyright (C) 2020 The Android Open Source Project
+ * CoMMA
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright © 2023 ONERA
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+ * Contributors: Karim Anemiche
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Any copyright is dedicated to the Public Domain.
+ * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
 #include "trace_categories.h"

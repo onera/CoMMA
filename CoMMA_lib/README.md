@@ -15,3 +15,12 @@ The main features of CoMMA are:
 CoMMA is a **header-only library**. A python module can be generated using `pybind11`.
 
 The interface to CoMMA is very simple and consists in only one function [agglomerate_one_level](@ref agglomerate_one_level).
+
+### Other info
+**Copyright**: Copyright © 2023 ONERA
+
+**Authors**: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+
+**Contributors**: Karim Anemiche
+
+**Licence**: This project is released under the [Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/)
