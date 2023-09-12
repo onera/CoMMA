@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 # https://github.com/catchorg/Catch2/issues/1204
 
 ###################################  PROJECT #################################
-project(CoMMA VERSION 1.2)
+project(CoMMA VERSION 1.3)
 
 # https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
 # For the current application, better to use an `option`:
