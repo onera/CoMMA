@@ -17,9 +17,6 @@
 
 // The set of track event categories that the example is using.
 PERFETTO_DEFINE_CATEGORIES(
-    perfetto::Category("setup")
-        .SetDescription("Rendering and graphics events"),
-    perfetto::Category("agglomerator")
-        .SetDescription("Agglomerator Events")
-);
+  perfetto::Category("setup").SetDescription("Rendering and graphics events"),
+  perfetto::Category("agglomerator").SetDescription("Agglomerator Events"));
 #endif  // TRACE_CATEGORIES_H

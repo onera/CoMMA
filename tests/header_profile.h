@@ -10,10 +10,11 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
-#include "profiling/trace_categories.h"
 #include <chrono>
 #include <fstream>
 #include <thread>
+
+#include "profiling/trace_categories.h"
 
 #ifndef HEADER_PROFILE_H
 #define HEADER_PROFILE_H
@@ -35,7 +36,7 @@ std::unique_ptr<perfetto::TracingSession> StartTracing() {
   // which corresponds to the TRACE_EVENT trace points.
   perfetto::TraceConfig cfg;
   cfg.add_buffers()->set_size_kb(1024);
-  auto* ds_cfg = cfg.add_data_sources()->mutable_config();
+  auto *ds_cfg = cfg.add_data_sources()->mutable_config();
   ds_cfg->set_name("track_event");
 
   auto tracing_session = perfetto::Tracing::NewTrace();

@@ -1,4 +1,23 @@
 ---
-
+Language: Cpp
 BasedOnStyle: Google
+ColumnLimit:  80
 
+AccessModifierOffset: -2
+ContinuationIndentWidth: 2
+IndentWidth: 2
+
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+AlignAfterOpenBracket: AlwaysBreak
+AlignTrailingComments: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+BinPackArguments: true
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakInheritanceList: AfterColon
+BreakConstructorInitializers: AfterColon
+BreakStringLiterals: false
+SpaceAfterTemplateKeyword: false

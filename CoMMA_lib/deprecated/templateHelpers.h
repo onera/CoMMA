@@ -14,18 +14,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-/** @brief Assign from type to another only if a compile-time condition is verified
- *  @tparam condition Boolean telling if the assignment should be done. It has to be
- *  a \p constexpr
+/** @brief Assign from type to another only if a compile-time condition is
+ * verified
+ *  @tparam condition Boolean telling if the assignment should be done. It has
+ * to be a \p constexpr
  *  @tparam typeA Type of the destination of the assignment
  *  @tparam typeB Type of the source of the assignment
  *  @param[in] A Destination of the assignment
  *  @param[in] B Source of the assignment
  *  @deprecated Not used anymore
  */
-template <bool condition, typename typeA, typename typeB>
+template<bool condition, typename typeA, typename typeB>
 void fill_value(typeA &A, typeB &B) {
-  if constexpr(condition) { A = B; }
+  if constexpr (condition) { A = B; }
 }
 
 #endif

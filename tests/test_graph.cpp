@@ -12,10 +12,9 @@
 
 #include <vector>
 
-#include "catch2/catch.hpp"
-
 #include "CoMMATypes.h"
 #include "Dual_Graph.h"
+#include "catch2/catch.hpp"
 
 using namespace std;
 
@@ -28,8 +27,8 @@ SCENARIO("Subgraph", "[Subgraph]") {
     WHEN("We build the graph") {
       vector<CoMMAIndexT> _mapping_l_to_g = {20, 30, 40, 50, 60};
       auto Marion = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-          5, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-          volumes, _mapping_l_to_g, true);
+        5, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+        _mapping_l_to_g, true);
       THEN("We remove a node") { Marion->remove_node(50); }
       THEN("We add a node") {
         vector<CoMMAIndexT> v_neigh = {30, 20};

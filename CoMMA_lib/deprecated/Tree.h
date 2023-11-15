@@ -29,11 +29,14 @@ using namespace std;
  *  @tparam CoMMAIntType the CoMMA type for integers
  *  @deprecated Not used anymore
  */
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
+template<
+  typename CoMMAIndexType,
+  typename CoMMAWeightType,
+  typename CoMMAIntType>
 class Node {
-  public:
-  Node(CoMMAIndexType index, CoMMAWeightType volume) : _index(index), _volume(volume) {};
+public:
+  Node(CoMMAIndexType index, CoMMAWeightType volume) :
+      _index(index), _volume(volume){};
   /** @brief Index of the cell*/
   CoMMAIndexType _index;
   /** @brief Volume*/
@@ -58,10 +61,12 @@ class Node {
  *  @tparam CoMMAIntType the CoMMA type for integers
  *  @deprecated Not used anymore
  */
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
+template<
+  typename CoMMAIndexType,
+  typename CoMMAWeightType,
+  typename CoMMAIntType>
 class Tree {
- public:
+public:
   /** @brief Type of node for the current tree */
   using NodeType = Node<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
@@ -71,7 +76,7 @@ class Tree {
   Tree(shared_ptr<NodeType> &root) : _root(root) {}
 
   /** @brief Destructor */
-  ~Tree() {};
+  ~Tree(){};
 
   /** @brief The Node at the root of the tree */
   shared_ptr<NodeType> _root;
@@ -82,11 +87,14 @@ class Tree {
    *  @param[in] volume Volume of the child
    *  @param[in] root Whether it is at the root
    */
-  void insertSon(const CoMMAIndexType &father_index, const CoMMAIndexType &index,
-                 const CoMMAWeightType &volume, const CoMMAIntType &root) {
+  void insertSon(
+    const CoMMAIndexType &father_index,
+    const CoMMAIndexType &index,
+    const CoMMAWeightType &volume,
+    const CoMMAIntType &root) {
     shared_ptr<NodeType> insertion = make_shared<NodeType>(index, volume);
-    auto u_p_father = root == 1 ? _root :
-                                  search(_root->_left_son_idx, father_index);
+    auto u_p_father =
+      root == 1 ? _root : search(_root->_left_son_idx, father_index);
     assert(u_p_father != nullptr);
     insertion->_father = u_p_father;
     auto left_idx = transverse(u_p_father->_left_son_idx);
@@ -97,7 +105,7 @@ class Tree {
       left_idx->_right_idx = insertion;
     }
     u_p_father->_sonc = u_p_father->_sonc + 1;
-    //cout << u_p_father->_sonc << endl;
+    // cout << u_p_father->_sonc << endl;
   }
 
   /** @brief Look for a node
@@ -105,13 +113,10 @@ class Tree {
    *  @param[in] value Target
    *  @return a pointer (possibly null) to the target
    */
-  shared_ptr<NodeType> search(shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
-    if (node->_index == value && node->_father != nullptr) {
-      return node;
-    }
-    if (node == nullptr || node->_right_idx == nullptr) {
-      return nullptr;
-    }
+  shared_ptr<NodeType> search(
+    shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
+    if (node->_index == value && node->_father != nullptr) { return node; }
+    if (node == nullptr || node->_right_idx == nullptr) { return nullptr; }
     return (search(node->_right_idx, value));
   }
 
@@ -120,25 +125,24 @@ class Tree {
    *  @return a pointer to a leaf
    */
   shared_ptr<NodeType> transverse(shared_ptr<NodeType> &node) {
-    if (node == nullptr || node->_right_idx == nullptr) {
-      return node;
-    }
+    if (node == nullptr || node->_right_idx == nullptr) { return node; }
     return (transverse(node->_right_idx));
   }
 
   /** @brief Delete a node
    *  @param[in] value Target
    */
-  void deleteNode(const CoMMAIndexType &value) {delete_node(_root->_left_son_idx, value);}
+  void deleteNode(const CoMMAIndexType &value) {
+    delete_node(_root->_left_son_idx, value);
+  }
 
   /** @brief Delete a node
    *  @param[in] searched_node Where to look
    *  @param[in] value Target
    */
-  void delete_node(shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
-    if (searched_node == nullptr) {
-      return;
-    }
+  void delete_node(
+    shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
+    if (searched_node == nullptr) { return; }
     if (searched_node->_index == value) {
       // case 0: leftest node
       if (searched_node->_left_idx == nullptr) {
@@ -167,10 +171,8 @@ class Tree {
    *  @param[in] node Where to start
    */
   void print_nodes(shared_ptr<NodeType> &node) {
-    if (node == nullptr) {
-      return;
-    }
-    //cout << "node" << node->_index << endl;
+    if (node == nullptr) { return; }
+    // cout << "node" << node->_index << endl;
     print_nodes(node->_left_son_idx);
     print_nodes(node->_right_idx);
   }

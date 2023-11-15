@@ -49,7 +49,8 @@ inline bool dot_deviate(const T dot) {
   return fabs(dot) < decltype(fabs(dot)){deviate_thresh};
 }
 
-/** @brief Compute the dot product between two vectors. No check on size is performed
+/** @brief Compute the dot product between two vectors. No check on size is
+ * performed
  * @tparam T Input type
  * @param[in] a First vector
  * @param[in] b Second vector
@@ -64,43 +65,45 @@ inline T dot_product(const vector<T> &a, const vector<T> &b) {
 #endif
   T dot{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i)
-    dot += a[i]*b[i];
+    dot += a[i] * b[i];
   return dot;
 }
 
-/** @brief Compute the direction from point \p a to point \p b and store it as unit
- * vector in \p dir.
+/** @brief Compute the direction from point \p a to point \p b and store it as
+ * unit vector in \p dir.
  * @tparam T Input type
  * @param[in] a Starting point
  * @param[in] b End point
  * @param[out] dir Unit vector of the direction
- * @return the distance from the two points (the norm used for the normalization)
+ * @return the distance from the two points (the norm used for the
+ * normalization)
  */
 template<typename T>
-inline T get_direction(const vector<T>& a, const vector<T>& b, vector<T>& dir) {
+inline T get_direction(const vector<T> &a, const vector<T> &b, vector<T> &dir) {
   T norm{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
     const T di = b[i] - a[i];
     dir[i] = di;
-    norm += di*di;
+    norm += di * di;
   }
   norm = sqrt(norm);
   const T ov_norm = T{1.} / norm;
-  for (auto& di : dir)
+  for (auto &di : dir)
     di *= ov_norm;
   return norm;
 }
 
-/** @brief Compute the squared Euclidean distance between two points seen as vectors.
- * We use vectors because we can have both 2- and 3D points (also we can have 3D
- * points even if the dimension given to CoMMA is 2D, e.g., with CODA pseudo-2D
- * meshes). The dimension used as reference is the one of the first point
+/** @brief Compute the squared Euclidean distance between two points seen as
+ * vectors. We use vectors because we can have both 2- and 3D points (also we
+ * can have 3D points even if the dimension given to CoMMA is 2D, e.g., with
+ * CODA pseudo-2D meshes). The dimension used as reference is the one of the
+ * first point
  *  @tparam T Type for real numbers
  *  @param[in] a First point
  *  @param[in] b Second point
  *  @return The squared Euclidean distance between the two points
  */
-template <typename T>
+template<typename T>
 inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
 #if 0
   return sqrt(
@@ -112,73 +115,84 @@ inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
   T ret{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
     const auto d = a[i] - b[i];
-    ret += d*d;
+    ret += d * d;
   }
   return ret;
 }
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
- * 'less than' operator for the second elements and 'greater than' for the first ones.
+ * 'less than' operator for the second elements and 'greater than' for the first
+ * ones.
  *  @tparam PairT Type for pairs
  */
 template<class PairT>
 struct CustomPairLessFunctor {
-  /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
-   * 'less than' operator for the second elements and 'greater than' for the first ones.
+  /** @brief Functor for pairs implementing a custom 'less than'. It relies on
+   * the 'less than' operator for the second elements and 'greater than' for the
+   * first ones.
    *  @param[in] p First pair
    *  @param[in] q Second pair
-   *  @return true if p.second < q.second or (p.second == q.second and p.first > q.first);
-   * false otherwise
+   *  @return true if p.second < q.second or (p.second == q.second and p.first >
+   * q.first); false otherwise
    */
-  inline bool operator() (const PairT &p, const PairT &q) const {
-    if      (p.second < q.second)   return true;
-    else if (p.second > q.second)   return false;
-    else /* p.second == q.second */ return p.first > q.first;
+  inline bool operator()(const PairT &p, const PairT &q) const {
+    if (p.second < q.second)
+      return true;
+    else if (p.second > q.second)
+      return false;
+    else /* p.second == q.second */
+      return p.first > q.first;
   }
 };
 
-/** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
- * 'greater than' operator for the second elements and 'less than' for the first ones.
+/** @brief Functor for pairs implementing a custom 'greater than'. It relies on
+ * the 'greater than' operator for the second elements and 'less than' for the
+ * first ones.
  *  @tparam PairT Type for pairs
  */
 template<typename PairT>
 struct CustomPairGreaterFunctor {
-  /** @brief Functor for pairs implementing a custom 'greater than'. It relies on the
-   * 'greater than' operator for the second elements and 'less than' for the first ones.
+  /** @brief Functor for pairs implementing a custom 'greater than'. It relies
+   * on the 'greater than' operator for the second elements and 'less than' for
+   * the first ones.
    *  @param[in] p First pair
    *  @param[in] q Second pair
-   *  @return true if p.second > q.second or (p.second == q.second and p.first < q.first);
-   * false otherwise
+   *  @return true if p.second > q.second or (p.second == q.second and p.first <
+   * q.first); false otherwise
    */
-  inline bool operator() (const PairT &p, const PairT &q) const {
+  inline bool operator()(const PairT &p, const PairT &q) const {
     // I tried this: return !CustomPairLessFunctor<PairT>()(p,q);
     // but it didn't work well for equality
-    if      (p.second > q.second)   return true;
-    else if (p.second < q.second)   return false;
-    else /* p.second == q.second */ return p.first < q.first;
+    if (p.second > q.second)
+      return true;
+    else if (p.second < q.second)
+      return false;
+    else /* p.second == q.second */
+      return p.first < q.first;
   }
 };
 
-/** @brief Functor for pairs implementing a less operator based only on the second
- * element of the pair.
+/** @brief Functor for pairs implementing a less operator based only on the
+ * second element of the pair.
  *  @tparam PairT Type for pairs
  */
 template<typename PairT>
 struct PairSecondBasedLessFunctor {
-  /** @brief Functor for pairs implementing a less operator based only on the second
- * element of the pair
+  /** @brief Functor for pairs implementing a less operator based only on the
+   * second element of the pair
    *  @param[in] p First pair
    *  @param[in] q Second pair
    *  @return true if p.second < q.second; false otherwise
    */
-  inline bool operator() (const PairT &p, const PairT &q) const {
+  inline bool operator()(const PairT &p, const PairT &q) const {
     return p.second < q.second;
   }
 };
 
 /** @brief Given a container of pairs, return a vector with first elements only
  *  @tparam CoMMAContainerPairType Type of the input container
- *  @param[in] c A container of pairs from which the first elements will be extracted
+ *  @param[in] c A container of pairs from which the first elements will be
+ * extracted
  *  @return The first elements of each pair
  */
 template<typename CoMMAContainerPairType>
@@ -191,29 +205,30 @@ vector_of_first_elements(const CoMMAContainerPairType &c) {
   return fe;
 }
 
-/** @brief Functor implementing an operator telling if a given value if the first
- * one of pair
+/** @brief Functor implementing an operator telling if a given value if the
+ * first one of pair
  *  @tparam PairT Type for pairs
  */
 template<typename PairT>
 class PairFindFirstBasedFunctor {
-  public:
+public:
   /** @brief Constructor */
-  PairFindFirstBasedFunctor() : _target() {};
+  PairFindFirstBasedFunctor() : _target(){};
   /** @brief Constructor
    *  @param target Reference value that will be sought
    */
   PairFindFirstBasedFunctor(const typename PairT::first_type &target) :
-    _target(target) {};
+      _target(target){};
   /** @brief Destructor */
-  ~PairFindFirstBasedFunctor() {};
+  ~PairFindFirstBasedFunctor(){};
   /** @brief Operator telling if the first value of the given pair is equal to
    * the reference one
    *  @param[in] p The pair
    *  @return a bool
    */
-  inline bool operator() (const PairT &p) const {return p.first == _target;}
-  private:
+  inline bool operator()(const PairT &p) const { return p.first == _target; }
+
+private:
   /** @brief Reference value to be sought */
   typename PairT::first_type _target;
 };
@@ -224,9 +239,9 @@ class PairFindFirstBasedFunctor {
  *  @param[in] dict A map
  *  @return a set
  */
-template <typename KeyT, typename ValueT>
+template<typename KeyT, typename ValueT>
 inline unordered_set<KeyT> d_keys_to_set(
-    const unordered_map<KeyT, ValueT> &dict) {
+  const unordered_map<KeyT, ValueT> &dict) {
   unordered_set<KeyT> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);
@@ -234,14 +249,13 @@ inline unordered_set<KeyT> d_keys_to_set(
   return s_neighbours_of_seed;
 }
 
-/** @brief Compute a neighbourhood-base wall-distance, that is, the distance of a
- * given cell from a wall is the number of cells though which the minimum path
- * starting from the cell and ending at the wall. For example, in a Cartesian grids
- * this is equivalent to the minimum of the Manhattan distance.\n
- * If the vector defining the wall is empty, return negative values.\n
- * If a cell is unconnected to the domain with the wall, its distance will be
- * negative.\n
- * It takes a compressed version of the connectivity of the mesh. It uses a BFS
+/** @brief Compute a neighbourhood-base wall-distance, that is, the distance of
+ * a given cell from a wall is the number of cells though which the minimum path
+ * starting from the cell and ending at the wall. For example, in a Cartesian
+ * grids this is equivalent to the minimum of the Manhattan distance.\n If the
+ * vector defining the wall is empty, return negative values.\n If a cell is
+ * unconnected to the domain with the wall, its distance will be negative.\n It
+ * takes a compressed version of the connectivity of the mesh. It uses a BFS
  * algorithm to visit all the cells.
  * @tparam IndexT Type for cell indices
  * @tparam DistT Type for distance (should be signed)
@@ -251,43 +265,43 @@ inline unordered_set<KeyT> d_keys_to_set(
  * @param[in] wall Cells composing the wall from which the distance is computed
  * @param[out] dist Distance from the wall. This vector is resized inside the
  * function to hold all the cells
- * @warning This function is \b experimental. Moreover, since CoMMA has knoledge of
- * the current domain only, this function might not give the right result if the
- * domain hab been partitioned. It is advised to use this function only when
+ * @warning This function is \b experimental. Moreover, since CoMMA has knoledge
+ * of the current domain only, this function might not give the right result if
+ * the domain hab been partitioned. It is advised to use this function only when
  * considering one domain only.
  */
-template <typename IndexT, typename DistT>
+template<typename IndexT, typename DistT>
 void compute_neighbourhood_based_wall_distance(
-    const vector<IndexT>& neigh_idxs,
-    const vector<IndexT>& neighs,
-    const vector<IndexT>& wall,
-    vector<DistT>& dist) {
-  static_assert(is_signed<DistT>::value,
-                "The distance type should be signed to allow flags (negative values)");
+  const vector<IndexT> &neigh_idxs,
+  const vector<IndexT> &neighs,
+  const vector<IndexT> &wall,
+  vector<DistT> &dist) {
+  static_assert(
+    is_signed<DistT>::value,
+    "The distance type should be signed to allow flags (negative values)");
   dist.resize(neigh_idxs.size() - 1);
   fill(dist.begin(), dist.end(), DistT{-1});
   queue<IndexT> to_visit{};
-  for (const auto & cell : wall) {
+  for (const auto &cell : wall) {
     dist[cell] = DistT{0};
     to_visit.emplace(cell);
   }
   while (!to_visit.empty()) {
     // If you get wrong results, this could might be to the fact that one should
     // consider not specially the first of the queue, but the one with lowest
-    // distance visited so far. So, the definition of `cur` below should be changed,
-    // and with that, another container should be used instead of a queue, since one
-    // might pop from whenever and not only the front (a deque should work).
+    // distance visited so far. So, the definition of `cur` below should be
+    // changed, and with that, another container should be used instead of a
+    // queue, since one might pop from whenever and not only the front (a deque
+    // should work).
     const auto cur = to_visit.front();
     to_visit.pop();
     const auto d = dist[cur] + DistT{1};
     for (auto neigh = neighs.cbegin() + neigh_idxs[cur];
-         neigh < neighs.cbegin() + neigh_idxs[cur + 1];
-         ++neigh) {
+         neigh < neighs.cbegin() + neigh_idxs[cur + 1]; ++neigh) {
       if (dist[*neigh] < DistT{0}) {
         dist[*neigh] = d;
         to_visit.emplace(*neigh);
-      }
-      else if (dist[*neigh] > d) {
+      } else if (dist[*neigh] > d) {
         dist[*neigh] = d;
       }
     }

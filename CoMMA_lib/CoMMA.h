@@ -23,17 +23,17 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CoMMATypes.h"
-
 #include "Agglomerator.h"
+#include "CoMMATypes.h"
 #include "Coarse_Cell_Container.h"
 #include "Dual_Graph.h"
 #include "Seeds_Pool.h"
 
 /// \cond DO_NOT_DOCUMENT
-#define check_int_type(intT, label) \
-  static_assert(numeric_limits<intT>::is_integer, \
-      "CoMMA works with integer types, but " #intT " (" label ") is not")
+#define check_int_type(intT, label)   \
+  static_assert(                      \
+    numeric_limits<intT>::is_integer, \
+    "CoMMA works with integer types, but " #intT " (" label ") is not")
 /// \endcond
 
 /** @brief Maximum allowed iterations for the iterative algorithm, see
@@ -52,37 +52,40 @@ using namespace std;
  * @tparam CoMMAIntType the CoMMA type for integers
  * @param[in] adjMatrix_row_ptr the row pointer of the CRS representation
  * @param[in] adjMatrix_col_ind the column index of the CRS representation
- * @param[in] adjMatrix_areaValues the weight of the CRS representation (in CoMMA
- * case will be the area of the faces that in the graph representation are the edges
- * between two nodes represented by the cell centers.
+ * @param[in] adjMatrix_areaValues the weight of the CRS representation (in
+ * CoMMA case will be the area of the faces that in the graph representation are
+ * the edges between two nodes represented by the cell centers.
  * @param[in] volumes The volumes of the cells
  * @param[in] centers Cell centers
- * @param[in] priority_weights Weights used to set the order telling where to start
- * agglomerating. The higher the weight, the higher the priority
+ * @param[in] priority_weights Weights used to set the order telling where to
+ * start agglomerating. The higher the weight, the higher the priority
  *  @param[in] anisotropicCompliantCells List of cells which have to be looked
  * for anisotropy
  * @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
- * @param[in] build_anisotropic_lines Whether lines joining the anisotropic cells
- * should be built, otherwise, if the anisotropic agglomeration is activated, the
- * lines should be provided, see \p agglomerationLines_Idx and \p agglomerationLines
+ * @param[in] build_anisotropic_lines Whether lines joining the anisotropic
+ * cells should be built, otherwise, if the anisotropic agglomeration is
+ * activated, the lines should be provided, see \p agglomerationLines_Idx and \p
+ * agglomerationLines
  * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration
- * @param[in] odd_line_length Whether anisotropic lines with odd length are allowed
- * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell is
- * considered as anisotropic. If negative, all compliant cells are considered as
- * anisotropic
- * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse cells.
- * Possible values (see \ref CoMMASeedsPoolT):
+ * @param[in] odd_line_length Whether anisotropic lines with odd length are
+ * allowed
+ * @param[in] threshold_anisotropy Value of the aspect-ratio above which a cell
+ * is considered as anisotropic. If negative, all compliant cells are considered
+ * as anisotropic
+ * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse
+ * cells. Possible values (see \ref CoMMASeedsPoolT):
  * - 0: The number of boundary faces has highest priority
  * - 1: The neighbourhood has highest priority (neighbours of coarse cells have
  *      priority)
- * - 10: The number of boundary faces has highest priority, and initialize with one
- *       point only then let evolve
- * - 11: The neighbourhood has highest priority, and initialize with one point only
- *       then let evolve
- * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine cell
- * belongs after agglomeration
- * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration lines:
- * each element points to a particular element in the vector \p agglomerationLines
+ * - 10: The number of boundary faces has highest priority, and initialize with
+ * one point only then let evolve
+ * - 11: The neighbourhood has highest priority, and initialize with one point
+ * only then let evolve
+ * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine
+ * cell belongs after agglomeration
+ * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration
+ * lines: each element points to a particular element in the vector \p
+ * agglomerationLines
  * @param[in,out] agglomerationLines Vector storing all the elements of the
  * anisotropic lines
  * @param[in] correction Whether to apply correction step (avoid isolated cells)
@@ -92,18 +95,18 @@ using namespace std;
  * ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
- * @param[in] singular_card_thresh (optional, default=1) Cardinality below which a
- * coarse is considered as singular, hence, compliant for correction
- * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed for
- * the algorithm choosing which fine cell to add next. The cost grows exponentially,
- * hence use small values.
- * @param[in] neighbourhood_type (optional, default=Extended) Type of neighbourhood
- * to use when growing a coarse cell. See \ref CoMMANeighbourhoodT for more details.
- * Two alternatives:
- * - Extended: requested with 0, standard algorithm where we consider every neighbour
- *      of the coarse cell as candidate.
- * - Pure Front Advancing: requested with 1, only direct neighbours of the last added
- *      cell are candidates.
+ * @param[in] singular_card_thresh (optional, default=1) Cardinality below which
+ * a coarse is considered as singular, hence, compliant for correction
+ * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed
+ * for the algorithm choosing which fine cell to add next. The cost grows
+ * exponentially, hence use small values.
+ * @param[in] neighbourhood_type (optional, default=Extended) Type of
+ * neighbourhood to use when growing a coarse cell. See \ref CoMMANeighbourhoodT
+ * for more details. Two alternatives:
+ * - Extended: requested with 0, standard algorithm where we consider every
+ * neighbour of the coarse cell as candidate.
+ * - Pure Front Advancing: requested with 1, only direct neighbours of the last
+ * added cell are candidates.
  * @throw invalid_argument whenever dimension is not 2 nor 3, cardinalities are
  * smaller than 1 or not in order, line building is disabled but lines are not
  * provided, or number of iterations is negative or greater than \ref max_iter.
@@ -114,44 +117,46 @@ using namespace std;
  * @license This project is released under the Mozilla Public License 2.0, see
  * https://mozilla.org/MPL/2.0/
  */
-template <typename CoMMAIndexType, typename CoMMAWeightType,
-          typename CoMMAIntType>
+template<
+  typename CoMMAIndexType,
+  typename CoMMAWeightType,
+  typename CoMMAIntType>
 void agglomerate_one_level(
-    // Dual graph:
-    const vector<CoMMAIndexType> &adjMatrix_row_ptr,
-    const vector<CoMMAIndexType> &adjMatrix_col_ind,
-    const vector<CoMMAWeightType> &adjMatrix_areaValues,
-    const vector<CoMMAWeightType> &volumes,
+  // Dual graph:
+  const vector<CoMMAIndexType> &adjMatrix_row_ptr,
+  const vector<CoMMAIndexType> &adjMatrix_col_ind,
+  const vector<CoMMAWeightType> &adjMatrix_areaValues,
+  const vector<CoMMAWeightType> &volumes,
 
-    // Additional info about the mesh
-    const vector<vector<CoMMAWeightType>> &centers,
-    const vector<CoMMAWeightType> &priority_weights,
-    const vector<CoMMAIndexType> &anisotropicCompliantCells,
-    const vector<CoMMAIntType> &n_bnd_faces,
+  // Additional info about the mesh
+  const vector<vector<CoMMAWeightType>> &centers,
+  const vector<CoMMAWeightType> &priority_weights,
+  const vector<CoMMAIndexType> &anisotropicCompliantCells,
+  const vector<CoMMAIntType> &n_bnd_faces,
 
-    // Anisotropy related info
-    bool build_anisotropic_lines,
-    bool is_anisotropic,
-    bool odd_line_length,
-    CoMMAWeightType threshold_anisotropy,
+  // Anisotropy related info
+  bool build_anisotropic_lines,
+  bool is_anisotropic,
+  bool odd_line_length,
+  CoMMAWeightType threshold_anisotropy,
 
-    // Seed ordering
-    const CoMMAIntType seed_ordering_type,
+  // Seed ordering
+  const CoMMAIntType seed_ordering_type,
 
-    // Outputs
-    vector<CoMMAIndexType> &fc_to_cc,                // Out
-    vector<CoMMAIndexType> &agglomerationLines_Idx,  // In & out
-    vector<CoMMAIndexType> &agglomerationLines,      // In & out
+  // Outputs
+  vector<CoMMAIndexType> &fc_to_cc,  // Out
+  vector<CoMMAIndexType> &agglomerationLines_Idx,  // In & out
+  vector<CoMMAIndexType> &agglomerationLines,  // In & out
 
-    // Tuning of the algorithms
-    bool correction,
-    CoMMAIntType dimension,
-    CoMMAIntType goal_card,
-    CoMMAIntType min_card,
-    CoMMAIntType max_card,
-    CoMMAIntType singular_card_thresh = 1,
-    CoMMAIntType fc_choice_iter = 1,
-    const CoMMAIntType neighbourhood_type=CoMMANeighbourhoodT::EXTENDED) {
+  // Tuning of the algorithms
+  bool correction,
+  CoMMAIntType dimension,
+  CoMMAIntType goal_card,
+  CoMMAIntType min_card,
+  CoMMAIntType max_card,
+  CoMMAIntType singular_card_thresh = 1,
+  CoMMAIntType fc_choice_iter = 1,
+  const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED) {
   // NOTATION
   //======================================
   // fc = Fine Cell
@@ -159,73 +164,94 @@ void agglomerate_one_level(
 
   // USEFUL SHORTCUTS
   //======================================
-  using SeedsPoolType = Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
-  using DualGraphType = Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
-  using CCContainerType = Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType,
-                                                CoMMAIntType>;
+  using SeedsPoolType =
+    Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  using DualGraphType =
+    Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+  using CCContainerType =
+    Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
   using IsotropicPtr = std::unique_ptr<
-                              Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType,
-                                                     CoMMAIntType>>;
+    Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
 
   // SANITY CHECKS
   //======================================
   check_int_type(CoMMAIndexType, "first template argument");
   check_int_type(CoMMAIntType, "third template argument");
-  if ( !(dimension == 2 || dimension == 3) )
-    throw invalid_argument( "CoMMA - Error: dimension must be 2 or 3" );
-  if ( min_card <= 1 || goal_card <= 1 || max_card <= 1 )
-    throw invalid_argument( "CoMMA - Error: Cardinalities must be greater than 1" );
-  if ( !( min_card <= goal_card && goal_card <= max_card ) )
-    throw invalid_argument( "CoMMA - Error: Cardinalities must be in order (min <= goal <= max)" );
-  if ( fc_choice_iter < 1 )
-    throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at least 1" );
-  else if ( fc_choice_iter > static_cast<CoMMAIntType>(max_iter) )
-    throw invalid_argument( "CoMMA - Error: the number of iteration for the choice of the fine cells must be at most "
-                            + to_string(max_iter));
-  if ( adjMatrix_row_ptr.empty()
-       || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
-       || adjMatrix_row_ptr.back() != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size())
-     )
-    throw invalid_argument( "CoMMA - Error: bad CRS graph (sizes do not match)");
+  if (!(dimension == 2 || dimension == 3))
+    throw invalid_argument("CoMMA - Error: dimension must be 2 or 3");
+  if (min_card <= 1 || goal_card <= 1 || max_card <= 1)
+    throw invalid_argument(
+      "CoMMA - Error: Cardinalities must be greater than 1");
+  if (!(min_card <= goal_card && goal_card <= max_card))
+    throw invalid_argument(
+      "CoMMA - Error: Cardinalities must be in order (min <= goal <= max)");
+  if (fc_choice_iter < 1)
+    throw invalid_argument(
+      "CoMMA - Error: the number of iteration for the choice of the fine "
+      "cells must be at least 1");
+  else if (fc_choice_iter > static_cast<CoMMAIntType>(max_iter))
+    throw invalid_argument(
+      "CoMMA - Error: the number of iteration for the choice of the fine "
+      "cells must be at most "
+      + to_string(max_iter));
+  if (
+    adjMatrix_row_ptr.empty()
+    || adjMatrix_row_ptr.back()
+         != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
+    || adjMatrix_row_ptr.back()
+         != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size()))
+    throw invalid_argument("CoMMA - Error: bad CRS graph (sizes do not match)");
   if (is_anisotropic) {
     if (build_anisotropic_lines) {
       if (anisotropicCompliantCells.empty()) {
-        cout << "CoMMA - Warning: building anisotropic line requested, no compliant cells provided. Switching off anisotropy." << endl;
+        cout << "CoMMA - Warning: building anisotropic line requested, no "
+                "compliant cells provided. Switching off anisotropy."
+             << endl;
       }
-    }
-    else {
+    } else {
       // Anisotropic lines are provided
-      if ( agglomerationLines_Idx.size() < 2 || agglomerationLines.empty() ) {
-        cout << "CoMMA - Warning: usage of input anisotropic line requested, but arguments are not enough / invalid to define them. Switching off anisotropy." << endl;
+      if (agglomerationLines_Idx.size() < 2 || agglomerationLines.empty()) {
+        cout << "CoMMA - Warning: usage of input anisotropic line requested, "
+                "but arguments are not enough / invalid to define them. "
+                "Switching off anisotropy."
+             << endl;
         is_anisotropic = false;
-      }
-      else if ( agglomerationLines_Idx.back() != static_cast<CoMMAIndexType>(agglomerationLines.size()) ) {
-        throw invalid_argument( "CoMMA - Error: bad anisotropic lines definition (sizes do not match)" );
+      } else if (
+        agglomerationLines_Idx.back()
+        != static_cast<CoMMAIndexType>(agglomerationLines.size())) {
+        throw invalid_argument(
+          "CoMMA - Error: bad anisotropic lines definition (sizes do not "
+          "match)");
       }
     }
   }
   auto sing_thresh = singular_card_thresh;
   if (singular_card_thresh <= 0) {
-    throw invalid_argument( "CoMMA - Error: Threshold cardinality for singular cells should be greater than zero" );
-  }
-  else if (singular_card_thresh >= min_card) {
-    cout << "CoMMA - Warning: Threshold cardinality is equal or larger than minimum cardinality. Changing it to this latter value." << endl;
+    throw invalid_argument(
+      "CoMMA - Error: Threshold cardinality for singular cells should be "
+      "greater than zero");
+  } else if (singular_card_thresh >= min_card) {
+    cout << "CoMMA - Warning: Threshold cardinality is equal or larger than "
+            "minimum cardinality. Changing it to this latter value."
+         << endl;
     sing_thresh = min_card - 1;
   }
 
   // SIZES CAST
   //======================================
   const CoMMAIndexType nb_fc =
-      static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
+    static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
   // BOUNDARY FACES
   //======================================
-  // Sometimes partitioners give a number of boundary faces higher than the physical
-  // one. We fix this
+  // Sometimes partitioners give a number of boundary faces higher than the
+  // physical one. We fix this
   const CoMMAIntType expected_max_n_bnd = dimension;
   vector<CoMMAIntType> fixed_n_bnd_faces(n_bnd_faces.size());
-  replace_copy_if(n_bnd_faces.begin(), n_bnd_faces.end(), fixed_n_bnd_faces.begin(),
-      [expected_max_n_bnd](auto n){return n > expected_max_n_bnd;}, expected_max_n_bnd);
+  replace_copy_if(
+    n_bnd_faces.begin(), n_bnd_faces.end(), fixed_n_bnd_faces.begin(),
+    [expected_max_n_bnd](auto n) { return n > expected_max_n_bnd; },
+    expected_max_n_bnd);
 
   // SEED POOL
   //======================================
@@ -233,42 +259,42 @@ void agglomerate_one_level(
   shared_ptr<SeedsPoolType> seeds_pool = nullptr;
   switch (seed_ordering_type) {
     case CoMMASeedsPoolT::BOUNDARY_PRIORITY:
-      seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<CoMMAIndexType, CoMMAWeightType,
-                                                            CoMMAIntType>>(
-                              fixed_n_bnd_faces, priority_weights, false);
+      seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<
+        CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fixed_n_bnd_faces, priority_weights, false);
       break;
     case CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY:
-      seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<CoMMAIndexType, CoMMAWeightType,
-                                                                 CoMMAIntType>>(
-                              fixed_n_bnd_faces, priority_weights, false);
+      seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<
+        CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fixed_n_bnd_faces, priority_weights, false);
       break;
     case CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT:
-      seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<CoMMAIndexType, CoMMAWeightType,
-                                                            CoMMAIntType>>(
-                              fixed_n_bnd_faces, priority_weights, true);
+      seeds_pool = make_shared<Seeds_Pool_Boundary_Priority<
+        CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fixed_n_bnd_faces, priority_weights, true);
       break;
     case CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT:
-      seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<CoMMAIndexType, CoMMAWeightType,
-                                                                 CoMMAIntType>>(
-                              fixed_n_bnd_faces, priority_weights, true);
+      seeds_pool = make_shared<Seeds_Pool_Neighbourhood_Priority<
+        CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+        fixed_n_bnd_faces, priority_weights, true);
       break;
     default:
-      throw invalid_argument( "CoMMA - Error: Seeds pool type unsupported" );
+      throw invalid_argument("CoMMA - Error: Seeds pool type unsupported");
   }
-
 
   // DUAL GRAPH
   //======================================
-  // Object containing the graph representation and related info in a convenient structure
+  // Object containing the graph representation and related info in a convenient
+  // structure
   shared_ptr<DualGraphType> fc_graph = make_shared<DualGraphType>(
-      nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues,
-      volumes, centers, fixed_n_bnd_faces, dimension, anisotropicCompliantCells);
+    nb_fc, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
+    centers, fixed_n_bnd_faces, dimension, anisotropicCompliantCells);
 
   // COARSE CELL CONTAINER
   //======================================
   // Preparing the object that will contain all the coarse cells
-  shared_ptr<CCContainerType> cc_graph = make_shared<CCContainerType>(fc_graph,
-      sing_thresh);
+  shared_ptr<CCContainerType> cc_graph =
+    make_shared<CCContainerType>(fc_graph, sing_thresh);
 
   // AGGLOMERATION OF ANISOTROPIC CELLS
   //======================================
@@ -284,20 +310,22 @@ void agglomerate_one_level(
   if (is_anisotropic) {
     // Build anisotropic agglomerator
     Agglomerator_Anisotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
-        aniso_agg(fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
-                  agglomerationLines_Idx, agglomerationLines, priority_weights,
-                  build_anisotropic_lines, odd_line_length, dimension);
+      aniso_agg(
+        fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
+        agglomerationLines_Idx, agglomerationLines, priority_weights,
+        build_anisotropic_lines, odd_line_length, dimension);
 
     // Agglomerate anisotropic cells only
-    aniso_agg.agglomerate_one_level(goal_card, min_card, max_card, priority_weights, false);
+    aniso_agg.agglomerate_one_level(
+      goal_card, min_card, max_card, priority_weights, false);
 
     // Put anisotropic lines into the output parameters
-    // (Info about level of the line: WARNING! here 1 it means that we give it back
-    // lines in the new global index, 0 the old)
+    // (Info about level of the line: WARNING! here 1 it means that we give it
+    // back lines in the new global index, 0 the old)
     const CoMMAIntType i_level{1};
-    aniso_agg.export_anisotropic_lines(i_level, agglomerationLines_Idx, agglomerationLines);
-  }
-  else {
+    aniso_agg.export_anisotropic_lines(
+      i_level, agglomerationLines_Idx, agglomerationLines);
+  } else {
     seeds_pool->initialize();
   }
 
@@ -306,20 +334,20 @@ void agglomerate_one_level(
   // We define here the type of Agglomerator
   IsotropicPtr agg = nullptr;
   // TODO: maybe pass to a switch when another agglomerator will be implemented
-  if (fc_choice_iter > 1){
+  if (fc_choice_iter > 1) {
     agg = make_unique<
-        Agglomerator_Iterative<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
-        dimension);
-  }
-  else {
+      Agglomerator_Iterative<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
+      dimension);
+  } else {
     agg = make_unique<
-        Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
-        fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
-        dimension);
+      Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+      fc_graph, cc_graph, seeds_pool, neighbourhood_type, fc_choice_iter,
+      dimension);
   }
   // Agglomerate
-  agg->agglomerate_one_level(goal_card, min_card, max_card, priority_weights, correction);
+  agg->agglomerate_one_level(
+    goal_card, min_card, max_card, priority_weights, correction);
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
   const auto &fccc = cc_graph->_fc_2_cc;

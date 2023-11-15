@@ -23,13 +23,13 @@ using namespace std;
 /** @brief An easy and straight forward implementation of a Bimap.
  *  @deprecated Not used anymore
  */
-template <typename A, typename B>
+template<typename A, typename B>
 class Bimap {
- public:
+public:
   /** @brief Constructor */
-  Bimap() {};
+  Bimap(){};
   /** @brief Destructor */
-  ~Bimap() {};
+  ~Bimap(){};
 
   //  using container= map<A, const B*>;
   //  using iterator=typename container::iterator;
@@ -44,21 +44,21 @@ class Bimap {
     auto aitr = _mapA.insert({b, nullptr}).first;  // creates first pair
     const B *bp = &(aitr->first);  // get pointer of our stored copy of b
     auto bitr =
-        _mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
-    const A *ap = &(bitr->first);    // update pointer in _mapA to point to a
+      _mapB.insert({a, bp}).first;  // insert second pair {a, pointer_to_b}
+    const A *ap = &(bitr->first);  // update pointer in _mapA to point to a
     _mapA.insert_or_assign(b, ap);
   }
 
   /** @brief Function to print the map */
   void print() {
-    for (const auto & [ key, value ] : _mapB) {
+    for (const auto &[key, value] : _mapB) {
       cout << '[' << key << "] = " << *value << "; ";
     }
   }
 
   /** @brief Update of the key of the map B and hence the value of the node A
-   * @param[in] a_old the old value of the node A (in case you do not know you can
-   * find it through the find.
+   * @param[in] a_old the old value of the node A (in case you do not know you
+   * can find it through the find.
    * @param[in] a_new the new value we want to attribute to the node A.
    */
   void update_nodeB(const A &a_old, const A &a_new) {
@@ -69,8 +69,8 @@ class Bimap {
     }
   }
   /** @brief Update of the key of the map A and hence the value of the node B
-   * @param[in] b_old the old value of the node B (in case you do not know you can
-   * find it through the find.
+   * @param[in] b_old the old value of the node B (in case you do not know you
+   * can find it through the find.
    * @param[in] b_new the new value we want to attribute to the node B.
    */
   void update_nodeA(const B &b_old, const B &b_new) {
@@ -124,7 +124,7 @@ class Bimap {
    */
   inline size_t lung() { return (_mapB.size()); }
 
- protected:
+protected:
   /** @brief Left map  */
   map<B, const A *> _mapA;
   /** @brief Right map */

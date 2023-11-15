@@ -24,13 +24,13 @@ using namespace std;
  *  @tparam T Type of the elements
  *  @deprecated Not used anymore
  */
-template <typename T>
+template<typename T>
 class Queue {
- private:
+private:
   /** @brief The vector of elements */
   deque<T> _elems;
 
- public:
+public:
   /** @brief Constructor */
   Queue() {}
   /** @brief Destructor */
@@ -38,30 +38,26 @@ class Queue {
   /** @brief Push an element on the top of the queue.
    *  @param elem The element to add
    */
-  void push(T const& elem) { _elems.push_back(elem); }
+  void push(T const &elem) { _elems.push_back(elem); }
   /** @brief pop an element from the bottom of the queue
    *  @return The element popped
    */
   T pop() {
-    if (_elems.empty()) {
-      return static_cast<T>(-1);
-    }
+    if (_elems.empty()) { return static_cast<T>(-1); }
     T elem = _elems.front();  // Copy last element
-    _elems.pop_front();       // remove last element
+    _elems.pop_front();  // remove last element
     return elem;
   }
   /** @brief Scope to the element on the bottom of the queue
    *  @return The bottom element of the queue
    */
   T top() const {
-    if (_elems.empty()) {
-      return static_cast<T>(-1);
-    }
+    if (_elems.empty()) { return static_cast<T>(-1); }
     return _elems.front();
   }
   /** @brief Whether the queue is empty
    *  @return a bool
    */
-  inline bool empty() const {return _elems.empty(); }
+  inline bool empty() const { return _elems.empty(); }
 };
 #endif
