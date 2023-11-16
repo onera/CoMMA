@@ -198,12 +198,12 @@ dic = {
 # dic = {}
 # # For every line...
 # for i in range(len(alines_Idx)-1):
-# mask = np.full(len(fc_to_cc_res), False)
-# # For every coarse cell in the line...
-# for cc in alines[alines_Idx[i]:alines_Idx[i+1]]:
-# # Take all the fine cells that are in the coarse cell
-# mask |= f2c == cc
-# dic[i] = np.flatnonzero(mask)
+#     mask = np.full(len(fc_to_cc_res), False)
+#     # For every coarse cell in the line...
+#     for cc in alines[alines_Idx[i]:alines_Idx[i+1]]:
+#         # Take all the fine cells that are in the coarse cell
+#         mask |= f2c == cc
+#     dic[i] = np.flatnonzero(mask)
 
 print("OK")
 line_draw = "test_lines.png"
