@@ -16,6 +16,13 @@ representation of an **unstructured** computational mesh.
 - Isotropic agglomeration with structured-like treatment of structured-like
   regions.
 
+## :scroll: License
+CoMMA is distributed under [Mozilla Public License Version 2.0](LICENSE). It has
+been registered to the
+[Agency for the Protection of Programs](https://www.app.asso.fr/lagence) (APP),
+Paris, with [IDDN](https://www.iddn.org/cert) identification number
+IDDN.FR.001.420013.000.S.X.2023.000.31235.
+
 ## :wrench: Building the Library
 CoMMA is a `C++` **header-only library** hence it does not need compilation, per
 se. Nonetheless, a `python` module can be generated using `pybind11`: this is
