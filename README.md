@@ -104,9 +104,6 @@ git submodule init
 git submodule update
 ```
 
-## :bow: Convenient scripts
-The file `CODA_transfer.sh` help for the installation in the CODA-CFD library.
-
 ## :mag: Testing CoMMA
 A set of tests to verify code and algorithm integrity has been set up, see
 [the related file](tests/test_structure.cpp). The tests rely on the `Catch2`
