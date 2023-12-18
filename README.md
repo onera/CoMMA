@@ -23,11 +23,9 @@ very convenient for testing and debugging purposes. Moreover, some tests via
 `Catch2` have been written to check the integrity of CoMMA. Both the `python`
 module and the tests need compilation.
 
-To build this library you just need a fairly recent `cmake` (3.14+). It should
-be easy to obtain via your distribution package manager, otherwise you can
-checkout [spack](https://spack.readthedocs.io/en/latest/). Then, a standard In
-out-of-source build with `cmake` in a freshly created directory will suffice to
-compile
+To build this library you just need a fairly recent `cmake` (3.14+). Then, a
+standard out-of-source build with `cmake` in a freshly created directory will
+suffice to compile
 ```shell
 mkdir build
 cd build
@@ -42,6 +40,9 @@ activated by default, but they can be switched off
 cmake -DBUILD_TESTS=Off .. # No tests
 cmake -DBUILD_PYTHON_BINDINGS=Off .. # No python bindings
 ```
+If `python` bindings and test are activated, the related submodules are needed,
+see [below](#link-submodules) how to get them.
+
 An additional `cmake` option might be passed to build the tests with coverage
 support (default is off)
 ```shell
@@ -92,7 +93,9 @@ different option settings:
 
 ## :link: Submodules
 To handle the `python` binding and the tests, we take advantage of two
-thirdparty libraries here included as submodules.
+thirdparty libraries, [`pybind11`](https://github.com/pybind/pybind11) and
+[`Catch2`](https://github.com/catchorg/Catch2) respectively. They are included
+in this repository as submodules.
 
 In order to update the submodules do:
 
@@ -176,52 +179,3 @@ configuration). The workflow performs several steps:
    [![coverage report](https://gitlab.onera.net/numerics/solver/comma/badges/main/coverage.svg)](https://gitlab.onera.net/numerics/solver/comma/-/commits/main)
 4. Build the documentation (same as [above](#book-documentation)) and deploy it
    on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/)
-
-### :exclamation: Things to be aware of
-A presentation of the ONERA-hosted CI is available
-[here](https://gitlab.onera.net/numerics/mesh/maia/-/wikis/GitLab-CI-ONERA), we
-give below some insights.
-
-The CI on the ONERA-hosted repo runs on **`spiro-commun`**.
-
-Two ways of running are available, directly as shell or through a `slurm` job.
-The workflow being simple and not needing many resources, we force the shell
-way:
-```yaml
-default:
-  tags: # Use shell instead of submitting pipeline to slurm
-    - shell
-```
-
-In order to successfully build and test, an environment (available in
-Riccardo's storage and accessible to anyone) is sourced and some checks are
-done
-```yaml
-job:init:
-    stage: init
-    before_script:
-        - module purge
-        # Load python version, compilers
-        - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
-        - python3 -c "import gcovr" || python3 -m pip install --user gcovr
-```
-
-It is important to notice that **the CI job runs as if launched by the author of
-the action** (commit, merge,...) who triggered the job. That means that it will read
-its `bash` profile, for instance.
-
-Finally, during the initialization stage, the workflow has to check out the
-submodules which are on regular (hence, not ONERA-hosted) GitHub. To do that, it
-has to goes through OENRA proxy. Not having set the rights proxy value will
-result in a failure of the check out and, hence of the workflow. As you know,
-the proxy depends on where at ONERA you are. For this reason, it is left to the
-user to have the right setting in its `bash` profile, see the previous paragraph
-to know how this is used. Typical settings are:
-```shell
-export PRX=proxy.onecert.fr:80
-# For other users it might be...
-#export PRX=proxy.onera.fr:80
-export no_proxy=.onera.net,.onera.fr,.onecert.fr
-export https_proxy=http://${PRX}
-export http_proxy=http://${PRX}
-```
