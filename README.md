@@ -77,6 +77,15 @@ and related html pages will be built in `documentation`.
 An [online version](https://numerics.gitlab-pages.onera.net/solver/comma/) of
 the doc hosted by GitLab is available.
 
+A user manual is also available, see
+[Documentation/CoMMA_user_manual.pdf](Documentation/CoMMA_user_manual.pdf). The
+goal of this document is to clearly state and explain how CoMMA works, that
+applies both to algorithms and their actual implementation (e.g., which data
+structures have been used). After having read this document, the user should be
+able to understand what CoMMA actually does under the hood and should have the
+essential insights to use it (e.g., which input parameters should one provides,
+how they will impact the final results...).
+
 ## :bulb: Examples
 Here are two animations about the agglomeration on a 2D mesh of a ring for two
 different option settings:
