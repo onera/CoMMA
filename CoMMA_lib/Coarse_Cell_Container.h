@@ -53,6 +53,8 @@ public:
   /** @brief Create a Coarse_Cell_Container
    *  @param[in] fc_graph Input element Dual_Graph to work on the seeds choice
    * and the seeds pool
+   *  @param[in] singular_card_thresh Threshold value below which a coarse cell
+   * is considered singular
    */
   Coarse_Cell_Container(
     DualGraphPtr &fc_graph, const CoMMAIntType singular_card_thresh) :
