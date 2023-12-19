@@ -1,0 +1,26 @@
+var class_coarse___cell___container =
+[
+    [ "CoarseCellPtr", "class_coarse___cell___container.html#a319328848c99b14f01a0914710217371", null ],
+    [ "CoarseCellType", "class_coarse___cell___container.html#a66f8c6355a3a99ac2f6487e86f17fc5c", null ],
+    [ "DualGraphPtr", "class_coarse___cell___container.html#ae1f92ee786149dd1dccf1a63b9e6232e", null ],
+    [ "Coarse_Cell_Container", "class_coarse___cell___container.html#a534208d33bc0bdc591223024496a3796", null ],
+    [ "~Coarse_Cell_Container", "class_coarse___cell___container.html#acbf8e09f2a919012a743a323564c3b3a", null ],
+    [ "cc_create_all_delayed_cc", "class_coarse___cell___container.html#a03acb3ee71ea2d53e899943912f7fc12", null ],
+    [ "correct", "class_coarse___cell___container.html#ad8f17759e8670d7c89b2931282f55617", null ],
+    [ "create_cc", "class_coarse___cell___container.html#a89af69d54fd9564d112fcc0897e8f8c3", null ],
+    [ "get_nb_of_cc", "class_coarse___cell___container.html#a914e4ce6536ddc54463f399e8e85f5b5", null ],
+    [ "get_neighs_cc", "class_coarse___cell___container.html#a209dae87bf495d5e9a9a1b51019203df", null ],
+    [ "get_number_of_fc_agglomerated", "class_coarse___cell___container.html#a09b33c3ceda1cc06bee353e8a23dfc02", null ],
+    [ "get_shared_faces", "class_coarse___cell___container.html#a1a4fee09c0e84fcd74804ee3aadb7665", null ],
+    [ "select_best_cc_to_agglomerate", "class_coarse___cell___container.html#aba3dc19912418f8bd60fc006c6d17e6d", null ],
+    [ "select_best_cc_to_agglomerate_whole", "class_coarse___cell___container.html#a420e4d3b4c4b4a11c151a5caf31f26d3", null ],
+    [ "_cc_counter", "class_coarse___cell___container.html#aaedb1987672cc4859f2f6fe7e1ec8233", null ],
+    [ "_ccs", "class_coarse___cell___container.html#acd55a3361f7870e4e3a6fecc0b722143", null ],
+    [ "_delayed_cc", "class_coarse___cell___container.html#a9ff233d4ed5041ea03911c235ea31cb1", null ],
+    [ "_fc_2_cc", "class_coarse___cell___container.html#a424991a123832bea6e516b5e05498ab6", null ],
+    [ "_fc_graph", "class_coarse___cell___container.html#a9ae47860d515a99af0e0199f4d844473", null ],
+    [ "_is_fc_agglomerated", "class_coarse___cell___container.html#a7940da5753d067f786aead5b6bc7f792", null ],
+    [ "_nb_of_agglomerated_fc", "class_coarse___cell___container.html#ad6364e5fed3a17cdbe68a52a205c836a", null ],
+    [ "_sing_card_thresh", "class_coarse___cell___container.html#a40c1a7820ff7948cde2ac8cb189be0f5", null ],
+    [ "_singular_cc", "class_coarse___cell___container.html#afc84ade812ac4538c434bd8ad5907a62", null ]
+];
