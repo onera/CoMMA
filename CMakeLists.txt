@@ -133,7 +133,7 @@ endif()
 
 # installation
 include(GNUInstallDirs)
-configure_file(comma.pc.in comma.pc @ONLY)
+# configure_file(comma.pc.in comma.pc @ONLY)
 
 # ${SOURCE_DIR} (no slash) considers the directory itself
 # ${SOURCE_DIR}/ (with slash) considers its files only
@@ -143,7 +143,7 @@ install(DIRECTORY ${SOURCE_DIR}/
   REGEX "deprecated" EXCLUDE
 )
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if ( BUILD_PYTHON_BINDINGS )
   install(TARGETS ${PROJECT_NAME}
