@@ -127,14 +127,14 @@ framework, which is why the related submodule is included in this repository. To
 run the tests, build the library (see [above](#wrench-building-the-library), the
 `cmake` commands related to the tests are already part of the reference
 [`CMakeLists.txt`](CMakeLists.txt)),
-this will generate an executable `Comma_test` in the building directory, simply
+this will generate an executable `CoMMA_test` in the building directory, simply
 run it.
 ```shell
 mkdir build
 cd build
 cmake ..
 make
-./Comma_test
+./CoMMA_test
 ```
 
 Tests are included in the
