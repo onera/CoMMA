@@ -28,6 +28,10 @@ option(COVERAGE "Build tests with coverage support" OFF)
 #set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
 option(BUILD_PYTHON_BINDINGS "Build python bindings via pybind11" ON)
 
+# https://vicrucann.github.io/tutorials/quick-cmake-doxygen/ and
+# https://stackoverflow.com/questions/34878276/build-doxygen-from-cmake-script
+option(BUILD_DOC "Build documentation (with Doxygen)" OFF)
+
 if ( CODAFLAGS )
    # We just do not set the optimization flags nor the parallelism-related ones
   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -131,6 +135,22 @@ if ( BUILD_PYTHON_BINDINGS )
   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
 endif()
 
+if ( BUILD_DOC )
+  message(STATUS "Documentation enabled")
+  find_package(Doxygen)
+  if ( NOT DOXYGEN_FOUND )
+    message(FATAl_ERROR "Doxygen is needed to build the documentation.")
+  endif()
+
+  # We add it to all-target as well
+  add_custom_target(doc
+    ALL
+    COMMAND ${DOXYGEN_EXECUTABLE} Documentation/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating documentation with Doxygen"
+  )
+endif()
+
 # installation
 include(GNUInstallDirs)
 # configure_file(comma.pc.in comma.pc @ONLY)
@@ -152,4 +172,8 @@ if ( BUILD_PYTHON_BINDINGS )
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
   )
+endif()
+
+if ( BUILD_DOC )
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/documentation/html TYPE DOC)
 endif()
