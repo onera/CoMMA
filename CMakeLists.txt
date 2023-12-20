@@ -139,7 +139,7 @@ if ( BUILD_DOC )
   message(STATUS "Documentation enabled")
   find_package(Doxygen)
   if ( NOT DOXYGEN_FOUND )
-    message(FATAl_ERROR "Doxygen is needed to build the documentation.")
+    message(FATAL_ERROR "Doxygen is needed to build the documentation.")
   endif()
 
   # We add it to all-target as well
