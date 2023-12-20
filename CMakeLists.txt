@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 if(NOT CMAKE_BUILD_TYPE)
-  message("No build type received, using Debug")
+  message(STATUS "No build type received, using Debug")
   set(CMAKE_BUILD_TYPE Debug)  # Debug version
 endif()
 
@@ -108,10 +108,10 @@ SET(TESTS
 
 # Generate a test executable with covergae report
 if ( BUILD_TESTS )
-  message("Tests enabled")
+  message(STATUS "Tests enabled")
   include_directories(Catch2/single_include)
   if ( COVERAGE )
-    message("Coverage support enabled")
+    message(STATUS "Coverage support enabled")
     add_compile_options("--coverage")
   endif()
   add_executable(${CoMMA_TEST} ${TESTS})
@@ -123,7 +123,7 @@ endif()
 #set_source_files_properties(${CoMMA_TEST} PROPERTIES COMPILE_FLAGS "--coverage")
 ######################## Pybind11 bindings ####################################
 if ( BUILD_PYTHON_BINDINGS )
-  message("Python bindings enabled")
+  message(STATUS "Python bindings enabled")
   add_subdirectory(pybind11)
   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
 endif()
