@@ -176,4 +176,8 @@ endif()
 
 if ( BUILD_DOC )
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/documentation/html TYPE DOC)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CoMMA_user_manual.pdf
+    TYPE DOC
+  )
 endif()
