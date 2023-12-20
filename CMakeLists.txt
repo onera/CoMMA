@@ -127,3 +127,26 @@ if ( BUILD_PYTHON_BINDINGS )
   add_subdirectory(pybind11)
   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
 endif()
+
+# installation
+include(GNUInstallDirs)
+configure_file(comma.pc.in comma.pc @ONLY)
+
+# ${SOURCE_DIR} (no slash) considers the directory itself
+# ${SOURCE_DIR}/ (with slash) considers its files only
+install(DIRECTORY ${SOURCE_DIR}/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.h"
+  REGEX "deprecated" EXCLUDE
+)
+install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+if ( BUILD_PYTHON_BINDINGS )
+  install(TARGETS ${PROJECT_NAME}
+    COMPONENT python
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  )
+endif()
