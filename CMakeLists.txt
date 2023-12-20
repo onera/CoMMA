@@ -37,7 +37,7 @@ if ( CODAFLAGS )
   elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-finite-math-only -fno-math-errno -fvisibility-inlines-hidden -Wall -Wno-absolute-value -Wno-deprecated-register -Wno-unused-lambda-capture")
   endif()
-  message("Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
+  message(STATUS "Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
 endif()
 
 # Effective library
