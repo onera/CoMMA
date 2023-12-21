@@ -175,9 +175,7 @@ if ( BUILD_PYTHON_BINDINGS )
 endif()
 
 if ( BUILD_DOC )
+  # Instead of "TYPE DOC" could have use ${CMAKE_INSTALL_DOCDIR} or similarly ${CMAKE_INSTALL_FULL_DOCDIR}
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/documentation/html TYPE DOC)
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CoMMA_user_manual.pdf
-    TYPE DOC
-  )
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CoMMA_user_manual.pdf TYPE DOC)
 endif()
