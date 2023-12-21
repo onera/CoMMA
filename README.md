@@ -30,7 +30,7 @@ very convenient for testing and debugging purposes. Moreover, some tests via
 `Catch2` have been written to check the integrity of CoMMA. Both the `python`
 module and the tests need compilation.
 
-To build this library you just need a fairly recent `cmake` (3.14+). Then, a
+To build this library you just need a fairly recent `cmake` (3.15+). Then, a
 standard out-of-source build with `cmake` in a freshly created directory will
 suffice to compile
 ```shell
