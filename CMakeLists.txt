@@ -136,6 +136,8 @@ endif()
 ######################## Pybind11 bindings ####################################
 if ( BUILD_PYTHON_BINDINGS )
   message(STATUS "Python bindings enabled")
+  # find the Python interpreter (including pybind might lead to other find files being used)
+  find_package(Python COMPONENTS Interpreter Development)
   add_subdirectory(pybind11)
   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
 endif()
@@ -171,11 +173,12 @@ install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
 # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if ( BUILD_PYTHON_BINDINGS )
+  set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
   install(TARGETS ${PROJECT_NAME}
     COMPONENT python
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
   )
 endif()
 
