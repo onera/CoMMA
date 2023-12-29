@@ -190,7 +190,7 @@ fc_to_cc, aggloLines_Idx, aggloLines = CoMMA.agglomerate_one_level(*[args])
 ```
 
 Several `python` scripts showcasing the CoMMA package (as well as its two main
-dependencies), `meshio` and `dualGPy`are [available](examples/scripts).
+dependencies, `meshio` and `dualGPy`) are [available](examples/scripts).
 
 <!-- ## :robot: Continuous Integration
 A Continuous Integration (CI) [workflow](.gitlab-ci.yml) is available and it
