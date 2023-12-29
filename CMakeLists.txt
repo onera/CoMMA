@@ -180,11 +180,22 @@ endif()
 
 if ( BUILD_PYTHON_BINDINGS )
   set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+  # Install generated module
   install(TARGETS ${PROJECT_NAME}
     COMPONENT python
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
+  )
+
+  # Install examples
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/scripts/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/examples/${PROJECT_NAME}
+    FILES_MATCHING
+    PATTERN "*.py"
+    PATTERN "*.md"
+    REGEX "deprecated" EXCLUDE
+    REGEX "cache" EXCLUDE
   )
 endif()
 
