@@ -27,16 +27,20 @@ IDDN.FR.001.420013.000.S.X.2023.000.31235.
 CoMMA is a `C++` **header-only library** hence it does not need compilation, per
 se. Nonetheless, a `python` module can be generated using `pybind11`: this is
 very convenient for testing and debugging purposes. Moreover, some tests via
-`Catch2` have been written to check the integrity of CoMMA. Both the `python`
-module and the tests need compilation.
+`Catch2` have been written to check the integrity of CoMMA (for more details see
+the [dedicated section](#mag-testing-comma) below). Both the `python` module and
+the tests need compilation. Finally, one can install the headers and, when
+applies, the `python` module in a given directory.
 
 To build this library you just need a fairly recent `cmake` (3.15+). Then, a
 standard out-of-source build with `cmake` in a freshly created directory will
 suffice to compile
 ```shell
-mkdir build
+mkdir build install
 cd build
-cmake ..
+cmake --prefix=../install ..
+make
+make install
 ```
 `cmake` should be able to find the simple dependencies by itself if they're
 installed in standard location.
@@ -56,15 +60,24 @@ support (default is off)
 cmake -DCOVERAGE=On ..
 ```
 
+Support for `pkg-config` can be enabled by passing the related option to
+`cmake`:
+```shell
+cmake -DPKGCONFIG_SUPPORT=On --prefix=../install ..
+```
+A template of such configuration file can be found
+[in the repository](config_files/comma.pc.in); given the prefix provided above,
+it will be installed in `path/to/CoMMA/install/lib64/pkgconfig`.
+
 An option is available to use the flags usually considered when compiling the
 CODA-CFD library:
 ```shell
-cmake -DCODAFLAGS=ON ..
+cmake -DCODAFLAGS=On ..
 ```
 
 ## :construction_worker: Usage
 The interface to CoMMA is very simple and consists in only one function
-[`agglomerate_one_level`](https://numerics.gitlab-pages.onera.net/solver/comma/_co_m_m_a_8h.html#abfb7a4b061c35873233941bb1329ea09).
+[`agglomerate_one_level`](https://onera.github.io/CoMMA/_co_m_m_a_8h.html#a906c231be20a1f53a240618bae81d95f).
 
 ## :book: Documentation
 CoMMA is documented via `doxygen`. If you have it and wish to have the full
@@ -74,7 +87,7 @@ doxygen Documentation/Doxyfile
 ```
 and related html pages will be built in `documentation`.
 
-An [online version](https://numerics.gitlab-pages.onera.net/solver/comma/) of
+An [online version](https://onera.github.io/CoMMA/) of
 the doc hosted by GitLab is available.
 
 A user manual is also available, see
@@ -90,18 +103,18 @@ how they will impact the final results...).
 Here are two animations about the agglomeration on a 2D mesh of a ring for two
 different option settings:
 * Seeds pool with
-  [full initialization](https://numerics.gitlab-pages.onera.net/solver/comma/struct_s_p_full_initializator.html)
+  [full initialization](https://onera.github.io/CoMMA/struct_s_p_full_initializator.html)
   and
-  [boundary priority](https://numerics.gitlab-pages.onera.net/solver/comma/class_seeds___pool___boundary___priority.html)
+  [boundary priority](https://onera.github.io/CoMMA/class_seeds___pool___boundary___priority.html)
 
 <div align="center">
     <img src="images/videos/bnd_full_init.gif" alt="" width="512" height="auto"/>
 </div>
 
 * Seeds pool with
-  [one-point initialization](https://numerics.gitlab-pages.onera.net/solver/comma/struct_s_p_one_point_initializator.html)
+  [one-point initialization](https://onera.github.io/CoMMA/struct_s_p_one_point_initializator.html)
   and
-  [neighbourhood priority](https://numerics.gitlab-pages.onera.net/solver/comma/class_seeds___pool___neighbourhood___priority.html)
+  [neighbourhood priority](https://onera.github.io/CoMMA/class_seeds___pool___neighbourhood___priority.html)
 
 <div align="center">
     <img src="images/videos/neigh_pt_init.gif" alt="" width="512" height="auto"/>
@@ -126,9 +139,8 @@ A set of tests to verify code and algorithm integrity has been set up, see
 framework, which is why the related submodule is included in this repository. To
 run the tests, build the library (see [above](#wrench-building-the-library), the
 `cmake` commands related to the tests are already part of the reference
-[`CMakeLists.txt`](CMakeLists.txt)),
-this will generate an executable `CoMMA_test` in the building directory, simply
-run it.
+[`CMakeLists.txt`](CMakeLists.txt)), this will generate an executable
+`CoMMA_test` in the building directory, simply run it.
 ```shell
 mkdir build
 cd build
@@ -141,14 +153,17 @@ Tests are included in the
 [continuous integration](#robot-continuous-integration) set of actions.
 
 ## :snake: A `python` interface to CoMMA
-A `python` module which interfaces to CoMMA can be obtained using `pybind11` (a submodule of
-CoMMA). To have it, just "build" (see [above](#wrench-building-the-library),
-related the `cmake` commands are already part of the reference
-[`CMakeLists.txt`](CMakeLists.txt)): a library called
-`CoMMA.cpython-38-x86_64-linux-gnu.so` (or similar) appears in the build
-directory. To use it, add the directory to your `python` path:
+A `python` module which interfaces to CoMMA can be obtained using `pybind11` (a
+submodule of CoMMA). To have it, just "build" (see
+[above](#wrench-building-the-library), related the `cmake` commands are already
+part of the reference [`CMakeLists.txt`](CMakeLists.txt)). A library called
+`CoMMA.cpython-38-x86_64-linux-gnu.so` (or similar) is installed in the
+`${CMAKE_INSTALL_LIBDIR}/python3.X/site-packages`, which, supposing one has
+given `install` as prefix in the `cmake` configuration step and using
+`python3.10`, will develop to `install/lib64/python3.10/site-packages`. To use
+it, add that directory to your `python` path:
 ```shell
-export PYTHONPATH:/path/to/CoMMA/build:$PYTHONPATH
+export PYTHONPATH:/path/to/CoMMA/install/lib64/python3.10/site-packages:$PYTHONPATH
 ```
 then just load CoMMA module in a `python` session:
 ```python
@@ -175,9 +190,9 @@ fc_to_cc, aggloLines_Idx, aggloLines = CoMMA.agglomerate_one_level(*[args])
 ```
 
 Several `python` scripts showcasing the CoMMA package (as well as its two main
-dependencies, `meshio` and `dualGPy`are [available](examples/scripts).
+dependencies), `meshio` and `dualGPy`are [available](examples/scripts).
 
-## :robot: Continuous Integration
+<!-- ## :robot: Continuous Integration
 A Continuous Integration (CI) [workflow](.gitlab-ci.yml) is available and it
 runs at each push event concerning `C++` or CI files (at least with the current
 configuration). The workflow performs several steps:
@@ -191,4 +206,4 @@ configuration). The workflow performs several steps:
    and the coverage
    [![coverage report](https://gitlab.onera.net/numerics/solver/comma/badges/main/coverage.svg)](https://gitlab.onera.net/numerics/solver/comma/-/commits/main)
 4. Build the documentation (same as [above](#book-documentation)) and deploy it
-   on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/)
+   on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/) -->
