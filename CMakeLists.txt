@@ -3,10 +3,10 @@
 
 ###############################   CMAKE VERSION and FLAGS ##########################
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
 
 if(NOT CMAKE_BUILD_TYPE)
-  message("No build type received, using Debug")
+  message(STATUS "No build type received, using Debug")
   set(CMAKE_BUILD_TYPE Debug)  # Debug version
 endif()
 
@@ -15,18 +15,29 @@ set(CMAKE_CXX_STANDARD 17)
 # https://github.com/catchorg/Catch2/issues/1204
 
 ###################################  PROJECT #################################
-project(CoMMA VERSION 1.3)
+project(CoMMA
+  VERSION 1.3
+  DESCRIPTION "Geometric agglomerator for unstructured grids"
+  HOMEPAGE_URL "https://github.com/onera/CoMMA"
+  LANGUAGES CXX
+)
 
 # https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
 # For the current application, better to use an `option`:
 # https://stackoverflow.com/questions/36358217/what-is-the-difference-between-option-and-set-cache-bool-for-a-cmake-variabl
 #set(BUILD_TESTS On CACHE BOOL "Build tests")
 option(BUILD_TESTS "Build tests" ON)
-set(CoMMA_TEST "Comma_test")
+set(CoMMA_TEST "CoMMA_test")
 option(COVERAGE "Build tests with coverage support" OFF)
 
 #set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
 option(BUILD_PYTHON_BINDINGS "Build python bindings via pybind11" ON)
+
+# https://vicrucann.github.io/tutorials/quick-cmake-doxygen/ and
+# https://stackoverflow.com/questions/34878276/build-doxygen-from-cmake-script
+option(BUILD_DOC "Build documentation (with Doxygen)" OFF)
+
+option(PKGCONFIG_SUPPORT "Prepare and install file to be used with pkg-config" OFF)
 
 if ( CODAFLAGS )
    # We just do not set the optimization flags nor the parallelism-related ones
@@ -37,7 +48,7 @@ if ( CODAFLAGS )
   elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-finite-math-only -fno-math-errno -fvisibility-inlines-hidden -Wall -Wno-absolute-value -Wno-deprecated-register -Wno-unused-lambda-capture")
   endif()
-  message("Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
+  message(STATUS "Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
 endif()
 
 # Effective library
@@ -108,22 +119,88 @@ SET(TESTS
 
 # Generate a test executable with covergae report
 if ( BUILD_TESTS )
-  message("Tests enabled")
+  message(STATUS "Tests enabled")
   include_directories(Catch2/single_include)
   if ( COVERAGE )
-    message("Coverage support enabled")
+    message(STATUS "Coverage support enabled")
     add_compile_options("--coverage")
   endif()
   add_executable(${CoMMA_TEST} ${TESTS})
   if ( COVERAGE )
     target_link_libraries(${CoMMA_TEST} gcov)
   endif()
+
+  enable_testing()
+  add_test(NAME ${CoMMA_TEST}_global COMMAND ${CoMMA_TEST})
 endif()
-#target_link_libraries(Comma_test Boost)
-#set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
+#target_link_libraries(${CoMMA_TEST} Boost)
+#set_source_files_properties(${CoMMA_TEST} PROPERTIES COMPILE_FLAGS "--coverage")
 ######################## Pybind11 bindings ####################################
 if ( BUILD_PYTHON_BINDINGS )
-  message("Python bindings enabled")
+  message(STATUS "Python bindings enabled")
+  # find the Python interpreter (including pybind might lead to other find files being used)
+  find_package(Python COMPONENTS Interpreter Development)
   add_subdirectory(pybind11)
   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
+endif()
+
+if ( BUILD_DOC )
+  message(STATUS "Documentation enabled")
+  find_package(Doxygen)
+  if ( NOT DOXYGEN_FOUND )
+    message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+  endif()
+
+  # We add it to all-target as well
+  add_custom_target(doc
+    ALL
+    COMMAND ${DOXYGEN_EXECUTABLE} Documentation/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating documentation with Doxygen"
+  )
+endif()
+
+# installation
+include(GNUInstallDirs)
+
+
+# ${SOURCE_DIR} (no slash) considers the directory itself
+# ${SOURCE_DIR}/ (with slash) considers its files only
+install(DIRECTORY ${SOURCE_DIR}/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.h"
+  REGEX "deprecated" EXCLUDE
+)
+install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
+
+if ( PKGCONFIG_SUPPORT )
+  configure_file(config_files/comma.pc.in comma.pc @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+endif()
+
+if ( BUILD_PYTHON_BINDINGS )
+  set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+  # Install generated module
+  install(TARGETS ${PROJECT_NAME}
+    COMPONENT python
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
+  )
+
+  # Install examples
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/scripts/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/examples/${PROJECT_NAME}
+    FILES_MATCHING
+    PATTERN "*.py"
+    PATTERN "*.md"
+    REGEX "deprecated" EXCLUDE
+    REGEX "cache" EXCLUDE
+  )
+endif()
+
+if ( BUILD_DOC )
+  # Instead of "TYPE DOC" could have use ${CMAKE_INSTALL_DOCDIR} or similarly ${CMAKE_INSTALL_FULL_DOCDIR}
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/documentation/html TYPE DOC)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CoMMA_user_manual.pdf TYPE DOC)
 endif()

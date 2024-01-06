@@ -82,7 +82,7 @@ job:test_dbg:
     script:
         - cd $CUSTOM_CI_DIR
         - cd build
-        - ./Comma_test -r junit > test_a.xml
+        - ./CoMMA_test -r junit > test_a.xml
         - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./CoMMA_lib/CoMMA.cpp' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
@@ -121,7 +121,7 @@ job:test_rel:
     script:
         - cd $CUSTOM_CI_DIR
         - cd build_rel
-        - ./Comma_test
+        - ./CoMMA_test
 pages:
     stage: documentation
     needs: ['job:init', 'job:build_dbg', 'job:test_dbg']
