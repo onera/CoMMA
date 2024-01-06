@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 ###################################  PROJECT #################################
 project(CoMMA
-  VERSION 1.3
+  VERSION 1.3.1
   DESCRIPTION "Geometric agglomerator for unstructured grids"
   HOMEPAGE_URL "https://github.com/onera/CoMMA"
   LANGUAGES CXX
