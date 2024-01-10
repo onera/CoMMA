@@ -22,6 +22,7 @@
 #include "deprecated/Tree.h"
 
 using namespace comma;
+using namespace std;
 
 using PairValueTestT = int;  // Leave this since we might try something more
                              // fancy than what usually found in CoMMA

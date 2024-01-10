@@ -22,8 +22,6 @@
 
 namespace comma {
 
-using namespace std;
-
 /** @brief Node data structure that represent a node of the tree
  *  @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
  *  @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
@@ -46,13 +44,13 @@ public:
   /** @brief Number of son*/
   CoMMAIntType _sonc = 0;
   /** @brief Shared pointer to the father node */
-  shared_ptr<Node> _father;
+  std::shared_ptr<Node> _father;
   /** @brief Shared pointer to the left element */
-  shared_ptr<Node> _left_idx;
+  std::shared_ptr<Node> _left_idx;
   /** @brief Shared pointer to the right element */
-  shared_ptr<Node> _right_idx;
+  std::shared_ptr<Node> _right_idx;
   /** @brief Shared pointer to the left element */
-  shared_ptr<Node> _left_son_idx;
+  std::shared_ptr<Node> _left_son_idx;
 };
 
 /** @brief Tree structure that represent a coarse cell, the fine cell and the
@@ -75,13 +73,13 @@ public:
   /** @brief Constructor
    *  @param[in] root A Node which is the root of the Tree
    */
-  Tree(shared_ptr<NodeType> &root) : _root(root) {}
+  Tree(std::shared_ptr<NodeType> &root) : _root(root) {}
 
   /** @brief Destructor */
   ~Tree(){};
 
   /** @brief The Node at the root of the tree */
-  shared_ptr<NodeType> _root;
+  std::shared_ptr<NodeType> _root;
 
   /** @brief Insert a node as child of a given node
    *  @param[in] father_index Index of the parent node
@@ -94,7 +92,8 @@ public:
     const CoMMAIndexType &index,
     const CoMMAWeightType &volume,
     const CoMMAIntType &root) {
-    shared_ptr<NodeType> insertion = make_shared<NodeType>(index, volume);
+    std::shared_ptr<NodeType> insertion =
+      std::make_shared<NodeType>(index, volume);
     auto u_p_father =
       root == 1 ? _root : search(_root->_left_son_idx, father_index);
     assert(u_p_father != nullptr);
@@ -107,7 +106,7 @@ public:
       left_idx->_right_idx = insertion;
     }
     u_p_father->_sonc = u_p_father->_sonc + 1;
-    // cout << u_p_father->_sonc << endl;
+    // std::cout << u_p_father->_sonc << std::endl;
   }
 
   /** @brief Look for a node
@@ -115,8 +114,8 @@ public:
    *  @param[in] value Target
    *  @return a pointer (possibly null) to the target
    */
-  shared_ptr<NodeType> search(
-    shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
+  std::shared_ptr<NodeType> search(
+    std::shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
     if (node->_index == value && node->_father != nullptr) { return node; }
     if (node == nullptr || node->_right_idx == nullptr) { return nullptr; }
     return (search(node->_right_idx, value));
@@ -126,7 +125,7 @@ public:
    *  @param[in] node Where to start the search
    *  @return a pointer to a leaf
    */
-  shared_ptr<NodeType> transverse(shared_ptr<NodeType> &node) {
+  std::shared_ptr<NodeType> transverse(std::shared_ptr<NodeType> &node) {
     if (node == nullptr || node->_right_idx == nullptr) { return node; }
     return (transverse(node->_right_idx));
   }
@@ -143,7 +142,7 @@ public:
    *  @param[in] value Target
    */
   void delete_node(
-    shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
+    std::shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
     if (searched_node == nullptr) { return; }
     if (searched_node->_index == value) {
       // case 0: leftest node
@@ -172,9 +171,9 @@ public:
   /** @brief Print the branches starting from a given node
    *  @param[in] node Where to start
    */
-  void print_nodes(shared_ptr<NodeType> &node) {
+  void print_nodes(std::shared_ptr<NodeType> &node) {
     if (node == nullptr) { return; }
-    // cout << "node" << node->_index << endl;
+    // std::cout << "node" << node->_index << std::endl;
     print_nodes(node->_left_son_idx);
     print_nodes(node->_right_idx);
   }

@@ -28,8 +28,6 @@
 
 namespace comma {
 
-using namespace std;
-
 /** @def CoMMAUnused(var)
  *  @brief Convenient function to avoid unused warnings
  */
@@ -59,7 +57,7 @@ inline bool dot_deviate(const T dot) {
  * @return the dot product
  */
 template<typename T>
-inline T dot_product(const vector<T> &a, const vector<T> &b) {
+inline T dot_product(const std::vector<T> &a, const std::vector<T> &b) {
 #if 0
   const CoMMAWeightType dot = inner_product(
       prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
@@ -81,7 +79,8 @@ inline T dot_product(const vector<T> &a, const vector<T> &b) {
  * normalization)
  */
 template<typename T>
-inline T get_direction(const vector<T> &a, const vector<T> &b, vector<T> &dir) {
+inline T get_direction(
+  const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &dir) {
   T norm{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
     const T di = b[i] - a[i];
@@ -106,7 +105,8 @@ inline T get_direction(const vector<T> &a, const vector<T> &b, vector<T> &dir) {
  *  @return The squared Euclidean distance between the two points
  */
 template<typename T>
-inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
+inline T squared_euclidean_distance(
+  const std::vector<T> &a, const std::vector<T> &b) {
 #if 0
   return sqrt(
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
@@ -198,9 +198,9 @@ struct PairSecondBasedLessFunctor {
  *  @return The first elements of each pair
  */
 template<typename CoMMAContainerPairType>
-inline vector<typename CoMMAContainerPairType::value_type::first_type>
+inline std::vector<typename CoMMAContainerPairType::value_type::first_type>
 vector_of_first_elements(const CoMMAContainerPairType &c) {
-  vector<typename CoMMAContainerPairType::value_type::first_type> fe;
+  std::vector<typename CoMMAContainerPairType::value_type::first_type> fe;
   fe.reserve(c.size());
   for (const auto &p : c)
     fe.emplace_back(p.first);
@@ -242,9 +242,9 @@ private:
  *  @return a set
  */
 template<typename KeyT, typename ValueT>
-inline unordered_set<KeyT> d_keys_to_set(
-  const unordered_map<KeyT, ValueT> &dict) {
-  unordered_set<KeyT> s_neighbours_of_seed = {};
+inline std::unordered_set<KeyT> d_keys_to_set(
+  const std::unordered_map<KeyT, ValueT> &dict) {
+  std::unordered_set<KeyT> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);
   }
@@ -274,16 +274,16 @@ inline unordered_set<KeyT> d_keys_to_set(
  */
 template<typename IndexT, typename DistT>
 void compute_neighbourhood_based_wall_distance(
-  const vector<IndexT> &neigh_idxs,
-  const vector<IndexT> &neighs,
-  const vector<IndexT> &wall,
-  vector<DistT> &dist) {
+  const std::vector<IndexT> &neigh_idxs,
+  const std::vector<IndexT> &neighs,
+  const std::vector<IndexT> &wall,
+  std::vector<DistT> &dist) {
   static_assert(
-    is_signed<DistT>::value,
+    std::is_signed<DistT>::value,
     "The distance type should be signed to allow flags (negative values)");
   dist.resize(neigh_idxs.size() - 1);
-  fill(dist.begin(), dist.end(), DistT{-1});
-  queue<IndexT> to_visit{};
+  std::fill(dist.begin(), dist.end(), DistT{-1});
+  std::queue<IndexT> to_visit{};
   for (const auto &cell : wall) {
     dist[cell] = DistT{0};
     to_visit.emplace(cell);

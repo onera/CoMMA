@@ -18,8 +18,6 @@
 
 namespace comma {
 
-using namespace std;
-
 /** @brief Wrapper around the STL pair with custom 'less than' operator: as in
  * the standard case, first we compare the first elements, then the second ones;
  * however it relies on the 'greater than' on the first elements, e.g., (4,X) <
@@ -32,7 +30,7 @@ template<typename A, typename B>
 class Priority_Pair {
 private:
   /** @brief STL pair around which current class is built */
-  pair<A, B> _p;
+  std::pair<A, B> _p;
 
 public:
   /** @brief Constructor */

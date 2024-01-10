@@ -21,7 +21,6 @@
 
 namespace comma {
 
-using namespace std;
 /** @brief A template class implementing a custom queue data structure
  *  @tparam T Type of the elements
  *  @deprecated Not used anymore
@@ -30,7 +29,7 @@ template<typename T>
 class Queue {
 private:
   /** @brief The vector of elements */
-  deque<T> _elems;
+  std::deque<T> _elems;
 
 public:
   /** @brief Constructor */
