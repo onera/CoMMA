@@ -14,6 +14,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+namespace comma {
+
 /// Type of an index (used by agglomerator CoMMA for edges and nodes).
 using CoMMAIndexT = unsigned long;
 
@@ -63,5 +65,7 @@ enum CoMMASeedsPoolT : CoMMAIntT {
    */
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
 };
+
+}  // end namespace comma
 
 #endif

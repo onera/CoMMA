@@ -25,6 +25,8 @@
 
 #include "Util.h"
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Class representing the neighbourhood of a given cell in the graph.
@@ -509,5 +511,7 @@ public:
       *dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_FIRST_ORDER_NEIGHBOURHOOD_H

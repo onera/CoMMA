@@ -29,6 +29,8 @@
 #include "CoMMATypes.h"
 #include "Util.h"
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Functor performing the initialization of a seeds pool
@@ -686,4 +688,7 @@ public:
     return this->is_empty() || (!this->_cur_top_queue.has_value());
   }
 };
+
+}  // end namespace comma
+
 #endif  // COMMA_PROJECT_SEEDS_POOL_H

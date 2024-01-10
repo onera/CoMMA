@@ -25,6 +25,8 @@
 #include "Coarse_Cell.h"
 #include "Dual_Graph.h"
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Class implementing a custom container where the coarse cells are
@@ -554,5 +556,7 @@ protected:
    * cell */
   deque<CoMMAIndexType> _singular_cc;
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_COARSE_CELL_GRAPH_H

@@ -31,6 +31,8 @@
 #include "Neighbourhood.h"
 #include "Util.h"
 
+namespace comma {
+
 using namespace std;
 
 // How to pass parameters from base class
@@ -1553,5 +1555,7 @@ public:
     }  // for i_fc
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_AGGLOMERATOR_H

@@ -21,8 +21,11 @@
 
 #include "CoMMATypes.h"
 
-using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
+using namespace comma;
 using namespace pybind11::literals;  // Use _a for args literals
+using namespace std;
+
+using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
 
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() =

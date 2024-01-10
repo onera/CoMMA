@@ -21,6 +21,7 @@
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 
+using namespace comma;
 using namespace std;
 
 SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {

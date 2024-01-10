@@ -19,6 +19,8 @@
 #include <iostream>
 #include <vector>
 
+namespace comma {
+
 using namespace std;
 /** @brief A template class implementing a custom queue data structure
  *  @tparam T Type of the elements
@@ -60,4 +62,7 @@ public:
    */
   inline bool empty() const { return _elems.empty(); }
 };
+
+}  // end namespace comma
+
 #endif

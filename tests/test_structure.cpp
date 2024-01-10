@@ -19,6 +19,7 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
+using namespace comma;
 using namespace std;
 
 SCENARIO("Test of a structure", "[structure]") {

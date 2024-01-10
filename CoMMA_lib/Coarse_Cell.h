@@ -22,6 +22,8 @@
 
 #include "Dual_Graph.h"
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Class describing a coarse cell.
@@ -266,5 +268,7 @@ public:
   /** @brief Whether the connectivity has been checked */
   bool _is_connectivity_up_to_date;
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_COARSE_CELL_H

@@ -19,6 +19,8 @@
 #include <map>
 #include <type_traits>
 
+namespace comma {
+
 using namespace std;
 /** @brief An easy and straight forward implementation of a Bimap.
  *  @deprecated Not used anymore
@@ -130,4 +132,7 @@ protected:
   /** @brief Right map */
   map<A, const B *> _mapB;
 };
+
+}  // end namespace comma
+
 #endif

@@ -14,6 +14,7 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
+using namespace comma;
 using namespace std;
 
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {

@@ -18,6 +18,7 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
+using namespace comma;
 using namespace std;
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {

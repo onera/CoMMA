@@ -14,6 +14,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+namespace comma {
+
 /** @brief Assign from type to another only if a compile-time condition is
  * verified
  *  @tparam condition Boolean telling if the assignment should be done. It has
@@ -28,5 +30,7 @@ template<bool condition, typename typeA, typename typeB>
 void fill_value(typeA &A, typeB &B) {
   if constexpr (condition) { A = B; }
 }
+
+}  // end namespace comma
 
 #endif

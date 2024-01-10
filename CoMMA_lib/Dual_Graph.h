@@ -27,6 +27,8 @@
 
 #include "Seeds_Pool.h"
 
+namespace comma {
+
 using namespace std;
 
 /** @brief An interface class responsible of storing the cell centered dual
@@ -827,5 +829,7 @@ public:
     nb_of_order_of_neighbourhood = i_order;
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_DUAL_GRAPH_H

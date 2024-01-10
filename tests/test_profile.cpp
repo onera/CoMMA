@@ -13,6 +13,8 @@
 #include "header_profile.h"
 #include "input/DualGPy.h"
 
+using namespace comma;
+
 int main(int argv, char **argc) {
   InitializePerfetto();
   auto tracing_session = StartTracing();

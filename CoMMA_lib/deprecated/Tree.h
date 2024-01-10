@@ -20,6 +20,8 @@
 #include <memory>
 #include <vector>
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Node data structure that represent a node of the tree
@@ -177,5 +179,7 @@ public:
     print_nodes(node->_right_idx);
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_TREE_H

@@ -21,6 +21,8 @@
 #include "deprecated/Queue.h"
 #include "deprecated/Tree.h"
 
+using namespace comma;
+
 using PairValueTestT = int;  // Leave this since we might try something more
                              // fancy than what usually found in CoMMA
 using NodeType = Node<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;

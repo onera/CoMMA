@@ -16,6 +16,8 @@
 
 #include <utility>
 
+namespace comma {
+
 using namespace std;
 
 /** @brief Wrapper around the STL pair with custom 'less than' operator: as in
@@ -82,4 +84,7 @@ public:
     return (a._p.first == b._p.first) && (a._p.second == b._p.second);
   }
 };
+
+}  // end namespace comma
+
 #endif  // COMMA_PROJECT_PRIORITY_PAIR_H

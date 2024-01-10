@@ -29,6 +29,8 @@
 #include "Dual_Graph.h"
 #include "Seeds_Pool.h"
 
+namespace comma {
+
 /// \cond DO_NOT_DOCUMENT
 #define check_int_type(intT, label)   \
   static_assert(                      \
@@ -355,5 +357,9 @@ void agglomerate_one_level(
     fc_to_cc[i_fc] = fccc[i_fc].value();
   }
 }
+
 #undef check_int_type
+
+}  // end namespace comma
+
 #endif

@@ -26,6 +26,8 @@
 #include <utility>
 #include <vector>
 
+namespace comma {
+
 using namespace std;
 
 /** @def CoMMAUnused(var)
@@ -307,5 +309,7 @@ void compute_neighbourhood_based_wall_distance(
     }
   }
 }
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_UTIL_H

@@ -13,6 +13,8 @@
 #include "CoMMATypes.h"
 #include "input/DualGPy.h"
 
+using namespace comma;
+
 int main(int argv, char **argc) {
   DualGPy Data = DualGPy();
   Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(

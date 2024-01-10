@@ -16,6 +16,7 @@
 #include "Dual_Graph.h"
 #include "catch2/catch.hpp"
 
+using namespace comma;
 using namespace std;
 
 SCENARIO("Subgraph", "[Subgraph]") {
