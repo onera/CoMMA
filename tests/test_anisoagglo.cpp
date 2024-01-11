@@ -489,7 +489,7 @@ the line grows vertically
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, w, build_lines, Data.dim);
+      agglomerationLines, w, build_lines, ODD_LINE_LENGTH, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
       Data.dim);
