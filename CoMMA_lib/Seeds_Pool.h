@@ -50,6 +50,13 @@ struct SPInitializator {
   /** @brief Type of set of pairs */
   using CoMMASetOfPairType =
     std::set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+
+  /** @brief Constructor */
+  SPInitializator() = default;
+
+  /** @brief Destructor */
+  virtual ~SPInitializator() = default;
+
   /** @brief Initialize a queue of a seeds pool
    *  @param[in] priority_weights Weights used to set the order of the seed to
    * choose
@@ -85,6 +92,13 @@ struct SPFullInitializator :
   using typename BaseClass::CoMMAQueueType;
   /** @brief Type of set of pairs */
   using typename BaseClass::CoMMASetOfPairType;
+
+  /** @brief Constructor */
+  SPFullInitializator() : BaseClass() {}
+
+  /** @brief Destructor */
+  ~SPFullInitializator() = default;
+
   /** @brief Initialize a queue of a seeds pool
    *  @param[in] priority_weights Weights used to set the order of the seed to
    * choose
@@ -131,6 +145,13 @@ struct SPOnePointInitializator :
   using typename BaseClass::CoMMAPairType;
   /** @brief Type of queue which holds seeds */
   using typename BaseClass::CoMMAQueueType;
+
+  /** @brief Constructor */
+  SPOnePointInitializator() : BaseClass() {}
+
+  /** @brief Destructor */
+  ~SPOnePointInitializator() = default;
+
   /** @brief Initialize a queue of a seeds pool
    *  @param[in] priority_weights Weights used to set the order of the seed to
    * choose
@@ -434,6 +455,9 @@ public:
       Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         n_bnd_faces, priority_weights, one_point_init) {}
 
+  /** @brief Destructor */
+  ~Seeds_Pool_Boundary_Priority() = default;
+
   /** @brief Choose a new seed in the pool
    *  @param[in] is_agglomerated Vector of booleans telling whether fine cells
    * are agglomerated
@@ -582,6 +606,9 @@ public:
     const bool one_point_init) :
       Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         n_bnd_faces, priority_weights, one_point_init) {}
+
+  /** @brief Destructor */
+  ~Seeds_Pool_Neighbourhood_Priority() = default;
 
   /** @brief Choose a new seed in the pool
    *  @param[in] is_agglomerated Vector of booleans telling whether fine cells

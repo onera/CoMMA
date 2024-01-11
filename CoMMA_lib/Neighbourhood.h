@@ -83,6 +83,9 @@ public:
     const Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) =
     default;
 
+  /** @brief Destructor */
+  virtual ~Neighbourhood() = default;
+
   /** @brief Method that updates the neighbourhood. Given the \p new_fc, if is
    * in the neighbours, it is deleted. Then, the new neighbours are added as
    * candidates
@@ -173,6 +176,9 @@ public:
     const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
       &other) = default;
 
+  /** @brief Destructor */
+  ~Neighbourhood_Extended() = default;
+
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are added as
    * candidates
@@ -259,6 +265,9 @@ public:
                            CoMMAIndexType,
                            CoMMAWeightType,
                            CoMMAIntType> &other) = default;
+
+  /** @brief Destructor */
+  ~Neighbourhood_Pure_Front() = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are considered as
@@ -375,6 +384,12 @@ public:
   using NeighbourhoodBaseType =
     Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
+  /** @brief Constructor */
+  NeighbourhoodCreator() = default;
+
+  /** @brief Destructor */
+  virtual ~NeighbourhoodCreator() = default;
+
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -421,6 +436,12 @@ public:
    */
   using NeighbourhoodDerivedType =
     Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+
+  /** @brief Constructor */
+  NeighbourhoodExtendedCreator() : CreatorBaseType() {}
+
+  /** @brief Destructor */
+  ~NeighbourhoodExtendedCreator() = default;
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
@@ -478,6 +499,12 @@ public:
    */
   using NeighbourhoodDerivedType =
     Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
+
+  /** @brief Constructor */
+  NeighbourhoodPureFrontCreator() : CreatorBaseType() {}
+
+  /** @brief Destructor */
+  ~NeighbourhoodPureFrontCreator() = default;
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
