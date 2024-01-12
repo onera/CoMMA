@@ -63,7 +63,7 @@ SET(SOURCE_DIR "src")
 
 include_directories(${INCLUDE_DIR})
 
-SET(PROFILING_DIR "tests")
+SET(PROFILING_DIR "misc_scripts")
 
 SET(TEST_DIR "tests")
 
@@ -81,11 +81,6 @@ set(PROFILING
 set(PROFILING_SOURCE
     ${PROFILING_DIR}/DualGraphExamples.h
     ${PROFILING_DIR}/test_profile.cpp
-)
-
-set(PROFILING_PERF
-    ${PROFILING_DIR}/DualGraphExamples.h
-    ${PROFILING_DIR}/test_perf.cpp
 )
 
 SET(TESTING_FILES
@@ -115,9 +110,6 @@ SET(TESTS
 #add_executable("Profiling" ${PROFILING_SOURCE} ${PROFILING} ${IMPLEMENTATION})
 #target_link_libraries(Profiling perfetto ${CMAKE_THREAD_LIBS_INIT})
 #
-######################### Profiling Perf ########################################
-#
-#add_executable("Profiling_perf" ${PROFILING_PERF} ${IMPLEMENTATION})
 #############################  TEST with CATCH2 BUILDING #########################
 # Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
