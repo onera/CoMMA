@@ -24,6 +24,7 @@ stages:
     - init
     - build
     - test
+    - lint_format
     - documentation
 
 job:init:
@@ -38,6 +39,8 @@ job:init:
             - CMakeLists.txt
             - .gitlab-ci.yml
             - Documentation/Doxyfile
+            - .clang-format
+            - .clang-tidy
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
@@ -122,6 +125,34 @@ job:test_rel:
         - cd $CUSTOM_CI_DIR
         - cd build_rel
         - ./CoMMA_test
+job:clang_tidy:
+    stage: lint_format
+    needs: ["job:init", 'job:build_dbg']
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - .clang-tidy
+    script:
+        - cd $CUSTOM_CI_DIR
+        - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" CoMMA_lib/*.h CoMMA_lib/*.cpp
+    allow_failure: true
+job:clang_format:
+    stage: lint_format
+    needs: ["job:init", 'job:build_dbg']
+    only:
+        changes:
+            - CoMMA_lib/*.{cpp,h}
+            - tests/**/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - .clang-format
+    script:
+        - cd $CUSTOM_CI_DIR
+        - git ls-tree --name-only -r HEAD CoMMA_lib tests | grep ".*\.\(h\|cpp\)" | xargs clang-format --style=file --dry-run --Werror
+    allow_failure: true
 pages:
     stage: documentation
     needs: ['job:init', 'job:build_dbg', 'job:test_dbg']
