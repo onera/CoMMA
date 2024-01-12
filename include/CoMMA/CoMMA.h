@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -111,7 +111,7 @@ constexpr unsigned short max_iter = 4;
  * smaller than 1 or not in order, line building is disabled but lines are not
  * provided, or number of iterations is negative or greater than \ref max_iter.
  *
- * @copyright Copyright © 2023 ONERA
+ * @copyright Copyright © 2024 ONERA
  * @author Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * @contributor Karim Anemiche
  * @license This project is released under the Mozilla Public License 2.0, see

@@ -17,7 +17,7 @@ CoMMA is a **header-only library**. A python module can be generated using `pybi
 The interface to CoMMA is very simple and consists in only one function [agglomerate_one_level](@ref comma::agglomerate_one_level).
 
 ### Other info
-**Copyright**: Copyright © 2023 ONERA
+**Copyright**: Copyright © 2024 ONERA
 
 **Authors**: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
 
