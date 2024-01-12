@@ -4,4 +4,4 @@ Here are stored several classes and functions that were once used in CoMMA but, 
 - Priority_Pair: wrapper around the STL pair with custom 'less than' operator
 - Queue: custom queue
 - Node and Tree: custom node and tree data structures
-- [Helpers](@ref fill_value)
+- [Helpers](@ref comma::fill_value)

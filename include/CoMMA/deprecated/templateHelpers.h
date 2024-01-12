@@ -22,8 +22,8 @@ namespace comma {
  * to be a \p constexpr
  *  @tparam typeA Type of the destination of the assignment
  *  @tparam typeB Type of the source of the assignment
- *  @param[in] A Destination of the assignment
- *  @param[in] B Source of the assignment
+ *  @param[in] a Destination of the assignment
+ *  @param[in] b Source of the assignment
  *  @deprecated Not used anymore
  */
 template<bool condition, typename typeA, typename typeB>
