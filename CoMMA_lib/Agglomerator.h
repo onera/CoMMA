@@ -230,6 +230,7 @@ public:
     CoMMAIntType dimension = 3) :
       Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         graph, cc_graph, seeds_pool, dimension),
+      _should_agglomerate(true),
       _aniso_neighbours(),
       _odd_line_length(odd_line_length) {
     // for every defined level (1 by default), contains the number of cells
@@ -239,8 +240,6 @@ public:
 
     this->_nb_lines = std::vector<CoMMAIndexType>(2);
     this->_v_lines = std::vector<std::vector<AnisotropicLinePtr>>(2);
-
-    this->_should_agglomerate = true;
 
     if (build_lines) {
       const CoMMAWeightType thr =
@@ -276,7 +275,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Anisotropic() = default;
+  ~Agglomerator_Anisotropic() override = default;
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
@@ -443,7 +442,7 @@ public:
     // Reset lines
     aniso_lines_idx.clear();
     aniso_lines.clear();
-    if (this->_should_agglomerate && this->_v_lines[level].size() > 0) {
+    if (this->_should_agglomerate && !this->_v_lines[level].empty()) {
       // If at the level of agglomeration "level" the vector containing the
       // number of lines is empty, hence it means no line has been found at the
       // current level. variable cumulating the number of fine cells in the
@@ -582,8 +581,7 @@ protected:
               std::vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
                 prev_cen, this->_fc_graph->_centers[*n_it], cur_dir);
-              const CoMMAWeightType dot =
-                dot_product<CoMMAWeightType>(prev_dir, cur_dir);
+              const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
               if (!dot_deviate<CoMMAWeightType>(dot))
                 candidates.emplace(fabs(dot), *n_it);
             }
@@ -626,7 +624,7 @@ protected:
                 std::vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
                   prev_cen, this->_fc_graph->_centers[*it], cur_dir);
-                const CoMMAWeightType dot =
+                const auto dot =
                   dot_product<CoMMAWeightType>(prev_dir, cur_dir);
                 if (!dot_deviate<CoMMAWeightType>(dot))
                   candidates.emplace(fabs(dot), *it);
@@ -757,7 +755,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Isotropic() = default;
+  ~Agglomerator_Isotropic() override = default;
 
   /** @brief The task of the function is to set the parameters of
    * determine the cardinality limits with respect to the parameters passed
@@ -929,9 +927,9 @@ public:
       this->_fc_graph->_centers[i_fc];
     CoMMAWeightType max_diam = cc_diam * cc_diam;
     for (const auto i_fc_cc : fc_of_cc) {
-      const CoMMAWeightType d = squared_euclidean_distance<CoMMAWeightType>(
+      const auto dist = squared_euclidean_distance<CoMMAWeightType>(
         cen_fc, this->_fc_graph->_centers[i_fc_cc]);
-      if (d > max_diam) max_diam = d;
+      if (dist > max_diam) max_diam = dist;
     }  // for i_fc_cc
     new_diam = sqrt(max_diam);
 
@@ -1005,7 +1003,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Biconnected() = default;
+  ~Agglomerator_Biconnected() override = default;
 
   /** @brief Specialization of the pure virtual function in the parent class, to
    * be used in couple with the agglomerate_one_level of the
@@ -1115,8 +1113,8 @@ public:
       std::unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
       cur_compact_by_fc.reserve(max_ind);
       cur_compact_by_fc[seed] = 0;
-      constexpr auto second_less = [](const auto &p, const auto &q) {
-        return p.second < q.second;
+      constexpr auto second_less = [](const auto &left, const auto &right) {
+        return left.second < right.second;
       };
       CoMMAIndexType next_cell = seed;  // Dummy initialization
       // Choice of the fine cells to agglomerate we enter in a while, we store
@@ -1195,8 +1193,8 @@ public:
           std::pair<
             std::unordered_set<CoMMAIndexType>,
             std::unordered_map<CoMMAIndexType, CoMMAIntType>>
-            p = std::make_pair(tmp_cc, new_dict);
-          dict_cc_in_creation[size_current_cc] = p;
+            tmp_pair = std::make_pair(tmp_cc, new_dict);
+          dict_cc_in_creation[size_current_cc] = tmp_pair;
         }
 
         // Update of diam_cc and vol_cc with the new fc added
@@ -1234,11 +1232,11 @@ public:
         neighs_by_order{};
       // For those that were outside max neighbourhood order
       std::unordered_set<CoMMAIndexType> neighs_not_found{};
-      for (const auto &s : cc_neighs) {
-        if (d_n_of_seed.find(s) != d_n_of_seed.end())
-          neighs_by_order[d_n_of_seed.at(s)].insert(s);
+      for (const auto &neigh : cc_neighs) {
+        if (d_n_of_seed.find(neigh) != d_n_of_seed.end())
+          neighs_by_order[d_n_of_seed.at(neigh)].insert(neigh);
         else
-          neighs_not_found.insert(s);
+          neighs_not_found.insert(neigh);
       }
       for (const auto &[o, neighs] : neighs_by_order)
         if (!neighs.empty())
@@ -1416,7 +1414,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Iterative() = default;
+  ~Agglomerator_Iterative() override = default;
 
   /** @brief Specialization of the parent function. This is an iterative
    * version. Computes the best fine cell to add to the coarse cell. The choice

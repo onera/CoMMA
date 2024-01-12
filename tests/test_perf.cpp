@@ -10,15 +10,21 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <deque>
+#include <forward_list>
+#include <vector>
+
 #include "CoMMATypes.h"
 #include "input/DualGPy.h"
 
-using namespace comma;
+using namespace comma;  // NOLINT
 
 int main(int argv, char **argc) {
-  DualGPy Data = DualGPy();
-  Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(
-    Data.n_bnd_faces, Data.weights, false);
+  CoMMAUnused(argv);
+  CoMMAUnused(argc);
+  const DualGPy Data = DualGPy();
+  const Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
+    seeds_pool(Data.n_bnd_faces, Data.weights, false);
   Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
     Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
     Data.adjMatrix_areaValues, Data.volumes, Data.centers, seeds_pool, 2,
@@ -44,7 +50,7 @@ int main(int argv, char **argc) {
 
   test *agg = new test(fc_graph, cc_graph, 2);
   CoMMAIndexT nb_agglomeration_lines = 0;
-  forward_list<deque<CoMMAIndexT> *> agglomeration_lines;
+  std::forward_list<std::deque<CoMMAIndexT> *> agglomeration_lines;
   // @todo add exception if it is not the first agglomeration (so if we are at a
   // further level)
   // Initialization of nb_agglo_lines in dependency if we are at the first
@@ -54,7 +60,7 @@ int main(int argv, char **argc) {
   agg->_v_nb_lines[0] = nb_agglomeration_lines;
   agg->_v_lines[0] = agglomeration_lines;
   CoMMAIntT testing = agg->test_variable();
-  vector<CoMMAIndexT> gg = agg->get_fc_2_cc();
+  std::vector<CoMMAIndexT> gg = agg->get_fc_2_cc();
   agg->agglomerate_one_level(2, 2, 2, -1);
   Agglomerator<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> *test =
     new Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(

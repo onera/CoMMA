@@ -33,9 +33,9 @@ private:
 
 public:
   /** @brief Constructor */
-  Queue() {}
+  Queue() = default;
   /** @brief Destructor */
-  ~Queue() {}
+  ~Queue() = default;
   /** @brief Push an element on the top of the queue.
    *  @param elem The element to add
    */

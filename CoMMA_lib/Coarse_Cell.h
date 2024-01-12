@@ -99,7 +99,7 @@ public:
    */
   virtual void insert_cell(
     const CoMMAIndexType i_fc,
-    const std::optional<CoMMAIntType> new_compactness = std::nullopt) {
+    const std::optional<CoMMAIntType> new_compactness) {
     _s_fc.insert(i_fc);
     ++_cardinality;
     _compactness = new_compactness.has_value()
@@ -114,7 +114,7 @@ public:
    */
   virtual void insert_cells(
     const std::unordered_set<CoMMAIndexType> &fcs,
-    const std::optional<CoMMAIntType> new_compactness = std::nullopt) {
+    const std::optional<CoMMAIntType> new_compactness) {
     _s_fc.insert(fcs.begin(), fcs.end());
     _cardinality += fcs.size();
     _compactness = new_compactness.has_value()
@@ -215,7 +215,7 @@ public:
    */
   void insert_cell(
     const CoMMAIndexType i_fc,
-    const std::optional<CoMMAIntType> new_compactness = std::nullopt) override {
+    const std::optional<CoMMAIntType> new_compactness) override {
     // As base class...
     this->_s_fc.insert(i_fc);
     ++this->_cardinality;
@@ -236,7 +236,7 @@ public:
    */
   void insert_cells(
     const std::unordered_set<CoMMAIndexType> &fcs,
-    const std::optional<CoMMAIntType> new_compactness = std::nullopt) override {
+    const std::optional<CoMMAIntType> new_compactness) override {
     // As base class...
     this->_s_fc.insert(fcs.begin(), fcs.end());
     this->_cardinality += fcs.size();

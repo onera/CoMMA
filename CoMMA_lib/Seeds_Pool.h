@@ -64,13 +64,13 @@ struct SPInitializator {
    * has
    *  @param[in] max_bnd Reference value for boundary faces: only cells with
    *  boundaries higher than this are considered
-   *  @param[out] q The queue to build
+   *  @param[out] queue The queue to build
    */
   virtual void operator()(
     const std::vector<CoMMAWeightType> &priority_weights,
     const std::vector<CoMMAIntType> &n_bnd_faces,
     const CoMMAIntType max_bnd,
-    CoMMAQueueType &q) = 0;
+    CoMMAQueueType &queue) = 0;
 };
 
 /** @brief Functor performing the full initialization of a seeds pool
@@ -97,7 +97,7 @@ struct SPFullInitializator :
   SPFullInitializator() : BaseClass() {}
 
   /** @brief Destructor */
-  ~SPFullInitializator() = default;
+  ~SPFullInitializator() override = default;
 
   /** @brief Initialize a queue of a seeds pool
    *  @param[in] priority_weights Weights used to set the order of the seed to
@@ -106,13 +106,13 @@ struct SPFullInitializator :
    * has
    *  @param[in] max_bnd Reference value for boundary faces: only cells with
    *  boundaries higher than this are considered
-   *  @param[out] q The queue to build
+   *  @param[out] queue The queue to build
    */
   void operator()(
     const std::vector<CoMMAWeightType> &priority_weights,
     const std::vector<CoMMAIntType> &n_bnd_faces,
     const CoMMAIntType max_bnd,
-    CoMMAQueueType &q) override {
+    CoMMAQueueType &queue) override {
     // Similar to function build_queue but without is_agglomerated
     // Using set to force order
     CoMMASetOfPairType tmp_set{};
@@ -122,7 +122,7 @@ struct SPFullInitializator :
         tmp_set.emplace(i_fc, priority_weights[i_fc]);
     }
     for (const auto &idx : tmp_set)
-      q.push_back(idx.first);
+      queue.push_back(idx.first);
   }
 };
 
@@ -150,7 +150,7 @@ struct SPOnePointInitializator :
   SPOnePointInitializator() : BaseClass() {}
 
   /** @brief Destructor */
-  ~SPOnePointInitializator() = default;
+  ~SPOnePointInitializator() override = default;
 
   /** @brief Initialize a queue of a seeds pool
    *  @param[in] priority_weights Weights used to set the order of the seed to
@@ -159,24 +159,24 @@ struct SPOnePointInitializator :
    * has
    *  @param[in] max_bnd Reference value for boundary faces: only cells with
    *  boundaries higher than this are considered
-   *  @param[out] q The queue to build
+   *  @param[out] queue The queue to build
    */
   void operator()(
     const std::vector<CoMMAWeightType> &priority_weights,
     const std::vector<CoMMAIntType> &n_bnd_faces,
     const CoMMAIntType max_bnd,
-    CoMMAQueueType &q) override {
+    CoMMAQueueType &queue) override {
     CoMMAPairType cur_max{
       std::numeric_limits<CoMMAIndexType>::max(),
       std::numeric_limits<CoMMAWeightType>::min()};
     const CustomPairGreaterFunctor<CoMMAPairType> comp_op{};
     for (auto i_fc = decltype(n_bnd_faces.size()){0}; i_fc < n_bnd_faces.size();
          ++i_fc) {
-      const CoMMAPairType p{i_fc, priority_weights[i_fc]};
-      if (n_bnd_faces[i_fc] >= max_bnd && comp_op(p, cur_max))
-        cur_max = std::move(p);
+      const CoMMAPairType cur_pair{i_fc, priority_weights[i_fc]};
+      if (n_bnd_faces[i_fc] >= max_bnd && comp_op(cur_pair, cur_max))
+        cur_max = std::move(cur_pair);
     }
-    q.push_back(cur_max.first);
+    queue.push_back(cur_max.first);
   }
 };
 
@@ -352,11 +352,8 @@ public:
       if (!is_fc_agglomerated[i_fc]) {
         const auto i_fc_bnd = _n_bnd_faces[i_fc];
         if (!max_bnd.has_value()) max_bnd = i_fc_bnd;
-        if (i_fc_bnd >= expected_max) {
-          return i_fc_bnd;
-        } else if (i_fc_bnd > max_bnd) {
-          max_bnd = i_fc_bnd;
-        }
+        if (i_fc_bnd >= expected_max) { return i_fc_bnd; }
+        if (i_fc_bnd > max_bnd) { max_bnd = i_fc_bnd; }
       }
     }
     return max_bnd;
@@ -369,7 +366,7 @@ public:
   bool is_empty(CoMMAIntType i_level = CoMMACellT::N_CELL_TYPES) const {
     assert(CoMMACellT::INTERIOR <= i_level);
     assert(i_level <= CoMMACellT::N_CELL_TYPES);
-    if (_l_of_seeds.size() > 0) {
+    if (!_l_of_seeds.empty()) {
       switch (i_level) {
         case CoMMACellT::INTERIOR:
           return _l_of_seeds[CoMMACellT::INTERIOR].empty();
@@ -456,7 +453,7 @@ public:
         n_bnd_faces, priority_weights, one_point_init) {}
 
   /** @brief Destructor */
-  ~Seeds_Pool_Boundary_Priority() = default;
+  ~Seeds_Pool_Boundary_Priority() override = default;
 
   /** @brief Choose a new seed in the pool
    *  @param[in] is_agglomerated Vector of booleans telling whether fine cells
@@ -509,12 +506,12 @@ public:
   inline void update(const std::deque<CoMMAIndexType> &new_seeds) override {
     if (!new_seeds.empty()) {
       CoMMAIntType max_bnd{0};
-      for (const auto &s : new_seeds) {
-        const auto n_bnd = this->_n_bnd_faces[s];
+      for (const auto &seed : new_seeds) {
+        const auto n_bnd = this->_n_bnd_faces[seed];
         if (n_bnd > max_bnd) max_bnd = n_bnd;
         // We add even if already present. Worst case scenario, a check if
         // agglomerated is done when choosing new seed
-        this->_l_of_seeds[n_bnd].push_back(s);
+        this->_l_of_seeds[n_bnd].push_back(seed);
       }
       if (
         !this->_cur_top_queue.has_value()
@@ -532,9 +529,9 @@ public:
     const std::unordered_set<CoMMAIndexType> &new_seeds) override {
     std::map<CoMMAIntType, CoMMASetOfPairType, std::greater<>> new_seeds_by_bnd;
     if (!new_seeds.empty()) {
-      for (const auto s : new_seeds) {
-        new_seeds_by_bnd[this->_n_bnd_faces[s]].emplace(
-          s, this->_priority_weights[s]);
+      for (const auto seed : new_seeds) {
+        new_seeds_by_bnd[this->_n_bnd_faces[seed]].emplace(
+          seed, this->_priority_weights[seed]);
       }
       const auto max_bnd = new_seeds_by_bnd.begin()->first;
       if (
@@ -545,8 +542,9 @@ public:
         // We add even if already present. Worst case scenario, a check if
         // agglomerated is done when choosing new seed
         std::transform(
-          seeds.cbegin(), seeds.cend(), std::back_inserter(this->_l_of_seeds[n_bnd]),
-          [](const auto &p) { return p.first; });
+          seeds.cbegin(), seeds.cend(),
+          std::back_inserter(this->_l_of_seeds[n_bnd]),
+          [](const auto &pr) { return pr.first; });
       }
     }
   }
@@ -608,7 +606,7 @@ public:
         n_bnd_faces, priority_weights, one_point_init) {}
 
   /** @brief Destructor */
-  ~Seeds_Pool_Neighbourhood_Priority() = default;
+  ~Seeds_Pool_Neighbourhood_Priority() override = default;
 
   /** @brief Choose a new seed in the pool
    *  @param[in] is_agglomerated Vector of booleans telling whether fine cells
@@ -625,13 +623,13 @@ public:
     // Exactly the inverse of the order of the list. For this reason we proceed
     // from the back
     if (this->_cur_top_queue.has_value()) {
-      for (auto q =
+      for (auto queue =
              this->_l_of_seeds.rbegin()
              + (this->_l_of_seeds.size() - (this->_cur_top_queue.value() + 1));
-           q != this->_l_of_seeds.rend(); ++q) {
-        const auto opt_seed = this->spoil_queue(is_agglomerated, *q);
+           queue != this->_l_of_seeds.rend(); ++queue) {
+        const auto opt_seed = this->spoil_queue(is_agglomerated, *queue);
         if (opt_seed.has_value()) {
-          this->_cur_top_queue = distance(q, this->_l_of_seeds.rend()) - 1;
+          this->_cur_top_queue = distance(queue, this->_l_of_seeds.rend()) - 1;
           return opt_seed.value();
         }
       }
@@ -668,16 +666,16 @@ public:
    *weight, therefore no check will be performed
    **/
   inline void update(const std::deque<CoMMAIndexType> &new_seeds) override {
-    for (const auto &s : new_seeds) {
+    for (const auto &seed : new_seeds) {
       // In order to the neighbourhood priority, we choose to append to the
       // current top queue, rather than switching queue
       const auto q_lvl =
         this->_cur_top_queue.has_value()
-          ? std::min(this->_n_bnd_faces[s], this->_cur_top_queue.value())
-          : this->_n_bnd_faces[s];
+          ? std::min(this->_n_bnd_faces[seed], this->_cur_top_queue.value())
+          : this->_n_bnd_faces[seed];
       // We add even if already present. Worst case scenario, a check if
       // agglomerated is done when choosing new seed
-      this->_l_of_seeds[q_lvl].push_back(s);
+      this->_l_of_seeds[q_lvl].push_back(seed);
     }
   }
 
@@ -689,9 +687,9 @@ public:
   inline void order_new_seeds_and_update(
     const std::unordered_set<CoMMAIndexType> &new_seeds) override {
     std::map<CoMMAIntType, CoMMASetOfPairType, std::greater<>> new_seeds_by_bnd;
-    for (const auto s : new_seeds) {
-      new_seeds_by_bnd[this->_n_bnd_faces[s]].emplace(
-        s, this->_priority_weights[s]);
+    for (const auto &seed : new_seeds) {
+      new_seeds_by_bnd[this->_n_bnd_faces[seed]].emplace(
+        seed, this->_priority_weights[seed]);
     }
     for (auto &[n_bnd, seeds] : new_seeds_by_bnd) {
       // In order to the neighbourhood priority, we choose to append to the
@@ -702,8 +700,9 @@ public:
       // We add even if already present. Worst case scenario, a check if
       // agglomerated is done when choosing new seed
       std::transform(
-        seeds.cbegin(), seeds.cend(), std::back_inserter(this->_l_of_seeds[q_lvl]),
-        [](const auto &p) { return p.first; });
+        seeds.cbegin(), seeds.cend(),
+        std::back_inserter(this->_l_of_seeds[q_lvl]),
+        [](const auto &pr) { return pr.first; });
     }
   }
 

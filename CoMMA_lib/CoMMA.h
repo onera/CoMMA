@@ -32,7 +32,7 @@
 namespace comma {
 
 /// \cond DO_NOT_DOCUMENT
-#define check_int_type(intT, label)        \
+#define CHECK_INT_TYPE(intT, label)        \
   static_assert(                           \
     std::numeric_limits<intT>::is_integer, \
     "CoMMA works with integer types, but " #intT " (" label ") is not")
@@ -175,8 +175,8 @@ void agglomerate_one_level(
 
   // SANITY CHECKS
   //======================================
-  check_int_type(CoMMAIndexType, "first template argument");
-  check_int_type(CoMMAIntType, "third template argument");
+  CHECK_INT_TYPE(CoMMAIndexType, "first template argument");
+  CHECK_INT_TYPE(CoMMAIntType, "third template argument");
   if (!(dimension == 2 || dimension == 3))
     throw std::invalid_argument("CoMMA - Error: dimension must be 2 or 3");
   if (min_card <= 1 || goal_card <= 1 || max_card <= 1)
@@ -189,7 +189,7 @@ void agglomerate_one_level(
     throw std::invalid_argument(
       "CoMMA - Error: the number of iteration for the choice of the fine "
       "cells must be at least 1");
-  else if (fc_choice_iter > static_cast<CoMMAIntType>(max_iter))
+  if (fc_choice_iter > static_cast<CoMMAIntType>(max_iter))
     throw std::invalid_argument(
       "CoMMA - Error: the number of iteration for the choice of the fine "
       "cells must be at most "
@@ -232,7 +232,8 @@ void agglomerate_one_level(
     throw std::invalid_argument(
       "CoMMA - Error: Threshold cardinality for singular cells should be "
       "greater than zero");
-  } else if (singular_card_thresh >= min_card) {
+  }
+  if (singular_card_thresh >= min_card) {
     std::cout
       << "CoMMA - Warning: Threshold cardinality is equal or larger than "
          "minimum cardinality. Changing it to this latter value."
@@ -242,8 +243,7 @@ void agglomerate_one_level(
 
   // SIZES CAST
   //======================================
-  const CoMMAIndexType nb_fc =
-    static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
+  const auto nb_fc = static_cast<CoMMAIndexType>(adjMatrix_row_ptr.size() - 1);
 
   // BOUNDARY FACES
   //======================================
@@ -359,7 +359,7 @@ void agglomerate_one_level(
   }
 }
 
-#undef check_int_type
+#undef CHECK_INT_TYPE
 
 }  // end namespace comma
 

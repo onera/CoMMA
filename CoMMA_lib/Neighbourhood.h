@@ -177,7 +177,7 @@ public:
       &other) = default;
 
   /** @brief Destructor */
-  ~Neighbourhood_Extended() = default;
+  ~Neighbourhood_Extended() override = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are added as
@@ -267,7 +267,7 @@ public:
                            CoMMAIntType> &other) = default;
 
   /** @brief Destructor */
-  ~Neighbourhood_Pure_Front() = default;
+  ~Neighbourhood_Pure_Front() override = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are considered as
@@ -282,14 +282,14 @@ public:
     this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    for (auto &q : this->_q_neighs_w_weights) {
+    for (auto &queue : this->_q_neighs_w_weights) {
       // There is erase_if for sets in C++20
-      // erase_if(q, [&new_fc](const CoMMAPairType &p){return p.first ==
+      // erase_if(queue, [&new_fc](const CoMMAPairType &p){return p.first ==
       // new_fc;});
-      auto it =
-        find_if(q.begin(), q.end(), CoMMAPairFindFirstBasedType(new_fc));
+      auto it = std::find_if(
+        queue.begin(), queue.end(), CoMMAPairFindFirstBasedType(new_fc));
       //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      if (it != q.end()) q.erase(it);
+      if (it != queue.end()) queue.erase(it);
     }
 
     // Compute the set of direct neighbours allowed by original
@@ -329,8 +329,8 @@ public:
       auto cur_back = decltype(this->_q_neighs_w_weights.size()){
         this->_q_neighs_w_weights.size() - 1};
       while (cur_front <= cur_back) {
-        typename decltype(this->_q_neighs_w_weights)::iterator it =
-          this->_q_neighs_w_weights.begin() + (cur_front++);
+        // typename decltype(this->_q_neighs_w_weights)::iterator it =
+        auto it = this->_q_neighs_w_weights.begin() + (cur_front++);
         if (!it->empty()) {
           this->extract_and_update_candidates(*it);
           break;
@@ -441,7 +441,7 @@ public:
   NeighbourhoodExtendedCreator() : CreatorBaseType() {}
 
   /** @brief Destructor */
-  ~NeighbourhoodExtendedCreator() = default;
+  ~NeighbourhoodExtendedCreator() override = default;
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
@@ -504,7 +504,7 @@ public:
   NeighbourhoodPureFrontCreator() : CreatorBaseType() {}
 
   /** @brief Destructor */
-  ~NeighbourhoodPureFrontCreator() = default;
+  ~NeighbourhoodPureFrontCreator() override = default;
 
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments

@@ -21,12 +21,13 @@
 
 #include "CoMMATypes.h"
 
-using namespace comma;
-using namespace pybind11::literals;  // Use _a for args literals
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace pybind11::literals;  // NOLINT Use _a for args literals
+using namespace std;  // NOLINT
 
 using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
 
+// NOLINTNEXTLINE
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() =
     "CoMMA is an agglomeration library\n"
@@ -52,7 +53,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       const vector<CoMMAWeightT> &volumes,
 
       // Additional info about the mesh
-      const vector<vector<CoMMAWeightT>> centers,
+      const vector<vector<CoMMAWeightT>> &centers,
       const vector<CoMMAWeightT> &priority_weights,
       const vector<CoMMAIndexT> &anisotropicCompliantCells,
       const vector<CoMMAIntT> &n_bnd_faces,

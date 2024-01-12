@@ -18,20 +18,20 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
-using namespace comma;
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_cube_4 Data = DualGPy_cube_4();
-    shared_ptr<SeedsPoolT> seeds_pool =
+    shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
@@ -66,7 +66,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       }
     }
 
-    shared_ptr<CCContainerT> cc_PF_graph =
+    shared_ptr<CCContainerT> const cc_PF_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
@@ -108,17 +108,18 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
       CoMMAWeightT cc_diam = sqrt(2.), cc_vol = 4.;
       // Out
-      CoMMAIntT shared_faces;
-      CoMMAWeightT ar;
-      CoMMAWeightT ref_diam = sqrt(3.), ref_vol = 5.;
+      CoMMAIntT shared_faces{};
+      CoMMAWeightT ar{};
+      const CoMMAWeightT ref_diam = sqrt(3.);
+      CoMMAWeightT ref_vol = 5.;
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("New coarse cell has 1 shared face") {
         agg->compute_next_cc_features(
           17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(17);
       cc_diam = ref_diam, cc_vol = ref_vol;
@@ -128,9 +129,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
         agg->compute_next_cc_features(
           21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 2);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(21);
       cc.insert(20);
@@ -141,9 +142,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
         agg->compute_next_cc_features(
           16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 3);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }  // Aspect ratio
   }
@@ -152,14 +153,14 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
 SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     const DualGPy_quad_4 Data = DualGPy_quad_4();
-    shared_ptr<SeedsPoolT> seeds_pool =
+    shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
@@ -212,7 +213,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       }
     }
 
-    shared_ptr<CCContainerT> cc_PF_graph =
+    const shared_ptr<CCContainerT> cc_PF_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
@@ -274,17 +275,17 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       CoMMAWeightT cc_diam = 1., cc_vol = 2.;
       // Out
       CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
-      CoMMAIntT shared_faces;
-      CoMMAWeightT ar;
+      CoMMAIntT shared_faces{};
+      CoMMAWeightT ar{};
       CoMMAWeightT ref_diam = sqrt(2.), ref_vol = 3.;
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("L-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
           5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       ref_diam = 2.;
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
@@ -292,9 +293,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         agg->compute_next_cc_features(
           2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 1);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(5);
       cc_diam = sqrt(2.), cc_vol = 3.;
@@ -304,22 +305,22 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         agg->compute_next_cc_features(
           4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
         REQUIRE(shared_faces == 2);
-        REQUIRE(equal_up_to(ref_diam, tmp_diam, eps));
-        REQUIRE(equal_up_to(ref_vol, tmp_vol, eps));
-        REQUIRE(equal_up_to(ref_ar, ar, eps));
+        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }
   };
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGPy_T_shaped Data = DualGPy_T_shaped();
-    shared_ptr<SeedsPoolT> seeds_pool =
+    const shared_ptr<SeedsPoolT> seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAIntT card = 4;
     CoMMAIntT comp = 0;
@@ -345,10 +346,10 @@ final CC)
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
       THEN("Compactness is well computed") { REQUIRE(comp == 1); }
       THEN("The cell is T-shaped") {
-        REQUIRE(found_(cc, seed));
-        REQUIRE(found_(cc, 0));
-        REQUIRE(found_(cc, 2));
-        REQUIRE(found_(cc, 4));
+        REQUIRE(CONTAINS_(cc, seed));
+        REQUIRE(CONTAINS_(cc, 0));
+        REQUIRE(CONTAINS_(cc, 2));
+        REQUIRE(CONTAINS_(cc, 4));
       }
     }
     WHEN(
@@ -362,10 +363,10 @@ final CC)
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
       THEN("Compactness is well computed") { REQUIRE(comp == 2); }
       THEN("The cell is a square") {
-        REQUIRE(found_(cc, seed));
-        REQUIRE(found_(cc, 0));
-        REQUIRE(found_(cc, 3));
-        REQUIRE(found_(cc, 4));
+        REQUIRE(CONTAINS_(cc, seed));
+        REQUIRE(CONTAINS_(cc, 0));
+        REQUIRE(CONTAINS_(cc, 3));
+        REQUIRE(CONTAINS_(cc, 4));
       }
     }
   }

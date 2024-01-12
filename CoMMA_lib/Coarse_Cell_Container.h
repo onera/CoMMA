@@ -280,6 +280,7 @@ Not used anymore but we leave it for example purposes
     for (const auto &cc_idx : neighs) {
       const auto n_cc = _ccs.at(cc_idx);
       if (n_cc->_is_isotropic) {
+        // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (true /* n_cc->_cardinality < max_card */) {
           // On second thought, let us consider also cells with max cardinality
           // since the number of faces could be important to ensure compactness
@@ -354,6 +355,7 @@ Not used anymore but we leave it for example purposes
       const auto n_cc = _ccs.at(cc_idx);
       if (n_cc->_is_isotropic) {
         iso_neighs.push_back(cc_idx);
+        // NOLINTNEXTLINE(readability-simplify-boolean-expr)
         if (true /* n_cc->_cardinality < max_card */) {
           // On second thought, let us consider also cells with max cardinality
           // since the number of faces could be important to ensure compactness

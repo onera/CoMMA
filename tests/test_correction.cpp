@@ -14,20 +14,22 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
-using namespace comma;
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
+// About the size
+// NOLINTNEXTLINE
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
     const DualGPy_minimal Data = DualGPy_minimal();
-    shared_ptr<SeedsPoolT> seeds_pool =
+    shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
@@ -44,14 +46,14 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
   };
-#define fc_in_cc(graph, fc, cc) graph->_fc_2_cc[fc].value() == cc
+#define fc_in_cc(graph, fc, cc) (graph)->_fc_2_cc[(fc)].value() == (cc)
   GIVEN("A simple 8-cell Cartesian grid") {
     const DualGPy_correction Data = DualGPy_correction();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1") {
@@ -144,7 +146,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
@@ -411,7 +413,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN("We agglomerate (manually) and request a high singular threshold") {
-      shared_ptr<CCContainerT> cc_graph_3thresh =
+      shared_ptr<CCContainerT> const cc_graph_3thresh =
         make_shared<CCContainerT>(fc_graph, 3);
       cc_graph_3thresh->create_cc({0, 1}, 1);
       cc_graph_3thresh->create_cc({2}, 0);
@@ -454,14 +456,14 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Data.weights.push_back(-1.);
     Data.arrayOfFineAnisotropicCompliantCells.push_back(9);
     //
-    shared_ptr<SeedsPoolT> seeds_pool =
+    shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
-    shared_ptr<CCContainerT> cc_graph =
+    shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN("We agglomerate (without correction)") {
       auto agg = make_unique<

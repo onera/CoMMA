@@ -34,7 +34,8 @@ private:
 
 public:
   /** @brief Constructor */
-  Priority_Pair(){};
+  Priority_Pair() = default;
+  ;
 
   /** @brief Constructor
    *  @param a First element
@@ -43,7 +44,8 @@ public:
   Priority_Pair(const A &a, const B &b) : _p(a, b){};
 
   /** @brief Destructor */
-  ~Priority_Pair(){};
+  ~Priority_Pair() = default;
+  ;
 
   /** @brief Accessor to the first element
    *  @return The first element
@@ -64,12 +66,10 @@ public:
    * b.second); false otherwise
    */
   inline friend bool operator<(const Priority_Pair &a, const Priority_Pair &b) {
-    if (a._p.first > b._p.first)
-      return true;
-    else if (a._p.first < b._p.first)
-      return false;
-    else /* a._p.first == b._p.first */
-      return a._p.second < b._p.second;
+    if (a._p.first > b._p.first) return true;
+    if (a._p.first < b._p.first) return false;
+    /* a._p.first == b._p.first */
+    return a._p.second < b._p.second;
   }
 
   /** @brief Operator 'equal'

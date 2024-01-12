@@ -19,8 +19,8 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
-using namespace comma;
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
@@ -57,7 +57,7 @@ SCENARIO("Test of a structure", "[structure]") {
       };
       THEN("We see that the agglomeration is not set, hence set to 0") {
         test agg = test(fc_graph, cc_graph, seeds_pool, 2);
-        CoMMAIntT testing = agg.test_variable();
+        const CoMMAIntT testing = agg.test_variable();
         REQUIRE(testing == 0);
       }
     }

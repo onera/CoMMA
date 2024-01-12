@@ -73,10 +73,10 @@ public:
   /** @brief Constructor
    *  @param[in] root A Node which is the root of the Tree
    */
-  Tree(std::shared_ptr<NodeType> &root) : _root(root) {}
+  explicit Tree(std::shared_ptr<NodeType> &root) : _root(root) {}
 
   /** @brief Destructor */
-  ~Tree(){};
+  ~Tree() = default;
 
   /** @brief The Node at the root of the tree */
   std::shared_ptr<NodeType> _root;

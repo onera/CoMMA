@@ -20,8 +20,8 @@
 #include "input/DualGPy.h"
 #include "test_defs.h"
 
-using namespace comma;
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
   GIVEN("A 7x7 Cartesian 2D matrix") {
@@ -78,42 +78,42 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
         Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist);
       THEN("Wall") {
         for (const auto &cell : wall) {
-          REQUIRE(equal_up_to(dist[cell], 0., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 0., eps));
         }
       }
       THEN("First set of neighbours") {
         const vector<CoMMAIndexT> cells = {8,  9,  10, 11, 12, 13,
                                            15, 22, 29, 36, 43};
         for (const auto &cell : cells) {
-          REQUIRE(equal_up_to(dist[cell], 1., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 1., eps));
         }
       }
       THEN("Second set of neighbours") {
         const vector<CoMMAIndexT> cells = {16, 17, 18, 19, 20, 23, 30, 37, 44};
         for (const auto &cell : cells) {
-          REQUIRE(equal_up_to(dist[cell], 2., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 2., eps));
         }
       }
       THEN("Third set of neighbours") {
         const vector<CoMMAIndexT> cells = {24, 25, 26, 27, 31, 38, 45};
         for (const auto &cell : cells) {
-          REQUIRE(equal_up_to(dist[cell], 3., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 3., eps));
         }
       }
       THEN("Fourth set of neighbours") {
         const vector<CoMMAIndexT> cells = {32, 33, 34, 39, 46};
         for (const auto &cell : cells) {
-          REQUIRE(equal_up_to(dist[cell], 4., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 4., eps));
         }
       }
       THEN("Fifth set of neighbours") {
         const vector<CoMMAIndexT> cells = {40, 41, 47};
         for (const auto &cell : cells) {
-          REQUIRE(equal_up_to(dist[cell], 5., eps));
+          REQUIRE(EQUAL_UP_TO(dist[cell], 5., eps));
         }
       }
       THEN("Sixth set of neighbours") {
-        REQUIRE(equal_up_to(dist[48], 6., eps));
+        REQUIRE(EQUAL_UP_TO(dist[48], 6., eps));
       }
     }
     WHEN(
@@ -134,7 +134,7 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
 SCENARIO("Test compactness computation", "[Compactness]") {
   GIVEN("A simple 3x3 Cartesian grid") {
     const DualGPy_quad_3 Data = DualGPy_quad_3();
-    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+    shared_ptr<DualGraphT> const fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
       Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
@@ -196,11 +196,11 @@ SCENARIO("Test compactness computation", "[Compactness]") {
 SCENARIO("Test custom pair comparison", "[Pair comparison]") {
   using PairIntInt = pair<int, int>;
   GIVEN("Some (int,int) pairs in a set with custom 'Greater'") {
-    set<PairIntInt, CustomPairGreaterFunctor<PairIntInt>> s = {
+    const set<PairIntInt, CustomPairGreaterFunctor<PairIntInt>> st = {
       {1, 0}, {1, 0}, {1, 3}, {0, 3}};
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
-        auto it = s.begin();
+        auto it = st.begin();
         REQUIRE(it->first == 0);
         REQUIRE(it->second == 3);
         //
@@ -212,15 +212,15 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
         REQUIRE(it->first == 1);
         REQUIRE(it->second == 0);
       }
-      THEN("Duplicates are not added") { REQUIRE(s.size() == 3); }
+      THEN("Duplicates are not added") { REQUIRE(st.size() == 3); }
     }
   }
   GIVEN("Some (int,int) pairs in a set with custom 'Less'") {
-    set<PairIntInt, CustomPairLessFunctor<PairIntInt>> s = {
+    const set<PairIntInt, CustomPairLessFunctor<PairIntInt>> st = {
       {1, 3}, {1, 0}, {1, 0}, {0, 3}};
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
-        auto it = s.begin();
+        auto it = st.begin();
         REQUIRE(it->first == 1);
         REQUIRE(it->second == 0);
         //
@@ -232,7 +232,7 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
         REQUIRE(it->first == 0);
         REQUIRE(it->second == 3);
       }
-      THEN("Duplicates are not added") { REQUIRE(s.size() == 3); }
+      THEN("Duplicates are not added") { REQUIRE(st.size() == 3); }
     }
   }
 }

@@ -234,7 +234,7 @@ public:
     if (_number_of_cells == 1) { return (true); }
     DFS(_m_CRS_Col_Ind[0]);
     for (auto i = decltype(_number_of_cells){0}; i < _number_of_cells; ++i) {
-      if (_visited[i] == false) { return (false); }
+      if (!_visited[i]) { return (false); }
     }
     return (true);
   }
@@ -253,11 +253,12 @@ public:
       if (dict_fc_compactness.empty()) { return 0; }
       return min_element(
                dict_fc_compactness.begin(), dict_fc_compactness.end(),
-               [](const auto &p, const auto &q) { return p.second < q.second; })
+               [](const auto &left, const auto &right) {
+                 return left.second < right.second;
+               })
         ->second;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   /** @brief Compute the dictionary of compactness of fine cells inside a coarse
@@ -335,14 +336,14 @@ public:
     // Compactness computation
     _compactness = static_cast<CoMMAIntType>(nb_c);
     for (auto c = decltype(nb_c){0}; c < nb_c; ++c) {
-      const CoMMAIntType n_neighs =
+      const auto n_neighs =
         static_cast<CoMMAIntType>(m_crs_row_ptr[c + 1] - m_crs_row_ptr[c]);
       if (n_neighs < _compactness) { _compactness = n_neighs; }
     }
   }
 
   /** @brief Destructor of the class */
-  virtual ~Subgraph() = default;
+  ~Subgraph() override = default;
 
   /** @brief Whether it originates from an isotropic cell. */
   bool _is_isotropic;
@@ -567,7 +568,7 @@ public:
   }
 
   /** @brief Destructor of the class */
-  virtual ~Dual_Graph() = default;
+  ~Dual_Graph() override = default;
 
   /** @brief Vector telling how many boundary faces each cell has */
   const std::vector<CoMMAIntType> &_n_bnd_faces;
@@ -667,30 +668,28 @@ public:
         max_weights[i_fc] = max_weight;
         // Compute the aspect-ratio and add cell to list if necessary
         const auto ar = _compute_AR(min_weight, max_weight);
-        if (preserving == 0) {
-          // Anisotropy criteria for the line Admissibility
-          if (ar >= threshold_anisotropy) {
-            // If the ratio is more than the given threshold of the biggest with
-            // the smallest cell, add it
-            aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-          }
-        } else if (preserving == 2) {
-          if (ar >= threshold_anisotropy) {
-            if (is_on_boundary(i_fc) > 0 && nb_neighbours == 3) {
+        // Anisotropy criteria for the line Admissibility
+        if (ar >= threshold_anisotropy) {
+          switch (preserving) {
+            case 2:
+              if (
+                (is_on_boundary(i_fc) > 0 && nb_neighbours == 3)
+                || nb_neighbours == 4)
+                aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+              break;
+            case 3:
+              if (
+                (is_on_boundary(i_fc) > 0 && nb_neighbours == 5)
+                || nb_neighbours == 6)
+                aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            case 0:
+            default:
+              // If the ratio is more than the given threshold of the biggest
+              // with the smallest cell, add it
               aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-            } else if (nb_neighbours == 4) {
-              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-            }
-          }
-        } else if (preserving == 3) {
-          if (ar >= threshold_anisotropy) {
-            if (is_on_boundary(i_fc) > 0 && nb_neighbours == 5) {
-              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-            } else if (nb_neighbours == 6) {
-              aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-            }
-          }
-        }
+              break;
+          }  // End switch
+        }  // End if ar
       }  // End for compliant cells
     }  // End if threshold
 

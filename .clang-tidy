@@ -1,0 +1,97 @@
+---
+HeaderFilterRegex: '(CoMMA_lib/.*|tests/test_.*)'
+# llvm-header-guard could be used if we change our headers to include the directory
+# cppcoreguidelines-pro-bounds-array-to-pointer-decay,hicpp-no-array-decay trigger on our asserts that include string literals
+# cppcoreguidelines-macro-usage we could leave enabled, but I think we know we don't want to use macros anyway
+# maybe keep magic-numbers? (HashHelper is annoying with it)
+# the mpi checkers crash (e.g. on CommData)
+# misc-confusable-identifiers leads to a runtime explosion
+# readability-function-cognitive-complexity is a bit overzealous (due to macros), but should be re-enabled once fixed
+# bugprone-easily-swappable-parameters is present in most interfaces
+# readability-identifier-naming leads to segfaults
+Checks: >
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  cert-*,
+  -cert-dcl21-cpp,
+  -cert-dcl37-c,
+  -cert-dcl51-cpp,
+  -cert-msc32-c,
+  -cert-err58-cpp,
+  clang-analyzer*,
+  -clang-analyzer-optin.mpi.MPI-Checker,
+  cppcoreguidelines-avoid-goto,
+  cppcoreguidelines-avoid-non-const-global-variables,
+  cppcoreguidelines-c-copy-assignment-signature,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-interfaces-global-init,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-pro-type-static-cast-downcast,
+  cppcoreguidelines-pro-type-union-access,
+  cppcoreguidelines-pro-type-vararg,
+  cppcoreguidelines-slicing,
+  fuchsia-trailing-return,
+  fuchsia-virtual-inheritance,
+  google-build-explicit-make-pair,
+  google-build-using-namespace,
+  google-default-arguments,
+  google-global-names-in-headers,
+  google-readability-casting,
+  google-runtime-operator,
+  google-upgrade-googletest-case,
+  hicpp-*,
+  -hicpp-deprecated-headers,
+  -hicpp-function-size,
+  -hicpp-invalid-access-moved,
+  -hicpp-noexcept-move,
+  -hicpp-uppercase-literal-suffix,
+  -hicpp-use-auto,
+  -hicpp-use-override,
+  -hicpp-vararg,
+  llvm-namespace-comment,
+  misc-*,
+  -misc-no-recursion,
+  -misc-confusable-identifiers,
+  -misc-non-private-member-variables-in-classes,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-pass-by-value,
+  -modernize-use-default-member-init,
+  -modernize-use-nodiscard,
+  openmp-exception-escape,
+  openmp-use-default-none,
+  performance-*,
+  readability-*,
+  -readability-avoid-const-params-in-decls,
+  -readability-magic-numbers,
+  -readability-qualified-auto,
+  -readability-uppercase-literal-suffix,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-naming,
+  -readability-isolate-declaration,
+  -*osx*,-*darwin*,-*fuchsia*,
+  -*-braces-around-statements,
+  -*avoid-c-arrays,
+  -*array-*decay*,
+  -*-named-parameter,
+  -*-special-member-functions,
+CheckOptions:
+  - key:             misc-throw-by-value-catch-by-reference.MaxSize
+    value:           '16'
+  - key:             misc-throw-by-value-catch-by-reference.WarnOnLargeObjects
+    value:           'true'
+  - key:             modernize-use-override.IgnoreDestructors
+    value:           'true'
+  - key:             readability-implicit-bool-conversion.AllowPointerConditions
+    value:           'true'
+
+  - key:             readability-identifier-length.MinimumVariableNameLength
+    value:           '2'
+  - key:             readability-identifier-length.MinimumParameterNameLength
+    value:           '2'
+  - key:             readability-identifier-length.IgnoredParameterNames
+    value:           '^[nabxyvw]$'
+  - key:             readability-identifier-length.IgnoredLoopCounterNames
+    value:           '^[a-z_]$'
+...

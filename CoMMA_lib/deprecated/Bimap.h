@@ -28,9 +28,9 @@ template<typename A, typename B>
 class Bimap {
 public:
   /** @brief Constructor */
-  Bimap(){};
+  Bimap() = default;
   /** @brief Destructor */
-  ~Bimap(){};
+  ~Bimap() = default;
 
   //  using container= std::map<A, const B*>;
   //  using iterator=typename container::iterator;
@@ -111,8 +111,8 @@ public:
     // We pass the associated value we want to search to the member
     // variable
     auto itB = _mapB.find(a);
-    auto b = *(itB->second);
-    auto itA = _mapA.find(b);
+    auto be = *(itB->second);
+    auto itA = _mapA.find(be);
     _mapB.erase(itB);
     _mapA.erase(itA);
   }

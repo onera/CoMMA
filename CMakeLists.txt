@@ -52,6 +52,8 @@ if ( CODAFLAGS )
   message(STATUS "Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Effective library
 
 SET(SOURCE_DIR "CoMMA_lib")

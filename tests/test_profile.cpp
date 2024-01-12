@@ -13,7 +13,7 @@
 #include "header_profile.h"
 #include "input/DualGPy.h"
 
-using namespace comma;
+using namespace comma;  // NOLINT
 
 int main(int argv, char **argc) {
   InitializePerfetto();

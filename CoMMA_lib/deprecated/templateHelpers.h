@@ -27,8 +27,8 @@ namespace comma {
  *  @deprecated Not used anymore
  */
 template<bool condition, typename typeA, typename typeB>
-void fill_value(typeA &A, typeB &B) {
-  if constexpr (condition) { A = B; }
+void fill_value(typeA &a, typeB &b) {
+  if constexpr (condition) { a = b; }
 }
 
 }  // end namespace comma

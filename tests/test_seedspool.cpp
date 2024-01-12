@@ -21,9 +21,11 @@
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 
-using namespace comma;
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
+// About the size
+// NOLINTNEXTLINE
 SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   GIVEN(
     "A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering") {
@@ -276,14 +278,14 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -310,14 +312,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -340,14 +342,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -373,14 +375,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -414,14 +416,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -444,14 +446,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
