@@ -14,7 +14,7 @@
 #include <forward_list>
 #include <vector>
 
-#include "CoMMATypes.h"
+#include "CoMMA/CoMMATypes.h"
 #include "input/DualGPy.h"
 
 using namespace comma;  // NOLINT
