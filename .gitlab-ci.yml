@@ -19,12 +19,16 @@ default:
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
     - python3 -c "import gcovr" || python3 -m pip install --user gcovr
+    - python3 -m black --version || python3 -m pip install --user black
+    - python3 -m isort --version || python3 -m pip install --user isort
+    - python3 -m ruff --version || python3 -m pip install --user ruff
 
 stages:
     - init
     - build
     - test
     - lint_format
+    - lint_format_python
     - documentation
 
 job:init:
@@ -41,6 +45,8 @@ job:init:
             - Documentation/Doxyfile
             - .clang-format
             - .clang-tidy
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
@@ -152,6 +158,39 @@ job:clang_format:
     script:
         - cd $CUSTOM_CI_DIR
         - git ls-tree --name-only -r HEAD CoMMA_lib tests | grep ".*\.\(h\|cpp\)" | xargs clang-format --style=file --dry-run --Werror
+    allow_failure: true
+job:black:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m black --check *.py
+    allow_failure: true
+job:isort:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m isort --check *.py
+    allow_failure: true
+job:ruff:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m ruff check *.py
     allow_failure: true
 pages:
     stage: documentation
