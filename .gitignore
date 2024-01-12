@@ -1,6 +1,10 @@
 # Build related
 build*/
+install*/
 compile_commands.json
+# Custom
+bkp*
+ref*
 # Python
 .cache
 # Git stuff
