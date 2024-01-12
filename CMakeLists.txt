@@ -72,33 +72,33 @@ set(PYTHONBIND
 )
 
 set(PROFILING
-    perfetto/sdk/perfetto.h
-    ${PROFILING_DIR}/profiling/trace_categories.h
-    ${PROFILING_DIR}/profiling/trace_categories.cpp
-    ${PROFILING_DIR}/header_profile.h
+  perfetto/sdk/perfetto.h
+  ${PROFILING_DIR}/profiling/trace_categories.h
+  ${PROFILING_DIR}/profiling/trace_categories.cpp
+  ${PROFILING_DIR}/header_profile.h
 )
 
 set(PROFILING_SOURCE
-    ${PROFILING_DIR}/DualGraphExamples.h
-    ${PROFILING_DIR}/test_profile.cpp
+  ${PROFILING_DIR}/DualGraphExamples.h
+  ${PROFILING_DIR}/test_profile.cpp
 )
 
 SET(TESTING_FILES
-    ${TEST_DIR}/test_anisoagglo.cpp
-    ${TEST_DIR}/test_correction.cpp
-    ${TEST_DIR}/test_deprecated.cpp
-    ${TEST_DIR}/test_graph.cpp
-    ${TEST_DIR}/test_isoagglo.cpp
-    ${TEST_DIR}/test_neighbourhood.cpp
-    ${TEST_DIR}/test_seedspool.cpp
-    ${TEST_DIR}/test_structure.cpp
-    ${TEST_DIR}/test_utils.cpp
+  ${TEST_DIR}/test_anisoagglo.cpp
+  ${TEST_DIR}/test_correction.cpp
+  ${TEST_DIR}/test_deprecated.cpp
+  ${TEST_DIR}/test_graph.cpp
+  ${TEST_DIR}/test_isoagglo.cpp
+  ${TEST_DIR}/test_neighbourhood.cpp
+  ${TEST_DIR}/test_seedspool.cpp
+  ${TEST_DIR}/test_structure.cpp
+  ${TEST_DIR}/test_utils.cpp
 )
 
 SET(TESTS
-    ${TEST_DIR}/DualGraphExamples.h
-    ${TEST_DIR}/test_defs.h
-    ${TESTING_FILES}
+  ${TEST_DIR}/DualGraphExamples.h
+  ${TEST_DIR}/test_defs.h
+  ${TESTING_FILES}
 )
 
 ###################### Perfetto Settings #####################
