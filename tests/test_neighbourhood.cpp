@@ -15,7 +15,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Neighbourhood.h"
+#include "CoMMA/Neighbourhood.h"
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "test_defs.h"

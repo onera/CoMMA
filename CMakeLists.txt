@@ -56,11 +56,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Effective library
 
-SET(SOURCE_DIR "CoMMA_lib")
+SET(INCLUDE_DIR "include")
+SET(SOURCE_DIR "src")
 
 # headers are in source dir
 
-include_directories(${SOURCE_DIR})
+include_directories(${INCLUDE_DIR})
 
 SET(PROFILING_DIR "tests")
 
@@ -167,9 +168,9 @@ endif()
 include(GNUInstallDirs)
 
 
-# ${SOURCE_DIR} (no slash) considers the directory itself
-# ${SOURCE_DIR}/ (with slash) considers its files only
-install(DIRECTORY ${SOURCE_DIR}/
+# ${INCLUDE_DIR} (no slash) considers the directory itself
+# ${INCLUDE_DIR}/ (with slash) considers its files only
+install(DIRECTORY ${INCLUDE_DIR}/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   FILES_MATCHING PATTERN "*.h"
   REGEX "deprecated" EXCLUDE

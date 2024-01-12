@@ -20,7 +20,7 @@
 #include <utility>
 #include <vector>
 
-#include "Dual_Graph.h"
+#include "CoMMA/Dual_Graph.h"
 
 namespace comma {
 

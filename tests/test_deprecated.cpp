@@ -13,13 +13,13 @@
 #include <set>
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Dual_Graph.h"
+#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/Dual_Graph.h"
+#include "CoMMA/deprecated/Bimap.h"
+#include "CoMMA/deprecated/Priority_Pair.h"
+#include "CoMMA/deprecated/Queue.h"
+#include "CoMMA/deprecated/Tree.h"
 #include "catch2/catch.hpp"
-#include "deprecated/Bimap.h"
-#include "deprecated/Priority_Pair.h"
-#include "deprecated/Queue.h"
-#include "deprecated/Tree.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT

@@ -22,8 +22,8 @@
 #include <optional>
 #include <vector>
 
-#include "Coarse_Cell.h"
-#include "Dual_Graph.h"
+#include "CoMMA/Coarse_Cell.h"
+#include "CoMMA/Dual_Graph.h"
 
 namespace comma {
 

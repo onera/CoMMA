@@ -16,8 +16,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Seeds_Pool.h"
+#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/Seeds_Pool.h"
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 

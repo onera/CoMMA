@@ -26,10 +26,10 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Coarse_Cell_Container.h"
-#include "Dual_Graph.h"
-#include "Neighbourhood.h"
-#include "Util.h"
+#include "CoMMA/Coarse_Cell_Container.h"
+#include "CoMMA/Dual_Graph.h"
+#include "CoMMA/Neighbourhood.h"
+#include "CoMMA/Util.h"
 
 namespace comma {
 

@@ -12,8 +12,8 @@
 
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Dual_Graph.h"
+#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/Dual_Graph.h"
 #include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT

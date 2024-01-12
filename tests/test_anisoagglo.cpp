@@ -12,8 +12,8 @@
 
 #include <vector>
 
-#include "Agglomerator.h"
-#include "CoMMA.h"
+#include "CoMMA/Agglomerator.h"
+#include "CoMMA/CoMMA.h"
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "test_defs.h"

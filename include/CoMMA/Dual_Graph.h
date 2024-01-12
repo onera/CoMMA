@@ -25,7 +25,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Seeds_Pool.h"
+#include "CoMMA/Seeds_Pool.h"
 
 namespace comma {
 

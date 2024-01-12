@@ -38,7 +38,8 @@ job:init:
         GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -63,7 +64,8 @@ job:build_dbg:
     needs: ['job:init']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -84,7 +86,8 @@ job:test_dbg:
     needs: ['job:init', 'job:build_dbg']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -92,7 +95,7 @@ job:test_dbg:
         - cd $CUSTOM_CI_DIR
         - cd build
         - ./CoMMA_test -r junit > test_a.xml
-        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./CoMMA_lib/CoMMA.cpp' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./src/CoMMA.cpp' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month
@@ -107,7 +110,8 @@ job:build_rel:
     needs: ['job:init']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -123,7 +127,8 @@ job:test_rel:
     needs: ['job:init', 'job:build_rel']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -136,28 +141,30 @@ job:clang_tidy:
     needs: ["job:init", 'job:build_dbg']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
             - .clang-tidy
     script:
         - cd $CUSTOM_CI_DIR
-        - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" CoMMA_lib/*.h CoMMA_lib/*.cpp
+        - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" include/CoMMA/*.h src/*.cpp
     allow_failure: true
 job:clang_format:
     stage: lint_format
     needs: ["job:init", 'job:build_dbg']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
             - tests/**/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
             - .clang-format
     script:
         - cd $CUSTOM_CI_DIR
-        - git ls-tree --name-only -r HEAD CoMMA_lib tests | grep ".*\.\(h\|cpp\)" | xargs clang-format --style=file --dry-run --Werror
+        - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)" | xargs clang-format --style=file --dry-run --Werror
     allow_failure: true
 job:black:
     stage: lint_format_python
@@ -209,6 +216,7 @@ pages:
     rules:
         - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
           changes:
-            - CoMMA_lib/*.{cpp,h,md}
+            - include/CoMMA/*.h,md
+            - src/*.cpp
             - .gitlab-ci.yml
             - Documentation/Doxyfile

@@ -11,7 +11,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "CoMMA.h"
+#include "CoMMA/CoMMA.h"
 
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -19,7 +19,7 @@
 
 #include <type_traits>
 
-#include "CoMMATypes.h"
+#include "CoMMA/CoMMATypes.h"
 
 using namespace comma;  // NOLINT
 using namespace pybind11::literals;  // NOLINT Use _a for args literals

@@ -14,8 +14,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Util.h"
+#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/Util.h"
 #include "catch2/catch.hpp"
 #include "input/DualGPy.h"
 #include "test_defs.h"

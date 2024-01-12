@@ -1,5 +1,5 @@
 ---
-HeaderFilterRegex: '(CoMMA_lib/.*|tests/test_.*)'
+HeaderFilterRegex: '(include/CoMMA/.*|src/.*|tests/test_.*)'
 # llvm-header-guard could be used if we change our headers to include the directory
 # cppcoreguidelines-pro-bounds-array-to-pointer-decay,hicpp-no-array-decay trigger on our asserts that include string literals
 # cppcoreguidelines-macro-usage we could leave enabled, but I think we know we don't want to use macros anyway

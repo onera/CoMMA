@@ -12,9 +12,9 @@
 
 #include <memory>
 
-#include "Agglomerator.h"
-#include "CoMMA.h"
-#include "CoMMATypes.h"
+#include "CoMMA/Agglomerator.h"
+#include "CoMMA/CoMMA.h"
+#include "CoMMA/CoMMATypes.h"
 
 #ifndef DUALGPY_TEST_H
 #define DUALGPY_TEST_H
