@@ -15,7 +15,7 @@
 #include "CoMMA/Agglomerator.h"
 #include "CoMMA/CoMMA.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -25,7 +25,7 @@ using namespace std;  // NOLINT
 SCENARIO(
   "Test the anisotropic agglomeration for small cases", "[Anisotropic]") {
   GIVEN("We load the anisotropic mesh structure") {
-    const DualGPy_aniso Data = DualGPy_aniso();
+    const DualGEx_aniso Data = DualGEx_aniso();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
@@ -53,7 +53,7 @@ SCENARIO(
   GIVEN(
     "We load the anisotropic mesh structure, but there is no anisotropic cell") {
     /* ATTENTION: This test produces (prints) a warning, twice */
-    const DualGPy_aniso Data = DualGPy_aniso();
+    const DualGEx_aniso Data = DualGEx_aniso();
     WHEN("We consider no anisotropic compliant cell") {
       shared_ptr<SeedsPoolT> const seeds_pool =
         make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -153,7 +153,7 @@ SCENARIO(
   GIVEN(
     "We load the anisotropic mesh structure, but only a cell is anisotropic") {
     /* ATTENTION: This test produces (prints) a warning */
-    const DualGPy_aniso Data = DualGPy_aniso();
+    const DualGEx_aniso Data = DualGEx_aniso();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     vector<CoMMAIndexT> v_aniso = {0};
@@ -185,7 +185,7 @@ SCENARIO(
   GIVEN(
     "We load a 4by7 quad 2D mesh, we provide 4 lines but one is just 1-cell long") {
     /* ATTENTION: This test produces (prints) a warning */
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     vector<CoMMAIndexT> v_aniso = {0};
@@ -219,7 +219,7 @@ SCENARIO(
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
     " a seeds pool with boundary priority with full initialization") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool build_lines = true;
     const vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -290,7 +290,7 @@ SCENARIO(
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
     " a seeds pool with boundary priority with full initialization but we forbid odd lines") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool build_lines = true;
     vector<CoMMAIndexT> const agglomerationLines_Idx{};
@@ -368,7 +368,7 @@ vertically: in this case, we test that the construction take into account the di
 We also have to modify the weights so that the seeds of the lines are at the bottom of the mesh which will ensure that
 the line grows vertically
 #endif
-    DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const vector<CoMMAIndexT> bottom_layer = {0, 11, 16, 20};
     const vector<CoMMAIndexT> first_stretched_layer = {5, 6, 17, 18};
     const vector<CoMMAIndexT> second_stretched_layer = {24, 25, 26, 27};
@@ -473,7 +473,7 @@ the line grows vertically
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
     " a seeds pool with neighbourhood priority and priority weights for inverse numbering") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const CoMMAWeightT aniso_thresh{4.};
     const bool build_lines = true;
     const vector<CoMMAIndexT> agglomerationLines_Idx{};
@@ -547,7 +547,7 @@ the line grows vertically
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
     " we simulate a restart (not first agglomeration, we already have the liens)") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const CoMMAWeightT aniso_thresh{2.};
     const bool build_lines = false;
     const vector<CoMMAIndexT> agglomerationLines_Idx = {0, 5, 10, 15, 20};
@@ -633,7 +633,7 @@ the line grows vertically
   (fc2cc[a] == fc2cc[b] && fc2cc[b] == fc2cc[c] && fc2cc[c] == fc2cc[d])
 SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
   GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     WHEN("We agglomerate with neighbourhood priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = true, build_lines = true, odd_length = true,

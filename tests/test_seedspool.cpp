@@ -19,7 +19,7 @@
 #include "CoMMA/CoMMATypes.h"
 #include "CoMMA/Seeds_Pool.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
@@ -29,7 +29,7 @@ using namespace std;  // NOLINT
 SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   GIVEN(
     "A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering") {
-    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGEx_cube_4 Data = DualGEx_cube_4();
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
       seeds_pool(Data.n_bnd_faces, Data.weights, false);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
@@ -198,7 +198,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
 
   GIVEN(
     "A 4x4x4 cube and a Seeds Pool which should force an order reversed wrt the cell numbering") {
-    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGEx_cube_4 Data = DualGEx_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
@@ -259,7 +259,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     }
   }
   GIVEN("A mesh with a hole and two corners") {
-    const DualGPy_hole_w_corners Data = DualGPy_hole_w_corners();
+    const DualGEx_hole_w_corners Data = DualGEx_hole_w_corners();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -393,7 +393,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     }
   }
   GIVEN("A mesh with a hole and no corners") {
-    const DualGPy_hole_no_corners Data = DualGPy_hole_no_corners();
+    const DualGEx_hole_no_corners Data = DualGEx_hole_no_corners();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc,
       Data.adjMatrix_row_ptr,

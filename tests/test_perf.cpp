@@ -15,14 +15,14 @@
 #include <vector>
 
 #include "CoMMA/CoMMATypes.h"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 
 using namespace comma;  // NOLINT
 
 int main(int argv, char **argc) {
   CoMMAUnused(argv);
   CoMMAUnused(argc);
-  const DualGPy Data = DualGPy();
+  const DualGEx Data = DualGEx();
   const Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
     seeds_pool(Data.n_bnd_faces, Data.weights, false);
   Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(

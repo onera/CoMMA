@@ -11,7 +11,7 @@
  */
 
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -21,7 +21,7 @@ using namespace std;  // NOLINT
 // NOLINTNEXTLINE
 SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("We load the Minimal Isotropic mesh structure") {
-    const DualGPy_minimal Data = DualGPy_minimal();
+    const DualGEx_minimal Data = DualGEx_minimal();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
@@ -48,7 +48,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   };
 #define fc_in_cc(graph, fc, cc) (graph)->_fc_2_cc[(fc)].value() == (cc)
   GIVEN("A simple 8-cell Cartesian grid") {
-    const DualGPy_correction Data = DualGPy_correction();
+    const DualGEx_correction Data = DualGEx_correction();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -141,7 +141,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
   }
   GIVEN("A simple 3x3 Cartesian grid") {
-    const DualGPy_quad_3 Data = DualGPy_quad_3();
+    const DualGEx_quad_3 Data = DualGEx_quad_3();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -446,7 +446,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN(
     "A simple 3x3 Cartesian grid to which we add an extra unconnected cell to"
     " simulate pathological partitions") {
-    DualGPy_quad_3 Data = DualGPy_quad_3();
+    DualGEx_quad_3 Data = DualGEx_quad_3();
     // Adding the extra cell
     Data.nb_fc = 10;
     Data.adjMatrix_row_ptr.push_back(24);

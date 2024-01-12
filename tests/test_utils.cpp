@@ -17,7 +17,7 @@
 #include "CoMMA/CoMMATypes.h"
 #include "CoMMA/Util.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -25,7 +25,7 @@ using namespace std;  // NOLINT
 
 SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
   GIVEN("A 7x7 Cartesian 2D matrix") {
-    const DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGEx_quad_7 Data = DualGEx_quad_7();
     const vector<CoMMAIndexT> wall = {0, 1,  2,  3,  4,  5, 6,
                                       7, 14, 21, 28, 35, 42};
     WHEN("We compute the neighbourhood-based wall-distance") {
@@ -133,7 +133,7 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
 
 SCENARIO("Test compactness computation", "[Compactness]") {
   GIVEN("A simple 3x3 Cartesian grid") {
-    const DualGPy_quad_3 Data = DualGPy_quad_3();
+    const DualGEx_quad_3 Data = DualGEx_quad_3();
     shared_ptr<DualGraphT> const fc_graph = make_shared<DualGraphT>(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,

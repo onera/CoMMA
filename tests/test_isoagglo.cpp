@@ -15,7 +15,7 @@
 
 #include "CoMMA/Agglomerator.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -23,7 +23,7 @@ using namespace std;  // NOLINT
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGEx_cube_4 Data = DualGEx_cube_4();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
@@ -152,7 +152,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
 
 SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
-    const DualGPy_quad_4 Data = DualGPy_quad_4();
+    const DualGEx_quad_4 Data = DualGEx_quad_4();
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
@@ -312,7 +312,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
     }
   };
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
-    const DualGPy_T_shaped Data = DualGPy_T_shaped();
+    const DualGEx_T_shaped Data = DualGEx_T_shaped();
     const shared_ptr<SeedsPoolT> seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();

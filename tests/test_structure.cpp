@@ -16,7 +16,7 @@
 
 #include "CoMMA/CoMMA.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -24,7 +24,7 @@ using namespace std;  // NOLINT
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
-    const DualGPy Data = DualGPy();
+    const DualGEx Data = DualGEx();
     // Construction of the Dual Graph element
     shared_ptr<SeedsPoolT> seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -102,7 +102,7 @@ SCENARIO("Test of main function", "[structure]") {
   // The following tests are basically a copy of test_isoagglo but with the
   // main function
   GIVEN("A simple 4x4 Cartesian mesh") {
-    const DualGPy_quad_4 Data = DualGPy_quad_4();
+    const DualGEx_quad_4 Data = DualGEx_quad_4();
     WHEN("We agglomerate with neighbourhood priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = false, build_lines = true, odd_length = true,
@@ -234,7 +234,7 @@ SCENARIO("Test of main function", "[structure]") {
     }
   }
   GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     WHEN("We agglomerate with bad argument") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = true, build_lines = true, odd_length = true,

@@ -11,7 +11,7 @@
  */
 
 #include "header_profile.h"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 
 using namespace comma;  // NOLINT
 
@@ -24,11 +24,11 @@ int main(int argv, char **argc) {
   perfetto::protos::gen::TrackDescriptor desc = process_track.Serialize();
   desc.mutable_process()->set_process_name("Example");
   perfetto::TrackEvent::SetTrackDescriptor(process_track, desc);
-  // DualGPy class constructor loads the configuration
+  // DualGEx class constructor loads the configuration
   // with the graph and all the variables required
   // TODO: maybe change to pointer for homogeneity
-  TRACE_EVENT_BEGIN("setup", "DualGPy");
-  DualGPy Data = DualGPy();
+  TRACE_EVENT_BEGIN("setup", "DualGEx");
+  DualGEx Data = DualGEx();
   TRACE_EVENT_END("setup");
   // Construction of the Dual Graph element
 

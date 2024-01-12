@@ -17,7 +17,7 @@
 
 #include "CoMMA/Neighbourhood.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
+#include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -30,7 +30,7 @@ using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
 // NOLINTNEXTLINE
 SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
-    const DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -156,7 +156,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
 #define CONTAINS_1STEL_(cont, obj)                                      \
   (find_if((cont).begin(), (cont).end(), CoMMAPairFindFirstBasedT(obj)) \
    != (cont).end())
-    const DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -274,7 +274,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
   }
   GIVEN(
     "We have a 7x7 Cartesian 2D matrix and set up a Pure Front Neighbourhood for 24") {
-    const DualGPy_quad_7 Data = DualGPy_quad_7();
+    const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,

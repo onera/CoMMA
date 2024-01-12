@@ -79,12 +79,12 @@ set(PROFILING
 )
 
 set(PROFILING_SOURCE
-    ${PROFILING_DIR}/input/DualGPy.h
+    ${PROFILING_DIR}/DualGraphExamples.h
     ${PROFILING_DIR}/test_profile.cpp
 )
 
 set(PROFILING_PERF
-    ${PROFILING_DIR}/input/DualGPy.h
+    ${PROFILING_DIR}/DualGraphExamples.h
     ${PROFILING_DIR}/test_perf.cpp
 )
 
@@ -101,7 +101,7 @@ SET(TESTING_FILES
 )
 
 SET(TESTS
-    ${TEST_DIR}/input/DualGPy.h
+    ${TEST_DIR}/DualGraphExamples.h
     ${TEST_DIR}/test_defs.h
     ${TESTING_FILES}
 )
