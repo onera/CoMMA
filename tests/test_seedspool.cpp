@@ -18,8 +18,8 @@
 
 #include "CoMMA/CoMMATypes.h"
 #include "CoMMA/Seeds_Pool.h"
-#include "catch2/catch.hpp"
 #include "DualGraphExamples.h"
+#include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT

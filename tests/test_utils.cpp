@@ -16,8 +16,8 @@
 
 #include "CoMMA/CoMMATypes.h"
 #include "CoMMA/Util.h"
-#include "catch2/catch.hpp"
 #include "DualGraphExamples.h"
+#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT

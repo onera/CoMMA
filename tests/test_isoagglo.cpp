@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
-#include "catch2/catch.hpp"
 #include "DualGraphExamples.h"
+#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
