@@ -210,12 +210,11 @@ SCENARIO(
     }
   }
 
-#define check2cells(a, b) (f2c[a].value() == f2c[b].value())
-#define check3cells(a, b, c) \
-  (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value())
-#define check4cells(a, b, c, d)                                         \
-  (f2c[a].value() == f2c[b].value() && f2c[b].value() == f2c[c].value() \
-   && f2c[c].value() == f2c[d].value())
+#define CHECK2CELLS(f2c, a, b) ((f2c)[(a)].value() == (f2c)[(b)].value())
+#define CHECK3CELLS(f2c, a, b, c) \
+  (CHECK2CELLS(f2c, a, b) && CHECK2CELLS(f2c, b, c))
+#define CHECK4CELLS(f2c, a, b, c, d) \
+  (CHECK2CELLS(f2c, a, b) && CHECK2CELLS(f2c, b, c) && CHECK2CELLS(f2c, c, d))
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
     " a seeds pool with boundary priority with full initialization") {
@@ -256,21 +255,21 @@ SCENARIO(
       iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
       THEN("There are two isotropic coarse cells") {
-        REQUIRE(check4cells(5, 6, 24, 25));
-        REQUIRE(check4cells(17, 18, 27, 26));
+        REQUIRE(CHECK4CELLS(f2c, 5, 6, 24, 25));
+        REQUIRE(CHECK4CELLS(f2c, 17, 18, 27, 26));
       }
       THEN(
         "The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(check2cells(0, 1));
-        REQUIRE(check2cells(11, 10));
-        REQUIRE(check2cells(16, 14));
-        REQUIRE(check2cells(20, 22));
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 11, 10));
+        REQUIRE(CHECK2CELLS(f2c, 16, 14));
+        REQUIRE(CHECK2CELLS(f2c, 20, 22));
       }
       THEN("The interior anisotropic coarse cells are of cardinality 3") {
-        REQUIRE(check3cells(2, 3, 4));
-        REQUIRE(check3cells(9, 8, 7));
-        REQUIRE(check3cells(12, 13, 15));
-        REQUIRE(check3cells(23, 21, 19));
+        REQUIRE(CHECK3CELLS(f2c, 2, 3, 4));
+        REQUIRE(CHECK3CELLS(f2c, 9, 8, 7));
+        REQUIRE(CHECK3CELLS(f2c, 12, 13, 15));
+        REQUIRE(CHECK3CELLS(f2c, 23, 21, 19));
       }
       THEN(
         "The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
@@ -327,20 +326,20 @@ SCENARIO(
       iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
       THEN("There are three isotropic coarse cells") {
-        REQUIRE(check4cells(5, 6, 24, 25));
-        REQUIRE(check4cells(17, 18, 27, 26));
-        REQUIRE(check4cells(4, 7, 15, 19));
+        REQUIRE(CHECK4CELLS(f2c, 5, 6, 24, 25));
+        REQUIRE(CHECK4CELLS(f2c, 17, 18, 27, 26));
+        REQUIRE(CHECK4CELLS(f2c, 4, 7, 15, 19));
       }
       THEN(
         "The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(check2cells(0, 1));
-        REQUIRE(check2cells(2, 3));
-        REQUIRE(check2cells(9, 8));
-        REQUIRE(check2cells(11, 10));
-        REQUIRE(check2cells(12, 13));
-        REQUIRE(check2cells(16, 14));
-        REQUIRE(check2cells(20, 22));
-        REQUIRE(check2cells(23, 21));
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 2, 3));
+        REQUIRE(CHECK2CELLS(f2c, 9, 8));
+        REQUIRE(CHECK2CELLS(f2c, 11, 10));
+        REQUIRE(CHECK2CELLS(f2c, 12, 13));
+        REQUIRE(CHECK2CELLS(f2c, 16, 14));
+        REQUIRE(CHECK2CELLS(f2c, 20, 22));
+        REQUIRE(CHECK2CELLS(f2c, 23, 21));
       }
       THEN(
         "The coarse-cell numbering the anisotropy and the priority weights") {
@@ -437,20 +436,20 @@ the line grows vertically
       }
       const auto f2c = cc_graph->_fc_2_cc;
       THEN("The anisotropic coarse cells at the bottom are of cardinality 2") {
-        REQUIRE(check2cells(0, 1));
-        REQUIRE(check2cells(2, 3));
-        REQUIRE(check2cells(9, 8));
-        REQUIRE(check2cells(11, 10));
-        REQUIRE(check2cells(12, 13));
-        REQUIRE(check2cells(16, 14));
-        REQUIRE(check2cells(20, 22));
-        REQUIRE(check2cells(23, 21));
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 2, 3));
+        REQUIRE(CHECK2CELLS(f2c, 9, 8));
+        REQUIRE(CHECK2CELLS(f2c, 11, 10));
+        REQUIRE(CHECK2CELLS(f2c, 12, 13));
+        REQUIRE(CHECK2CELLS(f2c, 16, 14));
+        REQUIRE(CHECK2CELLS(f2c, 20, 22));
+        REQUIRE(CHECK2CELLS(f2c, 23, 21));
       }
       THEN("The anisotropic coarse cells at the top are of cardinality 3") {
-        REQUIRE(check3cells(4, 5, 24));
-        REQUIRE(check3cells(7, 6, 25));
-        REQUIRE(check3cells(15, 17, 26));
-        REQUIRE(check3cells(19, 18, 27));
+        REQUIRE(CHECK3CELLS(f2c, 4, 5, 24));
+        REQUIRE(CHECK3CELLS(f2c, 7, 6, 25));
+        REQUIRE(CHECK3CELLS(f2c, 15, 17, 26));
+        REQUIRE(CHECK3CELLS(f2c, 19, 18, 27));
       }
       THEN(
         "The coarse-cell numbering the anisotropy and the priority weights") {
@@ -513,21 +512,21 @@ the line grows vertically
       iso_agg.agglomerate_one_level(4, 4, 4, wei, false);
       const auto f2c = cc_graph->_fc_2_cc;
       THEN("There are two isotropic coarse cells") {
-        REQUIRE(check4cells(5, 6, 24, 25));
-        REQUIRE(check4cells(17, 18, 27, 26));
+        REQUIRE(CHECK4CELLS(f2c, 5, 6, 24, 25));
+        REQUIRE(CHECK4CELLS(f2c, 17, 18, 27, 26));
       }
       THEN(
         "The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(check2cells(0, 1));
-        REQUIRE(check2cells(11, 10));
-        REQUIRE(check2cells(16, 14));
-        REQUIRE(check2cells(20, 22));
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 11, 10));
+        REQUIRE(CHECK2CELLS(f2c, 16, 14));
+        REQUIRE(CHECK2CELLS(f2c, 20, 22));
       }
       THEN("The interior anisotropic coarse cells are of cardinality 3") {
-        REQUIRE(check3cells(2, 3, 4));
-        REQUIRE(check3cells(9, 8, 7));
-        REQUIRE(check3cells(12, 13, 15));
-        REQUIRE(check3cells(23, 21, 19));
+        REQUIRE(CHECK3CELLS(f2c, 2, 3, 4));
+        REQUIRE(CHECK3CELLS(f2c, 9, 8, 7));
+        REQUIRE(CHECK3CELLS(f2c, 12, 13, 15));
+        REQUIRE(CHECK3CELLS(f2c, 23, 21, 19));
       }
       THEN(
         "The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
@@ -592,21 +591,21 @@ the line grows vertically
       iso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
       const auto f2c = cc_graph->_fc_2_cc;
       THEN("There are two isotropic coarse cells") {
-        REQUIRE(check4cells(5, 6, 24, 25));
-        REQUIRE(check4cells(17, 18, 27, 26));
+        REQUIRE(CHECK4CELLS(f2c, 5, 6, 24, 25));
+        REQUIRE(CHECK4CELLS(f2c, 17, 18, 27, 26));
       }
       THEN(
         "The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(check2cells(0, 1));
-        REQUIRE(check2cells(11, 10));
-        REQUIRE(check2cells(16, 14));
-        REQUIRE(check2cells(20, 22));
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 11, 10));
+        REQUIRE(CHECK2CELLS(f2c, 16, 14));
+        REQUIRE(CHECK2CELLS(f2c, 20, 22));
       }
       THEN("The interior anisotropic coarse cells are of cardinality 3") {
-        REQUIRE(check3cells(2, 3, 4));
-        REQUIRE(check3cells(9, 8, 7));
-        REQUIRE(check3cells(12, 13, 15));
-        REQUIRE(check3cells(23, 21, 19));
+        REQUIRE(CHECK3CELLS(f2c, 2, 3, 4));
+        REQUIRE(CHECK3CELLS(f2c, 9, 8, 7));
+        REQUIRE(CHECK3CELLS(f2c, 12, 13, 15));
+        REQUIRE(CHECK3CELLS(f2c, 23, 21, 19));
       }
       THEN(
         "The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
@@ -622,15 +621,17 @@ the line grows vertically
       }
     }
   }
-#undef check2cells
-#undef check3cells
-#undef check4cells
+#undef CHECK2CELLS
+#undef CHECK3CELLS
+#undef CHECK4CELLS
 }
 
-#define outcheck2cells(a, b) (fc2cc[a] == fc2cc[b])
-#define outcheck3cells(a, b, c) (fc2cc[a] == fc2cc[b] && fc2cc[b] == fc2cc[c])
-#define outcheck4cells(a, b, c, d) \
-  (fc2cc[a] == fc2cc[b] && fc2cc[b] == fc2cc[c] && fc2cc[c] == fc2cc[d])
+#define OUTCHECK2CELLS(f2c, a, b) ((f2c)[(a)] == (f2c)[(b)])
+#define OUTCHECK3CELLS(f2c, a, b, c) \
+  (OUTCHECK2CELLS(f2c, a, b) && OUTCHECK2CELLS(f2c, b, c))
+#define OUTCHECK4CELLS(f2c, a, b, c, d)                   \
+  (OUTCHECK2CELLS(f2c, a, b) && OUTCHECK2CELLS(f2c, b, c) \
+   && OUTCHECK2CELLS(f2c, c, d))
 SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
   GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
     const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
@@ -648,21 +649,21 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
         alines, correction, Data.dim, goal_card, min_card, max_card);
       THEN("There are two isotropic coarse cells") {
-        REQUIRE(outcheck4cells(5, 6, 24, 25));
-        REQUIRE(outcheck4cells(17, 18, 27, 26));
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 5, 6, 24, 25));
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 17, 18, 27, 26));
       }
       THEN(
         "The anisotropic coarse cells at the boundary are of cardinality 2") {
-        REQUIRE(outcheck2cells(0, 1));
-        REQUIRE(outcheck2cells(11, 10));
-        REQUIRE(outcheck2cells(16, 14));
-        REQUIRE(outcheck2cells(20, 22));
+        REQUIRE(OUTCHECK2CELLS(fc2cc, 0, 1));
+        REQUIRE(OUTCHECK2CELLS(fc2cc, 11, 10));
+        REQUIRE(OUTCHECK2CELLS(fc2cc, 16, 14));
+        REQUIRE(OUTCHECK2CELLS(fc2cc, 20, 22));
       }
       THEN("The interior anisotropic coarse cells are of cardinality 3") {
-        REQUIRE(outcheck3cells(2, 3, 4));
-        REQUIRE(outcheck3cells(9, 8, 7));
-        REQUIRE(outcheck3cells(12, 13, 15));
-        REQUIRE(outcheck3cells(23, 21, 19));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 2, 3, 4));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 9, 8, 7));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 12, 13, 15));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 23, 21, 19));
       }
       THEN(
         "The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
@@ -679,6 +680,6 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
     }
   }
 }
-#undef outcheck2cells
-#undef outcheck3cells
-#undef outcheck4cells
+#undef OUTCHECK2CELLS
+#undef OUTCHECK3CELLS
+#undef OUTCHECK4CELLS
