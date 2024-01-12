@@ -1,3 +1,6 @@
+#ifndef COMMA_PROJECT_TESTDEFS_H
+#define COMMA_PROJECT_TESTDEFS_H
+
 /*
  * CoMMA
  *
@@ -9,9 +12,6 @@
  * Any copyright is dedicated to the Public Domain.
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
-
-#ifndef COMMA_PROJECT_TESTDEFS_H
-#define COMMA_PROJECT_TESTDEFS_H
 
 #include "CoMMA/CoMMATypes.h"
 #include "CoMMA/Coarse_Cell_Container.h"
