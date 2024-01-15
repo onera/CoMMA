@@ -351,7 +351,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH,
-              comma::max_iter + 1)
+              comma::iter_agglo_max_iter + 1)
         );
       }
       // clang-format on

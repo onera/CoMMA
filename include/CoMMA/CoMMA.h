@@ -41,7 +41,7 @@ namespace comma {
 /** @brief Maximum allowed iterations for the iterative algorithm, see
  * \ref Agglomerator_Iterative
  */
-constexpr unsigned short max_iter = 4;
+constexpr CoMMAIntT iter_agglo_max_iter = 4;
 
 /** @brief Main function of the agglomerator, it is used as an interface
  * to build up all the agglomeration process. The result will be the definition
@@ -109,7 +109,8 @@ constexpr unsigned short max_iter = 4;
  * added cell are candidates.
  * @throw invalid_argument whenever dimension is not 2 nor 3, cardinalities are
  * smaller than 1 or not in order, line building is disabled but lines are not
- * provided, or number of iterations is negative or greater than \ref max_iter.
+ * provided, or number of iterations is negative or greater than
+ * \ref iter_agglo_max_iter.
  *
  * @copyright Copyright © 2024 ONERA
  * @author Nicolas Lantos, Alberto Remigi, and Riccardo Milani
@@ -189,11 +190,11 @@ void agglomerate_one_level(
     throw std::invalid_argument(
       "CoMMA - Error: the number of iteration for the choice of the fine "
       "cells must be at least 1");
-  if (fc_choice_iter > static_cast<CoMMAIntType>(max_iter))
+  if (fc_choice_iter > iter_agglo_max_iter)
     throw std::invalid_argument(
       "CoMMA - Error: the number of iteration for the choice of the fine "
       "cells must be at most "
-      + std::to_string(max_iter));
+      + std::to_string(iter_agglo_max_iter));
   if (
     adjMatrix_row_ptr.empty()
     || adjMatrix_row_ptr.back()
