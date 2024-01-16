@@ -156,6 +156,72 @@ job:test_rel:
         - cd $CUSTOM_CI_DIR
         - cd build_rel
         - ./CoMMA_test
+job:build_rel32:
+    stage: build
+    needs: ['job:init']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build_rel32
+        - cd build_rel32
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int32_t" -DINDEX_T="uint32_t" -DBUILD_PYTHON_BINDINGS=Off ..
+        - make -j
+job:test_rel32:
+    stage: test
+    needs: ['job:init', 'job:build_rel32']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build_rel32
+        - ./CoMMA_test
+job:build_rel64:
+    stage: build
+    needs: ['job:init']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build_rel64
+        - cd build_rel64
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int64_t" -DINDEX_T="uint64_t" -DBUILD_PYTHON_BINDINGS=Off ..
+        - make -j
+job:test_rel64:
+    stage: test
+    needs: ['job:init', 'job:build_rel64']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build_rel64
+        - ./CoMMA_test
 job:clang_tidy:
     stage: lint_format
     needs: ["job:init", 'job:build_dbg']
