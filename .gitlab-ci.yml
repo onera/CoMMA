@@ -52,6 +52,7 @@ job:init:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
+        - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
         # We do it manually since there is also perfetto which, however, is not used
         - git submodule update --init --depth 5 Catch2
         - git submodule update --init --depth 5 pybind11
@@ -74,7 +75,7 @@ job:build_dbg:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
         - cd build
-        - cmake -DCODAFLAGS=On -DCOVERAGE=On ..
+        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
         - make -j
     #artifacts:
     #    expire_in: 1 month
@@ -105,6 +106,19 @@ job:test_dbg:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
+job:test_install_pkgconfig:
+    stage: test
+    needs: ['job:init', 'job:build_dbg']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build
+        - make install
+        - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig pkg-config --cflags --libs comma`
 job:build_rel:
     stage: build
     needs: ['job:init']
