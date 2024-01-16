@@ -163,7 +163,7 @@ include(GNUInstallDirs)
 # ${INCLUDE_DIR} (no slash) considers the directory itself
 # ${INCLUDE_DIR}/ (with slash) considers its files only
 install(DIRECTORY ${INCLUDE_DIR}/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  TYPE INCLUDE
   FILES_MATCHING PATTERN "*.h"
   REGEX "deprecated" EXCLUDE
 )
