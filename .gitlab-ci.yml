@@ -48,6 +48,7 @@ job:init:
             - .clang-tidy
             - examples/scripts/*.py
             - examples/scripts/pyproject.toml
+            - config_files/*
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
@@ -71,6 +72,7 @@ job:build_dbg:
             - CMakeLists.txt
             - .gitlab-ci.yml
             - Documentation/Doxyfile
+            - config_files/*
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
@@ -114,6 +116,7 @@ job:test_install_pkgconfig:
             - include/CoMMA/*.h
             - CMakeLists.txt
             - .gitlab-ci.yml
+            - config_files/comma.pc.in
     script:
         - cd $CUSTOM_CI_DIR
         - cd build
