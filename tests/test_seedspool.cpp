@@ -16,7 +16,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Seeds_Pool.h"
 #include "DualGraphExamples.h"
 #include "catch2/catch.hpp"

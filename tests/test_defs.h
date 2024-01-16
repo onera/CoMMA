@@ -13,7 +13,7 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Seeds_Pool.h"

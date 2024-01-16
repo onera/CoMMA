@@ -52,6 +52,27 @@ if ( CODAFLAGS )
   message(STATUS "Added CODA-like extra flags. Current flags are: ${CMAKE_CXX_FLAGS}")
 endif()
 
+# Options for CoMMA types
+set(INT_T "int" CACHE STRING "Type for standard integers")
+set(INDEX_T "unsigned long" CACHE STRING "Type for integers for indices")
+set(REAL_T "double" CACHE STRING "Type for real values")
+function(check_int_type int_type label)
+  # Regex inspired by https://stackoverflow.com/a/12993881/12152457
+  if ( NOT int_type MATCHES "^((un)?signed *)?((long *)*|short *)?(int *)?$"
+      AND NOT int_type MATCHES "^u?int((_(fast|least))?(8|16|32|64)|(max|ptr))_t$" )
+    message(FATAL_ERROR "Invalid ${label} \"${int_type}\": Only integer types accepted")
+  endif()
+  string(TOUPPER ${label} out_label)
+  message(STATUS "${out_label} set to \"${int_type}\"")
+endfunction()
+check_int_type(${INT_T} "integer type")
+check_int_type(${INDEX_T} "index type")
+# Fixed width floating points only in C++23 https://en.cppreference.com/w/cpp/types/floating-point
+if ( NOT REAL_T STREQUAL "float" AND NOT REAL_T MATCHES "^(long )?double$" )
+  message(FATAL_ERROR "Invalid real type \"${REAL_T}\": Only \"(long )double\" and \"float\" accepted")
+endif()
+message(STATUS "REAL TYPE set to \"${REAL_T}\"")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Effective library
@@ -59,9 +80,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 SET(INCLUDE_DIR "include")
 SET(SOURCE_DIR "src")
 
-# headers are in source dir
-
+# Add headers
 include_directories(${INCLUDE_DIR})
+# Adding header with configuration for types and version
+set(ADDITIONAL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include)
+configure_file(config_files/CoMMAConfig.h.in ${ADDITIONAL_INCLUDE_DIR}/${PROJECT_NAME}/CoMMAConfig.h @ONLY)
+include_directories(${ADDITIONAL_INCLUDE_DIR})
 
 SET(PROFILING_DIR "misc_scripts")
 
@@ -159,10 +183,10 @@ endif()
 # installation
 include(GNUInstallDirs)
 
-
 # ${INCLUDE_DIR} (no slash) considers the directory itself
 # ${INCLUDE_DIR}/ (with slash) considers its files only
 install(DIRECTORY ${INCLUDE_DIR}/
+  DIRECTORY ${ADDITIONAL_INCLUDE_DIR}/
   TYPE INCLUDE
   FILES_MATCHING PATTERN "*.h"
   REGEX "deprecated" EXCLUDE

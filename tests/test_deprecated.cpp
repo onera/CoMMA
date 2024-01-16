@@ -13,7 +13,7 @@
 #include <set>
 #include <vector>
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/deprecated/Bimap.h"
 #include "CoMMA/deprecated/Priority_Pair.h"

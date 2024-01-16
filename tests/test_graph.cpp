@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Dual_Graph.h"
 #include "catch2/catch.hpp"
 

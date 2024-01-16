@@ -19,7 +19,10 @@
 
 #include <type_traits>
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMAConfig.h"
+
+#define CoMMA_xstr(s) CoMMA_str(s)
+#define CoMMA_str(s) #s
 
 using namespace comma;  // NOLINT
 using namespace pybind11::literals;  // NOLINT Use _a for args literals
@@ -36,12 +39,15 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     " - compute_neighbourhood_based_wall_distance: compute distance from a "
     "given wall\n"
     "\n"
-    "Types to use with numpy:\n"
+    "Types to use with numpy (suggestion):\n"
     " - IndexType: type for indices\n"
     " - WeightType: type for weights\n"
     " - IntType: type for integers";
-  module_handle.attr("__version__") = "1.3.1",
-  module_handle.attr("IndexType") = "ulong",
+  module_handle.attr("__version__") = CoMMA_xstr(CoMMA_VERSION),
+  // It's a bit hard to convert from C type to numpy type,
+  // https://numpy.org/doc/stable/user/basics.types.html so we use just
+  // suggestions
+    module_handle.attr("IndexType") = "ulong",
   module_handle.attr("WeightType") = "double",
   module_handle.attr("IntType") = "int",
   module_handle.def(
@@ -109,3 +115,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "Compute the neighbourhood-based distance from a given wall",
     "neigh_idxs"_a, "neighs"_a, "wall"_a);
 }
+
+#undef CoMMA_str
+#undef CoMMA_xstr

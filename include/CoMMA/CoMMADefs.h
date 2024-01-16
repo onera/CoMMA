@@ -14,18 +14,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+#include "CoMMA/CoMMAConfig.h"
+
 namespace comma {
-
-/// Type of an index (used by agglomerator CoMMA for edges and nodes).
-using CoMMAIndexT = unsigned long;
-
-/// Type of floating-point values (used by agglomerator CoMMA for this edge
-/// weights).
-using CoMMAWeightT = double;
-
-/// Type of integer for cardinality of coarse cells, dimension, distances,
-/// orders...
-using CoMMAIntT = int;
 
 /** @brief Type of an element according to its boundary faces / edges
  *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...

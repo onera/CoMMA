@@ -90,6 +90,7 @@ job:test_dbg:
     only:
         changes:
             - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -116,7 +117,7 @@ job:test_install_pkgconfig:
             - include/CoMMA/*.h
             - CMakeLists.txt
             - .gitlab-ci.yml
-            - config_files/comma.pc.in
+            - config_files/*.in
     script:
         - cd $CUSTOM_CI_DIR
         - cd build
@@ -128,6 +129,7 @@ job:build_rel:
     only:
         changes:
             - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -145,6 +147,7 @@ job:test_rel:
     only:
         changes:
             - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -159,6 +162,7 @@ job:clang_tidy:
     only:
         changes:
             - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -174,6 +178,7 @@ job:clang_format:
     only:
         changes:
             - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -181,7 +186,7 @@ job:clang_format:
             - .clang-format
     script:
         - cd $CUSTOM_CI_DIR
-        - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)" | xargs clang-format --style=file --dry-run --Werror
+        - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)\(\.in\)\?" | xargs clang-format --style=file --dry-run --Werror
     allow_failure: true
 job:black:
     stage: lint_format_python

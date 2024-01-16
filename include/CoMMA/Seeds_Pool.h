@@ -27,7 +27,7 @@
 #include <utility>
 #include <vector>
 
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Util.h"
 
 namespace comma {

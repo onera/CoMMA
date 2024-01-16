@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Seeds_Pool.h"

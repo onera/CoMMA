@@ -17,7 +17,7 @@
 
 #include "CoMMA/Agglomerator.h"
 #include "CoMMA/CoMMA.h"
-#include "CoMMA/CoMMATypes.h"
+#include "CoMMA/CoMMADefs.h"
 
 using DGEIndexT = comma::CoMMAIndexT;
 using DGEIntT = comma::CoMMAIntT;
