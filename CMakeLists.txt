@@ -21,17 +21,22 @@ project(CoMMA
   HOMEPAGE_URL "https://github.com/onera/CoMMA"
   LANGUAGES CXX
 )
+# Target name
+set(CoMMA_LIB "${PROJECT_NAME}_lib")
 
 # https://stackoverflow.com/questions/57860026/cmake-override-variable-set-in-cmakelists-txt-via-commandline
 # For the current application, better to use an `option`:
 # https://stackoverflow.com/questions/36358217/what-is-the-difference-between-option-and-set-cache-bool-for-a-cmake-variabl
 #set(BUILD_TESTS On CACHE BOOL "Build tests")
 option(BUILD_TESTS "Build tests" ON)
-set(CoMMA_TEST "CoMMA_test")
 option(COVERAGE "Build tests with coverage support" OFF)
+# Target name
+set(CoMMA_TEST "${PROJECT_NAME}_test")
 
 #set(BUILD_PYTHON_BINDINGS On CACHE BOOL "Build python bindings via pybind11")
 option(BUILD_PYTHON_BINDINGS "Build python bindings via pybind11" ON)
+# Target name
+set(CoMMA_PYTHON "${PROJECT_NAME}")
 
 # https://vicrucann.github.io/tutorials/quick-cmake-doxygen/ and
 # https://stackoverflow.com/questions/34878276/build-doxygen-from-cmake-script
@@ -80,12 +85,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 SET(INCLUDE_DIR "include")
 SET(SOURCE_DIR "src")
 
+add_library(${CoMMA_LIB} INTERFACE)
+
 # Add headers
-include_directories(${INCLUDE_DIR})
-# Adding header with configuration for types and version
 set(ADDITIONAL_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include)
 configure_file(config_files/CoMMAConfig.h.in ${ADDITIONAL_INCLUDE_DIR}/${PROJECT_NAME}/CoMMAConfig.h @ONLY)
-include_directories(${ADDITIONAL_INCLUDE_DIR})
+target_include_directories(${CoMMA_LIB} INTERFACE ${INCLUDE_DIR} ${ADDITIONAL_INCLUDE_DIR})
 
 SET(PROFILING_DIR "misc_scripts")
 
@@ -145,9 +150,9 @@ if ( BUILD_TESTS )
   if ( COVERAGE )
     message(STATUS "Coverage support enabled")
     add_compile_options("--coverage")
-    target_link_libraries(${CoMMA_TEST} Catch2::Catch2 gcov)
+    target_link_libraries(${CoMMA_TEST} ${CoMMA_LIB} Catch2::Catch2 gcov)
   else()
-    target_link_libraries(${CoMMA_TEST} Catch2::Catch2)
+    target_link_libraries(${CoMMA_TEST} ${CoMMA_LIB} Catch2::Catch2)
   endif()
 
   enable_testing()
@@ -164,7 +169,8 @@ if ( BUILD_PYTHON_BINDINGS )
   # find the Python interpreter (including pybind might lead to other find files being used)
   find_package(Python COMPONENTS Interpreter Development)
   add_subdirectory(pybind11)
-  pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
+  pybind11_add_module(${CoMMA_PYTHON} ${PYTHONBIND})
+  target_link_libraries(${CoMMA_PYTHON} PUBLIC ${CoMMA_LIB})
 endif()
 
 if ( BUILD_DOC )
@@ -204,7 +210,7 @@ endif()
 if ( BUILD_PYTHON_BINDINGS )
   set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
   # Install generated module
-  install(TARGETS ${PROJECT_NAME}
+  install(TARGETS ${CoMMA_PYTHON}
     COMPONENT python
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
