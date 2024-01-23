@@ -19,11 +19,16 @@ default:
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
     - python3 -c "import gcovr" || python3 -m pip install --user gcovr
+    - python3 -m black --version || python3 -m pip install --user black
+    - python3 -m isort --version || python3 -m pip install --user isort
+    - python3 -m ruff --version || python3 -m pip install --user ruff
 
 stages:
     - init
     - build
     - test
+    - lint_format
+    - lint_format_python
     - documentation
 
 job:init:
@@ -33,15 +38,22 @@ job:init:
         GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
+            - tests/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
             - Documentation/Doxyfile
+            - .clang-format
+            - .clang-tidy
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+            - config_files/*
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
+        - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
         # We do it manually since there is also perfetto which, however, is not used
         - git submodule update --init --depth 5 Catch2
         - git submodule update --init --depth 5 pybind11
@@ -54,16 +66,18 @@ job:build_dbg:
     needs: ['job:init']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
+            - include/CoMMA/*.h
+            - src/*.cpp
+            - tests/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
             - Documentation/Doxyfile
+            - config_files/*
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
         - cd build
-        - cmake -DCODAFLAGS=On -DCOVERAGE=On ..
+        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
         - make -j
     #artifacts:
     #    expire_in: 1 month
@@ -75,15 +89,17 @@ job:test_dbg:
     needs: ['job:init', 'job:build_dbg']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
     script:
         - cd $CUSTOM_CI_DIR
         - cd build
         - ./CoMMA_test -r junit > test_a.xml
-        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./CoMMA_lib/CoMMA.cpp' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./src/CoMMA.cpp' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month
@@ -93,13 +109,29 @@ job:test_dbg:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
+job:test_install_pkgconfig:
+    stage: test
+    needs: ['job:init', 'job:build_dbg']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - config_files/*.in
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build
+        - make install
+        - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig pkg-config --cflags --libs comma`
 job:build_rel:
     stage: build
     needs: ['job:init']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
             - Documentation/Doxyfile
@@ -114,14 +146,147 @@ job:test_rel:
     needs: ['job:init', 'job:build_rel']
     only:
         changes:
-            - CoMMA_lib/*.{cpp,h}
-            - tests/**/*.{cpp,h}
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
             - CMakeLists.txt
             - .gitlab-ci.yml
     script:
         - cd $CUSTOM_CI_DIR
         - cd build_rel
         - ./CoMMA_test
+job:build_rel32:
+    stage: build
+    needs: ['job:init']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build_rel32
+        - cd build_rel32
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int32_t" -DINDEX_T="uint32_t" -DBUILD_PYTHON_BINDINGS=Off ..
+        - make -j
+job:test_rel32:
+    stage: test
+    needs: ['job:init', 'job:build_rel32']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build_rel32
+        - ./CoMMA_test
+job:build_rel64:
+    stage: build
+    needs: ['job:init']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - Documentation/Doxyfile
+    script:
+        - cd $CUSTOM_CI_DIR
+        - mkdir -p build_rel64
+        - cd build_rel64
+        - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int64_t" -DINDEX_T="uint64_t" -DBUILD_PYTHON_BINDINGS=Off ..
+        - make -j
+job:test_rel64:
+    stage: test
+    needs: ['job:init', 'job:build_rel64']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+    script:
+        - cd $CUSTOM_CI_DIR
+        - cd build_rel64
+        - ./CoMMA_test
+job:clang_tidy:
+    stage: lint_format
+    needs: ["job:init", 'job:build_dbg']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - .clang-tidy
+    script:
+        - cd $CUSTOM_CI_DIR
+        - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" include/CoMMA/*.h src/*.cpp
+    allow_failure: true
+job:clang_format:
+    stage: lint_format
+    needs: ["job:init", 'job:build_dbg']
+    only:
+        changes:
+            - include/CoMMA/*.h
+            - config_files/*.{cpp,h}.in
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - .clang-format
+    script:
+        - cd $CUSTOM_CI_DIR
+        - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)\(\.in\)\?" | xargs clang-format --style=file --dry-run --Werror
+    allow_failure: true
+job:black:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m black --check *.py
+    allow_failure: true
+job:isort:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m isort --check *.py
+    allow_failure: true
+job:ruff:
+    stage: lint_format_python
+    needs: ["job:init"]
+    only:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+    script:
+        - cd $CUSTOM_CI_DIR/examples/scripts
+        - python3 -m ruff check *.py
+    allow_failure: true
 pages:
     stage: documentation
     needs: ['job:init', 'job:build_dbg', 'job:test_dbg']
@@ -139,6 +304,7 @@ pages:
     rules:
         - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
           changes:
-            - CoMMA_lib/*.{cpp,h,md}
+            - include/CoMMA/*.h,md
+            - src/*.cpp
             - .gitlab-ci.yml
             - Documentation/Doxyfile

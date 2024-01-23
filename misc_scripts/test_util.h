@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -13,26 +13,6 @@
 #ifndef COMMA_PROJECT_TEST_UTIL_H
 #define COMMA_PROJECT_TEST_UTIL_H
 
-/*
- * CoMMA
- *
- * Copyright © 2023 ONERA
- *
- * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -41,8 +21,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 /** @brief Convert string to the type of the template parameter
  * @tparam T Type to which the string will be converted to
  * @param[in] str The string to convert
@@ -50,8 +28,8 @@ using namespace std;
  * @notes Taken from here https://gist.github.com/mark-d-holmberg/862733
  */
 template<typename T>
-inline T convert_to(const string &str) {
-  istringstream ss(str);
+inline T convert_to(const std::string &str) {
+  std::istringstream const ss(str);
   T num;
   ss >> num;
   return num;
@@ -92,25 +70,25 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 CoMMAIntType read_mesh_from_file(
-  const string fname,
-  vector<CoMMAIndexType> &CSR_row,
-  vector<CoMMAIndexType> &CSR_col,
-  vector<CoMMAWeightType> &CSR_val,
-  vector<CoMMAWeightType> &volumes,
-  vector<CoMMAIntType> &n_bnd_faces,
-  vector<vector<CoMMAWeightType>> &centers) {
-  ifstream file(fname, ios::in);
+  const std::string &fname,
+  std::vector<CoMMAIndexType> &CSR_row,
+  std::vector<CoMMAIndexType> &CSR_col,
+  std::vector<CoMMAWeightType> &CSR_val,
+  std::vector<CoMMAWeightType> &volumes,
+  std::vector<CoMMAIntType> &n_bnd_faces,
+  std::vector<std::vector<CoMMAWeightType>> &centers) {
+  std::ifstream file(fname, std::ios::in);
   CoMMAIntType dim = 0;
   if (file) {
-    string line, val;
-    stringstream ssline;
+    std::string line, val;
+    std::stringstream ssline;
 
     // Dimension
     getline(file, line);
     dim = convert_to<CoMMAIntType>(line);
     if (!(dim == 2 || dim == 3)) {
       file.close();
-      throw invalid_argument("Error: dimension must be 2 or 3");
+      throw std::invalid_argument("Error: dimension must be 2 or 3");
     }
 
     // CSR_row
@@ -126,18 +104,18 @@ CoMMAIntType read_mesh_from_file(
     getline(file, line);
     ssline.clear();
     ssline.str(line);
-    CoMMAIndexType i = 0;
-    while (getline(ssline, val, ',') && i < sz)
-      CSR_col[i++] = convert_to<CoMMAIndexType>(val);
+    CoMMAIndexType idx = 0;
+    while (getline(ssline, val, ',') && idx < sz)
+      CSR_col[idx++] = convert_to<CoMMAIndexType>(val);
 
     // CSR_val
     CSR_val.resize(sz);
     getline(file, line);
     ssline.clear();
     ssline.str(line);
-    i = 0;
-    while (getline(ssline, val, ',') && i < sz)
-      CSR_val[i++] = convert_to<CoMMAWeightType>(val);
+    idx = 0;
+    while (getline(ssline, val, ',') && idx < sz)
+      CSR_val[idx++] = convert_to<CoMMAWeightType>(val);
 
     // volumes
     const auto nc = CSR_row.size() - 1;
@@ -145,43 +123,43 @@ CoMMAIntType read_mesh_from_file(
     getline(file, line);
     ssline.clear();
     ssline.str(line);
-    i = 0;
-    while (getline(ssline, val, ',') && i < nc)
-      volumes[i++] = convert_to<CoMMAWeightType>(val);
+    idx = 0;
+    while (getline(ssline, val, ',') && idx < nc)
+      volumes[idx++] = convert_to<CoMMAWeightType>(val);
 
     // boundary faces
     n_bnd_faces.resize(nc);
     getline(file, line);
     ssline.clear();
     ssline.str(line);
-    i = 0;
-    while (getline(ssline, val, ',') && i < nc)
-      n_bnd_faces[i++] = convert_to<CoMMAIntType>(val);
+    idx = 0;
+    while (getline(ssline, val, ',') && idx < nc)
+      n_bnd_faces[idx++] = convert_to<CoMMAIntType>(val);
 
     // centers
     centers.resize(nc);
     getline(file, line);
     ssline.clear();
     ssline.str(line);
-    i = 0;
+    idx = 0;
     CoMMAIndexType read = 0;
-    vector<CoMMAWeightType> tmp(dim);
+    std::vector<CoMMAWeightType> tmp(dim);
     for (auto &c : centers)
       c.resize(dim);
-    while (getline(ssline, val, ',') && i < nc) {
-      centers[i][read++] = convert_to<CoMMAWeightType>(val);
-      if (read == static_cast<CoMMAIndexType>(dim)) read = 0, ++i;
+    while (getline(ssline, val, ',') && idx < nc) {
+      centers[idx][read++] = convert_to<CoMMAWeightType>(val);
+      if (read == static_cast<CoMMAIndexType>(dim)) read = 0, ++idx;
     }
 
   } else {
-    throw invalid_argument("File not found");
+    throw std::invalid_argument("File not found");
   }
   file.close();
   return dim;
 }
 
-/** @brief Starting to the description of a fine mesh / graph and the result of
- * an agglomeration (\p fc2cc), build the description of the coarse graph
+/** @brief Starting from the description of a fine mesh / graph and the result
+ * of an agglomeration (\p fc2cc), build the description of the coarse graph
  * @param[in] fc2cc Result of an agglomeration telling giving the relation FC to
  * CC
  * @param[in] fine_CSR_row The row pointer of the CSR representation of the fine
@@ -210,24 +188,24 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 void build_coarse_CSR(
-  const vector<CoMMAIndexType> &fc2cc,
-  const vector<CoMMAIndexType> &fine_CSR_row,
-  const vector<CoMMAIndexType> &fine_CSR_col,
-  const vector<CoMMAWeightType> &fine_CSR_val,
-  const vector<CoMMAWeightType> &fine_volumes,
-  const vector<CoMMAIntType> &fine_n_bnd_faces,
-  const vector<vector<CoMMAWeightType>> &fine_centers,
-  vector<CoMMAIndexType> &coarse_CSR_row,
-  vector<CoMMAIndexType> &coarse_CSR_col,
-  vector<CoMMAWeightType> &coarse_CSR_val,
-  vector<CoMMAWeightType> &coarse_volumes,
-  vector<CoMMAIntType> &coarse_n_bnd_faces,
-  vector<vector<CoMMAWeightType>> &coarse_centers) {
+  const std::vector<CoMMAIndexType> &fc2cc,
+  const std::vector<CoMMAIndexType> &fine_CSR_row,
+  const std::vector<CoMMAIndexType> &fine_CSR_col,
+  const std::vector<CoMMAWeightType> &fine_CSR_val,
+  const std::vector<CoMMAWeightType> &fine_volumes,
+  const std::vector<CoMMAIntType> &fine_n_bnd_faces,
+  const std::vector<std::vector<CoMMAWeightType>> &fine_centers,
+  std::vector<CoMMAIndexType> &coarse_CSR_row,
+  std::vector<CoMMAIndexType> &coarse_CSR_col,
+  std::vector<CoMMAWeightType> &coarse_CSR_val,
+  std::vector<CoMMAWeightType> &coarse_volumes,
+  std::vector<CoMMAIntType> &coarse_n_bnd_faces,
+  std::vector<std::vector<CoMMAWeightType>> &coarse_centers) {
   const auto dim_pts = fine_centers[0].size();
-  const CoMMAIndexType n_fc = static_cast<CoMMAIndexType>(fc2cc.size());
+  const auto n_fc = static_cast<CoMMAIndexType>(fc2cc.size());
   CoMMAIndexType n_cc = 0;
   // Building the CC
-  map<CoMMAIndexType, set<CoMMAIndexType>> ccs{};
+  std::map<CoMMAIndexType, std::set<CoMMAIndexType>> ccs{};
   for (CoMMAIndexType i = 0; i < n_fc; ++i) {
     const auto cc = fc2cc[i];
     if (cc > n_cc) n_cc = cc;
@@ -242,9 +220,9 @@ void build_coarse_CSR(
   coarse_CSR_row[0] = 0;
   for (const auto &[cc, fcs] : ccs) {
     CoMMAWeightType vol{0.};
-    vector<CoMMAWeightType> cen(dim_pts, 0.);
+    std::vector<CoMMAWeightType> cen(dim_pts, 0.);
     CoMMAIntType n_bnd = 0;
-    map<CoMMAIndexType, CoMMAWeightType> coarse_val;
+    std::map<CoMMAIndexType, CoMMAWeightType> coarse_val;
     for (const auto &fc : fcs) {
       vol += fine_volumes[fc];
       if (fine_n_bnd_faces[fc] > n_bnd) n_bnd = fine_n_bnd_faces[fc];

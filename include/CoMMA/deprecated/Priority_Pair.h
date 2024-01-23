@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -16,7 +16,7 @@
 
 #include <utility>
 
-using namespace std;
+namespace comma {
 
 /** @brief Wrapper around the STL pair with custom 'less than' operator: as in
  * the standard case, first we compare the first elements, then the second ones;
@@ -30,11 +30,12 @@ template<typename A, typename B>
 class Priority_Pair {
 private:
   /** @brief STL pair around which current class is built */
-  pair<A, B> _p;
+  std::pair<A, B> _p;
 
 public:
   /** @brief Constructor */
-  Priority_Pair(){};
+  Priority_Pair() = default;
+  ;
 
   /** @brief Constructor
    *  @param a First element
@@ -43,7 +44,8 @@ public:
   Priority_Pair(const A &a, const B &b) : _p(a, b){};
 
   /** @brief Destructor */
-  ~Priority_Pair(){};
+  ~Priority_Pair() = default;
+  ;
 
   /** @brief Accessor to the first element
    *  @return The first element
@@ -64,12 +66,10 @@ public:
    * b.second); false otherwise
    */
   inline friend bool operator<(const Priority_Pair &a, const Priority_Pair &b) {
-    if (a._p.first > b._p.first)
-      return true;
-    else if (a._p.first < b._p.first)
-      return false;
-    else /* a._p.first == b._p.first */
-      return a._p.second < b._p.second;
+    if (a._p.first > b._p.first) return true;
+    if (a._p.first < b._p.first) return false;
+    /* a._p.first == b._p.first */
+    return a._p.second < b._p.second;
   }
 
   /** @brief Operator 'equal'
@@ -82,4 +82,7 @@ public:
     return (a._p.first == b._p.first) && (a._p.second == b._p.second);
   }
 };
+
+}  // end namespace comma
+
 #endif  // COMMA_PROJECT_PRIORITY_PAIR_H

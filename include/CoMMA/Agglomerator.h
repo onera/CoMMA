@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -26,12 +26,12 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Coarse_Cell_Container.h"
-#include "Dual_Graph.h"
-#include "Neighbourhood.h"
-#include "Util.h"
+#include "CoMMA/Coarse_Cell_Container.h"
+#include "CoMMA/Dual_Graph.h"
+#include "CoMMA/Neighbourhood.h"
+#include "CoMMA/Util.h"
 
-using namespace std;
+namespace comma {
 
 // How to pass parameters from base class
 // https://stackoverflow.com/questions/9692675/c-constructor-where-parameters-are-used-by-base-class-constructor
@@ -57,7 +57,7 @@ public:
    * \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ \n (Recall that in 2D the
    * volume is the surface)
    */
-  function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)>
+  std::function<CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)>
     _compute_AR;
 
   /** @brief The constructor of the interface
@@ -69,11 +69,12 @@ public:
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator(
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
-    shared_ptr<
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+      graph,
+    std::shared_ptr<
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       cc_graph,
-    shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
     CoMMAIntType dimension = 3) :
       _dimension(dimension),
@@ -81,7 +82,7 @@ public:
       _cc_graph(cc_graph),
       _seeds_pool(seeds_pool) {
     if ((_dimension != 2) && (_dimension != 3)) {
-      throw range_error("dimension can only be 2 or 3");
+      throw std::range_error("dimension can only be 2 or 3");
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
@@ -101,7 +102,7 @@ public:
   /** @brief Accessor to retrieve the fine cells to coarse cells from the coarse
    * cell graphs class
    */
-  inline vector<CoMMAIndexType> get_fc_2_cc() const {
+  inline std::vector<CoMMAIndexType> get_fc_2_cc() const {
     return _cc_graph->_fc_2_cc;
   }
 
@@ -120,7 +121,7 @@ public:
     const CoMMAIntType goal_card,
     const CoMMAIntType min_card,
     const CoMMAIntType max_card,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     bool correction_steps) = 0;
 
 protected:
@@ -146,21 +147,21 @@ protected:
    */
   CoMMAIntType _threshold_card = 0;
   /** @brief List of number of cells per coarse cell created */
-  vector<CoMMAIndexType> _l_nb_of_cells;
+  std::vector<CoMMAIndexType> _l_nb_of_cells;
   /** @brief Dual_Graph object determining Fine cells graph and hence the
    * connectivity
    */
-  shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+  std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
     _fc_graph;
   /** @brief pointer to Coarse_Cell_Container element
    */
-  shared_ptr<
+  std::shared_ptr<
     Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
     _cc_graph;
   /** @brief Seeds_Pool object giving the order in which the fine cells should
    * be considered when agglomerating
    */
-  shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+  std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
     _seeds_pool;
 };
 
@@ -180,16 +181,16 @@ class Agglomerator_Anisotropic :
     public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Container for an anisotropic line */
-  using AnisotropicLine = deque<CoMMAIndexType>;
+  using AnisotropicLine = std::deque<CoMMAIndexType>;
 
   /** @brief (Shared) Pointer to an anisotropic line */
-  using AnisotropicLinePtr = shared_ptr<AnisotropicLine>;
+  using AnisotropicLinePtr = std::shared_ptr<AnisotropicLine>;
 
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using CoMMAPairType = std::pair<CoMMAIndexType, CoMMAWeightType>;
   /** @brief Type of set of pairs */
   using CoMMASetOfPairType =
-    set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+    std::set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
 
   /** @brief Constructor.
    *  @param[in] graph Dual_Graph object that determines the connectivity
@@ -213,21 +214,23 @@ public:
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
-    shared_ptr<
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+      graph,
+    std::shared_ptr<
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       cc_graph,
-    shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
     const CoMMAWeightType threshold_anisotropy,
-    const vector<CoMMAIndexType> &agglomerationLines_Idx,
-    const vector<CoMMAIndexType> &agglomerationLines,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAIndexType> &agglomerationLines_Idx,
+    const std::vector<CoMMAIndexType> &agglomerationLines,
+    const std::vector<CoMMAWeightType> &priority_weights,
     const bool build_lines,
     const bool odd_line_length,
     CoMMAIntType dimension = 3) :
       Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         graph, cc_graph, seeds_pool, dimension),
+      _should_agglomerate(true),
       _aniso_neighbours(),
       _odd_line_length(odd_line_length) {
     // for every defined level (1 by default), contains the number of cells
@@ -235,10 +238,8 @@ public:
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
     this->_l_nb_of_cells.push_back(graph->_number_of_cells);
 
-    this->_nb_lines = vector<CoMMAIndexType>(2);
-    this->_v_lines = vector<vector<AnisotropicLinePtr>>(2);
-
-    this->_should_agglomerate = true;
+    this->_nb_lines = std::vector<CoMMAIndexType>(2);
+    this->_v_lines = std::vector<std::vector<AnisotropicLinePtr>>(2);
 
     if (build_lines) {
       const CoMMAWeightType thr =
@@ -258,7 +259,7 @@ public:
            idx_ptr != agglomerationLines_Idx.cend(); ++idx_ptr) {
         const auto ln_sz = *idx_ptr - (*(idx_ptr - 1));
         if (ln_sz > 1) {
-          this->_v_lines[0].push_back(make_shared<AnisotropicLine>(
+          this->_v_lines[0].push_back(std::make_shared<AnisotropicLine>(
             agglomerationLines.cbegin() + (*(idx_ptr - 1)),
             agglomerationLines.cbegin() + (*idx_ptr)));
           this->_nb_lines[0]++;
@@ -266,14 +267,15 @@ public:
       }
       this->_should_agglomerate = this->_nb_lines[0] > 0;
       if (!this->_should_agglomerate)
-        cout << "CoMMA - No anisotropic line was built (e.g., only one-cell "
-                "lines). Skipping anisotropic agglomeration"
-             << endl;
+        std::cout
+          << "CoMMA - No anisotropic line was built (e.g., only one-cell "
+             "lines). Skipping anisotropic agglomeration"
+          << std::endl;
     }
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Anisotropic() = default;
+  ~Agglomerator_Anisotropic() override = default;
 
   /** @brief Specialization of the pure virtual function to the class
    * Agglomerator_Anisotropic.
@@ -295,7 +297,7 @@ public:
     const CoMMAIntType goal_card,
     const CoMMAIntType min_card,
     const CoMMAIntType max_card,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     bool correction_steps) override {
     // Unused parameters
     CoMMAUnused(goal_card);
@@ -313,14 +315,14 @@ public:
       // since we want to loop forwards or backwards according to some runtime
       // value See, e.g., https://stackoverflow.com/a/56133699/12152457
       auto loop_line = [&](auto begin, auto end) {
-        AnisotropicLinePtr line_lvl_p_one = make_shared<AnisotropicLine>();
+        AnisotropicLinePtr line_lvl_p_one = std::make_shared<AnisotropicLine>();
         for (auto line_it = begin; line_it != end; line_it += 2) {
           // we agglomerate cells along the agglomeration line, hence we have to
           // go through the faces and agglomerate two faces together
           // Here we have to consider a special case when we have an odd number
           // of cells: THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID
           // ALGORITHM
-          unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+          std::unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
           // We update the neighbours. At this stage, we do not check if it is
           // or will be agglomerated since there will be a cleaning step after
           // the anisotropic agglomeration
@@ -435,12 +437,12 @@ public:
    */
   void export_anisotropic_lines(
     CoMMAIntType level,
-    vector<CoMMAIndexType> &aniso_lines_idx,
-    vector<CoMMAIndexType> &aniso_lines) const {
+    std::vector<CoMMAIndexType> &aniso_lines_idx,
+    std::vector<CoMMAIndexType> &aniso_lines) const {
     // Reset lines
     aniso_lines_idx.clear();
     aniso_lines.clear();
-    if (this->_should_agglomerate && this->_v_lines[level].size() > 0) {
+    if (this->_should_agglomerate && !this->_v_lines[level].empty()) {
       // If at the level of agglomeration "level" the vector containing the
       // number of lines is empty, hence it means no line has been found at the
       // current level. variable cumulating the number of fine cells in the
@@ -467,7 +469,7 @@ public:
   }
 
   /** @brief Vector of number of Anisotropic agglomeration lines per level */
-  vector<CoMMAIndexType> _nb_lines;
+  std::vector<CoMMAIndexType> _nb_lines;
 
   /** @brief _v_lines : Agglomeration lines structure:
    * - vector : level\n
@@ -475,7 +477,7 @@ public:
    * - deque : line cells\n
    * - e.g., _v_lines[0] --> agglomeration lines at the finest level
    */
-  vector<vector<AnisotropicLinePtr>> _v_lines;
+  std::vector<std::vector<AnisotropicLinePtr>> _v_lines;
 
   /** @brief Whether agglomeration is possible: for instance, if anisotropy
    * requested but no anisotropic cells found, there is no actual need.
@@ -495,13 +497,14 @@ protected:
    * @return whether at least one line was built
    */
   bool build_anisotropic_lines(
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     const CoMMAWeightType threshold_anisotropy) {
-    deque<CoMMAIndexType> aniso_seeds_pool;
+    std::deque<CoMMAIndexType> aniso_seeds_pool;
     // It is the max_weight, hence the maximum area among the faces composing
     // the cell. Used to recognized the face
-    vector<CoMMAWeightType> max_weights(this->_fc_graph->_number_of_cells, 0.0);
-    vector<bool> to_treat(this->_fc_graph->_number_of_cells, false);
+    std::vector<CoMMAWeightType> max_weights(
+      this->_fc_graph->_number_of_cells, 0.0);
+    std::vector<bool> to_treat(this->_fc_graph->_number_of_cells, false);
     // Computation of the anisotropic cell, alias of the cells for which the
     // ratio between the face with maximum area and the face with minimum area
     // is more than a given threshold.
@@ -509,9 +512,9 @@ protected:
       max_weights, to_treat, aniso_seeds_pool, threshold_anisotropy,
       priority_weights, 0);
     if (aniso_seeds_pool.empty()) {
-      cout << "CoMMA - No anisotropic cell found. Skipping anisotropic "
-              "agglomeration"
-           << endl;
+      std::cout << "CoMMA - No anisotropic cell found. Skipping anisotropic "
+                   "agglomeration"
+                << std::endl;
       return false;
     }
     // Size might not be the dimension
@@ -529,11 +532,11 @@ protected:
       // we save the primal seed for the opposite direction check that will
       // happen later
       const auto primal_seed = i_fc;
-      optional<vector<CoMMAWeightType>> primal_dir = nullopt;
+      std::optional<std::vector<CoMMAWeightType>> primal_dir = std::nullopt;
       // seed to be considered to add or not a new cell to the line
       CoMMAIndexType seed = primal_seed;
       // Create the new line
-      AnisotropicLinePtr cur_line = make_shared<AnisotropicLine>();
+      AnisotropicLinePtr cur_line = std::make_shared<AnisotropicLine>();
       // we add the first seed
       cur_line->push_back(seed);
       to_treat[seed] = false;
@@ -542,22 +545,22 @@ protected:
       // Flag to determine if we arrived at the end of an extreme of a line
       bool opposite_direction_check = false;
       // Info about growth direction
-      vector<CoMMAWeightType> prev_cen =
+      std::vector<CoMMAWeightType> prev_cen =
         this->_fc_graph->_centers[seed];  // OK copy
-      vector<CoMMAWeightType> prev_dir(pts_dim);
+      std::vector<CoMMAWeightType> prev_dir(pts_dim);
       bool empty_line = true;
       // Start the check from the seed
       // while the line is not ended
       while (!end) {
         // for the seed (that is updated each time end!= true) we fill the
         // neighbours and the weights
-        const vector<CoMMAIndexType> v_neighbours =
+        const std::vector<CoMMAIndexType> v_neighbours =
           this->_fc_graph->get_neighbours(seed);
-        const vector<CoMMAWeightType> v_w_neighbours =
+        const std::vector<CoMMAWeightType> v_w_neighbours =
           this->_fc_graph->get_weights(seed);
         auto n_it = this->_fc_graph->neighbours_cbegin(seed);
         auto w_it = this->_fc_graph->weights_cbegin(seed);
-        // vector of the candidates to continue the line
+        // std::vector of the candidates to continue the line
         CoMMASetOfPairType candidates;
         // If the line is long enough, we use the direction. Otherwise, we use
         // the weight. Putting a high-level if to reduce the branching inside
@@ -575,11 +578,10 @@ protected:
           for (; n_it != this->_fc_graph->neighbours_cend(seed);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
-              vector<CoMMAWeightType> cur_dir(pts_dim);
+              std::vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
                 prev_cen, this->_fc_graph->_centers[*n_it], cur_dir);
-              const CoMMAWeightType dot =
-                dot_product<CoMMAWeightType>(prev_dir, cur_dir);
+              const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
               if (!dot_deviate<CoMMAWeightType>(dot))
                 candidates.emplace(fabs(dot), *n_it);
             }
@@ -619,10 +621,10 @@ protected:
             for (auto it = this->_fc_graph->neighbours_cbegin(seed);
                  it != this->_fc_graph->neighbours_cend(seed); ++it) {
               if (to_treat[*it]) {
-                vector<CoMMAWeightType> cur_dir(pts_dim);
+                std::vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
                   prev_cen, this->_fc_graph->_centers[*it], cur_dir);
-                const CoMMAWeightType dot =
+                const auto dot =
                   dot_product<CoMMAWeightType>(prev_dir, cur_dir);
                 if (!dot_deviate<CoMMAWeightType>(dot))
                   candidates.emplace(fabs(dot), *it);
@@ -666,9 +668,9 @@ protected:
     }  // End of loop over anisotropic cells
 
     if (this->_nb_lines[0] == 0) {
-      cout << "CoMMA - No anisotropic line was built (e.g., only isolated "
-              "anisotropic cells). Skipping anisotropic agglomeration"
-           << endl;
+      std::cout << "CoMMA - No anisotropic line was built (e.g., only isolated "
+                   "anisotropic cells). Skipping anisotropic agglomeration"
+                << std::endl;
       return false;
     }
     return true;
@@ -677,7 +679,7 @@ protected:
   /** @brief Neighbours of the anisotropic cells agglomerated. They are used to
    * update the seeds pool
    */
-  deque<CoMMAIndexType> _aniso_neighbours;
+  std::deque<CoMMAIndexType> _aniso_neighbours;
 
   /** @brief Whether anisotropic lines with odd length are allowed. */
   bool _odd_line_length;
@@ -715,7 +717,7 @@ public:
   CoMMAIntType _fc_iter;
 
   /** @brief Creator responsible for neighborhood objects */
-  shared_ptr<NeighbourhoodCreatorBaseType> _neigh_crtor;
+  std::shared_ptr<NeighbourhoodCreatorBaseType> _neigh_crtor;
 
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and in this way activates also the constructor of the base
@@ -733,11 +735,12 @@ public:
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Isotropic(
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
-    shared_ptr<
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+      graph,
+    std::shared_ptr<
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       cc_graph,
-    shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
@@ -746,13 +749,13 @@ public:
         graph, cc_graph, seeds_pool, dimension),
       _fc_iter(fc_iter) {
     if (neighbourhood_type == CoMMANeighbourhoodT::EXTENDED)
-      _neigh_crtor = make_shared<NeighbourhoodCreatorExtType>();
+      _neigh_crtor = std::make_shared<NeighbourhoodCreatorExtType>();
     else
-      _neigh_crtor = make_shared<NeighbourhoodCreatorPFType>();
+      _neigh_crtor = std::make_shared<NeighbourhoodCreatorPFType>();
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Isotropic() = default;
+  ~Agglomerator_Isotropic() override = default;
 
   /** @brief The task of the function is to set the parameters of
    * determine the cardinality limits with respect to the parameters passed
@@ -770,13 +773,13 @@ public:
     // Note[RM]: I tried make the following const static but ended up
     // with some SEGFAULT with Intel possibly linked to the following
     // https://stackoverflow.com/a/36406774
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_min_card = {
+    std::unordered_map<CoMMAIntType, CoMMAIntType> d_default_min_card = {
       {2, 3}, {3, 6}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_max_card = {
+    std::unordered_map<CoMMAIntType, CoMMAIntType> d_default_max_card = {
       {2, 5}, {3, 10}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_goal_card = {
+    std::unordered_map<CoMMAIntType, CoMMAIntType> d_default_goal_card = {
       {2, 4}, {3, 8}};
-    unordered_map<CoMMAIntType, CoMMAIntType> d_default_threshold_card = {
+    std::unordered_map<CoMMAIntType, CoMMAIntType> d_default_threshold_card = {
       {2, 2}, {3, 3}};
     // Definition of _min_card
     if (min_card == 0) {
@@ -829,7 +832,7 @@ public:
     const CoMMAIntType goal_card,
     const CoMMAIntType min_card,
     const CoMMAIntType max_card,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     bool correction_steps) override {
     set_agglomeration_parameter(goal_card, min_card, max_card);
     constexpr bool is_anistropic = false;
@@ -843,7 +846,7 @@ public:
       // 2) Choose the set of Coarse Cells with the specification of the
       // algorithm in the children class
       CoMMAIntType compactness = 0;
-      const unordered_set<CoMMAIndexType> set_current_cc =
+      const std::unordered_set<CoMMAIndexType> set_current_cc =
         choose_optimal_cc_and_update_seeds_pool(
           seed.value(), priority_weights, compactness);
       // 3)  Creation of cc
@@ -873,7 +876,7 @@ public:
    * @return An approximation of the surface of a boundary face
    */
   inline CoMMAWeightType estimate_boundary_face(
-    const vector<CoMMAWeightType> &int_faces) const {
+    const std::vector<CoMMAWeightType> &int_faces) const {
     // Approximate with an average of the internal faces
     // We could choose many kinds of average, e.g. arithmetic or geometric, I
     // honestly don't know if one is better then the other...
@@ -882,7 +885,7 @@ public:
     return pow(
       accumulate(
         int_faces.begin(), int_faces.end(), CoMMAWeightType{1.},
-        multiplies<>()),
+        std::multiplies<>()),
       CoMMAWeightType{1.} / int_faces.size());
   }
 
@@ -906,7 +909,7 @@ public:
     const CoMMAIndexType i_fc,
     const CoMMAWeightType cc_diam,
     const CoMMAWeightType cc_vol,
-    const unordered_set<CoMMAIndexType> &fc_of_cc,
+    const std::unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
     CoMMAIntType &shared_faces,
     CoMMAWeightType &aspect_ratio,
@@ -920,12 +923,13 @@ public:
     }
 
     // Compute new diameter
-    const vector<CoMMAWeightType> &cen_fc = this->_fc_graph->_centers[i_fc];
+    const std::vector<CoMMAWeightType> &cen_fc =
+      this->_fc_graph->_centers[i_fc];
     CoMMAWeightType max_diam = cc_diam * cc_diam;
     for (const auto i_fc_cc : fc_of_cc) {
-      const CoMMAWeightType d = squared_euclidean_distance<CoMMAWeightType>(
+      const auto dist = squared_euclidean_distance<CoMMAWeightType>(
         cen_fc, this->_fc_graph->_centers[i_fc_cc]);
-      if (d > max_diam) max_diam = d;
+      if (dist > max_diam) max_diam = dist;
     }  // for i_fc_cc
     new_diam = sqrt(max_diam);
 
@@ -943,9 +947,10 @@ public:
    * number of neighbours of a fine cell inside a coarse cell
    *  @return the (unordered) set of the fine cells composing the coarse cell
    */
-  virtual unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
+  virtual std::unordered_set<CoMMAIndexType>
+  choose_optimal_cc_and_update_seeds_pool(
     const CoMMAIndexType seed,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     CoMMAIntType &compactness) = 0;
 };
 
@@ -982,11 +987,12 @@ public:
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Biconnected(
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
-    shared_ptr<
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+      graph,
+    std::shared_ptr<
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       cc_graph,
-    shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
@@ -997,7 +1003,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Biconnected() = default;
+  ~Agglomerator_Biconnected() override = default;
 
   /** @brief Specialization of the pure virtual function in the parent class, to
    * be used in couple with the agglomerate_one_level of the
@@ -1009,27 +1015,27 @@ public:
    * number of neighbours of a fine cell inside a coarse cell
    *  @return the (unordered) set of the fine cells composing the coarse cell
    */
-  unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
+  std::unordered_set<CoMMAIndexType> choose_optimal_cc_and_update_seeds_pool(
     const CoMMAIndexType seed,
-    const vector<CoMMAWeightType> &priority_weights,
+    const std::vector<CoMMAWeightType> &priority_weights,
     CoMMAIntType &compactness) override {
     bool is_order_primary = false;
     // The goal of this function is to choose from a pool of neighbour the
     // better one to build a compact coarse cell
     assert(this->_goal_card > 1);  // _goal_card has been initialized
     // OUTPUT: Definition of the current cc, IT WILL BE GIVEN AS AN OUTPUT
-    unordered_set<CoMMAIndexType> s_current_cc = {seed};
+    std::unordered_set<CoMMAIndexType> s_current_cc = {seed};
     // Dictionary of the neighbourhood of the seed, the key is the global index
     // of the cell and the value the order of distance from the seed (1 order
     // direct neighbourhood, 2 order etc.)
-    unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_seed;
+    std::unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_seed;
     // Number of fine cells constituting the current coarse cell in
     // construction.
     CoMMAIntType size_current_cc = 1;  // CC contains only one cell: the seed
     // set to 3 as default we set to this value the maximum order to which we
     // search to compose the coarse cell
     CoMMAIntType max_order_of_neighbourhood =
-      max(this->_min_neighbourhood, this->_max_card / this->_dimension);
+      std::max(this->_min_neighbourhood, this->_max_card / this->_dimension);
 
     // We fill the d_n_of_seeds considering the initial seed passed
     this->_fc_graph->compute_neighbourhood_of_cc(
@@ -1074,12 +1080,13 @@ public:
       // This dictionary is used to store the eligible cc: i.e. its size is
       // inside the permitted range. This is useful to track back our step if
       // needed. [size of the current, [cell set, d_n_of seed]]
-      unordered_map<
-        CoMMAIntType, pair<
-                        unordered_set<CoMMAIndexType>,
-                        unordered_map<CoMMAIndexType, CoMMAIntType>>>
+      std::unordered_map<
+        CoMMAIntType, std::pair<
+                        std::unordered_set<CoMMAIndexType>,
+                        std::unordered_map<CoMMAIndexType, CoMMAIntType>>>
         dict_cc_in_creation;
-      CoMMAIntType min_external_faces = numeric_limits<CoMMAIntType>::max();
+      CoMMAIntType min_external_faces =
+        std::numeric_limits<CoMMAIntType>::max();
       CoMMAIntType max_compact = 0;
       CoMMAIntType arg_min_card = this->_min_card;
       // Here we define the exact dimension of the coarse cell as the min
@@ -1087,8 +1094,8 @@ public:
       // choice in case of -1) and the dictionary of the boundary cells, it
       // means the total number of neighbourhood cells until the order we have
       // given (as default 3, so until the third order)
-      const CoMMAIntType max_ind =
-        min(this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
+      const CoMMAIntType max_ind = std::min(
+        this->_max_card, static_cast<CoMMAIntType>(d_n_of_seed.size() + 1));
       // This formula does not work
       CoMMAIntType number_of_external_faces_current_cc =
         this->_fc_graph->get_nb_of_neighbours(seed)
@@ -1096,18 +1103,18 @@ public:
       // d_keys_to_set from Util.h, it takes the keys of the unordered map and
       // create an unordered set. The unordered set is representing hence all
       // the neighbours of seed until a given order.
-      const unordered_set<CoMMAIndexType> s_neighbours_of_seed =
+      const std::unordered_set<CoMMAIndexType> s_neighbours_of_seed =
         d_keys_to_set<CoMMAIndexType, CoMMAIntType>(d_n_of_seed);
       // Build the class neighbourhood
       auto neighbourhood = this->_neigh_crtor->create(
         s_neighbours_of_seed, priority_weights, this->_dimension);
       // Compactness is used when choosing the best cell. We compute it
       // iteratively as the agglomeration advances.
-      unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
+      std::unordered_map<CoMMAIndexType, CoMMAIntType> cur_compact_by_fc{};
       cur_compact_by_fc.reserve(max_ind);
       cur_compact_by_fc[seed] = 0;
-      constexpr auto second_less = [](const auto &p, const auto &q) {
-        return p.second < q.second;
+      constexpr auto second_less = [](const auto &left, const auto &right) {
+        return left.second < right.second;
       };
       CoMMAIndexType next_cell = seed;  // Dummy initialization
       // Choice of the fine cells to agglomerate we enter in a while, we store
@@ -1117,15 +1124,17 @@ public:
         neighbourhood->update(
           next_cell, this->_fc_graph->get_neighbours(next_cell));
         next_cell = 0;  // Dummy initialization
-        CoMMAWeightType min_ar_diam = numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType min_ar_vol = numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType min_ar_diam =
+          std::numeric_limits<CoMMAWeightType>::max();
+        CoMMAWeightType min_ar_vol =
+          std::numeric_limits<CoMMAWeightType>::max();
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in next_cell. It takes account also
         // the fine cells that has been added until now.
         // min(max_ind - size_current_cc, this->_fc_iter)
         this->compute_best_fc_to_add(
-          min(max_ind - size_current_cc, this->_fc_iter), neighbourhood,
+          std::min(max_ind - size_current_cc, this->_fc_iter), neighbourhood,
           d_n_of_seed, is_order_primary, diam_cc, vol_cc, tmp_cc, next_cell,
           // output
           max_faces_in_common, min_ar_diam, min_ar_vol);
@@ -1179,13 +1188,13 @@ public:
           }
 
           // We update the dictionary of eligible coarse cells
-          unordered_map<CoMMAIndexType, CoMMAIntType> new_dict;
+          std::unordered_map<CoMMAIndexType, CoMMAIntType> new_dict;
           new_dict[next_cell] = d_n_of_seed[next_cell];
-          pair<
-            unordered_set<CoMMAIndexType>,
-            unordered_map<CoMMAIndexType, CoMMAIntType>>
-            p = make_pair(tmp_cc, new_dict);
-          dict_cc_in_creation[size_current_cc] = p;
+          std::pair<
+            std::unordered_set<CoMMAIndexType>,
+            std::unordered_map<CoMMAIndexType, CoMMAIntType>>
+            tmp_pair = std::make_pair(tmp_cc, new_dict);
+          dict_cc_in_creation[size_current_cc] = tmp_pair;
         }
 
         // Update of diam_cc and vol_cc with the new fc added
@@ -1197,7 +1206,7 @@ public:
       }
 
       // Selecting best CC to return
-      s_current_cc = move(dict_cc_in_creation[arg_min_card].first);
+      s_current_cc = std::move(dict_cc_in_creation[arg_min_card].first);
 
       // If we do not chose the biggest cc, we put the useless fc back to the
       // pool
@@ -1219,14 +1228,15 @@ public:
       const auto cc_neighs = this->_fc_graph->get_neighbourhood_of_cc(
         s_current_cc, this->_cc_graph->_is_fc_agglomerated);
       // Basically, like d_n_of_seed but with key and value swapped
-      map<CoMMAIntType, unordered_set<CoMMAIndexType>> neighs_by_order{};
+      std::map<CoMMAIntType, std::unordered_set<CoMMAIndexType>>
+        neighs_by_order{};
       // For those that were outside max neighbourhood order
-      unordered_set<CoMMAIndexType> neighs_not_found{};
-      for (const auto &s : cc_neighs) {
-        if (d_n_of_seed.find(s) != d_n_of_seed.end())
-          neighs_by_order[d_n_of_seed.at(s)].insert(s);
+      std::unordered_set<CoMMAIndexType> neighs_not_found{};
+      for (const auto &neigh : cc_neighs) {
+        if (d_n_of_seed.find(neigh) != d_n_of_seed.end())
+          neighs_by_order[d_n_of_seed.at(neigh)].insert(neigh);
         else
-          neighs_not_found.insert(s);
+          neighs_not_found.insert(neigh);
       }
       for (const auto &[o, neighs] : neighs_by_order)
         if (!neighs.empty())
@@ -1268,14 +1278,14 @@ public:
    */
   virtual void compute_best_fc_to_add(
     const CoMMAIntType fc_iter,
-    const shared_ptr<
+    const std::shared_ptr<
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       neighbourhood,
-    const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
+    const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
     const CoMMAWeightType &diam_cc,
     const CoMMAWeightType &vol_cc,
-    const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
+    const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
     CoMMAWeightType &min_ar_diam,
@@ -1283,7 +1293,7 @@ public:
     CoMMAUnused(fc_iter);
     //  this function defines the best fine cells to add to create the coarse
     // cell for the current coarse cell considered
-    CoMMAWeightType min_ar = numeric_limits<CoMMAWeightType>::max();
+    CoMMAWeightType min_ar = std::numeric_limits<CoMMAWeightType>::max();
     const auto neighbours = neighbourhood->get_candidates();
     CoMMAIndexType arg_max_faces_in_common = neighbours[0];
 
@@ -1292,9 +1302,9 @@ public:
       // the number of shared faces and/or minimizes the Aspect Ratio Compute
       // features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
-      CoMMAWeightType new_ar = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightType new_ar_diam = numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightType new_ar_vol = numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar = std::numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar_diam = std::numeric_limits<CoMMAWeightType>::min();
+      CoMMAWeightType new_ar_vol = std::numeric_limits<CoMMAWeightType>::min();
       this->compute_next_cc_features(
         i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
         // out
@@ -1388,11 +1398,12 @@ public:
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Iterative(
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>> graph,
-    shared_ptr<
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+      graph,
+    std::shared_ptr<
       Coarse_Cell_Container<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       cc_graph,
-    shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
@@ -1403,7 +1414,7 @@ public:
   }
 
   /** @brief Destructor*/
-  virtual ~Agglomerator_Iterative() = default;
+  ~Agglomerator_Iterative() override = default;
 
   /** @brief Specialization of the parent function. This is an iterative
    * version. Computes the best fine cell to add to the coarse cell. The choice
@@ -1433,34 +1444,34 @@ public:
    */
   void compute_best_fc_to_add(
     const CoMMAIntType fc_iter,
-    const shared_ptr<
+    const std::shared_ptr<
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       neighbourhood,
-    const unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
+    const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
     const CoMMAWeightType &diam_cc,
     const CoMMAWeightType &vol_cc,
-    const unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
+    const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
     CoMMAWeightType &min_ar_diam,
     CoMMAWeightType &min_ar_vol) const override {
     CoMMAIndexType outer_argmax_faces{0};
     CoMMAIntType ref_max_faces = max_faces_in_common;
-    CoMMAWeightType outer_ar = numeric_limits<CoMMAWeightType>::max();
+    CoMMAWeightType outer_ar = std::numeric_limits<CoMMAWeightType>::max();
     for (const auto &i_fc : neighbourhood->get_candidates()) {
       auto cur_neighbourhood = this->_neigh_crtor->clone(neighbourhood);
       CoMMAWeightType inner_ar{-1.};
       CoMMAIntType inner_max_faces_in_common{0};
       CoMMAWeightType inner_min_ar_diam =
-        numeric_limits<CoMMAWeightType>::max();
+        std::numeric_limits<CoMMAWeightType>::max();
       CoMMAWeightType inner_min_ar_vol{0.};
       this->compute_next_cc_features(
         i_fc, diam_cc, vol_cc, s_of_fc_for_current_cc,
         inner_max_faces_in_common, inner_ar, inner_min_ar_diam,
         inner_min_ar_vol);
       cur_neighbourhood->update(i_fc, this->_fc_graph->get_neighbours(i_fc));
-      unordered_set<CoMMAIndexType> cur_fc{
+      std::unordered_set<CoMMAIndexType> cur_fc{
         s_of_fc_for_current_cc.begin(), s_of_fc_for_current_cc.end()};
       cur_fc.insert(i_fc);
       // Store value of mother cell
@@ -1470,7 +1481,7 @@ public:
         CoMMAIndexType cur_argmin{0};
         CoMMAIntType cur_max_faces_in_common{0};
         CoMMAWeightType cur_min_ar_diam =
-          numeric_limits<CoMMAWeightType>::max();
+          std::numeric_limits<CoMMAWeightType>::max();
         CoMMAWeightType cur_min_ar_vol{0.};
         CoMMAWeightType cur_min_ar{0.};
         this->compute_best_fc_to_add(
@@ -1553,5 +1564,7 @@ public:
     }  // for i_fc
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_AGGLOMERATOR_H

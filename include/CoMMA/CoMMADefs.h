@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -14,16 +14,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-/// Type of an index (used by agglomerator CoMMA for edges and nodes).
-using CoMMAIndexT = unsigned long;
+#include "CoMMA/CoMMAConfig.h"
 
-/// Type of floating-point values (used by agglomerator CoMMA for this edge
-/// weights).
-using CoMMAWeightT = double;
-
-/// Type of integer for cardinality of coarse cells, dimension, distances,
-/// orders...
-using CoMMAIntT = int;
+namespace comma {
 
 /** @brief Type of an element according to its boundary faces / edges
  *  The terms come from the NIA paper: Nishikawa, Diskin, Thomas...
@@ -63,5 +56,7 @@ enum CoMMASeedsPoolT : CoMMAIntT {
    */
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
 };
+
+}  // end namespace comma
 
 #endif

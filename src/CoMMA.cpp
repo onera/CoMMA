@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -11,7 +11,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "CoMMA.h"
+#include "CoMMA/CoMMA.h"
 
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -19,11 +19,18 @@
 
 #include <type_traits>
 
-#include "CoMMATypes.h"
+#include "CoMMA/CoMMAConfig.h"
+
+#define CoMMA_xstr(s) CoMMA_str(s)
+#define CoMMA_str(s) #s
+
+using namespace comma;  // NOLINT
+using namespace pybind11::literals;  // NOLINT Use _a for args literals
+using namespace std;  // NOLINT
 
 using CoMMASignedIndexT = make_signed<CoMMAIndexT>::type;
-using namespace pybind11::literals;  // Use _a for args literals
 
+// NOLINTNEXTLINE
 PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.doc() =
     "CoMMA is an agglomeration library\n"
@@ -32,12 +39,15 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     " - compute_neighbourhood_based_wall_distance: compute distance from a "
     "given wall\n"
     "\n"
-    "Types to use with numpy:\n"
+    "Types to use with numpy (suggestion):\n"
     " - IndexType: type for indices\n"
     " - WeightType: type for weights\n"
     " - IntType: type for integers";
-  module_handle.attr("__version__") = "1.3.1",
-  module_handle.attr("IndexType") = "ulong",
+  module_handle.attr("__version__") = CoMMA_xstr(CoMMA_VERSION),
+  // It's a bit hard to convert from C type to numpy type,
+  // https://numpy.org/doc/stable/user/basics.types.html so we use just
+  // suggestions
+    module_handle.attr("IndexType") = "ulong",
   module_handle.attr("WeightType") = "double",
   module_handle.attr("IntType") = "int",
   module_handle.def(
@@ -49,7 +59,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       const vector<CoMMAWeightT> &volumes,
 
       // Additional info about the mesh
-      const vector<vector<CoMMAWeightT>> centers,
+      const vector<vector<CoMMAWeightT>> &centers,
       const vector<CoMMAWeightT> &priority_weights,
       const vector<CoMMAIndexT> &anisotropicCompliantCells,
       const vector<CoMMAIntT> &n_bnd_faces,
@@ -105,3 +115,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "Compute the neighbourhood-based distance from a given wall",
     "neigh_idxs"_a, "neighs"_a, "wall"_a);
 }
+
+#undef CoMMA_str
+#undef CoMMA_xstr

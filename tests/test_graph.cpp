@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -12,11 +12,12 @@
 
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Dual_Graph.h"
+#include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Dual_Graph.h"
 #include "catch2/catch.hpp"
 
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 SCENARIO("Subgraph", "[Subgraph]") {
   GIVEN("We have the CSR representation") {
@@ -31,9 +32,9 @@ SCENARIO("Subgraph", "[Subgraph]") {
         _mapping_l_to_g, true);
       THEN("We remove a node") { Marion->remove_node(50); }
       THEN("We add a node") {
-        vector<CoMMAIndexT> v_neigh = {30, 20};
-        CoMMAIndexT i_fc = 10;
-        vector<CoMMAWeightT> weight = {1, 1};
+        const vector<CoMMAIndexT> v_neigh = {30, 20};
+        const CoMMAIndexT i_fc = 10;
+        const vector<CoMMAWeightT> weight = {1, 1};
         Marion->insert_node(v_neigh, i_fc, 1, weight);
         REQUIRE(Marion->check_connectivity() == true);
         REQUIRE(Marion->_mapping_l_to_g[5] == 10);

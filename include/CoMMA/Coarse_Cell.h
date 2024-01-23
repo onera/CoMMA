@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -20,9 +20,9 @@
 #include <utility>
 #include <vector>
 
-#include "Dual_Graph.h"
+#include "CoMMA/Dual_Graph.h"
 
-using namespace std;
+namespace comma {
 
 /** @brief Class describing a coarse cell.
  * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
@@ -38,7 +38,7 @@ class Coarse_Cell {
 public:
   /** @brief Type for a shared pointer to a Dual_Graph object */
   using DualGraphPtr =
-    shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
+    std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>;
 
   /** @brief Constructor of the class
    * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
@@ -53,7 +53,7 @@ public:
   Coarse_Cell(
     DualGraphPtr fc_graph,
     CoMMAIndexType i_cc,
-    const unordered_set<CoMMAIndexType> &s_fc,
+    const std::unordered_set<CoMMAIndexType> &s_fc,
     CoMMAIntType compactness,
     bool is_isotropic = true) :
       _idx(i_cc),
@@ -83,7 +83,7 @@ public:
   bool _is_isotropic;
 
   /** @brief Set of fine cells composing the Coarse cell */
-  unordered_set<CoMMAIndexType> _s_fc;
+  std::unordered_set<CoMMAIndexType> _s_fc;
 
   /** @brief Method that return a boolean determining if the coarse cell is
    * defined by a connected sub-graph or not.
@@ -99,7 +99,7 @@ public:
    */
   virtual void insert_cell(
     const CoMMAIndexType i_fc,
-    const optional<CoMMAIntType> new_compactness = nullopt) {
+    const std::optional<CoMMAIntType> new_compactness) {
     _s_fc.insert(i_fc);
     ++_cardinality;
     _compactness = new_compactness.has_value()
@@ -113,8 +113,8 @@ public:
    * of the CC after the addition
    */
   virtual void insert_cells(
-    const unordered_set<CoMMAIndexType> &fcs,
-    const optional<CoMMAIntType> new_compactness = nullopt) {
+    const std::unordered_set<CoMMAIndexType> &fcs,
+    const std::optional<CoMMAIntType> new_compactness) {
     _s_fc.insert(fcs.begin(), fcs.end());
     _cardinality += fcs.size();
     _compactness = new_compactness.has_value()
@@ -148,7 +148,7 @@ public:
   using SubGraphType = Subgraph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
   /** @brief Type for a shared pointer to a Subgraph object */
-  using SubGraphPtr = shared_ptr<SubGraphType>;
+  using SubGraphPtr = std::shared_ptr<SubGraphType>;
 
   /** @brief Constructor of the class
    * @param[in] fc_graph Dual_Graph object from where are taken the set of fine
@@ -163,7 +163,7 @@ public:
   Coarse_Cell_Subgraph(
     DualGraphPtr fc_graph,
     CoMMAIndexType i_cc,
-    const unordered_set<CoMMAIndexType> &s_fc,
+    const std::unordered_set<CoMMAIndexType> &s_fc,
     CoMMAIntType compactness,
     bool is_isotropic = true) :
       BaseClass(fc_graph, i_cc, s_fc, compactness, is_isotropic),
@@ -171,22 +171,23 @@ public:
       _is_connectivity_up_to_date(true) {
     // initialization vectors
     CoMMAIndexType position = 0;
-    vector<CoMMAWeightType> volumes;
-    vector<CoMMAWeightType> CSR_vals{};
-    vector<CoMMAIndexType> CSR_row = {0};
-    vector<CoMMAIndexType> CSR_col{};
-    vector<CoMMAIndexType> col_ind{};
-    vector<CoMMAIndexType> mapping{};
+    std::vector<CoMMAWeightType> volumes;
+    std::vector<CoMMAWeightType> CSR_vals{};
+    std::vector<CoMMAIndexType> CSR_row = {0};
+    std::vector<CoMMAIndexType> CSR_col{};
+    std::vector<CoMMAIndexType> col_ind{};
+    std::vector<CoMMAIndexType> mapping{};
     for (const CoMMAIndexType &i_fc : this->_s_fc) {
       // we add to the mapping the i_fc
       mapping.push_back(i_fc);
       // get neighbours and the weights associated
-      const vector<CoMMAIndexType> neigh =
+      const std::vector<CoMMAIndexType> neigh =
         this->_fc_graph->get_neighbours(i_fc);
-      const vector<CoMMAWeightType> area = this->_fc_graph->get_weights(i_fc);
+      const std::vector<CoMMAWeightType> area =
+        this->_fc_graph->get_weights(i_fc);
       for (auto it = neigh.begin(); it != neigh.end(); ++it) {
         if (
-          find(this->_s_fc.begin(), this->_s_fc.end(), *it)
+          std::find(this->_s_fc.begin(), this->_s_fc.end(), *it)
           != this->_s_fc.end()) {
           ++position;
           col_ind.push_back(*it);
@@ -199,11 +200,11 @@ public:
 
     // Map in the local subgraph
     for (auto it = col_ind.begin(); it != col_ind.end(); ++it) {
-      auto indx = find(mapping.begin(), mapping.end(), *it);
+      auto indx = std::find(mapping.begin(), mapping.end(), *it);
       CSR_col.push_back(indx - mapping.begin());
     }
 
-    _cc_graph = make_shared<SubGraphType>(
+    _cc_graph = std::make_shared<SubGraphType>(
       s_fc.size(), CSR_row, CSR_col, CSR_vals, volumes, mapping, is_isotropic);
   }
 
@@ -214,7 +215,7 @@ public:
    */
   void insert_cell(
     const CoMMAIndexType i_fc,
-    const optional<CoMMAIntType> new_compactness = nullopt) override {
+    const std::optional<CoMMAIntType> new_compactness) override {
     // As base class...
     this->_s_fc.insert(i_fc);
     ++this->_cardinality;
@@ -234,8 +235,8 @@ public:
    * of the CC after the addition
    */
   void insert_cells(
-    const unordered_set<CoMMAIndexType> &fcs,
-    const optional<CoMMAIntType> new_compactness = nullopt) override {
+    const std::unordered_set<CoMMAIndexType> &fcs,
+    const std::optional<CoMMAIntType> new_compactness) override {
     // As base class...
     this->_s_fc.insert(fcs.begin(), fcs.end());
     this->_cardinality += fcs.size();
@@ -266,5 +267,7 @@ public:
   /** @brief Whether the connectivity has been checked */
   bool _is_connectivity_up_to_date;
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_COARSE_CELL_H

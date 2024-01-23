@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -19,7 +19,8 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+namespace comma {
+
 /** @brief A template class implementing a custom queue data structure
  *  @tparam T Type of the elements
  *  @deprecated Not used anymore
@@ -28,13 +29,13 @@ template<typename T>
 class Queue {
 private:
   /** @brief The vector of elements */
-  deque<T> _elems;
+  std::deque<T> _elems;
 
 public:
   /** @brief Constructor */
-  Queue() {}
+  Queue() = default;
   /** @brief Destructor */
-  ~Queue() {}
+  ~Queue() = default;
   /** @brief Push an element on the top of the queue.
    *  @param elem The element to add
    */
@@ -60,4 +61,7 @@ public:
    */
   inline bool empty() const { return _elems.empty(); }
 };
+
+}  // end namespace comma
+
 #endif

@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -14,16 +14,17 @@
 
 #include <vector>
 
-#include "CoMMA.h"
+#include "CoMMA/CoMMA.h"
+#include "DualGraphExamples.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
 #include "test_defs.h"
 
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
-    const DualGPy Data = DualGPy();
+    const DualGEx Data = DualGEx();
     // Construction of the Dual Graph element
     shared_ptr<SeedsPoolT> seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -56,7 +57,7 @@ SCENARIO("Test of a structure", "[structure]") {
       };
       THEN("We see that the agglomeration is not set, hence set to 0") {
         test agg = test(fc_graph, cc_graph, seeds_pool, 2);
-        CoMMAIntT testing = agg.test_variable();
+        const CoMMAIntT testing = agg.test_variable();
         REQUIRE(testing == 0);
       }
     }
@@ -101,7 +102,7 @@ SCENARIO("Test of main function", "[structure]") {
   // The following tests are basically a copy of test_isoagglo but with the
   // main function
   GIVEN("A simple 4x4 Cartesian mesh") {
-    const DualGPy_quad_4 Data = DualGPy_quad_4();
+    const DualGEx_quad_4 Data = DualGEx_quad_4();
     WHEN("We agglomerate with neighbourhood priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = false, build_lines = true, odd_length = true,
@@ -233,7 +234,7 @@ SCENARIO("Test of main function", "[structure]") {
     }
   }
   GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
-    const DualGPy_aniso_3cell Data = DualGPy_aniso_3cell();
+    const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     WHEN("We agglomerate with bad argument") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = true, build_lines = true, odd_length = true,
@@ -244,32 +245,36 @@ SCENARIO("Test of main function", "[structure]") {
       // clang-format off
       // Off to highlight which parameter should be responsible for the throw
       THEN("CoMMA throws if invalid arguments") {
+        // Bad dimension: only 2 or 3
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               5,
-              Data.dim, goal_card, min_card, max_card)
+              goal_card, min_card, max_card)
         );
         vector<CoMMAIndexT> tmp = {};
+        // Bad graph definition: indirection
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, min_card, goal_card, min_card, max_card)
+              Data.dim, goal_card, min_card, max_card)
         );
         tmp.push_back(2);
+        // Bad graph definition: indirection
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes, Data.centers,
               Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, build_lines,
               aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
-              min_card, goal_card, min_card, max_card)
+              goal_card, min_card, max_card)
         );
+        // Bad graph definition: values do not correspond to indirection
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr,
@@ -279,7 +284,8 @@ SCENARIO("Test of main function", "[structure]") {
               odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim, goal_card,
               min_card, max_card)
         );
-        vector<CoMMAWeightT> tmp_w = {};
+        // Bad graph definition: values do not correspond to indirection
+        const vector<CoMMAWeightT> tmp_w = {};
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
@@ -288,15 +294,17 @@ SCENARIO("Test of main function", "[structure]") {
               Data.n_bnd_faces, build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
               alines, correction, Data.dim, goal_card, min_card, max_card)
         );
+        // Bad cardinality: min higher than goal
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card,
-              8,
+              goal_card + 1,
               max_card)
         );
+        // Bad cardinality: goal cardinality is 0
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
@@ -306,8 +314,9 @@ SCENARIO("Test of main function", "[structure]") {
               0,
               min_card, max_card)
         );
-        vector<CoMMAIndexT> tmp_idx = {0, 0},
-                            tmp_lines = {4};
+        // Bad anisotropic line definition
+        vector<CoMMAIndexT> tmp_idx = {0, 0};
+        vector<CoMMAIndexT> tmp_lines = {4};
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
@@ -317,6 +326,7 @@ SCENARIO("Test of main function", "[structure]") {
               tmp_idx, tmp_lines,
               correction, Data.dim, goal_card, min_card, max_card)
         );
+        // Bad cardinality: singular cardinality is 0
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
@@ -325,6 +335,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.dim, goal_card, min_card, max_card,
               0)
         );
+        // Bad iteration number: is 0
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
@@ -333,13 +344,14 @@ SCENARIO("Test of main function", "[structure]") {
               Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH,
               0)
         );
+        // Bad iteration number: greater than threshold
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH,
-              100)
+              comma::iter_agglo_max_iter + 1)
         );
       }
       // clang-format on

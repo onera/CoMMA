@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -23,9 +23,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Util.h"
+#include "CoMMA/Util.h"
 
-using namespace std;
+namespace comma {
 
 /** @brief Class representing the neighbourhood of a given cell in the graph.
  * Mind that no information about the element being already agglomerated or not
@@ -54,15 +54,15 @@ a pair with the same index.
 
 public:
   /** @brief Type of pair */
-  using CoMMAPairType = pair<CoMMAIndexType, CoMMAWeightType>;
+  using CoMMAPairType = std::pair<CoMMAIndexType, CoMMAWeightType>;
   /** @brief Type of set of pairs */
   using CoMMASetOfPairType =
-    set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
+    std::set<CoMMAPairType, CustomPairGreaterFunctor<CoMMAPairType>>;
   /** @brief Functor used if find-like function relying only on first element of
    * the pair */
   using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
   /** @brief Type for container of candidates */
-  using CandidatesContainerType = deque<CoMMAIndexType>;
+  using CandidatesContainerType = std::deque<CoMMAIndexType>;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -71,9 +71,9 @@ public:
    *visit
    **/
   Neighbourhood(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &weights) :
-      _s_neighbours_of_seed(move(s_neighbours_of_seed)),
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &weights) :
+      _s_neighbours_of_seed(std::move(s_neighbours_of_seed)),
       _weights(weights),
       _s_fc(),
       _candidates() {}
@@ -82,6 +82,9 @@ public:
   Neighbourhood(
     const Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &other) =
     default;
+
+  /** @brief Destructor */
+  virtual ~Neighbourhood() = default;
 
   /** @brief Method that updates the neighbourhood. Given the \p new_fc, if is
    * in the neighbours, it is deleted. Then, the new neighbours are added as
@@ -92,7 +95,7 @@ public:
    */
   virtual void update(
     const CoMMAIndexType new_fc,
-    const vector<CoMMAIndexType> &new_neighbours) = 0;
+    const std::vector<CoMMAIndexType> &new_neighbours) = 0;
 
   /** @brief Get candidates that should be consider in the next step of the
    * agglomeration
@@ -107,13 +110,13 @@ protected:
    * Here, we can find all the neighbours of order up to a user-defined value
    * of the initial seed. Hence, it holds the cells allowed to be agglomerated
    */
-  const unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
+  const std::unordered_set<CoMMAIndexType> _s_neighbours_of_seed;
 
   /** @brief Priority weights */
-  const vector<CoMMAWeightType> &_weights;
+  const std::vector<CoMMAWeightType> &_weights;
 
   /** @brief Set of the fine cells composing the coarse cell */
-  unordered_set<CoMMAIndexType> _s_fc;
+  std::unordered_set<CoMMAIndexType> _s_fc;
 
   /** @brief Candidates that should be considered when choosing the next fine
    * cell to add to the coarse one
@@ -163,8 +166,8 @@ public:
    *visit
    **/
   Neighbourhood_Extended(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &weights) :
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &weights) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights) {}
 
@@ -172,6 +175,9 @@ public:
   Neighbourhood_Extended(
     const Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
       &other) = default;
+
+  /** @brief Destructor */
+  ~Neighbourhood_Extended() override = default;
 
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are added as
@@ -182,11 +188,11 @@ public:
    */
   void update(
     const CoMMAIndexType new_fc,
-    const vector<CoMMAIndexType> &new_neighbours) override {
+    const std::vector<CoMMAIndexType> &new_neighbours) override {
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
     auto new_fc_ptr =
-      find(this->_candidates.begin(), this->_candidates.end(), new_fc);
+      std::find(this->_candidates.begin(), this->_candidates.end(), new_fc);
     if (new_fc_ptr != this->_candidates.end())
       this->_candidates.erase(new_fc_ptr);
 
@@ -195,7 +201,7 @@ public:
     CoMMASetOfPairType neighs;
     for (const CoMMAIndexType &i_fc : new_neighbours) {
       if (
-        (find(this->_candidates.begin(), this->_candidates.end(), i_fc)
+        (std::find(this->_candidates.begin(), this->_candidates.end(), i_fc)
          == this->_candidates.end())
         && (this->_s_fc.count(i_fc) == 0)
         && (this->_s_neighbours_of_seed.count(i_fc) > 0)) {
@@ -246,8 +252,8 @@ public:
    *  @param[in] dimension Dimension of the problem
    **/
   Neighbourhood_Pure_Front(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &weights,
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &weights,
     CoMMAIntType dimension) :
       Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         s_neighbours_of_seed, weights),
@@ -260,6 +266,9 @@ public:
                            CoMMAWeightType,
                            CoMMAIntType> &other) = default;
 
+  /** @brief Destructor */
+  ~Neighbourhood_Pure_Front() override = default;
+
   /** @brief Method that updates the neighbourhood. Given the new_fc, if is in
    * the neighbours, it is deleted. Then, the new neighbours are considered as
    * candidates
@@ -269,18 +278,18 @@ public:
    */
   void update(
     const CoMMAIndexType new_fc,
-    const vector<CoMMAIndexType> &new_neighbours) override {
+    const std::vector<CoMMAIndexType> &new_neighbours) override {
     this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
-    for (auto &q : this->_q_neighs_w_weights) {
+    for (auto &queue : this->_q_neighs_w_weights) {
       // There is erase_if for sets in C++20
-      // erase_if(q, [&new_fc](const CoMMAPairType &p){return p.first ==
+      // erase_if(queue, [&new_fc](const CoMMAPairType &p){return p.first ==
       // new_fc;});
-      auto it =
-        find_if(q.begin(), q.end(), CoMMAPairFindFirstBasedType(new_fc));
+      auto it = std::find_if(
+        queue.begin(), queue.end(), CoMMAPairFindFirstBasedType(new_fc));
       //[&new_fc](const CoMMAPairType &p){return p.first == new_fc;});
-      if (it != q.end()) q.erase(it);
+      if (it != queue.end()) queue.erase(it);
     }
 
     // Compute the set of direct neighbours allowed by original
@@ -320,8 +329,8 @@ public:
       auto cur_back = decltype(this->_q_neighs_w_weights.size()){
         this->_q_neighs_w_weights.size() - 1};
       while (cur_front <= cur_back) {
-        typename decltype(this->_q_neighs_w_weights)::iterator it =
-          this->_q_neighs_w_weights.begin() + (cur_front++);
+        // typename decltype(this->_q_neighs_w_weights)::iterator it =
+        auto it = this->_q_neighs_w_weights.begin() + (cur_front++);
         if (!it->empty()) {
           this->extract_and_update_candidates(*it);
           break;
@@ -351,7 +360,7 @@ public:
 protected:
   /** @brief History of the first-order-neighbourhoods of the fine cells
    * recently agglomerated */
-  deque<CoMMASetOfPairType> _q_neighs_w_weights;
+  std::deque<CoMMASetOfPairType> _q_neighs_w_weights;
 
   /** @brief Dimensionality of the problem (_dimension = 2 -> 2D, _dimension = 3
    * -> 3D)*/
@@ -375,6 +384,12 @@ public:
   using NeighbourhoodBaseType =
     Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
+  /** @brief Constructor */
+  NeighbourhoodCreator() = default;
+
+  /** @brief Destructor */
+  virtual ~NeighbourhoodCreator() = default;
+
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -384,17 +399,17 @@ public:
    *  @param[in] dimension Dimension of the problem
    *  @return a shared pointer to a new Neighborhood object
    */
-  virtual shared_ptr<NeighbourhoodBaseType> create(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &priority_weights,
+  virtual std::shared_ptr<NeighbourhoodBaseType> create(
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &priority_weights,
     const CoMMAIntType dimension) const = 0;
 
   /** @brief Create a new Neighbourhood object by copy
    *  @param[in] other Shared pointer to an existing Neighbourhood object
    *  @return a shared pointer to a new Neighborhood object
    */
-  virtual shared_ptr<NeighbourhoodBaseType> clone(
-    shared_ptr<NeighbourhoodBaseType> other) const = 0;
+  virtual std::shared_ptr<NeighbourhoodBaseType> clone(
+    std::shared_ptr<NeighbourhoodBaseType> other) const = 0;
 };
 
 /** @brief Creator of Neighbourhood_Extended objects. It can create
@@ -422,6 +437,12 @@ public:
   using NeighbourhoodDerivedType =
     Neighbourhood_Extended<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
+  /** @brief Constructor */
+  NeighbourhoodExtendedCreator() : CreatorBaseType() {}
+
+  /** @brief Destructor */
+  ~NeighbourhoodExtendedCreator() override = default;
+
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -432,12 +453,12 @@ public:
    *  @return a shared pointer (base type) to a new Neighborhood (derived type)
    *  object
    */
-  inline shared_ptr<NeighbourhoodBaseType> create(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &priority_weights,
+  inline std::shared_ptr<NeighbourhoodBaseType> create(
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &priority_weights,
     const CoMMAIntType dimension) const override {
     CoMMAUnused(dimension);
-    return make_shared<NeighbourhoodDerivedType>(
+    return std::make_shared<NeighbourhoodDerivedType>(
       s_neighbours_of_seed, priority_weights);
   }
 
@@ -446,11 +467,11 @@ public:
    *  @return a shared pointer (base type) to a new Neighborhood (derived type)
    *  object
    */
-  inline shared_ptr<NeighbourhoodBaseType> clone(
-    shared_ptr<NeighbourhoodBaseType> other) const override {
+  inline std::shared_ptr<NeighbourhoodBaseType> clone(
+    std::shared_ptr<NeighbourhoodBaseType> other) const override {
     // Using copy-constructor
-    return make_shared<NeighbourhoodDerivedType>(
-      *dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
+    return std::make_shared<NeighbourhoodDerivedType>(
+      *std::dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
   }
 };
 
@@ -479,6 +500,12 @@ public:
   using NeighbourhoodDerivedType =
     Neighbourhood_Pure_Front<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
 
+  /** @brief Constructor */
+  NeighbourhoodPureFrontCreator() : CreatorBaseType() {}
+
+  /** @brief Destructor */
+  ~NeighbourhoodPureFrontCreator() override = default;
+
   /** @brief Create a new Neighbourhood object from scratch using the given
    * arguments
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -489,11 +516,11 @@ public:
    *  @return a shared pointer (base type) to a new Neighborhood (derived type)
    *  object
    */
-  inline shared_ptr<NeighbourhoodBaseType> create(
-    const unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
-    const vector<CoMMAWeightType> &priority_weights,
+  inline std::shared_ptr<NeighbourhoodBaseType> create(
+    const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
+    const std::vector<CoMMAWeightType> &priority_weights,
     const CoMMAIntType dimension) const override {
-    return make_shared<NeighbourhoodDerivedType>(
+    return std::make_shared<NeighbourhoodDerivedType>(
       s_neighbours_of_seed, priority_weights, dimension);
   }
 
@@ -502,12 +529,14 @@ public:
    *  @return a shared pointer (base type) to a new Neighborhood (derived type)
    *  object
    */
-  inline shared_ptr<NeighbourhoodBaseType> clone(
-    shared_ptr<NeighbourhoodBaseType> other) const override {
+  inline std::shared_ptr<NeighbourhoodBaseType> clone(
+    std::shared_ptr<NeighbourhoodBaseType> other) const override {
     // Using copy-constructor
-    return make_shared<NeighbourhoodDerivedType>(
-      *dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
+    return std::make_shared<NeighbourhoodDerivedType>(
+      *std::dynamic_pointer_cast<NeighbourhoodDerivedType>(other));
   }
 };
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_FIRST_ORDER_NEIGHBOURHOOD_H

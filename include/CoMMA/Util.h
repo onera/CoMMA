@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -26,7 +26,7 @@
 #include <utility>
 #include <vector>
 
-using namespace std;
+namespace comma {
 
 /** @def CoMMAUnused(var)
  *  @brief Convenient function to avoid unused warnings
@@ -57,7 +57,7 @@ inline bool dot_deviate(const T dot) {
  * @return the dot product
  */
 template<typename T>
-inline T dot_product(const vector<T> &a, const vector<T> &b) {
+inline T dot_product(const std::vector<T> &a, const std::vector<T> &b) {
 #if 0
   const CoMMAWeightType dot = inner_product(
       prev_dir.begin(), prev_dir.end(), cur_dir.begin(),
@@ -79,7 +79,8 @@ inline T dot_product(const vector<T> &a, const vector<T> &b) {
  * normalization)
  */
 template<typename T>
-inline T get_direction(const vector<T> &a, const vector<T> &b, vector<T> &dir) {
+inline T get_direction(
+  const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &dir) {
   T norm{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
     const T di = b[i] - a[i];
@@ -104,7 +105,8 @@ inline T get_direction(const vector<T> &a, const vector<T> &b, vector<T> &dir) {
  *  @return The squared Euclidean distance between the two points
  */
 template<typename T>
-inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
+inline T squared_euclidean_distance(
+  const std::vector<T> &a, const std::vector<T> &b) {
 #if 0
   return sqrt(
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
@@ -112,12 +114,12 @@ inline T squared_euclidean_distance(const vector<T> &a, const vector<T> &b) {
                        minus<T>())
       );
 #endif
-  T ret{0.};
+  T dist{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
-    const auto d = a[i] - b[i];
-    ret += d * d;
+    const auto diff = a[i] - b[i];
+    dist += diff * diff;
   }
-  return ret;
+  return dist;
 }
 
 /** @brief Functor for pairs implementing a custom 'less than'. It relies on the
@@ -130,18 +132,16 @@ struct CustomPairLessFunctor {
   /** @brief Functor for pairs implementing a custom 'less than'. It relies on
    * the 'less than' operator for the second elements and 'greater than' for the
    * first ones.
-   *  @param[in] p First pair
-   *  @param[in] q Second pair
-   *  @return true if p.second < q.second or (p.second == q.second and p.first >
-   * q.first); false otherwise
+   *  @param[in] left pair
+   *  @param[in] right Second pair
+   *  @return true if left.second < right.second or (left.second == right.second
+   * and left.first > right.first); false otherwise
    */
-  inline bool operator()(const PairT &p, const PairT &q) const {
-    if (p.second < q.second)
-      return true;
-    else if (p.second > q.second)
-      return false;
-    else /* p.second == q.second */
-      return p.first > q.first;
+  inline bool operator()(const PairT &left, const PairT &right) const {
+    if (left.second < right.second) return true;
+    if (left.second > right.second) return false;
+    /* left.second == right.second */
+    return left.first > right.first;
   }
 };
 
@@ -155,20 +155,18 @@ struct CustomPairGreaterFunctor {
   /** @brief Functor for pairs implementing a custom 'greater than'. It relies
    * on the 'greater than' operator for the second elements and 'less than' for
    * the first ones.
-   *  @param[in] p First pair
-   *  @param[in] q Second pair
-   *  @return true if p.second > q.second or (p.second == q.second and p.first <
-   * q.first); false otherwise
+   *  @param[in] left First pair
+   *  @param[in] right Second pair
+   *  @return true if left.second > right.second or (left.second == right.second
+   * and left.first < right.first); false otherwise
    */
-  inline bool operator()(const PairT &p, const PairT &q) const {
-    // I tried this: return !CustomPairLessFunctor<PairT>()(p,q);
+  inline bool operator()(const PairT &left, const PairT &right) const {
+    // I tried this: return !CustomPairLessFunctor<PairT>()(left,right);
     // but it didn't work well for equality
-    if (p.second > q.second)
-      return true;
-    else if (p.second < q.second)
-      return false;
-    else /* p.second == q.second */
-      return p.first < q.first;
+    if (left.second > right.second) return true;
+    if (left.second < right.second) return false;
+    /* left.second == right.second */
+    return left.first < right.first;
   }
 };
 
@@ -180,28 +178,28 @@ template<typename PairT>
 struct PairSecondBasedLessFunctor {
   /** @brief Functor for pairs implementing a less operator based only on the
    * second element of the pair
-   *  @param[in] p First pair
-   *  @param[in] q Second pair
-   *  @return true if p.second < q.second; false otherwise
+   *  @param[in] left First pair
+   *  @param[in] right Second pair
+   *  @return true if left.second < right.second; false otherwise
    */
-  inline bool operator()(const PairT &p, const PairT &q) const {
-    return p.second < q.second;
+  inline bool operator()(const PairT &left, const PairT &right) const {
+    return left.second < right.second;
   }
 };
 
 /** @brief Given a container of pairs, return a vector with first elements only
  *  @tparam CoMMAContainerPairType Type of the input container
- *  @param[in] c A container of pairs from which the first elements will be
+ *  @param[in] cont A container of pairs from which the first elements will be
  * extracted
  *  @return The first elements of each pair
  */
 template<typename CoMMAContainerPairType>
-inline vector<typename CoMMAContainerPairType::value_type::first_type>
-vector_of_first_elements(const CoMMAContainerPairType &c) {
-  vector<typename CoMMAContainerPairType::value_type::first_type> fe;
-  fe.reserve(c.size());
-  for (const auto &p : c)
-    fe.emplace_back(p.first);
+inline std::vector<typename CoMMAContainerPairType::value_type::first_type>
+vector_of_first_elements(const CoMMAContainerPairType &cont) {
+  std::vector<typename CoMMAContainerPairType::value_type::first_type> fe;
+  fe.reserve(cont.size());
+  for (const auto &pr : cont)
+    fe.emplace_back(pr.first);
   return fe;
 }
 
@@ -217,16 +215,17 @@ public:
   /** @brief Constructor
    *  @param target Reference value that will be sought
    */
+  // NOLINTNEXTLINE
   PairFindFirstBasedFunctor(const typename PairT::first_type &target) :
       _target(target){};
   /** @brief Destructor */
-  ~PairFindFirstBasedFunctor(){};
+  ~PairFindFirstBasedFunctor() = default;
   /** @brief Operator telling if the first value of the given pair is equal to
    * the reference one
-   *  @param[in] p The pair
+   *  @param[in] pr The pair
    *  @return a bool
    */
-  inline bool operator()(const PairT &p) const { return p.first == _target; }
+  inline bool operator()(const PairT &pr) const { return pr.first == _target; }
 
 private:
   /** @brief Reference value to be sought */
@@ -240,9 +239,9 @@ private:
  *  @return a set
  */
 template<typename KeyT, typename ValueT>
-inline unordered_set<KeyT> d_keys_to_set(
-  const unordered_map<KeyT, ValueT> &dict) {
-  unordered_set<KeyT> s_neighbours_of_seed = {};
+inline std::unordered_set<KeyT> d_keys_to_set(
+  const std::unordered_map<KeyT, ValueT> &dict) {
+  std::unordered_set<KeyT> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);
   }
@@ -265,23 +264,23 @@ inline unordered_set<KeyT> d_keys_to_set(
  * @param[in] wall Cells composing the wall from which the distance is computed
  * @param[out] dist Distance from the wall. This vector is resized inside the
  * function to hold all the cells
- * @warning This function is \b experimental. Moreover, since CoMMA has knoledge
- * of the current domain only, this function might not give the right result if
- * the domain hab been partitioned. It is advised to use this function only when
- * considering one domain only.
+ * @warning This function is \b experimental. Moreover, since CoMMA has
+ * knowledge of the current domain only, this function might not give the right
+ * result if the domain has been partitioned. It is advised to use this function
+ * only when considering one domain only.
  */
 template<typename IndexT, typename DistT>
 void compute_neighbourhood_based_wall_distance(
-  const vector<IndexT> &neigh_idxs,
-  const vector<IndexT> &neighs,
-  const vector<IndexT> &wall,
-  vector<DistT> &dist) {
+  const std::vector<IndexT> &neigh_idxs,
+  const std::vector<IndexT> &neighs,
+  const std::vector<IndexT> &wall,
+  std::vector<DistT> &dist) {
   static_assert(
-    is_signed<DistT>::value,
+    std::is_signed<DistT>::value,
     "The distance type should be signed to allow flags (negative values)");
   dist.resize(neigh_idxs.size() - 1);
-  fill(dist.begin(), dist.end(), DistT{-1});
-  queue<IndexT> to_visit{};
+  std::fill(dist.begin(), dist.end(), DistT{-1});
+  std::queue<IndexT> to_visit{};
   for (const auto &cell : wall) {
     dist[cell] = DistT{0};
     to_visit.emplace(cell);
@@ -295,17 +294,19 @@ void compute_neighbourhood_based_wall_distance(
     // should work).
     const auto cur = to_visit.front();
     to_visit.pop();
-    const auto d = dist[cur] + DistT{1};
+    const auto cur_dist = dist[cur] + DistT{1};
     for (auto neigh = neighs.cbegin() + neigh_idxs[cur];
          neigh < neighs.cbegin() + neigh_idxs[cur + 1]; ++neigh) {
       if (dist[*neigh] < DistT{0}) {
-        dist[*neigh] = d;
+        dist[*neigh] = cur_dist;
         to_visit.emplace(*neigh);
-      } else if (dist[*neigh] > d) {
-        dist[*neigh] = d;
+      } else if (dist[*neigh] > cur_dist) {
+        dist[*neigh] = cur_dist;
       }
     }
   }
 }
+
+}  // end namespace comma
 
 #endif  // COMMA_PROJECT_UTIL_H

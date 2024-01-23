@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -16,17 +16,20 @@
 #include <unordered_set>
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Seeds_Pool.h"
+#include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Seeds_Pool.h"
+#include "DualGraphExamples.h"
 #include "catch2/catch.hpp"
-#include "input/DualGPy.h"
 
-using namespace std;
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
+// About the size
+// NOLINTNEXTLINE
 SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   GIVEN(
     "A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering") {
-    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGEx_cube_4 Data = DualGEx_cube_4();
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
       seeds_pool(Data.n_bnd_faces, Data.weights, false);
     deque<CoMMAIndexT> corners{}, ridges{}, valleys{}, interior{};
@@ -195,7 +198,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
 
   GIVEN(
     "A 4x4x4 cube and a Seeds Pool which should force an order reversed wrt the cell numbering") {
-    const DualGPy_cube_4 Data = DualGPy_cube_4();
+    const DualGEx_cube_4 Data = DualGEx_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
@@ -256,7 +259,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
     }
   }
   GIVEN("A mesh with a hole and two corners") {
-    const DualGPy_hole_w_corners Data = DualGPy_hole_w_corners();
+    const DualGEx_hole_w_corners Data = DualGEx_hole_w_corners();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
       Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
@@ -275,14 +278,14 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -309,14 +312,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -339,14 +342,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -372,14 +375,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -390,7 +393,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
     }
   }
   GIVEN("A mesh with a hole and no corners") {
-    const DualGPy_hole_no_corners Data = DualGPy_hole_no_corners();
+    const DualGEx_hole_no_corners Data = DualGEx_hole_no_corners();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc,
       Data.adjMatrix_row_ptr,
@@ -413,14 +416,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
@@ -443,14 +446,14 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       assert(static_cast<CoMMAIndexT>(expected_order.size()) == Data.nb_fc);
       vector<bool> agglomerated(Data.nb_fc, false);
       vector<CoMMAIndexT> res_seeds(Data.nb_fc);
-      for (auto &s : res_seeds) {
+      for (auto &seed : res_seeds) {
         const auto opt_s = seeds_pool.choose_new_seed(agglomerated);
         assert(opt_s.has_value());
-        s = opt_s.value();
-        agglomerated[s] = true;
-        auto neighs = fc_graph.get_neighbours(s);
+        seed = opt_s.value();
+        agglomerated[seed] = true;
+        auto neighs = fc_graph.get_neighbours(seed);
         sort(neighs.begin(), neighs.end());  // Simulates order by weights
-        deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
+        const deque<CoMMAIndexT> d_neighs(neighs.begin(), neighs.end());
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {

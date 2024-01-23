@@ -1,7 +1,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -13,13 +13,16 @@
 #include <set>
 #include <vector>
 
-#include "CoMMATypes.h"
-#include "Dual_Graph.h"
+#include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Dual_Graph.h"
+#include "CoMMA/deprecated/Bimap.h"
+#include "CoMMA/deprecated/Priority_Pair.h"
+#include "CoMMA/deprecated/Queue.h"
+#include "CoMMA/deprecated/Tree.h"
 #include "catch2/catch.hpp"
-#include "deprecated/Bimap.h"
-#include "deprecated/Priority_Pair.h"
-#include "deprecated/Queue.h"
-#include "deprecated/Tree.h"
+
+using namespace comma;  // NOLINT
+using namespace std;  // NOLINT
 
 using PairValueTestT = int;  // Leave this since we might try something more
                              // fancy than what usually found in CoMMA
@@ -73,7 +76,7 @@ SCENARIO("Test of the tree", "[Tree]") {
 
 SCENARIO("Test of Priority Pair", "[Priority Pair]") {
   GIVEN("Some pairs") {
-    Priority_Pair<PairValueTestT, PairValueTestT> p1{0, 1}, p1bis{0, 1},
+    const Priority_Pair<PairValueTestT, PairValueTestT> p1{0, 1}, p1bis{0, 1},
       p2{3, 0}, p3{0, 0};
     WHEN("We compare two equal pairs") {
       THEN("Equal pairs are identified") { REQUIRE(p1 == p1bis); }
@@ -90,26 +93,26 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
     }
   }
   GIVEN("A set of pairs") {
-    set<Priority_Pair<PairValueTestT, PairValueTestT>> s = {
+    set<Priority_Pair<PairValueTestT, PairValueTestT>> st = {
       {0, 1}, {0, 1}, {3, 0}, {0, 0}, {2, -1}};
     WHEN("We iterate over the set") {
       vector<PairValueTestT> fe1 = {3, 2, 0, 0};
       vector<PairValueTestT> se1 = {0, -1, 0, 1};
       THEN("The expected order is obtained") {
-        for (auto it = s.begin(); it != s.end(); ++it) {
-          const auto idx = distance(s.begin(), it);
+        for (auto it = st.begin(); it != st.end(); ++it) {
+          const auto idx = distance(st.begin(), it);
           REQUIRE(it->first() == fe1[idx]);
           REQUIRE(it->second() == se1[idx]);
         }
       }
     }
     WHEN("We add an item and iterate on the new set") {
-      s.emplace(1, 4);
+      st.emplace(1, 4);
       vector<int> fe2 = {3, 2, 1, 0, 0};
       vector<int> se2 = {0, -1, 4, 0, 1};
       THEN("The expected order is obtained") {
-        for (auto it = s.begin(); it != s.end(); ++it) {
-          const auto idx = distance(s.begin(), it);
+        for (auto it = st.begin(); it != st.end(); ++it) {
+          const auto idx = distance(st.begin(), it);
           REQUIRE(it->first() == fe2[idx]);
           REQUIRE(it->second() == se2[idx]);
         }
@@ -154,7 +157,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
       THEN("We eliminate an element and we check the dimension changed") {
         auto lung = Collection.lung();
         REQUIRE(lung == 4);
-        decltype(lung) elim = 2;
+        const decltype(lung) elim = 2;
         Collection.erase_B(elim);
         lung = Collection.lung();
         REQUIRE(lung == 3);
@@ -179,7 +182,7 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
       CoMMAIndexT, shared_ptr<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>>
       Collection;
     WHEN("We insert an element and we delete it") {
-      CoMMAIndexT ins = 0;
+      const CoMMAIndexT ins = 0;
       Collection.insert(ins, Marion);
       // Collection.print();
       auto prova = Collection.get_B(ins);

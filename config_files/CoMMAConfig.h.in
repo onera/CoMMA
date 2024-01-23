@@ -1,0 +1,39 @@
+#ifndef COMMA_PROJECT_COMMACONFIG_H
+#define COMMA_PROJECT_COMMACONFIG_H
+
+/*
+ * CoMMA
+ *
+ * Copyright © 2024 ONERA
+ *
+ * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+ * Contributors: Karim Anemiche
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#include <cstdint>
+
+#define CoMMA_VERSION @PROJECT_VERSION@
+#define CoMMA_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define CoMMA_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define CoMMA_VERSION_PATCH @PROJECT_VERSION_PATCH@
+
+namespace comma {
+
+/// Type of an index (used by agglomerator CoMMA for edges and nodes).
+using CoMMAIndexT = @INDEX_T@;
+
+/// Type of floating-point values (used by agglomerator CoMMA for this edge
+/// weights).
+using CoMMAWeightT = @REAL_T@;
+
+/// Type of integer for cardinality of coarse cells, dimension, distances,
+/// orders...
+using CoMMAIntT = @INT_T@;
+
+}  // end namespace comma
+
+#endif

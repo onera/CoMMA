@@ -4,7 +4,7 @@
 /*
  * CoMMA
  *
- * Copyright © 2023 ONERA
+ * Copyright © 2024 ONERA
  *
  * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani
  * Contributors: Karim Anemiche
@@ -19,7 +19,8 @@
 #include <map>
 #include <type_traits>
 
-using namespace std;
+namespace comma {
+
 /** @brief An easy and straight forward implementation of a Bimap.
  *  @deprecated Not used anymore
  */
@@ -27,11 +28,11 @@ template<typename A, typename B>
 class Bimap {
 public:
   /** @brief Constructor */
-  Bimap(){};
+  Bimap() = default;
   /** @brief Destructor */
-  ~Bimap(){};
+  ~Bimap() = default;
 
-  //  using container= map<A, const B*>;
+  //  using container= std::map<A, const B*>;
   //  using iterator=typename container::iterator;
   //  inline iterator begin() noexcept { return _mapB.begin(); }
   //  inline iterator end() noexcept { return _mapB.end(); }
@@ -52,7 +53,7 @@ public:
   /** @brief Function to print the map */
   void print() {
     for (const auto &[key, value] : _mapB) {
-      cout << '[' << key << "] = " << *value << "; ";
+      std::cout << '[' << key << "] = " << *value << "; ";
     }
   }
 
@@ -65,7 +66,7 @@ public:
     auto node = _mapB.extract(a_old);
     if (!node.empty()) {
       node.key() = a_new;
-      _mapB.insert(move(node));
+      _mapB.insert(std::move(node));
     }
   }
   /** @brief Update of the key of the map A and hence the value of the node B
@@ -77,7 +78,7 @@ public:
     auto node = _mapA.extract(b_old);
     if (!node.empty()) {
       node.key() = b_new;
-      _mapA.insert(move(node));
+      _mapA.insert(std::move(node));
     }
   }
   /**@brief Getter of the B value starting from a A value
@@ -110,13 +111,13 @@ public:
     // We pass the associated value we want to search to the member
     // variable
     auto itB = _mapB.find(a);
-    auto b = *(itB->second);
-    auto itA = _mapA.find(b);
+    auto be = *(itB->second);
+    auto itA = _mapA.find(be);
     _mapB.erase(itB);
     _mapA.erase(itA);
   }
   /** @brief Check if the Bimap is empty
-   *  @return a boolan
+   *  @return a boolean
    */
   inline bool empty() { return (_mapA.empty()); }
   /** @brief Returns the size of the container
@@ -126,8 +127,11 @@ public:
 
 protected:
   /** @brief Left map  */
-  map<B, const A *> _mapA;
+  std::map<B, const A *> _mapA;
   /** @brief Right map */
-  map<A, const B *> _mapB;
+  std::map<A, const B *> _mapB;
 };
+
+}  // end namespace comma
+
 #endif
