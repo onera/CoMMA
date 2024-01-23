@@ -99,7 +99,7 @@ job:test_dbg:
         - cd $CUSTOM_CI_DIR
         - cd build
         - ./CoMMA_test -r junit > test_a.xml
-        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./build_rel/' --exclude '\.\./src/CoMMA.cpp' --print-summary -o coverage.xml --root ..
+        - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./perfetto/' --exclude '\.\./build_rel.*/' --exclude '\.\./src/CoMMA.cpp' --exclude '\.\./config_files/' --exclude '\.\./misc_scripts/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
     artifacts:
         expire_in: 1 month
