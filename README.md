@@ -8,42 +8,62 @@
 representation of an **unstructured** computational mesh.
 
 ## :triangular_ruler: Capabilities
+The main features of CoMMA are:
+- Support for any mesh (2- or 3D, polyhedral,...);
+- Minimal knowledge of the mesh, only its graph representation;
 - Sequential by zone (i.e. no coupling with graph partitioner);
-- Fine faces conservation for coarse levels;
-- Optimization of the shape of the coarse cells w.r.t their aspect ratio;
-- Connectivity of coarse cells;
+- Optimization of the shape of the coarse cells w.r.t. their aspect ratio;
 - Detection and treatment of anisotropic regions;
 - Isotropic agglomeration with structured-like treatment of structured-like
-  regions.
+  regions;
+- Fine faces conservation for coarse levels;
+- Connectivity of coarse cells.
 
 ## :scroll: License
 CoMMA is distributed under [Mozilla Public License Version 2.0](LICENSE). It has
-been registered to the
+been registered (more precisely, version 1.3) to the
 [Agency for the Protection of Programs](https://www.app.asso.fr/lagence) (APP),
 Paris, with [IDDN](https://www.iddn.org/cert) identification number
 IDDN.FR.001.420013.000.S.X.2023.000.31235.
 
 ## :wrench: Building the Library
-CoMMA is a `C++` **header-only library** hence it does not need compilation, per
-se. Nonetheless, a `python` module can be generated using `pybind11`: this is
-very convenient for testing and debugging purposes. Moreover, some tests via
-`Catch2` have been written to check the integrity of CoMMA (for more details see
-the [dedicated section](#mag-testing-comma) below). Both the `python` module and
-the tests need compilation. Finally, one can install the headers and, when
-applies, the `python` module in a given directory.
+CoMMA relies on a fairly recent version of `cmake` (3.15+). It is a `C++`
+**header-only library** hence it does not need compilation, per se, however a
+configuration step is necessary. A `python` module can be generated using
+`pybind11`: this is very convenient for testing and debugging purposes. Some
+tests relying on `Catch2` have been written to check the integrity of CoMMA (for
+more details see the [dedicated section](#mag-testing-comma) below). Both the
+`python` module and the tests need compilation. Finally, one can install the
+headers and, when applies, the `python` module in a given directory.
 
-To build this library you just need a fairly recent `cmake` (3.15+). Then, a
-standard out-of-source build with `cmake` in a freshly created directory will
-suffice to compile
+The pivotal part of the configuration step is the choice of the types used by
+CoMMA: one for indices (e.g., cell IDs), one for standard integers (e.g.,
+cardinality of the coarse cells), and one for reals (e.g., graph weights). They
+can be chosen with configuration options, respectively, `INDEX_T`, `INT_T`, and
+`REAL_T`. If not set, the default values are, respectively, `unsigned long`,
+`int`, and `double`.
+
+A typical flow for the configuration and installation of CoMMA usually relies on
+a standard out-of-source build and look like this:
 ```shell
+cd path/to/CoMMA
 mkdir build install
 cd build
-cmake --prefix=../install ..
+cmake -DINDEX_T="int" -DINT_T="int" -DREAL_T="double" --prefix=../install ..
 make
 make install
 ```
-`cmake` should be able to find the simple dependencies by itself if they're
-installed in standard location.
+Notice that custom types have been chosen. Since the dependencies for the
+`python` module and the tests are included in CoMMA repositories as submodules,
+`cmake` should be able to find them automatically; of course, the repository
+should have been initialized accordingly, see [below](#link-submodules).
+
+If one wants to use CoMMA in their code, it is important to perform the
+installation step: indeed, during configuration an important header (including
+the type definitions) is generated and then added to the other headers during
+the installation phase. If one tries to build using only the files in the
+`include` directory, the additional configuration header won't be found and the
+process will fail.
 
 The compilation of the tests and the generation of the `python` bindings are
 activated by default, but they can be switched off
@@ -51,11 +71,9 @@ activated by default, but they can be switched off
 cmake -DBUILD_TESTS=Off .. # No tests
 cmake -DBUILD_PYTHON_BINDINGS=Off .. # No python bindings
 ```
-If `python` bindings and test are activated, the related submodules are needed,
-see [below](#link-submodules) how to get them.
 
 An additional `cmake` option might be passed to build the tests with coverage
-support (default is off)
+support (default is off), in this case, the `gcov` library is needed:
 ```shell
 cmake -DCOVERAGE=On ..
 ```
@@ -66,8 +84,8 @@ Support for `pkg-config` can be enabled by passing the related option to
 cmake -DPKGCONFIG_SUPPORT=On --prefix=../install ..
 ```
 A template of such configuration file can be found
-[in the repository](config_files/comma.pc.in); given the prefix provided above,
-it will be installed in `path/to/CoMMA/install/lib64/pkgconfig`.
+[in the repository](config_files/comma.pc.in); given the prefix provided in the
+example above, it will be installed in `path/to/CoMMA/install/lib64/pkgconfig`.
 
 An option is available to use the flags usually considered when compiling the
 CODA-CFD library:
@@ -85,10 +103,16 @@ documentation, just run from the main directory:
 ```shell
 doxygen Documentation/Doxyfile
 ```
-and related html pages will be built in `documentation`.
+and related html pages will be built in `documentation`. Otherwise, the
+documentation can be activated during the configuration phase of the
+compilation, then built and installed:
+```shell
+cmake -DBUILD_DOC=On --prefix=../install ..
+make
+make install
+```
 
-An [online version](https://onera.github.io/CoMMA/) of
-the doc hosted by GitLab is available.
+An [online version](https://onera.github.io/CoMMA/) of the doc is available.
 
 A user manual is also available, see
 [Documentation/CoMMA_user_manual.pdf](Documentation/CoMMA_user_manual.pdf). The
@@ -127,7 +151,6 @@ thirdparty libraries, [`pybind11`](https://github.com/pybind/pybind11) and
 in this repository as submodules.
 
 In order to update the submodules do:
-
 ```shell
 git submodule init
 git submodule update
@@ -142,15 +165,10 @@ run the tests, build the library (see [above](#wrench-building-the-library), the
 [`CMakeLists.txt`](CMakeLists.txt)), this will generate an executable
 `CoMMA_test` in the building directory, simply run it.
 ```shell
-mkdir build
-cd build
 cmake ..
 make
-./CoMMA_test
+./CoMMA_test  # or simply: make test
 ```
-
-Tests are included in the
-[continuous integration](#robot-continuous-integration) set of actions.
 
 ## :snake: A `python` interface to CoMMA
 A `python` module which interfaces to CoMMA can be obtained using `pybind11` (a
@@ -174,7 +192,7 @@ import CoMMA
 
 Like standard `C++` CoMMA, the `python` module contains only one
 function, the counterpart of
-[`agglomerate_one_level`](https://numerics.gitlab-pages.onera.net/solver/comma/_co_m_m_a_8h.html#abfb7a4b061c35873233941bb1329ea09).
+[`agglomerate_one_level`](https://onera.github.io/CoMMA/_co_m_m_a_8h.html#abfb7a4b061c35873233941bb1329ea09).
 It has just the very same input arguments, only, all arguments are necessary (no
 defaulted parameters). However, differently from the `C++` version, it returns
 three lists:
@@ -186,7 +204,7 @@ three lists:
 
 ```python
 import CoMMA
-fc_to_cc, aggloLines_Idx, aggloLines = CoMMA.agglomerate_one_level(*[args])
+fc_to_cc, aggloLines_Idx, aggloLines = CoMMA.agglomerate_one_level(*args)
 ```
 
 Several `python` scripts showcasing the CoMMA package (as well as its two main
