@@ -1,14 +1,14 @@
 var searchData=
 [
-  ['d_5fkeys_5fto_5fset_0',['d_keys_to_set',['../_util_8h.html#a0f9e797856aaddc8607e26502cea3658',1,'Util.h']]],
-  ['delete_5fnode_1',['delete_node',['../class_tree.html#a67a96cf01ba50b94071ba0e98c73cf93',1,'Tree']]],
-  ['deletenode_2',['deleteNode',['../class_tree.html#a51e33e50623d498fdf8eb9fb619328c3',1,'Tree']]],
-  ['deprecated_20files_3',['Deprecated files',['../md__co_m_m_a_lib_deprecated__r_e_a_d_m_e.html',1,'']]],
-  ['deviate_5fthresh_4',['deviate_thresh',['../_util_8h.html#a92bafb9d36c34646ee1bf8ec1c67f3c9',1,'Util.h']]],
-  ['dfs_5',['DFS',['../class_graph.html#afb191c20fe7d483a018b7a448aabc037',1,'Graph']]],
-  ['dot_5fdeviate_6',['dot_deviate',['../_util_8h.html#aeec73ae34bff3c397b99dcf03d14a4a5',1,'Util.h']]],
-  ['dot_5fproduct_7',['dot_product',['../_util_8h.html#a92f46b4dab5ae23f1a86a2c55c2a6beb',1,'Util.h']]],
-  ['dual_5fgraph_8',['Dual_Graph',['../class_dual___graph.html',1,'Dual_Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;'],['../class_dual___graph.html#adb7691275dece84b9bc51514b27d0641',1,'Dual_Graph::Dual_Graph()']]],
+  ['d_5fkeys_5fto_5fset_0',['d_keys_to_set',['../namespacecomma.html#a81affca718f9c9927cfb82c317c8239e',1,'comma']]],
+  ['delete_5fnode_1',['delete_node',['../classcomma_1_1_tree.html#adde017be7b486d827e7ab1fb6355cfdc',1,'comma::Tree']]],
+  ['deletenode_2',['deleteNode',['../classcomma_1_1_tree.html#a22632aa17b0500f1bfe9428bbd612c33',1,'comma::Tree']]],
+  ['deprecated_20files_3',['Deprecated files',['../md_include__co_m_m_a_deprecated__r_e_a_d_m_e.html',1,'']]],
+  ['deviate_5fthresh_4',['deviate_thresh',['../namespacecomma.html#a75164a303f92061683959fa690d67906',1,'comma']]],
+  ['dfs_5',['DFS',['../classcomma_1_1_graph.html#a138b207a27e58bcb238d0a80444ba75b',1,'comma::Graph']]],
+  ['dot_5fdeviate_6',['dot_deviate',['../namespacecomma.html#aa6823809d0c8cc7a1e30d51cfb0ce21a',1,'comma']]],
+  ['dot_5fproduct_7',['dot_product',['../namespacecomma.html#a0e43c30768d45d4f1f643f2f8be53f5d',1,'comma']]],
+  ['dual_5fgraph_8',['Dual_Graph',['../classcomma_1_1_dual___graph.html',1,'comma::Dual_Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;'],['../classcomma_1_1_dual___graph.html#a62db97821210fa0ffa99d3396eecdaae',1,'comma::Dual_Graph::Dual_Graph()']]],
   ['dual_5fgraph_2eh_9',['Dual_Graph.h',['../_dual___graph_8h.html',1,'']]],
-  ['dualgraphptr_10',['DualGraphPtr',['../class_coarse___cell.html#a8be4bfb51fc40000cf941d264323f6b2',1,'Coarse_Cell::DualGraphPtr()'],['../class_coarse___cell___container.html#ae1f92ee786149dd1dccf1a63b9e6232e',1,'Coarse_Cell_Container::DualGraphPtr()'],['../class_coarse___cell___subgraph.html#a8be4bfb51fc40000cf941d264323f6b2',1,'Coarse_Cell_Subgraph::DualGraphPtr()']]]
+  ['dualgraphptr_10',['DualGraphPtr',['../classcomma_1_1_coarse___cell.html#a35ecf0c52bb9edbc441d78a43279ca30',1,'comma::Coarse_Cell::DualGraphPtr()'],['../classcomma_1_1_coarse___cell___container.html#a5051b74d460fe27476950f53a5fd2229',1,'comma::Coarse_Cell_Container::DualGraphPtr()'],['../classcomma_1_1_coarse___cell___subgraph.html#a35ecf0c52bb9edbc441d78a43279ca30',1,'comma::Coarse_Cell_Subgraph::DualGraphPtr()']]]
 ];

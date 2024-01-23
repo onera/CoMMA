@@ -1,5 +1,5 @@
 var _tree_8h =
 [
-    [ "Node< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_node.html", "class_node" ],
-    [ "Tree< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_tree.html", "class_tree" ]
+    [ "comma::Node< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_node.html", "classcomma_1_1_node" ],
+    [ "comma::Tree< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_tree.html", "classcomma_1_1_tree" ]
 ];

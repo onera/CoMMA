@@ -1,4 +1,4 @@
 var _bimap_8h =
 [
-    [ "Bimap< A, B >", "class_bimap.html", "class_bimap" ]
+    [ "comma::Bimap< A, B >", "classcomma_1_1_bimap.html", "classcomma_1_1_bimap" ]
 ];

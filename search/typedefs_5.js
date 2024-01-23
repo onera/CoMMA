@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['seedspoolbasetype_0',['SeedsPoolBaseType',['../class_seeds___pool___boundary___priority.html#a607c4ab9284f6116d12e4356fe4702b6',1,'Seeds_Pool_Boundary_Priority::SeedsPoolBaseType()'],['../class_seeds___pool___neighbourhood___priority.html#a1fa4863f05ee5d83399275bfcd430e53',1,'Seeds_Pool_Neighbourhood_Priority::SeedsPoolBaseType()']]],
-  ['subgraphptr_1',['SubGraphPtr',['../class_coarse___cell___subgraph.html#ac834adecb0b435e9722eb1e138bdac76',1,'Coarse_Cell_Subgraph']]],
-  ['subgraphtype_2',['SubGraphType',['../class_coarse___cell___subgraph.html#ab1c363143bc71d7b35e942d44eac78ab',1,'Coarse_Cell_Subgraph']]]
+  ['seedspoolbasetype_0',['SeedsPoolBaseType',['../classcomma_1_1_seeds___pool___boundary___priority.html#a1d1c45f7e5b7803108d17ba4bdef0261',1,'comma::Seeds_Pool_Boundary_Priority::SeedsPoolBaseType()'],['../classcomma_1_1_seeds___pool___neighbourhood___priority.html#a66ebace9a08086690b4ea3a1965f2cd9',1,'comma::Seeds_Pool_Neighbourhood_Priority::SeedsPoolBaseType()']]],
+  ['subgraphptr_1',['SubGraphPtr',['../classcomma_1_1_coarse___cell___subgraph.html#ad5a7874698d85e8a75d1738a6257ab26',1,'comma::Coarse_Cell_Subgraph']]],
+  ['subgraphtype_2',['SubGraphType',['../classcomma_1_1_coarse___cell___subgraph.html#ab140e803b551ea792a8f004aceb54aed',1,'comma::Coarse_Cell_Subgraph']]]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CoMMA: CoMMA_lib/deprecated/templateHelpers.h Source File</title>
+<title>CoMMA: include/CoMMA/deprecated/templateHelpers.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -100,7 +100,7 @@ $(document).ready(function(){initNavTree('template_helpers_8h_source.html',''); 
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * CoMMA</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * Copyright © 2023 ONERA</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * Copyright © 2024 ONERA</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * Authors: Nicolas Lantos, Alberto Remigi, and Riccardo Milani</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"> * Contributors: Karim Anemiche</span></div>
@@ -110,19 +110,24 @@ $(document).ready(function(){initNavTree('template_helpers_8h_source.html',''); 
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> * file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> condition, <span class="keyword">typename</span> typeA, <span class="keyword">typename</span> typeB&gt;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="template_helpers_8h.html#af8b229731dfc00cd8a557ef50078b87f">   28</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="template_helpers_8h.html#af8b229731dfc00cd8a557ef50078b87f">fill_value</a>(typeA &amp;A, typeB &amp;B) {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (condition) { A = B; }</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="atemplate_helpers_8h_html_af8b229731dfc00cd8a557ef50078b87f"><div class="ttname"><a href="template_helpers_8h.html#af8b229731dfc00cd8a557ef50078b87f">fill_value</a></div><div class="ttdeci">void fill_value(typeA &amp;A, typeB &amp;B)</div><div class="ttdoc">Assign from type to another only if a compile-time condition is verified.</div><div class="ttdef"><b>Definition:</b> templateHelpers.h:28</div></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecomma.html">comma</a> {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> condition, <span class="keyword">typename</span> typeA, <span class="keyword">typename</span> typeB&gt;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">   30</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">fill_value</a>(typeA &amp;a, typeB &amp;b) {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (condition) { a = b; }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}  <span class="comment">// end namespace comma</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacecomma_html"><div class="ttname"><a href="namespacecomma.html">comma</a></div><div class="ttdef"><b>Definition:</b> Agglomerator.h:34</div></div>
+<div class="ttc" id="anamespacecomma_html_a18179379fcc2bb56e6b89c7b43e249c2"><div class="ttname"><a href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">comma::fill_value</a></div><div class="ttdeci">void fill_value(typeA &amp;a, typeB &amp;b)</div><div class="ttdoc">Assign from type to another only if a compile-time condition is verified.</div><div class="ttdef"><b>Definition:</b> templateHelpers.h:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f7d8b6c0f4428b0df38184f730f938dc.html">CoMMA_lib</a></li><li class="navelem"><a class="el" href="dir_b4d066f17bf8846320f45d1123837ca0.html">deprecated</a></li><li class="navelem"><a class="el" href="template_helpers_8h.html">templateHelpers.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8f906a4a6ae3a71fbba10fd081503c31.html">CoMMA</a></li><li class="navelem"><a class="el" href="dir_375345a2a898c11a64ab4059403f7be4.html">deprecated</a></li><li class="navelem"><a class="el" href="template_helpers_8h.html">templateHelpers.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

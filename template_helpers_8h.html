@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CoMMA: CoMMA_lib/deprecated/templateHelpers.h File Reference</title>
+<title>CoMMA: include/CoMMA/deprecated/templateHelpers.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('template_helpers_8h.html',''); initRes
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">templateHelpers.h File Reference</div></div>
 </div><!--header-->
@@ -99,67 +100,24 @@ $(document).ready(function(){initNavTree('template_helpers_8h.html',''); initRes
 
 <p><a href="template_helpers_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecomma"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecomma.html">comma</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af8b229731dfc00cd8a557ef50078b87f"><td class="memTemplParams" colspan="2">template&lt;bool condition, typename typeA , typename typeB &gt; </td></tr>
-<tr class="memitem:af8b229731dfc00cd8a557ef50078b87f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="template_helpers_8h.html#af8b229731dfc00cd8a557ef50078b87f">fill_value</a> (typeA &amp;A, typeB &amp;B)</td></tr>
-<tr class="memdesc:af8b229731dfc00cd8a557ef50078b87f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign from type to another only if a compile-time condition is verified.  <a href="template_helpers_8h.html#af8b229731dfc00cd8a557ef50078b87f">More...</a><br /></td></tr>
-<tr class="separator:af8b229731dfc00cd8a557ef50078b87f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18179379fcc2bb56e6b89c7b43e249c2"><td class="memTemplParams" colspan="2">template&lt;bool condition, typename typeA , typename typeB &gt; </td></tr>
+<tr class="memitem:a18179379fcc2bb56e6b89c7b43e249c2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">comma::fill_value</a> (typeA &amp;a, typeB &amp;b)</td></tr>
+<tr class="memdesc:a18179379fcc2bb56e6b89c7b43e249c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign from type to another only if a compile-time condition is verified.  <a href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">More...</a><br /></td></tr>
+<tr class="separator:a18179379fcc2bb56e6b89c7b43e249c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="af8b229731dfc00cd8a557ef50078b87f" name="af8b229731dfc00cd8a557ef50078b87f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8b229731dfc00cd8a557ef50078b87f">&#9670;&#160;</a></span>fill_value()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;bool condition, typename typeA , typename typeB &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void fill_value </td>
-          <td>(</td>
-          <td class="paramtype">typeA &amp;&#160;</td>
-          <td class="paramname"><em>A</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typeB &amp;&#160;</td>
-          <td class="paramname"><em>B</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Assign from type to another only if a compile-time condition is verified. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">condition</td><td>Boolean telling if the assignment should be done. It has to be a <code>constexpr</code> </td></tr>
-    <tr><td class="paramname">typeA</td><td>Type of the destination of the assignment </td></tr>
-    <tr><td class="paramname">typeB</td><td>Type of the source of the assignment </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">A</td><td>Destination of the assignment </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">B</td><td>Source of the assignment </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f7d8b6c0f4428b0df38184f730f938dc.html">CoMMA_lib</a></li><li class="navelem"><a class="el" href="dir_b4d066f17bf8846320f45d1123837ca0.html">deprecated</a></li><li class="navelem"><a class="el" href="template_helpers_8h.html">templateHelpers.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8f906a4a6ae3a71fbba10fd081503c31.html">CoMMA</a></li><li class="navelem"><a class="el" href="dir_375345a2a898c11a64ab4059403f7be4.html">deprecated</a></li><li class="navelem"><a class="el" href="template_helpers_8h.html">templateHelpers.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

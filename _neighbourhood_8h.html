@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CoMMA: CoMMA_lib/Neighbourhood.h File Reference</title>
+<title>CoMMA: include/CoMMA/Neighbourhood.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,7 +92,8 @@ $(document).ready(function(){initNavTree('_neighbourhood_8h.html',''); initResiz
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">Neighbourhood.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -104,29 +105,34 @@ $(document).ready(function(){initNavTree('_neighbourhood_8h.html',''); initResiz
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="_util_8h_source.html">Util.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_util_8h_source.html">CoMMA/Util.h</a>&quot;</code><br />
 </div>
 <p><a href="_neighbourhood_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood.html">Neighbourhood&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. Mind that no information about the element being already agglomerated or not is known here.  <a href="class_neighbourhood.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood.html">comma::Neighbourhood&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. Mind that no information about the element being already agglomerated or not is known here.  <a href="classcomma_1_1_neighbourhood.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood___extended.html">Neighbourhood_Extended&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbourhood is extended, meaning that all the neighbours seen so far are candidates.  <a href="class_neighbourhood___extended.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood___extended.html">comma::Neighbourhood_Extended&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbourhood is extended, meaning that all the neighbours seen so far are candidates.  <a href="classcomma_1_1_neighbourhood___extended.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood___pure___front.html">Neighbourhood_Pure_Front&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. In this derived class, the neighbourhood is 'pure front-advancing', meaning that the next candidates are only the direct neighbours of the last added cell.  <a href="class_neighbourhood___pure___front.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood___pure___front.html">comma::Neighbourhood_Pure_Front&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the neighbourhood of a given cell in the graph. In this derived class, the neighbourhood is 'pure front-advancing', meaning that the next candidates are only the direct neighbours of the last added cell.  <a href="classcomma_1_1_neighbourhood___pure___front.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood_creator.html">NeighbourhoodCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure abstract class for a creator of <a class="el" href="class_neighbourhood.html" title="Class representing the neighbourhood of a given cell in the graph. Mind that no information about the...">Neighbourhood</a> objects. It can create from scratch or by copy.  <a href="class_neighbourhood_creator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood_creator.html">comma::NeighbourhoodCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure abstract class for a creator of <a class="el" href="classcomma_1_1_neighbourhood.html" title="Class representing the neighbourhood of a given cell in the graph. Mind that no information about the...">Neighbourhood</a> objects. It can create from scratch or by copy.  <a href="classcomma_1_1_neighbourhood_creator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood_extended_creator.html">NeighbourhoodExtendedCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creator of <a class="el" href="class_neighbourhood___extended.html" title="Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbou...">Neighbourhood_Extended</a> objects. It can create from scratch or by copy.  <a href="class_neighbourhood_extended_creator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood_extended_creator.html">comma::NeighbourhoodExtendedCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creator of <a class="el" href="classcomma_1_1_neighbourhood___extended.html" title="Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbou...">Neighbourhood_Extended</a> objects. It can create from scratch or by copy.  <a href="classcomma_1_1_neighbourhood_extended_creator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neighbourhood_pure_front_creator.html">NeighbourhoodPureFrontCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creator of <a class="el" href="class_neighbourhood___extended.html" title="Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbou...">Neighbourhood_Extended</a> objects. It can create from scratch or by copy.  <a href="class_neighbourhood_pure_front_creator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_neighbourhood_pure_front_creator.html">comma::NeighbourhoodPureFrontCreator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creator of <a class="el" href="classcomma_1_1_neighbourhood___extended.html" title="Class representing the neighbourhood of a given cell in the graph. In this derived class the neighbou...">Neighbourhood_Extended</a> objects. It can create from scratch or by copy.  <a href="classcomma_1_1_neighbourhood_pure_front_creator.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecomma"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecomma.html">comma</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
@@ -134,7 +140,7 @@ Classes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f7d8b6c0f4428b0df38184f730f938dc.html">CoMMA_lib</a></li><li class="navelem"><a class="el" href="_neighbourhood_8h.html">Neighbourhood.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8f906a4a6ae3a71fbba10fd081503c31.html">CoMMA</a></li><li class="navelem"><a class="el" href="_neighbourhood_8h.html">Neighbourhood.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

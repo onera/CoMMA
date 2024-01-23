@@ -26,8 +26,18 @@ var NAVTREE =
 [
   [ "CoMMA", "index.html", [
     [ "Welcome to CoMMA", "index.html", null ],
-    [ "Deprecated files", "md__co_m_m_a_lib_deprecated__r_e_a_d_m_e.html", null ],
+    [ "Deprecated files", "md_include__co_m_m_a_deprecated__r_e_a_d_m_e.html", null ],
     [ "Todo List", "todo.html", null ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
+      ] ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -44,11 +54,6 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ],
-        [ "Variables", "globals_vars.html", null ],
-        [ "Typedefs", "globals_type.html", null ],
-        [ "Enumerations", "globals_enum.html", null ],
-        [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -58,7 +63,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_agglomerator_8h.html",
-"class_neighbourhood___pure___front.html#adbe2555ab33ea43e96f1db86ef9ebc5a"
+"classcomma_1_1_coarse___cell___container.html#a909799f8910487259a0ebee59186b286",
+"classcomma_1_1_node.html#aa27241e12cb061d59c589bd3364bea47",
+"structcomma_1_1_custom_pair_greater_functor.html#a3baa52044f47d100d5320843cd48aa9f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

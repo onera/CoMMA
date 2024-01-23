@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ridge_0',['RIDGE',['../_co_m_m_a_types_8h.html#aaa3311fe4fbb22497d5d6825731902c9a44d0e0475ad371f8556a44361e179516',1,'CoMMATypes.h']]]
+  ['ridge_0',['RIDGE',['../namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8aaa4cdfbb2d1efc15da1728bbc125e9f1',1,'comma']]]
 ];

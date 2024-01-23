@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CoMMA: CoMMA_lib/Seeds_Pool.h File Reference</title>
+<title>CoMMA: include/CoMMA/Seeds_Pool.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,13 +92,15 @@ $(document).ready(function(){initNavTree('_seeds___pool_8h.html',''); initResiza
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">Seeds_Pool.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;deque&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;list&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
@@ -107,30 +109,35 @@ $(document).ready(function(){initNavTree('_seeds___pool_8h.html',''); initResiza
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="_co_m_m_a_types_8h_source.html">CoMMATypes.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_util_8h_source.html">Util.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_co_m_m_a_defs_8h_source.html">CoMMA/CoMMADefs.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_util_8h_source.html">CoMMA/Util.h</a>&quot;</code><br />
 </div>
 <p><a href="_seeds___pool_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_p_initializator.html">SPInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the initialization of a seeds pool.  <a href="struct_s_p_initializator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcomma_1_1_s_p_initializator.html">comma::SPInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the initialization of a seeds pool.  <a href="structcomma_1_1_s_p_initializator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_p_full_initializator.html">SPFullInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the full initialization of a seeds pool.  <a href="struct_s_p_full_initializator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcomma_1_1_s_p_full_initializator.html">comma::SPFullInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the full initialization of a seeds pool.  <a href="structcomma_1_1_s_p_full_initializator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_s_p_one_point_initializator.html">SPOnePointInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the one-point initialization of a seeds pool.  <a href="struct_s_p_one_point_initializator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcomma_1_1_s_p_one_point_initializator.html">comma::SPOnePointInitializator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor performing the one-point initialization of a seeds pool.  <a href="structcomma_1_1_s_p_one_point_initializator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_seeds___pool.html">Seeds_Pool&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell.  <a href="class_seeds___pool.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_seeds___pool.html">comma::Seeds_Pool&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell.  <a href="classcomma_1_1_seeds___pool.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_seeds___pool___boundary___priority.html">Seeds_Pool_Boundary_Priority&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell. This derived class gives higher priority to cells that are on the border.  <a href="class_seeds___pool___boundary___priority.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_seeds___pool___boundary___priority.html">comma::Seeds_Pool_Boundary_Priority&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell. This derived class gives higher priority to cells that are on the border.  <a href="classcomma_1_1_seeds___pool___boundary___priority.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_seeds___pool___neighbourhood___priority.html">Seeds_Pool_Neighbourhood_Priority&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell. This derived class gives higher priority to cells that are neighbours of already existing coarse cells.  <a href="class_seeds___pool___neighbourhood___priority.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_seeds___pool___neighbourhood___priority.html">comma::Seeds_Pool_Neighbourhood_Priority&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the pool of all the seeds for creating a coarse cell. This derived class gives higher priority to cells that are neighbours of already existing coarse cells.  <a href="classcomma_1_1_seeds___pool___neighbourhood___priority.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecomma"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecomma.html">comma</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
@@ -138,7 +145,7 @@ Classes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f7d8b6c0f4428b0df38184f730f938dc.html">CoMMA_lib</a></li><li class="navelem"><a class="el" href="_seeds___pool_8h.html">Seeds_Pool.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8f906a4a6ae3a71fbba10fd081503c31.html">CoMMA</a></li><li class="navelem"><a class="el" href="_seeds___pool_8h.html">Seeds_Pool.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

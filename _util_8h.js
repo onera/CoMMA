@@ -1,16 +1,16 @@
 var _util_8h =
 [
-    [ "CustomPairLessFunctor< PairT >", "struct_custom_pair_less_functor.html", "struct_custom_pair_less_functor" ],
-    [ "CustomPairGreaterFunctor< PairT >", "struct_custom_pair_greater_functor.html", "struct_custom_pair_greater_functor" ],
-    [ "PairSecondBasedLessFunctor< PairT >", "struct_pair_second_based_less_functor.html", "struct_pair_second_based_less_functor" ],
-    [ "PairFindFirstBasedFunctor< PairT >", "class_pair_find_first_based_functor.html", "class_pair_find_first_based_functor" ],
+    [ "comma::CustomPairLessFunctor< PairT >", "structcomma_1_1_custom_pair_less_functor.html", "structcomma_1_1_custom_pair_less_functor" ],
+    [ "comma::CustomPairGreaterFunctor< PairT >", "structcomma_1_1_custom_pair_greater_functor.html", "structcomma_1_1_custom_pair_greater_functor" ],
+    [ "comma::PairSecondBasedLessFunctor< PairT >", "structcomma_1_1_pair_second_based_less_functor.html", "structcomma_1_1_pair_second_based_less_functor" ],
+    [ "comma::PairFindFirstBasedFunctor< PairT >", "classcomma_1_1_pair_find_first_based_functor.html", "classcomma_1_1_pair_find_first_based_functor" ],
     [ "CoMMAUnused", "_util_8h.html#a8084ea35afd15dd36dacfc54e6f8ff90", null ],
-    [ "compute_neighbourhood_based_wall_distance", "_util_8h.html#a391837a2e1b572f5f7926b9aaae04d44", null ],
-    [ "d_keys_to_set", "_util_8h.html#a0f9e797856aaddc8607e26502cea3658", null ],
-    [ "dot_deviate", "_util_8h.html#aeec73ae34bff3c397b99dcf03d14a4a5", null ],
-    [ "dot_product", "_util_8h.html#a92f46b4dab5ae23f1a86a2c55c2a6beb", null ],
-    [ "get_direction", "_util_8h.html#a40c9ba8185d11790d9d1a4e466d98a35", null ],
-    [ "squared_euclidean_distance", "_util_8h.html#a4cbf9d2aae5e1f86e108538e5baa10f8", null ],
-    [ "vector_of_first_elements", "_util_8h.html#a4eb847819a7f5df06f9de67ff7dff82a", null ],
-    [ "deviate_thresh", "_util_8h.html#a92bafb9d36c34646ee1bf8ec1c67f3c9", null ]
+    [ "compute_neighbourhood_based_wall_distance", "_util_8h.html#ae3653181db03b3ea76722462c3b3e02b", null ],
+    [ "d_keys_to_set", "_util_8h.html#a81affca718f9c9927cfb82c317c8239e", null ],
+    [ "dot_deviate", "_util_8h.html#aa6823809d0c8cc7a1e30d51cfb0ce21a", null ],
+    [ "dot_product", "_util_8h.html#a0e43c30768d45d4f1f643f2f8be53f5d", null ],
+    [ "get_direction", "_util_8h.html#a3fda6288b7b5c19904abf0312557c774", null ],
+    [ "squared_euclidean_distance", "_util_8h.html#a39eb676bbec9475d7b0b5a6186b5f3d0", null ],
+    [ "vector_of_first_elements", "_util_8h.html#ab712cf58df5dacc470f08332abdde7ec", null ],
+    [ "deviate_thresh", "_util_8h.html#a75164a303f92061683959fa690d67906", null ]
 ];

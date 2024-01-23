@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['commacellt_0',['CoMMACellT',['../_co_m_m_a_types_8h.html#aaa3311fe4fbb22497d5d6825731902c9',1,'CoMMATypes.h']]],
-  ['commaneighbourhoodt_1',['CoMMANeighbourhoodT',['../_co_m_m_a_types_8h.html#a317369a7239fe01b94e2a7450c448531',1,'CoMMATypes.h']]],
-  ['commaseedspoolt_2',['CoMMASeedsPoolT',['../_co_m_m_a_types_8h.html#a21d465186a970946f27155976c4d2ef4',1,'CoMMATypes.h']]]
+  ['commacellt_0',['CoMMACellT',['../namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8',1,'comma']]],
+  ['commaneighbourhoodt_1',['CoMMANeighbourhoodT',['../namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022',1,'comma']]],
+  ['commaseedspoolt_2',['CoMMASeedsPoolT',['../namespacecomma.html#a8c8213401033616d834d48d77bf359a4',1,'comma']]]
 ];

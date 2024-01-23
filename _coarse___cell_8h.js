@@ -1,5 +1,5 @@
 var _coarse___cell_8h =
 [
-    [ "Coarse_Cell< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_coarse___cell.html", "class_coarse___cell" ],
-    [ "Coarse_Cell_Subgraph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_coarse___cell___subgraph.html", "class_coarse___cell___subgraph" ]
+    [ "comma::Coarse_Cell< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell.html", "classcomma_1_1_coarse___cell" ],
+    [ "comma::Coarse_Cell_Subgraph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell___subgraph.html", "classcomma_1_1_coarse___cell___subgraph" ]
 ];

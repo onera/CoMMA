@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tree_0',['Tree',['../class_tree.html',1,'']]]
+  ['tree_0',['Tree',['../classcomma_1_1_tree.html',1,'comma']]]
 ];

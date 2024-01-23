@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_0',['Queue',['../class_queue.html#af73bb29c868f7b37f369c668f114bd9f',1,'Queue']]]
+  ['queue_0',['Queue',['../classcomma_1_1_queue.html#aa75e16d9b3abc36850da8c426c169219',1,'comma::Queue']]]
 ];

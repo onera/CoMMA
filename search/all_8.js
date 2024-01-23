@@ -1,13 +1,14 @@
 var searchData=
 [
-  ['initialize_0',['initialize',['../class_seeds___pool.html#a23a0f231be556d1d87f216a5c002e760',1,'Seeds_Pool']]],
-  ['insert_1',['insert',['../class_bimap.html#ace92920f113af9bf07f930e21689d9c4',1,'Bimap']]],
-  ['insert_5fcell_2',['insert_cell',['../class_coarse___cell.html#a8933946e4838039b06b01854ea02bba1',1,'Coarse_Cell::insert_cell()'],['../class_coarse___cell___subgraph.html#acbd2ec917d2031f3d8c0e8a499c57185',1,'Coarse_Cell_Subgraph::insert_cell()']]],
-  ['insert_5fcells_3',['insert_cells',['../class_coarse___cell.html#aa72685cf11b7ef850592386bbbbf07cb',1,'Coarse_Cell::insert_cells()'],['../class_coarse___cell___subgraph.html#ad8656ac6fe4f8ab894e250fa160c5809',1,'Coarse_Cell_Subgraph::insert_cells()']]],
-  ['insert_5fnode_4',['insert_node',['../class_subgraph.html#acf5fbea7405e13ce3701069fd4fb6dc1',1,'Subgraph']]],
-  ['insertson_5',['insertSon',['../class_tree.html#ad8f18cbe37893507874177af06ab7df5',1,'Tree']]],
-  ['interior_6',['INTERIOR',['../_co_m_m_a_types_8h.html#aaa3311fe4fbb22497d5d6825731902c9aa5fec78385643202af1d49268705b4c2',1,'CoMMATypes.h']]],
-  ['is_5fconnected_7',['is_connected',['../class_coarse___cell.html#a9141f6b11ffcb23820a6bf94cff94375',1,'Coarse_Cell']]],
-  ['is_5fempty_8',['is_empty',['../class_seeds___pool.html#a90276b0aebe130de57c4b04afb7b45fc',1,'Seeds_Pool']]],
-  ['is_5fon_5fboundary_9',['is_on_boundary',['../class_dual___graph.html#a758730c4af1e17ac1531389083345ff2',1,'Dual_Graph']]]
+  ['initialize_0',['initialize',['../classcomma_1_1_seeds___pool.html#a820ecd76d0ab974a69701c9a9df3114e',1,'comma::Seeds_Pool']]],
+  ['insert_1',['insert',['../classcomma_1_1_bimap.html#a67acd42aeed25123ae23c2373dbf065b',1,'comma::Bimap']]],
+  ['insert_5fcell_2',['insert_cell',['../classcomma_1_1_coarse___cell.html#a80ad5b778411821842cfed3f7c8c19da',1,'comma::Coarse_Cell::insert_cell()'],['../classcomma_1_1_coarse___cell___subgraph.html#a1f699fd8684fc8a66ca34f8635857b43',1,'comma::Coarse_Cell_Subgraph::insert_cell()']]],
+  ['insert_5fcells_3',['insert_cells',['../classcomma_1_1_coarse___cell.html#ad02809c84ac2972857fb912a389444ca',1,'comma::Coarse_Cell::insert_cells()'],['../classcomma_1_1_coarse___cell___subgraph.html#a91979299073d846773d1222dc794175b',1,'comma::Coarse_Cell_Subgraph::insert_cells()']]],
+  ['insert_5fnode_4',['insert_node',['../classcomma_1_1_subgraph.html#a427eb4209f44547612b694d4ae7f1875',1,'comma::Subgraph']]],
+  ['insertson_5',['insertSon',['../classcomma_1_1_tree.html#a38103210c800f4ea07328f7ba5b80326',1,'comma::Tree']]],
+  ['interior_6',['INTERIOR',['../namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8ada6f7a085b1f7f2125ce30f5e02db53c',1,'comma']]],
+  ['is_5fconnected_7',['is_connected',['../classcomma_1_1_coarse___cell.html#ac4034b8340779db758fdbe338ced45e4',1,'comma::Coarse_Cell']]],
+  ['is_5fempty_8',['is_empty',['../classcomma_1_1_seeds___pool.html#a5b81870765d59728538feb0960bbcc5a',1,'comma::Seeds_Pool']]],
+  ['is_5fon_5fboundary_9',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]],
+  ['iter_5fagglo_5fmax_5fiter_10',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
 ];

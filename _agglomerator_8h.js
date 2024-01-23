@@ -1,8 +1,8 @@
 var _agglomerator_8h =
 [
-    [ "Agglomerator< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_agglomerator.html", "class_agglomerator" ],
-    [ "Agglomerator_Anisotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_agglomerator___anisotropic.html", "class_agglomerator___anisotropic" ],
-    [ "Agglomerator_Isotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_agglomerator___isotropic.html", "class_agglomerator___isotropic" ],
-    [ "Agglomerator_Biconnected< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_agglomerator___biconnected.html", "class_agglomerator___biconnected" ],
-    [ "Agglomerator_Iterative< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "class_agglomerator___iterative.html", "class_agglomerator___iterative" ]
+    [ "comma::Agglomerator< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator.html", "classcomma_1_1_agglomerator" ],
+    [ "comma::Agglomerator_Anisotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___anisotropic.html", "classcomma_1_1_agglomerator___anisotropic" ],
+    [ "comma::Agglomerator_Isotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___isotropic.html", "classcomma_1_1_agglomerator___isotropic" ],
+    [ "comma::Agglomerator_Biconnected< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___biconnected.html", "classcomma_1_1_agglomerator___biconnected" ],
+    [ "comma::Agglomerator_Iterative< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___iterative.html", "classcomma_1_1_agglomerator___iterative" ]
 ];

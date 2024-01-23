@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lung_0',['lung',['../class_bimap.html#a4c78f72df8b5689251721a94a138c13d',1,'Bimap']]]
+  ['lung_0',['lung',['../classcomma_1_1_bimap.html#af7226a5d51d99236f8b9451650356267',1,'comma::Bimap']]]
 ];

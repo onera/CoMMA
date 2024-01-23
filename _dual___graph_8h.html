@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CoMMA: CoMMA_lib/Dual_Graph.h File Reference</title>
+<title>CoMMA: include/CoMMA/Dual_Graph.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,7 +92,8 @@ $(document).ready(function(){initNavTree('_dual___graph_8h.html',''); initResiza
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">Dual_Graph.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -106,20 +107,25 @@ $(document).ready(function(){initNavTree('_dual___graph_8h.html',''); initResiza
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="_seeds___pool_8h_source.html">Seeds_Pool.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_seeds___pool_8h_source.html">CoMMA/Seeds_Pool.h</a>&quot;</code><br />
 </div>
 <p><a href="_dual___graph_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html">Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An interface class responsible of storing the cell centered dual graph and of acting on it (it is an interface for the global <a class="el" href="class_dual___graph.html" title="A class implementing the CRS global graph representation of the global mesh.">Dual_Graph</a> and the <a class="el" href="class_subgraph.html" title="A class implementing the CRS subgraph representation. It is used in the framework of CoMMA for the im...">Subgraph</a>)  <a href="class_graph.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_graph.html">comma::Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An interface class responsible of storing the cell centered dual graph and of acting on it (it is an interface for the global <a class="el" href="classcomma_1_1_dual___graph.html" title="A class implementing the CRS global graph representation of the global mesh.">Dual_Graph</a> and the <a class="el" href="classcomma_1_1_subgraph.html" title="A class implementing the CRS subgraph representation. It is used in the framework of CoMMA for the im...">Subgraph</a>)  <a href="classcomma_1_1_graph.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgraph.html">Subgraph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class implementing the CRS subgraph representation. It is used in the framework of CoMMA for the implementation of the CSR representation of the coarse cells.  <a href="class_subgraph.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_subgraph.html">comma::Subgraph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class implementing the CRS subgraph representation. It is used in the framework of CoMMA for the implementation of the CSR representation of the coarse cells.  <a href="classcomma_1_1_subgraph.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dual___graph.html">Dual_Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class implementing the CRS global graph representation of the global mesh.  <a href="class_dual___graph.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class implementing the CRS global graph representation of the global mesh.  <a href="classcomma_1_1_dual___graph.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecomma"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecomma.html">comma</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
@@ -127,7 +133,7 @@ Classes</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f7d8b6c0f4428b0df38184f730f938dc.html">CoMMA_lib</a></li><li class="navelem"><a class="el" href="_dual___graph_8h.html">Dual_Graph.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8f906a4a6ae3a71fbba10fd081503c31.html">CoMMA</a></li><li class="navelem"><a class="el" href="_dual___graph_8h.html">Dual_Graph.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

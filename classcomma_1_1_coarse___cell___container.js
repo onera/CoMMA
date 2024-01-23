@@ -1,0 +1,26 @@
+var classcomma_1_1_coarse___cell___container =
+[
+    [ "CoarseCellPtr", "classcomma_1_1_coarse___cell___container.html#a4670588ea6b7292b0ef8760f589eece4", null ],
+    [ "CoarseCellType", "classcomma_1_1_coarse___cell___container.html#a909799f8910487259a0ebee59186b286", null ],
+    [ "DualGraphPtr", "classcomma_1_1_coarse___cell___container.html#a5051b74d460fe27476950f53a5fd2229", null ],
+    [ "Coarse_Cell_Container", "classcomma_1_1_coarse___cell___container.html#aca19a5b3b66ea0d481b315ff012a7725", null ],
+    [ "~Coarse_Cell_Container", "classcomma_1_1_coarse___cell___container.html#ac64a40e0897db7510ba5e5b874891268", null ],
+    [ "cc_create_all_delayed_cc", "classcomma_1_1_coarse___cell___container.html#aff375cbd38f430300abad77480031841", null ],
+    [ "correct", "classcomma_1_1_coarse___cell___container.html#af30a16e10cd4cbcfa2837a36a5a80599", null ],
+    [ "create_cc", "classcomma_1_1_coarse___cell___container.html#a745d1b842ec7a43dbe303cbef43a0b80", null ],
+    [ "get_nb_of_cc", "classcomma_1_1_coarse___cell___container.html#a7e57abc220fb85877b92ad7a7be0b540", null ],
+    [ "get_neighs_cc", "classcomma_1_1_coarse___cell___container.html#adfc1c9ae9a17a20cc98d26e1d94753ce", null ],
+    [ "get_number_of_fc_agglomerated", "classcomma_1_1_coarse___cell___container.html#a74b86f5bf928b038c490f27c1e26bd64", null ],
+    [ "get_shared_faces", "classcomma_1_1_coarse___cell___container.html#a93ab43e7ab6288a9e7d6fa00e7d53c3d", null ],
+    [ "select_best_cc_to_agglomerate", "classcomma_1_1_coarse___cell___container.html#a7211f3bedde3f2f93044cbacd3e47c19", null ],
+    [ "select_best_cc_to_agglomerate_whole", "classcomma_1_1_coarse___cell___container.html#a06433ef8fe9388f3e640f3d8bfdf7c27", null ],
+    [ "_cc_counter", "classcomma_1_1_coarse___cell___container.html#a5cd32093348aa15c437952de4fb50c20", null ],
+    [ "_ccs", "classcomma_1_1_coarse___cell___container.html#a00994ecc5f6dae2f9ab6bb376e50931a", null ],
+    [ "_delayed_cc", "classcomma_1_1_coarse___cell___container.html#a3524485e16d28d4eda3cac529a882ae6", null ],
+    [ "_fc_2_cc", "classcomma_1_1_coarse___cell___container.html#a4552eff1fb2fb15974b835d765b61e4b", null ],
+    [ "_fc_graph", "classcomma_1_1_coarse___cell___container.html#a86e1e85dcd0d95bfd49a267960d4ea58", null ],
+    [ "_is_fc_agglomerated", "classcomma_1_1_coarse___cell___container.html#a7d4a556613699b7ab500717238bd7cf9", null ],
+    [ "_nb_of_agglomerated_fc", "classcomma_1_1_coarse___cell___container.html#a16e9f6a6002a7a3580b7f1d017a15b99", null ],
+    [ "_sing_card_thresh", "classcomma_1_1_coarse___cell___container.html#a337440485655e84a57e8a7e9d1d3ca8f", null ],
+    [ "_singular_cc", "classcomma_1_1_coarse___cell___container.html#a08300d61da9f6559f580b29003e1f689", null ]
+];

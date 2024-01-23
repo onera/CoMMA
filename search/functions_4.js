@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['empty_0',['empty',['../class_bimap.html#aed5fb1baaa71c1137984e96e9117ae5f',1,'Bimap::empty()'],['../class_queue.html#a84af2287bc5dad708508b588dc73457d',1,'Queue::empty()']]],
-  ['erase_5fb_1',['erase_B',['../class_bimap.html#aff20ef4205c50149fe441250a5966712',1,'Bimap']]],
-  ['estimate_5fboundary_5fface_2',['estimate_boundary_face',['../class_agglomerator___isotropic.html#a5235e06b6e1d681b5970a43c6eb90123',1,'Agglomerator_Isotropic']]],
-  ['export_5fanisotropic_5flines_3',['export_anisotropic_lines',['../class_agglomerator___anisotropic.html#af042ee016e1176de1edd69227b4c73cd',1,'Agglomerator_Anisotropic']]],
-  ['extract_5fand_5fupdate_5fcandidates_4',['extract_and_update_candidates',['../class_neighbourhood.html#ae3588ec9956d43fa93f8ece1f09bd6c7',1,'Neighbourhood']]]
+  ['empty_0',['empty',['../classcomma_1_1_bimap.html#a88364e304b1a847ff219e815af01be73',1,'comma::Bimap::empty()'],['../classcomma_1_1_queue.html#aa5746b4e600f2c85ec6f9f427974d302',1,'comma::Queue::empty()']]],
+  ['erase_5fb_1',['erase_B',['../classcomma_1_1_bimap.html#a8b79b0b9ba226a25bb66a326a57d1dc6',1,'comma::Bimap']]],
+  ['estimate_5fboundary_5fface_2',['estimate_boundary_face',['../classcomma_1_1_agglomerator___isotropic.html#a4b6bec13ab0d5a563d0c7f2095186141',1,'comma::Agglomerator_Isotropic']]],
+  ['export_5fanisotropic_5flines_3',['export_anisotropic_lines',['../classcomma_1_1_agglomerator___anisotropic.html#a117343c20ddb4b72d4c9084a89c3303a',1,'comma::Agglomerator_Anisotropic']]],
+  ['extract_5fand_5fupdate_5fcandidates_4',['extract_and_update_candidates',['../classcomma_1_1_neighbourhood.html#abf5efa9c654e7bacae24f74d3c3b8dc1',1,'comma::Neighbourhood']]]
 ];
