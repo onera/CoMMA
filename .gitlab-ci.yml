@@ -31,14 +31,10 @@ stages:
     - lint_format_python
     - documentation
 
-job:init:
-    stage: init
-    variables:
-        GIT_STRATEGY: clone
-        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
-    only:
+.rules_changes_anything:
+    rules:
         changes:
-            - include/CoMMA/*.h
+            - include/CoMMA/*.{h,md}
             - src/*.cpp
             - tests/*.{cpp,h}
             - CMakeLists.txt
@@ -49,6 +45,43 @@ job:init:
             - examples/scripts/*.py
             - examples/scripts/pyproject.toml
             - config_files/*
+
+.rules_changes_sources:
+    rules:
+        changes:
+            - include/CoMMA/*.h
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - config_files/*
+
+.rules_changes_sources_linting:
+    rules:
+        changes:
+            - include/CoMMA/*.h
+            - src/*.cpp
+            - tests/*.{cpp,h}
+            - CMakeLists.txt
+            - .gitlab-ci.yml
+            - .clang-format
+            - .clang-tidy
+            - config_files/*
+
+.rules_changes_python:
+    rules:
+        changes:
+            - examples/scripts/*.py
+            - examples/scripts/pyproject.toml
+            - config_files/*
+
+job:init:
+    stage: init
+    variables:
+        GIT_STRATEGY: clone
+        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
+    rules:
+        - !reference [.rules_changes_anything, rules]
     script:
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
@@ -64,15 +97,8 @@ job:init:
 job:build_dbg:
     stage: build
     needs: ['job:init']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - Documentation/Doxyfile
-            - config_files/*
+    rules:
+        - !reference [.rules_changes_sources_linting, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
@@ -87,14 +113,8 @@ job:build_dbg:
 job:test_dbg:
     stage: test
     needs: ['job:init', 'job:build_dbg']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - cd build
@@ -126,15 +146,8 @@ job:test_install_pkgconfig:
 job:build_rel:
     stage: build
     needs: ['job:init']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - Documentation/Doxyfile
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build_rel
@@ -144,14 +157,8 @@ job:build_rel:
 job:test_rel:
     stage: test
     needs: ['job:init', 'job:build_rel']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - cd build_rel
@@ -159,15 +166,8 @@ job:test_rel:
 job:build_rel32:
     stage: build
     needs: ['job:init']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - Documentation/Doxyfile
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build_rel32
@@ -177,14 +177,8 @@ job:build_rel32:
 job:test_rel32:
     stage: test
     needs: ['job:init', 'job:build_rel32']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - cd build_rel32
@@ -192,15 +186,8 @@ job:test_rel32:
 job:build_rel64:
     stage: build
     needs: ['job:init']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - Documentation/Doxyfile
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build_rel64
@@ -210,14 +197,8 @@ job:build_rel64:
 job:test_rel64:
     stage: test
     needs: ['job:init', 'job:build_rel64']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
+    rules:
+        - !reference [.rules_changes_sources, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - cd build_rel64
@@ -225,15 +206,8 @@ job:test_rel64:
 job:clang_tidy:
     stage: lint_format
     needs: ["job:init", 'job:build_dbg']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - .clang-tidy
+    rules:
+        - !reference [.rules_changes_sources_linting, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" include/CoMMA/*.h src/*.cpp
@@ -241,15 +215,8 @@ job:clang_tidy:
 job:clang_format:
     stage: lint_format
     needs: ["job:init", 'job:build_dbg']
-    only:
-        changes:
-            - include/CoMMA/*.h
-            - config_files/*.{cpp,h}.in
-            - src/*.cpp
-            - tests/*.{cpp,h}
-            - CMakeLists.txt
-            - .gitlab-ci.yml
-            - .clang-format
+    rules:
+        - !reference [.rules_changes_sources_linting, rules]
     script:
         - cd $CUSTOM_CI_DIR
         - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)\(\.in\)\?" | xargs clang-format --style=file --dry-run --Werror
@@ -257,10 +224,8 @@ job:clang_format:
 job:black:
     stage: lint_format_python
     needs: ["job:init"]
-    only:
-        changes:
-            - examples/scripts/*.py
-            - examples/scripts/pyproject.toml
+    rules:
+        - !reference [.rules_changes_python, rules]
     script:
         - cd $CUSTOM_CI_DIR/examples/scripts
         - python3 -m black --check *.py
@@ -268,10 +233,8 @@ job:black:
 job:isort:
     stage: lint_format_python
     needs: ["job:init"]
-    only:
-        changes:
-            - examples/scripts/*.py
-            - examples/scripts/pyproject.toml
+    rules:
+        - !reference [.rules_changes_python, rules]
     script:
         - cd $CUSTOM_CI_DIR/examples/scripts
         - python3 -m isort --check *.py
@@ -279,10 +242,8 @@ job:isort:
 job:ruff:
     stage: lint_format_python
     needs: ["job:init"]
-    only:
-        changes:
-            - examples/scripts/*.py
-            - examples/scripts/pyproject.toml
+    rules:
+        - !reference [.rules_changes_python, rules]
     script:
         - cd $CUSTOM_CI_DIR/examples/scripts
         - python3 -m ruff check *.py
@@ -304,7 +265,7 @@ pages:
     rules:
         - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
           changes:
-            - include/CoMMA/*.h,md
+            - include/CoMMA/*.{h,md}
             - src/*.cpp
             - .gitlab-ci.yml
             - Documentation/Doxyfile
