@@ -31,9 +31,15 @@ stages:
     - lint_format_python
     - documentation
 
+.rules_not_tag:
+    rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+
 .rules_changes_anything:
     rules:
-        changes:
+        - !reference [.rules_not_tag, rules]
+        - changes:
             - include/CoMMA/*.{h,md}
             - src/*.cpp
             - tests/*.{cpp,h}
@@ -48,7 +54,8 @@ stages:
 
 .rules_changes_sources:
     rules:
-        changes:
+        - !reference [.rules_not_tag, rules]
+        - changes:
             - include/CoMMA/*.h
             - src/*.cpp
             - tests/*.{cpp,h}
@@ -58,7 +65,8 @@ stages:
 
 .rules_changes_sources_linting:
     rules:
-        changes:
+        - !reference [.rules_not_tag, rules]
+        - changes:
             - include/CoMMA/*.h
             - src/*.cpp
             - tests/*.{cpp,h}
@@ -70,7 +78,8 @@ stages:
 
 .rules_changes_python:
     rules:
-        changes:
+        - !reference [.rules_not_tag, rules]
+        - changes:
             - examples/scripts/*.py
             - examples/scripts/pyproject.toml
             - config_files/*
@@ -132,8 +141,9 @@ job:test_dbg:
 job:test_install_pkgconfig:
     stage: test
     needs: ['job:init', 'job:build_dbg']
-    only:
-        changes:
+    rules:
+        - !reference [.rules_not_tag, rules]
+        - changes:
             - include/CoMMA/*.h
             - CMakeLists.txt
             - .gitlab-ci.yml
@@ -263,6 +273,7 @@ pages:
         paths:
             - public
     rules:
+        - !reference [.rules_not_tag, rules]
         - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
           changes:
             - include/CoMMA/*.{h,md}
