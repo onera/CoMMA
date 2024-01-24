@@ -251,6 +251,20 @@ fc_to_cc, aggloLines_Idx, aggloLines = CoMMA.agglomerate_one_level(*args)
 Several `python` scripts showcasing the CoMMA package (as well as its two main
 dependencies, `meshio` and `dualGPy`) are [available](examples/scripts).
 
+## :handshake: Cite CoMMA
+If you have found CoMMA useful, do not hesitate to cite it in your paper:
+```bibtex
+@techreport{CoMMA23,
+    author = {Milani, Riccardo},
+    title = {{CoMMA}, a geometric unstructured agglomerator},
+    institution = {ONERA},
+    number = {RT 7/30485},
+    year = {2023},
+    month = {November},
+    url = {https://github.com/onera/CoMMA/blob/main/Documentation/CoMMA_user_manual.pdf},
+}
+```
+
 <!-- ## :robot: Continuous Integration
 A Continuous Integration (CI) [workflow](.gitlab-ci.yml) is available and it
 runs at each push event concerning `C++` or CI files (at least with the current
