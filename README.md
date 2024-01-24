@@ -26,15 +26,19 @@ been registered (more precisely, version 1.3) to the
 Paris, with [IDDN](https://www.iddn.org/cert) identification number
 IDDN.FR.001.420013.000.S.X.2023.000.31235.
 
-## :wrench: Building the Library
-CoMMA relies on a fairly recent version of `cmake` (3.15+). It is a `C++`
-**header-only library** hence it does not need compilation, per se, however a
-configuration step is necessary. A `python` module can be generated using
-`pybind11`: this is very convenient for testing and debugging purposes. Some
-tests relying on `Catch2` have been written to check the integrity of CoMMA (for
-more details see the [dedicated section](#mag-testing-comma) below). Both the
-`python` module and the tests need compilation. Finally, one can install the
-headers and, when applies, the `python` module in a given directory.
+## :wrench: Building the library
+CoMMA uses `C++17` standards, hence a fairly recent compiler is needed, for
+instance, GNU > 8.1.9. For the configuration and building steps, it
+relies on `cmake` (>= 3.15).
+
+CoMMA is a `C++` **header-only library** hence it does not need compilation, per
+se, however a configuration step is necessary. A `python` module can be
+generated using `pybind11`: this is very convenient for testing and debugging
+purposes. Some tests relying on `Catch2` have been written to check the
+soundness of CoMMA (for more details see the
+[dedicated section](#mag-testing-comma) below). Both the `python` module and the
+tests need compilation. Finally, one can install the headers and, when applies,
+the `python` module in a given directory.
 
 The pivotal part of the configuration step is the choice of the types used by
 CoMMA: one for indices (e.g., cell IDs), one for standard integers (e.g.,
@@ -94,8 +98,45 @@ cmake -DCODAFLAGS=On ..
 ```
 
 ## :construction_worker: Usage
-The interface to CoMMA is very simple and consists in only one function
-[`agglomerate_one_level`](https://onera.github.io/CoMMA/_co_m_m_a_8h.html#a906c231be20a1f53a240618bae81d95f).
+CoMMA provides a `namespace` with the same name, but in lowercase: `comma`. Its
+interface is very simple and consists in only one function,
+`comma::agglomerate_one_level`. This functions needs several arguments: some
+define the graph representation of the mesh (e.g., connectivities, weights) in
+Compressed Row Storage (CRS) format; others set the parametrization of the
+coarsening algorithm (e.g., anisotropy, goal cardinality of the coarse cells);
+others are modified by CoMMA to store the results. No special classes or
+containers are needed since CoMMA itself relies on containers of the standard
+library. CoMMA does have some custom types though, which, as seen
+[above](#wrench-building-the-library), are chosen during the configuration
+phase. For more details, about the arguments, the reader is referred to the
+Doxygen page of the
+[function](https://onera.github.io/CoMMA/_co_m_m_a_8h.html#a906c231be20a1f53a240618bae81d95f)
+and section 2 of the [user manual](Documentation/CoMMA_user_manual.pdf).
+
+A typical `C++` file using CoMMA will look like the following:
+```cpp
+#include <vector>
+
+#include "CoMMA/CoMMA.h"
+
+// Graph representation
+std::vector<comma::CoMMAIndexT> graph_CRS_rows, graph_CRS_cols;
+std::vector<comma::CoMMAWeightT> graph_CRS_weights;
+// ...
+
+// Algorithm parametrization
+comma::CoMMAIntT min_card, goal_card, max_card;
+// ...
+
+// Output storage
+std::vector<comma::CoMMAIndexT> fc2cc;
+// ...
+
+// Agglomerate
+comma::agglomerate_one_level(
+  // ...args...
+)
+```
 
 ## :book: Documentation
 CoMMA is documented via `doxygen`. If you have it and wish to have the full
@@ -115,7 +156,7 @@ make install
 An [online version](https://onera.github.io/CoMMA/) of the doc is available.
 
 A user manual is also available, see
-[Documentation/CoMMA_user_manual.pdf](Documentation/CoMMA_user_manual.pdf). The
+[`Documentation/CoMMA_user_manual.pdf`](Documentation/CoMMA_user_manual.pdf). The
 goal of this document is to clearly state and explain how CoMMA works, that
 applies both to algorithms and their actual implementation (e.g., which data
 structures have been used). After having read this document, the user should be
