@@ -1,7 +1,11 @@
 # CoMMA (COarse Mesh Multigrid Agglomerator)
 
 <div align="center">
-    <img src="images/logos/logo-CoMMA.jpg" alt="CoMMA's logo" width="128" height="auto"/>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/logos/logo-CoMMA_darkbg.png">
+        <source media="(prefers-color-scheme: light)" srcset="images/logos/logo-CoMMA.png">
+        <img src="images/logos/logo-CoMMA.jpg" alt="CoMMA's logo" width="128" height="auto"/>
+    </picture>
 </div>
 
 **CoMMA** is a suite of graph algorithms meant to operate on the graph
