@@ -1,0 +1,19 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+        # https://github.com/pre-commit/pre-commit-hooks/issues/701 Otherwise does not support !reference
+        args: [--unsafe]
+    -   id: check-added-large-files
+-   repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+    -   id: clang-format
+        args: [--style=file]
+    -   id: clang-tidy
+        args: [-p=build/compile_commands.json]
