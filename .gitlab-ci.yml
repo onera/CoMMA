@@ -25,6 +25,7 @@ default:
 
 stages:
     - init
+    - configure
     - build
     - test
     - lint_format
@@ -103,8 +104,8 @@ job:init:
         reports:
             dotenv: ./build.env
 
-job:build_dbg:
-    stage: build
+job:configure_dbg:
+    stage: configure
     needs: ['job:init']
     rules:
         - !reference [.rules_changes_sources_linting, rules]
@@ -113,6 +114,15 @@ job:build_dbg:
         - mkdir -p build
         - cd build
         - cmake -DCODAFLAGS=On -DCOVERAGE=On -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+
+job:build_dbg:
+    stage: build
+    # We need job:init artifacts so leave it
+    needs: ['job:init', 'job:configure_dbg']
+    rules:
+        - !reference [.rules_changes_sources_linting, rules]
+    script:
+        - cd $CUSTOM_CI_DIR/build
         - make -j
     #artifacts:
     #    expire_in: 1 month
@@ -125,8 +135,7 @@ job:test_dbg:
     rules:
         - !reference [.rules_changes_sources, rules]
     script:
-        - cd $CUSTOM_CI_DIR
-        - cd build
+        - cd $CUSTOM_CI_DIR/build
         - ./CoMMA_test -r junit > test_a.xml
         - python3 -m gcovr --xml-pretty --exclude '\.\./pybind11/' --exclude '\.\./Catch2/' --exclude '\.\./perfetto/' --exclude '\.\./build_rel.*/' --exclude '\.\./src/CoMMA.cpp' --exclude '\.\./config_files/' --exclude '\.\./misc_scripts/' --print-summary -o coverage.xml --root ..
     coverage: /^\s*lines:\s*\d+.\d+\%/
@@ -149,12 +158,11 @@ job:test_install_pkgconfig:
             - .gitlab-ci.yml
             - config_files/*.in
     script:
-        - cd $CUSTOM_CI_DIR
-        - cd build
+        - cd $CUSTOM_CI_DIR/build
         - make install
         - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig pkg-config --cflags --libs comma`
-job:build_rel:
-    stage: build
+job:configure_rel:
+    stage: configure
     needs: ['job:init']
     rules:
         - !reference [.rules_changes_sources, rules]
@@ -163,6 +171,13 @@ job:build_rel:
         - mkdir -p build_rel
         - cd build_rel
         - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON_BINDINGS=Off ..
+job:build_rel:
+    stage: build
+    needs: ['job:init', 'job:configure_rel']
+    rules:
+        - !reference [.rules_changes_sources, rules]
+    script:
+        - cd $CUSTOM_CI_DIR/build_rel
         - make -j
 job:test_rel:
     stage: test
@@ -170,11 +185,10 @@ job:test_rel:
     rules:
         - !reference [.rules_changes_sources, rules]
     script:
-        - cd $CUSTOM_CI_DIR
-        - cd build_rel
+        - cd $CUSTOM_CI_DIR/build_rel
         - ./CoMMA_test
-job:build_rel32:
-    stage: build
+job:configure_rel32:
+    stage: configure
     needs: ['job:init']
     rules:
         - !reference [.rules_changes_sources, rules]
@@ -183,6 +197,13 @@ job:build_rel32:
         - mkdir -p build_rel32
         - cd build_rel32
         - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int32_t" -DINDEX_T="uint32_t" -DBUILD_PYTHON_BINDINGS=Off ..
+job:build_rel32:
+    stage: build
+    needs: ['job:init', 'job:configure_rel32']
+    rules:
+        - !reference [.rules_changes_sources, rules]
+    script:
+        - cd $CUSTOM_CI_DIR/build_rel32
         - make -j
 job:test_rel32:
     stage: test
@@ -190,11 +211,10 @@ job:test_rel32:
     rules:
         - !reference [.rules_changes_sources, rules]
     script:
-        - cd $CUSTOM_CI_DIR
-        - cd build_rel32
+        - cd $CUSTOM_CI_DIR/build_rel32
         - ./CoMMA_test
-job:build_rel64:
-    stage: build
+job:configure_rel64:
+    stage: configure
     needs: ['job:init']
     rules:
         - !reference [.rules_changes_sources, rules]
@@ -203,6 +223,13 @@ job:build_rel64:
         - mkdir -p build_rel64
         - cd build_rel64
         - cmake -DCODAFLAGS=On -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINT_T="int64_t" -DINDEX_T="uint64_t" -DBUILD_PYTHON_BINDINGS=Off ..
+job:build_rel64:
+    stage: build
+    needs: ['job:init', 'job:configure_rel64']
+    rules:
+        - !reference [.rules_changes_sources, rules]
+    script:
+        - cd $CUSTOM_CI_DIR/build_rel64
         - make -j
 job:test_rel64:
     stage: test
@@ -210,21 +237,23 @@ job:test_rel64:
     rules:
         - !reference [.rules_changes_sources, rules]
     script:
-        - cd $CUSTOM_CI_DIR
-        - cd build_rel64
+        - cd $CUSTOM_CI_DIR/build_rel64
         - ./CoMMA_test
 job:clang_tidy:
     stage: lint_format
-    needs: ["job:init", 'job:build_dbg']
+    # Need compile_commands
+    needs: ['job:init', 'job:configure_dbg']
     rules:
         - !reference [.rules_changes_sources_linting, rules]
+    # Select only changed files otherwise too long
     script:
         - cd $CUSTOM_CI_DIR
-        - clang-tidy -p build/compile_commands.json --warnings-as-errors="*" include/CoMMA/*.h src/*.cpp
+        - CHANGED_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep ".*\.\(h\|cpp\)" || true)
+        - if [[ ! -z $CHANGED_FILES ]]; then clang-tidy -p build/compile_commands.json --warnings-as-errors="*" $CHANGED_FILES; else echo "Nothing to do"; fi
     allow_failure: true
 job:clang_format:
     stage: lint_format
-    needs: ["job:init", 'job:build_dbg']
+    needs: ['job:init']
     rules:
         - !reference [.rules_changes_sources_linting, rules]
     script:
@@ -233,7 +262,7 @@ job:clang_format:
     allow_failure: true
 job:black:
     stage: lint_format_python
-    needs: ["job:init"]
+    needs: ['job:init']
     rules:
         - !reference [.rules_changes_python, rules]
     script:
@@ -242,7 +271,7 @@ job:black:
     allow_failure: true
 job:isort:
     stage: lint_format_python
-    needs: ["job:init"]
+    needs: ['job:init']
     rules:
         - !reference [.rules_changes_python, rules]
     script:
@@ -251,7 +280,7 @@ job:isort:
     allow_failure: true
 job:ruff:
     stage: lint_format_python
-    needs: ["job:init"]
+    needs: ['job:init']
     rules:
         - !reference [.rules_changes_python, rules]
     script:
@@ -260,7 +289,10 @@ job:ruff:
     allow_failure: true
 pages:
     stage: documentation
-    needs: ['job:init', 'job:build_dbg', 'job:test_dbg']
+    needs:
+      - job: 'job:init'
+      - job: 'job:test_dbg'
+        artifacts: false
     script:
         - cd $CUSTOM_CI_DIR
         - rm -rf documentation
