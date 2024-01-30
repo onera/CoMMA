@@ -142,7 +142,7 @@ SET(TESTS
 #############################  TEST with CATCH2 BUILDING #########################
 # Why Catch2? Read: https://snorristurluson.github.io/Catch2/
 
-# Generate a test executable with covergae report
+# Generate a test executable with coverage report
 if ( BUILD_TESTS )
   message(STATUS "Tests enabled")
   add_subdirectory(Catch2)

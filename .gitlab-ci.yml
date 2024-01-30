@@ -4,6 +4,15 @@
 #    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 #      when: never
 #    - when: always
+# Check out also this one https://stackoverflow.com/questions/69812129/gitlab-ci-if-mr-exist-just-trigger-merge-request-detach-pipeline-if-not-trigge/69819558#69819558
+# Triggers on merge resuests, branch pipelines UNLESS there is an open merge requests
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
 variables:
   GIT_STRATEGY: none # Do nothing by default. It will be done once in init, then other we reuse it
   GIT_SUBMODULE_STRATEGY: none
