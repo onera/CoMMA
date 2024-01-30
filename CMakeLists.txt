@@ -147,12 +147,14 @@ if ( BUILD_TESTS )
   message(STATUS "Tests enabled")
   add_subdirectory(Catch2)
   add_executable(${CoMMA_TEST} ${TESTS})
+  target_link_libraries(${CoMMA_TEST}
+    PUBLIC ${CoMMA_LIB}
+    PRIVATE Catch2::Catch2
+  )
   if ( COVERAGE )
     message(STATUS "Coverage support enabled")
     target_compile_options(${CoMMA_TEST} PUBLIC "--coverage")
-    target_link_libraries(${CoMMA_TEST} ${CoMMA_LIB} Catch2::Catch2 gcov)
-  else()
-    target_link_libraries(${CoMMA_TEST} ${CoMMA_LIB} Catch2::Catch2)
+    target_link_libraries(${CoMMA_TEST} PRIVATE gcov)
   endif()
 
   enable_testing()
