@@ -101,6 +101,15 @@ CODA-CFD library:
 cmake -DCODAFLAGS=On ..
 ```
 
+In order for CoMMA to be compatible with `spack` package manager, a
+configuration file and some patches are given in
+[`config_files/spack/comma`](config_files/spack/comma). The spack configuration
+supports almost the same variants that `cmake` uses, e.g., `+python`, `+doc`,
+`+pkgconfig`, `codaflags`. They only two differences is that coverage option is
+not available, and the type choices are more limited. Indeed, one use 64 bit
+integer with `+int64`, otherwise 32 bit; and double reals with `+real64`,
+otherwise float.
+
 ## :construction_worker: Usage
 CoMMA provides a `namespace` with the same name, but in lowercase: `comma`. Its
 interface is very simple and consists in only one function,

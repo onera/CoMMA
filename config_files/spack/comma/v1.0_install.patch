@@ -1,0 +1,73 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cc76cf5..70ebc71 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,7 +10,7 @@ set(CMAKE_BUILD_TYPE Debug)  # Debug version
+ 
+ 
+ set(CMAKE_CXX_STANDARD 17)
+-# for linker in MAC read: 
++# for linker in MAC read:
+ # https://github.com/catchorg/Catch2/issues/1204
+ 
+ ###################################  PROJECT #################################
+@@ -48,20 +48,20 @@ set(INTERFACCIA
+ set(SOURCE_FILES
+         ${SOURCE_DIR}/Tree.cpp
+ 	)
+-set(PROFILING 
++set(PROFILING
+ 	perfetto/sdk/perfetto.h
+ 	${PROFILING_DIR}/profiling/trace_categories.h
+ 	${PROFILING_DIR}/profiling/trace_categories.cpp
+ 	${PROFILING_DIR}/header_profile.h
+ 	)
+ 
+-set(PROFILING_SOURCE 
+-	${PROFILING_DIR}/input/DualGPy.h	
++set(PROFILING_SOURCE
++	${PROFILING_DIR}/input/DualGPy.h
+ 	${PROFILING_DIR}/test_profile.cpp
+    )
+ 
+-set(PROFILING_PERF 
+-	${PROFILING_DIR}/input/DualGPy.h	
++set(PROFILING_PERF
++	${PROFILING_DIR}/input/DualGPy.h
+ 	${PROFILING_DIR}/test_perf.cpp
+    )
+ 
+@@ -96,13 +96,33 @@ SET(TESTS ${IMPLEMENTATION}
+ 
+ # Generate a test executable
+ include_directories(Catch2/single_include)
+-add_compile_options("--coverage")
++# add_compile_options("--coverage")
+ add_executable("Comma_test" ${TESTS})
+ target_link_libraries(Comma_test gcov)
+ #target_link_libraries(Comma_test Boost)
+ #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
+ ######################## Pybind11 bindings ####################################
++find_package(Python COMPONENTS Interpreter Development)
+ add_subdirectory(pybind11)
+ pybind11_add_module(CoMMA ${IMPLEMENTATION} ${INTERFACCIA} ${SOURCE_FILES})
+ 
+-
++# installation
++include(GNUInstallDirs)
++install(DIRECTORY ${SOURCE_DIR}/
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
++  FILES_MATCHING PATTERN "*.h"
++  REGEX "deprecated" EXCLUDE
++)
++install(DIRECTORY ${SOURCE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
++
++if (BUILD_PYTHON_BINDINGS)
++  set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
++  install(TARGETS CoMMA
++    COMPONENT python
++    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
++    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
++    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}")
++endif()

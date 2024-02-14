@@ -1,0 +1,46 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a2e301f..edab066 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,7 @@
+ 
+ ###############################   CMAKE VERSION and FLAGS ##########################
+ 
+-cmake_minimum_required(VERSION 3.14)
++cmake_minimum_required(VERSION 3.15)
+ 
+ set(CMAKE_BUILD_TYPE Debug)  # Debug version
+ 
+@@ -97,11 +97,33 @@ SET(TESTS
+ 
+ # Generate a test executable with covergae report
+ include_directories(Catch2/single_include)
+-add_compile_options("--coverage")
++# add_compile_options("--coverage")
+ add_executable("Comma_test" ${TESTS})
+ target_link_libraries(Comma_test gcov)
+ #target_link_libraries(Comma_test Boost)
+ #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
+ ######################## Pybind11 bindings ####################################
++find_package(Python COMPONENTS Interpreter Development)
+ add_subdirectory(pybind11)
+ pybind11_add_module(CoMMA ${PYTHONBIND})
++
++# installation
++include(GNUInstallDirs)
++install(DIRECTORY ${SOURCE_DIR}/
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
++  FILES_MATCHING PATTERN "*.h"
++  REGEX "deprecated" EXCLUDE
++)
++install(DIRECTORY ${SOURCE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
++
++if (BUILD_PYTHON_BINDINGS)
++  set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
++  install(TARGETS CoMMA
++    COMPONENT python
++    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
++    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}"
++    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PYTHON_SUB_DIR}")
++endif()
