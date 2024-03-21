@@ -10,6 +10,7 @@ repos:
         # https://github.com/pre-commit/pre-commit-hooks/issues/701 Otherwise does not support !reference
         args: [--unsafe]
     -   id: check-added-large-files
+        args: ['--maxkb=4048']
 -   repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.3.5
     hooks:
