@@ -263,9 +263,7 @@ def build_coarse_graph(
     )
 
 
-def prepare_meshio_celldata(
-    data: npt.ArrayLike, cellblocks: typing.List["MeshioCellBlock"]
-) -> typing.List[npt.ArrayLike]:
+def prepare_meshio_celldata(data, cellblocks):
     """Prepare data so that it can be forwarded to `Meshio` as cell data.
 
     data: array like
@@ -275,22 +273,19 @@ def prepare_meshio_celldata(
     """
     if len(cellblocks) < 2:
         return [data]
-    ret: typing.List[npt.ArrayLike] = []
+    ret = []
     # More than one element type -> Adapt cell_data to meshio cellblock format
     start = 0
     for cells_by_type in cellblocks:
-        n_cell = cells_by_type.data.shape[0]
-        ret.append(data[start : start + n_cell])
-        start += n_cell
+        n_cells = cells_by_type.data.shape[0]
+        ret.append(data[start : start + n_cells])
+        start += n_cells
     return ret
 
 
 def prepare_meshio_agglomeration_data(
-    data: npt.ArrayLike,
-    cellblocks: typing.List["MeshioCellBlock"],
-    modulo_renumbering: typing.Optional[int] = None,
-    shuffle: bool = False,
-) -> typing.List[npt.ArrayLike]:
+    data, cellblocks, modulo_renumbering=None, shuffle=False
+):
     """Prepare data coming from the algorithm so that it can be forwarded to `Meshio` as
     cell data. If requested, the data is shuffled and/or modified by taking a modulo
     operation: both these lasts two features may result in better visualization.
@@ -319,5 +314,5 @@ def prepare_meshio_agglomeration_data(
         # )
         # As long as the data is composed of (integer) IDs, the following is equivalent
         # but much faster
-        final_data = final_data % modulo_renumbering
+        final_data %= modulo_renumbering
     return prepare_meshio_celldata(final_data, cellblocks)

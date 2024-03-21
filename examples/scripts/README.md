@@ -29,6 +29,11 @@ A brief description of the scripts in this directory:
 * `ex_several_agglo_levels.py`: Show how to agglomerate several times the same mesh using `CoMMA`. Useful for familiarizing with:
     * Running several agglomeration steps on the same mesh, each time preparing the result of the previous step for the following one
     * Outputting more than one field via `meshio`
+* `ex_rae.py`: Agglomeration of a 2D RAE2822 mesh. We use here different features:
+    * Perfectly selection of the BL by looking at the cell-type (only squares)
+    * Computation of the (reciprocal) of the wall-distance to be used as weights to give higher priority to cells near the wall
+    * Several agglomeration levels
+    * Modification of the anisotropic lines after the first level
 
 ## Deprecated
 Some old deprecated examples:
