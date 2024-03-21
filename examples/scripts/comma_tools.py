@@ -111,8 +111,8 @@ def dump_graph(
     n_bnd_faces: npt.ArrayLike,
     centers: npt.ArrayLike,
     precision: int = 15,
-    integer_format: [str, None] = None,
-    float_format: [str, None] = None,
+    integer_format: typing.Optional[str] = None,
+    float_format: typing.Optional[str] = None,
 ) -> None:
     """Dump a graph in a format readable by CoMMA `test_util.h`
 
@@ -261,3 +261,63 @@ def build_coarse_graph(
         coarse_n_bnd,
         coarse_centers,
     )
+
+
+def prepare_meshio_celldata(
+    data: npt.ArrayLike, cellblocks: typing.List["MeshioCellBlock"]
+) -> typing.List[npt.ArrayLike]:
+    """Prepare data so that it can be forwarded to `Meshio` as cell data.
+
+    data: array like
+        Data.
+    cellblocks: list of `Meshio` `CellBlock`s
+        Cell-blocks of which the `Meshio` mesh is composed.
+    """
+    if len(cellblocks) < 2:
+        return [data]
+    ret: typing.List[npt.ArrayLike] = []
+    # More than one element type -> Adapt cell_data to meshio cellblock format
+    start = 0
+    for cells_by_type in cellblocks:
+        n_cell = cells_by_type.data.shape[0]
+        ret.append(data[start : start + n_cell])
+        start += n_cell
+    return ret
+
+
+def prepare_meshio_agglomeration_data(
+    data: npt.ArrayLike,
+    cellblocks: typing.List["MeshioCellBlock"],
+    modulo_renumbering: typing.Optional[int] = None,
+    shuffle: bool = False,
+) -> typing.List[npt.ArrayLike]:
+    """Prepare data coming from the algorithm so that it can be forwarded to `Meshio` as
+    cell data. If requested, the data is shuffled and/or modified by taking a modulo
+    operation: both these lasts two features may result in better visualization.
+
+    data: array like
+        Data.
+    cellblocks: list of `Meshio` `CellBlock`s
+        Cell-blocks of which the `Meshio` mesh is composed.
+    modulo_renumbering: optional, None or int
+        Value of the modulo operation applied to the data.
+    shuffle: bool, default: False
+        Whether to shuffle the data before exporting.
+    """
+    final_data = np.asarray(data)
+    if shuffle:
+        n_cells = final_data.max() + 1
+        new_data = np.arange(n_cells)
+        np.random.default_rng().shuffle(new_data)
+        for i in range(final_data.shape[0]):
+            final_data[i] = new_data[final_data[i]]
+    if modulo_renumbering is not None and modulo_renumbering > 1:
+        # fine_cells_renum = (
+        #     dGut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)
+        #     if renum
+        #     else fc_to_res
+        # )
+        # As long as the data is composed of (integer) IDs, the following is equivalent
+        # but much faster
+        final_data = final_data % modulo_renumbering
+    return prepare_meshio_celldata(final_data, cellblocks)
