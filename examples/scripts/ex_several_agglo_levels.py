@@ -13,8 +13,6 @@
 Create a mesh with the default constructor of `dualGPy`, apply several levels of
 agglomeration with `CoMMA` and export the result.
 """
-from copy import deepcopy
-
 import meshio
 
 # import dualGPy.Utils as dGut
@@ -23,7 +21,7 @@ from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D, Mesh3D
 
-from comma_tools import build_coarse_graph
+from comma_tools import build_coarse_graph, prepare_meshio_agglomeration_data
 
 neigh_type_types = ["Extended", "Pure front advancing"]
 
@@ -61,11 +59,15 @@ sing_card = 1
 fc_iter = 1
 agglomeration_levels = 3
 
-# Output-related parameters
+# Output-related parameters, they should help with visualization. One can try only one
+# or both at the same time.
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
 # numbers from 1 to the given value are used (it makes it easier to distinguish the
 # coarse cells in Paraview
-renumber_coarse = 10  # -1 #
+renumber_coarse = 12  # -1 #
+# Whether to shuffle the ID of the coarse cells (so that adjacent cell should not have
+# closer ID)
+shuffle_coarse = False
 #########
 
 assert agglomeration_levels > 0
@@ -93,6 +95,7 @@ print(
     f" * Coarse cell renumbering={renum}"
     + (f" (from 0 to {renumber_coarse-1})" if renum else "")
 )
+print(f" * Shuffle coarse-cell IDs: {shuffle_coarse}")
 print()
 
 # CoMMATypes-like
@@ -131,8 +134,13 @@ fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
 arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
 agglomerationLines = np.array([0], dtype=CoMMAIndex)
+
+# Storage for the all the agglomeration levels
 out_data = {}
+# Since the results of the agglomeration step are given in terms of the previous level,
+# we store here the results wrt the initial fine mesh
 fc_to_cur_lvl = list(range(nb_fc))
+
 for level in range(agglomeration_levels):
     print(f"* Level {level}:")
     if level > 0:
@@ -140,7 +148,6 @@ for level in range(agglomeration_levels):
         build_lines = False
         # This is possibly not the most efficient way to do the following, but it works
         # and it is enough for now
-        f2c = np.asarray(fc_to_cc)
         (
             adjMatrix_row_ptr,
             adjMatrix_col_ind,
@@ -197,27 +204,12 @@ for level in range(agglomeration_levels):
         fc_to_cur_lvl[i] = fc_to_cc[fc_to_cur_lvl[i]]
 
     print(" - Finalizing...", flush=True, end="")
-    # fine_cells_renum = (
-    #     dGut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)
-    #     if renum
-    #     else fc_to_res
-    # )
-    # As long as the data is composed of (integer) IDs, the following is equivalent but
-    # much faster
-    fine_cells_renum = (
-        (np.asarray(fc_to_cur_lvl) % renumber_coarse) if renum else fc_to_cur_lvl
+    out_data[f"agglomerate_{level}"] = prepare_meshio_agglomeration_data(
+        fc_to_cur_lvl,
+        mesh.mesh.cells,
+        modulo_renumbering=renumber_coarse,
+        shuffle=shuffle_coarse,
     )
-    agglo = []
-    if len(mesh.mesh.cells) > 1:
-        # More than one element type -> Adapt cell_data to meshio cellblock format
-        start = 0
-        for cells_by_type in mesh.mesh.cells:
-            n_cell = cells_by_type.data.shape[0]
-            agglo.append(fine_cells_renum[start : start + n_cell])
-            start += n_cell
-    else:
-        agglo.append(fine_cells_renum)
-    out_data[f"agglomerate_{level}"] = deepcopy(agglo)
     print("OK")
     print()
     if max(fc_to_cc) == 0 and level < agglomeration_levels - 1:
@@ -227,8 +219,4 @@ for level in range(agglomeration_levels):
         break
 
 print(f"Writing in {outname}")
-meshio.Mesh(
-    mesh.mesh.points,
-    mesh.mesh.cells,
-    cell_data=out_data,
-).write(outname)
+meshio.Mesh(mesh.mesh.points, mesh.mesh.cells, cell_data=out_data).write(outname)

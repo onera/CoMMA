@@ -22,6 +22,8 @@ from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
+from comma_tools import prepare_meshio_agglomeration_data
+
 neigh_type_types = ["Extended", "Pure front advancing"]
 
 seed_ordering_types = {
@@ -51,11 +53,15 @@ sing_card = 1
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 
-# Output-related parameters
+# Output-related parameters, they should help with visualization. One can try only one
+# or both at the same time.
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
 # numbers from 1 to the given value are used (it makes it easier to distinguish the
 # coarse cells in Paraview
-renumber_coarse = 10  # -1 #
+renumber_coarse = 12  # -1 #
+# Whether to shuffle the ID of the coarse cells (so that adjacent cell should not have
+# closer ID)
+shuffle_coarse = False
 #########
 
 basename = "ani_3cell_test"
@@ -81,6 +87,7 @@ print(
     f" * Coarse cell renumbering={renum}"
     + (f" (from 0 to {renumber_coarse-1})" if renum else "")
 )
+print(f" * Shuffle coarse-cell IDs: {shuffle_coarse}")
 print()
 
 # CoMMATypes-like
@@ -165,27 +172,12 @@ fc_to_cc_res, alines_Idx, alines = agglomerate_one_level(
 print("OK")
 
 print("Finalizing...", flush=True, end="")
-# fine_cells_renum = (
-#     dGut.address_agglomerated_cells(fc_to_cc_res, renumber_coarse)
-#     if renum
-#     else fc_to_res
-# )
-# As long as the data is composed of (integer) IDs, the following is equivalent but
-# much faster
-fine_cells_renum = (
-    (np.asarray(fc_to_cc_res) % renumber_coarse) if renum else fc_to_cc_res
+agglo = prepare_meshio_agglomeration_data(
+    fc_to_cc_res,
+    m.mesh.cells,
+    modulo_renumbering=renumber_coarse,
+    shuffle=shuffle_coarse,
 )
-
-agglo = []
-if len(m.mesh.cells) > 1:
-    # More than one element type -> Adapt cell_data to meshio cellblock format
-    start = 0
-    for cells_by_type in m.mesh.cells:
-        n_cell = cells_by_type.data.shape[0]
-        agglo.append(fine_cells_renum[start : start + n_cell])
-        start += n_cell
-else:
-    agglo = [fine_cells_renum]
 
 f2c = np.asarray(fc_to_cc_res, dtype=int)
 # Building a dictionary 'aniso line ID' : [fine cells in line]
