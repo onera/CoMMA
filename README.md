@@ -57,14 +57,16 @@ a standard out-of-source build and look like this:
 cd path/to/CoMMA
 mkdir build install
 cd build
-cmake -DINDEX_T="int" -DINT_T="int" -DREAL_T="double" --prefix=../install ..
+cmake -DINDEX_T="int" -DINT_T="int" -DREAL_T="double" -DCMAKE_INSTALL_PREFIX=../install ..
 make
 make install
 ```
 Notice that custom types have been chosen. Since the dependencies for the
 `python` module and the tests are included in CoMMA repositories as submodules,
 `cmake` should be able to find them automatically; of course, the repository
-should have been initialized accordingly, see [below](#link-submodules).
+should have been initialized accordingly, see [below](#link-submodules). Instead
+of `-DCMAKE_INSTALL_PREFIX=`, one could have used `--install-prefix`, although
+this later only accepts absolute paths.
 
 If one wants to use CoMMA in their code, it is important to perform the
 installation step: indeed, during configuration an important header (including
@@ -89,7 +91,7 @@ cmake -DCOVERAGE=On ..
 Support for `pkg-config` can be enabled by passing the related option to
 `cmake`:
 ```shell
-cmake -DPKGCONFIG_SUPPORT=On --prefix=../install ..
+cmake -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=../install ..
 ```
 A template of such configuration file can be found
 [in the repository](config_files/comma.pc.in); given the prefix provided in the
@@ -161,7 +163,7 @@ and related html pages will be built in `documentation`. Otherwise, the
 documentation can be activated during the configuration phase of the
 compilation, then built and installed:
 ```shell
-cmake -DBUILD_DOC=On --prefix=../install ..
+cmake -DBUILD_DOC=On -DCMAKE_INSTALL_PREFIX=../install ..
 make
 make install
 ```
