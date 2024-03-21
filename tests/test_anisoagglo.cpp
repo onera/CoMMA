@@ -10,6 +10,7 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <optional>
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
@@ -20,6 +21,9 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+
+#define SING_CARD_THRESH 1
+#define MAX_CELLS_IN_LINE std::nullopt
 
 // NOLINTNEXTLINE
 SCENARIO(
@@ -40,7 +44,8 @@ SCENARIO(
     const vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
 
     WHEN(
       "We proceed with the agglomeration of the anisotropic lines (we gather them and later we agglomerate)") {
@@ -71,7 +76,7 @@ SCENARIO(
       Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
         fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
         agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
-        Data.dim);
+        MAX_CELLS_IN_LINE, Data.dim);
 
       THEN(
         "There is no need to agglomerate anisotropically since no line can be built") {
@@ -100,7 +105,7 @@ SCENARIO(
       Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
         fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
         agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
-        Data.dim);
+        MAX_CELLS_IN_LINE, Data.dim);
 
       THEN(
         "There is no need to agglomerate anisotropically since no line can be built") {
@@ -129,7 +134,7 @@ SCENARIO(
       Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
         fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
         agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
-        Data.dim);
+        MAX_CELLS_IN_LINE, Data.dim);
 
       THEN(
         "There is no need to agglomerate anisotropically since no line can be built") {
@@ -169,8 +174,8 @@ SCENARIO(
     const vector<CoMMAIndexT> agglomerationLines{};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
-
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
     THEN(
       "There is no need to agglomerate anisotropically since no line can be built") {
       REQUIRE(!aniso_agg._should_agglomerate);
@@ -202,8 +207,8 @@ SCENARIO(
       0, 11, 10, 9, 8, 7, 16, 14, 12, 13, 15, 20, 22, 23, 21, 19};
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
-
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
     THEN("Only 3 lines are built") {
       REQUIRE(aniso_agg._nb_lines[0] == 3);
       REQUIRE(aniso_agg._should_agglomerate);
@@ -233,7 +238,8 @@ SCENARIO(
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
       Data.dim);
@@ -304,7 +310,8 @@ SCENARIO(
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, false, Data.dim);
+      agglomerationLines, Data.weights, build_lines, false, MAX_CELLS_IN_LINE,
+      Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
       Data.dim);
@@ -420,7 +427,8 @@ the line grows vertically
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
     const Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
       iso_agg(
         fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
@@ -490,7 +498,8 @@ the line grows vertically
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, wei, build_lines, ODD_LINE_LENGTH, Data.dim);
+      agglomerationLines, wei, build_lines, ODD_LINE_LENGTH, MAX_CELLS_IN_LINE,
+      Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
       Data.dim);
@@ -545,13 +554,18 @@ the line grows vertically
 
   GIVEN(
     "We load a 4by7 quad 2D mesh which has 4 anisotropic lines each of length 5 cells and"
-    " we simulate a restart (not first agglomeration, we already have the liens)") {
+    " we simulate a restart (not first agglomeration, we already have the lines)") {
     const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
     const CoMMAWeightT aniso_thresh{2.};
     const bool build_lines = false;
     const vector<CoMMAIndexT> agglomerationLines_Idx = {0, 5, 10, 15, 20};
+    // clang-format off
     const vector<CoMMAIndexT> agglomerationLines = {
-      0, 1, 2, 3, 4, 11, 10, 9, 8, 7, 16, 14, 12, 13, 15, 20, 22, 23, 21, 19};
+      0, 1, 2, 3, 4,
+      11, 10, 9, 8, 7,
+      16, 14, 12, 13, 15,
+      20, 22, 23, 21, 19};
+    // clang-format on
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
@@ -562,7 +576,8 @@ the line grows vertically
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph, cc_graph, seeds_pool, aniso_thresh, agglomerationLines_Idx,
-      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH, Data.dim);
+      agglomerationLines, Data.weights, build_lines, ODD_LINE_LENGTH,
+      MAX_CELLS_IN_LINE, Data.dim);
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
       Data.dim);
@@ -676,6 +691,44 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         REQUIRE(fc2cc[16] == 4);
         REQUIRE(fc2cc[20] == 6);
         REQUIRE(fc2cc[23] == 7);
+      }
+    }
+    WHEN(
+      "We agglomerate with neighbourhood priority and limit the line length to 3") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
+      const bool aniso = true, build_lines = true, odd_length = true,
+                 correction = true;
+      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      const CoMMAIndexT max_line_length = 3;
+      const CoMMAWeightT aniso_thr = 4.;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
+        Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+        build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
+        alines, correction, Data.dim, goal_card, min_card, max_card,
+        SING_CARD_THRESH, max_line_length);
+      THEN("There are four isotropic coarse cells") {
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 5, 6, 24, 25));
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 17, 18, 27, 26));
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 3, 4, 7, 8));
+        REQUIRE(OUTCHECK4CELLS(fc2cc, 13, 15, 19, 21));
+      }
+      THEN(
+        "The anisotropic coarse cells at the boundary are of cardinality 3") {
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 0, 1, 2));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 11, 10, 9));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 16, 14, 12));
+        REQUIRE(OUTCHECK3CELLS(fc2cc, 20, 22, 23));
+      }
+      THEN(
+        "The coarse-cell numbering reflects the boundary trick (leave 3-cells cluster inside)"
+        " and the priority weights") {
+        REQUIRE(fc2cc[0] == 0);
+        REQUIRE(fc2cc[11] == 1);
+        REQUIRE(fc2cc[16] == 2);
+        REQUIRE(fc2cc[20] == 3);
       }
     }
   }

@@ -18,6 +18,7 @@
 #include <iostream>
 #include <iterator>
 #include <numeric>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
@@ -97,6 +98,9 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
  * @param[in] singular_card_thresh (optional, default=1) Cardinality below which
  * a coarse is considered as singular, hence, compliant for correction
+ * @param[in] max_cells_in_line [Optional] Maximum number of cells in an
+ * anisotropic line; when this value is reached, all reaming cells are
+ * discarded, hence considered as isotropic
  * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed
  * for the algorithm choosing which fine cell to add next. The cost grows
  * exponentially, hence use small values.
@@ -156,6 +160,7 @@ void agglomerate_one_level(
   CoMMAIntType min_card,
   CoMMAIntType max_card,
   CoMMAIntType singular_card_thresh = 1,
+  std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
   CoMMAIntType fc_choice_iter = 1,
   const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED) {
   // NOTATION
@@ -209,6 +214,12 @@ void agglomerate_one_level(
         std::cout << "CoMMA - Warning: building anisotropic line requested, no "
                      "compliant cells provided. Switching off anisotropy."
                   << std::endl;
+      }
+      if (max_cells_in_line.has_value() && max_cells_in_line.value() <= 0) {
+        std::cout << "CoMMA - Requested a negative or null maximum number of "
+                     "cells in line. Dropping the limit."
+                  << std::endl;
+        max_cells_in_line = std::nullopt;
       }
     } else {
       // Anisotropic lines are provided
@@ -317,7 +328,7 @@ void agglomerate_one_level(
       aniso_agg(
         fc_graph, cc_graph, seeds_pool, threshold_anisotropy,
         agglomerationLines_Idx, agglomerationLines, priority_weights,
-        build_anisotropic_lines, odd_line_length, dimension);
+        build_anisotropic_lines, odd_line_length, max_cells_in_line, dimension);
 
     // Agglomerate anisotropic cells only
     aniso_agg.agglomerate_one_level(

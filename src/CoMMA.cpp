@@ -17,6 +17,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <optional>
 #include <type_traits>
 
 #include "CoMMA/CoMMAConfig.h"
@@ -79,7 +80,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       // Tuning of the algorithms
       bool correction, CoMMAIntT dimension, CoMMAIntT goal_card,
       CoMMAIntT min_card, CoMMAIntT max_card, CoMMAIntT singular_card_thresh,
-      CoMMAIntT fc_choice_iter,
+      optional<CoMMAIndexT> max_cells_in_line, CoMMAIntT fc_choice_iter,
       const CoMMAIntT type_of_isotropic_agglomeration) {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
@@ -87,8 +88,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         build_anisotropic_lines, is_anisotropic, odd_line_length,
         threshold_anisotropy, seed_ordering_type, fc_to_cc,
         agglomerationLines_Idx, agglomerationLines, correction, dimension,
-        goal_card, min_card, max_card, singular_card_thresh, fc_choice_iter,
-        type_of_isotropic_agglomeration);
+        goal_card, min_card, max_card, singular_card_thresh, max_cells_in_line,
+        fc_choice_iter, type_of_isotropic_agglomeration);
       return std::make_tuple(
         fc_to_cc, agglomerationLines_Idx, agglomerationLines);
     },
@@ -101,7 +102,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "seed_ordering_type"_a, "fc_to_cc"_a, "agglomerationLines_Idx"_a,
     "agglomerationLines"_a, "correction"_a, "dimension"_a, "goal_card"_a,
     "min_card"_a, "max_card"_a, "singular_card_thresh"_a = 1,
-    "fc_choice_iter"_a = 1, "type_of_isotropic_agglomeration"_a = 0);
+    "max_cells_in_line"_a = std::nullopt, "fc_choice_iter"_a = 1,
+    "type_of_isotropic_agglomeration"_a = 0);
   module_handle.def(
     "compute_neighbourhood_based_wall_distance",
     [](

@@ -211,6 +211,9 @@ public:
    * be built
    *  @param[in] odd_line_length Whether anisotropic lines with odd length are
    * allowed
+   *  @param[in] max_cells_in_line Maximum number of cells in an anisotropic
+   *  line; when this value is reached, all reaming cells are discarded, hence
+   *  considered as isotropic
    *  @param[in] dimension Dimension of the problem
    */
   Agglomerator_Anisotropic(
@@ -227,12 +230,14 @@ public:
     const std::vector<CoMMAWeightType> &priority_weights,
     const bool build_lines,
     const bool odd_line_length,
+    const std::optional<CoMMAIndexType> max_cells_in_line,
     CoMMAIntType dimension = 3) :
       Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         graph, cc_graph, seeds_pool, dimension),
       _should_agglomerate(true),
       _aniso_neighbours(),
-      _odd_line_length(odd_line_length) {
+      _odd_line_length(odd_line_length),
+      _max_cells_in_line(max_cells_in_line) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -316,13 +321,21 @@ public:
       // value See, e.g., https://stackoverflow.com/a/56133699/12152457
       auto loop_line = [&](auto begin, auto end) {
         AnisotropicLinePtr line_lvl_p_one = std::make_shared<AnisotropicLine>();
+        typename decltype(this->_max_cells_in_line)::value_type n_cells{0};
         for (auto line_it = begin; line_it != end; line_it += 2) {
+          if (
+            this->_max_cells_in_line.has_value()
+            && n_cells + 2 > this->_max_cells_in_line.value()) {
+            // Max length reached, break
+            break;
+          }
           // we agglomerate cells along the agglomeration line, hence we have to
           // go through the faces and agglomerate two faces together
           // Here we have to consider a special case when we have an odd number
           // of cells: THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID
           // ALGORITHM
           std::unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+          n_cells += 2;
           // We update the neighbours. At this stage, we do not check if it is
           // or will be agglomerated since there will be a cleaning step after
           // the anisotropic agglomeration
@@ -334,10 +347,15 @@ public:
             this->_aniso_neighbours.end(),
             this->_fc_graph->neighbours_cbegin(*(line_it + 1)),
             this->_fc_graph->neighbours_cend(*(line_it + 1)));
-          if (distance(line_it, end) == 3) {
+          if (
+            std::distance(line_it, end) == 3
+            || (
+              this->_max_cells_in_line.has_value()
+              && n_cells + 1 == this->_max_cells_in_line.value())) {
             if (this->_odd_line_length) {
               // If only three cells left, agglomerate them
               s_fc.insert(*(line_it + 2));
+              n_cells++;
               this->_aniso_neighbours.insert(
                 this->_aniso_neighbours.end(),
                 this->_fc_graph->neighbours_cbegin(*(line_it + 2)),
@@ -683,6 +701,11 @@ protected:
 
   /** @brief Whether anisotropic lines with odd length are allowed. */
   bool _odd_line_length;
+
+  /** @brief Maximum number of cells in an anisotropic line; when this value is
+   * reached, all reaming cells are discarded, hence considered as isotropic
+   */
+  std::optional<CoMMAIndexType> _max_cells_in_line;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator
