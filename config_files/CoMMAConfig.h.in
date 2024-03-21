@@ -16,23 +16,31 @@
 
 #include <cstdint>
 
+// clang-format off
 #define CoMMA_VERSION @PROJECT_VERSION@
 #define CoMMA_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define CoMMA_VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define CoMMA_VERSION_PATCH @PROJECT_VERSION_PATCH@
+// clang-format on
 
 namespace comma {
 
+// clang-format off
 /// Type of an index (used by agglomerator CoMMA for edges and nodes).
 using CoMMAIndexT = @INDEX_T@;
+// clang-format on
 
+// clang-format off
 /// Type of floating-point values (used by agglomerator CoMMA for this edge
 /// weights).
 using CoMMAWeightT = @REAL_T@;
+// clang-format on
 
+// clang-format off
 /// Type of integer for cardinality of coarse cells, dimension, distances,
 /// orders...
 using CoMMAIntT = @INT_T@;
+// clang-format on
 
 }  // end namespace comma
 
