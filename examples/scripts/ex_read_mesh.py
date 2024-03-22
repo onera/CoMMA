@@ -40,11 +40,11 @@ seed_ordering_types = {
 # Input-related parameters
 # Format is one of those accepted by meshio or None
 # e.g., input_mesh, input_format = "3D_CRM.vtu", None
-input_mesh, input_format = "../meshes/naca2d_structured_ansys.msh", "ansys"
+input_mesh, input_format = "../../bkp_examples/aniso_3cell_extended.msh", "ansys"
 ##
 dimension = 2
 ##
-anisotropic = False
+anisotropic = True
 ## CoMMA parameters
 build_lines = True
 if dimension == 3:
@@ -60,6 +60,8 @@ seed_order = 0  # 0 = Boundary priority, 1 = Neighbourhood priority,
 #                 11 = Neighbourhood priority with point initialization
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
+# Max cells in an anisotropic line
+max_cells_in_line = None  # Or positive number
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 
@@ -68,7 +70,7 @@ fc_iter = 1
 # If < 1, the value associated to the coarse cells are the ID. Otherwise, only
 # numbers from 1 to the given value are used (it makes it easier to distinguish the
 # coarse cells in Paraview
-renumber_coarse = 12  # -1 #
+renumber_coarse = -1  # 12  # -1 #
 # Whether to shuffle the ID of the coarse cells (so that adjacent cell should not have
 # closer ID)
 shuffle_coarse = False
@@ -94,6 +96,7 @@ print(f" * neigh_type={neigh_type_types[neigh_type]}")
 print(" * Priority weights: reversed ID")
 print(f" * seed_ordering={seed_ordering_types[seed_order]}")
 print(f" * Threshold cardinality for singular cells={sing_card}")
+print(f" * Max cells in anisotropic line={max_cells_in_line}")
 print(f" * Fine-cell research iterations={fc_iter}")
 print(" [Output]")
 renum = renumber_coarse > 1
@@ -168,6 +171,7 @@ print("CoMMA call...", flush=True, end="")
     minCard,
     maxCard,
     sing_card,
+    max_cells_in_line,
     fc_iter,
     neigh_type,
 )
