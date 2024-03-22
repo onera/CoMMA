@@ -32,9 +32,16 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
   GIVEN("We have a 7x7 Cartesian 2D matrix") {
     const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
     const unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -44,7 +51,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         vector<bool>(Data.volumes.size(), false);
       unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
       fc_graph.compute_neighbourhood_of_cc(
-        s_seeds, neigh_order, d_n_of_seed, card, agglomerated);
+        s_seeds, neigh_order, d_n_of_seed, card, agglomerated
+      );
       vector<set<CoMMAIndexT>> neighs = vector<set<CoMMAIndexT>>(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v - 1].insert(k);
@@ -85,14 +93,16 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       }
     }  // WHEN PREVIOUS AGGLOMERATION
     WHEN(
-      "We compute neighbourhood of cell 24 (cell 10,16, 28-to-34 agglomerated)") {
+      "We compute neighbourhood of cell 24 (cell 10,16, 28-to-34 agglomerated)"
+    ) {
       vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
       agglomerated[10] = agglomerated[16] = true;
       for (int i = 28; i < 35; ++i)
         agglomerated[i] = true;
       unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
       fc_graph.compute_neighbourhood_of_cc(
-        s_seeds, neigh_order, d_n_of_seed, card, agglomerated);
+        s_seeds, neigh_order, d_n_of_seed, card, agglomerated
+      );
       vector<set<CoMMAIndexT>> neighs = vector<set<CoMMAIndexT>>(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v - 1].insert(k);
@@ -139,7 +149,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       agglomerated[9] = true;
       agglomerated[19] = true;
       THEN(
-        "If some cells are agglomerated, then they do not appear in the neighbourhood") {
+        "If some cells are agglomerated, then they do not appear in the neighbourhood"
+      ) {
         auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
         REQUIRE(neighs.size() == 6);
         REQUIRE(CONTAINS_(neighs, 22));
@@ -152,15 +163,23 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     }
   }
   GIVEN(
-    "We have a 7x7 Cartesian 2D matrix, a standard Neighbourhood for 24 a one given by the creator") {
+    "We have a 7x7 Cartesian 2D matrix, a standard Neighbourhood for 24 a one given by the creator"
+  ) {
 #define CONTAINS_1STEL_(cont, obj)                                      \
   (find_if((cont).begin(), (cont).end(), CoMMAPairFindFirstBasedT(obj)) \
    != (cont).end())
     const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     const unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -168,11 +187,13 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     const vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
     unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
     fc_graph.compute_neighbourhood_of_cc(
-      s_seeds, neigh_order, d_n_of_seed, card, agglomerated);
+      s_seeds, neigh_order, d_n_of_seed, card, agglomerated
+    );
     const unordered_set<CoMMAIndexT> s_neighbours_of_seed =
       d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
     Neighbourhood_Extended<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> neighbourhood(
-      s_neighbours_of_seed, Data.weights);
+      s_neighbours_of_seed, Data.weights
+    );
     neighbourhood.update(seed, fc_graph.get_neighbours(seed));
     WHEN("We check the first neighbourhood") {
       const auto &fon = neighbourhood.get_candidates();
@@ -265,7 +286,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         REQUIRE(CONTAINS_(fon, 32));
       }
       THEN(
-        "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)") {
+        "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
+      ) {
         REQUIRE(!CONTAINS_(fon, 37));
         REQUIRE(!CONTAINS_(fon, 39));
         REQUIRE(!CONTAINS_(fon, 45));
@@ -273,12 +295,20 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     }
   }
   GIVEN(
-    "We have a 7x7 Cartesian 2D matrix and set up a Pure Front Neighbourhood for 24") {
+    "We have a 7x7 Cartesian 2D matrix and set up a Pure Front Neighbourhood for 24"
+  ) {
     const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
     const unordered_set<CoMMAIndexT> s_seeds = {seed};
@@ -286,7 +316,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     const vector<bool> agglomerated = vector<bool>(Data.volumes.size(), false);
     unordered_map<CoMMAIndexT, CoMMAIntT> d_n_of_seed;
     fc_graph.compute_neighbourhood_of_cc(
-      s_seeds, neigh_order, d_n_of_seed, card, agglomerated);
+      s_seeds, neigh_order, d_n_of_seed, card, agglomerated
+    );
     const unordered_set<CoMMAIndexT> s_neighbours_of_seed =
       d_keys_to_set<CoMMAIndexT, CoMMAIntT>(d_n_of_seed);
     Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
@@ -345,7 +376,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       const auto prev_fon =
         dynamic_pointer_cast<
           Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-          c_neighbourhood)
+          c_neighbourhood
+        )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
         REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
@@ -369,7 +401,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       const auto prev_fon =
         dynamic_pointer_cast<
           Neighbourhood_Pure_Front<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-          copy_c_neighbourhood)
+          copy_c_neighbourhood
+        )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
         REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
@@ -384,13 +417,15 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 38") {
       const auto &fon = neighbourhood.get_candidates();
       THEN(
-        "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)") {
+        "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
+      ) {
         REQUIRE(!CONTAINS_(fon, 37));
         REQUIRE(!CONTAINS_(fon, 39));
         REQUIRE(!CONTAINS_(fon, 45));
       }
       THEN(
-        "First ever computed neighbourhood is returned since no direct neighbours were added") {
+        "First ever computed neighbourhood is returned since no direct neighbours were added"
+      ) {
         REQUIRE(CONTAINS_(fon, 17));
         REQUIRE(CONTAINS_(fon, 23));
         REQUIRE(CONTAINS_(fon, 25));
@@ -405,7 +440,8 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       }
       const auto &prev_fon_2 = neighbourhood.get_neighbours_by_level(2);
       THEN(
-        "Older neighbours are still in the second-to-last neighbourhood (which happens to be the first ever, hence the current)") {
+        "Older neighbours are still in the second-to-last neighbourhood (which happens to be the first ever, hence the current)"
+      ) {
         REQUIRE(CONTAINS_1STEL_(prev_fon_2, 17));
         REQUIRE(CONTAINS_1STEL_(prev_fon_2, 23));
         REQUIRE(CONTAINS_1STEL_(prev_fon_2, 25));

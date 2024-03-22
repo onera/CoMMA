@@ -73,7 +73,8 @@ public:
   /** @brief Constructor
    *  @param[in] root A Node which is the root of the Tree
    */
-  explicit Tree(std::shared_ptr<NodeType> &root) : _root(root) {}
+  explicit Tree(std::shared_ptr<NodeType> &root) :
+      _root(root) {}
 
   /** @brief Destructor */
   ~Tree() = default;
@@ -91,7 +92,8 @@ public:
     const CoMMAIndexType &father_index,
     const CoMMAIndexType &index,
     const CoMMAWeightType &volume,
-    const CoMMAIntType &root) {
+    const CoMMAIntType &root
+  ) {
     std::shared_ptr<NodeType> insertion =
       std::make_shared<NodeType>(index, volume);
     auto u_p_father =
@@ -115,9 +117,14 @@ public:
    *  @return a pointer (possibly null) to the target
    */
   std::shared_ptr<NodeType> search(
-    std::shared_ptr<NodeType> &node, const CoMMAIndexType &value) {
-    if (node->_index == value && node->_father != nullptr) { return node; }
-    if (node == nullptr || node->_right_idx == nullptr) { return nullptr; }
+    std::shared_ptr<NodeType> &node, const CoMMAIndexType &value
+  ) {
+    if (node->_index == value && node->_father != nullptr) {
+      return node;
+    }
+    if (node == nullptr || node->_right_idx == nullptr) {
+      return nullptr;
+    }
     return (search(node->_right_idx, value));
   }
 
@@ -126,7 +133,9 @@ public:
    *  @return a pointer to a leaf
    */
   std::shared_ptr<NodeType> transverse(std::shared_ptr<NodeType> &node) {
-    if (node == nullptr || node->_right_idx == nullptr) { return node; }
+    if (node == nullptr || node->_right_idx == nullptr) {
+      return node;
+    }
     return (transverse(node->_right_idx));
   }
 
@@ -142,8 +151,11 @@ public:
    *  @param[in] value Target
    */
   void delete_node(
-    std::shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value) {
-    if (searched_node == nullptr) { return; }
+    std::shared_ptr<NodeType> &searched_node, const CoMMAIndexType &value
+  ) {
+    if (searched_node == nullptr) {
+      return;
+    }
     if (searched_node->_index == value) {
       // case 0: leftest node
       if (searched_node->_left_idx == nullptr) {
@@ -172,7 +184,9 @@ public:
    *  @param[in] node Where to start
    */
   void print_nodes(std::shared_ptr<NodeType> &node) {
-    if (node == nullptr) { return; }
+    if (node == nullptr) {
+      return;
+    }
     // std::cout << "node" << node->_index << std::endl;
     print_nodes(node->_left_son_idx);
     print_nodes(node->_right_idx);

@@ -28,7 +28,8 @@ using namespace std;  // NOLINT
 // NOLINTNEXTLINE
 SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   GIVEN(
-    "A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering") {
+    "A 4x4x4 cube and a Seeds Pool which should ensure that the order respects the cell numbering"
+  ) {
     const DualGEx_cube_4 Data = DualGEx_cube_4();
     Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
       seeds_pool(Data.n_bnd_faces, Data.weights, false);
@@ -128,8 +129,8 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
         agglomerated[i] = false;
       }
       seeds_pool.update(new_seeds);
-      THEN(
-        "The order respects the order of the input if all in the same queue") {
+      THEN("The order respects the order of the input if all in the same queue"
+      ) {
         for (auto i : new_seeds) {
           const auto opt_seed = seeds_pool.choose_new_seed(agglomerated);
           REQUIRE(opt_seed.has_value());
@@ -197,7 +198,8 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   }
 
   GIVEN(
-    "A 4x4x4 cube and a Seeds Pool which should force an order reversed wrt the cell numbering") {
+    "A 4x4x4 cube and a Seeds Pool which should force an order reversed wrt the cell numbering"
+  ) {
     const DualGEx_cube_4 Data = DualGEx_cube_4();
     vector<CoMMAWeightT> w(Data.nb_fc);
     iota(w.begin(), w.end(), 0);
@@ -261,9 +263,16 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
   GIVEN("A mesh with a hole and two corners") {
     const DualGEx_hole_w_corners Data = DualGEx_hole_w_corners();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
         seeds_pool(Data.n_bnd_faces, Data.weights, false);

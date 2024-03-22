@@ -38,7 +38,8 @@ SCENARIO("Test of the Queue", "[Queue]") {
       st_long.push(2);
       THEN(
         "We can check that the operation on the stack are correctly "
-        "realized") {
+        "realized"
+      ) {
         REQUIRE(st_long.top() == 0);
         CoMMAIndexT top = st_long.pop();
         REQUIRE(top == 0);
@@ -94,7 +95,8 @@ SCENARIO("Test of Priority Pair", "[Priority Pair]") {
   }
   GIVEN("A set of pairs") {
     set<Priority_Pair<PairValueTestT, PairValueTestT>> st = {
-      {0, 1}, {0, 1}, {3, 0}, {0, 0}, {2, -1}};
+      {0, 1}, {0, 1}, {3, 0}, {0, 0}, {2, -1}
+    };
     WHEN("We iterate over the set") {
       vector<PairValueTestT> fe1 = {3, 2, 0, 0};
       vector<PairValueTestT> se1 = {0, -1, 0, 1};
@@ -125,7 +127,8 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
   GIVEN(
     "We have a 4x4 square 2D matrix of 16 elements that we consider divided "
     "in 4 Subgraph the structure of the subgraph is the same, changes "
-    "fundamentally the mapping") {
+    "fundamentally the mapping"
+  ) {
     vector<CoMMAIndexT> adjMatrix_row_ptr = {0, 2, 4, 6, 8};
     vector<CoMMAIndexT> adjMatrix_col_ind = {0, 1, 0, 2, 1, 3, 0, 2};
     vector<CoMMAWeightT> adjMatrix_areaValues = {1, 1, 1, 1, 1, 1, 1, 1};
@@ -135,20 +138,45 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     vector<CoMMAIndexT> mapping_l_to_g_2 = {8, 3, 13, 12};
     vector<CoMMAIndexT> mapping_l_to_g_3 = {10, 11, 15, 14};
     auto cc0 = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-      mapping_l_to_g_0, true);
+      4,
+      adjMatrix_row_ptr,
+      adjMatrix_col_ind,
+      adjMatrix_areaValues,
+      volumes,
+      mapping_l_to_g_0,
+      true
+    );
     auto cc1 = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-      mapping_l_to_g_1, true);
+      4,
+      adjMatrix_row_ptr,
+      adjMatrix_col_ind,
+      adjMatrix_areaValues,
+      volumes,
+      mapping_l_to_g_1,
+      true
+    );
     auto cc2 = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-      mapping_l_to_g_2, true);
+      4,
+      adjMatrix_row_ptr,
+      adjMatrix_col_ind,
+      adjMatrix_areaValues,
+      volumes,
+      mapping_l_to_g_2,
+      true
+    );
     auto cc3 = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      4, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-      mapping_l_to_g_3, true);
+      4,
+      adjMatrix_row_ptr,
+      adjMatrix_col_ind,
+      adjMatrix_areaValues,
+      volumes,
+      mapping_l_to_g_3,
+      true
+    );
     WHEN("We Collect the cells in the Bimap") {
       Bimap<
-        CoMMAIndexT, shared_ptr<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>>
+        CoMMAIndexT,
+        shared_ptr<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>>
         Collection;
       Collection.insert(0, cc0);
       Collection.insert(1, cc1);
@@ -176,10 +204,17 @@ SCENARIO("Test of the in-house Bimap", "[Bimap]") {
     vector<CoMMAWeightT> volumes = {1, 1, 1, 1, 1};
     vector<CoMMAIndexT> _mapping_l_to_g = {20, 30, 40, 50, 60};
     auto Marion = make_shared<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      5, adjMatrix_row_ptr, adjMatrix_col_ind, adjMatrix_areaValues, volumes,
-      _mapping_l_to_g, true);
+      5,
+      adjMatrix_row_ptr,
+      adjMatrix_col_ind,
+      adjMatrix_areaValues,
+      volumes,
+      _mapping_l_to_g,
+      true
+    );
     Bimap<
-      CoMMAIndexT, shared_ptr<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>>
+      CoMMAIndexT,
+      shared_ptr<Subgraph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>>
       Collection;
     WHEN("We insert an element and we delete it") {
       const CoMMAIndexT ins = 0;

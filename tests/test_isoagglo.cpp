@@ -28,38 +28,53 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
-      Data.dim);
+      fc_graph,
+      cc_graph,
+      seeds_pool,
+      CoMMANeighbourhoodT::EXTENDED,
+      FC_ITER,
+      Data.dim
+    );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {
-          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
-          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
-          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
+                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
+                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
+                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
+                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
       }
     }
     WHEN(
-      "We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
+      "We agglomerate the mesh with a biconnected agglomerator and we try to correct"
+    ) {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {
-          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
-          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
-          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
+                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
+                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
+                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
+                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -70,31 +85,39 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      fc_graph, cc_PF_graph, seeds_pool, CoMMANeighbourhoodT::PURE_FRONT,
-      FC_ITER, Data.dim);
+      fc_graph,
+      cc_PF_graph,
+      seeds_pool,
+      CoMMANeighbourhoodT::PURE_FRONT,
+      FC_ITER,
+      Data.dim
+    );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {
-          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
-          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
-          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
+                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
+                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
+                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
+                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
       }
     }
     WHEN(
-      "We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
+      "We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct"
+    ) {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {
-          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
-          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
-          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
+                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
+                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
+                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
+                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -115,7 +138,8 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("New coarse cell has 1 shared face") {
         agg->compute_next_cc_features(
-          17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 1);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -127,7 +151,8 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("New coarse cell has 2 shared face") {
         agg->compute_next_cc_features(
-          21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 2);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -140,7 +165,8 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("New coarse cell has 3 shared face") {
         agg->compute_next_cc_features(
-          16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 3);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -157,15 +183,27 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
-      Data.dim);
+      fc_graph,
+      cc_graph,
+      seeds_pool,
+      CoMMANeighbourhoodT::EXTENDED,
+      FC_ITER,
+      Data.dim
+    );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -190,7 +228,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       }
     }
     WHEN(
-      "We agglomerate the mesh with a biconnected agglomerator and we try to correct") {
+      "We agglomerate the mesh with a biconnected agglomerator and we try to correct"
+    ) {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_graph->_fc_2_cc;
@@ -217,8 +256,13 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg_PF = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      fc_graph, cc_PF_graph, seeds_pool, CoMMANeighbourhoodT::PURE_FRONT,
-      FC_ITER, Data.dim);
+      fc_graph,
+      cc_PF_graph,
+      seeds_pool,
+      CoMMANeighbourhoodT::PURE_FRONT,
+      FC_ITER,
+      Data.dim
+    );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -245,7 +289,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       }
     }
     WHEN(
-      "We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct") {
+      "We agglomerate the mesh with a pure front-advancing agglomerator and we try to correct"
+    ) {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto fccc = cc_PF_graph->_fc_2_cc;
@@ -281,7 +326,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("L-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
-          5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 1);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -291,7 +337,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("I-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
-          2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 1);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -303,7 +350,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
       THEN("Squared coarse cell, 2 shared faces") {
         agg->compute_next_cc_features(
-          4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol);
+          4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
+        );
         REQUIRE(shared_faces == 2);
         REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
         REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
@@ -317,9 +365,16 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     const CoMMAIntT card = 4;
@@ -336,11 +391,17 @@ final CC)
 #endif
     const CoMMAIndexT seed = 1;
     WHEN(
-      "We agglomerate from the bottom central cell with a standard agglomerator, we get a T-shaped coarse cell") {
+      "We agglomerate from the bottom central cell with a standard agglomerator, we get a T-shaped coarse cell"
+    ) {
       const CoMMAIntT fc_iter = 1;
       auto agg = Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter,
-        Data.dim);
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        CoMMANeighbourhoodT::EXTENDED,
+        fc_iter,
+        Data.dim
+      );
       agg.set_agglomeration_parameter(card, card, card);
       auto cc =
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
@@ -353,11 +414,17 @@ final CC)
       }
     }
     WHEN(
-      "We agglomerate from the bottom central cell with a 2-steps iterative agglomerator, we get a square coarse cell") {
+      "We agglomerate from the bottom central cell with a 2-steps iterative agglomerator, we get a square coarse cell"
+    ) {
       const CoMMAIntT fc_iter = 2;
       auto agg = Agglomerator_Iterative<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, fc_iter,
-        Data.dim);
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        CoMMANeighbourhoodT::EXTENDED,
+        fc_iter,
+        Data.dim
+      );
       agg.set_agglomeration_parameter(card, card, card);
       auto cc =
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);

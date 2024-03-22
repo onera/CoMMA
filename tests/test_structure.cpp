@@ -32,32 +32,44 @@ SCENARIO("Test of a structure", "[structure]") {
     shared_ptr<SeedsPoolT> seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     // Check the effective length
     WHEN("We try to access to the member variables") {
       class test :
           public Agglomerator_Biconnected<
-            CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
+            CoMMAIndexT,
+            CoMMAWeightT,
+            CoMMAIntT> {
       public:
         test(
           shared_ptr<DualGraphT> &graph,
           shared_ptr<CCContainerT> &cc_graph,
           shared_ptr<SeedsPoolT> &seeds_pool,
-          CoMMAIntT dimension) :
+          CoMMAIntT dimension
+        ) :
             Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               graph,
               cc_graph,
               seeds_pool,
               CoMMANeighbourhoodT::EXTENDED,
               FC_ITER,
-              dimension){};
+              dimension
+            ){};
 
         CoMMAIntT test_variable() { return (this->_threshold_card); };
       };
+
       THEN("We see that the agglomeration is not set, hence set to 0") {
         test agg = test(fc_graph, cc_graph, seeds_pool, 2);
         const CoMMAIntT testing = agg.test_variable();
@@ -67,25 +79,32 @@ SCENARIO("Test of a structure", "[structure]") {
     WHEN("We try to access to Define the cardinality") {
       class test :
           public Agglomerator_Biconnected<
-            CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
+            CoMMAIndexT,
+            CoMMAWeightT,
+            CoMMAIntT> {
       public:
         test(
           shared_ptr<DualGraphT> &graph,
           shared_ptr<CCContainerT> &cc_graph,
           shared_ptr<SeedsPoolT> &seeds_pool,
-          CoMMAIntT dimension) :
+          CoMMAIntT dimension
+        ) :
             Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               graph,
               cc_graph,
               seeds_pool,
               CoMMANeighbourhoodT::EXTENDED,
               FC_ITER,
-              dimension){};
+              dimension
+            ){};
 
         CoMMAIntT thres() { return (_threshold_card); };
+
         CoMMAIntT max() { return (_max_card); };
+
         CoMMAIntT min() { return (_min_card); };
       };
+
       THEN("We see that the cardinality passes from 0 to 2") {
         test agg = test(fc_graph, cc_graph, seeds_pool, 2);
 
@@ -114,11 +133,28 @@ SCENARIO("Test of main function", "[structure]") {
       const CoMMAWeightT aniso_thr = -4.;
       const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-        build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
-        alines, correction, Data.dim, goal_card, min_card, max_card);
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.n_bnd_faces,
+        build_lines,
+        aniso,
+        odd_length,
+        aniso_thr,
+        seed,
+        fc2cc,
+        alines_idx,
+        alines,
+        correction,
+        Data.dim,
+        goal_card,
+        min_card,
+        max_card
+      );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         REQUIRE(fc2cc[0] == 0);
         REQUIRE(fc2cc[1] == 0);
@@ -146,11 +182,28 @@ SCENARIO("Test of main function", "[structure]") {
       const CoMMAWeightT aniso_thr = -4.;
       const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-        build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
-        alines, correction, Data.dim, goal_card, min_card, max_card);
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.n_bnd_faces,
+        build_lines,
+        aniso,
+        odd_length,
+        aniso_thr,
+        seed,
+        fc2cc,
+        alines_idx,
+        alines,
+        correction,
+        Data.dim,
+        goal_card,
+        min_card,
+        max_card
+      );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         REQUIRE(fc2cc[0] == 0);
         REQUIRE(fc2cc[1] == 0);
@@ -170,8 +223,8 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE(fc2cc[15] == 3);
       }
     }
-    WHEN(
-      "We agglomerate with neighbourhood priority one point initialization") {
+    WHEN("We agglomerate with neighbourhood priority one point initialization"
+    ) {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = false, build_lines = true, odd_length = true,
                  correction = true;
@@ -179,11 +232,28 @@ SCENARIO("Test of main function", "[structure]") {
       const CoMMAWeightT aniso_thr = -4.;
       const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-        build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
-        alines, correction, Data.dim, goal_card, min_card, max_card);
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.n_bnd_faces,
+        build_lines,
+        aniso,
+        odd_length,
+        aniso_thr,
+        seed,
+        fc2cc,
+        alines_idx,
+        alines,
+        correction,
+        Data.dim,
+        goal_card,
+        min_card,
+        max_card
+      );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         REQUIRE(fc2cc[0] == 0);
         REQUIRE(fc2cc[1] == 0);
@@ -211,11 +281,28 @@ SCENARIO("Test of main function", "[structure]") {
       const CoMMAWeightT aniso_thr = -4.;
       const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-        Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
-        build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
-        alines, correction, Data.dim, goal_card, min_card, max_card);
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.n_bnd_faces,
+        build_lines,
+        aniso,
+        odd_length,
+        aniso_thr,
+        seed,
+        fc2cc,
+        alines_idx,
+        alines,
+        correction,
+        Data.dim,
+        goal_card,
+        min_card,
+        max_card
+      );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         REQUIRE(fc2cc[0] == 0);
         REQUIRE(fc2cc[1] == 0);

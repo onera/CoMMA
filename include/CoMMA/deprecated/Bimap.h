@@ -69,6 +69,7 @@ public:
       _mapB.insert(std::move(node));
     }
   }
+
   /** @brief Update of the key of the map A and hence the value of the node B
    * @param[in] b_old the old value of the node B (in case you do not know you
    * can find it through the find.
@@ -81,6 +82,7 @@ public:
       _mapA.insert(std::move(node));
     }
   }
+
   /**@brief Getter of the B value starting from a A value
    * @param[in] a the associated value we want to search
    * @return the value associated to \p a
@@ -116,10 +118,12 @@ public:
     _mapB.erase(itB);
     _mapA.erase(itA);
   }
+
   /** @brief Check if the Bimap is empty
    *  @return a boolean
    */
   inline bool empty() { return (_mapA.empty()); }
+
   /** @brief Returns the size of the container
    *  @return the size
    */

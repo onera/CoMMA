@@ -41,7 +41,8 @@ public:
    *  @param a First element
    *  @param b Second element
    */
-  Priority_Pair(const A &a, const B &b) : _p(a, b){};
+  Priority_Pair(const A &a, const B &b) :
+      _p(a, b){};
 
   /** @brief Destructor */
   ~Priority_Pair() = default;
@@ -78,7 +79,8 @@ public:
    *  @return true if a and b are equal
    */
   inline friend bool operator==(
-    const Priority_Pair &a, const Priority_Pair &b) {
+    const Priority_Pair &a, const Priority_Pair &b
+  ) {
     return (a._p.first == b._p.first) && (a._p.second == b._p.second);
   }
 };

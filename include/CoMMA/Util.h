@@ -80,7 +80,8 @@ inline T dot_product(const std::vector<T> &a, const std::vector<T> &b) {
  */
 template<typename T>
 inline T get_direction(
-  const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &dir) {
+  const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &dir
+) {
   T norm{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
     const T di = b[i] - a[i];
@@ -106,7 +107,8 @@ inline T get_direction(
  */
 template<typename T>
 inline T squared_euclidean_distance(
-  const std::vector<T> &a, const std::vector<T> &b) {
+  const std::vector<T> &a, const std::vector<T> &b
+) {
 #if 0
   return sqrt(
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
@@ -211,7 +213,8 @@ template<typename PairT>
 class PairFindFirstBasedFunctor {
 public:
   /** @brief Constructor */
-  PairFindFirstBasedFunctor() : _target(){};
+  PairFindFirstBasedFunctor() :
+      _target(){};
   /** @brief Constructor
    *  @param target Reference value that will be sought
    */
@@ -220,6 +223,7 @@ public:
       _target(target){};
   /** @brief Destructor */
   ~PairFindFirstBasedFunctor() = default;
+
   /** @brief Operator telling if the first value of the given pair is equal to
    * the reference one
    *  @param[in] pr The pair
@@ -240,7 +244,8 @@ private:
  */
 template<typename KeyT, typename ValueT>
 inline std::unordered_set<KeyT> d_keys_to_set(
-  const std::unordered_map<KeyT, ValueT> &dict) {
+  const std::unordered_map<KeyT, ValueT> &dict
+) {
   std::unordered_set<KeyT> s_neighbours_of_seed = {};
   for (const auto &i_k_v : dict) {
     s_neighbours_of_seed.insert(i_k_v.first);
@@ -274,10 +279,12 @@ void compute_neighbourhood_based_wall_distance(
   const std::vector<IndexT> &neigh_idxs,
   const std::vector<IndexT> &neighs,
   const std::vector<IndexT> &wall,
-  std::vector<DistT> &dist) {
+  std::vector<DistT> &dist
+) {
   static_assert(
     std::is_signed<DistT>::value,
-    "The distance type should be signed to allow flags (negative values)");
+    "The distance type should be signed to allow flags (negative values)"
+  );
   dist.resize(neigh_idxs.size() - 1);
   std::fill(dist.begin(), dist.end(), DistT{-1});
   std::queue<IndexT> to_visit{};
@@ -296,7 +303,8 @@ void compute_neighbourhood_based_wall_distance(
     to_visit.pop();
     const auto cur_dist = dist[cur] + DistT{1};
     for (auto neigh = neighs.cbegin() + neigh_idxs[cur];
-         neigh < neighs.cbegin() + neigh_idxs[cur + 1]; ++neigh) {
+         neigh < neighs.cbegin() + neigh_idxs[cur + 1];
+         ++neigh) {
       if (dist[*neigh] < DistT{0}) {
         dist[*neigh] = cur_dist;
         to_visit.emplace(*neigh);

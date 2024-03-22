@@ -66,7 +66,8 @@ public:
     const ContainerIndexType &m_crs_row_ptr,
     const ContainerIndexType &m_crs_col_ind,
     const ContainerWeightType &m_crs_values,
-    const ContainerWeightType &volumes) :
+    const ContainerWeightType &volumes
+  ) :
       _number_of_cells(nb_c),
       _m_CRS_Row_Ptr(m_crs_row_ptr),
       _m_CRS_Col_Ind(m_crs_col_ind),
@@ -104,7 +105,9 @@ public:
   void DFS(const CoMMAIndexType &i_fc) {
     _visited[i_fc] = true;
     for (auto it = neighbours_cbegin(i_fc); it != neighbours_cend(i_fc); ++it) {
-      if (!_visited[*it]) { DFS(*it); }
+      if (!_visited[*it]) {
+        DFS(*it);
+      }
     }
   }
 
@@ -118,7 +121,8 @@ public:
     std::vector<bool> visited(_number_of_cells, false);
     visited[root] = true;
     std::vector<std::optional<CoMMAIndexType>> prev(
-      _number_of_cells, std::nullopt);
+      _number_of_cells, std::nullopt
+    );
     while (!coda.empty()) {
       CoMMAIndexType node = coda.front();
       coda.pop_front();
@@ -165,7 +169,8 @@ public:
     // till the next pointed one, so related to all the connected areas (and
     // hence to the faces)
     ContainerIndexType result(
-      _m_CRS_Col_Ind.begin() + ind, _m_CRS_Col_Ind.begin() + ind_p_one);
+      _m_CRS_Col_Ind.begin() + ind, _m_CRS_Col_Ind.begin() + ind_p_one
+    );
     return result;
   }
 
@@ -173,8 +178,8 @@ public:
    *  @param[in] i_c Index of the cell
    *  @return The pointer
    */
-  inline ContainerIndexConstIt neighbours_cbegin(
-    const CoMMAIndexType &i_c) const {
+  inline ContainerIndexConstIt neighbours_cbegin(const CoMMAIndexType &i_c
+  ) const {
     return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c];
   }
 
@@ -183,8 +188,8 @@ public:
    *  @param[in] i_c Index of the cell
    *  @return The pointer
    */
-  inline ContainerIndexConstIt neighbours_cend(
-    const CoMMAIndexType &i_c) const {
+  inline ContainerIndexConstIt neighbours_cend(const CoMMAIndexType &i_c
+  ) const {
     return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c + 1];
   }
 
@@ -202,7 +207,8 @@ public:
     // till the next pointed one, so related to all the connected areas (and
     // hence to the faces)
     ContainerWeightType result(
-      _m_CRS_Values.begin() + ind, _m_CRS_Values.begin() + ind_p_one);
+      _m_CRS_Values.begin() + ind, _m_CRS_Values.begin() + ind_p_one
+    );
     return result;
   }
 
@@ -210,8 +216,8 @@ public:
    *  @param[in] i_c Index of the cell
    *  @return The pointer
    */
-  inline ContainerWeightConstIt weights_cbegin(
-    const CoMMAIndexType &i_c) const {
+  inline ContainerWeightConstIt weights_cbegin(const CoMMAIndexType &i_c
+  ) const {
     return _m_CRS_Values.cbegin() + _m_CRS_Row_Ptr[i_c];
   }
 
@@ -231,10 +237,14 @@ public:
     for (auto i = decltype(_number_of_cells){0}; i < _number_of_cells; ++i) {
       _visited.push_back(false);
     }
-    if (_number_of_cells == 1) { return (true); }
+    if (_number_of_cells == 1) {
+      return (true);
+    }
     DFS(_m_CRS_Col_Ind[0]);
     for (auto i = decltype(_number_of_cells){0}; i < _number_of_cells; ++i) {
-      if (!_visited[i]) { return (false); }
+      if (!_visited[i]) {
+        return (false);
+      }
     }
     return (true);
   }
@@ -244,19 +254,23 @@ public:
    *   @return the compactness of the fine cell
    */
   CoMMAIntType compute_min_fc_compactness_inside_a_cc(
-    const std::unordered_set<CoMMAIndexType> &s_fc) const {
+    const std::unordered_set<CoMMAIndexType> &s_fc
+  ) const {
     // Compute Compactness of a cc
     // Be careful: connectivity is assumed
     if (s_fc.size() > 1) {
       std::unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness =
         compute_fc_compactness_inside_a_cc(s_fc);
-      if (dict_fc_compactness.empty()) { return 0; }
+      if (dict_fc_compactness.empty()) {
+        return 0;
+      }
       return min_element(
-               dict_fc_compactness.begin(), dict_fc_compactness.end(),
+               dict_fc_compactness.begin(),
+               dict_fc_compactness.end(),
                [](const auto &left, const auto &right) {
                  return left.second < right.second;
-               })
-        ->second;
+               }
+      )->second;
     }
     return 0;
   }
@@ -269,7 +283,8 @@ public:
    */
   std::unordered_map<CoMMAIndexType, CoMMAIntType>
   compute_fc_compactness_inside_a_cc(
-    const std::unordered_set<CoMMAIndexType> &s_fc) const {
+    const std::unordered_set<CoMMAIndexType> &s_fc
+  ) const {
     std::unordered_map<CoMMAIndexType, CoMMAIntType> dict_fc_compactness;
     if (!s_fc.empty()) {
       if (s_fc.size() == 1) {
@@ -279,7 +294,8 @@ public:
           dict_fc_compactness[i_fc] = count_if(
             this->_m_CRS_Col_Ind.cbegin() + this->_m_CRS_Row_Ptr[i_fc],
             this->_m_CRS_Col_Ind.cbegin() + this->_m_CRS_Row_Ptr[i_fc + 1],
-            [&](const auto &neigh) { return s_fc.count(neigh) > 0; });
+            [&](const auto &neigh) { return s_fc.count(neigh) > 0; }
+          );
         }
       }
     }
@@ -307,6 +323,7 @@ public:
   using typename BaseClass::ContainerIndexType;
   /** @brief Type for containers of weights */
   using typename BaseClass::ContainerWeightType;
+
   /** @brief Constructor of the class
    *  @param[in] nb_c Cardinality of the CC, that is the number of fine cells
    * composing the CC
@@ -327,9 +344,11 @@ public:
     const ContainerWeightType &m_crs_values,
     const ContainerWeightType &volumes,
     const ContainerIndexType &mapping_l_to_g,
-    const bool &is_isotropic) :
+    const bool &is_isotropic
+  ) :
       Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
+        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
+      ),
       _is_isotropic(is_isotropic),
       _cardinality(static_cast<CoMMAIntType>(nb_c)),
       _mapping_l_to_g(mapping_l_to_g) {
@@ -338,7 +357,9 @@ public:
     for (auto c = decltype(nb_c){0}; c < nb_c; ++c) {
       const auto n_neighs =
         static_cast<CoMMAIntType>(m_crs_row_ptr[c + 1] - m_crs_row_ptr[c]);
-      if (n_neighs < _compactness) { _compactness = n_neighs; }
+      if (n_neighs < _compactness) {
+        _compactness = n_neighs;
+      }
     }
   }
 
@@ -376,7 +397,8 @@ public:
     const ContainerIndexType &v_neigh,
     const CoMMAIndexType &i_fc,
     const CoMMAWeightType &volume,
-    const ContainerWeightType &weight) {
+    const ContainerWeightType &weight
+  ) {
     // Use the mapping
     // local vector of neighbourhood
     ContainerIndexType v_l_neigh{};
@@ -403,20 +425,24 @@ public:
       // https://stackoverflow.com/questions/71299247/inserting-an-element-in-given-positions-more-than-one-of-a-vector/71299304#71299304
       // to understand why we re-initialize.
       this->_m_CRS_Col_Ind.insert(
-        this->_m_CRS_Col_Ind.begin() + this->_m_CRS_Row_Ptr[elem], local_index);
+        this->_m_CRS_Col_Ind.begin() + this->_m_CRS_Row_Ptr[elem], local_index
+      );
       this->_m_CRS_Values.insert(
         this->_m_CRS_Values.begin() + this->_m_CRS_Row_Ptr[elem],
-        weight[iter_weight]);
+        weight[iter_weight]
+      );
       // We modify the row pointer as far it is related with what we have done
       // before
       for (auto it = this->_m_CRS_Row_Ptr.begin() + elem;
-           it != this->_m_CRS_Row_Ptr.end(); ++it) {
+           it != this->_m_CRS_Row_Ptr.end();
+           ++it) {
         ++(*it);
       }
       // we do the same.
       this->_m_CRS_Col_Ind.insert(this->_m_CRS_Col_Ind.end(), elem);
       this->_m_CRS_Values.insert(
-        this->_m_CRS_Values.end(), weight[iter_weight]);
+        this->_m_CRS_Values.end(), weight[iter_weight]
+      );
       // We increment the weight flag iterator
       ++iter_weight;
     }
@@ -452,7 +478,8 @@ public:
           this->_m_CRS_Values.erase(pos_Values + (it - pos_col));
           // for each found i decrease the successive of 1 for the offset
           for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + elem + 1;
-               it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
+               it_bis != this->_m_CRS_Row_Ptr.end();
+               ++it_bis) {
             *it_bis = *it_bis - 1;
           }
         }
@@ -469,7 +496,8 @@ public:
       this->_m_CRS_Values.erase(pos_Values + (it - pos_col));
       // for each found i decrease the successive of 1 for the offset
       for (auto it_bis = this->_m_CRS_Row_Ptr.begin() + i_fc + 1;
-           it_bis != this->_m_CRS_Row_Ptr.end(); ++it_bis) {
+           it_bis != this->_m_CRS_Row_Ptr.end();
+           ++it_bis) {
         *it_bis = *it_bis - 1;
       }
     }
@@ -488,7 +516,8 @@ public:
     internal_mapping.reserve(this->_m_CRS_Row_Ptr.size() + 1);
     CoMMAIndexType indice = 0;
     for (auto ix = decltype(this->_m_CRS_Row_Ptr.size()){0};
-         ix < this->_m_CRS_Row_Ptr.size() + 1; ++ix) {
+         ix < this->_m_CRS_Row_Ptr.size() + 1;
+         ++ix) {
       if (static_cast<decltype(i_fc)>(ix) != i_fc) {
         internal_mapping.push_back(indice);
         indice++;
@@ -552,19 +581,24 @@ public:
     const std::vector<std::vector<CoMMAWeightType>> &centers,
     const std::vector<CoMMAIntType> &n_bnd_faces,
     const CoMMAIntType dimension,
-    const ContainerIndexType &anisotropic_compliant_fc) :
+    const ContainerIndexType &anisotropic_compliant_fc
+  ) :
       Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes),
+        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
+      ),
       _n_bnd_faces(n_bnd_faces),
       _s_anisotropic_compliant_cells(
-        anisotropic_compliant_fc.begin(), anisotropic_compliant_fc.end()),
+        anisotropic_compliant_fc.begin(), anisotropic_compliant_fc.end()
+      ),
       _centers(centers) {
     // Function to compute the aspect-ratio
     _compute_AR = dimension == 2
-      ? [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
-      -> CoMMAWeightType { return max_s / min_s; }
-    : [](const CoMMAWeightType min_s, const CoMMAWeightType max_s)
-        -> CoMMAWeightType { return sqrt(max_s / min_s); };
+      ? [](
+          const CoMMAWeightType min_s, const CoMMAWeightType max_s
+        ) -> CoMMAWeightType { return max_s / min_s; }
+    : [](
+        const CoMMAWeightType min_s, const CoMMAWeightType max_s
+      ) -> CoMMAWeightType { return sqrt(max_s / min_s); };
   }
 
   /** @brief Destructor of the class */
@@ -598,6 +632,7 @@ public:
   inline CoMMAIntType get_n_boundary_faces(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c];
   }
+
   /** @brief Whether a cell is on the boundary
    *  @param[in] idx_c Index of the cell
    *  @return Whether a cell is on the boundary
@@ -629,7 +664,8 @@ public:
     std::deque<CoMMAIndexType> &aniso_seeds_pool,
     const CoMMAWeightType threshold_anisotropy,
     const ContainerWeightType &priority_weights,
-    const CoMMAIndexType preserving) {
+    const CoMMAIndexType preserving
+  ) {
     CoMMASetOfPairType aniso_w_weights{};
     if (threshold_anisotropy < 0) {
       for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
@@ -658,8 +694,12 @@ public:
           // to avoid special case where the boundary value are stored
           if (v_neighbours[i_n] != i_fc) {
             const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-            if (max_weight < i_w_fc_n) { max_weight = i_w_fc_n; }
-            if (min_weight > i_w_fc_n) { min_weight = i_w_fc_n; }
+            if (max_weight < i_w_fc_n) {
+              max_weight = i_w_fc_n;
+            }
+            if (min_weight > i_w_fc_n) {
+              min_weight = i_w_fc_n;
+            }
           } else {
             nb_neighbours--;
           }
@@ -672,15 +712,13 @@ public:
         if (ar >= threshold_anisotropy) {
           switch (preserving) {
             case 2:
-              if (
-                (is_on_boundary(i_fc) > 0 && nb_neighbours == 3)
-                || nb_neighbours == 4)
+              if ((is_on_boundary(i_fc) > 0 && nb_neighbours == 3)
+                  || nb_neighbours == 4)
                 aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
               break;
             case 3:
-              if (
-                (is_on_boundary(i_fc) > 0 && nb_neighbours == 5)
-                || nb_neighbours == 6)
+              if ((is_on_boundary(i_fc) > 0 && nb_neighbours == 5)
+                  || nb_neighbours == 6)
                 aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
             case 0:
             default:
@@ -715,7 +753,8 @@ public:
    */
   inline std::unordered_set<CoMMAIndexType> get_neighbourhood_of_cc(
     const std::unordered_set<CoMMAIndexType> &s_seeds,
-    const std::vector<bool> &is_fc_agglomerated_tmp) const {
+    const std::vector<bool> &is_fc_agglomerated_tmp
+  ) const {
     std::unordered_set<CoMMAIndexType> cc_neighs{};
     for (const auto fc : s_seeds)
       for (auto n = this->neighbours_cbegin(fc); n != this->neighbours_cend(fc);
@@ -745,7 +784,8 @@ public:
     CoMMAIntType &nb_of_order_of_neighbourhood,
     std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const CoMMAIntType max_card,
-    const std::vector<bool> &is_fc_agglomerated_tmp) const {
+    const std::vector<bool> &is_fc_agglomerated_tmp
+  ) const {
     // Basic checks
     assert(max_card > 1);
     // dict of FC with the order of neighbouring from seed
@@ -759,8 +799,8 @@ public:
 
     while ((i_order < nb_of_order_of_neighbourhood + 1)
            || static_cast<CoMMAIntType>(
-                d_n_of_seed.size() + d_n_of_order_o_m_one.size())
-                < max_card) {
+                d_n_of_seed.size() + d_n_of_order_o_m_one.size()
+              ) < max_card) {
       std::unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
       // If here, add elements of previous elements to output dictionary
@@ -774,12 +814,12 @@ public:
         CoMMAIndexType seed_tmp = i_k_v.first;
 
         for (auto i_fc_n = this->neighbours_cbegin(seed_tmp);
-             i_fc_n != this->neighbours_cend(seed_tmp); ++i_fc_n) {
+             i_fc_n != this->neighbours_cend(seed_tmp);
+             ++i_fc_n) {
           // For all the neighbours of current seed...
 
-          if (
-            (d_n_of_seed.count(*i_fc_n) == 0)
-            && ((!is_fc_agglomerated_tmp[*i_fc_n]))) {
+          if ((d_n_of_seed.count(*i_fc_n) == 0)
+              && ((!is_fc_agglomerated_tmp[*i_fc_n]))) {
             // If not yet in the final dictionary and not yet agglomerated...
 
             if (d_n_of_order_o.count(*i_fc_n) == 0) {

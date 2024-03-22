@@ -28,7 +28,9 @@ namespace comma {
  */
 template<bool condition, typename typeA, typename typeB>
 void fill_value(typeA &a, typeB &b) {
-  if constexpr (condition) { a = b; }
+  if constexpr (condition) {
+    a = b;
+  }
 }
 
 }  // end namespace comma

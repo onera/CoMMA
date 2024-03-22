@@ -10,14 +10,17 @@ IndentWidth: 2
 DerivePointerAlignment: false
 PointerAlignment: Right
 
-AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: BlockIndent
 AlignTrailingComments: false
 AllowShortBlocksOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
-BinPackArguments: true
+BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
 BreakInheritanceList: AfterColon
 BreakConstructorInitializers: AfterColon
 BreakStringLiterals: false
+FixNamespaceComments: true
+PackConstructorInitializers: NextLineOnly
+SeparateDefinitionBlocks: Always
 SpaceAfterTemplateKeyword: false

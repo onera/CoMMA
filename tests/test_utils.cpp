@@ -26,20 +26,23 @@ using namespace std;  // NOLINT
 SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
   GIVEN("A 7x7 Cartesian 2D matrix") {
     const DualGEx_quad_7 Data = DualGEx_quad_7();
-    const vector<CoMMAIndexT> wall = {0, 1,  2,  3,  4,  5, 6,
-                                      7, 14, 21, 28, 35, 42};
+    const vector<CoMMAIndexT> wall = {
+      0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 28, 35, 42
+    };
     WHEN("We compute the neighbourhood-based wall-distance") {
       vector<CoMMAIntT> dist{};
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAIntT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist);
+        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist
+      );
       THEN("Wall") {
         for (const auto &cell : wall) {
           REQUIRE(dist[cell] == 0);
         }
       }
       THEN("First set of neighbours") {
-        const vector<CoMMAIndexT> cells = {8,  9,  10, 11, 12, 13,
-                                           15, 22, 29, 36, 43};
+        const vector<CoMMAIndexT> cells = {
+          8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43
+        };
         for (const auto &cell : cells) {
           REQUIRE(dist[cell] == 1);
         }
@@ -75,15 +78,17 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
       vector<CoMMAWeightT> dist{};
       constexpr CoMMAWeightT eps = 1e-10;
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist);
+        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist
+      );
       THEN("Wall") {
         for (const auto &cell : wall) {
           REQUIRE(EQUAL_UP_TO(dist[cell], 0., eps));
         }
       }
       THEN("First set of neighbours") {
-        const vector<CoMMAIndexT> cells = {8,  9,  10, 11, 12, 13,
-                                           15, 22, 29, 36, 43};
+        const vector<CoMMAIndexT> cells = {
+          8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43
+        };
         for (const auto &cell : cells) {
           REQUIRE(EQUAL_UP_TO(dist[cell], 1., eps));
         }
@@ -116,12 +121,13 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
         REQUIRE(EQUAL_UP_TO(dist[48], 6., eps));
       }
     }
-    WHEN(
-      "We compute the neighbourhood-based wall-distance wrt to an empty wall") {
+    WHEN("We compute the neighbourhood-based wall-distance wrt to an empty wall"
+    ) {
       const vector<CoMMAIndexT> empty_wall{};
       vector<CoMMAWeightT> dist{};
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
-        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, empty_wall, dist);
+        Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, empty_wall, dist
+      );
       THEN("All the distances are negative") {
         for (const auto &d : dist) {
           REQUIRE(d < 0);
@@ -135,9 +141,16 @@ SCENARIO("Test compactness computation", "[Compactness]") {
   GIVEN("A simple 3x3 Cartesian grid") {
     const DualGEx_quad_3 Data = DualGEx_quad_3();
     shared_ptr<DualGraphT> const fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     WHEN("We consider an empty coarse cell") {
       const unordered_set<CoMMAIndexT> cc = {};
       THEN("The single compactness value are right") {
@@ -197,7 +210,8 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
   using PairIntInt = pair<int, int>;
   GIVEN("Some (int,int) pairs in a set with custom 'Greater'") {
     const set<PairIntInt, CustomPairGreaterFunctor<PairIntInt>> st = {
-      {1, 0}, {1, 0}, {1, 3}, {0, 3}};
+      {1, 0}, {1, 0}, {1, 3}, {0, 3}
+    };
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
         auto it = st.begin();
@@ -217,7 +231,8 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
   }
   GIVEN("Some (int,int) pairs in a set with custom 'Less'") {
     const set<PairIntInt, CustomPairLessFunctor<PairIntInt>> st = {
-      {1, 3}, {1, 0}, {1, 0}, {0, 3}};
+      {1, 3}, {1, 0}, {1, 0}, {0, 3}
+    };
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
         auto it = st.begin();

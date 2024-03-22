@@ -26,15 +26,27 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     auto agg = make_unique<
       Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-      fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
-      Data.dim);
+      fc_graph,
+      cc_graph,
+      seeds_pool,
+      CoMMANeighbourhoodT::EXTENDED,
+      FC_ITER,
+      Data.dim
+    );
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
       agg->agglomerate_one_level(2, 2, 2, Data.weights, true);
@@ -50,13 +62,20 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("A simple 8-cell Cartesian grid") {
     const DualGEx_correction Data = DualGEx_correction();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
-    WHEN(
-      "We agglomerate (manually) leaving one coarse cell with cardinality 1") {
+    WHEN("We agglomerate (manually) leaving one coarse cell with cardinality 1"
+    ) {
       cc_graph->create_cc({0, 4, 5}, 1);
       cc_graph->create_cc({1}, 0);
       cc_graph->create_cc({2, 3, 6, 7}, 2);
@@ -72,7 +91,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Once the correction has been performed, the isolated cell has been agglomerated") {
+        "Once the correction has been performed, the isolated cell has been agglomerated"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 4, 0));
         REQUIRE(FC_IN_CC(cc_graph, 5, 0));
@@ -84,7 +104,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN(
-      "We perform the same test as above, but test whats happens if the singular cell is the first one") {
+      "We perform the same test as above, but test whats happens if the singular cell is the first one"
+    ) {
       cc_graph->create_cc({1}, 0);
       cc_graph->create_cc({0, 4, 5}, 1);
       cc_graph->create_cc({2, 3, 6, 7}, 2);
@@ -100,7 +121,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Once the correction has been performed, the isolated cell has been agglomerated") {
+        "Once the correction has been performed, the isolated cell has been agglomerated"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 4, 0));
         REQUIRE(FC_IN_CC(cc_graph, 5, 0));
@@ -112,7 +134,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN(
-      "We perform the same test as above, but test whats happens if the singular cell is the last one") {
+      "We perform the same test as above, but test whats happens if the singular cell is the last one"
+    ) {
       cc_graph->create_cc({0, 4, 5}, 1);
       cc_graph->create_cc({2, 3, 6, 7}, 2);
       cc_graph->create_cc({1}, 0);
@@ -128,7 +151,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Once the correction has been performed, the isolated cell has been agglomerated") {
+        "Once the correction has been performed, the isolated cell has been agglomerated"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 4, 0));
         REQUIRE(FC_IN_CC(cc_graph, 5, 0));
@@ -143,14 +167,22 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   GIVEN("A simple 3x3 Cartesian grid") {
     const DualGEx_quad_3 Data = DualGEx_quad_3();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and two coarse cells with cardinality 5 and 3") {
+      "and two coarse cells with cardinality 5 and 3"
+    ) {
       cc_graph->create_cc({0, 1, 2, 5, 8}, 1);
       cc_graph->create_cc({4}, 0);
       cc_graph->create_cc({3, 6, 7}, 1);
@@ -168,7 +200,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       cc_graph->correct(4);
       THEN(
         "Once the correction has been performed, the isolated cell has been agglomerated "
-        "to the coarse cell which has an increased in the compactness (no matter the max cardinality)") {
+        "to the coarse cell which has an increased in the compactness (no matter the max cardinality)"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 0));
         REQUIRE(FC_IN_CC(cc_graph, 2, 0));
@@ -182,7 +215,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and three coarse cells with cardinality 4, 2, and 2") {
+      "and three coarse cells with cardinality 4, 2, and 2"
+    ) {
       cc_graph->create_cc({0, 3}, 1);
       cc_graph->create_cc({6, 7}, 1);
       cc_graph->create_cc({4}, 0);
@@ -201,7 +235,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       cc_graph->correct(4);
       THEN(
         "Once the correction has been performed, the isolated cell has been agglomerated "
-        "to the coarse cell with which it shares the most faces (no matter the max cardinality)") {
+        "to the coarse cell with which it shares the most faces (no matter the max cardinality)"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 2));
         REQUIRE(FC_IN_CC(cc_graph, 2, 2));
@@ -215,7 +250,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and 3 cells with cardinality 4, 2, and 2") {
+      "and 3 cells with cardinality 4, 2, and 2"
+    ) {
       cc_graph->create_cc({0, 1, 3, 4}, 2);
       cc_graph->create_cc({7, 8}, 1);
       cc_graph->create_cc({6}, 0);
@@ -234,7 +270,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       cc_graph->correct(4);
       THEN(
         "Once the correction has been performed, the isolated cell has been agglomerated "
-        "to the coarse cell with the lowest cardinality") {
+        "to the coarse cell with the lowest cardinality"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 0));
         REQUIRE(FC_IN_CC(cc_graph, 2, 2));
@@ -248,7 +285,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and four coarse cells with cardinality 2") {
+      "and four coarse cells with cardinality 2"
+    ) {
       cc_graph->create_cc({0, 3}, 1);
       cc_graph->create_cc({6, 7}, 1);
       cc_graph->create_cc({4}, 0);
@@ -269,7 +307,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       THEN(
         "Once the correction has been performed, the isolated cell has been agglomerated "
         "to the coarse cell with lower ID (here, the coarse cells have equivalent features "
-        "wrt to the fine cell, hence we cannot choose)") {
+        "wrt to the fine cell, hence we cannot choose)"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 3));
         REQUIRE(FC_IN_CC(cc_graph, 2, 3));
@@ -283,7 +322,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and four coarse cells with cardinality 2, one of which is anisotropic") {
+      "and four coarse cells with cardinality 2, one of which is anisotropic"
+    ) {
       cc_graph->create_cc({0, 3}, 1, true);
       cc_graph->create_cc({6, 7}, 1);
       cc_graph->create_cc({4}, 0);
@@ -303,7 +343,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       cc_graph->correct(4);
       THEN(
         "Once the correction has been performed, the isolated cell has been agglomerated "
-        "to the coarse ISOTROPIC cell with lower ID") {
+        "to the coarse ISOTROPIC cell with lower ID"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 3));
         REQUIRE(FC_IN_CC(cc_graph, 2, 3));
@@ -317,7 +358,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     }
     WHEN(
       "We agglomerate (manually) leaving one coarse cell with cardinality 1 "
-      "and four coarse cells with cardinality 2, all of which are anisotropic") {
+      "and four coarse cells with cardinality 2, all of which are anisotropic"
+    ) {
       cc_graph->create_cc({0, 3}, 1, true);
       cc_graph->create_cc({6, 7}, 1, true);
       cc_graph->create_cc({4}, 0);
@@ -336,7 +378,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Nothing changes after correction because we do not agglomerate to anisotropic cells") {
+        "Nothing changes after correction because we do not agglomerate to anisotropic cells"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 4));
         REQUIRE(FC_IN_CC(cc_graph, 2, 4));
@@ -348,8 +391,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         REQUIRE(FC_IN_CC(cc_graph, 8, 3));
       }
     }
-    WHEN(
-      "We agglomerate (manually) leaving two coarse cells with cardinality 1") {
+    WHEN("We agglomerate (manually) leaving two coarse cells with cardinality 1"
+    ) {
       cc_graph->create_cc({0, 1}, 1);
       cc_graph->create_cc({2}, 0);
       cc_graph->create_cc({6}, 0);
@@ -368,7 +411,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Once the correction has been performed, the isolated cells have been agglomerated") {
+        "Once the correction has been performed, the isolated cells have been agglomerated"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 0));
         REQUIRE(FC_IN_CC(cc_graph, 1, 0));
         REQUIRE(FC_IN_CC(cc_graph, 2, 0));
@@ -381,7 +425,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
     }
     WHEN(
-      "We agglomerate (manually) leaving three coarse cells with cardinality 1") {
+      "We agglomerate (manually) leaving three coarse cells with cardinality 1"
+    ) {
       cc_graph->create_cc({3, 4, 5}, 1);
       cc_graph->create_cc({6, 7, 8}, 1);
       cc_graph->create_cc({0}, 0);
@@ -400,7 +445,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       }
       cc_graph->correct(4);
       THEN(
-        "Once the correction has been performed, the isolated cells have been agglomerated together") {
+        "Once the correction has been performed, the isolated cells have been agglomerated together"
+      ) {
         REQUIRE(FC_IN_CC(cc_graph, 0, 2));
         REQUIRE(FC_IN_CC(cc_graph, 1, 2));
         REQUIRE(FC_IN_CC(cc_graph, 2, 2));
@@ -445,7 +491,8 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
   }
   GIVEN(
     "A simple 3x3 Cartesian grid to which we add an extra unconnected cell to"
-    " simulate pathological partitions") {
+    " simulate pathological partitions"
+  ) {
     DualGEx_quad_3 Data = DualGEx_quad_3();
     // Adding the extra cell
     Data.nb_fc = 10;
@@ -460,55 +507,81 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
     seeds_pool->initialize();
     shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
-      Data.nb_fc, Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
-      Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.n_bnd_faces,
-      Data.dim, Data.arrayOfFineAnisotropicCompliantCells);
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.arrayOfFineAnisotropicCompliantCells
+    );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
     WHEN("We agglomerate (without correction)") {
       auto agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-        fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
-        Data.dim);
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        CoMMANeighbourhoodT::EXTENDED,
+        FC_ITER,
+        Data.dim
+      );
       agg->agglomerate_one_level(4, 2, 6, Data.weights, false);
       const auto &unconnected_cell = cc_graph->_fc_2_cc.back();
       THEN("The isolated cell is singular") {
         REQUIRE(unconnected_cell.has_value());
         REQUIRE(
           count_if(
-            cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+            cc_graph->_fc_2_cc.begin(),
+            cc_graph->_fc_2_cc.end(),
             [&](const auto &fc) {
               return fc.has_value() && fc.value() == unconnected_cell.value();
-            })
-          == 1);
+            }
+          )
+          == 1
+        );
       }
       THEN("If we try to correct, the cell remain isolated") {
         cc_graph->correct(4);
         REQUIRE(
           count_if(
-            cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+            cc_graph->_fc_2_cc.begin(),
+            cc_graph->_fc_2_cc.end(),
             [&](const auto &fc) {
               return fc.has_value() && fc.value() == unconnected_cell.value();
-            })
-          == 1);
+            }
+          )
+          == 1
+        );
       }
     }
     WHEN("We agglomerate (with correction)") {
       auto agg = make_unique<
         Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>>(
-        fc_graph, cc_graph, seeds_pool, CoMMANeighbourhoodT::EXTENDED, FC_ITER,
-        Data.dim);
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        CoMMANeighbourhoodT::EXTENDED,
+        FC_ITER,
+        Data.dim
+      );
       agg->agglomerate_one_level(4, 2, 6, Data.weights, true);
       const auto &unconnected_cell = cc_graph->_fc_2_cc.back();
       THEN("The isolated cell is singular") {
         REQUIRE(unconnected_cell.has_value());
         REQUIRE(
           count_if(
-            cc_graph->_fc_2_cc.begin(), cc_graph->_fc_2_cc.end(),
+            cc_graph->_fc_2_cc.begin(),
+            cc_graph->_fc_2_cc.end(),
             [&](const auto &fc) {
               return fc.has_value() && fc.value() == unconnected_cell.value();
-            })
-          == 1);
+            }
+          )
+          == 1
+        );
       }
     }
   }

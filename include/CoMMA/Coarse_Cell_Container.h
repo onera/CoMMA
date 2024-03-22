@@ -57,7 +57,8 @@ public:
    * is considered singular
    */
   Coarse_Cell_Container(
-    DualGraphPtr &fc_graph, const CoMMAIntType singular_card_thresh) :
+    DualGraphPtr &fc_graph, const CoMMAIntType singular_card_thresh
+  ) :
       _ccs(),
       _fc_graph(fc_graph),
       _cc_counter(0),
@@ -113,10 +114,12 @@ public:
    *  @return vector of the index of the coarse cells
    */
   inline std::set<CoMMAIndexType> get_neighs_cc(
-    const CoMMAIndexType &i_fc, const CoMMAIndexType &i_cc) const {
+    const CoMMAIndexType &i_fc, const CoMMAIndexType &i_cc
+  ) const {
     std::set<CoMMAIndexType> result;
     for (auto elem = _fc_graph->neighbours_cbegin(i_fc);
-         elem != _fc_graph->neighbours_cend(i_fc); ++elem) {
+         elem != _fc_graph->neighbours_cend(i_fc);
+         ++elem) {
       const auto cc = _fc_2_cc[*elem].value();
       if (cc != i_cc) result.insert(cc);
     }
@@ -183,7 +186,8 @@ Not used anymore but we leave it for example purposes
           if (!glob_neighs.empty()) {
             std::optional<CoMMAIntType> new_compactness = std::nullopt;
             const auto new_cc = select_best_cc_to_agglomerate_whole(
-              fcs, glob_neighs, max_card, new_compactness);
+              fcs, glob_neighs, max_card, new_compactness
+            );
             if (new_cc.has_value()) {
               // first we assign to the fc_2_cc the new cc (later it will be
               // renumbered considering the deleted cc)
@@ -202,7 +206,8 @@ Not used anymore but we leave it for example purposes
             if (!neighs.empty()) {
               std::optional<CoMMAIntType> new_compactness = std::nullopt;
               const auto new_cc = select_best_cc_to_agglomerate(
-                i_fc, neighs, max_card, new_compactness);
+                i_fc, neighs, max_card, new_compactness
+              );
               if (new_cc.has_value()) {
                 _fc_2_cc[i_fc] = new_cc.value();
                 _ccs[new_cc.value()]->insert_cell(i_fc, new_compactness);
@@ -267,7 +272,8 @@ Not used anymore but we leave it for example purposes
     const std::unordered_set<CoMMAIndexType> &fcs,
     const std::set<CoMMAIndexType> &neighs,
     const CoMMAIntType max_card,
-    std::optional<CoMMAIntType> &new_compactness) const {
+    std::optional<CoMMAIntType> &new_compactness
+  ) const {
     CoMMAUnused(max_card);
     std::unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     std::unordered_map<CoMMAIndexType, CoMMAIntType> compact{};
@@ -334,7 +340,8 @@ Not used anymore but we leave it for example purposes
     const CoMMAIndexType fc,
     const std::set<CoMMAIndexType> &neighs,
     const CoMMAIntType max_card,
-    std::optional<CoMMAIntType> &new_compactness) const {
+    std::optional<CoMMAIntType> &new_compactness
+  ) const {
     CoMMAUnused(max_card);
     std::unordered_map<CoMMAIndexType, CoMMAIntType> card{};
     std::unordered_map<CoMMAIndexType, CoMMAIntType> shared_faces{};
@@ -452,12 +459,13 @@ Not used anymore but we leave it for example purposes
    * @return The number of shared faces
    */
   inline CoMMAIntType get_shared_faces(
-    const CoMMAIndexType fc, const CoarseCellPtr cc) const {
+    const CoMMAIndexType fc, const CoarseCellPtr cc
+  ) const {
     CoMMAIntType shared_faces{0};
     for (const auto &i_fc : cc->_s_fc) {
       shared_faces += count(
-        _fc_graph->neighbours_cbegin(i_fc), _fc_graph->neighbours_cend(i_fc),
-        fc);
+        _fc_graph->neighbours_cbegin(i_fc), _fc_graph->neighbours_cend(i_fc), fc
+      );
     }
     return shared_faces;
   }
@@ -476,7 +484,8 @@ Not used anymore but we leave it for example purposes
     const std::unordered_set<CoMMAIndexType> &s_fc,
     const CoMMAIntType compactness,
     bool is_anisotropic = false,
-    bool is_creation_delayed = false) {
+    bool is_creation_delayed = false
+  ) {
     // Create a course cell from the fine cells and update the fc_2_cc tree.
     assert((!is_anisotropic) || (!is_creation_delayed));
     for (const auto &i_fc : s_fc) {
@@ -492,7 +501,8 @@ Not used anymore but we leave it for example purposes
     if (is_anisotropic) {
       // we collect the various cc, where the index in the vector is the i_cc
       _ccs[_cc_counter] = std::make_shared<CoarseCellType>(
-        _fc_graph, _cc_counter, s_fc, compactness, !is_anisotropic);
+        _fc_graph, _cc_counter, s_fc, compactness, !is_anisotropic
+      );
       is_mutable = false;
     }
     if (!is_creation_delayed) {
@@ -505,11 +515,11 @@ Not used anymore but we leave it for example purposes
         //==================
         // we collect the various cc, where the index in the vector is the i_cc
         _ccs[_cc_counter] = std::make_shared<CoarseCellType>(
-          _fc_graph, _cc_counter, s_fc, compactness);
-        if (
-          !is_anisotropic
-          && static_cast<decltype(_sing_card_thresh)>(s_fc.size())
-               <= _sing_card_thresh)
+          _fc_graph, _cc_counter, s_fc, compactness
+        );
+        if (!is_anisotropic
+            && static_cast<decltype(_sing_card_thresh)>(s_fc.size())
+                 <= _sing_card_thresh)
           _singular_cc.emplace_back(_cc_counter);
       }
       // Update of _associatedCoarseCellNumber the output of the current
@@ -520,7 +530,7 @@ Not used anymore but we leave it for example purposes
         _fc_2_cc[i_fc] = _cc_counter;
       }
       // Update of the number of CC
-      //####################################
+      // ####################################
       _cc_counter++;  // Only if not isCreationDelayed
     } else {
       // We do not create the coarse cell yet.

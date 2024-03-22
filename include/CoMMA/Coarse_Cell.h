@@ -55,7 +55,8 @@ public:
     CoMMAIndexType i_cc,
     const std::unordered_set<CoMMAIndexType> &s_fc,
     CoMMAIntType compactness,
-    bool is_isotropic = true) :
+    bool is_isotropic = true
+  ) :
       _idx(i_cc),
       _fc_graph(fc_graph),
       _compactness(compactness),
@@ -98,8 +99,8 @@ public:
    * of the CC after the addition
    */
   virtual void insert_cell(
-    const CoMMAIndexType i_fc,
-    const std::optional<CoMMAIntType> new_compactness) {
+    const CoMMAIndexType i_fc, const std::optional<CoMMAIntType> new_compactness
+  ) {
     _s_fc.insert(i_fc);
     ++_cardinality;
     _compactness = new_compactness.has_value()
@@ -114,7 +115,8 @@ public:
    */
   virtual void insert_cells(
     const std::unordered_set<CoMMAIndexType> &fcs,
-    const std::optional<CoMMAIntType> new_compactness) {
+    const std::optional<CoMMAIntType> new_compactness
+  ) {
     _s_fc.insert(fcs.begin(), fcs.end());
     _cardinality += fcs.size();
     _compactness = new_compactness.has_value()
@@ -165,7 +167,8 @@ public:
     CoMMAIndexType i_cc,
     const std::unordered_set<CoMMAIndexType> &s_fc,
     CoMMAIntType compactness,
-    bool is_isotropic = true) :
+    bool is_isotropic = true
+  ) :
       BaseClass(fc_graph, i_cc, s_fc, compactness, is_isotropic),
       _is_connected(compactness > 0),
       _is_connectivity_up_to_date(true) {
@@ -186,9 +189,8 @@ public:
       const std::vector<CoMMAWeightType> area =
         this->_fc_graph->get_weights(i_fc);
       for (auto it = neigh.begin(); it != neigh.end(); ++it) {
-        if (
-          std::find(this->_s_fc.begin(), this->_s_fc.end(), *it)
-          != this->_s_fc.end()) {
+        if (std::find(this->_s_fc.begin(), this->_s_fc.end(), *it)
+            != this->_s_fc.end()) {
           ++position;
           col_ind.push_back(*it);
           CSR_vals.push_back(area[it - neigh.begin()]);
@@ -205,7 +207,8 @@ public:
     }
 
     _cc_graph = std::make_shared<SubGraphType>(
-      s_fc.size(), CSR_row, CSR_col, CSR_vals, volumes, mapping, is_isotropic);
+      s_fc.size(), CSR_row, CSR_col, CSR_vals, volumes, mapping, is_isotropic
+    );
   }
 
   /** @brief Insert a FC in the CC (and update sub-graph if necessary)
@@ -214,8 +217,8 @@ public:
    * of the CC after the addition
    */
   void insert_cell(
-    const CoMMAIndexType i_fc,
-    const std::optional<CoMMAIntType> new_compactness) override {
+    const CoMMAIndexType i_fc, const std::optional<CoMMAIntType> new_compactness
+  ) override {
     // As base class...
     this->_s_fc.insert(i_fc);
     ++this->_cardinality;
@@ -225,8 +228,11 @@ public:
         : this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
     // ...but now add to the subgraph
     _cc_graph->insert_node(
-      this->_fc_graph->get_neighbours(i_fc), i_fc,
-      this->_fc_graph->_volumes[i_fc], this->_fc_graph->get_weights(i_fc));
+      this->_fc_graph->get_neighbours(i_fc),
+      i_fc,
+      this->_fc_graph->_volumes[i_fc],
+      this->_fc_graph->get_weights(i_fc)
+    );
   }
 
   /** @brief Insert several FC in the CC (and update sub-graph if necessary)
@@ -236,7 +242,8 @@ public:
    */
   void insert_cells(
     const std::unordered_set<CoMMAIndexType> &fcs,
-    const std::optional<CoMMAIntType> new_compactness) override {
+    const std::optional<CoMMAIntType> new_compactness
+  ) override {
     // As base class...
     this->_s_fc.insert(fcs.begin(), fcs.end());
     this->_cardinality += fcs.size();
@@ -247,8 +254,11 @@ public:
     // ...but now add to the subgraph
     for (const auto &i_fc : fcs) {
       _cc_graph->insert_node(
-        this->_fc_graph->get_neighbours(i_fc), i_fc,
-        this->_fc_graph->_volumes[i_fc], this->_fc_graph->get_weights(i_fc));
+        this->_fc_graph->get_neighbours(i_fc),
+        i_fc,
+        this->_fc_graph->_volumes[i_fc],
+        this->_fc_graph->get_weights(i_fc)
+      );
     }
   }
 
