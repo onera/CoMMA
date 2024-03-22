@@ -55,6 +55,8 @@ seed_order = 0  # 0 = Boundary priority, 1 = Neighbourhood priority,
 #                 11 = Neighbourhood priority with point initialization
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
+# Max cells in an anisotropic line
+max_cells_in_line = None  # Or positive number
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 
@@ -85,6 +87,7 @@ print(f" * neigh_type={neigh_type_types[neigh_type]}")
 print(" * Priority weights: reversed ID")
 print(f" * seed_ordering={seed_ordering_types[seed_order]}")
 print(f" * Threshold cardinality for singular cells={sing_card}")
+print(f" * Max cells in anisotropic line={max_cells_in_line}")
 print(f" * Fine-cell research iterations={fc_iter}")
 print(" [Output]")
 renum = renumber_coarse > 1
@@ -159,6 +162,7 @@ print("CoMMA call...", flush=True, end="")
     minCard,
     maxCard,
     sing_card,
+    max_cells_in_line,
     fc_iter,
     neigh_type,
 )

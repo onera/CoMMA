@@ -74,10 +74,12 @@ seed_order = 0  # 0 = Boundary priority, 1 = Neighbourhood priority,
 #                 11 = Neighbourhood priority with point initialization
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
+# Max cells in an anisotropic line
+max_cells_in_line = None  # Or positive number
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 # Number of iteration steps to perform
-agglomeration_levels = 3
+agglomeration_levels = 1
 
 # Output-related parameters, they should help with visualization. One can try only one
 # or both at the same time.
@@ -110,6 +112,7 @@ print(f" * {odd_line_length=}")
 print(f" * neigh_type={neigh_type_types[neigh_type]}")
 print(f" * seed_ordering={seed_ordering_types[seed_order]}")
 print(f" * Threshold cardinality for singular cells={sing_card}")
+print(f" * Max cells in anisotropic line={max_cells_in_line}")
 print(f" * Fine-cell research iterations={fc_iter}")
 print(f" * {agglomeration_levels=}")
 print(" [Output]")
@@ -212,7 +215,8 @@ for level in range(agglomeration_levels):
         arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
         # Here we try some ways to limit the anisotropic zone after the first
         # agglomeration step
-        if level >= 1:
+        # if level >= 1:
+        if False:  # level >= 1:
             # Plainly, switch it off
             # anisotropic = False
 
@@ -258,6 +262,7 @@ for level in range(agglomeration_levels):
         minCard,
         maxCard,
         sing_card,
+        max_cells_in_line,
         fc_iter,
         neigh_type,
     )
