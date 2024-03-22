@@ -1,12 +1,14 @@
 var NAVTREEINDEX2 =
 {
+"classcomma_1_1_node.html#a1ab325d368510e673507beae3116e78e":[4,0,0,19,7],
 "classcomma_1_1_node.html#aa27241e12cb061d59c589bd3364bea47":[3,0,0,19,3],
+"classcomma_1_1_node.html#aa27241e12cb061d59c589bd3364bea47":[4,0,0,19,3],
 "classcomma_1_1_node.html#aa73c0969d0ff731040bc3c684913c86c":[4,0,0,19,6],
 "classcomma_1_1_node.html#aa73c0969d0ff731040bc3c684913c86c":[3,0,0,19,6],
 "classcomma_1_1_node.html#ab982f0768228f971628980b0d5ca47e1":[3,0,0,19,0],
 "classcomma_1_1_node.html#ab982f0768228f971628980b0d5ca47e1":[4,0,0,19,0],
-"classcomma_1_1_node.html#abb78e37b6c11686abeaf744f0e29ec2a":[4,0,0,19,2],
 "classcomma_1_1_node.html#abb78e37b6c11686abeaf744f0e29ec2a":[3,0,0,19,2],
+"classcomma_1_1_node.html#abb78e37b6c11686abeaf744f0e29ec2a":[4,0,0,19,2],
 "classcomma_1_1_pair_find_first_based_functor.html":[4,0,0,20],
 "classcomma_1_1_pair_find_first_based_functor.html":[3,0,0,20],
 "classcomma_1_1_pair_find_first_based_functor.html#a162183a1f3a7017792fab396ef5a2e7b":[4,0,0,20,3],
@@ -216,6 +218,7 @@ var NAVTREEINDEX2 =
 "namespacecomma.html":[3,0,0],
 "namespacecomma.html#a0e43c30768d45d4f1f643f2f8be53f5d":[3,0,0,39],
 "namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2":[3,0,0,40],
+"namespacecomma.html#a2d9288bb16f6c211415b0458dafb18a4":[3,0,0,35],
 "namespacecomma.html#a39eb676bbec9475d7b0b5a6186b5f3d0":[3,0,0,42],
 "namespacecomma.html#a3fda6288b7b5c19904abf0312557c774":[3,0,0,41],
 "namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8":[3,0,0,32],
@@ -236,7 +239,6 @@ var NAVTREEINDEX2 =
 "namespacecomma.html#a8c8213401033616d834d48d77bf359a4a8c23e18158e720cbd348f98e50376a5d":[3,0,0,34,3],
 "namespacecomma.html#a8c8213401033616d834d48d77bf359a4ae3fbc583bddef8540a06125ed1e7dc79":[3,0,0,34,1],
 "namespacecomma.html#aa6823809d0c8cc7a1e30d51cfb0ce21a":[3,0,0,38],
-"namespacecomma.html#aa6987db36673ecd638a9b08dfaac18b1":[3,0,0,35],
 "namespacecomma.html#ab712cf58df5dacc470f08332abdde7ec":[3,0,0,43],
 "namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b":[3,0,0,36],
 "namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b":[3,0,0,45],
@@ -247,7 +249,5 @@ var NAVTREEINDEX2 =
 "namespacemembers_vars.html":[3,1,2],
 "namespaces.html":[3,0],
 "pages.html":[],
-"structcomma_1_1_custom_pair_greater_functor.html":[4,0,0,9],
-"structcomma_1_1_custom_pair_greater_functor.html":[3,0,0,9],
-"structcomma_1_1_custom_pair_greater_functor.html#a3baa52044f47d100d5320843cd48aa9f":[3,0,0,9,0]
+"structcomma_1_1_custom_pair_greater_functor.html":[4,0,0,9]
 };

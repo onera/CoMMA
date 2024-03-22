@@ -228,10 +228,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa6987db36673ecd638a9b08dfaac18b1"><td class="memTemplParams" colspan="2">template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </td></tr>
-<tr class="memitem:aa6987db36673ecd638a9b08dfaac18b1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#aa6987db36673ecd638a9b08dfaac18b1">agglomerate_one_level</a> (const std::vector&lt; CoMMAIndexType &gt; &amp;adjMatrix_row_ptr, const std::vector&lt; CoMMAIndexType &gt; &amp;adjMatrix_col_ind, const std::vector&lt; CoMMAWeightType &gt; &amp;adjMatrix_areaValues, const std::vector&lt; CoMMAWeightType &gt; &amp;volumes, const std::vector&lt; std::vector&lt; CoMMAWeightType &gt; &gt; &amp;centers, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const std::vector&lt; CoMMAIndexType &gt; &amp;anisotropicCompliantCells, const std::vector&lt; CoMMAIntType &gt; &amp;n_bnd_faces, bool build_anisotropic_lines, bool is_anisotropic, bool odd_line_length, CoMMAWeightType threshold_anisotropy, const CoMMAIntType seed_ordering_type, std::vector&lt; CoMMAIndexType &gt; &amp;fc_to_cc, std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, bool correction, CoMMAIntType dimension, CoMMAIntType goal_card, CoMMAIntType min_card, CoMMAIntType max_card, CoMMAIntType singular_card_thresh=1, CoMMAIntType fc_choice_iter=1, const CoMMAIntType neighbourhood_type=<a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022a5b91bee96d92adb448b6529d2ea8289d">CoMMANeighbourhoodT::EXTENDED</a>)</td></tr>
-<tr class="memdesc:aa6987db36673ecd638a9b08dfaac18b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function of the agglomerator, it is used as an interface to build up all the agglomeration process. The result will be the definition of the agglomerated cells <code>fc_to_cc</code>.  <a href="namespacecomma.html#aa6987db36673ecd638a9b08dfaac18b1">More...</a><br /></td></tr>
-<tr class="separator:aa6987db36673ecd638a9b08dfaac18b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d9288bb16f6c211415b0458dafb18a4"><td class="memTemplParams" colspan="2">template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </td></tr>
+<tr class="memitem:a2d9288bb16f6c211415b0458dafb18a4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a2d9288bb16f6c211415b0458dafb18a4">agglomerate_one_level</a> (const std::vector&lt; CoMMAIndexType &gt; &amp;adjMatrix_row_ptr, const std::vector&lt; CoMMAIndexType &gt; &amp;adjMatrix_col_ind, const std::vector&lt; CoMMAWeightType &gt; &amp;adjMatrix_areaValues, const std::vector&lt; CoMMAWeightType &gt; &amp;volumes, const std::vector&lt; std::vector&lt; CoMMAWeightType &gt; &gt; &amp;centers, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const std::vector&lt; CoMMAIndexType &gt; &amp;anisotropicCompliantCells, const std::vector&lt; CoMMAIntType &gt; &amp;n_bnd_faces, bool build_anisotropic_lines, bool is_anisotropic, bool odd_line_length, CoMMAWeightType threshold_anisotropy, const CoMMAIntType seed_ordering_type, std::vector&lt; CoMMAIndexType &gt; &amp;fc_to_cc, std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, bool correction, CoMMAIntType dimension, CoMMAIntType goal_card, CoMMAIntType min_card, CoMMAIntType max_card, CoMMAIntType singular_card_thresh=1, std::optional&lt; CoMMAIndexType &gt; max_cells_in_line=std::nullopt, CoMMAIntType fc_choice_iter=1, const CoMMAIntType neighbourhood_type=<a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022a5b91bee96d92adb448b6529d2ea8289d">CoMMANeighbourhoodT::EXTENDED</a>)</td></tr>
+<tr class="memdesc:a2d9288bb16f6c211415b0458dafb18a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function of the agglomerator, it is used as an interface to build up all the agglomeration process. The result will be the definition of the agglomerated cells <code>fc_to_cc</code>.  <a href="namespacecomma.html#a2d9288bb16f6c211415b0458dafb18a4">More...</a><br /></td></tr>
+<tr class="separator:a2d9288bb16f6c211415b0458dafb18a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18179379fcc2bb56e6b89c7b43e249c2"><td class="memTemplParams" colspan="2">template&lt;bool condition, typename typeA , typename typeB &gt; </td></tr>
 <tr class="memitem:a18179379fcc2bb56e6b89c7b43e249c2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">fill_value</a> (typeA &amp;a, typeB &amp;b)</td></tr>
 <tr class="memdesc:a18179379fcc2bb56e6b89c7b43e249c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign from type to another only if a compile-time condition is verified.  <a href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">More...</a><br /></td></tr>
@@ -357,8 +357,8 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aa6987db36673ecd638a9b08dfaac18b1" name="aa6987db36673ecd638a9b08dfaac18b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6987db36673ecd638a9b08dfaac18b1">&#9670;&#160;</a></span>agglomerate_one_level()</h2>
+<a id="a2d9288bb16f6c211415b0458dafb18a4" name="a2d9288bb16f6c211415b0458dafb18a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d9288bb16f6c211415b0458dafb18a4">&#9670;&#160;</a></span>agglomerate_one_level()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -500,6 +500,12 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::optional&lt; CoMMAIndexType &gt;&#160;</td>
+          <td class="paramname"><em>max_cells_in_line</em> = <code>std::nullopt</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">CoMMAIntType&#160;</td>
           <td class="paramname"><em>fc_choice_iter</em> = <code>1</code>, </td>
         </tr>
@@ -556,6 +562,7 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
     <tr><td class="paramdir">[in]</td><td class="paramname">min_card</td><td>Minimum cardinality accepted for the coarse cells </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_card</td><td>Maximum cardinality accepted for the coarse cells </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">singular_card_thresh</td><td>(optional, default=1) Cardinality below which a coarse is considered as singular, hence, compliant for correction </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_cells_in_line</td><td>[Optional] Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fc_choice_iter</td><td>(optional, default=1) Number of iterations allowed for the algorithm choosing which fine cell to add next. The cost grows exponentially, hence use small values. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">neighbourhood_type</td><td>(optional, default=Extended) Type of neighbourhood to use when growing a coarse cell. See <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> for more details. Two alternatives:<ul>
 <li>Extended: requested with 0, standard algorithm where we consider every neighbour of the coarse cell as candidate.</li>

@@ -133,9 +133,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5c939c5706f8c9c47675e3df657568fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a5c939c5706f8c9c47675e3df657568fb">Agglomerator_Anisotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, const CoMMAWeightType threshold_anisotropy, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const bool build_lines, const bool odd_line_length, CoMMAIntType dimension=3)</td></tr>
-<tr class="memdesc:a5c939c5706f8c9c47675e3df657568fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a5c939c5706f8c9c47675e3df657568fb">More...</a><br /></td></tr>
-<tr class="separator:a5c939c5706f8c9c47675e3df657568fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af168953c042e6db4a008b9ec7cbfa69f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#af168953c042e6db4a008b9ec7cbfa69f">Agglomerator_Anisotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, const CoMMAWeightType threshold_anisotropy, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const bool build_lines, const bool odd_line_length, const std::optional&lt; CoMMAIndexType &gt; max_cells_in_line, CoMMAIntType dimension=3)</td></tr>
+<tr class="memdesc:af168953c042e6db4a008b9ec7cbfa69f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#af168953c042e6db4a008b9ec7cbfa69f">More...</a><br /></td></tr>
+<tr class="separator:af168953c042e6db4a008b9ec7cbfa69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#aa9bfcf6f6403c97bff9c9bba8673a377">~Agglomerator_Anisotropic</a> () override=default</td></tr>
 <tr class="memdesc:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#aa9bfcf6f6403c97bff9c9bba8673a377">More...</a><br /></td></tr>
 <tr class="separator:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,6 +195,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a231b51e38cfd45989b02fb7ea383e6a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a231b51e38cfd45989b02fb7ea383e6a9">_odd_line_length</a></td></tr>
 <tr class="memdesc:a231b51e38cfd45989b02fb7ea383e6a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether anisotropic lines with odd length are allowed.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a231b51e38cfd45989b02fb7ea383e6a9">More...</a><br /></td></tr>
 <tr class="separator:a231b51e38cfd45989b02fb7ea383e6a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79aca5e2caedd482930c00a36a024e4a"><td class="memItemLeft" align="right" valign="top">std::optional&lt; CoMMAIndexType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a79aca5e2caedd482930c00a36a024e4a">_max_cells_in_line</a></td></tr>
+<tr class="memdesc:a79aca5e2caedd482930c00a36a024e4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a79aca5e2caedd482930c00a36a024e4a">More...</a><br /></td></tr>
+<tr class="separator:a79aca5e2caedd482930c00a36a024e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classcomma_1_1_agglomerator"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcomma_1_1_agglomerator')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcomma_1_1_agglomerator.html">comma::Agglomerator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
 <tr class="memitem:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">_dimension</a></td></tr>
 <tr class="memdesc:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dimensionality of the problem (_dimension = 2 -&gt; 2D, _dimension = 3 -&gt; 3D)  <a href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">More...</a><br /></td></tr>
@@ -312,8 +315,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5c939c5706f8c9c47675e3df657568fb" name="a5c939c5706f8c9c47675e3df657568fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c939c5706f8c9c47675e3df657568fb">&#9670;&#160;</a></span>Agglomerator_Anisotropic()</h2>
+<a id="af168953c042e6db4a008b9ec7cbfa69f" name="af168953c042e6db4a008b9ec7cbfa69f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af168953c042e6db4a008b9ec7cbfa69f">&#9670;&#160;</a></span>Agglomerator_Anisotropic()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -380,6 +383,12 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::optional&lt; CoMMAIndexType &gt;&#160;</td>
+          <td class="paramname"><em>max_cells_in_line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">CoMMAIntType&#160;</td>
           <td class="paramname"><em>dimension</em> = <code>3</code>&#160;</td>
         </tr>
@@ -408,6 +417,7 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
     <tr><td class="paramdir">[in]</td><td class="paramname">priority_weights</td><td>Weights used to set the order telling where to start agglomerating. The higher the weight, the higher the priority </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">build_lines</td><td>Whether lines joining the anisotropic cells should be built </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">odd_line_length</td><td>Whether anisotropic lines with odd length are allowed </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_cells_in_line</td><td>Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dimension</td><td>Dimension of the problem </td></tr>
   </table>
   </dd>
@@ -676,6 +686,32 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div><div class="memdoc">
 
 <p>Neighbours of the anisotropic cells agglomerated. They are used to update the seeds pool. </p>
+
+</div>
+</div>
+<a id="a79aca5e2caedd482930c00a36a024e4a" name="a79aca5e2caedd482930c00a36a024e4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79aca5e2caedd482930c00a36a024e4a">&#9670;&#160;</a></span>_max_cells_in_line</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;CoMMAIndexType&gt; <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::_max_cells_in_line</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic. </p>
 
 </div>
 </div>

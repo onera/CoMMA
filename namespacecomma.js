@@ -50,7 +50,7 @@ var namespacecomma =
       [ "BOUNDARY_PRIORITY_ONE_POINT_INIT", "namespacecomma.html#a8c8213401033616d834d48d77bf359a4a29ddaed9cc8cda952d02296b79010787", null ],
       [ "NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT", "namespacecomma.html#a8c8213401033616d834d48d77bf359a4a8c23e18158e720cbd348f98e50376a5d", null ]
     ] ],
-    [ "agglomerate_one_level", "namespacecomma.html#aa6987db36673ecd638a9b08dfaac18b1", null ],
+    [ "agglomerate_one_level", "namespacecomma.html#a2d9288bb16f6c211415b0458dafb18a4", null ],
     [ "compute_neighbourhood_based_wall_distance", "namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b", null ],
     [ "d_keys_to_set", "namespacecomma.html#a81affca718f9c9927cfb82c317c8239e", null ],
     [ "dot_deviate", "namespacecomma.html#aa6823809d0c8cc7a1e30d51cfb0ce21a", null ],
