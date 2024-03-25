@@ -316,3 +316,51 @@ def prepare_meshio_agglomeration_data(
         # but much faster
         final_data %= modulo_renumbering
     return prepare_meshio_celldata(final_data, cellblocks)
+
+
+def assign_anisotropic_line_data_to_cells(
+    idxs, cells, fc2cc, default_value=-1, modulo_renumbering=None, shuffle=False
+):
+    """Given the CSR definition of the anisotropic lines returned by `CoMMA`, give to
+    each (fine) cell the ID of anistotropic line to which it belongs, otherwise a
+    default values. Since the line definition returned by CoMMA is is terms of coarse
+    cells, knowledge to relate the fine cells to the coarse ones is needed, hence
+    `fc2cc`. It returns a (`numpy`) vector of the same length as `fc2cc` where the value
+    at position `i` is the ID of the anisotropic line to which cell `i` belongs. If cell
+    `i` does not belong to any line, the given default value is used. The line IDs:
+    * are positive and 0-based if the default value is negative
+    * are positive and 1-based if the default value is 0
+    * are negative if the default value is positive
+
+    idxs: array like
+        Indices for lines.
+    cells: array like
+        Flat array containing the all the cells of belonging to the anisotropic lines.
+    fc2cc: array like
+        Result of the agglomeration, ID of the coarse cell to which a fine cell belongs.
+    default_value: int, default = -1
+        Value to assign to cells which do not belong to any line
+    modulo_renumbering: optional, None or int
+        Value of the modulo operation applied to the data.
+    shuffle: bool, default: False
+        Whether to shuffle the ID
+    """
+    n_lines = len(idxs) - 1
+    lines = np.arange(n_lines)
+    f2c = np.asarray(fc2cc)
+    ret = np.full_like(f2c, default_value, dtype=int)
+    if shuffle:
+        np.random.default_rng().shuffle(lines)
+    if modulo_renumbering is not None and modulo_renumbering > 1:
+        lines %= modulo_renumbering
+    if default_value == 0:
+        lines += 1
+    elif default_value > 0:
+        lines = -lines
+    for ln in range(n_lines):
+        # With the following commented definitions, the actual code would me more
+        # readable:
+        # coarse_cells_in_line = cells[idxs[ln] : idxs[ln + 1]]
+        # mask_fine_cells_in_line = np.isin(f2c, coarse_cells_in_line)
+        ret[np.isin(f2c, cells[idxs[ln] : idxs[ln + 1]])] = lines[ln]
+    return ret

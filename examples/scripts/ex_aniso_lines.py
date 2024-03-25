@@ -22,7 +22,11 @@ from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
-from comma_tools import prepare_meshio_agglomeration_data
+from comma_tools import (
+    assign_anisotropic_line_data_to_cells,
+    prepare_meshio_agglomeration_data,
+    prepare_meshio_celldata,
+)
 
 neigh_type_types = ["Extended", "Pure front advancing"]
 
@@ -182,6 +186,12 @@ agglo = prepare_meshio_agglomeration_data(
     modulo_renumbering=renumber_coarse,
     shuffle=shuffle_coarse,
 )
+out_lines = prepare_meshio_celldata(
+    assign_anisotropic_line_data_to_cells(
+        agglomerationLines_Idx, agglomerationLines, fc_to_cc
+    ),
+    m.mesh.cells,
+)
 
 f2c = np.asarray(fc_to_cc_res, dtype=int)
 # Building a dictionary 'aniso line ID' : [fine cells in line]
@@ -207,6 +217,8 @@ print(f"Drawing graph and lines in {line_draw}")
 m.draw_aggl_lines(line_draw, dic, -0.02, 4.02, -0.02, 2.02, show_axes=False)
 
 print(f"Writing in {outname}")
-meshio.Mesh(m.mesh.points, m.mesh.cells, cell_data={"agglomerate": agglo}).write(
-    outname
-)
+meshio.Mesh(
+    m.mesh.points,
+    m.mesh.cells,
+    cell_data={"agglomerate": agglo, "anisotropic_lines": out_lines},
+).write(outname)

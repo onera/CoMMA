@@ -25,6 +25,7 @@ from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
 from comma_tools import (
+    assign_anisotropic_line_data_to_cells,
     build_coarse_graph,
     compute_neighbourhood_wall_distance,
     prepare_meshio_agglomeration_data,
@@ -59,7 +60,7 @@ seed_ordering_types = {
 #################
 input_mesh, input_format = "../meshes/raebis_ansys.msh", "ansys"
 # Number of cells in the aniso lines in the last agglomeration step
-n_cells_in_aniso_line = 2
+# n_cells_in_aniso_line = 2
 ##
 anisotropic = True
 ## CoMMA parameters
@@ -79,7 +80,7 @@ max_cells_in_line = None  # Or positive number
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 # Number of iteration steps to perform
-agglomeration_levels = 1
+agglomeration_levels = 3
 
 # Output-related parameters, they should help with visualization. One can try only one
 # or both at the same time.
@@ -169,7 +170,7 @@ foil_distance = compute_neighbourhood_wall_distance(
 # Choosing the whole BL as compliant
 arrayOfFineAnisotropicCompliantCells = squares
 # Weights inversely proportional to the distance so that cells closer to the
-# boundary have higher priority
+# boundary have higher priority (+1 to avoid division by 0)
 weights = np.reciprocal(1.0 + foil_distance.astype(float))
 
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
@@ -279,6 +280,17 @@ for level in range(agglomeration_levels):
         modulo_renumbering=renumber_coarse,
         shuffle=shuffle_coarse,
     )
+    if level == 0:
+        out_data["anisotropic_lines"] = prepare_meshio_celldata(
+            assign_anisotropic_line_data_to_cells(
+                agglomerationLines_Idx,
+                agglomerationLines,
+                fc_to_cc,
+                modulo_renumbering=renumber_coarse,
+                shuffle=shuffle_coarse,
+            ),
+            mesh.mesh.cells,
+        )
     print("OK")
     print()
     if max(fc_to_cc) == 0 and level < agglomeration_levels - 1:
