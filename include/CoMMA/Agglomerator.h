@@ -586,8 +586,6 @@ protected:
       // Flag to determine if we arrived at the end of an extreme of a line
       bool opposite_direction_check = false;
       // Info about growth direction
-      std::vector<CoMMAWeightType> prev_cen =
-        this->_fc_graph->_centers[seed];  // OK copy
       std::vector<CoMMAWeightType> prev_dir(pts_dim);
       bool empty_line = true;
       // Start the check from the seed
@@ -595,39 +593,21 @@ protected:
       while (!end) {
         // for the seed (that is updated each time end!= true) we fill the
         // neighbours and the weights
-        const std::vector<CoMMAIndexType> v_neighbours =
-          this->_fc_graph->get_neighbours(seed);
-        const std::vector<CoMMAWeightType> v_w_neighbours =
-          this->_fc_graph->get_weights(seed);
-        auto n_it = this->_fc_graph->neighbours_cbegin(seed);
-        auto w_it = this->_fc_graph->weights_cbegin(seed);
-        // std::vector of the candidates to continue the line
+        // Candidates to continue the line
         CoMMASetOfPairType candidates;
         // If the line is long enough, we use the direction. Otherwise, we use
         // the weight. Putting a high-level if to reduce the branching inside
         // the loop over the neighbours.
         if (empty_line) {
-          for (; n_it != this->_fc_graph->neighbours_cend(seed);
-               ++n_it, ++w_it) {
-            if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
-              candidates.emplace(*w_it, *n_it);
-            }
-          }  // end for loop
+          this->find_cell_candidates_for_line_max_weight(
+            seed, to_treat, max_weights, candidates
+          );
         } else {
           // If not an empty line, we check the direction, see
           // !dot_deviate below
-          for (; n_it != this->_fc_graph->neighbours_cend(seed);
-               ++n_it, ++w_it) {
-            if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
-              std::vector<CoMMAWeightType> cur_dir(pts_dim);
-              get_direction<CoMMAWeightType>(
-                prev_cen, this->_fc_graph->_centers[*n_it], cur_dir
-              );
-              const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
-              if (!dot_deviate<CoMMAWeightType>(dot))
-                candidates.emplace(fabs(dot), *n_it);
-            }
-          }  // end for loop
+          this->find_cell_candidates_for_line_direction(
+            seed, to_treat, max_weights, prev_dir, true, candidates
+          );
         }
         if (!candidates.empty()) {
           // Even if we have more than one candidate, we choose just one
@@ -637,6 +617,7 @@ protected:
           /** @todo Not properly efficient. We risk to do twice the operations
            * (we overwrite the seed). This is not proper
            */
+          const auto old_seed = seed;
           // update the seed to the actual candidate
           seed = candidates.begin()->second;
           if (!opposite_direction_check) {
@@ -646,9 +627,7 @@ protected:
           }
           to_treat[seed] = false;
           empty_line = false;
-          const auto &cur_cen = this->_fc_graph->_centers[seed];
-          get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
-          prev_cen = cur_cen;  // this->_fc_graph->_centers[seed];
+          this->_fc_graph->get_center_direction(old_seed, seed, prev_dir);
           if (!primal_dir.has_value()) primal_dir = prev_dir;
         }
         // 0 candidate, we are at the end of the line or at the end of one
@@ -660,21 +639,11 @@ protected:
           if (!empty_line) {
             // If not an empty line, we check the direction, see is_parallel
             // below
-            for (auto it = this->_fc_graph->neighbours_cbegin(seed);
-                 it != this->_fc_graph->neighbours_cend(seed);
-                 ++it) {
-              if (to_treat[*it]) {
-                std::vector<CoMMAWeightType> cur_dir(pts_dim);
-                get_direction<CoMMAWeightType>(
-                  prev_cen, this->_fc_graph->_centers[*it], cur_dir
-                );
-                const auto dot =
-                  dot_product<CoMMAWeightType>(prev_dir, cur_dir);
-                if (!dot_deviate<CoMMAWeightType>(dot))
-                  candidates.emplace(fabs(dot), *it);
-              }
-            }  // end for loop
+            this->find_cell_candidates_for_line_direction(
+              seed, to_treat, max_weights, prev_dir, false, candidates
+            );
             if (!candidates.empty()) {
+              const auto old_seed = seed;
               // We found one! Keep going!
               seed = candidates.begin()->second;
               if (!opposite_direction_check) {
@@ -684,9 +653,7 @@ protected:
               }
               to_treat[seed] = false;
               empty_line = false;
-              const auto &cur_cen = this->_fc_graph->_centers[seed];
-              get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
-              prev_cen = cur_cen;  // this->_fc_graph->_centers[seed];
+              this->_fc_graph->get_center_direction(old_seed, seed, prev_dir);
               if (!primal_dir.has_value()) primal_dir = prev_dir;
             } else {
               if (opposite_direction_check) {
@@ -694,7 +661,6 @@ protected:
               } else {
                 seed = primal_seed;
                 prev_dir = primal_dir.value();
-                prev_cen = this->_fc_graph->_centers[seed];
                 opposite_direction_check = true;
               }
             }
@@ -718,6 +684,79 @@ protected:
       return false;
     }
     return true;
+  }
+
+  /** @brief Tell whether a weight should be considered as high coupling between
+   * two cells.
+   * @param[in] weight Value to be examined
+   * @param[in] ref_weight Reference against which the value will be compared
+   * @return whether the given value is a mark of high-coupling
+   */
+  inline bool is_high_coupling(
+    const CoMMAWeightType weight, const CoMMAWeightType ref_weight
+  ) {
+    return weight > 0.90 * ref_weight;
+  }
+
+  /** @brief Find cells which are good candidates to be added to the anisotropic
+   * line. In order to identify the candidate, the weights are considered.
+   * @param[in] seed Last cell to be added to the line.
+   * @param[in] to_treat Vector of booleans telling whether a cell should be
+   * considered.
+   * @param[in] max_weights Vector holding for each cell the maximum weight
+   * among its neighbours.
+   * @param[out] candidates Set of the candidates, which are pairs of cell ID
+   * and related priority.
+   */
+  inline void find_cell_candidates_for_line_max_weight(
+    const CoMMAIndexType seed,
+    const std::vector<bool> &to_treat,
+    const std::vector<CoMMAWeightType> &max_weights,
+    CoMMASetOfPairType &candidates
+  ) {
+    auto n_it = this->_fc_graph->neighbours_cbegin(seed);
+    auto w_it = this->_fc_graph->weights_cbegin(seed);
+    for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
+      if (to_treat[*n_it] && this->is_high_coupling(*w_it, max_weights[seed])) {
+        candidates.emplace(*w_it, *n_it);
+      }
+    }  // end for loop
+  }
+
+  /** @brief Find cells which are good candidates to be added to the anisotropic
+   * line. In order to identify the candidate, the direction is compared to the
+   * last reported one; additionally, if requested, the weights can also be
+   * considered
+   * @param[in] seed Last cell to be added to the line.
+   * @param[in] to_treat Vector of booleans telling whether a cell should be
+   * considered.
+   * @param[in] max_weights Vector holding for each cell the maximum weight
+   * among its neighbours.
+   * @param[in] prev_dir Previous direction.
+   * @param[out] candidates Set of the candidates, which are pairs of cell ID
+   * and related priority.
+   */
+  inline void find_cell_candidates_for_line_direction(
+    const CoMMAIndexType seed,
+    const std::vector<bool> &to_treat,
+    const std::vector<CoMMAWeightType> &max_weights,
+    const std::vector<CoMMAWeightType> &prev_dir,
+    const bool check_weight,
+    CoMMASetOfPairType &candidates
+  ) {
+    auto n_it = this->_fc_graph->neighbours_cbegin(seed);
+    auto w_it = this->_fc_graph->weights_cbegin(seed);
+    const auto pts_dim = this->_fc_graph->_centers[0].size();
+    for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
+      if (to_treat[*n_it]
+          && (!check_weight || this->is_high_coupling(*w_it, max_weights[seed]))) {
+        std::vector<CoMMAWeightType> cur_dir(pts_dim);
+        this->_fc_graph->get_center_direction(seed, *n_it, cur_dir);
+        const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
+        if (!dot_deviate<CoMMAWeightType>(dot))
+          candidates.emplace(fabs(dot), *n_it);
+      }
+    }  // end for loop
   }
 
   /** @brief Neighbours of the anisotropic cells agglomerated. They are used to

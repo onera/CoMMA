@@ -641,6 +641,25 @@ public:
     return _n_bnd_faces[idx_c] > 0;
   }
 
+  /** @brief Compute the direction from vertex \p a to vertex \p b and store it
+   * as unit vector in \p dir.
+   * @param[in] a Starting point
+   * @param[in] b End point
+   * @param[out] dir Unit vector of the direction
+   * @return the distance from the two points (the norm used for the
+   * normalization)
+   * @note This is just a wrapper around get_direction.
+   */
+  inline CoMMAWeightType get_center_direction(
+    const CoMMAIndexType &a,
+    const CoMMAIndexType &b,
+    std::vector<CoMMAWeightType> &dir
+  ) {
+    return get_direction<CoMMAWeightType>(
+      this->_centers[a], this->_centers[b], dir
+    );
+  }
+
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
    * threshold and order them according to given priority
    *  @param[out] max_weights Array of the maximum weight: the biggest area of
