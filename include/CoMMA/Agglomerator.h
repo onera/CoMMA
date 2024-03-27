@@ -33,6 +33,85 @@
 
 namespace comma {
 
+/** @brief Convenient class containing salient features of a cell.
+ * @tparam T type used for the features
+ */
+template<typename T>
+class CellFeatures {
+public:
+  /** Measure of the cell: area in 2D or volume in 3D */
+  T _measure;
+
+  /** (Approximation of) The minimum edge of the cell */
+  T _min_edge;
+
+  /** (Approximation of) The maximum edge of the cell */
+  T _diam;
+
+  /** @brief Constructor
+   * @param[in] measure Measure of the cell
+   * @param[in] min_edge (Approximation of) The minimum edge of the cell
+   * @param[in] diam (Approximation of) The diameter of the cell
+   */
+  CellFeatures(
+    const T measure = std::numeric_limits<T>::min(),
+    const T min_edge = std::numeric_limits<T>::max(),
+    const T diam = std::numeric_limits<T>::min()
+  ) :
+      _measure(measure), _min_edge(min_edge), _diam(diam){};
+
+  /** @brief Move constructor
+   * @param[in] other Features to move
+   */
+  CellFeatures(CellFeatures<T> &&other) = default;
+
+  /** @brief Move assignment
+   * @param[in] other Features to move
+   */
+  CellFeatures &operator=(CellFeatures<T> &&other) = default;
+
+  /** @brief Copy assignment
+   * @param[in] other Features to copy
+   */
+  CellFeatures &operator=(const CellFeatures<T> &other) = default;
+};
+
+/** @brief Given the features of a cell, compute its aspect-ratio. This uses
+ * the diameter and the measure.\n  In 3D:
+ * \f$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} \f$ \n In 2D:
+ * \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ (Recall that in 2D the
+ * volume is the surface) \n Generally, for dimension \f$ d >=2 \f$:
+ * \f$ AR = \frac{diam_{CC}}{\sqrt[d]{vol_{CC}}} \f$, otherwise no root:
+ * \f$ AR = \frac{diam_{CC}}{vol_{CC}} \f$
+ * @tparam T type used for the features
+ * @tparam dim Dimension (e.g., 2D)
+ * @param[in] feat Cell features
+ * @return the aspect-ratio
+ */
+template<typename T, int dim>
+inline T compute_AR_max_ov_radius(const CellFeatures<T> &feat) {
+  if constexpr (dim < 2) {
+    return feat._diam / feat._measure;
+  } else if constexpr (dim == 2) {
+    return feat._diam / sqrt(feat._measure);
+  } else if constexpr (dim == 3) {
+    return feat._diam / cbrt(feat._measure);
+  } else {
+    return feat._diam / pow(feat._measure, 1.0 / dim);
+  }
+}
+
+/** @brief Given the features of a cell, compute its aspect-ratio. This returns
+ * the ratio between the diameter and the minimum edge.
+ * @tparam T type used for the features
+ * @param[in] feat Cell features
+ * @return the aspect-ratio
+ */
+template<typename T>
+inline T compute_AR_max_ov_min(const CellFeatures<T> &feat) {
+  return feat._diam / feat._min_edge;
+}
+
 // How to pass parameters from base class
 // https://stackoverflow.com/questions/9692675/c-constructor-where-parameters-are-used-by-base-class-constructor
 // https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-base-class-constructor
@@ -57,9 +136,7 @@ public:
    * \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ \n (Recall that in 2D the
    * volume is the surface)
    */
-  std::function<CoMMAWeightType(
-    const CoMMAWeightType, const CoMMAWeightType, const CoMMAWeightType
-  )>
+  std::function<CoMMAWeightType(const CellFeatures<CoMMAWeightType> &)>
     _compute_AR;
 
   /** @brief The constructor of the interface
@@ -89,24 +166,10 @@ public:
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
-      _compute_AR = [](
-                      const CoMMAWeightType diam,
-                      const CoMMAWeightType min_edge,
-                      const CoMMAWeightType area
-                    ) -> CoMMAWeightType {
-        CoMMAUnused(min_edge);
-        return diam / sqrt(area);
-      };
+      _compute_AR = compute_AR_max_ov_radius<CoMMAWeightType, 2>;
     } else {
       _min_neighbourhood = 3;
-      _compute_AR = [](
-                      const CoMMAWeightType diam,
-                      const CoMMAWeightType min_edge,
-                      const CoMMAWeightType vol
-                    ) -> CoMMAWeightType {
-        CoMMAUnused(min_edge);
-        return diam / cbrt(vol);
-      };
+      _compute_AR = compute_AR_max_ov_radius<CoMMAWeightType, 3>;
     }
     _l_nb_of_cells.push_back(graph->_number_of_cells);
   }
@@ -971,34 +1034,23 @@ public:
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio and number of face shared with other cells
    * already agglomerated (Current coarse cell means without \p i_fc)
-   *  @param[in] i_fc Index of the fine cell to add to the coarse cell
-   *  @param[in] cc_diam (Approximation of the) Diameter of the current coarse
-   *  @param[in] cc_min_edge (Approximation of the) Smaller edge of the current
-   *  coarse cell
-   *  @param[in] cc_vol Volume of the current coarse cell
-   *  @param[in] fc_of_cc Index of the fine cells already agglomerated in the
-   *  coarse cell
-   *  @param[out] shared_faces Number of faces shared by the fine cell with the
-   *  current coarse cell
-   *  @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
-   *  @param[out] new_diam (Approximation of the) Diameter of the (final) coarse
-   *  cell
-   *  @param[in] new_min_edge (Approximation of the) Smallest edge of the
-   *  (final) coarse cell
-   *  @param[out] new_vol Volume of the (final) coarse cell
+   * @param[in] i_fc Index of the fine cell to add to the coarse cell
+   * @param[in] cc_feats Features of the current coarse cell
+   * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
+   * coarse cell
+   * @param[out] shared_faces Number of faces shared by the fine cell with the
+   * current coarse cell
+   * @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
+   * @param[out] new_feats Features of the (final) coarse cell
    */
   inline void compute_next_cc_features(
     const CoMMAIndexType i_fc,
-    const CoMMAWeightType cc_diam,
-    const CoMMAWeightType cc_min_edge,
-    const CoMMAWeightType cc_vol,
+    const CellFeatures<CoMMAWeightType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
     CoMMAIntType &shared_faces,
     CoMMAWeightType &aspect_ratio,
-    CoMMAWeightType &new_diam,
-    CoMMAWeightType &new_min_edge,
-    CoMMAWeightType &new_vol
+    CellFeatures<CoMMAWeightType> &new_feats
   ) const {
     // Compute shared faces
     shared_faces = 0;
@@ -1011,8 +1063,8 @@ public:
     // Compute new diameter
     const std::vector<CoMMAWeightType> &cen_fc =
       this->_fc_graph->_centers[i_fc];
-    CoMMAWeightType max_diam = cc_diam * cc_diam,
-                    min_edge = cc_min_edge * cc_min_edge;
+    CoMMAWeightType max_diam = cc_feats._diam * cc_feats._diam,
+                    min_edge = cc_feats._min_edge * cc_feats._min_edge;
     for (const auto i_fc_cc : fc_of_cc) {
       const auto dist = squared_euclidean_distance<CoMMAWeightType>(
         cen_fc, this->_fc_graph->_centers[i_fc_cc]
@@ -1020,12 +1072,11 @@ public:
       if (dist > max_diam) max_diam = dist;
       if (dist < min_edge) min_edge = dist;
     }  // for i_fc_cc
-    new_diam = sqrt(max_diam);
-    new_min_edge = sqrt(min_edge);
+    new_feats._diam = sqrt(max_diam);
+    new_feats._min_edge = sqrt(min_edge);
+    new_feats._measure = cc_feats._measure + this->_fc_graph->_volumes[i_fc];
 
-    new_vol = cc_vol + this->_fc_graph->_volumes[i_fc];
-
-    aspect_ratio = this->_compute_AR(new_diam, new_min_edge, new_vol);
+    aspect_ratio = this->_compute_AR(new_feats);
   }
 
   /** @brief Pure virtual function that must be implemented in child classes to
@@ -1167,13 +1218,11 @@ public:
       // cardinality required
       // TODO: CHECK THAT, if the goal is 2, the minimum size would be 3?
       // ARGUABLE! Let's think to 3
-      // Computation of the initial aspect ratio
-      CoMMAWeightType diam_cc{-1.};
-      CoMMAWeightType min_edge_cc{-1.};
       // CC in construction
       decltype(s_current_cc) tmp_cc = {seed};
       // volume of cc is at first the volume of the seed.
-      CoMMAWeightType vol_cc = this->_fc_graph->_volumes[seed];
+      CellFeatures<CoMMAWeightType> cur_cc_feats(this->_fc_graph->_volumes[seed]
+      );
       // This dictionary is used to store the eligible cc: i.e. its size is
       // inside the permitted range. This is useful to track back our step if
       // needed. [size of the current, [cell set, d_n_of seed]]
@@ -1225,12 +1274,7 @@ public:
           next_cell, this->_fc_graph->get_neighbours(next_cell)
         );
         next_cell = 0;  // Dummy initialization
-        CoMMAWeightType min_ar_diam =
-          std::numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType min_ar_min_edge =
-          std::numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType min_ar_vol =
-          std::numeric_limits<CoMMAWeightType>::max();
+        CellFeatures<CoMMAWeightType> min_ar_cc_feats;
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in next_cell. It takes account also
@@ -1241,16 +1285,12 @@ public:
           neighbourhood,
           d_n_of_seed,
           is_order_primary,
-          diam_cc,
-          min_edge_cc,
-          vol_cc,
+          cur_cc_feats,
           tmp_cc,
           next_cell,
           // output
           max_faces_in_common,
-          min_ar_diam,
-          min_edge_cc,
-          min_ar_vol
+          min_ar_cc_feats
         );
 
         // This formula does not work
@@ -1313,10 +1353,8 @@ public:
           dict_cc_in_creation[size_current_cc] = tmp_pair;
         }
 
-        // Update of diam_cc and vol_cc with the new fc added
-        diam_cc = min_ar_diam;
-        min_edge_cc = min_ar_min_edge;
-        vol_cc = min_ar_vol;
+        // Update of cc features after new fc has been added
+        cur_cc_feats = std::move(min_ar_cc_feats);
 
         // Remove added fc from the available neighbours
         d_n_of_seed.erase(next_cell);
@@ -1373,30 +1411,22 @@ public:
    * depends on: the number of shared faces (tries to maximize it), the
    * neighbourhood order (tries to minimize it), and the aspect-ratio of the
    * coarse cell (tries to minimize it).
-   *  @param[in] fc_iter (Unused) Number of iteration for the fine cell
-   *  research algorithm
-   *  @param[in] neighbourhood Neighborhood object
-   *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
-   *  agglomeration with their neighbourhood order wrt to the original seed
-   *  @param[in] is_order_primary If true, the neighbourhood order prevails on
-   *  other criteria
-   *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse
-   *  cell
-   *  @param[in] min_edge_cc (Approximation of the) Smallest edge of the current
-   *  coarse cell
-   *  @param[in] vol_cc Volume of the current coarse cell
-   *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
-   *  agglomerated in the coarse cell
-   *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine
-   *  cell
-   *  @param[out] max_faces_in_common Number of faces shared between the chosen
-   *  fine cell and the coarse cell
-   *  @param[out] min_ar_diam (Approximation of the) Diameter of the coarse cell
-   *  after the addition of the chosen fine cell
-   *  @param[out] min_ar_min_edge (Approximation of the) Smallest edge coarse
-   *  cell after the addition of the chosen fine cell
-   *  @param[out] min_ar_vol Volume of the coarse cell after the addition of the
-   *  chosen fine cell
+   * @param[in] fc_iter (Unused) Number of iteration for the fine cell
+   * research algorithm
+   * @param[in] neighbourhood Neighborhood object
+   * @param[in] d_n_of_seed Dictionary containing the cells to consider for the
+   * agglomeration with their neighbourhood order wrt to the original seed
+   * @param[in] is_order_primary If true, the neighbourhood order prevails on
+   * other criteria
+   * @param[in] cc_feats Features of the current coarse cell
+   * @param[in] s_of_fc_for_current_cc Indices of the fine cells already
+   * agglomerated in the coarse cell
+   * @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine
+   * cell
+   * @param[out] max_faces_in_common Number of faces shared between the chosen
+   * fine cell and the coarse cell
+   * @param[out] min_ar_cc_feats Features of the coarse cell after the addition
+   * of the chosen fine cell
    */
   virtual void compute_best_fc_to_add(
     const CoMMAIntType fc_iter,
@@ -1405,15 +1435,11 @@ public:
       neighbourhood,
     const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
-    const CoMMAWeightType &diam_cc,
-    const CoMMAWeightType &min_edge_cc,
-    const CoMMAWeightType &vol_cc,
+    const CellFeatures<CoMMAWeightType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
-    CoMMAWeightType &min_ar_diam,
-    CoMMAWeightType &min_ar_min_edge,
-    CoMMAWeightType &min_ar_vol
+    CellFeatures<CoMMAWeightType> &min_ar_cc_feats
   ) const {
     CoMMAUnused(fc_iter);
     //  this function defines the best fine cells to add to create the coarse
@@ -1428,22 +1454,15 @@ public:
       // features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightType new_ar = std::numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightType new_ar_diam = std::numeric_limits<CoMMAWeightType>::min();
-      CoMMAWeightType new_ar_min_edge =
-        std::numeric_limits<CoMMAWeightType>::max();
-      CoMMAWeightType new_ar_vol = std::numeric_limits<CoMMAWeightType>::min();
+      CellFeatures<CoMMAWeightType> new_min_ar_cc_feats{};
       this->compute_next_cc_features(
         i_fc,
-        diam_cc,
-        min_edge_cc,
-        vol_cc,
+        cc_feats,
         s_of_fc_for_current_cc,
         // out
         number_faces_in_common,
         new_ar,
-        new_ar_diam,
-        new_ar_min_edge,
-        new_ar_vol
+        new_min_ar_cc_feats
       );
 
       // Neighbourhood order of i_fc wrt to original seed of CC
@@ -1469,9 +1488,7 @@ public:
                 // element.
                 min_ar = new_ar;
                 argmin_ar = i_fc;
-                min_ar_diam = new_ar_diam;
-                min_ar_min_edge = new_ar_min_edge;
-                min_ar_vol = new_ar_vol;
+                min_ar_cc_feats = std::move(new_min_ar_cc_feats);
 
                 arg_max_faces_in_common = i_fc;
                 // The number of face in common is the same no need to touch it
@@ -1482,9 +1499,7 @@ public:
               arg_max_faces_in_common = i_fc;
               min_ar = new_ar;
               argmin_ar = i_fc;
-              min_ar_diam = new_ar_diam;
-              min_ar_min_edge = new_ar_min_edge;
-              min_ar_vol = new_ar_vol;
+              min_ar_cc_feats = std::move(new_min_ar_cc_feats);
               // The number of face in common is the same no need to touch it
             }
           }
@@ -1495,9 +1510,7 @@ public:
           arg_max_faces_in_common = i_fc;
           min_ar = new_ar;
           argmin_ar = i_fc;
-          min_ar_diam = new_ar_diam;
-          min_ar_min_edge = new_ar_min_edge;
-          min_ar_vol = new_ar_vol;
+          min_ar_cc_feats = std::move(new_min_ar_cc_feats);
         }
       }
     }
@@ -1561,30 +1574,22 @@ public:
    * depends on: the number of shared faces (tries to maximize it), the
    * neighbourhood order (tries to minimize it), and the aspect-ratio of the
    * coarse cell (tries to minimize it).
-   *  @param[in] fc_iter Number of iteration for the fine-cell research
-   *  algorithm
-   *  @param[in] neighbourhood Neighborhood object
-   *  @param[in] d_n_of_seed Dictionary containing the cells to consider for the
-   *  agglomeration with their neighbourhood order wrt to the original seed
-   *  @param[in] is_order_primary If true, the neighbourhood order prevails on
-   *  other criteria
-   *  @param[in] diam_cc (Approximation of the) Diameter of the current coarse
-   *  cell
-   *  @param[in] min_edge_cc (Approximation of the) Smallest edge of the current
-   *  coarse cell
-   *  @param[in] vol_cc Volume of the current coarse cell
-   *  @param[in] s_of_fc_for_current_cc Indices of the fine cells already
-   *  agglomerated in the coarse cell
-   *  @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine
-   *  cell
-   *  @param[out] max_faces_in_common Number of faces shared between the chosen
-   *  fine cell and the coarse cell
-   *  @param[out] min_ar_diam (Approximation of the) Diameter of the coarse cell
-   *  after the addition of the chosen fine cell
-   *  @param[out] min_ar_min_edge (Approximation of the) Smallest edge coarse
-   *  cell after the addition of the chosen fine cell
-   *  @param[out] min_ar_vol Volume of the coarse cell after the addition of the
-   *  chosen fine cell
+   * @param[in] fc_iter Number of iteration for the fine-cell research
+   * algorithm
+   * @param[in] neighbourhood Neighborhood object
+   * @param[in] d_n_of_seed Dictionary containing the cells to consider for the
+   * agglomeration with their neighbourhood order wrt to the original seed
+   * @param[in] is_order_primary If true, the neighbourhood order prevails on
+   * other criteria
+   * @param[in] cc_feats Features of the current coarse cell
+   * @param[in] s_of_fc_for_current_cc Indices of the fine cells already
+   * agglomerated in the coarse cell
+   * @param[out] argmin_ar Index wrt to neighbours vector of the chosen fine
+   * cell
+   * @param[out] max_faces_in_common Number of faces shared between the chosen
+   * fine cell and the coarse cell
+   * @param[out] min_ar_cc_feats Features of the coarse cell after the addition
+   * of the chosen fine cell
    */
   void compute_best_fc_to_add(
     const CoMMAIntType fc_iter,
@@ -1593,15 +1598,11 @@ public:
       neighbourhood,
     const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
-    const CoMMAWeightType &diam_cc,
-    const CoMMAWeightType &min_edge_cc,
-    const CoMMAWeightType &vol_cc,
+    const CellFeatures<CoMMAWeightType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
-    CoMMAWeightType &min_ar_diam,
-    CoMMAWeightType &min_ar_min_edge,
-    CoMMAWeightType &min_ar_vol
+    CellFeatures<CoMMAWeightType> &min_ar_cc_feats
   ) const override {
     CoMMAIndexType outer_argmax_faces{0};
     CoMMAIntType ref_max_faces = max_faces_in_common;
@@ -1610,22 +1611,14 @@ public:
       auto cur_neighbourhood = this->_neigh_crtor->clone(neighbourhood);
       CoMMAWeightType inner_ar{-1.};
       CoMMAIntType inner_max_faces_in_common{0};
-      CoMMAWeightType inner_min_ar_diam =
-        std::numeric_limits<CoMMAWeightType>::max();
-      CoMMAWeightType inner_min_ar_min_edge =
-        std::numeric_limits<CoMMAWeightType>::max();
-      CoMMAWeightType inner_min_ar_vol{0.};
+      CellFeatures<CoMMAWeightType> inner_min_ar_cc_feats{};
       this->compute_next_cc_features(
         i_fc,
-        diam_cc,
-        min_edge_cc,
-        vol_cc,
+        cc_feats,
         s_of_fc_for_current_cc,
         inner_max_faces_in_common,
         inner_ar,
-        inner_min_ar_diam,
-        inner_min_ar_min_edge,
-        inner_min_ar_vol
+        inner_min_ar_cc_feats
       );
       cur_neighbourhood->update(i_fc, this->_fc_graph->get_neighbours(i_fc));
       std::unordered_set<CoMMAIndexType> cur_fc{
@@ -1638,27 +1631,19 @@ public:
       if (fc_iter > 1) {
         CoMMAIndexType cur_argmin{0};
         CoMMAIntType cur_max_faces_in_common{0};
-        CoMMAWeightType cur_min_ar_diam =
-          std::numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType cur_min_ar_min_edge =
-          std::numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType cur_min_ar_vol{0.};
+        CellFeatures<CoMMAWeightType> cur_min_ar_cc_feats{};
         CoMMAWeightType cur_min_ar{0.};
         this->compute_best_fc_to_add(
           fc_iter - 1,
           cur_neighbourhood,
           d_n_of_seed,
           is_order_primary,
-          inner_min_ar_diam,
-          inner_min_ar_min_edge,
-          inner_min_ar_vol,
+          inner_min_ar_cc_feats,
           cur_fc,
           // output
           cur_argmin,
           cur_max_faces_in_common,
-          cur_min_ar_diam,
-          cur_min_ar_min_edge,
-          cur_min_ar_vol
+          cur_min_ar_cc_feats
         );
         // We just keep the min AR and the max faces in common
         if (cur_max_faces_in_common > inner_max_faces_in_common) {
@@ -1692,9 +1677,7 @@ public:
                 // and volume are used in the next step, we keep those of the
                 // mother cell...
                 outer_ar = inner_ar;
-                min_ar_diam = inner_min_ar_diam;
-                min_ar_min_edge = inner_min_ar_min_edge;
-                min_ar_vol = inner_min_ar_vol;
+                min_ar_cc_feats = std::move(inner_min_ar_cc_feats);
                 // ... same for faces in common
                 max_faces_in_common = ref_inner_faces;
 
@@ -1709,9 +1692,7 @@ public:
               // volume are used in the next step, we keep those of the mother
               // cell...
               outer_ar = inner_ar;
-              min_ar_diam = inner_min_ar_diam;
-              min_ar_min_edge = inner_min_ar_min_edge;
-              min_ar_vol = inner_min_ar_vol;
+              min_ar_cc_feats = std::move(inner_min_ar_cc_feats);
               // ... same for faces in common
               max_faces_in_common = ref_inner_faces;
             }
@@ -1726,9 +1707,7 @@ public:
           // volume are used in the next step, we keep those of the mother
           // cell...
           outer_ar = inner_ar;
-          min_ar_diam = inner_min_ar_diam;
-          min_ar_min_edge = inner_min_ar_min_edge;
-          min_ar_vol = inner_min_ar_vol;
+          min_ar_cc_feats = std::move(inner_min_ar_cc_feats);
           // ... same for faces in common
           max_faces_in_common = ref_inner_faces;
         }

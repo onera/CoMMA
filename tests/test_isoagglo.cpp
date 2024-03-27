@@ -128,76 +128,49 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       constexpr CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1, 4, 5};
-      CoMMAWeightT tmp_diam{-1.}, tmp_min_edge{-1.}, tmp_vol{-1.};
-      CoMMAWeightT cc_diam = sqrt(2.), cc_min_edge = 1., cc_vol = 4.;
+      CellFeatures<CoMMAWeightT> tmp_feats{};
+      // Not sure about min edge
+      CellFeatures<CoMMAWeightT> cc_feats{4., 1., sqrt(2.)};
       // Out
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      const CoMMAWeightT ref_diam = sqrt(3.);
-      const CoMMAWeightT ref_min_edge = 2.;
-      CoMMAWeightT ref_vol = 5.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      // Not sure about min edge
+      CellFeatures<CoMMAWeightT> ref_feats{5., 2., sqrt(3.)};
+      CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 1 shared face") {
         agg->compute_next_cc_features(
-          17,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          17, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(17);
-      cc_diam = ref_diam, cc_vol = ref_vol;
-      ref_vol = 6.;  // ref_diam does not change
-      ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      cc_feats = ref_feats;  // OK copy
+      ref_feats._measure = 6.;  // ref_diam does not change
+      ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 2 shared face") {
         agg->compute_next_cc_features(
-          21,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          21, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(21);
       cc.insert(20);
-      cc_vol = 7.;  // cc_diam does not change
-      ref_vol = 8.;  // ref_diam does not change
-      ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      cc_feats._measure = 7.;  // cc_diam does not change
+      ref_feats._measure = 8.;  // ref_diam does not change
+      ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 3 shared face") {
         agg->compute_next_cc_features(
-          16,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          16, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 3);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }  // Aspect ratio
@@ -345,71 +318,46 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       const CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1};
-      CoMMAWeightT cc_diam = 1., cc_min_edge = 1., cc_vol = 2.;
+      // Not sure about min edge
+      CellFeatures<CoMMAWeightT> cc_feats{2., 1., 1.};
       // Out
-      CoMMAWeightT tmp_diam{-1.}, tmp_min_edge{-1.}, tmp_vol{-1.};
+      CellFeatures<CoMMAWeightT> tmp_feats{};
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      CoMMAWeightT ref_diam = sqrt(2.), ref_min_edge = 2., ref_vol = 3.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      // Not sure about min edge
+      CellFeatures<CoMMAWeightT> ref_feats{3., 2., sqrt(2.)};
+      CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("L-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
-          5,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          5, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
-      ref_diam = 2.;
-      ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      ref_feats._diam = 2.;
+      ref_ar = agg->_compute_AR(ref_feats);
       THEN("I-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
-          2,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          2, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(5);
-      cc_diam = sqrt(2.), cc_vol = 3.;
-      ref_diam = cc_diam, ref_vol = 4.;
-      ref_ar = agg->_compute_AR(ref_diam, ref_min_edge, ref_vol);
+      cc_feats._diam = sqrt(2.), cc_feats._measure = 3.;
+      ref_feats._diam = cc_feats._diam, ref_feats._measure = 4.;
+      ref_ar = agg->_compute_AR(ref_feats);
       THEN("Squared coarse cell, 2 shared faces") {
         agg->compute_next_cc_features(
-          4,
-          cc_diam,
-          cc_min_edge,
-          cc_vol,
-          cc,
-          shared_faces,
-          ar,
-          tmp_diam,
-          tmp_min_edge,
-          tmp_vol
+          4, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
+        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }
