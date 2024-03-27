@@ -57,6 +57,14 @@ enum CoMMASeedsPoolT : CoMMAIntT {
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
 };
 
+/** @brief Type of coupling between cells in an anisotropic line */
+enum CoMMACellCouplingT : CoMMAIntT {
+  /** Maximum edge-weight (e.g., max area) */
+  MAX_WEIGHT = 0,
+  /** Minimum distance */
+  MIN_DISTANCE = 1
+};
+
 }  // end namespace comma
 
 #endif

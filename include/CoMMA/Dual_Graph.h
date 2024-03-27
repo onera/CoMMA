@@ -25,7 +25,9 @@
 #include <unordered_set>
 #include <vector>
 
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Seeds_Pool.h"
+#include "CoMMA/Util.h"
 
 namespace comma {
 
@@ -662,18 +664,20 @@ public:
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
    * threshold and order them according to given priority
-   *  @param[out] max_weights Array of the maximum weight: the biggest area of
+   * @param[out] max_weights Array of the maximum weight: the biggest area of
    * the faces composing the given fine cell
-   *  @param[out] is_anisotropic Vector of length equal to the total number of
+   * @param[out] is_anisotropic Vector of length equal to the total number of
    * cell telling whether a cell is anisotropic
-   *  @param[out] aniso_seeds_pool Container containing the anisotropic cells in
+   * @param[out] aniso_seeds_pool Container containing the anisotropic cells in
    * the order they should be considered when computing the lines
-   *  @param[in] threshold_anisotropy Value of the aspect ratio above which a
-   *  cell is considered anisotropic. If negative, all compliant cells are
-   *  considered as anisotropic
+   * @param[in] threshold_anisotropy Value of the aspect ratio above which a
+   * cell is considered anisotropic. If negative, all compliant cells are
+   * considered as anisotropic
    * @param[in] priority_weights Weights used to set the order telling where to
    * start agglomerating. The higher the weight, the higher the priority
-   *  @param[in] preserving if 0 does not hit only the BL prism to preserve the
+   * @param[in] cell_coupling CoMMACellCouplingT indicating the type of
+   * coupling to consider when building anisotropic lines
+   * @param[in] preserving if 0 does not hit only the BL prism to preserve the
    * boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only
    * in the anisotropic agglomeration
    */
@@ -683,20 +687,47 @@ public:
     std::deque<CoMMAIndexType> &aniso_seeds_pool,
     const CoMMAWeightType threshold_anisotropy,
     const ContainerWeightType &priority_weights,
+    const CoMMACellCouplingT cell_coupling,
     const CoMMAIndexType preserving
   ) {
     CoMMASetOfPairType aniso_w_weights{};
     if (threshold_anisotropy < 0) {
-      for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
-        aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
-        max_weights[i_fc] =
-          *(max_element(this->weights_cbegin(i_fc), this->weights_cend(i_fc)));
-      }
+      switch (cell_coupling) {
+        case CoMMACellCouplingT::MAX_WEIGHT: {
+          for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
+            aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            max_weights[i_fc] = *(
+              max_element(this->weights_cbegin(i_fc), this->weights_cend(i_fc))
+            );
+          }
+          break;
+        }
+        case CoMMACellCouplingT::MIN_DISTANCE: {
+          for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
+            aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
+            CoMMAWeightType max_ov_dist = 0.0;
+            for (auto neigh = this->neighbours_cbegin(i_fc);
+                 neigh != this->neighbours_cend(i_fc);
+                 ++neigh) {
+              const auto dist = 1.
+                                / squared_euclidean_distance<CoMMAWeightType>(
+                                  this->_centers[i_fc], this->_centers[*neigh]
+                                );
+              if (dist > max_ov_dist) max_ov_dist = dist;
+            }  // for neigh
+            max_weights[i_fc] = max_ov_dist;
+          }
+          break;
+        }
+        default:
+          break;
+      }  // end switch
     } else {
       for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
+        // The max weight is always computed since it's needed for the AR
+        CoMMAWeightType max_weight = 0.0;
         CoMMAWeightType min_weight =
           std::numeric_limits<CoMMAWeightType>::max();
-        CoMMAWeightType max_weight = 0.0;
 
         // computation of min_weight, max_weight for the current cell
         // Process of every faces/Neighbours and compute for the current cell
@@ -723,8 +754,6 @@ public:
             nb_neighbours--;
           }
         }
-
-        max_weights[i_fc] = max_weight;
         // Compute the aspect-ratio and add cell to list if necessary
         const auto ar = _compute_AR(min_weight, max_weight);
         // Anisotropy criteria for the line Admissibility
@@ -747,6 +776,31 @@ public:
               break;
           }  // End switch
         }  // End if ar
+
+        // Updating weights according to coupling
+        switch (cell_coupling) {
+          case CoMMACellCouplingT::MAX_WEIGHT: {
+            max_weights[i_fc] = max_weight;
+            break;
+          }
+          case CoMMACellCouplingT::MIN_DISTANCE: {
+            CoMMAWeightType max_ov_dist = 0.0;
+            for (auto neigh = this->neighbours_cbegin(i_fc);
+                 neigh != this->neighbours_cend(i_fc);
+                 ++neigh) {
+              const auto dist = 1.
+                                / squared_euclidean_distance<CoMMAWeightType>(
+                                  this->_centers[i_fc], this->_centers[*neigh]
+                                );
+              if (dist > max_ov_dist) max_ov_dist = dist;
+            }  // for neigh
+            max_weights[i_fc] = max_ov_dist;
+            break;
+          }
+          default:
+            break;
+        }  // end switch
+
       }  // End for compliant cells
     }  // End if threshold
 

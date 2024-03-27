@@ -15,6 +15,7 @@
 
 #include "CoMMA/Agglomerator.h"
 #include "CoMMA/CoMMA.h"
+#include "CoMMA/CoMMADefs.h"
 #include "DualGraphExamples.h"
 #include "catch2/catch.hpp"
 #include "test_defs.h"
@@ -24,6 +25,8 @@ using namespace std;  // NOLINT
 
 #define SING_CARD_THRESH 1
 #define MAX_CELLS_IN_LINE std::nullopt
+#define CELL_COUPLING_MAX CoMMACellCouplingT::MAX_WEIGHT
+#define FORCE_DIRECTION true
 
 // NOLINTNEXTLINE
 SCENARIO(
@@ -61,7 +64,9 @@ SCENARIO(
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
 
     WHEN(
@@ -110,7 +115,9 @@ SCENARIO(
         build_lines,
         ODD_LINE_LENGTH,
         MAX_CELLS_IN_LINE,
-        Data.dim
+        Data.dim,
+        CELL_COUPLING_MAX,
+        FORCE_DIRECTION
       );
 
       THEN(
@@ -156,7 +163,9 @@ SCENARIO(
         build_lines,
         ODD_LINE_LENGTH,
         MAX_CELLS_IN_LINE,
-        Data.dim
+        Data.dim,
+        CELL_COUPLING_MAX,
+        FORCE_DIRECTION
       );
 
       THEN(
@@ -202,7 +211,9 @@ SCENARIO(
         build_lines,
         ODD_LINE_LENGTH,
         MAX_CELLS_IN_LINE,
-        Data.dim
+        Data.dim,
+        CELL_COUPLING_MAX,
+        FORCE_DIRECTION
       );
 
       THEN(
@@ -261,7 +272,9 @@ SCENARIO(
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     THEN(
       "There is no need to agglomerate anisotropically since no line can be built"
@@ -299,9 +312,14 @@ SCENARIO(
     const CoMMAWeightT aniso_thresh{-2.};
     const bool build_lines = false;
     const vector<CoMMAIndexT> agglomerationLines_Idx{0, 1, 6, 11, 16};
+    // clang-format off
     const vector<CoMMAIndexT> agglomerationLines{
-      0, 11, 10, 9, 8, 7, 16, 14, 12, 13, 15, 20, 22, 23, 21, 19
+      0,  // This one won't be built, too short
+      11, 10, 9, 8, 7,
+      16, 14, 12, 13, 15,
+      20, 22, 23, 21, 19
     };
+    // clang-format on
     Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
       fc_graph,
       cc_graph,
@@ -313,7 +331,9 @@ SCENARIO(
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     THEN("Only 3 lines are built") {
       REQUIRE(aniso_agg._nb_lines[0] == 3);
@@ -361,7 +381,9 @@ SCENARIO(
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph,
@@ -459,7 +481,9 @@ SCENARIO(
       build_lines,
       false,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph,
@@ -605,7 +629,9 @@ the line grows vertically
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     const Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
       iso_agg(
@@ -703,7 +729,9 @@ the line grows vertically
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph,
@@ -807,7 +835,9 @@ the line grows vertically
       build_lines,
       ODD_LINE_LENGTH,
       MAX_CELLS_IN_LINE,
-      Data.dim
+      Data.dim,
+      CELL_COUPLING_MAX,
+      FORCE_DIRECTION
     );
     Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
       fc_graph,

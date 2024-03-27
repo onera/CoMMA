@@ -19,6 +19,7 @@
 #include <functional>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <numeric>
 #include <optional>
@@ -26,6 +27,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Neighbourhood.h"
@@ -219,6 +221,10 @@ public:
    *  line; when this value is reached, all reaming cells are discarded, hence
    *  considered as isotropic
    *  @param[in] dimension Dimension of the problem
+   *  @param[in] cell_coupling CoMMACellCouplingT indicating the type of
+   *  coupling to consider when building anisotropic lines
+   *  @param[in] force_line_direction Whether a continuous direction of the
+   *  line should be enforced when building it
    */
   Agglomerator_Anisotropic(
     std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
@@ -235,7 +241,9 @@ public:
     const bool build_lines,
     const bool odd_line_length,
     const std::optional<CoMMAIndexType> max_cells_in_line,
-    CoMMAIntType dimension = 3
+    CoMMAIntType dimension = 3,
+    CoMMACellCouplingT cell_coupling = CoMMACellCouplingT::MAX_WEIGHT,
+    const bool force_line_direction = true
   ) :
       Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
         graph, cc_graph, seeds_pool, dimension
@@ -243,7 +251,9 @@ public:
       _should_agglomerate(true),
       _aniso_neighbours(),
       _odd_line_length(odd_line_length),
-      _max_cells_in_line(max_cells_in_line) {
+      _max_cells_in_line(max_cells_in_line),
+      _cell_coupling(cell_coupling),
+      _force_line_direction(force_line_direction) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -550,6 +560,7 @@ protected:
       aniso_seeds_pool,
       threshold_anisotropy,
       priority_weights,
+      this->_cell_coupling,
       0
     );
     if (aniso_seeds_pool.empty()) {
@@ -598,7 +609,7 @@ protected:
         // If the line is long enough, we use the direction. Otherwise, we use
         // the weight. Putting a high-level if to reduce the branching inside
         // the loop over the neighbours.
-        if (empty_line) {
+        if (!this->_force_line_direction || empty_line) {
           this->find_cell_candidates_for_line_max_weight(
             seed, to_treat, max_weights, candidates
           );
@@ -636,7 +647,7 @@ protected:
           // Before giving up, let's try another thing: Doing the same things as
           // above with the only difference that we allow to move through any
           // faces and not only the maximum one but still checking for direction
-          if (!empty_line) {
+          if (this->_force_line_direction && !empty_line) {
             // If not an empty line, we check the direction, see is_parallel
             // below
             this->find_cell_candidates_for_line_direction(
@@ -733,6 +744,7 @@ protected:
    * @param[in] max_weights Vector holding for each cell the maximum weight
    * among its neighbours.
    * @param[in] prev_dir Previous direction.
+   * @param[in] check_weight Whether to check weight of the potential candidate
    * @param[out] candidates Set of the candidates, which are pairs of cell ID
    * and related priority.
    */
@@ -771,6 +783,14 @@ protected:
    * reached, all reaming cells are discarded, hence considered as isotropic
    */
   std::optional<CoMMAIndexType> _max_cells_in_line;
+
+  /** Type of cell coupling to consider when building aniso lines */
+  CoMMACellCouplingT _cell_coupling;
+
+  /** Whether the force the direction of the anisotropic lines to remain
+   * straight
+   */
+  bool _force_line_direction;
 };
 
 /** @brief Agglomerator_Isotropic class is a child class of the Agglomerator

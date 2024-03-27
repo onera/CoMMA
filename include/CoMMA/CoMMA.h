@@ -102,6 +102,10 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * @param[in] max_cells_in_line [Optional] Maximum number of cells in an
  * anisotropic line; when this value is reached, all reaming cells are
  * discarded, hence considered as isotropic
+ * @param[in] aniso_cell_coupling CoMMACellCouplingT indicating the type of
+ * coupling to consider when building anisotropic lines
+ * @param[in] force_line_direction Whether to force the direction of the
+ * anisotropic lines to remain straight
  * @param[in] fc_choice_iter (optional, default=1) Number of iterations allowed
  * for the algorithm choosing which fine cell to add next. The cost grows
  * exponentially, hence use small values.
@@ -162,6 +166,8 @@ void agglomerate_one_level(
   CoMMAIntType max_card,
   CoMMAIntType singular_card_thresh = 1,
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
+  CoMMACellCouplingT aniso_cell_coupling = CoMMACellCouplingT::MAX_WEIGHT,
+  bool force_line_direction = true,
   CoMMAIntType fc_choice_iter = 1,
   const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
 ) {
@@ -226,6 +232,17 @@ void agglomerate_one_level(
                      "cells in line. Dropping the limit."
                   << std::endl;
         max_cells_in_line = std::nullopt;
+      }
+      switch (aniso_cell_coupling) {
+        case CoMMACellCouplingT::MAX_WEIGHT:
+        case CoMMACellCouplingT::MIN_DISTANCE:
+          // OK
+          break;
+        default:
+          std::cout << "CoMMA - Warning: Unknown anisotropic cell coupling."
+                       " Switching it to: max weight."
+                    << std::endl;
+          aniso_cell_coupling = CoMMACellCouplingT::MAX_WEIGHT;
       }
     } else {
       // Anisotropic lines are provided
@@ -358,7 +375,9 @@ void agglomerate_one_level(
         build_anisotropic_lines,
         odd_line_length,
         max_cells_in_line,
-        dimension
+        dimension,
+        aniso_cell_coupling,
+        force_line_direction
       );
 
     // Agglomerate anisotropic cells only
