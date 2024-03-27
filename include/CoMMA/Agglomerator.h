@@ -1017,10 +1017,8 @@ public:
       const auto dist = squared_euclidean_distance<CoMMAWeightType>(
         cen_fc, this->_fc_graph->_centers[i_fc_cc]
       );
-      if (dist > max_diam)
-        max_diam = dist;
-      else if (dist < min_edge)
-        min_edge = dist;
+      if (dist > max_diam) max_diam = dist;
+      if (dist < min_edge) min_edge = dist;
     }  // for i_fc_cc
     new_diam = sqrt(max_diam);
     new_min_edge = sqrt(min_edge);
