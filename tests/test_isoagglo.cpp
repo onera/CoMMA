@@ -21,6 +21,11 @@
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
 
+#define CHECK_CELL_FEATURES(this, that, eps)                 \
+  REQUIRE(EQUAL_UP_TO(this._diam, that._diam, eps));         \
+  REQUIRE(EQUAL_UP_TO(this._min_edge, that._min_edge, eps)); \
+  REQUIRE(EQUAL_UP_TO(this._measure, that._measure, eps));
+
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     const DualGEx_cube_4 Data = DualGEx_cube_4();
@@ -129,21 +134,18 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1, 4, 5};
       CellFeatures<CoMMAWeightT> tmp_feats{};
-      // Not sure about min edge
       CellFeatures<CoMMAWeightT> cc_feats{4., 1., sqrt(2.)};
       // Out
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      // Not sure about min edge
-      CellFeatures<CoMMAWeightT> ref_feats{5., 2., sqrt(3.)};
+      CellFeatures<CoMMAWeightT> ref_feats{5., 1., sqrt(3.)};
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 1 shared face") {
         agg->compute_next_cc_features(
           17, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(17);
@@ -155,8 +157,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           21, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(21);
@@ -169,8 +170,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           16, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 3);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }  // Aspect ratio
@@ -315,25 +315,22 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
     }
 
     WHEN("We compute the aspect-ratio of a coarse cell") {
-      const CoMMAWeightT eps = 1e-10;
+      constexpr CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1};
-      // Not sure about min edge
       CellFeatures<CoMMAWeightT> cc_feats{2., 1., 1.};
       // Out
       CellFeatures<CoMMAWeightT> tmp_feats{};
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      // Not sure about min edge
-      CellFeatures<CoMMAWeightT> ref_feats{3., 2., sqrt(2.)};
+      CellFeatures<CoMMAWeightT> ref_feats{3., 1., sqrt(2.)};
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("L-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
           5, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       ref_feats._diam = 2.;
@@ -343,8 +340,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
           2, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(5);
@@ -356,8 +352,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
           4, cc_feats, cc, shared_faces, ar, tmp_feats
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_feats._diam, tmp_feats._diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_feats._measure, tmp_feats._measure, eps));
+        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }
