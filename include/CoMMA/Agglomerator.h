@@ -34,19 +34,30 @@
 namespace comma {
 
 /** @brief Convenient class containing salient features of a cell.
- * @tparam T type used for the features
+ * @tparam IndexT type used for indices
+ * @tparam RealT type used for features
+ * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  */
-template<typename T>
+template<typename IndexT, typename RealT, typename IntT>
 class CellFeatures {
 public:
   /** Measure of the cell: area in 2D or volume in 3D */
-  T _measure;
+  RealT _measure;
+
+  /** Sum of all external weights (i.e., the area of external faces) */
+  RealT _external_weights;
+
+  /** Sum of all internal weights (i.e., the area of internal faces) */
+  RealT _internal_weights;
+
+  /** Number of internal faces */
+  IntT _n_internal_faces;
 
   /** (Approximation of) The minimum edge of the cell */
-  T _min_edge;
+  RealT _min_edge;
 
-  /** (Approximation of) The maximum edge of the cell */
-  T _diam;
+  /** (Approximation of) The diameter of the cell */
+  RealT _diam;
 
   /** @brief Constructor
    * @param[in] measure Measure of the cell
@@ -54,26 +65,47 @@ public:
    * @param[in] diam (Approximation of) The diameter of the cell
    */
   CellFeatures(
-    const T measure = std::numeric_limits<T>::min(),
-    const T min_edge = std::numeric_limits<T>::max(),
-    const T diam = std::numeric_limits<T>::min()
+    const RealT measure = std::numeric_limits<RealT>::min(),
+    const RealT external_weights = 0.0,
+    const RealT internal_weights = 0.0,
+    const IntT n_internal_faces = 0,
+    const RealT min_edge = std::numeric_limits<RealT>::max(),
+    const RealT diam = std::numeric_limits<RealT>::min()
   ) :
-      _measure(measure), _min_edge(min_edge), _diam(diam){};
+      _measure(measure),
+      _external_weights(external_weights),
+      _internal_weights(internal_weights),
+      _n_internal_faces(n_internal_faces),
+      _min_edge(min_edge),
+      _diam(diam){};
+
+  /** @brief Constructor
+   */
+  CellFeatures(
+    const IndexT index, std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
+  ) :
+      _measure(graph->_volumes[index]),
+      _external_weights(graph->estimated_total_weight(index)),
+      _internal_weights(0.0),
+      _n_internal_faces(0),
+      _min_edge(std::numeric_limits<RealT>::max()),
+      _diam(std::numeric_limits<RealT>::min()){};
 
   /** @brief Move constructor
    * @param[in] other Features to move
    */
-  CellFeatures(CellFeatures<T> &&other) = default;
+  CellFeatures(CellFeatures<IndexT, RealT, IntT> &&other) = default;
 
   /** @brief Move assignment
    * @param[in] other Features to move
    */
-  CellFeatures &operator=(CellFeatures<T> &&other) = default;
+  CellFeatures &operator=(CellFeatures<IndexT, RealT, IntT> &&other) = default;
 
   /** @brief Copy assignment
    * @param[in] other Features to copy
    */
-  CellFeatures &operator=(const CellFeatures<T> &other) = default;
+  CellFeatures &operator=(const CellFeatures<IndexT, RealT, IntT> &other
+  ) = default;
 };
 
 /** @brief Given the features of a cell, compute its aspect-ratio. This uses
@@ -88,8 +120,10 @@ public:
  * @param[in] feat Cell features
  * @return the aspect-ratio
  */
-template<typename T, int dim>
-inline T compute_AR_max_ov_radius(const CellFeatures<T> &feat) {
+template<typename IndexT, typename RealT, typename IntT, int dim>
+inline RealT compute_AR_max_ov_radius(
+  const CellFeatures<IndexT, RealT, IntT> &feat
+) {
   if constexpr (dim < 2) {
     return feat._diam / feat._measure;
   } else if constexpr (dim == 2) {
@@ -107,8 +141,9 @@ inline T compute_AR_max_ov_radius(const CellFeatures<T> &feat) {
  * @param[in] feat Cell features
  * @return the aspect-ratio
  */
-template<typename T>
-inline T compute_AR_max_ov_min(const CellFeatures<T> &feat) {
+template<typename IndexT, typename RealT, typename IntT>
+inline RealT compute_AR_max_ov_min(const CellFeatures<IndexT, RealT, IntT> &feat
+) {
   return feat._diam / feat._min_edge;
 }
 
@@ -136,7 +171,10 @@ public:
    * \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ \n (Recall that in 2D the
    * volume is the surface)
    */
-  std::function<CoMMAWeightType(const CellFeatures<CoMMAWeightType> &)>
+  std::function<CoMMAWeightType(const CellFeatures<
+                                CoMMAIndexType,
+                                CoMMAWeightType,
+                                CoMMAIntType> &)>
     _compute_AR;
 
   /** @brief The constructor of the interface
@@ -166,10 +204,18 @@ public:
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
-      _compute_AR = compute_AR_max_ov_radius<CoMMAWeightType, 2>;
+      _compute_AR = compute_AR_max_ov_radius<
+        CoMMAIndexType,
+        CoMMAWeightType,
+        CoMMAIntType,
+        2>;
     } else {
       _min_neighbourhood = 3;
-      _compute_AR = compute_AR_max_ov_radius<CoMMAWeightType, 3>;
+      _compute_AR = compute_AR_max_ov_radius<
+        CoMMAIndexType,
+        CoMMAWeightType,
+        CoMMAIntType,
+        3>;
     }
     _l_nb_of_cells.push_back(graph->_number_of_cells);
   }
@@ -1006,31 +1052,6 @@ public:
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
 
-  /** @brief Approximate the value of a boundary face using the known internal
-   * faces. It uses a (geometric) average, so the result is correct only if the
-   * cell is a regular polygon
-   * @param int_faces Vector of the surfaces of the internal faces
-   * @return An approximation of the surface of a boundary face
-   */
-  inline CoMMAWeightType estimate_boundary_face(
-    const std::vector<CoMMAWeightType> &int_faces
-  ) const {
-    // Approximate with an average of the internal faces
-    // We could choose many kinds of average, e.g. arithmetic or geometric, I
-    // honestly don't know if one is better then the other...
-    // Here, we use the geometric one, which should be less sensitive to
-    // outliers
-    return pow(
-      accumulate(
-        int_faces.begin(),
-        int_faces.end(),
-        CoMMAWeightType{1.},
-        std::multiplies<>()
-      ),
-      CoMMAWeightType{1.} / int_faces.size()
-    );
-  }
-
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio and number of face shared with other cells
    * already agglomerated (Current coarse cell means without \p i_fc)
@@ -1045,19 +1066,23 @@ public:
    */
   inline void compute_next_cc_features(
     const CoMMAIndexType i_fc,
-    const CellFeatures<CoMMAWeightType> &cc_feats,
+    const CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &fc_of_cc,
     // out
     CoMMAIntType &shared_faces,
     CoMMAWeightType &aspect_ratio,
-    CellFeatures<CoMMAWeightType> &new_feats
+    CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &new_feats
   ) const {
     // Compute shared faces
     shared_faces = 0;
-    for (auto it = this->_fc_graph->neighbours_cbegin(i_fc);
-         it != this->_fc_graph->neighbours_cend(i_fc);
-         ++it) {
-      if (*it != i_fc && (fc_of_cc.count(*it) != 0)) shared_faces++;
+    CoMMAWeightType shared_weights{0.};
+    auto n_it = this->_fc_graph->neighbours_cbegin(i_fc);
+    auto w_it = this->_fc_graph->weights_cbegin(i_fc);
+    for (; n_it != this->_fc_graph->neighbours_cend(i_fc); ++n_it, ++w_it) {
+      if (*n_it != i_fc && (fc_of_cc.count(*n_it) != 0)) {
+        shared_faces++;
+        shared_weights += *w_it;
+      }
     }
 
     // Compute new diameter
@@ -1075,6 +1100,11 @@ public:
     new_feats._diam = sqrt(max_diam);
     new_feats._min_edge = sqrt(min_edge);
     new_feats._measure = cc_feats._measure + this->_fc_graph->_volumes[i_fc];
+    new_feats._external_weights =
+      cc_feats._external_weights + this->_fc_graph->estimated_total_weight(i_fc)
+      - 2 * shared_weights;
+    new_feats._internal_weights = cc_feats._internal_weights + shared_weights;
+    new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
 
     aspect_ratio = this->_compute_AR(new_feats);
   }
@@ -1221,7 +1251,8 @@ public:
       // CC in construction
       decltype(s_current_cc) tmp_cc = {seed};
       // volume of cc is at first the volume of the seed.
-      CellFeatures<CoMMAWeightType> cur_cc_feats(this->_fc_graph->_volumes[seed]
+      CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> cur_cc_feats(
+        seed, this->_fc_graph
       );
       // This dictionary is used to store the eligible cc: i.e. its size is
       // inside the permitted range. This is useful to track back our step if
@@ -1274,7 +1305,8 @@ public:
           next_cell, this->_fc_graph->get_neighbours(next_cell)
         );
         next_cell = 0;  // Dummy initialization
-        CellFeatures<CoMMAWeightType> min_ar_cc_feats;
+        CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+          min_ar_cc_feats{};
         CoMMAIntType max_faces_in_common = 0;
         // We compute the best fine cell to add, based on the aspect
         // ratio and is given back in next_cell. It takes account also
@@ -1435,11 +1467,11 @@ public:
       neighbourhood,
     const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
-    const CellFeatures<CoMMAWeightType> &cc_feats,
+    const CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
-    CellFeatures<CoMMAWeightType> &min_ar_cc_feats
+    CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &min_ar_cc_feats
   ) const {
     CoMMAUnused(fc_iter);
     //  this function defines the best fine cells to add to create the coarse
@@ -1454,7 +1486,8 @@ public:
       // features of the CC obtained by adding i_fc
       CoMMAIntType number_faces_in_common = 0;
       CoMMAWeightType new_ar = std::numeric_limits<CoMMAWeightType>::min();
-      CellFeatures<CoMMAWeightType> new_min_ar_cc_feats{};
+      CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        new_min_ar_cc_feats{};
       this->compute_next_cc_features(
         i_fc,
         cc_feats,
@@ -1598,11 +1631,11 @@ public:
       neighbourhood,
     const std::unordered_map<CoMMAIndexType, CoMMAIntType> &d_n_of_seed,
     const bool &is_order_primary,
-    const CellFeatures<CoMMAWeightType> &cc_feats,
+    const CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &cc_feats,
     const std::unordered_set<CoMMAIndexType> &s_of_fc_for_current_cc,
     CoMMAIndexType &argmin_ar,
     CoMMAIntType &max_faces_in_common,
-    CellFeatures<CoMMAWeightType> &min_ar_cc_feats
+    CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &min_ar_cc_feats
   ) const override {
     CoMMAIndexType outer_argmax_faces{0};
     CoMMAIntType ref_max_faces = max_faces_in_common;
@@ -1611,7 +1644,8 @@ public:
       auto cur_neighbourhood = this->_neigh_crtor->clone(neighbourhood);
       CoMMAWeightType inner_ar{-1.};
       CoMMAIntType inner_max_faces_in_common{0};
-      CellFeatures<CoMMAWeightType> inner_min_ar_cc_feats{};
+      CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+        inner_min_ar_cc_feats{};
       this->compute_next_cc_features(
         i_fc,
         cc_feats,
@@ -1631,7 +1665,8 @@ public:
       if (fc_iter > 1) {
         CoMMAIndexType cur_argmin{0};
         CoMMAIntType cur_max_faces_in_common{0};
-        CellFeatures<CoMMAWeightType> cur_min_ar_cc_feats{};
+        CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
+          cur_min_ar_cc_feats{};
         CoMMAWeightType cur_min_ar{0.};
         this->compute_best_fc_to_add(
           fc_iter - 1,

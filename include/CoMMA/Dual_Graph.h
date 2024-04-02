@@ -633,12 +633,62 @@ public:
     return _n_bnd_faces[idx_c];
   }
 
+  /** @brief Return total number of faces, that is, number of neighbours plus
+   *  number of boundaries
+   *  @param[in] idx_c Index of the cell
+   *  @return the number of faces
+   */
+  inline CoMMAIntType get_total_n_faces(const CoMMAIndexType idx_c) const {
+    return this->_n_bnd_faces[idx_c]
+           + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c + 1]);
+  }
+
   /** @brief Whether a cell is on the boundary
    *  @param[in] idx_c Index of the cell
    *  @return Whether a cell is on the boundary
    */
   inline bool is_on_boundary(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c] > 0;
+  }
+
+  /** @brief Approximate the value of a boundary face using the known internal
+   * faces. It uses a (geometric) average, so the result is correct only if the
+   * cell is a regular polygon
+   * @param[in] idx_c Index of the cell
+   * @return An approximation of the surface of a boundary face
+   */
+  inline CoMMAWeightType estimated_boundary_weight(const CoMMAIndexType idx_c
+  ) const {
+    // Approximate with an average of the internal faces
+    // We could choose many kinds of average, e.g. arithmetic or geometric, I
+    // honestly don't know if one is better then the other...
+    // Here, we use the geometric one, which should be less sensitive to
+    // outliers
+    // There might be concerns about the performances
+    return this->_n_bnd_faces[idx_c] == 0
+             ? 0.
+             : this->_n_bnd_faces[idx_c]
+                 * pow(
+                   std::accumulate(
+                     this->weights_cbegin(idx_c),
+                     this->weights_cend(idx_c),
+                     CoMMAWeightType{1.},
+                     std::multiplies<>()
+                   ),
+                   CoMMAWeightType{1.} / this->_n_bnd_faces[idx_c]
+                 );
+  }
+
+  /** @brief Sum of wall the weights (faces) of a cell. Since there is no
+   * knowledge about boundary faces, the result is correct only if internal
+   * cell.
+   * @param[in] idx_c Index of the cell
+   * @return Total weight
+   */
+  inline CoMMAWeightType estimated_total_weight(const CoMMAIndexType idx_c
+  ) const {
+    return std::reduce(this->weights_cbegin(idx_c), this->weights_cend(idx_c))
+           + this->estimated_boundary_weight(idx_c);
   }
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given

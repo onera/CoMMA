@@ -21,10 +21,13 @@
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
 
-#define CHECK_CELL_FEATURES(this, that, eps)                 \
-  REQUIRE(EQUAL_UP_TO(this._diam, that._diam, eps));         \
-  REQUIRE(EQUAL_UP_TO(this._min_edge, that._min_edge, eps)); \
-  REQUIRE(EQUAL_UP_TO(this._measure, that._measure, eps));
+#define CHECK_CELL_FEATURES(this, that, eps)                                 \
+  REQUIRE(EQUAL_UP_TO(this._diam, that._diam, eps));                         \
+  REQUIRE(EQUAL_UP_TO(this._min_edge, that._min_edge, eps));                 \
+  REQUIRE(EQUAL_UP_TO(this._measure, that._measure, eps));                   \
+  REQUIRE(EQUAL_UP_TO(this._external_weights, that._external_weights, eps)); \
+  REQUIRE(EQUAL_UP_TO(this._internal_weights, that._internal_weights, eps)); \
+  REQUIRE(this._n_internal_faces == that._n_internal_faces);
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
@@ -133,12 +136,16 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       constexpr CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1, 4, 5};
-      CellFeatures<CoMMAWeightT> tmp_feats{};
-      CellFeatures<CoMMAWeightT> cc_feats{4., 1., sqrt(2.)};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> tmp_feats{};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_feats{
+        4., 16., 4., 4, 1., sqrt(2.)
+      };
       // Out
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      CellFeatures<CoMMAWeightT> ref_feats{5., 1., sqrt(3.)};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> ref_feats{
+        5., 20., 5., 5, 1., sqrt(3.)
+      };
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 1 shared face") {
         agg->compute_next_cc_features(
@@ -150,7 +157,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       }
       cc.insert(17);
       cc_feats = ref_feats;  // OK copy
-      ref_feats._measure = 6.;  // ref_diam does not change
+      ref_feats._measure = 6.;
+      // ref_diam does not change
+      ref_feats._external_weights = 22.;
+      ref_feats._internal_weights = 7.;
+      ref_feats._n_internal_faces = 7;
       ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 2 shared face") {
         agg->compute_next_cc_features(
@@ -162,8 +173,16 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       }
       cc.insert(21);
       cc.insert(20);
-      cc_feats._measure = 7.;  // cc_diam does not change
-      ref_feats._measure = 8.;  // ref_diam does not change
+      cc_feats._measure = 7.;
+      // cc_diam does not change
+      cc_feats._external_weights = 24.;
+      cc_feats._internal_weights = 9.;
+      cc_feats._n_internal_faces = 9;
+      ref_feats._measure = 8.;
+      // ref_diam does not change
+      ref_feats._external_weights = 24.;
+      ref_feats._internal_weights = 12.;
+      ref_feats._n_internal_faces = 12;
       ref_ar = agg->_compute_AR(ref_feats);
       THEN("New coarse cell has 3 shared face") {
         agg->compute_next_cc_features(
@@ -318,12 +337,16 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       constexpr CoMMAWeightT eps = 1e-10;
       // In
       unordered_set<CoMMAIndexT> cc = {0, 1};
-      CellFeatures<CoMMAWeightT> cc_feats{2., 1., 1.};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_feats{
+        2., 6., 1., 1, 1., 1.
+      };
       // Out
-      CellFeatures<CoMMAWeightT> tmp_feats{};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> tmp_feats{};
       CoMMAIntT shared_faces{};
       CoMMAWeightT ar{};
-      CellFeatures<CoMMAWeightT> ref_feats{3., 1., sqrt(2.)};
+      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> ref_feats{
+        3., 8., 2., 2, 1., sqrt(2.)
+      };
       CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
       THEN("L-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
@@ -344,8 +367,17 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(5);
-      cc_feats._diam = sqrt(2.), cc_feats._measure = 3.;
-      ref_feats._diam = cc_feats._diam, ref_feats._measure = 4.;
+      cc_feats._diam = sqrt(2.);
+      cc_feats._measure = 3.;
+      cc_feats._external_weights = 8.;
+      cc_feats._internal_weights = 2.;
+      cc_feats._n_internal_faces = 2;
+      //
+      ref_feats._diam = cc_feats._diam;
+      ref_feats._measure = 4.;
+      ref_feats._external_weights = 8.;
+      ref_feats._internal_weights = 4.;
+      ref_feats._n_internal_faces = 4;
       ref_ar = agg->_compute_AR(ref_feats);
       THEN("Squared coarse cell, 2 shared faces") {
         agg->compute_next_cc_features(
