@@ -26,87 +26,13 @@
 #include <stdexcept>
 #include <vector>
 
+#include "CoMMA/ARComputer.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Neighbourhood.h"
 #include "CoMMA/Util.h"
 
 namespace comma {
-
-/** @brief Convenient class containing salient features of a cell.
- * @tparam IndexT type used for indices
- * @tparam RealT type used for features
- * @tparam IntT type used for integers (e.g., number of cells, faces,...)
- */
-template<typename IndexT, typename RealT, typename IntT>
-class CellFeatures {
-public:
-  /** Measure of the cell: area in 2D or volume in 3D */
-  RealT _measure;
-
-  /** Sum of all external weights (i.e., the area of external faces) */
-  RealT _external_weights;
-
-  /** Sum of all internal weights (i.e., the area of internal faces) */
-  RealT _internal_weights;
-
-  /** Number of internal faces */
-  IntT _n_internal_faces;
-
-  /** (Approximation of) The minimum edge of the cell */
-  RealT _min_edge;
-
-  /** (Approximation of) The diameter of the cell */
-  RealT _diam;
-
-  /** @brief Constructor
-   * @param[in] measure Measure of the cell
-   * @param[in] min_edge (Approximation of) The minimum edge of the cell
-   * @param[in] diam (Approximation of) The diameter of the cell
-   */
-  CellFeatures(
-    const RealT measure = std::numeric_limits<RealT>::min(),
-    const RealT external_weights = 0.0,
-    const RealT internal_weights = 0.0,
-    const IntT n_internal_faces = 0,
-    const RealT min_edge = std::numeric_limits<RealT>::max(),
-    const RealT diam = std::numeric_limits<RealT>::min()
-  ) :
-      _measure(measure),
-      _external_weights(external_weights),
-      _internal_weights(internal_weights),
-      _n_internal_faces(n_internal_faces),
-      _min_edge(min_edge),
-      _diam(diam){};
-
-  /** @brief Constructor
-   */
-  CellFeatures(
-    const IndexT index, std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
-  ) :
-      _measure(graph->_volumes[index]),
-      _external_weights(graph->estimated_total_weight(index)),
-      _internal_weights(0.0),
-      _n_internal_faces(0),
-      _min_edge(std::numeric_limits<RealT>::max()),
-      _diam(std::numeric_limits<RealT>::min()){};
-
-  /** @brief Move constructor
-   * @param[in] other Features to move
-   */
-  CellFeatures(CellFeatures<IndexT, RealT, IntT> &&other) = default;
-
-  /** @brief Move assignment
-   * @param[in] other Features to move
-   */
-  CellFeatures &operator=(CellFeatures<IndexT, RealT, IntT> &&other) = default;
-
-  /** @brief Copy assignment
-   * @param[in] other Features to copy
-   */
-  CellFeatures &operator=(const CellFeatures<IndexT, RealT, IntT> &other
-  ) = default;
-};
 
 /** @brief Given the features of a cell, compute its aspect-ratio. This uses
  * the diameter and the measure.\n  In 3D:
@@ -889,6 +815,13 @@ public:
   /** @brief Creator responsible for neighborhood objects */
   std::shared_ptr<NeighbourhoodCreatorBaseType> _neigh_crtor;
 
+// DEBUG
+#if 0
+  /** @brief Object computing the aspect-ratio of a coarse cell */
+  std::shared_ptr<ARComputer<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
+    _AR_computer;
+#endif
+
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and in this way activates also the constructor of the base
    * class.
@@ -924,6 +857,22 @@ public:
       _neigh_crtor = std::make_shared<NeighbourhoodCreatorExtType>();
     else
       _neigh_crtor = std::make_shared<NeighbourhoodCreatorPFType>();
+
+// DEBUG
+#if 0
+    if (dimension == 2)
+      _AR_computer = std::make_shared<ARDiamOverEstimatedRadius<
+        CoMMAIndexType,
+        CoMMAWeightType,
+        CoMMAIntType,
+        2>>(graph);
+    else
+      _AR_computer = std::make_shared<ARDiamOverEstimatedRadius<
+        CoMMAIndexType,
+        CoMMAWeightType,
+        CoMMAIntType,
+        3>>(graph);
+#endif
   }
 
   /** @brief Destructor*/
@@ -1488,6 +1437,10 @@ public:
       CoMMAWeightType new_ar = std::numeric_limits<CoMMAWeightType>::min();
       CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         new_min_ar_cc_feats{};
+// DEBUG
+#if 0
+      this->_AR_computer->compute_and_update_features(
+#endif
       this->compute_next_cc_features(
         i_fc,
         cc_feats,
@@ -1646,6 +1599,10 @@ public:
       CoMMAIntType inner_max_faces_in_common{0};
       CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         inner_min_ar_cc_feats{};
+// DEBUG
+#if 0
+      this->_AR_computer->compute_and_update_features(
+#endif
       this->compute_next_cc_features(
         i_fc,
         cc_feats,
