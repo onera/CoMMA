@@ -114,12 +114,14 @@ $(document).ready(function(){initNavTree('template_helpers_8h_source.html',''); 
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> condition, <span class="keyword">typename</span> typeA, <span class="keyword">typename</span> typeB&gt;</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">   30</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">fill_value</a>(typeA &amp;a, typeB &amp;b) {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (condition) { a = b; }</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}  <span class="comment">// end namespace comma</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (condition) {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    a = b;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  }</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}  <span class="comment">// end namespace comma</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacecomma_html"><div class="ttname"><a href="namespacecomma.html">comma</a></div><div class="ttdef"><b>Definition:</b> Agglomerator.h:34</div></div>
 <div class="ttc" id="anamespacecomma_html_a18179379fcc2bb56e6b89c7b43e249c2"><div class="ttname"><a href="namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2">comma::fill_value</a></div><div class="ttdeci">void fill_value(typeA &amp;a, typeB &amp;b)</div><div class="ttdoc">Assign from type to another only if a compile-time condition is verified.</div><div class="ttdef"><b>Definition:</b> templateHelpers.h:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
