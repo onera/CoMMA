@@ -187,9 +187,7 @@ agglo = prepare_meshio_agglomeration_data(
     shuffle=shuffle_coarse,
 )
 out_lines = prepare_meshio_celldata(
-    assign_anisotropic_line_data_to_cells(
-        agglomerationLines_Idx, agglomerationLines, fc_to_cc
-    ),
+    assign_anisotropic_line_data_to_cells(alines_Idx, alines, fc_to_cc),
     m.mesh.cells,
 )
 
