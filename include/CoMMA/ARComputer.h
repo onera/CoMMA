@@ -692,11 +692,14 @@ class ARMaxOverMinBaryDistance : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
    *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] tolerance Threshold below which the distances are considered
+   * null
    */
   explicit ARMaxOverMinBaryDistance(
-    std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
+    std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph,
+    const RealT tolerance
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+      ARComputer<IndexT, RealT, IntT>(graph), _tolerance(tolerance){};
 
   /** @brief Destructor*/
   ~ARMaxOverMinBaryDistance() override = default;
@@ -746,7 +749,7 @@ public:
         squared_euclidean_distance<RealT>(bary, this->_graph->_centers[i_fc])
       );
       // Skipping if barycenter is the center of the cell
-      if (dist > 1e-10) {
+      if (dist > this->_tolerance) {
         min_dist = max_dist = dist;
       }
     }
@@ -755,7 +758,7 @@ public:
         const auto dist = sqrt(squared_euclidean_distance<RealT>(
           bary, this->_graph->_centers[i_fc_cc]
         ));
-        if (dist > 1e-10) {
+        if (dist > this->_tolerance) {
           if (dist > max_dist) max_dist = dist;
           if (dist < min_dist) min_dist = dist;
         }
@@ -763,6 +766,10 @@ public:
     }  // for i_fc_cc
     aspect_ratio = max_dist / min_dist;
   }
+
+protected:
+  /** Threshold below which the distances are considered null */
+  RealT _tolerance;
 };
 
 }  // end namespace comma
