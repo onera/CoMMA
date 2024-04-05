@@ -88,7 +88,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT max_card,
       CoMMAIntT singular_card_thresh,
       optional<CoMMAIndexT> max_cells_in_line,
-      CoMMACellCouplingT aniso_cell_coupling,
+      CoMMAIntT aniso_cell_coupling,
       bool force_line_direction,
       CoMMAIntT fc_choice_iter,
       const CoMMAIntT type_of_isotropic_agglomeration
@@ -151,7 +151,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "max_card"_a,
     "singular_card_thresh"_a = 1,
     "max_cells_in_line"_a = std::nullopt,
-    "aniso_cell_coupling"_a = CoMMACellCouplingT::MAX_WEIGHT,
+    "aniso_cell_coupling"_a = 0,
     "force_line_direction"_a = true,
     "fc_choice_iter"_a = 1,
     "type_of_isotropic_agglomeration"_a = 0

@@ -166,7 +166,7 @@ void agglomerate_one_level(
   CoMMAIntType max_card,
   CoMMAIntType singular_card_thresh = 1,
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
-  CoMMACellCouplingT aniso_cell_coupling = CoMMACellCouplingT::MAX_WEIGHT,
+  CoMMAIntType aniso_cell_coupling = CoMMACellCouplingT::MAX_WEIGHT,
   bool force_line_direction = true,
   CoMMAIntType fc_choice_iter = 1,
   const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
@@ -376,7 +376,7 @@ void agglomerate_one_level(
         odd_line_length,
         max_cells_in_line,
         dimension,
-        aniso_cell_coupling,
+        static_cast<CoMMACellCouplingT>(aniso_cell_coupling),
         force_line_direction
       );
 
