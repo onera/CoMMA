@@ -446,7 +446,10 @@ public:
       i_fc, cc_feats, fc_of_cc, new_feats
     );
     // Compute AR
-    aspect_ratio = new_feats._diam / new_feats._min_edge;
+    // If only 2 cells (hence the reference coarse cell is only one cell), max
+    // and min are the same, hence use only max
+    aspect_ratio = fc_of_cc.size() == 1 ? new_feats._diam
+                                        : new_feats._diam / new_feats._min_edge;
   }
 };
 
