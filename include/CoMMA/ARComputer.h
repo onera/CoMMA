@@ -147,7 +147,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARComputer {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARComputer(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
       _graph(graph){};
@@ -284,7 +284,7 @@ template<typename IndexT, typename RealT, typename IntT, int dim>
 class ARDiamOverEstimatedRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARDiamOverEstimatedRadius(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
@@ -356,7 +356,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class AROverMeasure : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit AROverMeasure(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
@@ -406,7 +406,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARDiamOverMinEdge : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARDiamOverMinEdge(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
@@ -468,7 +468,7 @@ template<typename IndexT, typename RealT, typename IntT, int dim = 2>
 class ARExternalWeightOverMeasure : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARExternalWeightOverMeasure(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
@@ -536,7 +536,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARDiameter : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARDiameter(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
       ARComputer<IndexT, RealT, IntT>(graph){};
@@ -589,7 +589,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARMinCut : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARMinCut(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
       ARComputer<IndexT, RealT, IntT>(graph){};
@@ -638,7 +638,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARInternalWeight : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARInternalWeight(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
@@ -691,7 +691,7 @@ template<typename IndexT, typename RealT, typename IntT>
 class ARMaxOverMinBaryDistance : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    * @param[in] tolerance Threshold below which the distances are considered
    * null
    */
