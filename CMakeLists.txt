@@ -167,9 +167,13 @@ endif()
 #set_source_files_properties(${CoMMA_TEST} PROPERTIES COMPILE_FLAGS "--coverage")
 ######################## Pybind11 bindings ####################################
 if ( BUILD_PYTHON_BINDINGS )
+  # We use pybind11, see https://pybind11.readthedocs.io/en/latest/compiling.html#building-with-cmake
   message(STATUS "Python bindings enabled")
   # find the Python interpreter (including pybind might lead to other find files being used)
-  find_package(Python COMPONENTS Interpreter Development)
+  find_package(Python COMPONENTS Interpreter Development REQUIRED)
+  # Without the following, CMake and pybind seems to find different versions of python
+  # https://pybind11.readthedocs.io/en/stable/faq.html#inconsistent-detection-of-python-version-in-cmake-and-pybind11
+  # option(PYBIND11_FINDPYTHON "Use pybind11 to find python" ON)
   add_subdirectory(pybind11)
   pybind11_add_module(${CoMMA_PYTHON} ${PYTHONBIND})
   target_link_libraries(${CoMMA_PYTHON} PUBLIC ${CoMMA_LIB})
