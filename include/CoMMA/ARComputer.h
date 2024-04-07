@@ -133,6 +133,22 @@ public:
    */
   CellFeatures &operator=(const CellFeatures<IndexT, RealT, IntT> &other
   ) = default;
+
+  /** @brief Compute the radius of a cell.
+   * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
+   */
+  template<IntT dim>
+  inline RealT get_radius() const {
+    if constexpr (dim < 2) {
+      return _measure;
+    } else if constexpr (dim == 2) {
+      return sqrt(_measure);
+    } else if constexpr (dim == 3) {
+      return cbrt(_measure);
+    } else {
+      return pow(_measure, 1.0 / dim);
+    }
+  }
 };
 
 /** @brief Similar to a functor, the key point is the method that computes the
@@ -240,6 +256,23 @@ protected:
     new_feats._min_edge = sqrt(min_edge);
   }
 
+  inline std::vector<RealT> compute_and_update_barycenter(
+    const IndexT i_fc,
+    const CellFeatures<IndexT, RealT, IntT> &cc_feats,
+    const std::unordered_set<IndexT> &fc_of_cc,
+    CellFeatures<IndexT, RealT, IntT> &new_feats
+  ) const {
+    new_feats._sum_centers = cc_feats._sum_centers;
+    const auto &cur_c = this->_graph->centers[i_fc];
+    decltype(cur_c) bary(cur_c.size());
+    const RealT ov_N = 1. / (fc_of_cc.size() + 1);
+    for (auto i = decltype(cur_c.size()){0}; i < cur_c.size(); ++i) {
+      new_feats._sum_centers[i] += this->_graph->_volumes[i_fc] * cur_c[i];
+      bary[i] = new_feats._sum_centers[i] * ov_N;
+    }
+    return bary;
+  }
+
   /** @brief Compute approximated geometric features (e.g., diameter)
    * @tparam compute_weights Whether algebraic features should be computed
    * (e.g., weights)
@@ -324,25 +357,7 @@ public:
       i_fc, cc_feats, fc_of_cc, new_feats
     );
     // Compute AR
-    aspect_ratio = this->compute_AR(new_feats);
-  }
-
-protected:
-  /** @brief Compute the aspect-ratio.
-   * @param[in] feats Features of the current coarse cell
-   * @return \f$ \frac{diam_{CC}}{\sqrt[dim]{vol_{CC}}} \f$
-   */
-  inline RealT compute_AR(const CellFeatures<IndexT, RealT, IntT> &feats
-  ) const {
-    if constexpr (dim < 2) {
-      return feats._diam / feats._measure;
-    } else if constexpr (dim == 2) {
-      return feats._diam / sqrt(feats._measure);
-    } else if constexpr (dim == 3) {
-      return feats._diam / cbrt(feats._measure);
-    } else {
-      return feats._diam / pow(feats._measure, 1.0 / dim);
-    }
+    aspect_ratio = new_feats._diam / new_feats.template get_radius<dim>();
   }
 };
 
@@ -516,14 +531,14 @@ protected:
   inline RealT compute_AR(const CellFeatures<IndexT, RealT, IntT> &feats
   ) const {
     if constexpr (dim < 2) {
-      return feats._external_weights / feats._measure;
+      return feats._external_weights / feats.template get_radius<dim>();
     } else if constexpr (dim == 2) {
-      return feats._external_weights / sqrt(feats._measure);
+      return feats._external_weights / feats.template get_radius<dim>();
     } else if constexpr (dim == 3) {
-      return sqrt(feats._external_weights) / cbrt(feats._measure);
+      return sqrt(feats._external_weights) / feats.template get_radius<dim>();
     } else {
       return pow(feats._external_weights, 1.0 / (dim - 1))
-             / pow(feats._measure, 1.0 / dim);
+             / feats.template get_radius<dim>();
     }
   }
 };
@@ -733,14 +748,8 @@ public:
     );
     new_feats._external_facets[i_fc] =
       this->_graph->get_total_n_faces(i_fc) - shared_faces;
-    new_feats._sum_centers = cc_feats._sum_centers;
-    const auto &cur_c = this->_graph->centers[i_fc];
-    decltype(cur_c) bary(cur_c.size());
-    const RealT ov_N = 1. / (fc_of_cc.size() + 1);
-    for (auto i = decltype(cur_c.size()){0}; i < cur_c.size(); ++i) {
-      new_feats._sum_centers[i] += this->_graph->_volumes[i_fc] * cur_c[i];
-      bary[i] = new_feats._sum_centers[i] * ov_N;
-    }
+    const auto bary =
+      this->compute_and_update_barycenter(i_fc, cc_feats, fc_of_cc, new_feats);
     // Compute AR
     RealT min_dist = std::numeric_limits<RealT>::max(),
           max_dist = std::numeric_limits<RealT>::min();
