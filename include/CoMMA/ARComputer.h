@@ -702,6 +702,72 @@ public:
  * @tparam IndexT type used for indices
  * @tparam RealT type used for features
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
+ * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
+ */
+template<typename IndexT, typename RealT, typename IntT, int dim>
+class ARMaxBaryDistanceOverRadius : public ARComputer<IndexT, RealT, IntT> {
+public:
+  /** @brief Constructor
+   * @param[in] graph Dual_Graph object that determines the connectivity
+   * null
+   */
+  explicit ARMaxBaryDistanceOverRadius(
+    std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
+  ) :
+      ARComputer<IndexT, RealT, IntT>(graph){};
+
+  /** @brief Destructor*/
+  ~ARMaxBaryDistanceOverRadius() override = default;
+
+  /** @brief Computes features of the CC obtained by adding a given fine cell.
+   * The features are Aspect-Ratio, number of face shared with other cells
+   * already agglomerated (Current coarse cell means without \p i_fc) and those
+   * of CellFeatures.
+   * @param[in] i_fc Index of the fine cell to add to the coarse cell
+   * @param[in] cc_feats Features of the current coarse cell
+   * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
+   * coarse cell
+   * @param[out] shared_faces Number of faces shared by the fine cell with the
+   * current coarse cell
+   * @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
+   * @param[out] new_feats Features of the (final) coarse cell
+   */
+  void compute_and_update_features(
+    const IndexT i_fc,
+    const CellFeatures<IndexT, RealT, IntT> &cc_feats,
+    const std::unordered_set<IndexT> &fc_of_cc,
+    // out
+    IntT &shared_faces,
+    RealT &aspect_ratio,
+    CellFeatures<IndexT, RealT, IntT> &new_feats
+  ) const override {
+    // Update
+    this->template update_basic_features<>(
+      i_fc, cc_feats, fc_of_cc, shared_faces, new_feats
+    );
+    const auto bary =
+      this->compute_and_update_barycenter(i_fc, cc_feats, fc_of_cc, new_feats);
+    // Compute AR
+    const auto dist_fc =
+      squared_euclidean_distance<RealT>(bary, this->_graph->_centers[i_fc]);
+    RealT max_dist = dist_fc;
+    for (const auto i_fc_cc : fc_of_cc) {
+      const auto dist = squared_euclidean_distance<RealT>(
+        bary, this->_graph->_centers[i_fc_cc]
+      );
+      if (dist > max_dist) max_dist = dist;
+    }  // for i_fc_cc
+    aspect_ratio = sqrt(max_dist) / new_feats.template get_radius<dim>();
+  }
+};
+
+/** @brief ARComputer. Here, AR is the ratio of the maximum over minimum
+ * distance of the cell centers from the barycenter (computed as weighted
+ * average of centers). If a cell is totally internal, it won't be included in
+ * the computations.
+ * @tparam IndexT type used for indices
+ * @tparam RealT type used for features
+ * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  */
 template<typename IndexT, typename RealT, typename IntT>
 class ARMaxOverMinBaryDistance : public ARComputer<IndexT, RealT, IntT> {
