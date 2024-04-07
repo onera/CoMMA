@@ -520,9 +520,10 @@ protected:
     } else if constexpr (dim == 2) {
       return feats._external_weights / sqrt(feats._measure);
     } else if constexpr (dim == 3) {
-      return feats._external_weights / cbrt(feats._measure);
+      return sqrt(feats._external_weights) / cbrt(feats._measure);
     } else {
-      return feats._external_weights / pow(feats._measure, 1.0 / dim);
+      return pow(feats._external_weights, 1.0 / (dim - 1))
+             / pow(feats._measure, 1.0 / dim);
     }
   }
 };
