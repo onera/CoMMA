@@ -180,6 +180,8 @@ class AnisotropicArgs {
 public:
   /** @brief Whether to consider an anisotropic agglomeration */
   bool is_anisotropic;
+  /** @brief List of cells which have to be looked for anisotropy */
+  const std::vector<CoMMAIndexType> &anisotropicCompliantCells;
   /** @brief Whether lines joining the anisotropic cells should be built */
   bool build_lines;
   /** @brief  Whether anisotropic lines with odd length are allowed */
@@ -188,45 +190,36 @@ public:
    * anisotropic
    */
   CoMMAWeightType threshold_anisotropy;
-  /** @brief List of cells which have to be looked for anisotropy */
-  const std::vector<CoMMAIndexType> &anisotropicCompliantCells;
   /** @brief Maximum number of cells in an anisotropic line */
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt;
 
   /** @brief Constructor
    * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration.
+   * @param[in] anisotropicCompliantCells List of cells which have to be looked
+   * for anisotropy
    * @param[in] build_lines Whether lines joining the anisotropic cells should
    * be built.
    * @param[in] odd_line_length Whether anisotropic lines with odd length are
    * allowed.
    * @param[in] threshold_anisotropy Value of the aspect-ratio above which a
    * cell is considered as anisotropic.
-   * @param[in] anisotropicCompliantCells List of cells which have to be looked
-   * for anisotropy
    * @param[in] max_cells_in_line [Optional] Maximum number of cells in an
    * anisotropic line.
    */
-  explicit AnisotropicArgs(
-    bool is_anisotropic = false,
+  AnisotropicArgs(
+    bool is_anisotropic,
+    const std::vector<CoMMAIndexType> &anisotropicCompliantCells,
     std::optional<bool> build_lines = std::nullopt,
     std::optional<bool> odd_line_length = std::nullopt,
     std::optional<CoMMAWeightType> threshold_anisotropy = std::nullopt,
-    const std::vector<CoMMAIndexType> &anisotropicCompliantCells = {},
     std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt
   ) :
       is_anisotropic(is_anisotropic),
-      build_lines(true),  // Dummy, overridden later
-      odd_line_length(true),  // Dummy, overridden later
-      threshold_anisotropy(1.),  // Dummy, overridden later
       anisotropicCompliantCells(anisotropicCompliantCells),
-      max_cells_in_line(max_cells_in_line) {
-    // If anisotropic, spacial case to ensure that necessary attributes are set
-    if (is_anisotropic) {
-      this->build_lines = build_lines.value_or(true);
-      this->odd_line_length = odd_line_length.value_or(true);
-      this->threshold_anisotropy = threshold_anisotropy.value_or(4.);
-    }
-  }
+      build_lines(build_lines.value_or(true)),
+      odd_line_length(odd_line_length.value_or(true)),
+      threshold_anisotropy(threshold_anisotropy.value_or(4.)),
+      max_cells_in_line(max_cells_in_line) {}
 };
 
 }  // end namespace comma

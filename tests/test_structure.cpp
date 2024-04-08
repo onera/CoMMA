@@ -183,7 +183,8 @@ SCENARIO("Test of main function", "[structure]") {
       const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo(
         goal_card, min_card, max_card, correction, seed
       );
-      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(is_aniso
+      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(
+        is_aniso, Data.anisoCompliantCells
       );
       // Agglomerate
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
@@ -368,7 +369,7 @@ SCENARIO("Test of main function", "[structure]") {
         goal_card, min_card, max_card, correction, seed
       );
       const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(
-        is_aniso, build_lines, odd_length, aniso_thr, Data.anisoCompliantCells
+        is_aniso, Data.anisoCompliantCells, build_lines, odd_length, aniso_thr
       );
       // Agglomerate
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
