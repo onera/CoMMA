@@ -57,7 +57,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         }
       }
     }
-  };
+  }
 #define FC_IN_CC(graph, fc, cc) ((graph)->_fc_2_cc[(fc)].value() == (cc))
   GIVEN("A simple 8-cell Cartesian grid") {
     const DualGEx_correction Data = DualGEx_correction();

@@ -40,11 +40,11 @@ seed_ordering_types = {
 # Input-related parameters
 # Format is one of those accepted by meshio or None
 # e.g., input_mesh, input_format = "3D_CRM.vtu", None
-input_mesh, input_format = "../../bkp_examples/aniso_3cell_extended.msh", "ansys"
+input_mesh, input_format = "../meshes/naca2d_structured_ansys.msh", "ansys"
 ##
 dimension = 2
 ##
-anisotropic = True
+anisotropic = False
 ## CoMMA parameters
 build_lines = True
 if dimension == 3:

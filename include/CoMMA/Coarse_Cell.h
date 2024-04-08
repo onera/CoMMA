@@ -104,8 +104,8 @@ public:
     _s_fc.insert(i_fc);
     ++_cardinality;
     _compactness = new_compactness.has_value()
-                     ? new_compactness.value()
-                     : _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
+      ? new_compactness.value()
+      : _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
   }
 
   /** @brief Insert several FC in the CC (and update sub-graph if necessary)
@@ -120,8 +120,8 @@ public:
     _s_fc.insert(fcs.begin(), fcs.end());
     _cardinality += fcs.size();
     _compactness = new_compactness.has_value()
-                     ? new_compactness.value()
-                     : _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
+      ? new_compactness.value()
+      : _fc_graph->compute_min_fc_compactness_inside_a_cc(_s_fc);
   }
 };
 
@@ -222,10 +222,9 @@ public:
     // As base class...
     this->_s_fc.insert(i_fc);
     ++this->_cardinality;
-    this->_compactness =
-      new_compactness.has_value()
-        ? new_compactness.value()
-        : this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
+    this->_compactness = new_compactness.has_value()
+      ? new_compactness.value()
+      : this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
     // ...but now add to the subgraph
     _cc_graph->insert_node(
       this->_fc_graph->get_neighbours(i_fc),
@@ -247,10 +246,9 @@ public:
     // As base class...
     this->_s_fc.insert(fcs.begin(), fcs.end());
     this->_cardinality += fcs.size();
-    this->_compactness =
-      new_compactness.has_value()
-        ? new_compactness.value()
-        : this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
+    this->_compactness = new_compactness.has_value()
+      ? new_compactness.value()
+      : this->_fc_graph->compute_min_fc_compactness_inside_a_cc(this->_s_fc);
     // ...but now add to the subgraph
     for (const auto &i_fc : fcs) {
       _cc_graph->insert_node(

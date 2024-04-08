@@ -710,9 +710,9 @@ public:
                  neigh != this->neighbours_cend(i_fc);
                  ++neigh) {
               const auto dist = 1.
-                                / squared_euclidean_distance<CoMMAWeightType>(
+                / squared_euclidean_distance<CoMMAWeightType>(
                                   this->_centers[i_fc], this->_centers[*neigh]
-                                );
+                );
               if (dist > max_ov_dist) max_ov_dist = dist;
             }  // for neigh
             max_weights[i_fc] = max_ov_dist;
@@ -789,9 +789,9 @@ public:
                  neigh != this->neighbours_cend(i_fc);
                  ++neigh) {
               const auto dist = 1.
-                                / squared_euclidean_distance<CoMMAWeightType>(
+                / squared_euclidean_distance<CoMMAWeightType>(
                                   this->_centers[i_fc], this->_centers[*neigh]
-                                );
+                );
               if (dist > max_ov_dist) max_ov_dist = dist;
             }  // for neigh
             max_weights[i_fc] = max_ov_dist;
@@ -873,7 +873,8 @@ public:
     while ((i_order < nb_of_order_of_neighbourhood + 1)
            || static_cast<CoMMAIntType>(
                 d_n_of_seed.size() + d_n_of_order_o_m_one.size()
-              ) < max_card) {
+              )
+             < max_card) {
       std::unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
       // If here, add elements of previous elements to output dictionary
