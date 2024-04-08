@@ -302,8 +302,8 @@ public:
     if (build_lines) {
       const CoMMAWeightType thr =
         (threshold_anisotropy > 1 || threshold_anisotropy < 0)
-          ? threshold_anisotropy
-          : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
+        ? threshold_anisotropy
+        : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
       // if the finest agglomeration line is not computed, hence compute it
       // (REMEMBER! We compute the agglomeration lines only on the (original)
       // finest level
@@ -1049,9 +1049,8 @@ public:
     new_feats._diam = sqrt(max_diam);
     new_feats._min_edge = sqrt(min_edge);
     new_feats._measure = cc_feats._measure + this->_fc_graph->_volumes[i_fc];
-    new_feats._external_weights =
-      cc_feats._external_weights + this->_fc_graph->estimated_total_weight(i_fc)
-      - 2 * shared_weights;
+    new_feats._external_weights = cc_feats._external_weights
+      + this->_fc_graph->estimated_total_weight(i_fc) - 2 * shared_weights;
     new_feats._internal_weights = cc_feats._internal_weights + shared_weights;
     new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
 

@@ -115,7 +115,7 @@ public:
     for (auto &xyz : _sum_centers) {
       xyz *= graph->_volumes[index];
     }
-  };
+  }
 
   /** @brief Move constructor
    * @param[in] other Features to move
@@ -297,8 +297,7 @@ protected:
     this->compute_shared_faces(i_fc, fc_of_cc, shared_faces, shared_weights);
     if constexpr (compute_weights) {
       new_feats._external_weights = cc_feats._external_weights
-                                    + this->_graph->estimated_total_weight(i_fc)
-                                    - 2 * shared_weights;
+        + this->_graph->estimated_total_weight(i_fc) - 2 * shared_weights;
       new_feats._internal_weights = cc_feats._internal_weights + shared_weights;
     }
     new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
@@ -538,7 +537,7 @@ protected:
       return sqrt(feats._external_weights) / feats.template get_radius<dim>();
     } else {
       return pow(feats._external_weights, 1.0 / (dim - 1))
-             / feats.template get_radius<dim>();
+        / feats.template get_radius<dim>();
     }
   }
 };

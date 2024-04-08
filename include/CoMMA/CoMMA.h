@@ -208,9 +208,9 @@ void agglomerate_one_level(
     );
   if (adjMatrix_row_ptr.empty()
       || adjMatrix_row_ptr.back()
-           != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
+        != static_cast<CoMMAIndexType>(adjMatrix_col_ind.size())
       || adjMatrix_row_ptr.back()
-           != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size()))
+        != static_cast<CoMMAIndexType>(adjMatrix_areaValues.size()))
     throw std::invalid_argument(
       "CoMMA - Error: bad CRS graph (sizes do not match)"
     );

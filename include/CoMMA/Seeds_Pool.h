@@ -398,9 +398,9 @@ public:
         case CoMMACellT::N_CELL_TYPES:
         default:
           return _l_of_seeds[CoMMACellT::INTERIOR].empty()
-                 && _l_of_seeds[CoMMACellT::VALLEY].empty()
-                 && _l_of_seeds[CoMMACellT::RIDGE].empty()
-                 && _l_of_seeds[CoMMACellT::CORNER].empty();
+            && _l_of_seeds[CoMMACellT::VALLEY].empty()
+            && _l_of_seeds[CoMMACellT::RIDGE].empty()
+            && _l_of_seeds[CoMMACellT::CORNER].empty();
       } /* Switch */
     }
     return true;
@@ -655,8 +655,7 @@ public:
     // Exactly the inverse of the order of the list. For this reason we proceed
     // from the back
     if (this->_cur_top_queue.has_value()) {
-      for (auto queue =
-             this->_l_of_seeds.rbegin()
+      for (auto queue = this->_l_of_seeds.rbegin()
              + (this->_l_of_seeds.size() - (this->_cur_top_queue.value() + 1));
            queue != this->_l_of_seeds.rend();
            ++queue) {
@@ -703,10 +702,9 @@ public:
     for (const auto &seed : new_seeds) {
       // In order to the neighbourhood priority, we choose to append to the
       // current top queue, rather than switching queue
-      const auto q_lvl =
-        this->_cur_top_queue.has_value()
-          ? std::min(this->_n_bnd_faces[seed], this->_cur_top_queue.value())
-          : this->_n_bnd_faces[seed];
+      const auto q_lvl = this->_cur_top_queue.has_value()
+        ? std::min(this->_n_bnd_faces[seed], this->_cur_top_queue.value())
+        : this->_n_bnd_faces[seed];
       // We add even if already present. Worst case scenario, a check if
       // agglomerated is done when choosing new seed
       this->_l_of_seeds[q_lvl].push_back(seed);
@@ -731,8 +729,8 @@ public:
       // In order to the neighbourhood priority, we choose to append to the
       // current top queue, rather than switching queue
       const auto q_lvl = this->_cur_top_queue.has_value()
-                           ? std::min(n_bnd, this->_cur_top_queue.value())
-                           : n_bnd;
+        ? std::min(n_bnd, this->_cur_top_queue.value())
+        : n_bnd;
       // We add even if already present. Worst case scenario, a check if
       // agglomerated is done when choosing new seed
       std::transform(

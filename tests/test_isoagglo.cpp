@@ -388,7 +388,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
     }
-  };
+  }
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGEx_T_shaped Data = DualGEx_T_shaped();
     const shared_ptr<SeedsPoolT> seeds_pool =

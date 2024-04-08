@@ -217,7 +217,7 @@ for level in range(agglomeration_levels):
         # Here we try some ways to limit the anisotropic zone after the first
         # agglomeration step
         # if level >= 1:
-        if False:  # level >= 1:
+        if False:
             # Plainly, switch it off
             # anisotropic = False
 

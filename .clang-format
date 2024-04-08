@@ -11,6 +11,7 @@ DerivePointerAlignment: false
 PointerAlignment: Right
 
 AlignAfterOpenBracket: BlockIndent
+AlignOperands: DontAlign
 AlignTrailingComments: false
 AllowShortBlocksOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
@@ -20,7 +21,9 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakInheritanceList: AfterColon
 BreakConstructorInitializers: AfterColon
 BreakStringLiterals: false
+EmptyLineBeforeAccessModifier: Always
 FixNamespaceComments: true
 PackConstructorInitializers: NextLineOnly
+RemoveSemicolon: true
 SeparateDefinitionBlocks: Always
 SpaceAfterTemplateKeyword: false

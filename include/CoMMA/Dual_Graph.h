@@ -640,7 +640,7 @@ public:
    */
   inline CoMMAIntType get_total_n_faces(const CoMMAIndexType idx_c) const {
     return this->_n_bnd_faces[idx_c]
-           + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c + 1]);
+      + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c + 1]);
   }
 
   /** @brief Whether a cell is on the boundary
@@ -665,18 +665,15 @@ public:
     // Here, we use the geometric one, which should be less sensitive to
     // outliers
     // There might be concerns about the performances
-    return this->_n_bnd_faces[idx_c] == 0
-             ? 0.
-             : this->_n_bnd_faces[idx_c]
-                 * pow(
-                   std::accumulate(
-                     this->weights_cbegin(idx_c),
-                     this->weights_cend(idx_c),
-                     CoMMAWeightType{1.},
-                     std::multiplies<>()
-                   ),
-                   CoMMAWeightType{1.} / this->_n_bnd_faces[idx_c]
-                 );
+    return this->_n_bnd_faces[idx_c] == 0 ? 0.
+                                          : this->_n_bnd_faces[idx_c]
+        * pow(std::accumulate(
+                this->weights_cbegin(idx_c),
+                this->weights_cend(idx_c),
+                CoMMAWeightType{1.},
+                std::multiplies<>()
+              ),
+              CoMMAWeightType{1.} / this->_n_bnd_faces[idx_c]);
   }
 
   /** @brief Sum of wall the weights (faces) of a cell. Since there is no
@@ -688,7 +685,7 @@ public:
   inline CoMMAWeightType estimated_total_weight(const CoMMAIndexType idx_c
   ) const {
     return std::reduce(this->weights_cbegin(idx_c), this->weights_cend(idx_c))
-           + this->estimated_boundary_weight(idx_c);
+      + this->estimated_boundary_weight(idx_c);
   }
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
@@ -850,7 +847,8 @@ public:
     while ((i_order < nb_of_order_of_neighbourhood + 1)
            || static_cast<CoMMAIntType>(
                 d_n_of_seed.size() + d_n_of_order_o_m_one.size()
-              ) < max_card) {
+              )
+             < max_card) {
       std::unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
       // If here, add elements of previous elements to output dictionary
