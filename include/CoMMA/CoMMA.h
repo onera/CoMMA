@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
+#include "CoMMA/Args.h"
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
@@ -61,7 +62,7 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * @param[in] centers Cell centers
  * @param[in] priority_weights Weights used to set the order telling where to
  * start agglomerating. The higher the weight, the higher the priority
- *  @param[in] anisotropicCompliantCells List of cells which have to be looked
+ * @param[in] anisotropicCompliantCells List of cells which have to be looked
  * for anisotropy
  * @param[in] n_bnd_faces Vector telling how many boundary faces each cell has
  * @param[in] build_anisotropic_lines Whether lines joining the anisotropic
@@ -93,7 +94,7 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * @param[in] correction Whether to apply correction step (avoid isolated cells)
  * after agglomeration
  * @param[in] dimension Dimensionality of the problem, 2- or 3D
- * @param[in] goal_card Expected cardinality of the coarse cells (might not be
+ * @param[in] goal_card Desired cardinality of the coarse cells (might not be
  * ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
@@ -413,6 +414,72 @@ void agglomerate_one_level(
   for (auto i_fc = decltype(nb_fc){0}; i_fc < nb_fc; i_fc++) {
     fc_to_cc[i_fc] = fccc[i_fc].value();
   }
+}
+
+/** @brief Main function of the agglomerator, it is used as an interface
+ * to build up all the agglomeration process. The result will be the definition
+ * of the agglomerated cells \p fc_to_cc.
+ * @tparam CoMMAIndexType the CoMMA index type for the global index of the mesh
+ * @tparam CoMMAWeightType the CoMMA weight type for the weights (volume or
+ * area) of the nodes or edges of the Mesh
+ * @tparam CoMMAIntType the CoMMA type for integers
+ * @param[in] graph Definition of the graph, see GraphArgs.
+ * @param[in] agglo Parametrization of the isotropic agglomeration algorithm,
+ * see AgglomerationArgs.
+ * @param[in] aniso Parametrization of the anisotropic agglomeration algorithm,
+ * see AnisotropicArgs.
+ * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine
+ * cell belongs after agglomeration.
+ * @param[in,out] aniso_lines_indices Connectivity for the agglomeration lines
+ * @param[in,out] aniso_lines Vector storing all the elements of the
+ * anisotropic lines
+ *
+ * @note This version is just a wrapper around the other agglomerate_one_level
+ * @copyright Copyright © 2024 ONERA
+ * @author Nicolas Lantos, Alberto Remigi, and Riccardo Milani
+ * @contributor Karim Anemiche
+ * @license This project is released under the Mozilla Public License 2.0, see
+ * https://mozilla.org/MPL/2.0/
+ */
+template<
+  typename CoMMAIndexType,
+  typename CoMMAWeightType,
+  typename CoMMAIntType>
+inline void agglomerate_one_level(
+  const GraphArgs<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &graph,
+  const AgglomerationArgs<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &agglo,
+  const AnisotropicArgs<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &aniso,
+  std::vector<CoMMAIndexType> &fc_to_cc,  // Out
+  std::vector<CoMMAIndexType> &aniso_lines_indices,  // In & out
+  std::vector<CoMMAIndexType> &aniso_lines  // In & out
+) {
+  agglomerate_one_level(
+    graph.connectivity_indices,
+    graph.connectivity,
+    graph.connectivity_weights,
+    graph.volumes,
+    graph.centers,
+    graph.priority_weights,
+    aniso.anisotropicCompliantCells,
+    graph.n_bnd_faces,
+    aniso.build_lines,
+    aniso.is_anisotropic,
+    aniso.odd_line_length,
+    aniso.threshold_anisotropy,
+    agglo.seed_ordering_type,
+    fc_to_cc,
+    aniso_lines_indices,
+    aniso_lines,
+    agglo.correction,
+    graph.dimension,
+    agglo.goal_card,
+    agglo.min_card,
+    agglo.max_card,
+    agglo.singular_card_thresh,
+    aniso.max_cells_in_line,
+    agglo.fc_choice_iter,
+    agglo.neighbourhood_type
+  );
 }
 
 #undef CHECK_INT_TYPE

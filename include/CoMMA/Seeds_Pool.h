@@ -85,7 +85,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 struct SPFullInitializator :
-    public SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Parent class */
   using BaseClass =
     SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
@@ -96,7 +96,7 @@ struct SPFullInitializator :
 
   /** @brief Constructor */
   SPFullInitializator() :
-      BaseClass() {}
+    BaseClass() {}
 
   /** @brief Destructor */
   ~SPFullInitializator() override = default;
@@ -140,7 +140,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 struct SPOnePointInitializator :
-    public SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
   /** @brief Parent class */
   using BaseClass =
     SPInitializator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
@@ -151,7 +151,7 @@ struct SPOnePointInitializator :
 
   /** @brief Constructor */
   SPOnePointInitializator() :
-      BaseClass() {}
+    BaseClass() {}
 
   /** @brief Destructor */
   ~SPOnePointInitializator() override = default;
@@ -258,9 +258,9 @@ public:
     const std::vector<CoMMAWeightType> &priority_weights,
     const bool one_point_init
   ) :
-      _priority_weights(priority_weights),
-      _cur_top_queue(std::nullopt),
-      _n_bnd_faces(n_bnd_faces) {
+    _priority_weights(priority_weights),
+    _cur_top_queue(std::nullopt),
+    _n_bnd_faces(n_bnd_faces) {
     // The size 4 corresponds to 0 : interior, 1 : valley, 2 : ridge, 3 : corner
     _l_of_seeds = std::vector<CoMMAQueueType>(CoMMACellT::N_CELL_TYPES);
 
@@ -449,7 +449,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Seeds_Pool_Boundary_Priority :
-    public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using SeedsPoolBaseType =
@@ -472,9 +472,9 @@ public:
     const std::vector<CoMMAWeightType> &priority_weights,
     const bool one_point_init
   ) :
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        n_bnd_faces, priority_weights, one_point_init
-      ) {}
+    Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      n_bnd_faces, priority_weights, one_point_init
+    ) {}
 
   /** @brief Destructor */
   ~Seeds_Pool_Boundary_Priority() override = default;
@@ -609,7 +609,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Seeds_Pool_Neighbourhood_Priority :
-    public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using SeedsPoolBaseType =
@@ -632,9 +632,9 @@ public:
     const std::vector<CoMMAWeightType> &priority_weights,
     const bool one_point_init
   ) :
-      Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        n_bnd_faces, priority_weights, one_point_init
-      ) {}
+    Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      n_bnd_faces, priority_weights, one_point_init
+    ) {}
 
   /** @brief Destructor */
   ~Seeds_Pool_Neighbourhood_Priority() override = default;

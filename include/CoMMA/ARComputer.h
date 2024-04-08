@@ -90,27 +90,27 @@ public:
     const std::unordered_map<IndexT, IntT> external_facets =
       std::unordered_map<IndexT, IntT>{}
   ) :
-      _measure(measure),
-      _external_weights(external_weights),
-      _internal_weights(internal_weights),
-      _n_internal_faces(n_internal_faces),
-      _min_edge(min_edge),
-      _diam(diam),
-      _sum_centers(sum_centers),
-      _external_facets(external_facets){};
+    _measure(measure),
+    _external_weights(external_weights),
+    _internal_weights(internal_weights),
+    _n_internal_faces(n_internal_faces),
+    _min_edge(min_edge),
+    _diam(diam),
+    _sum_centers(sum_centers),
+    _external_facets(external_facets){};
 
   /** @brief Constructor
    */
   CellFeatures(
     const IndexT index, std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      _measure(graph->_volumes[index]),
-      _external_weights(graph->estimated_total_weight(index)),
-      _internal_weights(0.0),
-      _n_internal_faces(0),
-      _min_edge(std::numeric_limits<RealT>::max()),
-      _diam(std::numeric_limits<RealT>::min()),
-      _external_facets({{index, graph->get_total_n_faces(index)}}) {
+    _measure(graph->_volumes[index]),
+    _external_weights(graph->estimated_total_weight(index)),
+    _internal_weights(0.0),
+    _n_internal_faces(0),
+    _min_edge(std::numeric_limits<RealT>::max()),
+    _diam(std::numeric_limits<RealT>::min()),
+    _external_facets({{index, graph->get_total_n_faces(index)}}) {
     _sum_centers = graph->_centers[index];
     for (auto &xyz : _sum_centers) {
       xyz *= graph->_volumes[index];
@@ -166,7 +166,7 @@ public:
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARComputer(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
-      _graph(graph){};
+    _graph(graph){};
 
   /** @brief The destructor of the class */
   virtual ~ARComputer() = default;
@@ -321,7 +321,7 @@ public:
   explicit ARDiamOverEstimatedRadius(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARDiamOverEstimatedRadius() override = default;
@@ -374,7 +374,7 @@ public:
    */
   explicit AROverMeasure(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~AROverMeasure() override = default;
@@ -425,7 +425,7 @@ public:
   explicit ARDiamOverMinEdge(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARDiamOverMinEdge() override = default;
@@ -487,7 +487,7 @@ public:
   explicit ARExternalWeightOverMeasure(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARExternalWeightOverMeasure() override = default;
@@ -554,7 +554,7 @@ public:
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARDiameter(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARDiameter() override = default;
@@ -607,7 +607,7 @@ public:
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
   explicit ARMinCut(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARMinCut() override = default;
@@ -658,7 +658,7 @@ public:
   explicit ARInternalWeight(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARInternalWeight() override = default;
@@ -713,7 +713,7 @@ public:
   explicit ARMaxBaryDistanceOverRadius(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph){};
+    ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
   ~ARMaxBaryDistanceOverRadius() override = default;
@@ -780,7 +780,7 @@ public:
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph,
     const RealT tolerance
   ) :
-      ARComputer<IndexT, RealT, IntT>(graph), _tolerance(tolerance){};
+    ARComputer<IndexT, RealT, IntT>(graph), _tolerance(tolerance){};
 
   /** @brief Destructor*/
   ~ARMaxOverMinBaryDistance() override = default;

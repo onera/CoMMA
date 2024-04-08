@@ -38,7 +38,7 @@ minCard = 4
 goalCard = 4
 maxCard = 4
 verbose = 0
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
 agglomerationLines = np.array([0], dtype=CoMMAIndex)
 build_lines = True
@@ -68,7 +68,7 @@ print("CoMMA call")
     volumes,
     Mesh1.centers.astype(CoMMAWeight, copy=False),
     weights,
-    arrayOfFineAnisotropicCompliantCells,
+    anisoCompliantCells,
     n_bnd_faces,
     build_lines,
     False,

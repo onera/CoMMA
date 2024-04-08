@@ -168,7 +168,7 @@ foil_distance = compute_neighbourhood_wall_distance(
 )
 
 # Choosing the whole BL as compliant
-arrayOfFineAnisotropicCompliantCells = squares
+anisoCompliantCells = squares
 # Weights inversely proportional to the distance so that cells closer to the
 # boundary have higher priority (+1 to avoid division by 0)
 weights = np.reciprocal(1.0 + foil_distance.astype(float))
@@ -213,7 +213,7 @@ for level in range(agglomeration_levels):
         # it is OK
         weights = np.arange(start=nb_cc - 1, stop=0, step=-1, dtype=CoMMAWeight)
         fc_to_cc = np.empty(nb_cc, dtype=CoMMAIndex)
-        arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
+        anisoCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
         # Here we try some ways to limit the anisotropic zone after the first
         # agglomeration step
         # if level >= 1:
@@ -247,7 +247,7 @@ for level in range(agglomeration_levels):
         volumes,
         centers,
         weights,
-        arrayOfFineAnisotropicCompliantCells,
+        anisoCompliantCells,
         n_bnd_faces,
         build_lines,
         anisotropic,

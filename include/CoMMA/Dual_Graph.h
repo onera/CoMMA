@@ -68,11 +68,11 @@ public:
     const ContainerWeightType &m_crs_values,
     const ContainerWeightType &volumes
   ) :
-      _number_of_cells(nb_c),
-      _m_CRS_Row_Ptr(m_crs_row_ptr),
-      _m_CRS_Col_Ind(m_crs_col_ind),
-      _m_CRS_Values(m_crs_values),
-      _volumes(volumes) {
+    _number_of_cells(nb_c),
+    _m_CRS_Row_Ptr(m_crs_row_ptr),
+    _m_CRS_Col_Ind(m_crs_col_ind),
+    _m_CRS_Values(m_crs_values),
+    _volumes(volumes) {
     _visited.resize(_number_of_cells);
     fill(_visited.begin(), _visited.end(), false);
   }
@@ -346,12 +346,12 @@ public:
     const ContainerIndexType &mapping_l_to_g,
     const bool &is_isotropic
   ) :
-      Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
-      ),
-      _is_isotropic(is_isotropic),
-      _cardinality(static_cast<CoMMAIntType>(nb_c)),
-      _mapping_l_to_g(mapping_l_to_g) {
+    Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
+    ),
+    _is_isotropic(is_isotropic),
+    _cardinality(static_cast<CoMMAIntType>(nb_c)),
+    _mapping_l_to_g(mapping_l_to_g) {
     // Compactness computation
     _compactness = static_cast<CoMMAIntType>(nb_c);
     for (auto c = decltype(nb_c){0}; c < nb_c; ++c) {
@@ -583,14 +583,14 @@ public:
     const CoMMAIntType dimension,
     const ContainerIndexType &anisotropic_compliant_fc
   ) :
-      Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
-      ),
-      _n_bnd_faces(n_bnd_faces),
-      _s_anisotropic_compliant_cells(
-        anisotropic_compliant_fc.begin(), anisotropic_compliant_fc.end()
-      ),
-      _centers(centers) {
+    Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      nb_c, m_crs_row_ptr, m_crs_col_ind, m_crs_values, volumes
+    ),
+    _n_bnd_faces(n_bnd_faces),
+    _s_anisotropic_compliant_cells(
+      anisotropic_compliant_fc.begin(), anisotropic_compliant_fc.end()
+    ),
+    _centers(centers) {
     // Function to compute the aspect-ratio
     _compute_AR = dimension == 2
       ? [](

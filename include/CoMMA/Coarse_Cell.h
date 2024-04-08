@@ -57,12 +57,12 @@ public:
     CoMMAIntType compactness,
     bool is_isotropic = true
   ) :
-      _idx(i_cc),
-      _fc_graph(fc_graph),
-      _compactness(compactness),
-      _cardinality(static_cast<CoMMAIntType>(s_fc.size())),
-      _is_isotropic(is_isotropic),
-      _s_fc(s_fc) {}
+    _idx(i_cc),
+    _fc_graph(fc_graph),
+    _compactness(compactness),
+    _cardinality(static_cast<CoMMAIntType>(s_fc.size())),
+    _is_isotropic(is_isotropic),
+    _s_fc(s_fc) {}
 
   /** @brief Destructor of the class */
   virtual ~Coarse_Cell() = default;
@@ -138,7 +138,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Coarse_Cell_Subgraph :
-    Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Type for the base Coarse_Cell class */
   using BaseClass = Coarse_Cell<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>;
@@ -169,9 +169,9 @@ public:
     CoMMAIntType compactness,
     bool is_isotropic = true
   ) :
-      BaseClass(fc_graph, i_cc, s_fc, compactness, is_isotropic),
-      _is_connected(compactness > 0),
-      _is_connectivity_up_to_date(true) {
+    BaseClass(fc_graph, i_cc, s_fc, compactness, is_isotropic),
+    _is_connected(compactness > 0),
+    _is_connectivity_up_to_date(true) {
     // initialization vectors
     CoMMAIndexType position = 0;
     std::vector<CoMMAWeightType> volumes;
