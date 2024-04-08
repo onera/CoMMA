@@ -40,7 +40,7 @@ SCENARIO("Test of a structure", "[structure]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -139,7 +139,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,
@@ -188,7 +188,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,
@@ -238,7 +238,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,
@@ -287,7 +287,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,
@@ -339,7 +339,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               5,
               goal_card, min_card, max_card)
@@ -350,7 +350,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card)
         );
@@ -360,7 +360,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes, Data.centers,
-              Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, build_lines,
+              Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces, build_lines,
               aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
               goal_card, min_card, max_card)
         );
@@ -370,7 +370,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr,
               tmp,
               Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-              Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces, build_lines, aniso,
+              Data.anisoCompliantCells, Data.n_bnd_faces, build_lines, aniso,
               odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim, goal_card,
               min_card, max_card)
         );
@@ -380,7 +380,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
               tmp_w,
-              Data.volumes, Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells,
+              Data.volumes, Data.centers, Data.weights, Data.anisoCompliantCells,
               Data.n_bnd_faces, build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
               alines, correction, Data.dim, goal_card, min_card, max_card)
         );
@@ -388,7 +388,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card,
               goal_card + 1,
@@ -398,7 +398,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim,
               0,
@@ -410,7 +410,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               false,
               aniso, odd_length, aniso_thr, seed, fc2cc,
               tmp_idx, tmp_lines,
@@ -420,7 +420,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card,
               0)
@@ -429,7 +429,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               0)
@@ -438,7 +438,7 @@ SCENARIO("Test of main function", "[structure]") {
         REQUIRE_THROWS(
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
-              Data.centers, Data.weights, Data.arrayOfFineAnisotropicCompliantCells, Data.n_bnd_faces,
+              Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               comma::iter_agglo_max_iter + 1)

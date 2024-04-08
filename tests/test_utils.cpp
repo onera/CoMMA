@@ -149,7 +149,7 @@ SCENARIO("Test compactness computation", "[Compactness]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     WHEN("We consider an empty coarse cell") {
       const unordered_set<CoMMAIndexT> cc = {};

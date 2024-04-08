@@ -34,7 +34,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -70,7 +70,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -175,7 +175,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -501,7 +501,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
     Data.volumes.push_back(1.);
     Data.centers.push_back({-10, -10});
     Data.weights.push_back(-1.);
-    Data.arrayOfFineAnisotropicCompliantCells.push_back(9);
+    Data.anisoCompliantCells.push_back(9);
     //
     shared_ptr<SeedsPoolT> const seeds_pool =
       make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
@@ -515,7 +515,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);

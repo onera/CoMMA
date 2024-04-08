@@ -145,7 +145,7 @@ volumes = np.array(m.volume, dtype=CoMMAWeight)
 nb_fc = len(g.vertex) - 1
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
 agglomerationLines = np.array([0], dtype=CoMMAIndex)
 
@@ -157,7 +157,7 @@ fc_to_cc_res, alines_Idx, alines = agglomerate_one_level(
     volumes,
     m.centers.astype(CoMMAWeight, copy=False),
     weights,
-    arrayOfFineAnisotropicCompliantCells,
+    anisoCompliantCells,
     n_bnd_faces,
     build_lines,
     anisotropic,

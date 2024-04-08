@@ -271,7 +271,7 @@ SCENARIO("Test of the seeds pool", "[Seeds_Pool]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>
@@ -412,7 +412,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells);
+      Data.anisoCompliantCells);
     WHEN("We use a seeds pool with boundary priority") {
       Seeds_Pool_Boundary_Priority<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> seeds_pool(
         Data.n_bnd_faces, Data.weights, false);

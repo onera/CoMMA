@@ -61,7 +61,7 @@ minCard = 4
 goalCard = 4
 maxCard = 4
 checks = 1
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 agglomerationLines_Idx = np.zeros(nb_fc, dtype=CoMMAIndex)
 agglomerationLines = np.zeros(nb_fc, dtype=CoMMAIndex)
 build_lines = True
@@ -90,7 +90,7 @@ fc_iter = 1
     volumes,
     centers,
     weights,
-    arrayOfFineAnisotropicCompliantCells,
+    anisoCompliantCells,
     n_bnd_faces,
     array_isOnValley,
     array_isOnRidge,

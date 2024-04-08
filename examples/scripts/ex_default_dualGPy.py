@@ -130,7 +130,7 @@ volumes = np.array(mesh.volume, dtype=CoMMAWeight)
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 n_bnd_faces = np.array(mesh.boundary_cells, dtype=CoMMAInt)
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
 agglomerationLines = np.array([0], dtype=CoMMAIndex)
 
@@ -146,7 +146,7 @@ print("CoMMA call...", flush=True, end="")
     volumes,
     mesh.centers.astype(CoMMAWeight, copy=False),
     weights,
-    arrayOfFineAnisotropicCompliantCells,
+    anisoCompliantCells,
     n_bnd_faces,
     build_lines,
     anisotropic,
