@@ -800,7 +800,8 @@ public:
     while ((i_order < nb_of_order_of_neighbourhood + 1)
            || static_cast<CoMMAIntType>(
                 d_n_of_seed.size() + d_n_of_order_o_m_one.size()
-              ) < max_card) {
+              )
+             < max_card) {
       std::unordered_map<CoMMAIndexType, CoMMAIntType> d_n_of_order_o;
 
       // If here, add elements of previous elements to output dictionary

@@ -519,7 +519,7 @@ Not used anymore but we leave it for example purposes
         );
         if (!is_anisotropic
             && static_cast<decltype(_sing_card_thresh)>(s_fc.size())
-                 <= _sing_card_thresh)
+              <= _sing_card_thresh)
           _singular_cc.emplace_back(_cc_counter);
       }
       // Update of _associatedCoarseCellNumber the output of the current

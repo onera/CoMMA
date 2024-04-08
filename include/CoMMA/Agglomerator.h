@@ -255,8 +255,8 @@ public:
     if (build_lines) {
       const CoMMAWeightType thr =
         (threshold_anisotropy > 1 || threshold_anisotropy < 0)
-          ? threshold_anisotropy
-          : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
+        ? threshold_anisotropy
+        : static_cast<CoMMAWeightType>(1. / threshold_anisotropy);
       // if the finest agglomeration line is not computed, hence compute it
       // (REMEMBER! We compute the agglomeration lines only on the (original)
       // finest level

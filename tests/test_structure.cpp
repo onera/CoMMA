@@ -67,7 +67,7 @@ SCENARIO("Test of a structure", "[structure]") {
               dimension
             ){};
 
-        CoMMAIntT test_variable() { return (this->_threshold_card); };
+        CoMMAIntT test_variable() { return (this->_threshold_card); }
       };
 
       THEN("We see that the agglomeration is not set, hence set to 0") {
@@ -98,11 +98,11 @@ SCENARIO("Test of a structure", "[structure]") {
               dimension
             ){};
 
-        CoMMAIntT thres() { return (_threshold_card); };
+        CoMMAIntT thres() { return (_threshold_card); }
 
-        CoMMAIntT max() { return (_max_card); };
+        CoMMAIntT max() { return (_max_card); }
 
-        CoMMAIntT min() { return (_min_card); };
+        CoMMAIntT min() { return (_min_card); }
       };
 
       THEN("We see that the cardinality passes from 0 to 2") {
