@@ -78,10 +78,10 @@ public:
       seeds_pool,
     CoMMAIntType dimension = 3
   ) :
-      _dimension(dimension),
-      _fc_graph(graph),
-      _cc_graph(cc_graph),
-      _seeds_pool(seeds_pool) {
+    _dimension(dimension),
+    _fc_graph(graph),
+    _cc_graph(cc_graph),
+    _seeds_pool(seeds_pool) {
     if ((_dimension != 2) && (_dimension != 3)) {
       throw std::range_error("dimension can only be 2 or 3");
     }
@@ -182,7 +182,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Agglomerator_Anisotropic :
-    public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Container for an anisotropic line */
   using AnisotropicLine = std::deque<CoMMAIndexType>;
@@ -237,13 +237,13 @@ public:
     const std::optional<CoMMAIndexType> max_cells_in_line,
     CoMMAIntType dimension = 3
   ) :
-      Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        graph, cc_graph, seeds_pool, dimension
-      ),
-      _should_agglomerate(true),
-      _aniso_neighbours(),
-      _odd_line_length(odd_line_length),
-      _max_cells_in_line(max_cells_in_line) {
+    Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      graph, cc_graph, seeds_pool, dimension
+    ),
+    _should_agglomerate(true),
+    _aniso_neighbours(),
+    _odd_line_length(odd_line_length),
+    _max_cells_in_line(max_cells_in_line) {
     // for every defined level (1 by default), contains the number of cells
     // e.g. _l_nb_of_cells[0]= number of cells on finest level
     //      _l_nb_of_cells[1]= number of cells on the first coarse level
@@ -747,7 +747,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Agglomerator_Isotropic :
-    public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief NeighbourhoodCreator type (base class) */
   using NeighbourhoodCreatorBaseType =
@@ -795,10 +795,10 @@ public:
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
-      Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        graph, cc_graph, seeds_pool, dimension
-      ),
-      _fc_iter(fc_iter) {
+    Agglomerator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      graph, cc_graph, seeds_pool, dimension
+    ),
+    _fc_iter(fc_iter) {
     if (neighbourhood_type == CoMMANeighbourhoodT::EXTENDED)
       _neigh_crtor = std::make_shared<NeighbourhoodCreatorExtType>();
     else
@@ -1038,10 +1038,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Agglomerator_Biconnected :
-    public Agglomerator_Isotropic<
-      CoMMAIndexType,
-      CoMMAWeightType,
-      CoMMAIntType> {
+  public Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Isotropic.
@@ -1069,9 +1066,9 @@ public:
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
-      Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
-      ) {
+    Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
+    ) {
     // no particular constructor
   }
 
@@ -1477,10 +1474,10 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Agglomerator_Iterative :
-    public Agglomerator_Biconnected<
-      CoMMAIndexType,
-      CoMMAWeightType,
-      CoMMAIntType> {
+  public Agglomerator_Biconnected<
+    CoMMAIndexType,
+    CoMMAWeightType,
+    CoMMAIntType> {
 public:
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Biconnected
@@ -1508,9 +1505,9 @@ public:
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
-      Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
-      ) {
+    Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
+    ) {
     // no particular constructor
   }
 

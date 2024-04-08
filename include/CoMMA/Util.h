@@ -214,13 +214,13 @@ class PairFindFirstBasedFunctor {
 public:
   /** @brief Constructor */
   PairFindFirstBasedFunctor() :
-      _target(){};
+    _target(){};
   /** @brief Constructor
    *  @param target Reference value that will be sought
    */
   // NOLINTNEXTLINE
   PairFindFirstBasedFunctor(const typename PairT::first_type &target) :
-      _target(target){};
+    _target(target){};
   /** @brief Destructor */
   ~PairFindFirstBasedFunctor() = default;
 

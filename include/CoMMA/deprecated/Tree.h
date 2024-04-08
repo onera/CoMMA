@@ -36,7 +36,7 @@ template<
 class Node {
 public:
   Node(CoMMAIndexType index, CoMMAWeightType volume) :
-      _index(index), _volume(volume){};
+    _index(index), _volume(volume){};
   /** @brief Index of the cell*/
   CoMMAIndexType _index;
   /** @brief Volume*/
@@ -74,7 +74,7 @@ public:
    *  @param[in] root A Node which is the root of the Tree
    */
   explicit Tree(std::shared_ptr<NodeType> &root) :
-      _root(root) {}
+    _root(root) {}
 
   /** @brief Destructor */
   ~Tree() = default;

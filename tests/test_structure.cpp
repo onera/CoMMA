@@ -47,10 +47,7 @@ SCENARIO("Test of a structure", "[structure]") {
     // Check the effective length
     WHEN("We try to access to the member variables") {
       class test :
-          public Agglomerator_Biconnected<
-            CoMMAIndexT,
-            CoMMAWeightT,
-            CoMMAIntT> {
+        public Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
       public:
         test(
           shared_ptr<DualGraphT> &graph,
@@ -58,14 +55,14 @@ SCENARIO("Test of a structure", "[structure]") {
           shared_ptr<SeedsPoolT> &seeds_pool,
           CoMMAIntT dimension
         ) :
-            Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-              graph,
-              cc_graph,
-              seeds_pool,
-              CoMMANeighbourhoodT::EXTENDED,
-              FC_ITER,
-              dimension
-            ){};
+          Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+            graph,
+            cc_graph,
+            seeds_pool,
+            CoMMANeighbourhoodT::EXTENDED,
+            FC_ITER,
+            dimension
+          ){};
 
         CoMMAIntT test_variable() { return (this->_threshold_card); }
       };
@@ -78,10 +75,7 @@ SCENARIO("Test of a structure", "[structure]") {
     }
     WHEN("We try to access to Define the cardinality") {
       class test :
-          public Agglomerator_Biconnected<
-            CoMMAIndexT,
-            CoMMAWeightT,
-            CoMMAIntT> {
+        public Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> {
       public:
         test(
           shared_ptr<DualGraphT> &graph,
@@ -89,14 +83,14 @@ SCENARIO("Test of a structure", "[structure]") {
           shared_ptr<SeedsPoolT> &seeds_pool,
           CoMMAIntT dimension
         ) :
-            Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-              graph,
-              cc_graph,
-              seeds_pool,
-              CoMMANeighbourhoodT::EXTENDED,
-              FC_ITER,
-              dimension
-            ){};
+          Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+            graph,
+            cc_graph,
+            seeds_pool,
+            CoMMANeighbourhoodT::EXTENDED,
+            FC_ITER,
+            dimension
+          ){};
 
         CoMMAIntT thres() { return (_threshold_card); }
 
