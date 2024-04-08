@@ -15,6 +15,7 @@
 #include <optional>
 #include <vector>
 
+#include "CoMMA/Args.h"
 #include "CoMMA/CoMMA.h"
 #include "DualGraphExamples.h"
 #include "catch2/catch.hpp"
@@ -125,6 +126,9 @@ SCENARIO("Test of main function", "[structure]") {
   // main function
   GIVEN("A simple 4x4 Cartesian mesh") {
     const DualGEx_quad_4 Data = DualGEx_quad_4();
+    const vector<CoMMAIndexT> ref_results(
+      {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3}
+    );
     WHEN("We agglomerate with neighbourhood priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = false, build_lines = true, odd_length = true,
@@ -156,22 +160,38 @@ SCENARIO("Test of main function", "[structure]") {
         max_card
       );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        REQUIRE(fc2cc[0] == 0);
-        REQUIRE(fc2cc[1] == 0);
-        REQUIRE(fc2cc[2] == 1);
-        REQUIRE(fc2cc[3] == 1);
-        REQUIRE(fc2cc[4] == 0);
-        REQUIRE(fc2cc[5] == 0);
-        REQUIRE(fc2cc[6] == 1);
-        REQUIRE(fc2cc[7] == 1);
-        REQUIRE(fc2cc[8] == 2);
-        REQUIRE(fc2cc[9] == 2);
-        REQUIRE(fc2cc[10] == 3);
-        REQUIRE(fc2cc[11] == 3);
-        REQUIRE(fc2cc[12] == 2);
-        REQUIRE(fc2cc[13] == 2);
-        REQUIRE(fc2cc[14] == 3);
-        REQUIRE(fc2cc[15] == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
+      }
+    }
+    // It is the same test as above but we use the API with parameter classes
+    WHEN("We agglomerate with neighbourhood priority and the parameter API") {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
+      const bool is_aniso = false, correction = true;
+      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph(
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.n_bnd_faces,
+        Data.dim
+      );
+      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo(
+        goal_card, min_card, max_card, correction, seed
+      );
+      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(is_aniso
+      );
+      // Agglomerate
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        graph, agglo, aniso, fc2cc, alines_idx, alines
+      );
+      THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
       }
     }
     WHEN("We agglomerate with boundary priority") {
@@ -205,22 +225,8 @@ SCENARIO("Test of main function", "[structure]") {
         max_card
       );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        REQUIRE(fc2cc[0] == 0);
-        REQUIRE(fc2cc[1] == 0);
-        REQUIRE(fc2cc[2] == 1);
-        REQUIRE(fc2cc[3] == 1);
-        REQUIRE(fc2cc[4] == 0);
-        REQUIRE(fc2cc[5] == 0);
-        REQUIRE(fc2cc[6] == 1);
-        REQUIRE(fc2cc[7] == 1);
-        REQUIRE(fc2cc[8] == 2);
-        REQUIRE(fc2cc[9] == 2);
-        REQUIRE(fc2cc[10] == 3);
-        REQUIRE(fc2cc[11] == 3);
-        REQUIRE(fc2cc[12] == 2);
-        REQUIRE(fc2cc[13] == 2);
-        REQUIRE(fc2cc[14] == 3);
-        REQUIRE(fc2cc[15] == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
       }
     }
     WHEN("We agglomerate with neighbourhood priority one point initialization"
@@ -255,22 +261,8 @@ SCENARIO("Test of main function", "[structure]") {
         max_card
       );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        REQUIRE(fc2cc[0] == 0);
-        REQUIRE(fc2cc[1] == 0);
-        REQUIRE(fc2cc[2] == 1);
-        REQUIRE(fc2cc[3] == 1);
-        REQUIRE(fc2cc[4] == 0);
-        REQUIRE(fc2cc[5] == 0);
-        REQUIRE(fc2cc[6] == 1);
-        REQUIRE(fc2cc[7] == 1);
-        REQUIRE(fc2cc[8] == 2);
-        REQUIRE(fc2cc[9] == 2);
-        REQUIRE(fc2cc[10] == 3);
-        REQUIRE(fc2cc[11] == 3);
-        REQUIRE(fc2cc[12] == 2);
-        REQUIRE(fc2cc[13] == 2);
-        REQUIRE(fc2cc[14] == 3);
-        REQUIRE(fc2cc[15] == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
       }
     }
     WHEN("We agglomerate with boundary priority one point initialization") {
@@ -304,27 +296,89 @@ SCENARIO("Test of main function", "[structure]") {
         max_card
       );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
-        REQUIRE(fc2cc[0] == 0);
-        REQUIRE(fc2cc[1] == 0);
-        REQUIRE(fc2cc[2] == 1);
-        REQUIRE(fc2cc[3] == 1);
-        REQUIRE(fc2cc[4] == 0);
-        REQUIRE(fc2cc[5] == 0);
-        REQUIRE(fc2cc[6] == 1);
-        REQUIRE(fc2cc[7] == 1);
-        REQUIRE(fc2cc[8] == 2);
-        REQUIRE(fc2cc[9] == 2);
-        REQUIRE(fc2cc[10] == 3);
-        REQUIRE(fc2cc[11] == 3);
-        REQUIRE(fc2cc[12] == 2);
-        REQUIRE(fc2cc[13] == 2);
-        REQUIRE(fc2cc[14] == 3);
-        REQUIRE(fc2cc[15] == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
       }
     }
   }
   GIVEN("a 4by7 quad 2D mesh which has 4 anisotropic lines") {
     const DualGEx_aniso_3cell Data = DualGEx_aniso_3cell();
+    const vector<CoMMAIndexT> ref_results({0, 0, 1, 1, 1, 8, 8, 3, 3, 3,
+                                           2, 2, 5, 5, 4, 5, 4, 9, 9, 7,
+                                           6, 7, 6, 7, 8, 8, 9, 9});
+    // The following tests are basically a copy of test_isoagglo but with the
+    // main function
+    WHEN(
+      "We agglomerate with anisotropy activated, boundary priority and, full initialization"
+    ) {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
+      const bool aniso = true, build_lines = true, odd_length = ODD_LINE_LENGTH,
+                 correction = true;
+      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      const CoMMAWeightT aniso_thr = 4.;
+      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.anisoCompliantCells,
+        Data.n_bnd_faces,
+        build_lines,
+        aniso,
+        odd_length,
+        aniso_thr,
+        seed,
+        fc2cc,
+        alines_idx,
+        alines,
+        correction,
+        Data.dim,
+        goal_card,
+        min_card,
+        max_card
+      );
+      THEN("The result is 4 anisotropic lines and 2 isotropic cells") {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
+      }
+    }
+    WHEN(
+      "We agglomerate with anisotropy activated, boundary priority and, full initialization using the parameter classes"
+    ) {
+      vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
+      const bool is_aniso = true, build_lines = true,
+                 odd_length = ODD_LINE_LENGTH, correction = true;
+      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      const CoMMAWeightT aniso_thr = 4.;
+      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph(
+        Data.adjMatrix_row_ptr,
+        Data.adjMatrix_col_ind,
+        Data.adjMatrix_areaValues,
+        Data.volumes,
+        Data.centers,
+        Data.weights,
+        Data.n_bnd_faces,
+        Data.dim
+      );
+      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo(
+        goal_card, min_card, max_card, correction, seed
+      );
+      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(
+        is_aniso, build_lines, odd_length, aniso_thr, Data.anisoCompliantCells
+      );
+      // Agglomerate
+      agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        graph, agglo, aniso, fc2cc, alines_idx, alines
+      );
+      THEN("The result is 4 anisotropic lines and 2 isotropic cells") {
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
+          REQUIRE(fc2cc[i] == ref_results[i]);
+      }
+    }
     WHEN("We agglomerate with bad argument") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
       const bool aniso = true, build_lines = true, odd_length = true,
