@@ -75,14 +75,14 @@ public:
     const std::vector<CoMMAIntType> &n_bnd_faces,
     CoMMAIntType dimension
   ) :
-      connectivity_indices(connectivity_indices),
-      connectivity(connectivity),
-      connectivity_weights(connectivity_weights),
-      volumes(volumes),
-      centers(centers),
-      priority_weights(priority_weights),
-      n_bnd_faces(n_bnd_faces),
-      dimension(dimension) {}
+    connectivity_indices(connectivity_indices),
+    connectivity(connectivity),
+    connectivity_weights(connectivity_weights),
+    volumes(volumes),
+    centers(centers),
+    priority_weights(priority_weights),
+    n_bnd_faces(n_bnd_faces),
+    dimension(dimension) {}
 };
 
 /** @brief Convenient class holding arguments for the parametrization of the
@@ -155,14 +155,14 @@ public:
     CoMMAIntType fc_choice_iter = 1,
     CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
   ) :
-      goal_card(goal_card),
-      min_card(min_card),
-      max_card(max_card),
-      correction(correction),
-      seed_ordering_type(seed_ordering_type),
-      singular_card_thresh(singular_card_thresh),
-      fc_choice_iter(fc_choice_iter),
-      neighbourhood_type(neighbourhood_type) {}
+    goal_card(goal_card),
+    min_card(min_card),
+    max_card(max_card),
+    correction(correction),
+    seed_ordering_type(seed_ordering_type),
+    singular_card_thresh(singular_card_thresh),
+    fc_choice_iter(fc_choice_iter),
+    neighbourhood_type(neighbourhood_type) {}
 };
 
 /** @brief Convenient class holding arguments for the parametrization of the
@@ -214,12 +214,12 @@ public:
     std::optional<CoMMAWeightType> threshold_anisotropy = std::nullopt,
     std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt
   ) :
-      is_anisotropic(is_anisotropic),
-      anisotropicCompliantCells(anisotropicCompliantCells),
-      build_lines(build_lines.value_or(true)),
-      odd_line_length(odd_line_length.value_or(true)),
-      threshold_anisotropy(threshold_anisotropy.value_or(4.)),
-      max_cells_in_line(max_cells_in_line) {}
+    is_anisotropic(is_anisotropic),
+    anisotropicCompliantCells(anisotropicCompliantCells),
+    build_lines(build_lines.value_or(true)),
+    odd_line_length(odd_line_length.value_or(true)),
+    threshold_anisotropy(threshold_anisotropy.value_or(4.)),
+    max_cells_in_line(max_cells_in_line) {}
 };
 
 }  // end namespace comma

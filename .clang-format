@@ -21,6 +21,7 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakInheritanceList: AfterColon
 BreakConstructorInitializers: AfterColon
 BreakStringLiterals: false
+ConstructorInitializerIndentWidth: 2
 EmptyLineBeforeAccessModifier: Always
 FixNamespaceComments: true
 PackConstructorInitializers: NextLineOnly

@@ -56,16 +56,16 @@ public:
     const std::vector<DGEWeightT> &volumes,
     const std::vector<std::vector<DGEWeightT>> &centers
   ) :
-      dim{},
-      nb_fc{},
-      adjMatrix_row_ptr(adjMatrix_row_ptr),
-      adjMatrix_col_ind(adjMatrix_col_ind),
-      adjMatrix_areaValues(adjMatrix_areaValues),
-      n_bnd_faces(n_bnd_faces),
-      volumes(volumes),
-      centers(centers),
-      anisoCompliantCells(n_bnd_faces.size()),
-      weights(n_bnd_faces.size()) {
+    dim{},
+    nb_fc{},
+    adjMatrix_row_ptr(adjMatrix_row_ptr),
+    adjMatrix_col_ind(adjMatrix_col_ind),
+    adjMatrix_areaValues(adjMatrix_areaValues),
+    n_bnd_faces(n_bnd_faces),
+    volumes(volumes),
+    centers(centers),
+    anisoCompliantCells(n_bnd_faces.size()),
+    weights(n_bnd_faces.size()) {
     dim = static_cast<DGEIntT>(centers[0].size());
     nb_fc = static_cast<DGEIndexT>(n_bnd_faces.size());
     for (DGEIndexT i = 0; i < this->nb_fc; i++) {
@@ -79,8 +79,8 @@ public:
 class DualGEx : public BaseDualGEx {
 public:
   DualGEx() :
-      BaseDualGEx(
-        // clang-format off
+    BaseDualGEx(
+      // clang-format off
         /* row_ptr */ {0, 2,  5,  9, 13, 17, 21, 24, 28, 32, 35, 38, 41, 44, 46, 49, 52, 54, 56, 59, 62, 64},
         /* col_ind */ { 1,  9,  0,  2,  6,  1,  3,  5,  8,  2,  4,  7, 11,  3,  5, 12, 14,  2,  4,  6, 15,  1,  5, 16, 3,  8, 10, 19,  2,  7,  9, 18,  0,  8, 17,  7, 11, 20,  3, 10, 12,  4, 11, 13, 12, 14,  4, 13,15,  5, 14, 16,  6, 15,  9, 18,  8, 17, 19,  7, 18, 20, 10, 19},
         /* areas   */ {1.41421356, 1, 1, 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},

@@ -59,15 +59,15 @@ public:
   Coarse_Cell_Container(
     DualGraphPtr &fc_graph, const CoMMAIntType singular_card_thresh
   ) :
-      _ccs(),
-      _fc_graph(fc_graph),
-      _cc_counter(0),
-      _fc_2_cc(fc_graph->_number_of_cells, std::nullopt),
-      _is_fc_agglomerated(fc_graph->_number_of_cells, false),
-      _sing_card_thresh(singular_card_thresh),
-      _nb_of_agglomerated_fc(0),
-      _delayed_cc(),
-      _singular_cc() {}
+    _ccs(),
+    _fc_graph(fc_graph),
+    _cc_counter(0),
+    _fc_2_cc(fc_graph->_number_of_cells, std::nullopt),
+    _is_fc_agglomerated(fc_graph->_number_of_cells, false),
+    _sing_card_thresh(singular_card_thresh),
+    _nb_of_agglomerated_fc(0),
+    _delayed_cc(),
+    _singular_cc() {}
 
   /** @brief Destructor */
   ~Coarse_Cell_Container() = default;
