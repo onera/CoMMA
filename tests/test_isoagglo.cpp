@@ -53,6 +53,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       fc_graph,
       cc_graph,
       seeds_pool,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
       FC_ITER,
       Data.dim
@@ -96,6 +97,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       fc_graph,
       cc_PF_graph,
       seeds_pool,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
       FC_ITER,
       Data.dim
@@ -220,6 +222,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       fc_graph,
       cc_graph,
       seeds_pool,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
       FC_ITER,
       Data.dim
@@ -279,6 +282,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       fc_graph,
       cc_PF_graph,
       seeds_pool,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
       FC_ITER,
       Data.dim
@@ -428,6 +432,7 @@ final CC)
         fc_graph,
         cc_graph,
         seeds_pool,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         fc_iter,
         Data.dim
@@ -451,6 +456,7 @@ final CC)
         fc_graph,
         cc_graph,
         seeds_pool,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         fc_iter,
         Data.dim

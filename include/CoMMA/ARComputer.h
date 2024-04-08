@@ -256,6 +256,14 @@ protected:
     new_feats._min_edge = sqrt(min_edge);
   }
 
+  /** @brief Compute the barycenter and update the features accordingly
+   * @param[in] i_fc Index of the fine cell to add to the coarse cell
+   * @param[in] cc_feats Features of the current coarse cell
+   * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
+   * coarse cell
+   * @param[out] new_feats Features of the (final) coarse cell
+   * @return the barycenter
+   */
   inline std::vector<RealT> compute_and_update_barycenter(
     const IndexT i_fc,
     const CellFeatures<IndexT, RealT, IntT> &cc_feats,
@@ -263,8 +271,8 @@ protected:
     CellFeatures<IndexT, RealT, IntT> &new_feats
   ) const {
     new_feats._sum_centers = cc_feats._sum_centers;
-    const auto &cur_c = this->_graph->centers[i_fc];
-    decltype(cur_c) bary(cur_c.size());
+    const auto &cur_c = this->_graph->_centers[i_fc];
+    std::vector<RealT> bary(cur_c.size());
     const RealT ov_N = 1. / (fc_of_cc.size() + 1);
     for (auto i = decltype(cur_c.size()){0}; i < cur_c.size(); ++i) {
       new_feats._sum_centers[i] += this->_graph->_volumes[i_fc] * cur_c[i];
@@ -313,18 +321,18 @@ protected:
  * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
  */
 template<typename IndexT, typename RealT, typename IntT, int dim>
-class ARDiamOverEstimatedRadius : public ARComputer<IndexT, RealT, IntT> {
+class ARDiamOverRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
-  explicit ARDiamOverEstimatedRadius(
+  explicit ARDiamOverRadius(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
     ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
-  ~ARDiamOverEstimatedRadius() override = default;
+  ~ARDiamOverRadius() override = default;
 
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio, number of face shared with other cells
@@ -479,18 +487,18 @@ public:
  * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
  */
 template<typename IndexT, typename RealT, typename IntT, int dim = 2>
-class ARExternalWeightOverMeasure : public ARComputer<IndexT, RealT, IntT> {
+class ARExternalWeightOverRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
-  explicit ARExternalWeightOverMeasure(
+  explicit ARExternalWeightOverRadius(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
     ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
-  ~ARExternalWeightOverMeasure() override = default;
+  ~ARExternalWeightOverRadius() override = default;
 
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio, number of face shared with other cells
@@ -519,7 +527,7 @@ public:
       i_fc, cc_feats, fc_of_cc, shared_faces, new_feats
     );
     // Compute AR
-    aspect_ratio = this->compute_AR();
+    aspect_ratio = this->compute_AR(new_feats);
   }
 
 protected:
@@ -601,16 +609,18 @@ public:
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  */
 template<typename IndexT, typename RealT, typename IntT>
-class ARMinCut : public ARComputer<IndexT, RealT, IntT> {
+class ARExternalWeights : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
-  explicit ARMinCut(std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph) :
+  explicit ARExternalWeights(
+    std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
+  ) :
     ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
-  ~ARMinCut() override = default;
+  ~ARExternalWeights() override = default;
 
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio, number of face shared with other cells
@@ -650,18 +660,18 @@ public:
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  */
 template<typename IndexT, typename RealT, typename IntT>
-class ARInternalWeight : public ARComputer<IndexT, RealT, IntT> {
+class AROverInternalWeights : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
    * @param[in] graph Dual_Graph object that determines the connectivity
    */
-  explicit ARInternalWeight(
+  explicit AROverInternalWeights(
     std::shared_ptr<Dual_Graph<IndexT, RealT, IntT>> graph
   ) :
     ARComputer<IndexT, RealT, IntT>(graph){};
 
   /** @brief Destructor*/
-  ~ARInternalWeight() override = default;
+  ~AROverInternalWeights() override = default;
 
   /** @brief Computes features of the CC obtained by adding a given fine cell.
    * The features are Aspect-Ratio, number of face shared with other cells

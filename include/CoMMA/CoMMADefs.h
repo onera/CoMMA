@@ -57,6 +57,30 @@ enum CoMMASeedsPoolT : CoMMAIntT {
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
 };
 
+/** @brief Type of aspect-ratio */
+enum CoMMAAspectRatioT : CoMMAIntT {
+  /** @brief  */
+  DIAMETER_OVER_RADIUS = 0,
+  /** @brief  */
+  DIAMETER_OVER_MIN_EDGE,
+  /** @brief  */
+  DIAMETER,
+  /** @brief  */
+  ONE_OVER_MEASURE,
+  /** @brief  */
+  ONE_OVER_INTERNAL_WEIGHTS,
+  /** @brief  */
+  PERIMETER_OVER_RADIUS,
+  /** @brief  */
+  EXTERNAL_WEIGHTS,
+  /** @brief  */
+  MAX_BARY_DIST_OVER_RADIUS,
+  /** @brief  */
+  MAX_OVER_MIN_BARY_DIST,
+  /** @brief  */
+  ALGEBRAIC_PERIMETER_OVER_MEASURE,
+};
+
 }  // end namespace comma
 
 #endif

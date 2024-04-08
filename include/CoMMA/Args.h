@@ -112,6 +112,8 @@ public:
    * CoMMASeedsPoolT)
    */
   CoMMAIntType seed_ordering_type;
+  /** @brief Type of aspect ratio */
+  CoMMAAspectRatioT aspect_ratio;
   /** @brief Cardinality below which a coarse is considered as singular, hence,
    * compliant for correction */
   CoMMAIntType singular_card_thresh;
@@ -135,7 +137,8 @@ public:
    * @param[in] correction Whether to apply correction step (avoid isolated
    * cells) after agglomeration
    * @param[in] seed_ordering_type Type of ordering for the seeds of the coarse
-   * cells (see \ref CoMMASeedsPoolT):
+   * cells (see \ref CoMMASeedsPoolT)
+   * @param[in] aspect_ratio Type of aspect-ratio (see \ref CoMMAAspectRatioT)
    * @param[in] singular_card_thresh (optional, default=1) Cardinality below
    * which a coarse is considered as singular, hence, compliant for correction
    * @param[in] fc_choice_iter (optional, default=1) Number of iterations
@@ -151,6 +154,7 @@ public:
     CoMMAIntType max_card,
     bool correction,
     CoMMAIntType seed_ordering_type,
+    CoMMAAspectRatioT aspect_ratio = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
     CoMMAIntType singular_card_thresh = 1,
     CoMMAIntType fc_choice_iter = 1,
     CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
@@ -160,6 +164,7 @@ public:
     max_card(max_card),
     correction(correction),
     seed_ordering_type(seed_ordering_type),
+    aspect_ratio(aspect_ratio),
     singular_card_thresh(singular_card_thresh),
     fc_choice_iter(fc_choice_iter),
     neighbourhood_type(neighbourhood_type) {}

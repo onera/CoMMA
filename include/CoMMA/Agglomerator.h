@@ -815,27 +815,25 @@ public:
   /** @brief Creator responsible for neighborhood objects */
   std::shared_ptr<NeighbourhoodCreatorBaseType> _neigh_crtor;
 
-// DEBUG
-#if 0
   /** @brief Object computing the aspect-ratio of a coarse cell */
   std::shared_ptr<ARComputer<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
-    _AR_computer;
-#endif
+    _ar_computer;
 
   /** @brief Constructor. The constructor takes as arguments the same arguments
    * of the father and in this way activates also the constructor of the base
    * class.
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
-   *  @param[in] cc_graph Container for the coarse cells
-   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
+   * @param[in] cc_graph Container for the coarse cells
+   * @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
    * cells should be considered when agglomerating
-   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * @param[in] aspect_ratio Type of aspect-ratio (see \ref CoMMAAspectRatioT)
+   * @param[in] neighbourhood_type Type of neighbourhood to use when growing a
    * coarse cell. See \ref CoMMANeighbourhoodT for more details.
-   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing
+   * @param[in] fc_iter Number of iterations allowed for the algorithm choosing
    * which fine cell to add next. The cost grows exponentially, hence use small
    * values.
-   *  @param[in] dimension Dimension of the problem
+   * @param[in] dimension Dimension of the problem
    */
   Agglomerator_Isotropic(
     std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
@@ -845,6 +843,7 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
+    CoMMAAspectRatioT aspect_ratio,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
@@ -858,21 +857,102 @@ public:
     else
       _neigh_crtor = std::make_shared<NeighbourhoodCreatorPFType>();
 
-// DEBUG
-#if 0
-    if (dimension == 2)
-      _AR_computer = std::make_shared<ARDiamOverEstimatedRadius<
-        CoMMAIndexType,
-        CoMMAWeightType,
-        CoMMAIntType,
-        2>>(graph);
-    else
-      _AR_computer = std::make_shared<ARDiamOverEstimatedRadius<
-        CoMMAIndexType,
-        CoMMAWeightType,
-        CoMMAIntType,
-        3>>(graph);
-#endif
+    switch (aspect_ratio) {
+      case DIAMETER_OVER_RADIUS: {
+        if (dimension == 2) {
+          _ar_computer = std::make_shared<
+            ARDiamOverRadius<CoMMAIndexType, CoMMAWeightType, CoMMAIntType, 2>>(
+            graph
+          );
+        } else {
+          _ar_computer = std::make_shared<
+            ARDiamOverRadius<CoMMAIndexType, CoMMAWeightType, CoMMAIntType, 3>>(
+            graph
+          );
+        }
+        break;
+      }
+      case DIAMETER_OVER_MIN_EDGE: {
+        _ar_computer = std::make_shared<
+          ARDiamOverMinEdge<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+          graph
+        );
+        break;
+      }
+      case DIAMETER: {
+        _ar_computer = std::make_shared<
+          ARDiameter<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(graph);
+        break;
+      }
+      case ONE_OVER_MEASURE: {
+        _ar_computer = std::make_shared<
+          AROverMeasure<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(graph);
+        break;
+      }
+      case ONE_OVER_INTERNAL_WEIGHTS: {
+        _ar_computer = std::make_shared<
+          AROverInternalWeights<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+          graph
+        );
+        break;
+      }
+      case PERIMETER_OVER_RADIUS: {
+        if (dimension == 2) {
+          _ar_computer = std::make_shared<ARExternalWeightOverRadius<
+            CoMMAIndexType,
+            CoMMAWeightType,
+            CoMMAIntType,
+            2>>(graph);
+        } else {
+          _ar_computer = std::make_shared<ARExternalWeightOverRadius<
+            CoMMAIndexType,
+            CoMMAWeightType,
+            CoMMAIntType,
+            3>>(graph);
+        }
+        break;
+      }
+      case EXTERNAL_WEIGHTS: {
+        _ar_computer = std::make_shared<
+          ARExternalWeights<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>(
+          graph
+        );
+        break;
+      }
+      case MAX_BARY_DIST_OVER_RADIUS: {
+        if (dimension == 2) {
+          _ar_computer = std::make_shared<ARMaxBaryDistanceOverRadius<
+            CoMMAIndexType,
+            CoMMAWeightType,
+            CoMMAIntType,
+            2>>(graph);
+        } else {
+          _ar_computer = std::make_shared<ARMaxBaryDistanceOverRadius<
+            CoMMAIndexType,
+            CoMMAWeightType,
+            CoMMAIntType,
+            3>>(graph);
+        }
+        break;
+      }
+      case MAX_OVER_MIN_BARY_DIST: {
+        _ar_computer = std::make_shared<ARMaxOverMinBaryDistance<
+          CoMMAIndexType,
+          CoMMAWeightType,
+          CoMMAIntType>>(graph, 1e-12);
+        break;
+      }
+      case ALGEBRAIC_PERIMETER_OVER_MEASURE: {
+        _ar_computer = std::make_shared<ARExternalWeightOverRadius<
+          CoMMAIndexType,
+          CoMMAWeightType,
+          CoMMAIntType,
+          1>>(graph);
+        break;
+      }
+      default:
+        throw std::invalid_argument("CoMMA - Error: Unknown aspect-ratio type");
+    } /* Switch */
   }
 
   /** @brief Destructor*/
@@ -1091,17 +1171,18 @@ class Agglomerator_Biconnected :
 public:
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Isotropic.
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
-   *  @param[in] cc_graph Container for the coarse cells
-   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
+   * @param[in] cc_graph Container for the coarse cells
+   * @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
    * cells should be considered when agglomerating
-   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * @param[in] aspect_ratio Type of aspect-ratio (see \ref CoMMAAspectRatioT)
+   * @param[in] neighbourhood_type Type of neighbourhood to use when growing a
    * coarse cell. See \ref CoMMANeighbourhoodT for more details.
-   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing
+   * @param[in] fc_iter Number of iterations allowed for the algorithm choosing
    * which fine cell to add next. The cost grows exponentially, hence use small
    * values.
-   *  @param[in] dimension Dimension of the problem
+   * @param[in] dimension Dimension of the problem
    */
   Agglomerator_Biconnected(
     std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
@@ -1111,12 +1192,19 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
+    CoMMAAspectRatioT aspect_ratio,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
     Agglomerator_Isotropic<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-      graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
+      graph,
+      cc_graph,
+      seeds_pool,
+      aspect_ratio,
+      neighbourhood_type,
+      fc_iter,
+      dimension
     ) {
     // no particular constructor
   }
@@ -1433,11 +1521,7 @@ public:
       CoMMAWeightType new_ar = std::numeric_limits<CoMMAWeightType>::min();
       CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         new_min_ar_cc_feats{};
-// DEBUG
-#if 0
-      this->_AR_computer->compute_and_update_features(
-#endif
-      this->compute_next_cc_features(
+      this->_ar_computer->compute_and_update_features(
         i_fc,
         cc_feats,
         s_of_fc_for_current_cc,
@@ -1518,17 +1602,18 @@ class Agglomerator_Iterative :
 public:
   /** @brief Constructor of the class. No specific implementation, it
    * instantiates the base class Agglomerator_Biconnected
-   *  @param[in] graph Dual_Graph object that determines the connectivity
+   * @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
-   *  @param[in] cc_graph Container for the coarse cells
-   *  @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
+   * @param[in] cc_graph Container for the coarse cells
+   * @param[in] seeds_pool Seeds_Pool object giving the order in which the fine
    * cells should be considered when agglomerating
-   *  @param[in] neighbourhood_type Type of neighbourhood to use when growing a
+   * @param[in] aspect_ratio Type of aspect-ratio (see \ref CoMMAAspectRatioT)
+   * @param[in] neighbourhood_type Type of neighbourhood to use when growing a
    * coarse cell. See \ref CoMMANeighbourhoodT for more details.
-   *  @param[in] fc_iter Number of iterations allowed for the algorithm choosing
+   * @param[in] fc_iter Number of iterations allowed for the algorithm choosing
    * which fine cell to add next. The cost grows exponentially, hence use small
    * values.
-   *  @param[in] dimension Dimension of the problem
+   * @param[in] dimension Dimension of the problem
    */
   Agglomerator_Iterative(
     std::shared_ptr<Dual_Graph<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
@@ -1538,12 +1623,19 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
+    CoMMAAspectRatioT aspect_ratio,
     CoMMAIntType neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
     Agglomerator_Biconnected<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-      graph, cc_graph, seeds_pool, neighbourhood_type, fc_iter, dimension
+      graph,
+      cc_graph,
+      seeds_pool,
+      aspect_ratio,
+      neighbourhood_type,
+      fc_iter,
+      dimension
     ) {
     // no particular constructor
   }
@@ -1595,11 +1687,7 @@ public:
       CoMMAIntType inner_max_faces_in_common{0};
       CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
         inner_min_ar_cc_feats{};
-// DEBUG
-#if 0
-      this->_AR_computer->compute_and_update_features(
-#endif
-      this->compute_next_cc_features(
+      this->_ar_computer->compute_and_update_features(
         i_fc,
         cc_feats,
         s_of_fc_for_current_cc,

@@ -24,6 +24,9 @@ constexpr comma::CoMMAIntT FC_ITER = 1;
 
 constexpr bool ODD_LINE_LENGTH = true;
 
+constexpr comma::CoMMAAspectRatioT DEFAULT_AR =
+  comma::CoMMAAspectRatioT::DIAMETER_OVER_RADIUS;
+
 // Some containers have contains, but only in C++20; others has find, others
 // neither So we set up one function for all
 #define CONTAINS_(cont, obj) \
