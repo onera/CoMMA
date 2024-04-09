@@ -148,7 +148,7 @@ void agglomerate_one_level(
   CoMMAWeightType threshold_anisotropy,
 
   // Seed ordering
-  const CoMMAIntType seed_ordering_type,
+  CoMMASeedsPoolT seed_ordering_type,
 
   // Outputs
   std::vector<CoMMAIndexType> &fc_to_cc,  // Out
@@ -164,7 +164,7 @@ void agglomerate_one_level(
   CoMMAIntType singular_card_thresh = 1,
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
   CoMMAIntType fc_choice_iter = 1,
-  const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
+  CoMMANeighbourhoodT neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
 ) {
   // NOTATION
   //======================================

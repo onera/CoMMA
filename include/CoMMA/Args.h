@@ -111,7 +111,7 @@ public:
   /** @brief Type of ordering for the seeds of the coarse cells (see \ref
    * CoMMASeedsPoolT)
    */
-  CoMMAIntType seed_ordering_type;
+  CoMMASeedsPoolT seed_ordering_type{};
   /** @brief Cardinality below which a coarse is considered as singular, hence,
    * compliant for correction */
   CoMMAIntType singular_card_thresh;
@@ -122,7 +122,7 @@ public:
   /** @brief Type of neighbourhood to use when growing a coarse cell. See \ref
    * CoMMANeighbourhoodT for more details.
    */
-  CoMMAIntType neighbourhood_type;
+  CoMMANeighbourhoodT neighbourhood_type{};
 
   /** @brief Default constructor */
   AgglomerationArgs() = default;
@@ -150,10 +150,10 @@ public:
     CoMMAIntType min_card,
     CoMMAIntType max_card,
     bool correction,
-    CoMMAIntType seed_ordering_type,
+    CoMMASeedsPoolT seed_ordering_type,
     CoMMAIntType singular_card_thresh = 1,
     CoMMAIntType fc_choice_iter = 1,
-    CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
+    CoMMANeighbourhoodT neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
   ) :
     goal_card(goal_card),
     min_card(min_card),
