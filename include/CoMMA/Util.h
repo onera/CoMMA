@@ -253,6 +253,37 @@ inline std::unordered_set<KeyT> d_keys_to_set(
   return s_neighbours_of_seed;
 }
 
+/** @brief Given the connectivity of the graph, filter cells keeping only those
+ * with the desired number of edges / neighbours.
+ * @tparam IndexT Type for indices.
+ * @tparam IntT Type for integers.
+ * @param[in] indices Indices of the connectivity of the graph.
+ * @param[in] n_bnd_faces Number of boundary faces per cell.
+ * @param[in] allowed Set with the accepted number of edges.
+ * @param[out] filtered Filtered cells.
+ */
+template<typename IndexT, typename IntT>
+inline void filter_cells_by_n_edges(
+  const std::vector<IndexT> &indices,
+  const std::vector<IntT> &n_bnd_faces,
+  const std::unordered_set<IntT> allowed,
+  std::vector<IndexT> &filtered
+) {
+  const auto n_cells = static_cast<IndexT>(n_bnd_faces.size());
+  filtered.clear();
+  filtered.reserve(n_cells);
+  //
+  for (auto c = decltype(n_cells){0}; c < n_cells; ++c) {
+    if (allowed.find(
+          static_cast<IntT>(indices[c + 1] - indices[c] + n_bnd_faces[c])
+        )
+        != allowed.end())
+      filtered.emplace_back(c);
+  }  // for c
+  //
+  filtered.shrink_to_fit();
+}
+
 /** @brief Compute a neighbourhood-base wall-distance, that is, the distance of
  * a given cell from a wall is the number of cells though which the minimum path
  * starting from the cell and ending at the wall. For example, in a Cartesian

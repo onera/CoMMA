@@ -19,9 +19,12 @@
 
 #include <optional>
 #include <type_traits>
+#include <unordered_set>
+#include <vector>
 
 #include "CoMMA/CoMMAConfig.h"
 #include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Util.h"
 
 #define CoMMA_xstr(s) CoMMA_str(s)
 #define CoMMA_str(s) #s
@@ -189,7 +192,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       const vector<CoMMAIndexT> &neighs,
       const vector<CoMMAIndexT> &wall
     ) {
-      vector<CoMMASignedIndexT> dist{};
+      std::vector<CoMMASignedIndexT> dist{};
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMASignedIndexT>(
         neigh_idxs, neighs, wall, dist
       );
@@ -199,6 +202,23 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "neigh_idxs"_a,
     "neighs"_a,
     "wall"_a
+  );
+
+  module_handle.def(
+    "filter_cells_by_n_edges",
+    [](
+      const std::vector<CoMMAIndexT> &indices,
+      const std::vector<CoMMAIntT> &n_bnd_faces,
+      const std::unordered_set<CoMMAIntT> allowed
+    ) {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges(indices, n_bnd_faces, allowed, filtered);
+      return filtered;
+    },
+    "Filter cells according to their number of edges",
+    "indices"_a,
+    "n_bnd_face"_a,
+    "allowed"_a
   );
 }
 

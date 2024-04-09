@@ -171,6 +171,8 @@ n_bnd_faces = np.array(mesh.boundary_cells, dtype=CoMMAInt)
 
 # The mesh is hybrid with squares in the BL and triangles else where
 squares = [i for i, cell in enumerate(mesh.cells) if len(cell) == 4]
+# Or
+# squares = CoMMA.filter_cells_by_n_edges(adjMatrix_row_ptr, n_bnd_faces, {4})
 foil = [i for i in squares if mesh.boundary_cells[i] > 0]
 foil_distance = compute_neighbourhood_wall_distance(
     adjMatrix_row_ptr, adjMatrix_col_ind, foil
