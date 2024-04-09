@@ -16,11 +16,9 @@ agglomeration with `CoMMA` and export the result.
 import os
 from math import floor, log  # noqa: F401
 
+import CoMMA
 import meshio
-
-# import dualGPy.Utils as dGut
 import numpy as np
-from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
@@ -47,13 +45,16 @@ def limit_line_length(idxs, cells, max_cells_in_line):
     return ret_idxs, ret_cells
 
 
-neigh_type_types = ["Extended", "Pure front advancing"]
+neigh_type_types = {
+    CoMMA.Neighbourhood.EXTENDED: "Extended",
+    CoMMA.Neighbourhood.PURE_FRONT: "Pure front advancing",
+}
 
 seed_ordering_types = {
-    0: "Boundary priority",
-    1: "Neighbourhood priority",
-    10: "Boundary priority with point initialization",
-    11: "Neighbourhood priority with point initialization",
+    CoMMA.SeedsPool.BOUNDARY: "Boundary priority",
+    CoMMA.SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
+    CoMMA.SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
+    CoMMA.SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
 }
 
 # USER PARAMETERS
@@ -69,10 +70,18 @@ minCard, goalCard, maxCard = 2, 4, 6
 correction = True
 threshold_anisotropy = -4.0
 odd_line_length = True
-neigh_type = 0  # 0 = Extended (standard), 1 = Pure front advancing
-seed_order = 0  # 0 = Boundary priority, 1 = Neighbourhood priority,
-#                 10 = Boundary priority with point initialization
-#                 11 = Neighbourhood priority with point initialization
+# Seeds pool ordering choices:
+# - SeedsPool.BOUNDARY:  Boundary priority, 0
+# - SeedsPool.NEIGHBOURHOOD: Neighbourhood priority, 1
+# - SeedsPool.BOUNDARY_POINT_INIT: Boundary priority with point initialization,
+#       10
+# - SeedsPool.NEIGHBOURHOOD_POINT_INIT: Neighbourhood priority with point
+#       initialization, 11
+seed_order = CoMMA.SeedsPool.BOUNDARY
+# Neighbourhood type choices:
+# - Neighbourhood.EXTENDED: Extended, 0, standard
+# - Neighbourhood.PURE_FRONT: Pure front advancing, 1, experimental
+neigh_type = CoMMA.Neighbourhood.EXTENDED
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
 # Max cells in an anisotropic line
@@ -126,9 +135,9 @@ print(f" * Shuffle coarse-cell IDs: {shuffle_coarse}")
 print()
 
 # CoMMATypes-like
-CoMMAIndex = np.uint  # Unsigned long
-CoMMAInt = int
-CoMMAWeight = np.double
+CoMMAIndex = np.uint  # We could have used CoMMA.IndexType = Unsigned long
+CoMMAInt = CoMMA.IntType  # = int
+CoMMAWeight = CoMMA.WeightType  # = double
 
 outname = (
     "raebis_"
@@ -175,8 +184,8 @@ weights = np.reciprocal(1.0 + foil_distance.astype(float))
 
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
 
-agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
-agglomerationLines = np.array([0], dtype=CoMMAIndex)
+aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
+aniso_lines = np.array([0], dtype=CoMMAIndex)
 print("OK")
 
 # Storage for the all the agglomeration levels
@@ -227,20 +236,20 @@ for level in range(agglomeration_levels):
             # max_cells = (
             # n_cells_in_aniso_line * 2**(agglomeration_levels - 1 - level)
             # )
-            line_length = agglomerationLines_Idx[1] - agglomerationLines_Idx[0]
+            line_length = aniso_lines_idx[1] - aniso_lines_idx[0]
             # Reduce by 2 so that the excluded cells will be agglomerated with
             # their neighbours (also excluded) and form a nice coarse with
             # cardinality 4
             max_cells = max(2, line_length - 2)
             # Closest smallest power of 2, since the agglomeration is always 2-by-2
             # max_cells = 2**int(floor(log(line_length, 2)))
-            agglomerationLines_Idx, agglomerationLines = limit_line_length(
-                agglomerationLines_Idx, agglomerationLines, max_cells
+            aniso_lines_idx, aniso_lines = limit_line_length(
+                aniso_lines_idx, aniso_lines, max_cells
             )
         print("OK")
 
     print(" - CoMMA call...", flush=True, end="")
-    fc_to_cc, agglomerationLines_Idx, agglomerationLines = agglomerate_one_level(
+    fc_to_cc, aniso_lines_idx, aniso_lines = CoMMA.agglomerate_one_level(
         adjMatrix_row_ptr,
         adjMatrix_col_ind,
         adjMatrix_areaValues,
@@ -255,8 +264,8 @@ for level in range(agglomeration_levels):
         threshold_anisotropy,
         seed_order,
         fc_to_cc,
-        agglomerationLines_Idx,
-        agglomerationLines,
+        aniso_lines_idx,
+        aniso_lines,
         correction,
         dimension,
         goalCard,
@@ -283,8 +292,8 @@ for level in range(agglomeration_levels):
     if level == 0:
         out_data["anisotropic_lines"] = prepare_meshio_celldata(
             assign_anisotropic_line_data_to_cells(
-                agglomerationLines_Idx,
-                agglomerationLines,
+                aniso_lines_idx,
+                aniso_lines,
                 fc_to_cc,
                 modulo_renumbering=renumber_coarse,
                 shuffle=shuffle_coarse,

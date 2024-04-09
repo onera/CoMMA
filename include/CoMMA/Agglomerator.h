@@ -791,7 +791,7 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
-    CoMMAIntType neighbourhood_type,
+    CoMMANeighbourhoodT neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
@@ -1062,7 +1062,7 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
-    CoMMAIntType neighbourhood_type,
+    CoMMANeighbourhoodT neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
@@ -1501,7 +1501,7 @@ public:
       cc_graph,
     std::shared_ptr<Seeds_Pool<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>>
       seeds_pool,
-    CoMMAIntType neighbourhood_type,
+    CoMMANeighbourhoodT neighbourhood_type,
     CoMMAIntType fc_iter,
     CoMMAIntType dimension = 3
   ) :
