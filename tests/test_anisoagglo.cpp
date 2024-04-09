@@ -564,8 +564,8 @@ the line grows vertically
   const auto max_w = *max_element(Data.weights.begin(), Data.weights.end());
   for (const auto idx : bottom_layer)
     Data.weights[idx] = max_w + 1.;
-  const CoMMAWeightT aniso_thresh{-4.
-  };  // Negative so that every cell is considered
+  // Negative so that every cell is considered
+  const CoMMAWeightT aniso_thresh{-4.};
   const bool build_lines = true;
   const vector<CoMMAIndexT> agglomerationLines_Idx{};
   const vector<CoMMAIndexT> agglomerationLines{};
@@ -597,14 +597,6 @@ the line grows vertically
     MAX_CELLS_IN_LINE,
     Data.dim
   );
-  const Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
-    fc_graph,
-    cc_graph,
-    seeds_pool,
-    CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
-  );
   WHEN("We agglomerate the mesh") {
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
     THEN("All cells have been agglomerated") {
@@ -617,7 +609,7 @@ the line grows vertically
         ))
       );
     }
-    const auto f2c = cc_graph->_fc_2_cc;
+    const auto &f2c = cc_graph->_fc_2_cc;
     THEN("The anisotropic coarse cells at the bottom are of cardinality 2") {
       REQUIRE(CHECK2CELLS(f2c, 0, 1));
       REQUIRE(CHECK2CELLS(f2c, 2, 3));

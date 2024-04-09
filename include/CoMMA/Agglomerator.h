@@ -586,8 +586,6 @@ protected:
       // Flag to determine if we arrived at the end of an extreme of a line
       bool opposite_direction_check = false;
       // Info about growth direction
-      std::vector<CoMMAWeightType> prev_cen =
-        this->_fc_graph->_centers[seed];  // OK copy
       std::vector<CoMMAWeightType> prev_dir(pts_dim);
       bool empty_line = true;
       // Start the check from the seed
@@ -595,10 +593,6 @@ protected:
       while (!end) {
         // for the seed (that is updated each time end!= true) we fill the
         // neighbours and the weights
-        const std::vector<CoMMAIndexType> v_neighbours =
-          this->_fc_graph->get_neighbours(seed);
-        const std::vector<CoMMAWeightType> v_w_neighbours =
-          this->_fc_graph->get_weights(seed);
         auto n_it = this->_fc_graph->neighbours_cbegin(seed);
         auto w_it = this->_fc_graph->weights_cbegin(seed);
         // std::vector of the candidates to continue the line
@@ -610,7 +604,7 @@ protected:
           for (; n_it != this->_fc_graph->neighbours_cend(seed);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
-              candidates.emplace(*w_it, *n_it);
+              candidates.emplace(*n_it, *w_it);
             }
           }  // end for loop
         } else {
@@ -621,11 +615,14 @@ protected:
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               std::vector<CoMMAWeightType> cur_dir(pts_dim);
               get_direction<CoMMAWeightType>(
-                prev_cen, this->_fc_graph->_centers[*n_it], cur_dir
+                this->_fc_graph->_centers[seed],
+                this->_fc_graph->_centers[*n_it],
+                cur_dir
               );
               const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
-              if (!dot_deviate<CoMMAWeightType>(dot))
-                candidates.emplace(fabs(dot), *n_it);
+              if (!dot_deviate<CoMMAWeightType>(dot)) {
+                candidates.emplace(*n_it, fabs(dot));
+              }
             }
           }  // end for loop
         }
@@ -638,7 +635,8 @@ protected:
            * (we overwrite the seed). This is not proper
            */
           // update the seed to the actual candidate
-          seed = candidates.begin()->second;
+          const auto old_seed = seed;
+          seed = candidates.begin()->first;
           if (!opposite_direction_check) {
             cur_line->push_back(seed);
           } else {
@@ -646,9 +644,11 @@ protected:
           }
           to_treat[seed] = false;
           empty_line = false;
-          const auto &cur_cen = this->_fc_graph->_centers[seed];
-          get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
-          prev_cen = cur_cen;  // this->_fc_graph->_centers[seed];
+          get_direction<CoMMAWeightType>(
+            this->_fc_graph->_centers[old_seed],
+            this->_fc_graph->_centers[seed],
+            prev_dir
+          );
           if (!primal_dir.has_value()) primal_dir = prev_dir;
         }
         // 0 candidate, we are at the end of the line or at the end of one
@@ -666,17 +666,21 @@ protected:
               if (to_treat[*it]) {
                 std::vector<CoMMAWeightType> cur_dir(pts_dim);
                 get_direction<CoMMAWeightType>(
-                  prev_cen, this->_fc_graph->_centers[*it], cur_dir
+                  this->_fc_graph->_centers[seed],
+                  this->_fc_graph->_centers[*it],
+                  cur_dir
                 );
                 const auto dot =
                   dot_product<CoMMAWeightType>(prev_dir, cur_dir);
-                if (!dot_deviate<CoMMAWeightType>(dot))
-                  candidates.emplace(fabs(dot), *it);
+                if (!dot_deviate<CoMMAWeightType>(dot)) {
+                  candidates.emplace(*it, fabs(dot));
+                }
               }
             }  // end for loop
             if (!candidates.empty()) {
               // We found one! Keep going!
-              seed = candidates.begin()->second;
+              const auto old_seed = seed;
+              seed = candidates.begin()->first;
               if (!opposite_direction_check) {
                 cur_line->push_back(seed);
               } else {
@@ -684,23 +688,40 @@ protected:
               }
               to_treat[seed] = false;
               empty_line = false;
-              const auto &cur_cen = this->_fc_graph->_centers[seed];
-              get_direction<CoMMAWeightType>(prev_cen, cur_cen, prev_dir);
-              prev_cen = cur_cen;  // this->_fc_graph->_centers[seed];
+              get_direction<CoMMAWeightType>(
+                this->_fc_graph->_centers[old_seed],
+                this->_fc_graph->_centers[seed],
+                prev_dir
+              );
               if (!primal_dir.has_value()) primal_dir = prev_dir;
             } else {
-              if (opposite_direction_check) {
-                end = true;
-              } else {
+              // If we have already looked at the other side of the line or if
+              // the primal seed is where we are already at, there is nothing
+              // that we can do
+              if (!opposite_direction_check && seed != primal_seed) {
                 seed = primal_seed;
+                // The check sed != prima_seed should ensure that
+                // primal_dir != null
                 prev_dir = primal_dir.value();
-                prev_cen = this->_fc_graph->_centers[seed];
                 opposite_direction_check = true;
+              } else {
+                end = true;
               }
             }
           }  // End last step check on neighbours
           else {
-            end = true;
+            // If we have already looked at the other side of the line or if
+            // the primal seed is where we are already at, there is nothing
+            // that we can do
+            if (!opposite_direction_check && seed != primal_seed) {
+              seed = primal_seed;
+              // The check sed != prima_seed should ensure that
+              // primal_dir != null
+              prev_dir = primal_dir.value();
+              opposite_direction_check = true;
+            } else {
+              end = true;
+            }
           }
         }  // End of no candidates case
       }  // End of a line
