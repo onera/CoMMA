@@ -15,10 +15,9 @@ at the bottom, then agglomerates it and draws the mesh including the computed
 anisotropic lines using the related features of `dualGPy`.
 """
 # import dualGPy.Utils as dGut
+import CoMMA
 import meshio
-import meshio as mio
 import numpy as np
-from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
@@ -28,13 +27,16 @@ from comma_tools import (
     prepare_meshio_celldata,
 )
 
-neigh_type_types = ["Extended", "Pure front advancing"]
+neigh_type_types = {
+    CoMMA.Neighbourhood.EXTENDED: "Extended",
+    CoMMA.Neighbourhood.PURE_FRONT: "Pure front advancing",
+}
 
 seed_ordering_types = {
-    0: "Boundary priority",
-    1: "Neighbourhood priority",
-    10: "Boundary priority with point initialization",
-    11: "Neighbourhood priority with point initialization",
+    CoMMA.SeedsPool.BOUNDARY: "Boundary priority",
+    CoMMA.SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
+    CoMMA.SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
+    CoMMA.SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
 }
 
 # USER PARAMETERS
@@ -48,10 +50,18 @@ minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 1.5
 odd_line_length = True
-neigh_type = 0  # 0 = Extended (standard), 1 = Pure front advancing
-seed_order = 0  # 0  = Boundary priority, 1 = Neighbourhood priority,
-#                 10 = Boundary priority with point initialization
-#                 11 = Neighbourhood priority with point initialization
+# Seeds pool ordering choices:
+# - SeedsPool.BOUNDARY:  Boundary priority, 0
+# - SeedsPool.NEIGHBOURHOOD: Neighbourhood priority, 1
+# - SeedsPool.BOUNDARY_POINT_INIT: Boundary priority with point initialization,
+#       10
+# - SeedsPool.NEIGHBOURHOOD_POINT_INIT: Neighbourhood priority with point
+#       initialization, 11
+seed_order = CoMMA.SeedsPool.BOUNDARY
+# Neighbourhood type choices:
+# - Neighbourhood.EXTENDED: Extended, 0, standard
+# - Neighbourhood.PURE_FRONT: Pure front advancing, 1, experimental
+neigh_type = CoMMA.Neighbourhood.EXTENDED
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
 # Max cells in an anisotropic line
@@ -98,9 +108,9 @@ print(f" * Shuffle coarse-cell IDs: {shuffle_coarse}")
 print()
 
 # CoMMATypes-like
-CoMMAIndex = np.uint  # Unsigned long
-CoMMAInt = int
-CoMMAWeight = np.double
+CoMMAIndex = np.uint  # We could have used CoMMA.IndexType = Unsigned long
+CoMMAInt = CoMMA.IntType  # = int
+CoMMAWeight = CoMMA.WeightType  # = double
 
 print("Creating mesh and dual graph...", flush=True, end="")
 ref_pts = np.zeros((7, 2), dtype=float)
@@ -126,7 +136,7 @@ assert len(btlxnd) == cells.shape[0]
 for i, nd in enumerate(btlxnd):
     cells[i, :] += nd
 # print(cells)
-mio_m = mio.Mesh(points=points, cells={"quad": cells})
+mio_m = meshio.Mesh(points=points, cells={"quad": cells})
 # mio_m.write('aniso_3cell.msh', file_format = "ansys")
 m = Mesh2D(mio_m)
 m.get_boundary_faces()
@@ -145,19 +155,19 @@ volumes = np.array(m.volume, dtype=CoMMAWeight)
 nb_fc = len(g.vertex) - 1
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
-agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
-agglomerationLines = np.array([0], dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
+aniso_lines = np.array([0], dtype=CoMMAIndex)
 
 print("CoMMA call...", flush=True, end="")
-fc_to_cc_res, alines_Idx, alines = agglomerate_one_level(
+fc_to_cc_res, alines_idx, alines = CoMMA.agglomerate_one_level(
     adjMatrix_row_ptr,
     adjMatrix_col_ind,
     adjMatrix_areaValues,
     volumes,
     m.centers.astype(CoMMAWeight, copy=False),
     weights,
-    arrayOfFineAnisotropicCompliantCells,
+    anisoCompliantCells,
     n_bnd_faces,
     build_lines,
     anisotropic,
@@ -165,8 +175,8 @@ fc_to_cc_res, alines_Idx, alines = agglomerate_one_level(
     threshold_anisotropy,
     seed_order,
     fc_to_cc,
-    agglomerationLines_Idx,
-    agglomerationLines,
+    aniso_lines_idx,
+    aniso_lines,
     correction,
     dimension,
     goalCard,
@@ -187,7 +197,7 @@ agglo = prepare_meshio_agglomeration_data(
     shuffle=shuffle_coarse,
 )
 out_lines = prepare_meshio_celldata(
-    assign_anisotropic_line_data_to_cells(alines_Idx, alines, fc_to_cc),
+    assign_anisotropic_line_data_to_cells(alines_idx, alines, fc_to_cc),
     m.mesh.cells,
 )
 
@@ -195,16 +205,16 @@ f2c = np.asarray(fc_to_cc_res, dtype=int)
 # Building a dictionary 'aniso line ID' : [fine cells in line]
 # One-liner:
 dic = {
-    i: np.flatnonzero(np.isin(f2c, alines[alines_Idx[i] : alines_Idx[i + 1]]))
-    for i in range(len(alines_Idx) - 1)
+    i: np.flatnonzero(np.isin(f2c, alines[alines_idx[i] : alines_idx[i + 1]]))
+    for i in range(len(alines_idx) - 1)
 }
 # Second option, better explained
 # dic = {}
 # # For every line...
-# for i in range(len(alines_Idx)-1):
+# for i in range(len(alines_idx)-1):
 #     mask = np.full(len(fc_to_cc_res), False)
 #     # For every coarse cell in the line...
-#     for cc in alines[alines_Idx[i]:alines_Idx[i+1]]:
+#     for cc in alines[alines_idx[i]:alines_idx[i+1]]:
 #         # Take all the fine cells that are in the coarse cell
 #         mask |= f2c == cc
 #     dic[i] = np.flatnonzero(mask)

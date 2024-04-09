@@ -40,7 +40,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 3;
@@ -178,7 +178,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;
@@ -307,7 +307,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     const CoMMAIndexT seed = 24;
     CoMMAIntT neigh_order = 2;

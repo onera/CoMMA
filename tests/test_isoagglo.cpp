@@ -36,7 +36,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -191,7 +191,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -373,7 +373,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     const shared_ptr<CCContainerT> cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);

@@ -43,7 +43,7 @@ shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
   Data.centers,
   Data.n_bnd_faces,
   Data.dim,
-  Data.arrayOfFineAnisotropicCompliantCells
+  Data.anisoCompliantCells
 );
 shared_ptr<CCContainerT> const cc_graph =
   make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -142,7 +142,7 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -190,7 +190,7 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
       Data.centers,
       Data.n_bnd_faces,
       Data.dim,
-      Data.arrayOfFineAnisotropicCompliantCells
+      Data.anisoCompliantCells
     );
     shared_ptr<CCContainerT> const cc_graph =
       make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -365,7 +365,7 @@ GIVEN(
     Data.centers,
     Data.n_bnd_faces,
     Data.dim,
-    Data.arrayOfFineAnisotropicCompliantCells
+    Data.anisoCompliantCells
   );
   shared_ptr<CCContainerT> const cc_graph =
     make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -462,7 +462,7 @@ GIVEN(
     Data.centers,
     Data.n_bnd_faces,
     Data.dim,
-    Data.arrayOfFineAnisotropicCompliantCells
+    Data.anisoCompliantCells
   );
   shared_ptr<CCContainerT> const cc_graph =
     make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -604,7 +604,7 @@ the line grows vertically
     Data.centers,
     Data.n_bnd_faces,
     Data.dim,
-    Data.arrayOfFineAnisotropicCompliantCells
+    Data.anisoCompliantCells
   );
   shared_ptr<CCContainerT> const cc_graph =
     make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -702,7 +702,7 @@ GIVEN(
     Data.centers,
     Data.n_bnd_faces,
     Data.dim,
-    Data.arrayOfFineAnisotropicCompliantCells
+    Data.anisoCompliantCells
   );
   shared_ptr<CCContainerT> const cc_graph =
     make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -805,7 +805,7 @@ GIVEN(
     Data.centers,
     Data.n_bnd_faces,
     Data.dim,
-    Data.arrayOfFineAnisotropicCompliantCells
+    Data.anisoCompliantCells
   );
   shared_ptr<CCContainerT> const cc_graph =
     make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
@@ -919,7 +919,7 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,
@@ -983,7 +983,7 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         Data.volumes,
         Data.centers,
         Data.weights,
-        Data.arrayOfFineAnisotropicCompliantCells,
+        Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
         aniso,

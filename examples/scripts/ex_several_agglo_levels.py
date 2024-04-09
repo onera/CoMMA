@@ -13,23 +13,25 @@
 Create a mesh with the default constructor of `dualGPy`, apply several levels of
 agglomeration with `CoMMA` and export the result.
 """
-import meshio
-
 # import dualGPy.Utils as dGut
+import CoMMA
+import meshio
 import numpy as np
-from CoMMA import agglomerate_one_level
 from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D, Mesh3D
 
 from comma_tools import build_coarse_graph, prepare_meshio_agglomeration_data
 
-neigh_type_types = ["Extended", "Pure front advancing"]
+neigh_type_types = {
+    CoMMA.Neighbourhood.EXTENDED: "Extended",
+    CoMMA.Neighbourhood.PURE_FRONT: "Pure front advancing",
+}
 
 seed_ordering_types = {
-    0: "Boundary priority",
-    1: "Neighbourhood priority",
-    10: "Boundary priority with point initialization",
-    11: "Neighbourhood priority with point initialization",
+    CoMMA.SeedsPool.BOUNDARY: "Boundary priority",
+    CoMMA.SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
+    CoMMA.SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
+    CoMMA.SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
 }
 
 # USER PARAMETERS
@@ -49,10 +51,18 @@ else:
 correction = False
 threshold_anisotropy = 4.0
 odd_line_length = True
-neigh_type = 0  # 0 = Extended (standard), 1 = Pure front advancing
-seed_order = 0  # 0 = Boundary priority, 1 = Neighbourhood priority,
-#                 10 = Boundary priority with point initialization
-#                 11 = Neighbourhood priority with point initialization
+# Seeds pool ordering choices:
+# - SeedsPool.BOUNDARY:  Boundary priority, 0
+# - SeedsPool.NEIGHBOURHOOD: Neighbourhood priority, 1
+# - SeedsPool.BOUNDARY_POINT_INIT: Boundary priority with point initialization,
+#       10
+# - SeedsPool.NEIGHBOURHOOD_POINT_INIT: Neighbourhood priority with point
+#       initialization, 11
+seed_order = CoMMA.SeedsPool.BOUNDARY
+# Neighbourhood type choices:
+# - Neighbourhood.EXTENDED: Extended, 0, standard
+# - Neighbourhood.PURE_FRONT: Pure front advancing, 1, experimental
+neigh_type = CoMMA.Neighbourhood.EXTENDED
 # Threshold cardinality for a coarse cell to be considered singular
 sing_card = 1
 # Max cells in an anisotropic line
@@ -102,9 +112,9 @@ print(f" * Shuffle coarse-cell IDs: {shuffle_coarse}")
 print()
 
 # CoMMATypes-like
-CoMMAIndex = np.uint  # Unsigned long
-CoMMAInt = int
-CoMMAWeight = np.double
+CoMMAIndex = np.uint  # We could have used CoMMA.IndexType = Unsigned long
+CoMMAInt = CoMMA.IntType  # = int
+CoMMAWeight = CoMMA.WeightType  # = double
 
 print("Creating mesh and dual graph...", flush=True, end="")
 outname = (
@@ -134,9 +144,9 @@ centers = mesh.centers.copy()
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 n_bnd_faces = np.array(mesh.boundary_cells, dtype=CoMMAInt)
 fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
-arrayOfFineAnisotropicCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
-agglomerationLines_Idx = np.array([0], dtype=CoMMAIndex)
-agglomerationLines = np.array([0], dtype=CoMMAIndex)
+anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
+aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
+aniso_lines = np.array([0], dtype=CoMMAIndex)
 
 # Storage for the all the agglomeration levels
 out_data = {}
@@ -170,18 +180,18 @@ for level in range(agglomeration_levels):
         nb_cc = n_bnd_faces.shape[0]
         weights = np.arange(start=nb_cc - 1, stop=0, step=-1, dtype=CoMMAWeight)
         fc_to_cc = np.empty(nb_cc, dtype=CoMMAIndex)
-        arrayOfFineAnisotropicCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
+        anisoCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
         print("OK")
 
     print(" - CoMMA call...", flush=True, end="")
-    fc_to_cc, agglomerationLines_Idx, agglomerationLines = agglomerate_one_level(
+    fc_to_cc, aniso_lines_idx, aniso_lines = CoMMA.agglomerate_one_level(
         adjMatrix_row_ptr,
         adjMatrix_col_ind,
         adjMatrix_areaValues,
         volumes,
         centers,
         weights,
-        arrayOfFineAnisotropicCompliantCells,
+        anisoCompliantCells,
         n_bnd_faces,
         build_lines,
         anisotropic,
@@ -189,8 +199,8 @@ for level in range(agglomeration_levels):
         threshold_anisotropy,
         seed_order,
         fc_to_cc,
-        agglomerationLines_Idx,
-        agglomerationLines,
+        aniso_lines_idx,
+        aniso_lines,
         correction,
         dimension,
         goalCard,

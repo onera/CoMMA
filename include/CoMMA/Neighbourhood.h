@@ -74,10 +74,10 @@ public:
     const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
     const std::vector<CoMMAWeightType> &weights
   ) :
-      _s_neighbours_of_seed(std::move(s_neighbours_of_seed)),
-      _weights(weights),
-      _s_fc(),
-      _candidates() {}
+    _s_neighbours_of_seed(std::move(s_neighbours_of_seed)),
+    _weights(weights),
+    _s_fc(),
+    _candidates() {}
 
   /** @brief Copy constructor */
   Neighbourhood(
@@ -149,7 +149,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Neighbourhood_Extended :
-    public Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using NeighbourhoodBaseType =
@@ -172,9 +172,9 @@ public:
     const std::unordered_set<CoMMAIndexType> &s_neighbours_of_seed,
     const std::vector<CoMMAWeightType> &weights
   ) :
-      Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights
-      ) {}
+    Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      s_neighbours_of_seed, weights
+    ) {}
 
   /** @brief Copy constructor */
   Neighbourhood_Extended(
@@ -237,7 +237,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class Neighbourhood_Pure_Front :
-    public Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using NeighbourhoodBaseType =
@@ -262,11 +262,11 @@ public:
     const std::vector<CoMMAWeightType> &weights,
     CoMMAIntType dimension
   ) :
-      Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
-        s_neighbours_of_seed, weights
-      ),
-      _q_neighs_w_weights(),
-      _dimension(dimension) {}
+    Neighbourhood<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
+      s_neighbours_of_seed, weights
+    ),
+    _q_neighs_w_weights(),
+    _dimension(dimension) {}
 
   /** @brief Copy constructor */
   Neighbourhood_Pure_Front(const Neighbourhood_Pure_Front<
@@ -438,7 +438,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class NeighbourhoodExtendedCreator :
-    public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using CreatorBaseType =
@@ -453,7 +453,7 @@ public:
 
   /** @brief Constructor */
   NeighbourhoodExtendedCreator() :
-      CreatorBaseType() {}
+    CreatorBaseType() {}
 
   /** @brief Destructor */
   ~NeighbourhoodExtendedCreator() override = default;
@@ -506,7 +506,7 @@ template<
   typename CoMMAWeightType,
   typename CoMMAIntType>
 class NeighbourhoodPureFrontCreator :
-    public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
+  public NeighbourhoodCreator<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> {
 public:
   /** @brief Base class */
   using CreatorBaseType =
@@ -521,7 +521,7 @@ public:
 
   /** @brief Constructor */
   NeighbourhoodPureFrontCreator() :
-      CreatorBaseType() {}
+    CreatorBaseType() {}
 
   /** @brief Destructor */
   ~NeighbourhoodPureFrontCreator() override = default;

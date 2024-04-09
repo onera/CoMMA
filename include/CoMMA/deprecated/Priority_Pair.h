@@ -42,7 +42,7 @@ public:
    *  @param b Second element
    */
   Priority_Pair(const A &a, const B &b) :
-      _p(a, b){};
+    _p(a, b){};
 
   /** @brief Destructor */
   ~Priority_Pair() = default;
