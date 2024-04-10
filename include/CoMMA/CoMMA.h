@@ -149,7 +149,7 @@ void agglomerate_one_level(
   CoMMAWeightType threshold_anisotropy,
 
   // Seed ordering
-  const CoMMAIntType seed_ordering_type,
+  CoMMASeedsPoolT seed_ordering_type,
 
   // Outputs
   std::vector<CoMMAIndexType> &fc_to_cc,  // Out
@@ -166,7 +166,7 @@ void agglomerate_one_level(
   CoMMAIntType singular_card_thresh = 1,
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
   CoMMAIntType fc_choice_iter = 1,
-  const CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
+  CoMMANeighbourhoodT neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
 ) {
   // NOTATION
   //======================================
@@ -354,14 +354,14 @@ void agglomerate_one_level(
         fc_graph,
         cc_graph,
         seeds_pool,
+        dimension,
         threshold_anisotropy,
         agglomerationLines_Idx,
         agglomerationLines,
         priority_weights,
         build_anisotropic_lines,
         odd_line_length,
-        max_cells_in_line,
-        dimension
+        max_cells_in_line
       );
 
     // Agglomerate anisotropic cells only
@@ -372,9 +372,8 @@ void agglomerate_one_level(
     // Put anisotropic lines into the output parameters
     // (Info about level of the line: WARNING! here 1 it means that we give it
     // back lines in the new global index, 0 the old)
-    const CoMMAIntType i_level{1};
     aniso_agg.export_anisotropic_lines(
-      i_level, agglomerationLines_Idx, agglomerationLines
+      1, agglomerationLines_Idx, agglomerationLines
     );
   } else {
     seeds_pool->initialize();
@@ -391,10 +390,10 @@ void agglomerate_one_level(
       fc_graph,
       cc_graph,
       seeds_pool,
+      dimension,
       aspect_ratio,
       neighbourhood_type,
-      fc_choice_iter,
-      dimension
+      fc_choice_iter
     );
   } else {
     agg = std::make_unique<
@@ -402,10 +401,10 @@ void agglomerate_one_level(
       fc_graph,
       cc_graph,
       seeds_pool,
+      dimension,
       aspect_ratio,
       neighbourhood_type,
-      fc_choice_iter,
-      dimension
+      fc_choice_iter
     );
   }
   // Agglomerate

@@ -111,7 +111,7 @@ public:
   /** @brief Type of ordering for the seeds of the coarse cells (see \ref
    * CoMMASeedsPoolT)
    */
-  CoMMAIntType seed_ordering_type;
+  CoMMASeedsPoolT seed_ordering_type{};
   /** @brief Type of aspect ratio */
   CoMMAAspectRatioT aspect_ratio;
   /** @brief Cardinality below which a coarse is considered as singular, hence,
@@ -124,7 +124,7 @@ public:
   /** @brief Type of neighbourhood to use when growing a coarse cell. See \ref
    * CoMMANeighbourhoodT for more details.
    */
-  CoMMAIntType neighbourhood_type;
+  CoMMANeighbourhoodT neighbourhood_type{};
 
   /** @brief Default constructor */
   AgglomerationArgs() = default;
@@ -153,11 +153,11 @@ public:
     CoMMAIntType min_card,
     CoMMAIntType max_card,
     bool correction,
-    CoMMAIntType seed_ordering_type,
+    CoMMASeedsPoolT seed_ordering_type,
     CoMMAAspectRatioT aspect_ratio = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
     CoMMAIntType singular_card_thresh = 1,
     CoMMAIntType fc_choice_iter = 1,
-    CoMMAIntType neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
+    CoMMANeighbourhoodT neighbourhood_type = CoMMANeighbourhoodT::EXTENDED
   ) :
     goal_card(goal_card),
     min_card(min_card),
@@ -201,29 +201,29 @@ public:
   /** @brief Constructor
    * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration.
    * @param[in] anisotropicCompliantCells List of cells which have to be looked
-   * for anisotropy
+   * for anisotropy.
    * @param[in] build_lines Whether lines joining the anisotropic cells should
-   * be built.
+   * be built. Default: true.
    * @param[in] odd_line_length Whether anisotropic lines with odd length are
-   * allowed.
+   * allowed. Default: true.
    * @param[in] threshold_anisotropy Value of the aspect-ratio above which a
-   * cell is considered as anisotropic.
-   * @param[in] max_cells_in_line [Optional] Maximum number of cells in an
-   * anisotropic line.
+   * cell is considered as anisotropic. Default: 4.0
+   * @param[in] max_cells_in_line Maximum number of cells in an anisotropic
+   * line. Default: no limit.
    */
   AnisotropicArgs(
     bool is_anisotropic,
     const std::vector<CoMMAIndexType> &anisotropicCompliantCells,
-    std::optional<bool> build_lines = std::nullopt,
-    std::optional<bool> odd_line_length = std::nullopt,
-    std::optional<CoMMAWeightType> threshold_anisotropy = std::nullopt,
+    bool build_lines = true,
+    bool odd_line_length = true,
+    CoMMAWeightType threshold_anisotropy = 4.,
     std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt
   ) :
     is_anisotropic(is_anisotropic),
     anisotropicCompliantCells(anisotropicCompliantCells),
-    build_lines(build_lines.value_or(true)),
-    odd_line_length(odd_line_length.value_or(true)),
-    threshold_anisotropy(threshold_anisotropy.value_or(4.)),
+    build_lines(build_lines),
+    odd_line_length(odd_line_length),
+    threshold_anisotropy(threshold_anisotropy),
     max_cells_in_line(max_cells_in_line) {}
 };
 

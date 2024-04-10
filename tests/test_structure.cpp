@@ -60,10 +60,10 @@ SCENARIO("Test of a structure", "[structure]") {
             graph,
             cc_graph,
             seeds_pool,
+            dimension,
             DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
-            FC_ITER,
-            dimension
+            FC_ITER
           ){};
 
         CoMMAIntT test_variable() { return (this->_threshold_card); }
@@ -89,10 +89,10 @@ SCENARIO("Test of a structure", "[structure]") {
             graph,
             cc_graph,
             seeds_pool,
+            dimension,
             DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
-            FC_ITER,
-            dimension
+            FC_ITER
           ){};
 
         CoMMAIntT thres() { return (_threshold_card); }

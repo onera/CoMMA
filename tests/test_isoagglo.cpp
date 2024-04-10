@@ -53,10 +53,10 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
       DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
-      FC_ITER,
-      Data.dim
+      FC_ITER
     );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
@@ -97,10 +97,10 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       fc_graph,
       cc_PF_graph,
       seeds_pool,
+      Data.dim,
       DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
-      FC_ITER,
-      Data.dim
+      FC_ITER
     );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
@@ -222,10 +222,10 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
       DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
-      FC_ITER,
-      Data.dim
+      FC_ITER
     );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
@@ -282,10 +282,10 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       fc_graph,
       cc_PF_graph,
       seeds_pool,
+      Data.dim,
       DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
-      FC_ITER,
-      Data.dim
+      FC_ITER
     );
     // COMPLETE THE TEST
     WHEN("We agglomerate the mesh with a pure front-advancing agglomerator") {
@@ -432,10 +432,10 @@ final CC)
         fc_graph,
         cc_graph,
         seeds_pool,
+        Data.dim,
         DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
-        fc_iter,
-        Data.dim
+        fc_iter
       );
       agg.set_agglomeration_parameter(card, card, card);
       auto cc =
@@ -456,10 +456,10 @@ final CC)
         fc_graph,
         cc_graph,
         seeds_pool,
+        Data.dim,
         DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
-        fc_iter,
-        Data.dim
+        fc_iter
       );
       agg.set_agglomeration_parameter(card, card, card);
       auto cc =

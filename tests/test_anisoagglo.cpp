@@ -52,14 +52,14 @@ Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
   fc_graph,
   cc_graph,
   seeds_pool,
+  Data.dim,
   aniso_thresh,
   agglomerationLines_Idx,
   agglomerationLines,
   Data.weights,
   build_lines,
   ODD_LINE_LENGTH,
-  MAX_CELLS_IN_LINE,
-  Data.dim
+  MAX_CELLS_IN_LINE
 );
 
 WHEN(
@@ -101,14 +101,14 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
       aniso_thresh,
       agglomerationLines_Idx,
       agglomerationLines,
       Data.weights,
       build_lines,
       ODD_LINE_LENGTH,
-      MAX_CELLS_IN_LINE,
-      Data.dim
+      MAX_CELLS_IN_LINE
     );
 
     THEN(
@@ -147,14 +147,14 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
       aniso_thresh,
       agglomerationLines_Idx,
       agglomerationLines,
       Data.weights,
       build_lines,
       ODD_LINE_LENGTH,
-      MAX_CELLS_IN_LINE,
-      Data.dim
+      MAX_CELLS_IN_LINE
     );
 
     THEN(
@@ -193,14 +193,14 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
       aniso_thresh,
       agglomerationLines_Idx,
       agglomerationLines,
       Data.weights,
       build_lines,
       ODD_LINE_LENGTH,
-      MAX_CELLS_IN_LINE,
-      Data.dim
+      MAX_CELLS_IN_LINE
     );
 
     THEN(
@@ -252,14 +252,14 @@ GIVEN("We load the anisotropic mesh structure, but only a cell is anisotropic"
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   THEN(
     "There is no need to agglomerate anisotropically since no line can be built"
@@ -304,14 +304,14 @@ GIVEN(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   THEN("Only 3 lines are built") {
     REQUIRE(aniso_agg._nb_lines[0] == 3);
@@ -353,23 +353,23 @@ GIVEN(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
+    FC_ITER
   );
   WHEN("We agglomerate the mesh") {
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -449,23 +449,23 @@ GIVEN(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     false,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
+    FC_ITER
   );
   WHEN("We agglomerate the mesh") {
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -566,8 +566,8 @@ the line grows vertically
   const auto max_w = *max_element(Data.weights.begin(), Data.weights.end());
   for (const auto idx : bottom_layer)
     Data.weights[idx] = max_w + 1.;
-  const CoMMAWeightT aniso_thresh{-4.
-  };  // Negative so that every cell is considered
+  // Negative so that every cell is considered
+  const CoMMAWeightT aniso_thresh{-4.};
   const bool build_lines = true;
   const vector<CoMMAIndexT> agglomerationLines_Idx{};
   const vector<CoMMAIndexT> agglomerationLines{};
@@ -590,23 +590,14 @@ the line grows vertically
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
-  );
-  const Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
-    fc_graph,
-    cc_graph,
-    seeds_pool,
-    DEFAULT_AR,
-    CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   WHEN("We agglomerate the mesh") {
     aniso_agg.agglomerate_one_level(4, 4, 4, Data.weights, false);
@@ -620,7 +611,7 @@ the line grows vertically
         ))
       );
     }
-    const auto f2c = cc_graph->_fc_2_cc;
+    const auto &f2c = cc_graph->_fc_2_cc;
     THEN("The anisotropic coarse cells at the bottom are of cardinality 2") {
       REQUIRE(CHECK2CELLS(f2c, 0, 1));
       REQUIRE(CHECK2CELLS(f2c, 2, 3));
@@ -687,23 +678,23 @@ GIVEN(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     wei,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
+    FC_ITER
   );
   WHEN("We agglomerate the mesh") {
     aniso_agg.agglomerate_one_level(4, 4, 4, wei, false);
@@ -789,23 +780,23 @@ GIVEN(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     aniso_thresh,
     agglomerationLines_Idx,
     agglomerationLines,
     Data.weights,
     build_lines,
     ODD_LINE_LENGTH,
-    MAX_CELLS_IN_LINE,
-    Data.dim
+    MAX_CELLS_IN_LINE
   );
   Agglomerator_Biconnected<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> iso_agg(
     fc_graph,
     cc_graph,
     seeds_pool,
+    Data.dim,
     DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
-    FC_ITER,
-    Data.dim
+    FC_ITER
   );
   WHEN("We initialize the agglomerator") {
     THEN("The anisotropic lines have been read correctly and in order") {
