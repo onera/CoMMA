@@ -4,7 +4,7 @@ var classcomma_1_1_agglomerator___anisotropic =
     [ "AnisotropicLinePtr", "classcomma_1_1_agglomerator___anisotropic.html#a9de6a86962a319a3cd058000fade94e0", null ],
     [ "CoMMAPairType", "classcomma_1_1_agglomerator___anisotropic.html#a221bef52906b0fe45f9957ef52ac85d0", null ],
     [ "CoMMASetOfPairType", "classcomma_1_1_agglomerator___anisotropic.html#a9f4297614846f54366d4561a6428fa4d", null ],
-    [ "Agglomerator_Anisotropic", "classcomma_1_1_agglomerator___anisotropic.html#af168953c042e6db4a008b9ec7cbfa69f", null ],
+    [ "Agglomerator_Anisotropic", "classcomma_1_1_agglomerator___anisotropic.html#aeccd35ffb2739c71190c6e0545b56839", null ],
     [ "~Agglomerator_Anisotropic", "classcomma_1_1_agglomerator___anisotropic.html#aa9bfcf6f6403c97bff9c9bba8673a377", null ],
     [ "agglomerate_one_level", "classcomma_1_1_agglomerator___anisotropic.html#a679ba0b3f517db87b18a0707d71a6432", null ],
     [ "build_anisotropic_lines", "classcomma_1_1_agglomerator___anisotropic.html#a06284c8df3ba73d75790c1b703774b11", null ],
