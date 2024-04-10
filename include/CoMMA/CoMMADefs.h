@@ -41,17 +41,17 @@ enum CoMMANeighbourhoodT : CoMMAIntT {
 
 /** @brief Type of seeds pool ordering */
 enum CoMMASeedsPoolT : CoMMAIntT {
-  /** The number of boundary faces has highest priority */
+  /** The number of boundary faces has higher priority */
   BOUNDARY_PRIORITY = 0,
   /** The neighbourhood has highest priority (neighbours of coarse cells have
-   * priority)
+   * higher priority)
    */
   NEIGHBOURHOOD_PRIORITY = 1,
-  /** The number of boundary faces has highest priority, and initialize with one
+  /** The number of boundary faces has higher priority, and initialize with one
    * point only then let evolve
    */
   BOUNDARY_PRIORITY_ONE_POINT_INIT = 10,
-  /** The neighbourhood has highest priority, and initialize with one point only
+  /** The neighbourhood has higher priority, and initialize with one point only
    * then let evolve
    */
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11

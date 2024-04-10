@@ -13,6 +13,7 @@
 
 #include "CoMMA/CoMMA.h"
 
+#include <pybind11/attr.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -58,30 +59,49 @@ PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.attr("WeightType") = "double";
   module_handle.attr("IntType") = "int";
 
-  // Setting up fictitious sub-modules that will hold only the enum definitions
-  // for better calls, e.g., CoMMA.SeedsPool.BOUNDARY.
-  // This would not be necessary if the enum were inside classes as in the
-  // pybind11 example
-  // https://pybind11.readthedocs.io/en/stable/classes.html?highlight=enum#enumerations-and-internal-types
-  auto submodule_neigh =
-    module_handle.def_submodule("Neighbourhood", "Type of neighbourhood");
-  auto submodule_seeds =
-    module_handle.def_submodule("SeedsPool", "Type of seeds pool ordering");
   // Exporting enumerator to be used in python
   // https://stackoverflow.com/questions/47893832/pybind11-global-level-enum
-  py::enum_<CoMMANeighbourhoodT>(submodule_neigh, "CoMMANeighbourhoodT")
-    .value("EXTENDED", CoMMANeighbourhoodT::EXTENDED)
-    .value("PURE_FRONT", CoMMANeighbourhoodT::PURE_FRONT)
-    .export_values();
-  py::enum_<CoMMASeedsPoolT>(submodule_seeds, "CoMMASeedsPoolT")
-    .value("BOUNDARY", CoMMASeedsPoolT::BOUNDARY_PRIORITY)
-    .value("NEIGHBOURHOOD", CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY)
+  // https://pybind11.readthedocs.io/en/stable/classes.html?highlight=enum#enumerations-and-internal-types
+  // https://github.com/pybind/pybind11/blob/master/tests/test_enum.py
+  // https://github.com/pybind/pybind11/blob/master/tests/test_enum.cpp
+  py::enum_<CoMMANeighbourhoodT>(
+    module_handle,
+    "Neighbourhood",
+    "Type of neighbourhood of a coarse cell considered when agglomerating"
+  )
     .value(
-      "BOUNDARY_POINT_INIT", CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT
+      "EXTENDED",
+      CoMMANeighbourhoodT::EXTENDED,
+      "All neighbours of the coarse cell"
+    )
+    .value(
+      "PURE_FRONT",
+      CoMMANeighbourhoodT::PURE_FRONT,
+      "Only neighbours of the last added fine cell"
+    )
+    .export_values();
+  py::enum_<CoMMASeedsPoolT>(
+    module_handle, "SeedsPool", "Type of seeds pool ordering"
+  )
+    .value(
+      "BOUNDARY",
+      CoMMASeedsPoolT::BOUNDARY_PRIORITY,
+      "The number of boundary faces has higher priority"
+    )
+    .value(
+      "NEIGHBOURHOOD",
+      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY,
+      "Neighbours of already agglomerated coarse cells have higher priority)"
+    )
+    .value(
+      "BOUNDARY_POINT_INIT",
+      CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT,
+      "The number of boundary faces has higher priority, and initialize with one point only then let evolve"
     )
     .value(
       "NEIGHBOURHOOD_POINT_INIT",
-      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT
+      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT,
+      "Neighbours of already agglomerated coarse cells have higher priority, and initialize with one point only then let evolve"
     )
     .export_values();
 
@@ -107,7 +127,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAWeightT threshold_anisotropy,
 
       // Seed ordering
-      CoMMASeedsPoolT seed_ordering_type,
+      CoMMAIntT seed_ordering_type,
 
       // Outputs
       vector<CoMMAIndexT> fc_to_cc,  // Out
@@ -123,7 +143,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT singular_card_thresh,
       optional<CoMMAIndexT> max_cells_in_line,
       CoMMAIntT fc_choice_iter,
-      CoMMANeighbourhoodT type_of_isotropic_agglomeration
+      CoMMAIntT type_of_isotropic_agglomeration
     ) {
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         adjMatrix_row_ptr,
@@ -138,7 +158,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         is_anisotropic,
         odd_line_length,
         threshold_anisotropy,
-        seed_ordering_type,
+        static_cast<CoMMASeedsPoolT>(seed_ordering_type),
         fc_to_cc,
         agglomerationLines_Idx,
         agglomerationLines,
@@ -150,7 +170,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         singular_card_thresh,
         max_cells_in_line,
         fc_choice_iter,
-        type_of_isotropic_agglomeration
+        static_cast<CoMMANeighbourhoodT>(type_of_isotropic_agglomeration)
       );
       return std::make_tuple(
         fc_to_cc, agglomerationLines_Idx, agglomerationLines
