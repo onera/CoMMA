@@ -628,9 +628,9 @@ protected:
           /** @todo Not properly efficient. We risk to do twice the operations
            * (we overwrite the seed). This is not proper
            */
-          const auto old_seed = seed;
           // update the seed to the actual candidate
-          seed = candidates.begin()->second;
+          const auto old_seed = seed;
+          seed = candidates.begin()->first;
           if (!opposite_direction_check) {
             cur_line->push_back(seed);
           } else {
@@ -654,9 +654,9 @@ protected:
               seed, to_treat, max_weights, prev_dir, false, candidates
             );
             if (!candidates.empty()) {
-              const auto old_seed = seed;
               // We found one! Keep going!
-              seed = candidates.begin()->second;
+              const auto old_seed = seed;
+              seed = candidates.begin()->first;
               if (!opposite_direction_check) {
                 cur_line->push_back(seed);
               } else {
@@ -667,17 +667,33 @@ protected:
               this->_fc_graph->get_center_direction(old_seed, seed, prev_dir);
               if (!primal_dir.has_value()) primal_dir = prev_dir;
             } else {
-              if (opposite_direction_check) {
-                end = true;
-              } else {
+              // If we have already looked at the other side of the line or if
+              // the primal seed is where we are already at, there is nothing
+              // that we can do
+              if (!opposite_direction_check && seed != primal_seed) {
                 seed = primal_seed;
+                // The check seed != primal_seed should ensure that
+                // primal_dir != null
                 prev_dir = primal_dir.value();
                 opposite_direction_check = true;
+              } else {
+                end = true;
               }
             }
           }  // End last step check on neighbours
           else {
-            end = true;
+            // If we have already looked at the other side of the line or if
+            // the primal seed is where we are already at, there is nothing
+            // that we can do
+            if (!opposite_direction_check && seed != primal_seed) {
+              seed = primal_seed;
+              // The check seed != primal_seed should ensure that
+              // primal_dir != null
+              prev_dir = primal_dir.value();
+              opposite_direction_check = true;
+            } else {
+              end = true;
+            }
           }
         }  // End of no candidates case
       }  // End of a line
@@ -729,7 +745,7 @@ protected:
     auto w_it = this->_fc_graph->weights_cbegin(seed);
     for (; n_it != this->_fc_graph->neighbours_cend(seed); ++n_it, ++w_it) {
       if (to_treat[*n_it] && this->is_high_coupling(*w_it, max_weights[seed])) {
-        candidates.emplace(*w_it, *n_it);
+        candidates.emplace(*n_it, *w_it);
       }
     }  // end for loop
   }
@@ -766,7 +782,7 @@ protected:
         this->_fc_graph->get_center_direction(seed, *n_it, cur_dir);
         const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
         if (!dot_deviate<CoMMAWeightType>(dot))
-          candidates.emplace(fabs(dot), *n_it);
+          candidates.emplace(*n_it, fabs(dot));
       }
     }  // end for loop
   }
