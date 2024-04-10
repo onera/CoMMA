@@ -251,3 +251,40 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
     }
   }
 }
+
+SCENARIO("Test cell filtering", "[Cell filtering]") {
+  GIVEN("A 2D 4x4 quad mesh") {
+    const DualGEx_quad_4 Data = DualGEx_quad_4();
+    std::vector<CoMMAIndexT> ref_res(Data.nb_fc);
+    std::iota(ref_res.begin(), ref_res.end(), 0);
+    WHEN("We ask for cells with 3 neighbours (that is, none)") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {3}, filtered
+      );
+      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+    }
+    WHEN("We ask for cells with 4 neighbours (that is, all)") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {4}, filtered
+      );
+      std::sort(filtered.begin(), filtered.end());
+      THEN("All cells are in the final results") {
+        REQUIRE(filtered.size() == Data.nb_fc);
+        REQUIRE(ref_res == filtered);
+      }
+    }
+    WHEN("We ask for cells with 3 or 4 neighbours (that is, all)") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {3, 4}, filtered
+      );
+      std::sort(filtered.begin(), filtered.end());
+      THEN("All cells are in the final results") {
+        REQUIRE(filtered.size() == Data.nb_fc);
+        REQUIRE(ref_res == filtered);
+      }
+    }
+  }
+}
