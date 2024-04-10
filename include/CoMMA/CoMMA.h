@@ -352,14 +352,14 @@ void agglomerate_one_level(
         fc_graph,
         cc_graph,
         seeds_pool,
+        dimension,
         threshold_anisotropy,
         agglomerationLines_Idx,
         agglomerationLines,
         priority_weights,
         build_anisotropic_lines,
         odd_line_length,
-        max_cells_in_line,
-        dimension
+        max_cells_in_line
       );
 
     // Agglomerate anisotropic cells only
@@ -370,9 +370,8 @@ void agglomerate_one_level(
     // Put anisotropic lines into the output parameters
     // (Info about level of the line: WARNING! here 1 it means that we give it
     // back lines in the new global index, 0 the old)
-    const CoMMAIntType i_level{1};
     aniso_agg.export_anisotropic_lines(
-      i_level, agglomerationLines_Idx, agglomerationLines
+      1, agglomerationLines_Idx, agglomerationLines
     );
   } else {
     seeds_pool->initialize();
@@ -389,9 +388,9 @@ void agglomerate_one_level(
       fc_graph,
       cc_graph,
       seeds_pool,
+      dimension,
       neighbourhood_type,
-      fc_choice_iter,
-      dimension
+      fc_choice_iter
     );
   } else {
     agg = std::make_unique<
@@ -399,9 +398,9 @@ void agglomerate_one_level(
       fc_graph,
       cc_graph,
       seeds_pool,
+      dimension,
       neighbourhood_type,
-      fc_choice_iter,
-      dimension
+      fc_choice_iter
     );
   }
   // Agglomerate
