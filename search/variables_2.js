@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['iter_5fagglo_5fmax_5fiter_0',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
+  ['build_5flines_0',['build_lines',['../classcomma_1_1_anisotropic_args.html#ac29fef538d78bda8a2b9935c6256a23e',1,'comma::AnisotropicArgs']]]
 ];

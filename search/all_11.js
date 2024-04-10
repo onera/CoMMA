@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['update_0',['update',['../classcomma_1_1_neighbourhood.html#a2a993a6864f21796dafeb06778cb461d',1,'comma::Neighbourhood::update()'],['../classcomma_1_1_neighbourhood___extended.html#a452c8c35e83e2b4a28cb4e60362bcfed',1,'comma::Neighbourhood_Extended::update()'],['../classcomma_1_1_neighbourhood___pure___front.html#ae1b96c3d2b2421520cdef03e16a7d102',1,'comma::Neighbourhood_Pure_Front::update()'],['../classcomma_1_1_seeds___pool.html#a822572a26fb4a9f1efef060d3ecada9f',1,'comma::Seeds_Pool::update()'],['../classcomma_1_1_seeds___pool___boundary___priority.html#adff771d42e189fd9f51ec5ca70c5ad0d',1,'comma::Seeds_Pool_Boundary_Priority::update()'],['../classcomma_1_1_seeds___pool___neighbourhood___priority.html#af2883cfa457dc93928f31d35f7e62a3c',1,'comma::Seeds_Pool_Neighbourhood_Priority::update()']]],
-  ['update_5fconnectivity_1',['update_connectivity',['../classcomma_1_1_coarse___cell___subgraph.html#a2961e12f53d52fb01a1be0243ea45126',1,'comma::Coarse_Cell_Subgraph']]],
-  ['update_5fnodea_2',['update_nodeA',['../classcomma_1_1_bimap.html#a1651c9075b5bd0895e3d3deda3dca566',1,'comma::Bimap']]],
-  ['update_5fnodeb_3',['update_nodeB',['../classcomma_1_1_bimap.html#aca11af6d19701ce17ce0dc05f25af6ec',1,'comma::Bimap']]],
-  ['update_5fseeds_5fpool_4',['update_seeds_pool',['../classcomma_1_1_agglomerator___anisotropic.html#a3ed52576f0b6698a69f388f295a2e1c5',1,'comma::Agglomerator_Anisotropic']]],
-  ['util_2eh_5',['Util.h',['../_util_8h.html',1,'']]]
+  ['tag_5fanisotropic_5fcells_0',['tag_anisotropic_cells',['../classcomma_1_1_dual___graph.html#ae54c9474438da03527cc8eab80362cf3',1,'comma::Dual_Graph']]],
+  ['templatehelpers_2eh_1',['templateHelpers.h',['../template_helpers_8h.html',1,'']]],
+  ['threshold_5fanisotropy_2',['threshold_anisotropy',['../classcomma_1_1_anisotropic_args.html#accfbc365df02bc934ec02efaea568b6c',1,'comma::AnisotropicArgs']]],
+  ['todo_20list_3',['Todo List',['../todo.html',1,'']]],
+  ['top_4',['top',['../classcomma_1_1_queue.html#a2f3e001cc9477b9ed8015bd2118702bf',1,'comma::Queue']]],
+  ['transverse_5',['transverse',['../classcomma_1_1_tree.html#aa8d121b22ac52df459f125da7b1c939b',1,'comma::Tree']]],
+  ['tree_6',['Tree',['../classcomma_1_1_tree.html',1,'comma::Tree&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;'],['../classcomma_1_1_tree.html#afa76cefe052c105cbdf5a89e6171e001',1,'comma::Tree::Tree()']]],
+  ['tree_2eh_7',['Tree.h',['../_tree_8h.html',1,'']]]
 ];

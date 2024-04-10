@@ -1,11 +1,13 @@
 var annotated_dup =
 [
     [ "comma", "namespacecomma.html", [
+      [ "AgglomerationArgs", "classcomma_1_1_agglomeration_args.html", "classcomma_1_1_agglomeration_args" ],
       [ "Agglomerator", "classcomma_1_1_agglomerator.html", "classcomma_1_1_agglomerator" ],
       [ "Agglomerator_Anisotropic", "classcomma_1_1_agglomerator___anisotropic.html", "classcomma_1_1_agglomerator___anisotropic" ],
       [ "Agglomerator_Biconnected", "classcomma_1_1_agglomerator___biconnected.html", "classcomma_1_1_agglomerator___biconnected" ],
       [ "Agglomerator_Isotropic", "classcomma_1_1_agglomerator___isotropic.html", "classcomma_1_1_agglomerator___isotropic" ],
       [ "Agglomerator_Iterative", "classcomma_1_1_agglomerator___iterative.html", "classcomma_1_1_agglomerator___iterative" ],
+      [ "AnisotropicArgs", "classcomma_1_1_anisotropic_args.html", "classcomma_1_1_anisotropic_args" ],
       [ "Bimap", "classcomma_1_1_bimap.html", "classcomma_1_1_bimap" ],
       [ "Coarse_Cell", "classcomma_1_1_coarse___cell.html", "classcomma_1_1_coarse___cell" ],
       [ "Coarse_Cell_Container", "classcomma_1_1_coarse___cell___container.html", "classcomma_1_1_coarse___cell___container" ],
@@ -14,6 +16,7 @@ var annotated_dup =
       [ "CustomPairLessFunctor", "structcomma_1_1_custom_pair_less_functor.html", "structcomma_1_1_custom_pair_less_functor" ],
       [ "Dual_Graph", "classcomma_1_1_dual___graph.html", "classcomma_1_1_dual___graph" ],
       [ "Graph", "classcomma_1_1_graph.html", "classcomma_1_1_graph" ],
+      [ "GraphArgs", "classcomma_1_1_graph_args.html", "classcomma_1_1_graph_args" ],
       [ "Neighbourhood", "classcomma_1_1_neighbourhood.html", "classcomma_1_1_neighbourhood" ],
       [ "Neighbourhood_Extended", "classcomma_1_1_neighbourhood___extended.html", "classcomma_1_1_neighbourhood___extended" ],
       [ "Neighbourhood_Pure_Front", "classcomma_1_1_neighbourhood___pure___front.html", "classcomma_1_1_neighbourhood___pure___front" ],

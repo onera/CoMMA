@@ -1,5 +1,6 @@
 var hierarchy =
 [
+    [ "comma::AgglomerationArgs< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomeration_args.html", null ],
     [ "comma::Agglomerator< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator.html", [
       [ "comma::Agglomerator_Anisotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___anisotropic.html", null ],
       [ "comma::Agglomerator_Isotropic< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_agglomerator___isotropic.html", [
@@ -8,6 +9,7 @@ var hierarchy =
         ] ]
       ] ]
     ] ],
+    [ "comma::AnisotropicArgs< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_anisotropic_args.html", null ],
     [ "comma::Bimap< A, B >", "classcomma_1_1_bimap.html", null ],
     [ "comma::Coarse_Cell< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell.html", [
       [ "comma::Coarse_Cell_Subgraph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell___subgraph.html", null ]
@@ -19,6 +21,7 @@ var hierarchy =
       [ "comma::Dual_Graph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_dual___graph.html", null ],
       [ "comma::Subgraph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_subgraph.html", null ]
     ] ],
+    [ "comma::GraphArgs< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_graph_args.html", null ],
     [ "comma::Neighbourhood< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_neighbourhood.html", [
       [ "comma::Neighbourhood_Extended< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_neighbourhood___extended.html", null ],
       [ "comma::Neighbourhood_Pure_Front< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_neighbourhood___pure___front.html", null ]

@@ -7,8 +7,9 @@ var searchData=
   ['insert_5fnode_4',['insert_node',['../classcomma_1_1_subgraph.html#a427eb4209f44547612b694d4ae7f1875',1,'comma::Subgraph']]],
   ['insertson_5',['insertSon',['../classcomma_1_1_tree.html#a38103210c800f4ea07328f7ba5b80326',1,'comma::Tree']]],
   ['interior_6',['INTERIOR',['../namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8ada6f7a085b1f7f2125ce30f5e02db53c',1,'comma']]],
-  ['is_5fconnected_7',['is_connected',['../classcomma_1_1_coarse___cell.html#ac4034b8340779db758fdbe338ced45e4',1,'comma::Coarse_Cell']]],
-  ['is_5fempty_8',['is_empty',['../classcomma_1_1_seeds___pool.html#a5b81870765d59728538feb0960bbcc5a',1,'comma::Seeds_Pool']]],
-  ['is_5fon_5fboundary_9',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]],
-  ['iter_5fagglo_5fmax_5fiter_10',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
+  ['is_5fanisotropic_7',['is_anisotropic',['../classcomma_1_1_anisotropic_args.html#ab099ce094b546efd12d2da871587f827',1,'comma::AnisotropicArgs']]],
+  ['is_5fconnected_8',['is_connected',['../classcomma_1_1_coarse___cell.html#ac4034b8340779db758fdbe338ced45e4',1,'comma::Coarse_Cell']]],
+  ['is_5fempty_9',['is_empty',['../classcomma_1_1_seeds___pool.html#a5b81870765d59728538feb0960bbcc5a',1,'comma::Seeds_Pool']]],
+  ['is_5fon_5fboundary_10',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]],
+  ['iter_5fagglo_5fmax_5fiter_11',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
 ];

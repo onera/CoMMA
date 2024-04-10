@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['deviate_5fthresh_0',['deviate_thresh',['../namespacecomma.html#a75164a303f92061683959fa690d67906',1,'comma']]]
+  ['anisotropiccompliantcells_0',['anisotropicCompliantCells',['../classcomma_1_1_anisotropic_args.html#afcec684865d7bae8b341fd5c415c2d43',1,'comma::AnisotropicArgs']]]
 ];

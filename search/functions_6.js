@@ -17,5 +17,6 @@ var searchData=
   ['get_5fnumber_5fof_5ffc_5fagglomerated_14',['get_number_of_fc_agglomerated',['../classcomma_1_1_coarse___cell___container.html#a74b86f5bf928b038c490f27c1e26bd64',1,'comma::Coarse_Cell_Container']]],
   ['get_5fshared_5ffaces_15',['get_shared_faces',['../classcomma_1_1_coarse___cell___container.html#a93ab43e7ab6288a9e7d6fa00e7d53c3d',1,'comma::Coarse_Cell_Container']]],
   ['get_5fweights_16',['get_weights',['../classcomma_1_1_graph.html#aec4547e40dba5830f05b5fe96cd2355c',1,'comma::Graph']]],
-  ['graph_17',['Graph',['../classcomma_1_1_graph.html#a22e0c39a18c9f9bc87cc71c0255b43c0',1,'comma::Graph']]]
+  ['graph_17',['Graph',['../classcomma_1_1_graph.html#a22e0c39a18c9f9bc87cc71c0255b43c0',1,'comma::Graph']]],
+  ['graphargs_18',['GraphArgs',['../classcomma_1_1_graph_args.html#abf2f3527356b20f9e6acacc449259bf3',1,'comma::GraphArgs::GraphArgs()=default'],['../classcomma_1_1_graph_args.html#afa08a897f55062fd1d9f5c75751557af',1,'comma::GraphArgs::GraphArgs(const std::vector&lt; CoMMAIndexType &gt; &amp;connectivity_indices, const std::vector&lt; CoMMAIndexType &gt; &amp;connectivity, const std::vector&lt; CoMMAWeightType &gt; &amp;connectivity_weights, const std::vector&lt; CoMMAWeightType &gt; &amp;volumes, const std::vector&lt; std::vector&lt; CoMMAWeightType &gt; &gt; &amp;centers, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const std::vector&lt; CoMMAIntType &gt; &amp;n_bnd_faces, CoMMAIntType dimension)']]]
 ];
