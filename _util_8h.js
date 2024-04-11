@@ -9,7 +9,7 @@ var _util_8h =
     [ "d_keys_to_set", "_util_8h.html#a81affca718f9c9927cfb82c317c8239e", null ],
     [ "dot_deviate", "_util_8h.html#aa6823809d0c8cc7a1e30d51cfb0ce21a", null ],
     [ "dot_product", "_util_8h.html#a0e43c30768d45d4f1f643f2f8be53f5d", null ],
-    [ "filter_cells_by_n_edges", "_util_8h.html#a4bcb27b4d8d828bd3b5b0a51710d310a", null ],
+    [ "filter_cells_by_n_edges", "_util_8h.html#a5193675e5abbdc422bcb8be506e6c08c", null ],
     [ "get_direction", "_util_8h.html#a3fda6288b7b5c19904abf0312557c774", null ],
     [ "squared_euclidean_distance", "_util_8h.html#a39eb676bbec9475d7b0b5a6186b5f3d0", null ],
     [ "vector_of_first_elements", "_util_8h.html#ab712cf58df5dacc470f08332abdde7ec", null ],

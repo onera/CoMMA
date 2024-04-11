@@ -273,10 +273,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a81affca718f9c9927cfb82c317c8239e"><td class="memTemplItemLeft" align="right" valign="top">std::unordered_set&lt; KeyT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a81affca718f9c9927cfb82c317c8239e">d_keys_to_set</a> (const std::unordered_map&lt; KeyT, ValueT &gt; &amp;dict)</td></tr>
 <tr class="memdesc:a81affca718f9c9927cfb82c317c8239e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility function for creating a set out of the keys of a map.  <a href="namespacecomma.html#a81affca718f9c9927cfb82c317c8239e">More...</a><br /></td></tr>
 <tr class="separator:a81affca718f9c9927cfb82c317c8239e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bcb27b4d8d828bd3b5b0a51710d310a"><td class="memTemplParams" colspan="2">template&lt;typename IndexT , typename IntT &gt; </td></tr>
-<tr class="memitem:a4bcb27b4d8d828bd3b5b0a51710d310a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a4bcb27b4d8d828bd3b5b0a51710d310a">filter_cells_by_n_edges</a> (const std::vector&lt; IndexT &gt; &amp;indices, const std::vector&lt; IntT &gt; &amp;n_bnd_faces, const std::unordered_set&lt; IntT &gt; allowed, std::vector&lt; IndexT &gt; &amp;filtered)</td></tr>
-<tr class="memdesc:a4bcb27b4d8d828bd3b5b0a51710d310a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the connectivity of the graph, filter cells keeping only those with the desired number of edges / neighbours.  <a href="namespacecomma.html#a4bcb27b4d8d828bd3b5b0a51710d310a">More...</a><br /></td></tr>
-<tr class="separator:a4bcb27b4d8d828bd3b5b0a51710d310a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5193675e5abbdc422bcb8be506e6c08c"><td class="memTemplParams" colspan="2">template&lt;typename IndexT , typename IntT &gt; </td></tr>
+<tr class="memitem:a5193675e5abbdc422bcb8be506e6c08c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a5193675e5abbdc422bcb8be506e6c08c">filter_cells_by_n_edges</a> (const std::vector&lt; IndexT &gt; &amp;indices, const std::vector&lt; IntT &gt; &amp;n_bnd_faces, const std::unordered_set&lt; IntT &gt; &amp;allowed, std::vector&lt; IndexT &gt; &amp;filtered)</td></tr>
+<tr class="memdesc:a5193675e5abbdc422bcb8be506e6c08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the connectivity of the graph, filter cells keeping only those with the desired number of edges / neighbours.  <a href="namespacecomma.html#a5193675e5abbdc422bcb8be506e6c08c">More...</a><br /></td></tr>
+<tr class="separator:a5193675e5abbdc422bcb8be506e6c08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3653181db03b3ea76722462c3b3e02b"><td class="memTemplParams" colspan="2">template&lt;typename IndexT , typename DistT &gt; </td></tr>
 <tr class="memitem:ae3653181db03b3ea76722462c3b3e02b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b">compute_neighbourhood_based_wall_distance</a> (const std::vector&lt; IndexT &gt; &amp;neigh_idxs, const std::vector&lt; IndexT &gt; &amp;neighs, const std::vector&lt; IndexT &gt; &amp;wall, std::vector&lt; DistT &gt; &amp;dist)</td></tr>
 <tr class="memdesc:ae3653181db03b3ea76722462c3b3e02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a neighbourhood-base wall-distance, that is, the distance of a given cell from a wall is the number of cells though which the minimum path starting from the cell and ending at the wall. For example, in a Cartesian grids this is equivalent to the minimum of the Manhattan distance.<br  />
@@ -942,8 +942,8 @@ template&lt;bool condition, typename typeA , typename typeB &gt; </div>
 
 </div>
 </div>
-<a id="a4bcb27b4d8d828bd3b5b0a51710d310a" name="a4bcb27b4d8d828bd3b5b0a51710d310a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bcb27b4d8d828bd3b5b0a51710d310a">&#9670;&#160;</a></span>filter_cells_by_n_edges()</h2>
+<a id="a5193675e5abbdc422bcb8be506e6c08c" name="a5193675e5abbdc422bcb8be506e6c08c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5193675e5abbdc422bcb8be506e6c08c">&#9670;&#160;</a></span>filter_cells_by_n_edges()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -968,7 +968,7 @@ template&lt;typename IndexT , typename IntT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::unordered_set&lt; IntT &gt;&#160;</td>
+          <td class="paramtype">const std::unordered_set&lt; IntT &gt; &amp;&#160;</td>
           <td class="paramname"><em>allowed</em>, </td>
         </tr>
         <tr>

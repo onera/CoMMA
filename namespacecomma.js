@@ -60,7 +60,7 @@ var namespacecomma =
     [ "dot_deviate", "namespacecomma.html#aa6823809d0c8cc7a1e30d51cfb0ce21a", null ],
     [ "dot_product", "namespacecomma.html#a0e43c30768d45d4f1f643f2f8be53f5d", null ],
     [ "fill_value", "namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2", null ],
-    [ "filter_cells_by_n_edges", "namespacecomma.html#a4bcb27b4d8d828bd3b5b0a51710d310a", null ],
+    [ "filter_cells_by_n_edges", "namespacecomma.html#a5193675e5abbdc422bcb8be506e6c08c", null ],
     [ "get_direction", "namespacecomma.html#a3fda6288b7b5c19904abf0312557c774", null ],
     [ "squared_euclidean_distance", "namespacecomma.html#a39eb676bbec9475d7b0b5a6186b5f3d0", null ],
     [ "vector_of_first_elements", "namespacecomma.html#ab712cf58df5dacc470f08332abdde7ec", null ],
