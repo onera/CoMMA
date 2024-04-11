@@ -110,11 +110,10 @@ inline T squared_euclidean_distance(
   const std::vector<T> &a, const std::vector<T> &b
 ) {
 #if 0
-  return sqrt(
+  return
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
                        [](const auto sum, const auto val){return sum + val*val;},
-                       minus<T>())
-      );
+                       minus<T>());
 #endif
   T dist{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
@@ -266,22 +265,29 @@ template<typename IndexT, typename IntT>
 inline void filter_cells_by_n_edges(
   const std::vector<IndexT> &indices,
   const std::vector<IntT> &n_bnd_faces,
-  const std::unordered_set<IntT> allowed,
+  const std::unordered_set<IntT> &allowed,
   std::vector<IndexT> &filtered
 ) {
-  const auto n_cells = static_cast<IndexT>(n_bnd_faces.size());
   filtered.clear();
-  filtered.reserve(n_cells);
-  //
-  for (auto c = decltype(n_cells){0}; c < n_cells; ++c) {
-    if (allowed.find(
-          static_cast<IntT>(indices[c + 1] - indices[c] + n_bnd_faces[c])
-        )
-        != allowed.end())
-      filtered.emplace_back(c);
-  }  // for c
-  //
-  filtered.shrink_to_fit();
+  auto target = decltype(allowed){};
+  std::copy_if(
+    allowed.begin(),
+    allowed.end(),
+    std::inserter(target, target.begin()),
+    [](const auto n) { return n > 0; }
+  );
+  if (!target.empty()) {
+    const auto n_cells = static_cast<IndexT>(n_bnd_faces.size());
+    filtered.reserve(n_cells);
+    for (auto c = decltype(n_cells){0}; c < n_cells; ++c) {
+      if (allowed.find(
+            static_cast<IntT>(indices[c + 1] - indices[c] + n_bnd_faces[c])
+          )
+          != allowed.end())
+        filtered.emplace_back(c);
+    }
+    filtered.shrink_to_fit();
+  }
 }
 
 /** @brief Compute a neighbourhood-base wall-distance, that is, the distance of

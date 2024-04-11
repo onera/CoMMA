@@ -257,6 +257,20 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
     const DualGEx_quad_4 Data = DualGEx_quad_4();
     std::vector<CoMMAIndexT> ref_res(Data.nb_fc);
     std::iota(ref_res.begin(), ref_res.end(), 0);
+    WHEN("We provide no neighbours") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {}, filtered
+      );
+      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+    }
+    WHEN("We provide an impossible number of neighbours") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {-1, 0}, filtered
+      );
+      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+    }
     WHEN("We ask for cells with 3 neighbours (that is, none)") {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
