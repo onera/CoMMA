@@ -67,6 +67,7 @@ class Comma(CMakePackage):
 
     extends("python", when="+python")
     depends_on("python", type=("build", "link", "run"), when="+python")
+    depends_on("pybind11@2.12.0:", type=("build", "link", "run"), when="@develop+python")
 
     # older versions always had a Python dependency
     extends("python", when="@1.0:1.1")
