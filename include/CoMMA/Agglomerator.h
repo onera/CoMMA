@@ -51,13 +51,13 @@ inline RealT compute_AR_max_ov_radius(
   const CellFeatures<IndexT, RealT, IntT> &feat
 ) {
   if constexpr (dim < 2) {
-    return feat._diam / feat._measure;
+    return sqrt(feat._sq_diam) / feat._measure;
   } else if constexpr (dim == 2) {
-    return feat._diam / sqrt(feat._measure);
+    return sqrt(feat._sq_diam) / sqrt(feat._measure);
   } else if constexpr (dim == 3) {
-    return feat._diam / cbrt(feat._measure);
+    return sqrt(feat._sq_diam) / cbrt(feat._measure);
   } else {
-    return feat._diam / pow(feat._measure, 1.0 / dim);
+    return sqrt(feat._sq_diam) / pow(feat._measure, 1.0 / dim);
   }
 }
 
@@ -1162,8 +1162,8 @@ public:
     // Compute new diameter
     const std::vector<CoMMAWeightType> &cen_fc =
       this->_fc_graph->_centers[i_fc];
-    CoMMAWeightType max_diam = cc_feats._diam * cc_feats._diam,
-                    min_edge = cc_feats._min_edge * cc_feats._min_edge;
+    CoMMAWeightType max_diam = cc_feats._sq_diam,
+                    min_edge = cc_feats._sq_min_edge;
     for (const auto i_fc_cc : fc_of_cc) {
       const auto dist = squared_euclidean_distance<CoMMAWeightType>(
         cen_fc, this->_fc_graph->_centers[i_fc_cc]
@@ -1171,8 +1171,8 @@ public:
       if (dist > max_diam) max_diam = dist;
       if (dist < min_edge) min_edge = dist;
     }  // for i_fc_cc
-    new_feats._diam = sqrt(max_diam);
-    new_feats._min_edge = sqrt(min_edge);
+    new_feats._sq_diam = max_diam;
+    new_feats._sq_min_edge = min_edge;
     new_feats._measure = cc_feats._measure + this->_fc_graph->_volumes[i_fc];
     new_feats._external_weights = cc_feats._external_weights
       + this->_fc_graph->estimated_total_weight(i_fc) - 2 * shared_weights;

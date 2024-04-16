@@ -47,17 +47,17 @@ public:
   /** Number of internal faces */
   IntT _n_internal_faces;
 
-  /** Approximation of the minimum edge of the cell, that is, the minimum
-   * distance between two cell centers.
+  /** Square of the approximation of the minimum edge of the cell, that is, the
+   * minimum distance between two cell centers.
    */
-  RealT _min_edge;
+  RealT _sq_min_edge;
 
-  /** Approximation of the diameter of the cell, that is, the maximum
-   * distance between two cell centers.
+  /** Square of the approximation of the diameter of the cell, that is, the
+   * maximum distance between two cell centers.
    */
-  RealT _diam;
+  RealT _sq_diam;
 
-  /** Sum of the coordinates of the centers weighted by the mesures, useful to
+  /** Sum of the coordinates of the centers weighted by the measures, useful to
    * compute barycenter */
   std::vector<RealT> _sum_centers;
 
@@ -94,8 +94,8 @@ public:
     _external_weights(external_weights),
     _internal_weights(internal_weights),
     _n_internal_faces(n_internal_faces),
-    _min_edge(min_edge),
-    _diam(diam),
+    _sq_min_edge(min_edge * min_edge),
+    _sq_diam(diam * diam),
     _sum_centers(sum_centers),
     _external_facets(external_facets){};
 
@@ -108,8 +108,8 @@ public:
     _external_weights(graph->estimated_total_weight(index)),
     _internal_weights(0.0),
     _n_internal_faces(0),
-    _min_edge(std::numeric_limits<RealT>::max()),
-    _diam(std::numeric_limits<RealT>::min()),
+    _sq_min_edge(std::numeric_limits<RealT>::max()),
+    _sq_diam(std::numeric_limits<RealT>::min()),
     _external_facets({{index, graph->get_total_n_faces(index)}}) {
     _sum_centers = graph->_centers[index];
     for (auto &xyz : _sum_centers) {
@@ -137,8 +137,8 @@ public:
   /** @brief Compute the radius of a cell.
    * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
    */
-  template<IntT dim>
-  inline RealT get_radius() const {
+  template<unsigned int dim>
+  inline RealT constexpr get_radius() const {
     if constexpr (dim < 2) {
       return _measure;
     } else if constexpr (dim == 2) {
@@ -243,8 +243,7 @@ protected:
     CellFeatures<IndexT, RealT, IntT> &new_feats
   ) const {
     const std::vector<RealT> &cen_fc = this->_graph->_centers[i_fc];
-    RealT max_diam = cc_feats._diam * cc_feats._diam,
-          min_edge = cc_feats._min_edge * cc_feats._min_edge;
+    RealT max_diam = cc_feats._sq_diam, min_edge = cc_feats._sq_min_edge;
     for (const auto i_fc_cc : fc_of_cc) {
       const auto dist = squared_euclidean_distance<RealT>(
         cen_fc, this->_graph->_centers[i_fc_cc]
@@ -252,8 +251,8 @@ protected:
       if (dist > max_diam) max_diam = dist;
       if (dist < min_edge) min_edge = dist;
     }  // for i_fc_cc
-    new_feats._diam = sqrt(max_diam);
-    new_feats._min_edge = sqrt(min_edge);
+    new_feats._sq_diam = max_diam;
+    new_feats._sq_min_edge = min_edge;
   }
 
   /** @brief Compute the barycenter and update the features accordingly
@@ -310,6 +309,30 @@ protected:
     }
     new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
   }
+
+  /** @brief Given a squared quantity and cell features, compute the ratio
+   * between the quantity and the radius of the cell (that is
+   * \f$ \sqrt[dim](vol(CC)) \f$), or an approximation of it where the
+   * numerator and denominator are raised to certain powers (instead of taking
+   * roots) to ensure non-dimensionality.
+   * @param[in] sqx Square of the quantity used as numerator
+   * @param[in] feats Features of the cell
+   * @return \f$ sqx^{dim} / vol(CC)^2 \f$
+   */
+  template<unsigned int dim>
+  inline RealT constexpr x_over_radius(
+    const RealT sqx, const CellFeatures<IndexT, RealT, IntT> &feats
+  ) const {
+    if constexpr (dim < 2) {
+      return sqrt(sqx) / feats.template get_radius<dim>();
+    } else if constexpr (dim == 2) {
+      return sqx / feats._measure;
+    } else if constexpr (dim == 3) {
+      return _cb(sqx) / _sq(feats._measure);
+    } else {
+      return int_power<dim>(sqx) / _sq(feats._measure);
+    }
+  }
 };
 
 /** @brief ARComputer. Here, AR is the ratio of the diameter over the
@@ -320,7 +343,7 @@ protected:
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
  */
-template<typename IndexT, typename RealT, typename IntT, int dim>
+template<typename IndexT, typename RealT, typename IntT, unsigned int dim>
 class ARDiamOverRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
@@ -364,7 +387,8 @@ public:
       i_fc, cc_feats, fc_of_cc, new_feats
     );
     // Compute AR
-    aspect_ratio = new_feats._diam / new_feats.template get_radius<dim>();
+    aspect_ratio =
+      this->template x_over_radius<dim>(new_feats._sq_diam, new_feats);
   }
 };
 
@@ -470,8 +494,9 @@ public:
     // Compute AR
     // If only 2 cells (hence the reference coarse cell is only one cell), max
     // and min are the same, hence use only max
-    aspect_ratio = fc_of_cc.size() == 1 ? new_feats._diam
-                                        : new_feats._diam / new_feats._min_edge;
+    aspect_ratio = fc_of_cc.size() == 1
+      ? new_feats._sq_diam
+      : new_feats._sq_diam / new_feats._sq_min_edge;
   }
 };
 
@@ -486,7 +511,7 @@ public:
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
  */
-template<typename IndexT, typename RealT, typename IntT, int dim = 2>
+template<typename IndexT, typename RealT, typename IntT, unsigned int dim>
 class ARExternalWeightOverRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
@@ -533,19 +558,27 @@ public:
 protected:
   /** @brief Compute the aspect-ratio.
    * @param[in] feats Features of the current coarse cell
-   * @return \f$ \frac{ExtWeights_{CC}}{\sqrt[dim]{vol_{CC}}} \f$
+   * @return \f$ \frac{ExtWeights_{CC}}{\sqrt[dim]{vol_{CC}}} \f$ or a similar
+   * ratio where numerator and denominator are raised to certain powers
+   * (instead of their roots) as to ensure non-dimensionality
    */
-  inline RealT compute_AR(const CellFeatures<IndexT, RealT, IntT> &feats
+  inline RealT constexpr compute_AR(
+    const CellFeatures<IndexT, RealT, IntT> &feats
   ) const {
     if constexpr (dim < 2) {
       return feats._external_weights / feats.template get_radius<dim>();
     } else if constexpr (dim == 2) {
-      return feats._external_weights / feats.template get_radius<dim>();
+      // return feats._external_weights / feats.template get_radius<dim>();
+      return _sq(feats._external_weights) / feats._measure;
     } else if constexpr (dim == 3) {
-      return sqrt(feats._external_weights) / feats.template get_radius<dim>();
+      // return sqrt(feats._external_weights) / feats.template
+      // get_radius<dim>();
+      return _cb(feats._external_weights) / _sq(feats._measure);
     } else {
-      return pow(feats._external_weights, 1.0 / (dim - 1))
-        / feats.template get_radius<dim>();
+      // return pow(feats._external_weights, 1.0 / (dim - 1))
+      // / feats.template get_radius<dim>();
+      return int_power<dim>(feats._external_weights)
+        / int_power<dim - 1>(feats._measure);
     }
   }
 };
@@ -597,7 +630,7 @@ public:
       i_fc, cc_feats, fc_of_cc, new_feats
     );
     // Compute AR
-    aspect_ratio = new_feats._diam;
+    aspect_ratio = new_feats._sq_diam;
   }
 };
 
@@ -713,7 +746,7 @@ public:
  * @tparam IntT type used for integers (e.g., number of cells, faces,...)
  * @tparam dim dimension of the problem (e.g., 1-, 2-, 3D,...)
  */
-template<typename IndexT, typename RealT, typename IntT, int dim>
+template<typename IndexT, typename RealT, typename IntT, unsigned int dim>
 class ARMaxBaryDistanceOverRadius : public ARComputer<IndexT, RealT, IntT> {
 public:
   /** @brief Constructor
@@ -740,6 +773,9 @@ public:
    * current coarse cell
    * @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
    * @param[out] new_feats Features of the (final) coarse cell
+   * @note The returned AR might not exactly the above-mentioned ration but a
+   * similar one where numerator and denominator are raised to certain powers
+   * (instead of their roots) as to ensure non-dimensionality
    */
   void compute_and_update_features(
     const IndexT i_fc,
@@ -766,7 +802,7 @@ public:
       );
       if (dist > max_dist) max_dist = dist;
     }  // for i_fc_cc
-    aspect_ratio = sqrt(max_dist) / new_feats.template get_radius<dim>();
+    aspect_ratio = this->template x_over_radius<dim>(max_dist, new_feats);
   }
 };
 
@@ -830,6 +866,7 @@ public:
           max_dist = std::numeric_limits<RealT>::min();
     // Skipping if totally internal cell
     if (new_feats._external_facets[i_fc] > 0) {
+      // Since we are comparing to a threshold, keep sqrt here
       const auto dist = sqrt(
         squared_euclidean_distance<RealT>(bary, this->_graph->_centers[i_fc])
       );

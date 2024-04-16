@@ -22,8 +22,8 @@ using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
 
 #define CHECK_CELL_FEATURES(this, that, eps)                                 \
-  REQUIRE(EQUAL_UP_TO(this._diam, that._diam, eps));                         \
-  REQUIRE(EQUAL_UP_TO(this._min_edge, that._min_edge, eps));                 \
+  REQUIRE(EQUAL_UP_TO(this._sq_diam, that._sq_diam, eps));                   \
+  REQUIRE(EQUAL_UP_TO(this._sq_min_edge, that._sq_min_edge, eps));           \
   REQUIRE(EQUAL_UP_TO(this._measure, that._measure, eps));                   \
   REQUIRE(EQUAL_UP_TO(this._external_weights, that._external_weights, eps)); \
   REQUIRE(EQUAL_UP_TO(this._internal_weights, that._internal_weights, eps)); \
@@ -360,7 +360,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
-      ref_feats._diam = 2.;
+      ref_feats._sq_diam = 4.;
       ref_ar = agg->_compute_AR(ref_feats);
       THEN("I-shaped coarse cell, 1 shared face") {
         agg->compute_next_cc_features(
@@ -371,13 +371,13 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
       }
       cc.insert(5);
-      cc_feats._diam = sqrt(2.);
+      cc_feats._sq_diam = 2.;
       cc_feats._measure = 3.;
       cc_feats._external_weights = 8.;
       cc_feats._internal_weights = 2.;
       cc_feats._n_internal_faces = 2;
       //
-      ref_feats._diam = cc_feats._diam;
+      ref_feats._sq_diam = cc_feats._sq_diam;
       ref_feats._measure = 4.;
       ref_feats._external_weights = 8.;
       ref_feats._internal_weights = 4.;
