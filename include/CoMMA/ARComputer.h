@@ -117,6 +117,11 @@ public:
     }
   }
 
+  /** @brief Copy constructor
+   * @param[in] other Features to move
+   */
+  CellFeatures(const CellFeatures<IndexT, RealT, IntT> &other) = default;
+
   /** @brief Move constructor
    * @param[in] other Features to move
    */
@@ -207,23 +212,21 @@ protected:
    * @param[in] i_fc Index of the fine cell to add to the coarse cell
    * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
    * coarse cell
-   * @param[out] shared_faces Number of faces shared by the fine cell with the
-   * current coarse cell
    * @param[out] shared_weights Sum of the weights of the shared faces
+   * @param[out] shared_faces Faces shared by the fine cell with the coarse one
    */
   inline void compute_shared_faces(
     const IndexT i_fc,
     const std::unordered_set<IndexT> &fc_of_cc,
-    IntT &shared_faces,
-    RealT &shared_weights
+    RealT &shared_weights,
+    std::unordered_set<IndexT> &shared_faces
   ) const {
-    shared_faces = 0;
     shared_weights = 0.;
     auto n_it = this->_graph->neighbours_cbegin(i_fc);
     auto w_it = this->_graph->weights_cbegin(i_fc);
     for (; n_it != this->_graph->neighbours_cend(i_fc); ++n_it, ++w_it) {
       if (*n_it != i_fc && (fc_of_cc.count(*n_it) != 0)) {
-        shared_faces++;
+        shared_faces.insert(*n_it);
         shared_weights += *w_it;
       }
     }
@@ -283,6 +286,7 @@ protected:
   /** @brief Compute approximated geometric features (e.g., diameter)
    * @tparam compute_weights Whether algebraic features should be computed
    * (e.g., weights)
+   * @tparam update_facets Whether to update external facets
    * @param[in] i_fc Index of the fine cell to add to the coarse cell
    * @param[in] cc_feats Features of the current coarse cell
    * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
@@ -291,23 +295,33 @@ protected:
    * current coarse cell
    * @param[out] new_feats Features of the (final) coarse cell
    */
-  template<bool compute_weights = false>
+  template<bool compute_weights = false, bool update_facets = false>
   inline void update_basic_features(
     const IndexT i_fc,
     const CellFeatures<IndexT, RealT, IntT> &cc_feats,
     const std::unordered_set<IndexT> &fc_of_cc,
-    IntT &shared_faces,
+    IntT &n_shared_faces,
     CellFeatures<IndexT, RealT, IntT> &new_feats
   ) const {
     new_feats._measure = cc_feats._measure + this->_graph->_volumes[i_fc];
     RealT shared_weights{};
-    this->compute_shared_faces(i_fc, fc_of_cc, shared_faces, shared_weights);
+    std::unordered_set<IndexT> shared_faces{};
+    this->compute_shared_faces(i_fc, fc_of_cc, shared_weights, shared_faces);
+    n_shared_faces = static_cast<IntT>(shared_faces.size());
+    new_feats._n_internal_faces = cc_feats._n_internal_faces + n_shared_faces;
     if constexpr (compute_weights) {
       new_feats._external_weights = cc_feats._external_weights
         + this->_graph->estimated_total_weight(i_fc) - 2 * shared_weights;
       new_feats._internal_weights = cc_feats._internal_weights + shared_weights;
     }
-    new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
+    if constexpr (update_facets) {
+      new_feats._external_facets = cc_feats._external_facets;  // OK copy
+      for (const auto &face : shared_faces) {
+        new_feats._external_facets.at(face)--;
+      }
+      new_feats._external_facets[i_fc] =
+        this->_graph->get_total_n_faces(i_fc) - n_shared_faces;
+    }
   }
 
   /** @brief Given a squared quantity and cell features, compute the ratio
@@ -854,11 +868,9 @@ public:
     CellFeatures<IndexT, RealT, IntT> &new_feats
   ) const override {
     // Update
-    this->template update_basic_features<>(
+    this->template update_basic_features<false, true>(
       i_fc, cc_feats, fc_of_cc, shared_faces, new_feats
     );
-    new_feats._external_facets[i_fc] =
-      this->_graph->get_total_n_faces(i_fc) - shared_faces;
     const auto bary =
       this->compute_and_update_barycenter(i_fc, cc_feats, fc_of_cc, new_feats);
     // Compute AR
