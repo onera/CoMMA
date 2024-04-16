@@ -640,7 +640,7 @@ public:
    */
   inline CoMMAIntType get_total_n_faces(const CoMMAIndexType idx_c) const {
     return this->_n_bnd_faces[idx_c]
-      + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c + 1]);
+      + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c]);
   }
 
   /** @brief Whether a cell is on the boundary
