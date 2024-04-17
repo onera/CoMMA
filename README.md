@@ -295,3 +295,6 @@ configuration). The workflow performs several steps:
    [![coverage report](https://gitlab.onera.net/numerics/solver/comma/badges/main/coverage.svg)](https://gitlab.onera.net/numerics/solver/comma/-/commits/main)
 4. Build the documentation (same as [above](#book-documentation)) and deploy it
    on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/) -->
+
+## :pray: Acknowledgements
+The development of CoMMA was financially supported by the European Union's Horizon 2020 research and innovation program under grant agreement number 956104 ("NextSim") and the French Directorate General for Civil Aviation (DGAC) project "LAMA".
