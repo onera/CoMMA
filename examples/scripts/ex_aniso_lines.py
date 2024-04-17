@@ -154,13 +154,12 @@ n_bnd_faces = np.array(m.boundary_cells, dtype=CoMMAInt)
 volumes = np.array(m.volume, dtype=CoMMAWeight)
 nb_fc = len(g.vertex) - 1
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
-fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
 anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
 aniso_lines = np.array([0], dtype=CoMMAIndex)
 
 print("CoMMA call...", flush=True, end="")
-fc_to_cc_res, alines_idx, alines = CoMMA.agglomerate_one_level(
+fc_to_cc, alines_idx, alines = CoMMA.agglomerate_one_level(
     adjMatrix_row_ptr,
     adjMatrix_col_ind,
     adjMatrix_areaValues,
@@ -174,7 +173,6 @@ fc_to_cc_res, alines_idx, alines = CoMMA.agglomerate_one_level(
     odd_line_length,
     threshold_anisotropy,
     seed_order,
-    fc_to_cc,
     aniso_lines_idx,
     aniso_lines,
     correction,
@@ -191,7 +189,7 @@ print("OK")
 
 print("Finalizing...", flush=True, end="")
 agglo = prepare_meshio_agglomeration_data(
-    fc_to_cc_res,
+    fc_to_cc,
     m.mesh.cells,
     modulo_renumbering=renumber_coarse,
     shuffle=shuffle_coarse,
@@ -201,7 +199,7 @@ out_lines = prepare_meshio_celldata(
     m.mesh.cells,
 )
 
-f2c = np.asarray(fc_to_cc_res, dtype=int)
+f2c = np.asarray(fc_to_cc, dtype=int)
 # Building a dictionary 'aniso line ID' : [fine cells in line]
 # One-liner:
 dic = {
@@ -212,7 +210,7 @@ dic = {
 # dic = {}
 # # For every line...
 # for i in range(len(alines_idx)-1):
-#     mask = np.full(len(fc_to_cc_res), False)
+#     mask = np.full(len(fc_to_cc), False)
 #     # For every coarse cell in the line...
 #     for cc in alines[alines_idx[i]:alines_idx[i+1]]:
 #         # Take all the fine cells that are in the coarse cell

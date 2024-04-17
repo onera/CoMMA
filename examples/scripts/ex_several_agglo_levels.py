@@ -143,7 +143,7 @@ volumes = np.array(mesh.volume, dtype=CoMMAWeight)
 centers = mesh.centers.copy()
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 n_bnd_faces = np.array(mesh.boundary_cells, dtype=CoMMAInt)
-fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
+fc_to_cc = None
 anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
 aniso_lines = np.array([0], dtype=CoMMAIndex)
@@ -179,7 +179,6 @@ for level in range(agglomeration_levels):
         )
         nb_cc = n_bnd_faces.shape[0]
         weights = np.arange(start=nb_cc - 1, stop=0, step=-1, dtype=CoMMAWeight)
-        fc_to_cc = np.empty(nb_cc, dtype=CoMMAIndex)
         anisoCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
         print("OK")
 
@@ -198,7 +197,6 @@ for level in range(agglomeration_levels):
         odd_line_length,
         threshold_anisotropy,
         seed_order,
-        fc_to_cc,
         aniso_lines_idx,
         aniso_lines,
         correction,

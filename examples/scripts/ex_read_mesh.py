@@ -149,14 +149,13 @@ adjMatrix_areaValues = np.array(mesh.area, dtype=CoMMAWeight)
 volumes = np.array(mesh.volume, dtype=CoMMAWeight)
 weights = np.arange(start=nb_fc - 1, stop=0, step=-1, dtype=CoMMAWeight)
 n_bnd_faces = np.array(mesh.boundary_cells, dtype=CoMMAInt)
-fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
 anisoCompliantCells = np.arange(nb_fc, dtype=CoMMAIndex)
 aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
 aniso_lines = np.array([0], dtype=CoMMAIndex)
 
 print("CoMMA call...", flush=True, end="")
 (
-    fc_to_cc_res,
+    fc_to_cc,
     aniso_lines_idx_res_iso,
     aniso_lines_res_iso,
 ) = CoMMA.agglomerate_one_level(
@@ -173,7 +172,6 @@ print("CoMMA call...", flush=True, end="")
     odd_line_length,
     threshold_anisotropy,
     seed_order,
-    fc_to_cc,
     aniso_lines_idx,
     aniso_lines,
     correction,
@@ -190,7 +188,7 @@ print("OK")
 
 print("Finalizing...", flush=True, end="")
 agglo = prepare_meshio_agglomeration_data(
-    fc_to_cc_res,
+    fc_to_cc,
     mesh.mesh.cells,
     modulo_renumbering=renumber_coarse,
     shuffle=shuffle_coarse,

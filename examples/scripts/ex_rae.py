@@ -184,7 +184,7 @@ anisoCompliantCells = squares
 # boundary have higher priority (+1 to avoid division by 0)
 weights = np.reciprocal(1.0 + foil_distance.astype(float))
 
-fc_to_cc = np.empty(nb_fc, dtype=CoMMAIndex)
+fc_to_cc = None
 
 aniso_lines_idx = np.array([0], dtype=CoMMAIndex)
 aniso_lines = np.array([0], dtype=CoMMAIndex)
@@ -223,7 +223,6 @@ for level in range(agglomeration_levels):
         # Here, it's hard to redo what we did for the distance to the foil, but
         # it is OK
         weights = np.arange(start=nb_cc - 1, stop=0, step=-1, dtype=CoMMAWeight)
-        fc_to_cc = np.empty(nb_cc, dtype=CoMMAIndex)
         anisoCompliantCells = np.arange(nb_cc, dtype=CoMMAIndex)
         # Here we try some ways to limit the anisotropic zone after the first
         # agglomeration step
@@ -265,7 +264,6 @@ for level in range(agglomeration_levels):
         odd_line_length,
         threshold_anisotropy,
         seed_order,
-        fc_to_cc,
         aniso_lines_idx,
         aniso_lines,
         correction,
