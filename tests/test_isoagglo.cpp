@@ -20,6 +20,7 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::WithinAbs;
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
@@ -141,9 +142,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
       cc.insert(17);
       cc_diam = ref_diam, cc_vol = ref_vol;
@@ -154,9 +155,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
       cc.insert(21);
       cc.insert(20);
@@ -168,9 +169,9 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 3);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
     }  // Aspect ratio
   }
@@ -329,9 +330,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
           5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
       ref_diam = 2.;
       ref_ar = agg->_compute_AR(ref_diam, ref_vol);
@@ -340,9 +341,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
           2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
       cc.insert(5);
       cc_diam = sqrt(2.), cc_vol = 3.;
@@ -353,9 +354,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
           4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
         );
         REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
+        REQUIRE_THAT(tmp_diam, WithinAbs(ref_diam, eps));
+        REQUIRE_THAT(tmp_vol, WithinAbs(ref_vol, eps));
+        REQUIRE_THAT(ar, WithinAbs(ref_ar, eps));
       }
     }
   }

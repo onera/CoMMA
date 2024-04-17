@@ -28,7 +28,6 @@ constexpr bool ODD_LINE_LENGTH = true;
 // neither So we set up one function for all
 #define CONTAINS_(cont, obj) \
   (find((cont).begin(), (cont).end(), (obj)) != (cont).end())
-#define EQUAL_UP_TO(a, b, eps) (fabs((a) - (b)) < (eps))
 
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<
   comma::CoMMAIndexT,
