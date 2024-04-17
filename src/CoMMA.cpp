@@ -228,7 +228,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     [](
       const std::vector<CoMMAIndexT> &indices,
       const std::vector<CoMMAIntT> &n_bnd_faces,
-      const std::unordered_set<CoMMAIntT> allowed
+      const std::unordered_set<CoMMAIntT> allowed  // NOLINT
     ) {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges(indices, n_bnd_faces, allowed, filtered);
