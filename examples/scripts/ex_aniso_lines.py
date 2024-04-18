@@ -22,22 +22,13 @@ from dualGPy.Graph import Graph2D
 from dualGPy.Mesh import Mesh2D
 
 from comma_tools import (
+    AR_DESCRIPTIONS,
+    NEIGHBOURHOOD_DESCRIPTIONS,
+    SEED_ORDERING_DESCRIPTIONS,
     assign_anisotropic_line_data_to_cells,
     prepare_meshio_agglomeration_data,
     prepare_meshio_celldata,
 )
-
-neigh_type_types = {
-    CoMMA.Neighbourhood.EXTENDED: "Extended",
-    CoMMA.Neighbourhood.PURE_FRONT: "Pure front advancing",
-}
-
-seed_ordering_types = {
-    CoMMA.SeedsPool.BOUNDARY: "Boundary priority",
-    CoMMA.SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
-    CoMMA.SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
-    CoMMA.SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
-}
 
 # USER PARAMETERS
 #################
@@ -50,6 +41,20 @@ minCard, goalCard, maxCard = 4, 4, 4
 correction = False
 threshold_anisotropy = 1.5
 odd_line_length = True
+# Which type of aspect ratio to use. We give the available list below, but for more
+# details refer to Documentation/AR_note.pdf, and
+# include/CoMMA/{CoMMADefs.h,AR_computer.h}
+# - AR.DIAMETER_OVER_RADIUS
+# - AR.DIAMETER_OVER_MIN_EDGE
+# - AR.DIAMETER
+# - AR.ONE_OVER_MEASURE
+# - AR.ONE_OVER_INTERNAL_WEIGHTS
+# - AR.PERIMETER_OVER_RADIUS
+# - AR.EXTERNAL_WEIGHTS
+# - AR.MAX_BARY_DIST_OVER_RADIUS
+# - AR.MAX_OVER_MIN_BARY_DIST
+# - AR.ALGEBRAIC_PERIMETER_OVER_MEASURE
+AR = CoMMA.AR.DIAMETER_OVER_RADIUS
 # Seeds pool ordering choices:
 # - SeedsPool.BOUNDARY:  Boundary priority, 0
 # - SeedsPool.NEIGHBOURHOOD: Neighbourhood priority, 1
@@ -90,11 +95,12 @@ print(f" * {build_lines=}")
 print(f" * {minCard=}")
 print(f" * {goalCard=}")
 print(f" * {maxCard=}")
+print(f" * aspect ratio={AR_DESCRIPTIONS[AR]}")
 print(f" * {correction=}")
 print(f" * {threshold_anisotropy=}")
 print(f" * {odd_line_length=}")
-print(f" * neigh_type={neigh_type_types[neigh_type]}")
-print(f" * seed_ordering={seed_ordering_types[seed_order]}")
+print(f" * neigh_type={NEIGHBOURHOOD_DESCRIPTIONS[neigh_type]}")
+print(f" * seed_ordering={SEED_ORDERING_DESCRIPTIONS[seed_order]}")
 print(f" * Threshold cardinality for singular cells={sing_card}")
 print(f" * Max cells in anisotropic line={max_cells_in_line}")
 print(f" * Fine-cell research iterations={fc_iter}")
@@ -180,6 +186,7 @@ fc_to_cc, alines_idx, alines = CoMMA.agglomerate_one_level(
     goalCard,
     minCard,
     maxCard,
+    AR,
     sing_card,
     max_cells_in_line,
     fc_iter,
