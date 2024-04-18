@@ -85,7 +85,8 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * - 11: The neighbourhood has highest priority, and initialize with one point
  * only then let evolve
  * @param[out] fc_to_cc Vector telling the ID of the coarse cell to which a fine
- * cell belongs after agglomeration
+ * cell belongs after agglomeration. The vector is cleared and then resized to
+ * the right size.
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration
  * lines: each element points to a particular element in the vector \p
  * agglomerationLines
@@ -413,10 +414,14 @@ void agglomerate_one_level(
   );
   // FILLING FC TO CC (it is a property of the cc_graph but retrieved through an
   // helper of the agglomerator)
-  const auto &fccc = cc_graph->_fc_2_cc;
-  for (auto i_fc = decltype(nb_fc){0}; i_fc < nb_fc; i_fc++) {
-    fc_to_cc[i_fc] = fccc[i_fc].value();
-  }
+  fc_to_cc.clear();
+  fc_to_cc.reserve(cc_graph->_fc_2_cc.size());
+  std::transform(
+    cc_graph->_fc_2_cc.begin(),
+    cc_graph->_fc_2_cc.end(),
+    std::back_inserter(fc_to_cc),
+    [](const auto &f2c) { return f2c.value(); }
+  );
 }
 
 /** @brief Main function of the agglomerator, it is used as an interface

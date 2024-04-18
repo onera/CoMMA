@@ -210,7 +210,7 @@ def build_coarse_graph(
     :obj:`np.ndarray` of `int`
         Vector telling how many boundary faces each cell of the coarse graph has
     :obj:`np.ndarray` of `float`
-        Cell centers of the coarse graph"""
+        Cell centers of the coarse graph (weighted average of the fine one)"""
     fc2cc = np.asarray(fc2cc, dtype=int)
     CSR_row = np.asarray(CSR_row, dtype=int)
     CSR_col = np.asarray(CSR_col, dtype=int)
@@ -236,7 +236,9 @@ def build_coarse_graph(
         coarse_n_bnd[cc] = np.max(n_bnd[mask_fc])
         coarse_volumes[cc] = np.sum(volumes[mask_fc])
         # This is not actually very good, but still...
-        coarse_centers[cc, :] = centers[mask_fc, :].mean(axis=0)
+        coarse_centers[cc, :] = np.average(
+            centers[mask_fc, :], axis=0, weights=volumes[mask_fc]
+        )
         neighs_cc = {}
         # for every (previous) fine cell composing the current coarse cell...
         for fc in fcs:

@@ -25,31 +25,27 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Approx;
+using Catch::Matchers::WithinAbs;
 
 using ARCT = ARComputer<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 using CFT = CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
 
-#define CHECK_BASE_CELL_FEATURES(this, that, eps)              \
-  REQUIRE(EQUAL_UP_TO((this)._measure, (that)._measure, eps)); \
+#define CHECK_BASE_CELL_FEATURES(this, that, eps)                 \
+  REQUIRE_THAT((this)._measure, WithinAbs((that)._measure, eps)); \
   REQUIRE((this)._n_internal_faces == (that)._n_internal_faces);
 
-#define CHECK_WEIGHTS_CELL_FEATURES(this, that, eps)                           \
-  REQUIRE(EQUAL_UP_TO((this)._external_weights, (that)._external_weights, eps) \
-  );                                                                           \
-  REQUIRE(EQUAL_UP_TO((this)._internal_weights, (that)._internal_weights, eps));
+#define CHECK_WEIGHTS_CELL_FEATURES(this, that, eps)                   \
+  REQUIRE_THAT(                                                        \
+    (this)._external_weights, WithinAbs((that)._external_weights, eps) \
+  );                                                                   \
+  REQUIRE_THAT(                                                        \
+    (this)._internal_weights, WithinAbs((that)._internal_weights, eps) \
+  );
 
-#define CHECK_GEOM_CELL_FEATURES(this, that, eps)              \
-  REQUIRE(EQUAL_UP_TO((this)._sq_diam, (that)._sq_diam, eps)); \
-  REQUIRE(EQUAL_UP_TO((this)._sq_min_edge, (that)._sq_min_edge, eps));
-
-#define EQUAL_UP_TO_2D(this, that, eps)   \
-  (EQUAL_UP_TO((this)[0], (that)[0], eps) \
-   && EQUAL_UP_TO((this)[1], (that)[1], eps))
-
-#define EQUAL_UP_TO_3D(this, that, eps)      \
-  (EQUAL_UP_TO((this)[0], (that)[0], eps)    \
-   && EQUAL_UP_TO((this)[1], (that)[1], eps) \
-   && EQUAL_UP_TO((this)[2], (that)[2], eps))
+#define CHECK_GEOM_CELL_FEATURES(this, that, eps)                 \
+  REQUIRE_THAT((this)._sq_diam, WithinAbs((that)._sq_diam, eps)); \
+  REQUIRE_THAT((this)._sq_min_edge, WithinAbs((that)._sq_min_edge, eps));
 
 constexpr CoMMAWeightT eps = 1e-10;
 
@@ -70,11 +66,11 @@ SCENARIO("Test CellFeatures", "[CellFeatures]") {
     WHEN("We create a CellFeatures object using the dual graph") {
       constexpr CoMMAIndexT idx = 0;
       const CFT feats(idx, graph);
+      const vector<CoMMAWeightT> ref_center = {0.5, 0.5};
       THEN("Quantities are as expected") {
-        REQUIRE(EQUAL_UP_TO(feats._measure, 1., eps));
-        REQUIRE(EQUAL_UP_TO(feats._external_weights, 4., eps));
-        REQUIRE(EQUAL_UP_TO(feats._sum_centers[0], 0.5, eps));
-        REQUIRE(EQUAL_UP_TO(feats._sum_centers[1], 0.5, eps));
+        REQUIRE_THAT(feats._measure, WithinAbs(1., eps));
+        REQUIRE_THAT(feats._external_weights, WithinAbs(4., eps));
+        REQUIRE_THAT(feats._sum_centers, Approx(ref_center).margin(eps));
         REQUIRE(feats._external_facets.at(idx) == 4);
       }
     }  // When
@@ -170,8 +166,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("2 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_2D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          ref_feats._sum_centers, Approx(tmp_feats._sum_centers).margin(eps)
         );
         REQUIRE(
           (tmp_feats._external_facets.find(new_fc)
@@ -223,8 +219,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("3 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_2D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         REQUIRE(
           (tmp_feats._external_facets.find(new_fc)
@@ -277,8 +273,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("4 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_2D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         REQUIRE(
           (tmp_feats._external_facets.find(new_fc)
@@ -310,7 +306,7 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
           ARC->compute_and_update_features(
             new_fc, feats, cc, n_shared_faces, ar, tmp_feats
           );
-          REQUIRE(EQUAL_UP_TO(ar, expected_AR.at(label), eps));
+          REQUIRE_THAT(ar, WithinAbs(expected_AR.at(label), eps));
         }
       }
 
@@ -362,8 +358,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("9 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_2D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         for (auto &[idx, nef] : tmp_feats._external_facets) {
           REQUIRE(nef == ref_feats._external_facets.at(idx));
@@ -372,7 +368,7 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         // min(bary_dist) = 1 It should be zero since the barycenter is the
         // center of a cell, but we have a threshold
         // Here, it is not squared
-        REQUIRE(EQUAL_UP_TO(ar, sqrt(2.), eps));
+        REQUIRE_THAT(ar, WithinAbs(sqrt(2.), eps));
       }  // Then
 
     }  // When
@@ -485,8 +481,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("5 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_3D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          ref_feats._sum_centers, Approx(tmp_feats._sum_centers).margin(eps)
         );
         for (auto &[idx, nef] : tmp_feats._external_facets) {
           REQUIRE(nef == ref_feats._external_facets.at(idx));
@@ -534,8 +530,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("6 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_3D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         for (auto &[idx, nef] : tmp_feats._external_facets) {
           REQUIRE(nef == ref_feats._external_facets.at(idx));
@@ -598,8 +594,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("8 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_3D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         for (auto &[idx, nef] : tmp_feats._external_facets) {
           REQUIRE(nef == ref_feats._external_facets.at(idx));
@@ -630,14 +626,14 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
           ARC->compute_and_update_features(
             new_fc, feats, cc, n_shared_faces, ar, tmp_feats
           );
-          REQUIRE(EQUAL_UP_TO(ar, expected_AR.at(label), eps));
+          REQUIRE_THAT(ar, WithinAbs(expected_AR.at(label), eps));
         }
       }
     }  // When
 
     WHEN("We create a cell and try to add some fine-cells") {
       // clang-format off
-      CoMMAIndexT new_fc = 42;
+      constexpr CoMMAIndexT new_fc = 42;  // It was not on purpose
       const unordered_set<CoMMAIndexT> cc = {
         // Top layer
         40, 41, // new_fc, We will add it later
@@ -709,8 +705,8 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         );
       THEN("27 cells - barycenter info is OK") {
         CHECK_BASE_CELL_FEATURES(tmp_feats, ref_feats, eps);
-        REQUIRE(
-          EQUAL_UP_TO_3D(ref_feats._sum_centers, tmp_feats._sum_centers, eps)
+        REQUIRE_THAT(
+          tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
         for (auto &[idx, nef] : tmp_feats._external_facets) {
           REQUIRE(nef == ref_feats._external_facets.at(idx));
@@ -719,7 +715,7 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         // min(bary_dist) = 1 It should be zero since the barycenter is the
         // center of a cell, but we have a threshold
         // Here, it is not squared
-        REQUIRE(EQUAL_UP_TO(ar, sqrt(3.), eps));
+        REQUIRE_THAT(ar, WithinAbs(sqrt(3.), eps));
       }  // Then
     }  // When
   }  // Given

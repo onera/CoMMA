@@ -178,9 +178,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT seed_ordering_type,
 
       // Outputs
-      vector<CoMMAIndexT> fc_to_cc,  // Out
-      vector<CoMMAIndexT> agglomerationLines_Idx,  // In & out
-      vector<CoMMAIndexT> agglomerationLines,  // In & out
+      vector<CoMMAIndexT> &agglomerationLines_Idx,  // In & out
+      vector<CoMMAIndexT> &agglomerationLines,  // In & out
 
       // Tuning of the algorithms
       bool correction,
@@ -194,6 +193,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT fc_choice_iter,
       CoMMAIntT type_of_isotropic_agglomeration
     ) {
+      vector<CoMMAIndexT> fc_to_cc{};
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         adjMatrix_row_ptr,
         adjMatrix_col_ind,
@@ -241,7 +241,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "odd_line_length"_a,
     "threshold_anisotropy"_a,
     "seed_ordering_type"_a,
-    "fc_to_cc"_a,
     "agglomerationLines_Idx"_a,
     "agglomerationLines"_a,
     "correction"_a,
@@ -280,7 +279,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     [](
       const std::vector<CoMMAIndexT> &indices,
       const std::vector<CoMMAIntT> &n_bnd_faces,
-      const std::unordered_set<CoMMAIntT> allowed
+      const std::unordered_set<CoMMAIntT> allowed  // NOLINT
     ) {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges(indices, n_bnd_faces, allowed, filtered);

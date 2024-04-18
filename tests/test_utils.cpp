@@ -22,6 +22,7 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::WithinAbs;
 
 SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
   GIVEN("A 7x7 Cartesian 2D matrix") {
@@ -82,7 +83,7 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
       );
       THEN("Wall") {
         for (const auto &cell : wall) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 0., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(0., eps));
         }
       }
       THEN("First set of neighbours") {
@@ -90,35 +91,35 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
           8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43
         };
         for (const auto &cell : cells) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 1., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(1., eps));
         }
       }
       THEN("Second set of neighbours") {
         const vector<CoMMAIndexT> cells = {16, 17, 18, 19, 20, 23, 30, 37, 44};
         for (const auto &cell : cells) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 2., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(2., eps));
         }
       }
       THEN("Third set of neighbours") {
         const vector<CoMMAIndexT> cells = {24, 25, 26, 27, 31, 38, 45};
         for (const auto &cell : cells) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 3., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(3., eps));
         }
       }
       THEN("Fourth set of neighbours") {
         const vector<CoMMAIndexT> cells = {32, 33, 34, 39, 46};
         for (const auto &cell : cells) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 4., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(4., eps));
         }
       }
       THEN("Fifth set of neighbours") {
         const vector<CoMMAIndexT> cells = {40, 41, 47};
         for (const auto &cell : cells) {
-          REQUIRE(EQUAL_UP_TO(dist[cell], 5., eps));
+          REQUIRE_THAT(dist[cell], WithinAbs(5., eps));
         }
       }
       THEN("Sixth set of neighbours") {
-        REQUIRE(EQUAL_UP_TO(dist[48], 6., eps));
+        REQUIRE_THAT(dist[48], WithinAbs(6., eps));
       }
     }
     WHEN("We compute the neighbourhood-based wall-distance wrt to an empty wall"
@@ -257,6 +258,20 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
     const DualGEx_quad_4 Data = DualGEx_quad_4();
     std::vector<CoMMAIndexT> ref_res(Data.nb_fc);
     std::iota(ref_res.begin(), ref_res.end(), 0);
+    WHEN("We provide no neighbours") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {}, filtered
+      );
+      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+    }
+    WHEN("We provide an impossible number of neighbours") {
+      std::vector<CoMMAIndexT> filtered{};
+      filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
+        Data.adjMatrix_row_ptr, Data.n_bnd_faces, {-1, 0}, filtered
+      );
+      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+    }
     WHEN("We ask for cells with 3 neighbours (that is, none)") {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(

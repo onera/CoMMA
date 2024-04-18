@@ -223,7 +223,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 31") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_FALSE(CONTAINS_(fon, 31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
         REQUIRE(CONTAINS_(fon, 17));
@@ -240,7 +240,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 31 to the creator-provided neighbourhood") {
       const auto fon = c_neighbourhood->get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_FALSE(CONTAINS_(fon, 31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
         REQUIRE(CONTAINS_(fon, 17));
@@ -259,7 +259,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 31 to the copy of the creator-provided neighbourhood") {
       const auto fon = copy_c_neighbourhood->get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_FALSE(CONTAINS_(fon, 31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
         REQUIRE(CONTAINS_(fon, 17));
@@ -276,7 +276,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 38") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Cell 38 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 38));
+        REQUIRE_FALSE(CONTAINS_(fon, 38));
       }
       THEN("Old neighbours are still in the neighbourhood") {
         REQUIRE(CONTAINS_(fon, 17));
@@ -288,9 +288,9 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       THEN(
         "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
       ) {
-        REQUIRE(!CONTAINS_(fon, 37));
-        REQUIRE(!CONTAINS_(fon, 39));
-        REQUIRE(!CONTAINS_(fon, 45));
+        REQUIRE_FALSE(CONTAINS_(fon, 37));
+        REQUIRE_FALSE(CONTAINS_(fon, 39));
+        REQUIRE_FALSE(CONTAINS_(fon, 45));
       }
     }
   }
@@ -357,7 +357,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       }
       const auto &prev_fon = neighbourhood.get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_FALSE(CONTAINS_1STEL_(prev_fon, 31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
         REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
@@ -380,7 +380,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_FALSE(CONTAINS_1STEL_(prev_fon, 31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
         REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
@@ -405,7 +405,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_FALSE(CONTAINS_1STEL_(prev_fon, 31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
         REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
@@ -419,9 +419,9 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       THEN(
         "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
       ) {
-        REQUIRE(!CONTAINS_(fon, 37));
-        REQUIRE(!CONTAINS_(fon, 39));
-        REQUIRE(!CONTAINS_(fon, 45));
+        REQUIRE_FALSE(CONTAINS_(fon, 37));
+        REQUIRE_FALSE(CONTAINS_(fon, 39));
+        REQUIRE_FALSE(CONTAINS_(fon, 45));
       }
       THEN(
         "First ever computed neighbourhood is returned since no direct neighbours were added"
@@ -432,7 +432,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       }
       const auto &prev_fon = neighbourhood.get_neighbours_by_level(1);
       THEN("Cell 38 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 38));
+        REQUIRE_FALSE(CONTAINS_1STEL_(prev_fon, 38));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
         REQUIRE(CONTAINS_1STEL_(prev_fon, 30));
