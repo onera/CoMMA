@@ -21,14 +21,6 @@
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
 
-#define CHECK_CELL_FEATURES(this, that, eps)                                 \
-  REQUIRE(EQUAL_UP_TO(this._sq_diam, that._sq_diam, eps));                   \
-  REQUIRE(EQUAL_UP_TO(this._sq_min_edge, that._sq_min_edge, eps));           \
-  REQUIRE(EQUAL_UP_TO(this._measure, that._measure, eps));                   \
-  REQUIRE(EQUAL_UP_TO(this._external_weights, that._external_weights, eps)); \
-  REQUIRE(EQUAL_UP_TO(this._internal_weights, that._internal_weights, eps)); \
-  REQUIRE(this._n_internal_faces == that._n_internal_faces);
-
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
     const DualGEx_cube_4 Data = DualGEx_cube_4();
@@ -133,68 +125,6 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
         }
       }
     }
-
-    WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
-      constexpr CoMMAWeightT eps = 1e-10;
-      // In
-      unordered_set<CoMMAIndexT> cc = {0, 1, 4, 5};
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> tmp_feats{};
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_feats{
-        4., 16., 4., 4, 1., sqrt(2.)
-      };
-      // Out
-      CoMMAIntT shared_faces{};
-      CoMMAWeightT ar{};
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> ref_feats{
-        5., 20., 5., 5, 1., sqrt(3.)
-      };
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
-      THEN("New coarse cell has 1 shared face") {
-        agg->compute_next_cc_features(
-          17, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 1);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(17);
-      cc_feats = ref_feats;  // OK copy
-      ref_feats._measure = 6.;
-      // ref_diam does not change
-      ref_feats._external_weights = 22.;
-      ref_feats._internal_weights = 7.;
-      ref_feats._n_internal_faces = 7;
-      ref_ar = agg->_compute_AR(ref_feats);
-      THEN("New coarse cell has 2 shared face") {
-        agg->compute_next_cc_features(
-          21, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 2);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(21);
-      cc.insert(20);
-      cc_feats._measure = 7.;
-      // cc_diam does not change
-      cc_feats._external_weights = 24.;
-      cc_feats._internal_weights = 9.;
-      cc_feats._n_internal_faces = 9;
-      ref_feats._measure = 8.;
-      // ref_diam does not change
-      ref_feats._external_weights = 24.;
-      ref_feats._internal_weights = 12.;
-      ref_feats._n_internal_faces = 12;
-      ref_ar = agg->_compute_AR(ref_feats);
-      THEN("New coarse cell has 3 shared face") {
-        agg->compute_next_cc_features(
-          16, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 3);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-    }  // Aspect ratio
   }
 }
 
@@ -336,63 +266,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         REQUIRE(fccc[15].value() == 3);
       }
     }
-
-    WHEN("We compute the aspect-ratio of a coarse cell") {
-      constexpr CoMMAWeightT eps = 1e-10;
-      // In
-      unordered_set<CoMMAIndexT> cc = {0, 1};
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> cc_feats{
-        2., 6., 1., 1, 1., 1.
-      };
-      // Out
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> tmp_feats{};
-      CoMMAIntT shared_faces{};
-      CoMMAWeightT ar{};
-      CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> ref_feats{
-        3., 8., 2., 2, 1., sqrt(2.)
-      };
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_feats);
-      THEN("L-shaped coarse cell, 1 shared face") {
-        agg->compute_next_cc_features(
-          5, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 1);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      ref_feats._sq_diam = 4.;
-      ref_ar = agg->_compute_AR(ref_feats);
-      THEN("I-shaped coarse cell, 1 shared face") {
-        agg->compute_next_cc_features(
-          2, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 1);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(5);
-      cc_feats._sq_diam = 2.;
-      cc_feats._measure = 3.;
-      cc_feats._external_weights = 8.;
-      cc_feats._internal_weights = 2.;
-      cc_feats._n_internal_faces = 2;
-      //
-      ref_feats._sq_diam = cc_feats._sq_diam;
-      ref_feats._measure = 4.;
-      ref_feats._external_weights = 8.;
-      ref_feats._internal_weights = 4.;
-      ref_feats._n_internal_faces = 4;
-      ref_ar = agg->_compute_AR(ref_feats);
-      THEN("Squared coarse cell, 2 shared faces") {
-        agg->compute_next_cc_features(
-          4, cc_feats, cc, shared_faces, ar, tmp_feats
-        );
-        REQUIRE(shared_faces == 2);
-        CHECK_CELL_FEATURES(ref_feats, tmp_feats, eps);
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-    }
   }
+
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGEx_T_shaped Data = DualGEx_T_shaped();
     const shared_ptr<SeedsPoolT> seeds_pool =

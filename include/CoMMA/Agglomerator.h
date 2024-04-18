@@ -92,17 +92,6 @@ template<
   typename CoMMAIntType>
 class Agglomerator {
 public:
-  /** @brief Function which computes the aspect-ratio from a diameter and a
-   * volume\n In 3D: \f$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} \f$ \n In 2D:
-   * \f$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} \f$ \n (Recall that in 2D the
-   * volume is the surface)
-   */
-  std::function<CoMMAWeightType(const CellFeatures<
-                                CoMMAIndexType,
-                                CoMMAWeightType,
-                                CoMMAIntType> &)>
-    _compute_AR;
-
   /** @brief The constructor of the interface
    *  @param[in] graph Dual_Graph object that determines the connectivity
    * of the matrix
@@ -130,18 +119,8 @@ public:
     }
     if (_dimension == 2) {
       _min_neighbourhood = 2;
-      _compute_AR = compute_AR_max_ov_radius<
-        CoMMAIndexType,
-        CoMMAWeightType,
-        CoMMAIntType,
-        2>;
     } else {
       _min_neighbourhood = 3;
-      _compute_AR = compute_AR_max_ov_radius<
-        CoMMAIndexType,
-        CoMMAWeightType,
-        CoMMAIntType,
-        3>;
     }
     _l_nb_of_cells.push_back(graph->_number_of_cells);
   }
@@ -1124,62 +1103,6 @@ public:
       ),
       CoMMAWeightType{1.} / int_faces.size()
     );
-  }
-
-  /** @brief Computes features of the CC obtained by adding a given fine cell.
-   * The features are Aspect-Ratio and number of face shared with other cells
-   * already agglomerated (Current coarse cell means without \p i_fc)
-   * @param[in] i_fc Index of the fine cell to add to the coarse cell
-   * @param[in] cc_feats Features of the current coarse cell
-   * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
-   * coarse cell
-   * @param[out] shared_faces Number of faces shared by the fine cell with the
-   * current coarse cell
-   * @param[out] aspect_ratio Aspect-Ratio of the (final) coarse cell
-   * @param[out] new_feats Features of the (final) coarse cell
-   */
-  inline void compute_next_cc_features(
-    const CoMMAIndexType i_fc,
-    const CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &cc_feats,
-    const std::unordered_set<CoMMAIndexType> &fc_of_cc,
-    // out
-    CoMMAIntType &shared_faces,
-    CoMMAWeightType &aspect_ratio,
-    CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType> &new_feats
-  ) const {
-    // Compute shared faces
-    shared_faces = 0;
-    CoMMAWeightType shared_weights{0.};
-    auto n_it = this->_fc_graph->neighbours_cbegin(i_fc);
-    auto w_it = this->_fc_graph->weights_cbegin(i_fc);
-    for (; n_it != this->_fc_graph->neighbours_cend(i_fc); ++n_it, ++w_it) {
-      if (*n_it != i_fc && (fc_of_cc.count(*n_it) != 0)) {
-        shared_faces++;
-        shared_weights += *w_it;
-      }
-    }
-
-    // Compute new diameter
-    const std::vector<CoMMAWeightType> &cen_fc =
-      this->_fc_graph->_centers[i_fc];
-    CoMMAWeightType max_diam = cc_feats._sq_diam,
-                    min_edge = cc_feats._sq_min_edge;
-    for (const auto i_fc_cc : fc_of_cc) {
-      const auto dist = squared_euclidean_distance<CoMMAWeightType>(
-        cen_fc, this->_fc_graph->_centers[i_fc_cc]
-      );
-      if (dist > max_diam) max_diam = dist;
-      if (dist < min_edge) min_edge = dist;
-    }  // for i_fc_cc
-    new_feats._sq_diam = max_diam;
-    new_feats._sq_min_edge = min_edge;
-    new_feats._measure = cc_feats._measure + this->_fc_graph->_volumes[i_fc];
-    new_feats._external_weights = cc_feats._external_weights
-      + this->_fc_graph->estimated_total_weight(i_fc) - 2 * shared_weights;
-    new_feats._internal_weights = cc_feats._internal_weights + shared_weights;
-    new_feats._n_internal_faces = cc_feats._n_internal_faces + shared_faces;
-
-    aspect_ratio = this->_compute_AR(new_feats);
   }
 
   /** @brief Pure virtual function that must be implemented in child classes to
