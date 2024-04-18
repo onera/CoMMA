@@ -291,7 +291,7 @@ protected:
    * @param[in] cc_feats Features of the current coarse cell
    * @param[in] fc_of_cc Index of the fine cells already agglomerated in the
    * coarse cell
-   * @param[out] shared_faces Number of faces shared by the fine cell with the
+   * @param[out] n_shared_faces Number of faces shared by the fine cell with the
    * current coarse cell
    * @param[out] new_feats Features of the (final) coarse cell
    */
