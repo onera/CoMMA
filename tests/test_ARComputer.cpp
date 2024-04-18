@@ -169,12 +169,9 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         REQUIRE_THAT(
           ref_feats._sum_centers, Approx(tmp_feats._sum_centers).margin(eps)
         );
-        REQUIRE(
-          (tmp_feats._external_facets.find(new_fc)
-             != tmp_feats._external_facets.end()
-           && tmp_feats._external_facets.at(new_fc)
-             == ref_feats._external_facets.at(new_fc))
-        );
+        for (auto &[idx, nef] : tmp_feats._external_facets) {
+          REQUIRE(nef == ref_feats._external_facets.at(idx));
+        }
       }  // Then
 
       // Adding one cell
@@ -193,7 +190,7 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         ref_feats._sum_centers[xyz] +=
           graph->_volumes[new_fc] * graph->_centers[new_fc][xyz];
       ref_feats._external_facets.insert({new_fc, 3});
-      ref_feats._external_facets.at(1) = 3;
+      ref_feats._external_facets.at(1) -= 1;
       // Case with basic features
       all_ARCs.at(DIAMETER)->compute_and_update_features(
         new_fc, feats, cc, n_shared_faces, ar, tmp_feats
@@ -222,12 +219,9 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         REQUIRE_THAT(
           tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
-        REQUIRE(
-          (tmp_feats._external_facets.find(new_fc)
-             != tmp_feats._external_facets.end()
-           && tmp_feats._external_facets.at(new_fc)
-             == ref_feats._external_facets.at(new_fc))
-        );
+        for (auto &[idx, nef] : tmp_feats._external_facets) {
+          REQUIRE(nef == ref_feats._external_facets.at(idx));
+        }
       }  // Then
 
       // Adding one cell
@@ -276,12 +270,9 @@ SCENARIO("Test aspect-ration computations", "[ARComputer]") {
         REQUIRE_THAT(
           tmp_feats._sum_centers, Approx(ref_feats._sum_centers).margin(eps)
         );
-        REQUIRE(
-          (tmp_feats._external_facets.find(new_fc)
-             != tmp_feats._external_facets.end()
-           && tmp_feats._external_facets.at(new_fc)
-             == ref_feats._external_facets.at(new_fc))
-        );
+        for (auto &[idx, nef] : tmp_feats._external_facets) {
+          REQUIRE(nef == ref_feats._external_facets.at(idx));
+        }
       }  // Then
 
       const map<CoMMAAspectRatioT, CoMMAWeightT> expected_AR({
