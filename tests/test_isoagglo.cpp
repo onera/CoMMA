@@ -55,11 +55,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -71,11 +71,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -99,11 +99,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -115,11 +115,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }

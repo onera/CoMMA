@@ -151,7 +151,7 @@ public:
    *  @param[in] i_c Index of the cell
    *  @return Number of neighbours of the given cell.
    */
-  inline CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) const {
+  inline CoMMAIntType get_nb_of_neighbours(const CoMMAIndexType i_c) const {
     // Return the number of neighbours of the ith cell
     return _m_CRS_Row_Ptr[i_c + 1] - _m_CRS_Row_Ptr[i_c];
   }
@@ -639,8 +639,7 @@ public:
    *  @return the number of faces
    */
   inline CoMMAIntType get_total_n_faces(const CoMMAIndexType idx_c) const {
-    return this->_n_bnd_faces[idx_c]
-      + (this->_m_CRS_Row_Ptr[idx_c + 1] - this->_m_CRS_Row_Ptr[idx_c]);
+    return this->_n_bnd_faces[idx_c] + this->get_nb_of_neighbours(idx_c);
   }
 
   /** @brief Whether a cell is on the boundary
@@ -662,18 +661,25 @@ public:
     // Approximate with an average of the internal faces
     // We could choose many kinds of average, e.g. arithmetic or geometric, I
     // honestly don't know if one is better then the other...
-    // Here, we use the geometric one, which should be less sensitive to
-    // outliers
-    // There might be concerns about the performances
+    // Here, we use the arithmetic one for performance concerns.
+    // However, the geometric one, which should be less sensitive to outliers
+    // is given below as well.
     return this->_n_bnd_faces[idx_c] == 0 ? 0.
                                           : this->_n_bnd_faces[idx_c]
+#if 1
+        * std::reduce(this->weights_cbegin(idx_c),
+                      this->weights_cend(idx_c),
+                      CoMMAWeightType{0.})
+        / this->get_nb_of_neighbours(idx_c);
+#else
         * pow(std::accumulate(
                 this->weights_cbegin(idx_c),
                 this->weights_cend(idx_c),
                 CoMMAWeightType{1.},
                 std::multiplies<>()
               ),
-              CoMMAWeightType{1.} / this->_n_bnd_faces[idx_c]);
+              CoMMAWeightType{1.} / this->get_nb_of_neighbours(idx_c));
+#endif
   }
 
   /** @brief Sum of wall the weights (faces) of a cell. Since there is no

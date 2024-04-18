@@ -1080,31 +1080,6 @@ public:
     this->_l_nb_of_cells.push_back(this->_cc_graph->_cc_counter);
   }
 
-  /** @brief Approximate the value of a boundary face using the known internal
-   * faces. It uses a (geometric) average, so the result is correct only if the
-   * cell is a regular polygon
-   * @param int_faces Vector of the surfaces of the internal faces
-   * @return An approximation of the surface of a boundary face
-   */
-  inline CoMMAWeightType estimate_boundary_face(
-    const std::vector<CoMMAWeightType> &int_faces
-  ) const {
-    // Approximate with an average of the internal faces
-    // We could choose many kinds of average, e.g. arithmetic or geometric, I
-    // honestly don't know if one is better then the other...
-    // Here, we use the geometric one, which should be less sensitive to
-    // outliers
-    return pow(
-      accumulate(
-        int_faces.begin(),
-        int_faces.end(),
-        CoMMAWeightType{1.},
-        std::multiplies<>()
-      ),
-      CoMMAWeightType{1.} / int_faces.size()
-    );
-  }
-
   /** @brief Pure virtual function that must be implemented in child classes to
    * define the optimal coarse cell
    *  @param[in] seed Cell from which the agglomeration of the CC starts
