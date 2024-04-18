@@ -113,7 +113,7 @@ public:
    */
   CoMMASeedsPoolT seed_ordering_type{};
   /** @brief Type of aspect ratio */
-  CoMMAAspectRatioT aspect_ratio;
+  CoMMAAspectRatioT aspect_ratio{};
   /** @brief Cardinality below which a coarse is considered as singular, hence,
    * compliant for correction */
   CoMMAIntType singular_card_thresh;

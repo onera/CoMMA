@@ -77,7 +77,7 @@ SCENARIO("Test CellFeatures", "[CellFeatures]") {
   }  // Given
 }  // Scenario
 
-SCENARIO("Test aspect-ration computations", "[ARComputer]") {
+SCENARIO("Test aspect-ration computations", "[ARComputer]") {  // NOLINT
   GIVEN("A 2D 4x4 Cartesian mesh") {
     const DualGEx_quad_4 Data = DualGEx_quad_4();
     shared_ptr<DualGraphT> graph = make_shared<DualGraphT>(
