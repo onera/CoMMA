@@ -367,6 +367,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -464,6 +465,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -694,6 +696,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -797,6 +800,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -966,6 +970,7 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         goal_card,
         min_card,
         max_card,
+        DEFAULT_AR,
         SING_CARD_THRESH,
         max_line_length
       );

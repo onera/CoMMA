@@ -61,6 +61,7 @@ SCENARIO("Test of a structure", "[structure]") {
             cc_graph,
             seeds_pool,
             dimension,
+            DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
             FC_ITER
           ){};
@@ -89,6 +90,7 @@ SCENARIO("Test of a structure", "[structure]") {
             cc_graph,
             seeds_pool,
             dimension,
+            DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
             FC_ITER
           ){};
@@ -471,7 +473,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR,
               0)
         );
         // Bad iteration number: is 0
@@ -480,7 +482,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               0)
         );
         // Bad iteration number: greater than threshold
@@ -489,7 +491,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               comma::iter_agglo_max_iter + 1)
         );
       }

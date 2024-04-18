@@ -104,6 +104,54 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       "Neighbours of already agglomerated coarse cells have higher priority, and initialize with one point only then let evolve"
     )
     .export_values();
+  py::enum_<CoMMAAspectRatioT>(module_handle, "AR", "Type of aspect-ratio")
+    .value(
+      "DIAMETER_OVER_RADIUS",
+      CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
+      "Diameter over radius"
+    )
+    .value(
+      "DIAMETER_OVER_MIN_EDGE",
+      CoMMAAspectRatioT::DIAMETER_OVER_MIN_EDGE,
+      "Diameter over minimum edge"
+    )
+    .value("DIAMETER", CoMMAAspectRatioT::DIAMETER, "Diameter")
+    .value(
+      "ONE_OVER_MEASURE",
+      CoMMAAspectRatioT::ONE_OVER_MEASURE,
+      "One over the measure (e.g., volume) of the cell"
+    )
+    .value(
+      "ONE_OVER_INTERNAL_WEIGHTS",
+      CoMMAAspectRatioT::ONE_OVER_INTERNAL_WEIGHTS,
+      "One over the internal weights"
+    )
+    .value(
+      "PERIMETER_OVER_RADIUS",
+      CoMMAAspectRatioT::PERIMETER_OVER_RADIUS,
+      "Perimeter over radius"
+    )
+    .value(
+      "EXTERNAL_WEIGHTS",
+      CoMMAAspectRatioT::EXTERNAL_WEIGHTS,
+      "External weights, that is, perimeter"
+    )
+    .value(
+      "MAX_BARY_DIST_OVER_RADIUS",
+      CoMMAAspectRatioT::MAX_BARY_DIST_OVER_RADIUS,
+      "Maximum FC-center distance from barycenter over radius"
+    )
+    .value(
+      "MAX_OVER_MIN_BARY_DIST",
+      CoMMAAspectRatioT::MAX_OVER_MIN_BARY_DIST,
+      "Maximum over minimum FC-center distance from barycenter"
+    )
+    .value(
+      "ALGEBRAIC_PERIMETER_OVER_MEASURE",
+      CoMMAAspectRatioT::ALGEBRAIC_PERIMETER_OVER_MEASURE,
+      "Algebraic-like perimeter over measure, that is, external weights over cell weight"
+    )
+    .export_values();
 
   // Main function
   module_handle.def(
@@ -139,6 +187,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT goal_card,
       CoMMAIntT min_card,
       CoMMAIntT max_card,
+      CoMMAIntT aspect_ratio,
       CoMMAIntT singular_card_thresh,
       optional<CoMMAIndexT> max_cells_in_line,
       CoMMAIntT fc_choice_iter,
@@ -167,6 +216,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         goal_card,
         min_card,
         max_card,
+        static_cast<CoMMAAspectRatioT>(aspect_ratio),
         singular_card_thresh,
         max_cells_in_line,
         fc_choice_iter,
@@ -198,6 +248,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "goal_card"_a,
     "min_card"_a,
     "max_card"_a,
+    "aspect_ratio"_a = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
     "singular_card_thresh"_a = 1,
     "max_cells_in_line"_a = std::nullopt,
     "fc_choice_iter"_a = 1,

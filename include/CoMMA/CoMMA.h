@@ -99,6 +99,7 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * ensured)
  * @param[in] min_card Minimum cardinality accepted for the coarse cells
  * @param[in] max_card Maximum cardinality accepted for the coarse cells
+ * @param[in] aspect_ratio Type of aspect-ratio (see \ref CoMMAAspectRatioT)
  * @param[in] singular_card_thresh (optional, default=1) Cardinality below which
  * a coarse is considered as singular, hence, compliant for correction
  * @param[in] max_cells_in_line [Optional] Maximum number of cells in an
@@ -162,6 +163,7 @@ void agglomerate_one_level(
   CoMMAIntType goal_card,
   CoMMAIntType min_card,
   CoMMAIntType max_card,
+  CoMMAAspectRatioT aspect_ratio = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
   CoMMAIntType singular_card_thresh = 1,
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
   CoMMAIntType fc_choice_iter = 1,
@@ -390,6 +392,7 @@ void agglomerate_one_level(
       cc_graph,
       seeds_pool,
       dimension,
+      aspect_ratio,
       neighbourhood_type,
       fc_choice_iter
     );
@@ -400,6 +403,7 @@ void agglomerate_one_level(
       cc_graph,
       seeds_pool,
       dimension,
+      aspect_ratio,
       neighbourhood_type,
       fc_choice_iter
     );
@@ -479,6 +483,7 @@ inline void agglomerate_one_level(
     agglo.goal_card,
     agglo.min_card,
     agglo.max_card,
+    agglo.aspect_ratio,
     agglo.singular_card_thresh,
     aniso.max_cells_in_line,
     agglo.fc_choice_iter,
