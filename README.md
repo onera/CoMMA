@@ -179,6 +179,10 @@ able to understand what CoMMA actually does under the hood and should have the
 essential insights to use it (e.g., which input parameters should one provides,
 how they will impact the final results...).
 
+Finally, a brief note dedicated to the
+[aspect-ratio computation](Documentation/AR_note.pdf) can be found in the
+repository as well.
+
 ## :bulb: Examples
 Here are two animations about the agglomeration on a 2D mesh of a ring for two
 different option settings:

@@ -16,6 +16,8 @@ CoMMA is a **header-only library**. A python module can be generated using `pybi
 
 The interface to CoMMA is very simple and consists in only one function [agglomerate_one_level](@ref comma::agglomerate_one_level).
 
+In CoMMA repository, one can find some [documentation](https://gitlab.onera.net/numerics/solver/comma/-/tree/main/Documentation), such as [the user manual](https://gitlab.onera.net/numerics/solver/comma/-/blob/main/Documentation/CoMMA_user_manual.pdf) and a note about the aspect ratio, quantity that plays a pivotal role in the agglomeration.
+
 ### Other info
 **Copyright**: Copyright © 2024 ONERA
 
