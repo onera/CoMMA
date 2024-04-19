@@ -114,7 +114,7 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
     THEN(
       "There is no need to agglomerate anisotropically since no line can be built"
     ) {
-      REQUIRE(!aniso_agg._should_agglomerate);
+      REQUIRE_FALSE(aniso_agg._should_agglomerate);
       REQUIRE(aniso_agg._nb_lines[0] == 0);
       THEN("Even if one tries to agglomerate anisotropically, nothing happens"
       ) {
@@ -160,7 +160,7 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
     THEN(
       "There is no need to agglomerate anisotropically since no line can be built"
     ) {
-      REQUIRE(!aniso_agg._should_agglomerate);
+      REQUIRE_FALSE(aniso_agg._should_agglomerate);
       REQUIRE(aniso_agg._nb_lines[0] == 0);
       THEN("Even if one tries to agglomerate anisotropically, nothing happens"
       ) {
@@ -206,7 +206,7 @@ GIVEN("We load the anisotropic mesh structure, but there is no anisotropic cell"
     THEN(
       "There is no need to agglomerate anisotropically since no line can be built"
     ) {
-      REQUIRE(!aniso_agg._should_agglomerate);
+      REQUIRE_FALSE(aniso_agg._should_agglomerate);
       REQUIRE(aniso_agg._nb_lines[0] == 0);
       THEN("Even if one tries to agglomerate anisotropically, nothing happens"
       ) {
@@ -264,7 +264,7 @@ GIVEN("We load the anisotropic mesh structure, but only a cell is anisotropic"
   THEN(
     "There is no need to agglomerate anisotropically since no line can be built"
   ) {
-    REQUIRE(!aniso_agg._should_agglomerate);
+    REQUIRE_FALSE(aniso_agg._should_agglomerate);
     REQUIRE(aniso_agg._nb_lines[0] == 0);
     THEN("Even if one tries to agglomerate anisotropically, nothing happens") {
       aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
@@ -367,6 +367,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -376,8 +377,10 @@ GIVEN(
     THEN(
       "After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization"
     ) {
-      REQUIRE(!seeds_pool->is_empty());
-      REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
+      REQUIRE_FALSE(seeds_pool->is_empty());
+      REQUIRE_FALSE(
+        seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated)
+      );
     }
     THEN(
       "Having chosen a priority by boundary, the seed is a corner who is not a neighbour"
@@ -462,6 +465,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -471,8 +475,10 @@ GIVEN(
     THEN(
       "After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization"
     ) {
-      REQUIRE(!seeds_pool->is_empty());
-      REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
+      REQUIRE_FALSE(seeds_pool->is_empty());
+      REQUIRE_FALSE(
+        seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated)
+      );
     }
     THEN(
       "Having chosen a priority by boundary, the seed is a corner who is not a neighbour"
@@ -690,6 +696,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -699,8 +706,10 @@ GIVEN(
     THEN(
       "After the anisotropic agglomeration, the seeds pool is not empty and does not need an initialization"
     ) {
-      REQUIRE(!seeds_pool->is_empty());
-      REQUIRE(!seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated));
+      REQUIRE_FALSE(seeds_pool->is_empty());
+      REQUIRE_FALSE(
+        seeds_pool->need_initialization(cc_graph->_is_fc_agglomerated)
+      );
     }
     THEN(
       "Having chosen a neighbourhood by boundary, the seed is a neighbour of the first line"
@@ -791,6 +800,7 @@ GIVEN(
     cc_graph,
     seeds_pool,
     Data.dim,
+    DEFAULT_AR,
     CoMMANeighbourhoodT::EXTENDED,
     FC_ITER
   );
@@ -960,6 +970,7 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
         goal_card,
         min_card,
         max_card,
+        DEFAULT_AR,
         SING_CARD_THRESH,
         max_line_length
       );

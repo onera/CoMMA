@@ -38,6 +38,48 @@ namespace comma {
  */
 constexpr double deviate_thresh = 0.9396926207859084;
 
+/** @brief Square
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return the square of \p x
+ */
+template<typename T>
+inline T constexpr _sq(const T x) {
+  return x * x;
+}
+
+/** @brief Cube
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return the cube of \p x
+ */
+template<typename T>
+inline T constexpr _cb(const T x) {
+  return x * x * x;
+}
+
+/** @brief Raise a quantity to an integer power
+ * @tparam p The power
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return \f$ x^p \f$
+ */
+template<unsigned int p, typename T>
+inline T constexpr int_power(const T x) {
+  // See https://stackoverflow.com/a/1505791/12152457
+  if constexpr (p == 0) return 1;
+  if constexpr (p == 1) return x;
+  if constexpr (p == 2) return x * x;
+  if constexpr (p == 3) return x * x * x;
+
+  constexpr int tmp = int_power<p / 2>(x);
+  if constexpr ((p % 2) == 0) {
+    return tmp * tmp;
+  } else {
+    return x * tmp * tmp;
+  }
+}
+
 /** @brief Tell whether the dot product given as input comes from two parallel
  * vectors. Compared against \ref deviate_thresh.
  * @tparam T Input type
@@ -45,7 +87,7 @@ constexpr double deviate_thresh = 0.9396926207859084;
  * @return true if higher than a reference threshold
  */
 template<typename T>
-inline bool dot_deviate(const T dot) {
+inline bool constexpr dot_deviate(const T dot) {
   return fabs(dot) < decltype(fabs(dot)){deviate_thresh};
 }
 

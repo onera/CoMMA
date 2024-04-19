@@ -13,6 +13,30 @@ import typing
 
 import numpy as np
 import numpy.typing as npt
+from CoMMA import AR, Neighbourhood, SeedsPool
+
+AR_DESCRIPTIONS = {
+    AR.DIAMETER_OVER_RADIUS: "Diameter over radius",
+    AR.DIAMETER_OVER_MIN_EDGE: "Diameter over minimum edge",
+    AR.DIAMETER: "Diameter",
+    AR.ONE_OVER_MEASURE: "One over the measure (e.g., volume) of the cell",
+    AR.ONE_OVER_INTERNAL_WEIGHTS: "One over the internal weights",
+    AR.PERIMETER_OVER_RADIUS: "Perimeter over radius",
+    AR.EXTERNAL_WEIGHTS: "External weights, that is, perimeter",
+    AR.MAX_BARY_DIST_OVER_RADIUS: "Maximum FC-center distance from barycenter over radius",  # noqa: E501
+    AR.MAX_OVER_MIN_BARY_DIST: "Maximum over minimum FC-center distance from barycenter",  # noqa: E501
+    AR.ALGEBRAIC_PERIMETER_OVER_MEASURE: "Algebraic-like perimeter over measure, that is, external weights over cell weight",  # noqa: E501
+}
+NEIGHBOURHOOD_DESCRIPTIONS = {
+    Neighbourhood.EXTENDED: "Extended",
+    Neighbourhood.PURE_FRONT: "Pure front advancing",
+}
+SEED_ORDERING_DESCRIPTIONS = {
+    SeedsPool.BOUNDARY: "Boundary priority",
+    SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
+    SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
+    SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
+}
 
 
 def compute_neighbourhood_wall_distance(

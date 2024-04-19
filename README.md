@@ -179,6 +179,10 @@ able to understand what CoMMA actually does under the hood and should have the
 essential insights to use it (e.g., which input parameters should one provides,
 how they will impact the final results...).
 
+Finally, a brief note dedicated to the
+[aspect-ratio computation](Documentation/AR_note.pdf) can be found in the
+repository as well.
+
 ## :bulb: Examples
 Here are two animations about the agglomeration on a 2D mesh of a ring for two
 different option settings:
@@ -295,3 +299,6 @@ configuration). The workflow performs several steps:
    [![coverage report](https://gitlab.onera.net/numerics/solver/comma/badges/main/coverage.svg)](https://gitlab.onera.net/numerics/solver/comma/-/commits/main)
 4. Build the documentation (same as [above](#book-documentation)) and deploy it
    on a [GitLab page](https://numerics.gitlab-pages.onera.net/solver/comma/) -->
+
+## :pray: Acknowledgements
+The development of CoMMA was financially supported by the European Union's Horizon 2020 research and innovation program under grant agreement number 956104 ("NextSim") and the French Directorate General for Civil Aviation (DGAC) project "LAMA".

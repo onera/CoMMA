@@ -113,6 +113,7 @@ set(PROFILING_SOURCE
 )
 
 SET(TESTING_FILES
+  ${TEST_DIR}/test_ARComputer.cpp
   ${TEST_DIR}/test_anisoagglo.cpp
   ${TEST_DIR}/test_correction.cpp
   ${TEST_DIR}/test_deprecated.cpp

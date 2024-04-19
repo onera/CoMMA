@@ -24,11 +24,13 @@ constexpr comma::CoMMAIntT FC_ITER = 1;
 
 constexpr bool ODD_LINE_LENGTH = true;
 
+constexpr comma::CoMMAAspectRatioT DEFAULT_AR =
+  comma::CoMMAAspectRatioT::DIAMETER_OVER_RADIUS;
+
 // Some containers have contains, but only in C++20; others has find, others
 // neither So we set up one function for all
 #define CONTAINS_(cont, obj) \
   (find((cont).begin(), (cont).end(), (obj)) != (cont).end())
-#define EQUAL_UP_TO(a, b, eps) (fabs((a) - (b)) < (eps))
 
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<
   comma::CoMMAIndexT,

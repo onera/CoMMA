@@ -46,6 +46,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       cc_graph,
       seeds_pool,
       Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
       FC_ITER
     );
@@ -54,11 +55,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -70,11 +71,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -89,6 +90,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       cc_PF_graph,
       seeds_pool,
       Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
       FC_ITER
     );
@@ -97,11 +99,11 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, false);
       THEN("We obtain the 64 fine cells divided in 8 coarse cells") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
@@ -113,66 +115,16 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
       agg_PF->agglomerate_one_level(8, 8, 8, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        vector<CoMMAIndexT> fc2cc_req = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-                                         2, 3, 3, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2,
-                                         3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5,
-                                         5, 6, 6, 7, 7, 6, 6, 7, 7, 4, 4, 5, 5,
-                                         4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7};
+        const vector<CoMMAIndexT> fc2cc_req = {
+          0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 0, 0, 1, 1, 0, 0,
+          1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7,
+          6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
+        };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
           REQUIRE(fccc[i].value() == fc2cc_req[i]);
         }
       }
     }
-
-    WHEN("We compute the aspect-ratio of a coarse cell on the boundary") {
-      constexpr CoMMAWeightT eps = 1e-10;
-      // In
-      unordered_set<CoMMAIndexT> cc = {0, 1, 4, 5};
-      CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
-      CoMMAWeightT cc_diam = sqrt(2.), cc_vol = 4.;
-      // Out
-      CoMMAIntT shared_faces{};
-      CoMMAWeightT ar{};
-      const CoMMAWeightT ref_diam = sqrt(3.);
-      CoMMAWeightT ref_vol = 5.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("New coarse cell has 1 shared face") {
-        agg->compute_next_cc_features(
-          17, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(17);
-      cc_diam = ref_diam, cc_vol = ref_vol;
-      ref_vol = 6.;  // ref_diam does not change
-      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("New coarse cell has 2 shared face") {
-        agg->compute_next_cc_features(
-          21, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(21);
-      cc.insert(20);
-      cc_vol = 7.;  // cc_diam does not change
-      ref_vol = 8.;  // ref_diam does not change
-      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("New coarse cell has 3 shared face") {
-        agg->compute_next_cc_features(
-          16, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 3);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-    }  // Aspect ratio
   }
 }
 
@@ -201,6 +153,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       cc_graph,
       seeds_pool,
       Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
       FC_ITER
     );
@@ -260,6 +213,7 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       cc_PF_graph,
       seeds_pool,
       Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::PURE_FRONT,
       FC_ITER
     );
@@ -312,53 +266,8 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         REQUIRE(fccc[15].value() == 3);
       }
     }
-
-    WHEN("We compute the aspect-ratio of a coarse cell") {
-      const CoMMAWeightT eps = 1e-10;
-      // In
-      unordered_set<CoMMAIndexT> cc = {0, 1};
-      CoMMAWeightT cc_diam = 1., cc_vol = 2.;
-      // Out
-      CoMMAWeightT tmp_diam{-1.}, tmp_vol{-1.};
-      CoMMAIntT shared_faces{};
-      CoMMAWeightT ar{};
-      CoMMAWeightT ref_diam = sqrt(2.), ref_vol = 3.;
-      CoMMAWeightT ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("L-shaped coarse cell, 1 shared face") {
-        agg->compute_next_cc_features(
-          5, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      ref_diam = 2.;
-      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("I-shaped coarse cell, 1 shared face") {
-        agg->compute_next_cc_features(
-          2, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 1);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-      cc.insert(5);
-      cc_diam = sqrt(2.), cc_vol = 3.;
-      ref_diam = cc_diam, ref_vol = 4.;
-      ref_ar = agg->_compute_AR(ref_diam, ref_vol);
-      THEN("Squared coarse cell, 2 shared faces") {
-        agg->compute_next_cc_features(
-          4, cc_diam, cc_vol, cc, shared_faces, ar, tmp_diam, tmp_vol
-        );
-        REQUIRE(shared_faces == 2);
-        REQUIRE(EQUAL_UP_TO(ref_diam, tmp_diam, eps));
-        REQUIRE(EQUAL_UP_TO(ref_vol, tmp_vol, eps));
-        REQUIRE(EQUAL_UP_TO(ref_ar, ar, eps));
-      }
-    }
   }
+
   GIVEN("A 3x2 mesh of slightly stretched (x1.75) rectangles") {
     const DualGEx_T_shaped Data = DualGEx_T_shaped();
     const shared_ptr<SeedsPoolT> seeds_pool =
@@ -399,6 +308,7 @@ final CC)
         cc_graph,
         seeds_pool,
         Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         fc_iter
       );
@@ -422,6 +332,7 @@ final CC)
         cc_graph,
         seeds_pool,
         Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         fc_iter
       );

@@ -44,6 +44,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       cc_graph,
       seeds_pool,
       Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
       FC_ITER
     );
@@ -526,6 +527,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         cc_graph,
         seeds_pool,
         Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         FC_ITER
       );
@@ -565,6 +567,7 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         cc_graph,
         seeds_pool,
         Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
         FC_ITER
       );
