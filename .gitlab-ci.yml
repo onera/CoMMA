@@ -29,7 +29,9 @@ default:
     - module purge
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
-    # Add installed version of Catch2 to path
+    # Adding installed pybind11 to PATH (it has been installed with pip)
+    - export PATH=/stck/rmilani/.local/lib/python3.10/site-packages/pybind11:$PATH
+    # Adding installed Catch2 to PATH
     - export PATH=/stck/rmilani/opt/Catch2/install:$PATH
 
 stages:
@@ -89,7 +91,7 @@ job:init:
     stage: init
     variables:
         GIT_STRATEGY: clone
-        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
+        # GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules # Superseded
     rules:
         - !reference [.rules_changes_anything, rules]
     script:
@@ -97,8 +99,6 @@ job:init:
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
-        # We do it manually since there is also perfetto which, however, is not used
-        - git submodule update --init --depth 5 pybind11
         # See if python tools are installed (here, we have already sourced the env,
         # see default:before_script, so it's OK
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr

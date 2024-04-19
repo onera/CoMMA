@@ -19,21 +19,17 @@ class Comma(CMakePackage):
     git = "https://github.com/onera/CoMMA.git"
 
     submodules = True
-    submodules_to_delete = ["perfetto"]
-    # Not sure if something as what follows is possible
-    # if not run_tests:
-    #     submodules_delete.append("Catch2")
 
     maintainers("RiMillo")
 
-    version("develop", branch="main", submodules_delete=submodules_to_delete)
-    version("1.3.2", tag="v1.3.2", submodules_delete=submodules_to_delete, preferred=True)
-    version("1.3.1", tag="v1.3.1", submodules_delete=submodules_to_delete)
+    version("develop", branch="main")
+    version("1.3.2", tag="v1.3.2", preferred=True)
+    version("1.3.1", tag="v1.3.1")
     # Named 1.3, but as we have a 1.3.1 that changes patches, let us do this differently
-    version("1.3.0", tag="v1.3", submodules_delete=submodules_to_delete)
-    version("1.2", tag="v1.2", submodules_delete=submodules_to_delete)
-    version("1.1", tag="v1.1", submodules_delete=submodules_to_delete)
-    version("1.0", tag="v1.0", submodules_delete=submodules_to_delete)
+    version("1.3.0", tag="v1.3")
+    version("1.2", tag="v1.2")
+    version("1.1", tag="v1.1")
+    version("1.0", tag="v1.0")
 
     # Add install methods
     patch("v1.3_install.patch", when="@1.2:1.3.0")  # Works for version 1.2 and 1.3
@@ -67,6 +63,17 @@ class Comma(CMakePackage):
 
     extends("python", when="+python")
     depends_on("python", type=("build", "link", "run"), when="+python")
+    depends_on("py-pybind11", type=("build", "link", "run"), when="@develop:+python")
+    depends_on(
+        "py-pybind11@2.10.0:",
+        type=("build", "link", "run"),
+        when="@develop:+python^python@3.11:"
+    )
+    depends_on(
+        "py-pybind11@2.12.0:",
+        type=("build", "link", "run"),
+        when="@develop:+python^python@3.12:"
+    )
 
     # older versions always had a Python dependency
     extends("python", when="@1.0:1.1")
