@@ -29,6 +29,8 @@ default:
     - module purge
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
+    # Add installed version of Catch2 to path
+    - export PATH=/stck/rmilani/opt/Catch2/install:$PATH
 
 stages:
     - init
@@ -95,7 +97,6 @@ job:init:
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
-        - export PATH=/stck/rmilani/opt/Catch2/install:$PATH
         # We do it manually since there is also perfetto which, however, is not used
         - git submodule update --init --depth 5 pybind11
         # See if python tools are installed (here, we have already sourced the env,
