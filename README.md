@@ -124,9 +124,9 @@ make -j4
 make install
 ```
 Once that is finished, in order for CoMMA to see `Catch2`, add the install directory
-to the path:
+to `cmake` path:
 ```shell
-export PATH=/path/to/Catch2/install:$PATH
+export CMAKE_PREFIX_PATH=/path/to/Catch2/install:$CMAKE_PREFIX_PATH
 ```
 
 In order to get a `python` module of CoMMA, one has to compile it relying on
@@ -137,9 +137,9 @@ python3 -m pip --user pybind11
 ```
 For `cmake` to find `pybind` one then has to give it the right path. Typically,
 assuming one has used the command above and was using `python3.10`, that is done by
-updating the path:
+updating `cmake` path:
 ```shell
-export PATH=${HOME}/.local/lib/python3.10/site-packages/pybind11
+export CMAKE_PREFIX_PATH=${HOME}/.local/lib/python3.10/site-packages/pybind11:$CMAKE_PREFIX_PATH
 ```
 The CLI utility `pybind11-config`, automatically installed with `pybind`, can help
 identifying the right path.

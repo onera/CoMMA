@@ -29,10 +29,10 @@ default:
     - module purge
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
-    # Adding installed pybind11 to PATH (it has been installed with pip)
-    - export PATH=/stck/rmilani/.local/lib/python3.10/site-packages/pybind11:$PATH
-    # Adding installed Catch2 to PATH
-    - export PATH=/stck/rmilani/opt/Catch2/install:$PATH
+    # Adding installed pybind11 to CMAKE_PREFIX_PATH (it has been installed with pip)
+    - export CMAKE_PREFIX_PATH=/stck/rmilani/.local/lib/python3.10/site-packages/pybind11:$CMAKE_PREFIX_PATH
+    # Adding installed Catch2 to CMAKE_PREFIX_PATH
+    - export CMAKE_PREFIX_PATH=/stck/rmilani/opt/Catch2/install:$CMAKE_PREFIX_PATH
 
 stages:
     - init
