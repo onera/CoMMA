@@ -116,22 +116,22 @@ Inheritance diagram for comma::Agglomerator_Biconnected&lt; CoMMAIndexType, CoMM
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0744384ce714c0f8dba59eca630dbdd1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#a0744384ce714c0f8dba59eca630dbdd1">Agglomerator_Biconnected</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> neighbourhood_type, CoMMAIntType fc_iter)</td></tr>
-<tr class="memdesc:a0744384ce714c0f8dba59eca630dbdd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor of the class. No specific implementation, it instantiates the base class <a class="el" href="classcomma_1_1_agglomerator___isotropic.html" title="Agglomerator_Isotropic class is a child class of the Agglomerator class that specializes the implemen...">Agglomerator_Isotropic</a>.  <a href="classcomma_1_1_agglomerator___biconnected.html#a0744384ce714c0f8dba59eca630dbdd1">More...</a><br /></td></tr>
-<tr class="separator:a0744384ce714c0f8dba59eca630dbdd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa1a29652d16d3ef403271c90e3bae3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#afa1a29652d16d3ef403271c90e3bae3b">Agglomerator_Biconnected</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, <a class="el" href="namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8">CoMMAAspectRatioT</a> aspect_ratio, <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> neighbourhood_type, CoMMAIntType fc_iter)</td></tr>
+<tr class="memdesc:afa1a29652d16d3ef403271c90e3bae3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor of the class. No specific implementation, it instantiates the base class <a class="el" href="classcomma_1_1_agglomerator___isotropic.html" title="Agglomerator_Isotropic class is a child class of the Agglomerator class that specializes the implemen...">Agglomerator_Isotropic</a>.  <a href="classcomma_1_1_agglomerator___biconnected.html#afa1a29652d16d3ef403271c90e3bae3b">More...</a><br /></td></tr>
+<tr class="separator:afa1a29652d16d3ef403271c90e3bae3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e429e7e1e8cca0447b7322a4636ca1b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#a1e429e7e1e8cca0447b7322a4636ca1b">~Agglomerator_Biconnected</a> () override=default</td></tr>
 <tr class="memdesc:a1e429e7e1e8cca0447b7322a4636ca1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="classcomma_1_1_agglomerator___biconnected.html#a1e429e7e1e8cca0447b7322a4636ca1b">More...</a><br /></td></tr>
 <tr class="separator:a1e429e7e1e8cca0447b7322a4636ca1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bb82fadd4a4ddd13581102df1491d08"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; CoMMAIndexType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#a3bb82fadd4a4ddd13581102df1491d08">choose_optimal_cc_and_update_seeds_pool</a> (const CoMMAIndexType seed, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, CoMMAIntType &amp;compactness) override</td></tr>
 <tr class="memdesc:a3bb82fadd4a4ddd13581102df1491d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the pure virtual function in the parent class, to be used in couple with the agglomerate_one_level of the <a class="el" href="classcomma_1_1_agglomerator___isotropic.html" title="Agglomerator_Isotropic class is a child class of the Agglomerator class that specializes the implemen...">Agglomerator_Isotropic</a>.  <a href="classcomma_1_1_agglomerator___biconnected.html#a3bb82fadd4a4ddd13581102df1491d08">More...</a><br /></td></tr>
 <tr class="separator:a3bb82fadd4a4ddd13581102df1491d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae1d6469c6921e306a3fa054d076bf0f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#aae1d6469c6921e306a3fa054d076bf0f">compute_best_fc_to_add</a> (const CoMMAIntType fc_iter, const std::shared_ptr&lt; <a class="el" href="classcomma_1_1_neighbourhood.html">Neighbourhood</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; neighbourhood, const std::unordered_map&lt; CoMMAIndexType, CoMMAIntType &gt; &amp;d_n_of_seed, const bool &amp;is_order_primary, const CoMMAWeightType &amp;diam_cc, const CoMMAWeightType &amp;vol_cc, const std::unordered_set&lt; CoMMAIndexType &gt; &amp;s_of_fc_for_current_cc, CoMMAIndexType &amp;argmin_ar, CoMMAIntType &amp;max_faces_in_common, CoMMAWeightType &amp;min_ar_diam, CoMMAWeightType &amp;min_ar_vol) const</td></tr>
-<tr class="memdesc:aae1d6469c6921e306a3fa054d076bf0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the best fine cell to add to the coarse cell. The choice depends on: the number of shared faces (tries to maximize it), the neighbourhood order (tries to minimize it), and the aspect-ratio of the coarse cell (tries to minimize it).  <a href="classcomma_1_1_agglomerator___biconnected.html#aae1d6469c6921e306a3fa054d076bf0f">More...</a><br /></td></tr>
-<tr class="separator:aae1d6469c6921e306a3fa054d076bf0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63f9963cba9be0b8cae0c5d33123962c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___biconnected.html#a63f9963cba9be0b8cae0c5d33123962c">compute_best_fc_to_add</a> (const CoMMAIntType fc_iter, const std::shared_ptr&lt; <a class="el" href="classcomma_1_1_neighbourhood.html">Neighbourhood</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; neighbourhood, const std::unordered_map&lt; CoMMAIndexType, CoMMAIntType &gt; &amp;d_n_of_seed, const bool &amp;is_order_primary, const <a class="el" href="classcomma_1_1_cell_features.html">CellFeatures</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &amp;cc_feats, const std::unordered_set&lt; CoMMAIndexType &gt; &amp;s_of_fc_for_current_cc, CoMMAIndexType &amp;argmin_ar, CoMMAIntType &amp;max_faces_in_common, <a class="el" href="classcomma_1_1_cell_features.html">CellFeatures</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &amp;min_ar_cc_feats) const</td></tr>
+<tr class="memdesc:a63f9963cba9be0b8cae0c5d33123962c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the best fine cell to add to the coarse cell. The choice depends on: the number of shared faces (tries to maximize it), the neighbourhood order (tries to minimize it), and the aspect-ratio of the coarse cell (tries to minimize it).  <a href="classcomma_1_1_agglomerator___biconnected.html#a63f9963cba9be0b8cae0c5d33123962c">More...</a><br /></td></tr>
+<tr class="separator:a63f9963cba9be0b8cae0c5d33123962c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcomma_1_1_agglomerator___isotropic"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcomma_1_1_agglomerator___isotropic')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcomma_1_1_agglomerator___isotropic.html">comma::Agglomerator_Isotropic&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memitem:a6d589efa4a8648631a2b946763b04dd6 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a6d589efa4a8648631a2b946763b04dd6">Agglomerator_Isotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> neighbourhood_type, CoMMAIntType fc_iter)</td></tr>
-<tr class="memdesc:a6d589efa4a8648631a2b946763b04dd6 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. The constructor takes as arguments the same arguments of the father and in this way activates also the constructor of the base class.  <a href="classcomma_1_1_agglomerator___isotropic.html#a6d589efa4a8648631a2b946763b04dd6">More...</a><br /></td></tr>
-<tr class="separator:a6d589efa4a8648631a2b946763b04dd6 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a745a11f75eb2f77d692f1e81ad40e26f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a745a11f75eb2f77d692f1e81ad40e26f">Agglomerator_Isotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, <a class="el" href="namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8">CoMMAAspectRatioT</a> aspect_ratio, <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> neighbourhood_type, CoMMAIntType fc_iter)</td></tr>
+<tr class="memdesc:a745a11f75eb2f77d692f1e81ad40e26f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. The constructor takes as arguments the same arguments of the father and in this way activates also the constructor of the base class.  <a href="classcomma_1_1_agglomerator___isotropic.html#a745a11f75eb2f77d692f1e81ad40e26f">More...</a><br /></td></tr>
+<tr class="separator:a745a11f75eb2f77d692f1e81ad40e26f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa254625482275446b207051f544fd92f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#aa254625482275446b207051f544fd92f">~Agglomerator_Isotropic</a> () override=default</td></tr>
 <tr class="memdesc:aa254625482275446b207051f544fd92f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="classcomma_1_1_agglomerator___isotropic.html#aa254625482275446b207051f544fd92f">More...</a><br /></td></tr>
 <tr class="separator:aa254625482275446b207051f544fd92f inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,12 +143,6 @@ Public Member Functions</h2></td></tr>
  The function calls function <a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a471fd42799365932adaf4a0123834700">choose_optimal_cc_and_update_seeds_pool</a> of the derived class. For further information about the structure, have a look at: <a href="http://www.cplusplus.com/forum/general/31851/">http://www.cplusplus.com/forum/general/31851/</a> <br  />
  The pseudo-code considers the while function and the agglomeration process is not completed until all the cells are not agglomerated. Hence, while there are still non agglomerate fine cells, repeat the following steps:  <a href="classcomma_1_1_agglomerator___isotropic.html#a7690b334b4f4d143d5edef7e015226c5">More...</a><br /></td></tr>
 <tr class="separator:a7690b334b4f4d143d5edef7e015226c5 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b6bec13ab0d5a563d0c7f2095186141 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">CoMMAWeightType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a4b6bec13ab0d5a563d0c7f2095186141">estimate_boundary_face</a> (const std::vector&lt; CoMMAWeightType &gt; &amp;int_faces) const</td></tr>
-<tr class="memdesc:a4b6bec13ab0d5a563d0c7f2095186141 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approximate the value of a boundary face using the known internal faces. It uses a (geometric) average, so the result is correct only if the cell is a regular polygon.  <a href="classcomma_1_1_agglomerator___isotropic.html#a4b6bec13ab0d5a563d0c7f2095186141">More...</a><br /></td></tr>
-<tr class="separator:a4b6bec13ab0d5a563d0c7f2095186141 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8eeb2f4079e010af97f6018ea48d70da inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a8eeb2f4079e010af97f6018ea48d70da">compute_next_cc_features</a> (const CoMMAIndexType i_fc, const CoMMAWeightType cc_diam, const CoMMAWeightType cc_vol, const std::unordered_set&lt; CoMMAIndexType &gt; &amp;fc_of_cc, CoMMAIntType &amp;shared_faces, CoMMAWeightType &amp;aspect_ratio, CoMMAWeightType &amp;new_diam, CoMMAWeightType &amp;new_vol) const</td></tr>
-<tr class="memdesc:a8eeb2f4079e010af97f6018ea48d70da inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes features of the CC obtained by adding a given fine cell. The features are Aspect-Ratio and number of face shared with other cells already agglomerated (Current coarse cell means without <code>i_fc</code>)  <a href="classcomma_1_1_agglomerator___isotropic.html#a8eeb2f4079e010af97f6018ea48d70da">More...</a><br /></td></tr>
-<tr class="separator:a8eeb2f4079e010af97f6018ea48d70da inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a471fd42799365932adaf4a0123834700 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_set&lt; CoMMAIndexType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a471fd42799365932adaf4a0123834700">choose_optimal_cc_and_update_seeds_pool</a> (const CoMMAIndexType seed, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, CoMMAIntType &amp;compactness)=0</td></tr>
 <tr class="memdesc:a471fd42799365932adaf4a0123834700 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function that must be implemented in child classes to define the optimal coarse cell.  <a href="classcomma_1_1_agglomerator___isotropic.html#a471fd42799365932adaf4a0123834700">More...</a><br /></td></tr>
 <tr class="separator:a471fd42799365932adaf4a0123834700 inherit pub_methods_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,13 +179,9 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a5c6f7d604d05f97dcf8c61ace4e49aef inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a88a36f50abb4794a7bfe1ce8caef5736">NeighbourhoodCreatorBaseType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a5c6f7d604d05f97dcf8c61ace4e49aef">_neigh_crtor</a></td></tr>
 <tr class="memdesc:a5c6f7d604d05f97dcf8c61ace4e49aef inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creator responsible for neighborhood objects.  <a href="classcomma_1_1_agglomerator___isotropic.html#a5c6f7d604d05f97dcf8c61ace4e49aef">More...</a><br /></td></tr>
 <tr class="separator:a5c6f7d604d05f97dcf8c61ace4e49aef inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classcomma_1_1_agglomerator"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classcomma_1_1_agglomerator')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classcomma_1_1_agglomerator.html">comma::Agglomerator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
-<tr class="memitem:ac8cfb2dbc276a34680c0f1fee2b3c390 inherit pub_attribs_classcomma_1_1_agglomerator"><td class="memItemLeft" align="right" valign="top">std::function&lt; CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#ac8cfb2dbc276a34680c0f1fee2b3c390">_compute_AR</a></td></tr>
-<tr class="memdesc:ac8cfb2dbc276a34680c0f1fee2b3c390 inherit pub_attribs_classcomma_1_1_agglomerator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which computes the aspect-ratio from a diameter and a volume<br  />
- In 3D: <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} $" src="form_0.png"/></picture> <br  />
- In 2D: <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} $" src="form_1.png"/></picture> <br  />
- (Recall that in 2D the volume is the surface)  <a href="classcomma_1_1_agglomerator.html#ac8cfb2dbc276a34680c0f1fee2b3c390">More...</a><br /></td></tr>
-<tr class="separator:ac8cfb2dbc276a34680c0f1fee2b3c390 inherit pub_attribs_classcomma_1_1_agglomerator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35a3d420867ce4925046ffadab5c8479 inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classcomma_1_1_a_r_computer.html">ARComputer</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___isotropic.html#a35a3d420867ce4925046ffadab5c8479">_ar_computer</a></td></tr>
+<tr class="memdesc:a35a3d420867ce4925046ffadab5c8479 inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object computing the aspect-ratio of a coarse cell.  <a href="classcomma_1_1_agglomerator___isotropic.html#a35a3d420867ce4925046ffadab5c8479">More...</a><br /></td></tr>
+<tr class="separator:a35a3d420867ce4925046ffadab5c8479 inherit pub_attribs_classcomma_1_1_agglomerator___isotropic"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classcomma_1_1_agglomerator"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcomma_1_1_agglomerator')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcomma_1_1_agglomerator.html">comma::Agglomerator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
 <tr class="memitem:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">_dimension</a></td></tr>
 <tr class="memdesc:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dimensionality of the problem (_dimension = 2 -&gt; 2D, _dimension = 3 -&gt; 3D)  <a href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">More...</a><br /></td></tr>
@@ -236,8 +226,8 @@ class comma::Agglomerator_Biconnected&lt; CoMMAIndexType, CoMMAWeightType, CoMMA
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0744384ce714c0f8dba59eca630dbdd1" name="a0744384ce714c0f8dba59eca630dbdd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0744384ce714c0f8dba59eca630dbdd1">&#9670;&#160;</a></span>Agglomerator_Biconnected()</h2>
+<a id="afa1a29652d16d3ef403271c90e3bae3b" name="afa1a29652d16d3ef403271c90e3bae3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa1a29652d16d3ef403271c90e3bae3b">&#9670;&#160;</a></span>Agglomerator_Biconnected()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,6 +264,12 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8">CoMMAAspectRatioT</a>&#160;</td>
+          <td class="paramname"><em>aspect_ratio</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a>&#160;</td>
           <td class="paramname"><em>neighbourhood_type</em>, </td>
         </tr>
@@ -303,6 +299,7 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
     <tr><td class="paramdir">[in]</td><td class="paramname">cc_graph</td><td>Container for the coarse cells </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">seeds_pool</td><td><a class="el" href="classcomma_1_1_seeds___pool.html" title="Class representing the pool of all the seeds for creating a coarse cell.">Seeds_Pool</a> object giving the order in which the fine cells should be considered when agglomerating </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dimension</td><td>Dimension of the problem </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">aspect_ratio</td><td>Type of aspect-ratio (see <a class="el" href="namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8">CoMMAAspectRatioT</a>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">neighbourhood_type</td><td>Type of neighbourhood to use when growing a coarse cell. See <a class="el" href="namespacecomma.html#a705b45ec112a3ac1bf59f760f0f4d022">CoMMANeighbourhoodT</a> for more details. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fc_iter</td><td>Number of iterations allowed for the algorithm choosing which fine cell to add next. The cost grows exponentially, hence use small values. </td></tr>
   </table>
@@ -398,8 +395,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
-<a id="aae1d6469c6921e306a3fa054d076bf0f" name="aae1d6469c6921e306a3fa054d076bf0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae1d6469c6921e306a3fa054d076bf0f">&#9670;&#160;</a></span>compute_best_fc_to_add()</h2>
+<a id="a63f9963cba9be0b8cae0c5d33123962c" name="a63f9963cba9be0b8cae0c5d33123962c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63f9963cba9be0b8cae0c5d33123962c">&#9670;&#160;</a></span>compute_best_fc_to_add()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,14 +433,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const CoMMAWeightType &amp;&#160;</td>
-          <td class="paramname"><em>diam_cc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const CoMMAWeightType &amp;&#160;</td>
-          <td class="paramname"><em>vol_cc</em>, </td>
+          <td class="paramtype">const <a class="el" href="classcomma_1_1_cell_features.html">CellFeatures</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cc_feats</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -466,14 +457,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">CoMMAWeightType &amp;&#160;</td>
-          <td class="paramname"><em>min_ar_diam</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CoMMAWeightType &amp;&#160;</td>
-          <td class="paramname"><em>min_ar_vol</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classcomma_1_1_cell_features.html">CellFeatures</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>min_ar_cc_feats</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -495,18 +480,16 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
     <tr><td class="paramdir">[in]</td><td class="paramname">neighbourhood</td><td>Neighborhood object </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">d_n_of_seed</td><td>Dictionary containing the cells to consider for the agglomeration with their neighbourhood order wrt to the original seed </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is_order_primary</td><td>If true, the neighbourhood order prevails on other criteria </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">diam_cc</td><td>(Approximation of the) Diameter of the current coarse cell </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vol_cc</td><td>Volume of the current coarse cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cc_feats</td><td>Features of the current coarse cell </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">s_of_fc_for_current_cc</td><td>Indices of the fine cells already agglomerated in the coarse cell </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">argmin_ar</td><td>Index wrt to neighbours vector of the chosen fine cell </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">max_faces_in_common</td><td>Number of faces shared between the chosen fine cell and the coarse cell </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">min_ar_diam</td><td>(Approximation of the) Diameter of the coarse cell after the addition of the chosen fine cell </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">min_ar_vol</td><td>Volume of the coarse cell after the addition of the chosen fine cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">min_ar_cc_feats</td><td>Features of the coarse cell after the addition of the chosen fine cell </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classcomma_1_1_agglomerator___iterative.html#adb49da3aaabcb93c3ece598600cb21b9">comma::Agglomerator_Iterative&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classcomma_1_1_agglomerator___iterative.html#aaa8baa35d8933d01e29f7b92e2258068">comma::Agglomerator_Iterative&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a>.</p>
 
 </div>
 </div>

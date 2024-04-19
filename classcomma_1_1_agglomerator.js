@@ -5,7 +5,6 @@ var classcomma_1_1_agglomerator =
     [ "agglomerate_one_level", "classcomma_1_1_agglomerator.html#ad318f38cc60db419207fa1def39e2269", null ],
     [ "get_fc_2_cc", "classcomma_1_1_agglomerator.html#ad2b5d75df795ac89897ab01d6be0f4e5", null ],
     [ "_cc_graph", "classcomma_1_1_agglomerator.html#a8451ab2bd5cb83611182ff63ee6df949", null ],
-    [ "_compute_AR", "classcomma_1_1_agglomerator.html#ac8cfb2dbc276a34680c0f1fee2b3c390", null ],
     [ "_dimension", "classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3", null ],
     [ "_fc_graph", "classcomma_1_1_agglomerator.html#a851078a996985840835428c7bef3c942", null ],
     [ "_goal_card", "classcomma_1_1_agglomerator.html#acffaa9cdc55cd1affe6d3e2924f46f81", null ],

@@ -6,5 +6,15 @@ var searchData=
   ['agglomerator_5fbiconnected_3',['Agglomerator_Biconnected',['../classcomma_1_1_agglomerator___biconnected.html',1,'comma']]],
   ['agglomerator_5fisotropic_4',['Agglomerator_Isotropic',['../classcomma_1_1_agglomerator___isotropic.html',1,'comma']]],
   ['agglomerator_5fiterative_5',['Agglomerator_Iterative',['../classcomma_1_1_agglomerator___iterative.html',1,'comma']]],
-  ['anisotropicargs_6',['AnisotropicArgs',['../classcomma_1_1_anisotropic_args.html',1,'comma']]]
+  ['anisotropicargs_6',['AnisotropicArgs',['../classcomma_1_1_anisotropic_args.html',1,'comma']]],
+  ['arcomputer_7',['ARComputer',['../classcomma_1_1_a_r_computer.html',1,'comma']]],
+  ['ardiameter_8',['ARDiameter',['../classcomma_1_1_a_r_diameter.html',1,'comma']]],
+  ['ardiamoverminedge_9',['ARDiamOverMinEdge',['../classcomma_1_1_a_r_diam_over_min_edge.html',1,'comma']]],
+  ['ardiamoverradius_10',['ARDiamOverRadius',['../classcomma_1_1_a_r_diam_over_radius.html',1,'comma']]],
+  ['arexternalweightoverradius_11',['ARExternalWeightOverRadius',['../classcomma_1_1_a_r_external_weight_over_radius.html',1,'comma']]],
+  ['arexternalweights_12',['ARExternalWeights',['../classcomma_1_1_a_r_external_weights.html',1,'comma']]],
+  ['armaxbarydistanceoverradius_13',['ARMaxBaryDistanceOverRadius',['../classcomma_1_1_a_r_max_bary_distance_over_radius.html',1,'comma']]],
+  ['armaxoverminbarydistance_14',['ARMaxOverMinBaryDistance',['../classcomma_1_1_a_r_max_over_min_bary_distance.html',1,'comma']]],
+  ['aroverinternalweights_15',['AROverInternalWeights',['../classcomma_1_1_a_r_over_internal_weights.html',1,'comma']]],
+  ['arovermeasure_16',['AROverMeasure',['../classcomma_1_1_a_r_over_measure.html',1,'comma']]]
 ];

@@ -11,7 +11,7 @@ var classcomma_1_1_graph =
     [ "compute_fc_compactness_inside_a_cc", "classcomma_1_1_graph.html#a5ca107f24d5ba40ea695a23699eb1661", null ],
     [ "compute_min_fc_compactness_inside_a_cc", "classcomma_1_1_graph.html#a4a4d55d139f5812150abfa01e197f5e5", null ],
     [ "DFS", "classcomma_1_1_graph.html#a138b207a27e58bcb238d0a80444ba75b", null ],
-    [ "get_nb_of_neighbours", "classcomma_1_1_graph.html#a565588a181fda3b2ebab502ff00c3546", null ],
+    [ "get_nb_of_neighbours", "classcomma_1_1_graph.html#a607fb45d5b133a30bde7725007877743", null ],
     [ "get_neighbours", "classcomma_1_1_graph.html#a26a90ddbfdfa7fd05dd068e3b8eb4c9f", null ],
     [ "get_weights", "classcomma_1_1_graph.html#aec4547e40dba5830f05b5fe96cd2355c", null ],
     [ "neighbours_cbegin", "classcomma_1_1_graph.html#ae53c16fecb13a6319a63b681ac470f94", null ],

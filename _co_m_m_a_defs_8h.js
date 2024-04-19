@@ -1,5 +1,17 @@
 var _co_m_m_a_defs_8h =
 [
+    [ "CoMMAAspectRatioT", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8", [
+      [ "DIAMETER_OVER_RADIUS", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8aa351872cd7850f5acd1c0f7d15791ac3", null ],
+      [ "DIAMETER_OVER_MIN_EDGE", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8ad95bf49ebe2c8dffb7925f1f6c8ea501", null ],
+      [ "DIAMETER", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8aed2ee02285e0e6f65604cec18a72906a", null ],
+      [ "ONE_OVER_MEASURE", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a24e459b8a19def0f2202bd0007fc5f51", null ],
+      [ "ONE_OVER_INTERNAL_WEIGHTS", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a338fbd50e6953c9f8d4bed80203ab293", null ],
+      [ "PERIMETER_OVER_RADIUS", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8af88e6862b1602f233d2d495a9b1d1e98", null ],
+      [ "EXTERNAL_WEIGHTS", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a77ecfee8b6ce57670d02fceec49c89d5", null ],
+      [ "MAX_BARY_DIST_OVER_RADIUS", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a8e8c23ebd7ed4f6183e3b0d87986dfed", null ],
+      [ "MAX_OVER_MIN_BARY_DIST", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8adea3279d5aefb79b3587092acda0310c", null ],
+      [ "ALGEBRAIC_PERIMETER_OVER_MEASURE", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a40c0eaf07c674d996bc2044ceccce8ce", null ]
+    ] ],
     [ "CoMMACellT", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8", [
       [ "INTERIOR", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8ada6f7a085b1f7f2125ce30f5e02db53c", null ],
       [ "VALLEY", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8a4f18a70072d52370244908b93cf13e85", null ],

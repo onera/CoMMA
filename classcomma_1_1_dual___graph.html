@@ -156,9 +156,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a020ecb0b3f410b468bbb8e57878bf9aa"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a020ecb0b3f410b468bbb8e57878bf9aa">get_n_boundary_faces</a> (const CoMMAIndexType idx_c) const</td></tr>
 <tr class="memdesc:a020ecb0b3f410b468bbb8e57878bf9aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return how many boundary faces a certain cell has.  <a href="classcomma_1_1_dual___graph.html#a020ecb0b3f410b468bbb8e57878bf9aa">More...</a><br /></td></tr>
 <tr class="separator:a020ecb0b3f410b468bbb8e57878bf9aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e13a84eed233df574dc50a0b7d3adf5"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a3e13a84eed233df574dc50a0b7d3adf5">get_total_n_faces</a> (const CoMMAIndexType idx_c) const</td></tr>
+<tr class="memdesc:a3e13a84eed233df574dc50a0b7d3adf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return total number of faces, that is, number of neighbours plus number of boundaries.  <a href="classcomma_1_1_dual___graph.html#a3e13a84eed233df574dc50a0b7d3adf5">More...</a><br /></td></tr>
+<tr class="separator:a3e13a84eed233df574dc50a0b7d3adf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a243466aae3bc5b1a7c1f259dc398ce67"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67">is_on_boundary</a> (const CoMMAIndexType idx_c) const</td></tr>
 <tr class="memdesc:a243466aae3bc5b1a7c1f259dc398ce67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a cell is on the boundary.  <a href="classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67">More...</a><br /></td></tr>
 <tr class="separator:a243466aae3bc5b1a7c1f259dc398ce67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4e2cd99bd2e6035febcd49ff460ce3e"><td class="memItemLeft" align="right" valign="top">CoMMAWeightType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#af4e2cd99bd2e6035febcd49ff460ce3e">estimated_boundary_weight</a> (const CoMMAIndexType idx_c) const</td></tr>
+<tr class="memdesc:af4e2cd99bd2e6035febcd49ff460ce3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approximate the value of a boundary face using the known internal faces. It uses a (geometric) average, so the result is correct only if the cell is a regular polygon.  <a href="classcomma_1_1_dual___graph.html#af4e2cd99bd2e6035febcd49ff460ce3e">More...</a><br /></td></tr>
+<tr class="separator:af4e2cd99bd2e6035febcd49ff460ce3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bed2815c618f5670469a6cb38863f0e"><td class="memItemLeft" align="right" valign="top">CoMMAWeightType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a5bed2815c618f5670469a6cb38863f0e">estimated_total_weight</a> (const CoMMAIndexType idx_c) const</td></tr>
+<tr class="memdesc:a5bed2815c618f5670469a6cb38863f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of wall the weights (faces) of a cell. Since there is no knowledge about boundary faces, the result is correct only if internal cell.  <a href="classcomma_1_1_dual___graph.html#a5bed2815c618f5670469a6cb38863f0e">More...</a><br /></td></tr>
+<tr class="separator:a5bed2815c618f5670469a6cb38863f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae54c9474438da03527cc8eab80362cf3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#ae54c9474438da03527cc8eab80362cf3">tag_anisotropic_cells</a> (<a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;max_weights, std::vector&lt; bool &gt; &amp;is_anisotropic, std::deque&lt; CoMMAIndexType &gt; &amp;aniso_seeds_pool, const CoMMAWeightType threshold_anisotropy, const <a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;priority_weights, const CoMMAIndexType preserving)</td></tr>
 <tr class="memdesc:ae54c9474438da03527cc8eab80362cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag cells as anisotropic if their aspect-ratio is over a given threshold and order them according to given priority.  <a href="classcomma_1_1_dual___graph.html#ae54c9474438da03527cc8eab80362cf3">More...</a><br /></td></tr>
 <tr class="separator:ae54c9474438da03527cc8eab80362cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,9 +193,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeea451f73bc04c2b88a24a4709f28c21 inherit pub_methods_classcomma_1_1_graph"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_graph.html#aeea451f73bc04c2b88a24a4709f28c21">BFS</a> (const CoMMAIndexType &amp;root)</td></tr>
 <tr class="memdesc:aeea451f73bc04c2b88a24a4709f28c21 inherit pub_methods_classcomma_1_1_graph"><td class="mdescLeft">&#160;</td><td class="mdescRight">Breadth First Search (BFS) function.  <a href="classcomma_1_1_graph.html#aeea451f73bc04c2b88a24a4709f28c21">More...</a><br /></td></tr>
 <tr class="separator:aeea451f73bc04c2b88a24a4709f28c21 inherit pub_methods_classcomma_1_1_graph"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a565588a181fda3b2ebab502ff00c3546 inherit pub_methods_classcomma_1_1_graph"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_graph.html#a565588a181fda3b2ebab502ff00c3546">get_nb_of_neighbours</a> (CoMMAIndexType i_c) const</td></tr>
-<tr class="memdesc:a565588a181fda3b2ebab502ff00c3546 inherit pub_methods_classcomma_1_1_graph"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of neighbours.  <a href="classcomma_1_1_graph.html#a565588a181fda3b2ebab502ff00c3546">More...</a><br /></td></tr>
-<tr class="separator:a565588a181fda3b2ebab502ff00c3546 inherit pub_methods_classcomma_1_1_graph"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a607fb45d5b133a30bde7725007877743 inherit pub_methods_classcomma_1_1_graph"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_graph.html#a607fb45d5b133a30bde7725007877743">get_nb_of_neighbours</a> (const CoMMAIndexType i_c) const</td></tr>
+<tr class="memdesc:a607fb45d5b133a30bde7725007877743 inherit pub_methods_classcomma_1_1_graph"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of neighbours.  <a href="classcomma_1_1_graph.html#a607fb45d5b133a30bde7725007877743">More...</a><br /></td></tr>
+<tr class="separator:a607fb45d5b133a30bde7725007877743 inherit pub_methods_classcomma_1_1_graph"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26a90ddbfdfa7fd05dd068e3b8eb4c9f inherit pub_methods_classcomma_1_1_graph"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcomma_1_1_graph.html#ac24e8e9de0c15af027fe8d1ccd8304d4">ContainerIndexType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_graph.html#a26a90ddbfdfa7fd05dd068e3b8eb4c9f">get_neighbours</a> (const CoMMAIndexType &amp;i_c) const</td></tr>
 <tr class="memdesc:a26a90ddbfdfa7fd05dd068e3b8eb4c9f inherit pub_methods_classcomma_1_1_graph"><td class="mdescLeft">&#160;</td><td class="mdescRight">Based on the CRS representation retrieves the neighbours of the cell given as an input.  <a href="classcomma_1_1_graph.html#a26a90ddbfdfa7fd05dd068e3b8eb4c9f">More...</a><br /></td></tr>
 <tr class="separator:a26a90ddbfdfa7fd05dd068e3b8eb4c9f inherit pub_methods_classcomma_1_1_graph"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,8 +237,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a49d4b45fcbf985e001a9137f38d8fd0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="memItemLeft" align="right" valign="top">std::function&lt; CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#adbc7f2b85fe3771b78a1d485575ed4a3">_compute_AR</a></td></tr>
 <tr class="memdesc:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which computes the aspect-ratio from the minimum and maximum faces<br  />
- In 3D: <picture><source srcset="form_2_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_2.png"/></picture><br  />
- In 2D: <picture><source srcset="form_3_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_3.png"/></picture><br  />
+ In 3D: <picture><source srcset="form_25_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_25.png"/></picture><br  />
+ In 2D: <picture><source srcset="form_26_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_26.png"/></picture><br  />
  (Recall that in 2D a face is actually an edge)  <a href="classcomma_1_1_dual___graph.html#adbc7f2b85fe3771b78a1d485575ed4a3">More...</a><br /></td></tr>
 <tr class="separator:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classcomma_1_1_graph"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classcomma_1_1_graph')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classcomma_1_1_graph.html">comma::Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
@@ -549,6 +558,80 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
+<a id="af4e2cd99bd2e6035febcd49ff460ce3e" name="af4e2cd99bd2e6035febcd49ff460ce3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4e2cd99bd2e6035febcd49ff460ce3e">&#9670;&#160;</a></span>estimated_boundary_weight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">CoMMAWeightType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::estimated_boundary_weight </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType&#160;</td>
+          <td class="paramname"><em>idx_c</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Approximate the value of a boundary face using the known internal faces. It uses a (geometric) average, so the result is correct only if the cell is a regular polygon. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">idx_c</td><td>Index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An approximation of the surface of a boundary face </dd></dl>
+
+</div>
+</div>
+<a id="a5bed2815c618f5670469a6cb38863f0e" name="a5bed2815c618f5670469a6cb38863f0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bed2815c618f5670469a6cb38863f0e">&#9670;&#160;</a></span>estimated_total_weight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">CoMMAWeightType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::estimated_total_weight </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType&#160;</td>
+          <td class="paramname"><em>idx_c</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sum of wall the weights (faces) of a cell. Since there is no knowledge about boundary faces, the result is correct only if internal cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">idx_c</td><td>Index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Total weight </dd></dl>
+
+</div>
+</div>
 <a id="a020ecb0b3f410b468bbb8e57878bf9aa" name="a020ecb0b3f410b468bbb8e57878bf9aa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a020ecb0b3f410b468bbb8e57878bf9aa">&#9670;&#160;</a></span>get_n_boundary_faces()</h2>
 
@@ -661,6 +744,43 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The set of neighbours </dd></dl>
+
+</div>
+</div>
+<a id="a3e13a84eed233df574dc50a0b7d3adf5" name="a3e13a84eed233df574dc50a0b7d3adf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e13a84eed233df574dc50a0b7d3adf5">&#9670;&#160;</a></span>get_total_n_faces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">CoMMAIntType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::get_total_n_faces </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType&#160;</td>
+          <td class="paramname"><em>idx_c</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return total number of faces, that is, number of neighbours plus number of boundaries. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">idx_c</td><td>Index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of faces </dd></dl>
 
 </div>
 </div>
@@ -810,8 +930,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div><div class="memdoc">
 
 <p>Function which computes the aspect-ratio from the minimum and maximum faces<br  />
- In 3D: <picture><source srcset="form_2_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_2.png"/></picture><br  />
- In 2D: <picture><source srcset="form_3_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_3.png"/></picture><br  />
+ In 3D: <picture><source srcset="form_25_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_25.png"/></picture><br  />
+ In 2D: <picture><source srcset="form_26_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_26.png"/></picture><br  />
  (Recall that in 2D a face is actually an edge) </p>
 
 </div>

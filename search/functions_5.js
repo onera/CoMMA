@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['fill_5fvalue_0',['fill_value',['../namespacecomma.html#a18179379fcc2bb56e6b89c7b43e249c2',1,'comma']]],
-  ['filter_5fcells_5fby_5fn_5fedges_1',['filter_cells_by_n_edges',['../namespacecomma.html#a5193675e5abbdc422bcb8be506e6c08c',1,'comma']]],
-  ['first_2',['first',['../classcomma_1_1_priority___pair.html#a992d3e38d40c9741a9ffc7efa4172c04',1,'comma::Priority_Pair']]]
+  ['empty_0',['empty',['../classcomma_1_1_bimap.html#a88364e304b1a847ff219e815af01be73',1,'comma::Bimap::empty()'],['../classcomma_1_1_queue.html#aa5746b4e600f2c85ec6f9f427974d302',1,'comma::Queue::empty()']]],
+  ['erase_5fb_1',['erase_B',['../classcomma_1_1_bimap.html#a8b79b0b9ba226a25bb66a326a57d1dc6',1,'comma::Bimap']]],
+  ['estimated_5fboundary_5fweight_2',['estimated_boundary_weight',['../classcomma_1_1_dual___graph.html#af4e2cd99bd2e6035febcd49ff460ce3e',1,'comma::Dual_Graph']]],
+  ['estimated_5ftotal_5fweight_3',['estimated_total_weight',['../classcomma_1_1_dual___graph.html#a5bed2815c618f5670469a6cb38863f0e',1,'comma::Dual_Graph']]],
+  ['export_5fanisotropic_5flines_4',['export_anisotropic_lines',['../classcomma_1_1_agglomerator___anisotropic.html#a117343c20ddb4b72d4c9084a89c3303a',1,'comma::Agglomerator_Anisotropic']]],
+  ['extract_5fand_5fupdate_5fcandidates_5',['extract_and_update_candidates',['../classcomma_1_1_neighbourhood.html#abf5efa9c654e7bacae24f74d3c3b8dc1',1,'comma::Neighbourhood']]]
 ];

@@ -1,7 +1,8 @@
 var classcomma_1_1_agglomeration_args =
 [
     [ "AgglomerationArgs", "classcomma_1_1_agglomeration_args.html#a967adfbb31855d5e9511a9bcd1adc381", null ],
-    [ "AgglomerationArgs", "classcomma_1_1_agglomeration_args.html#a9c1a315802d5e50eeab5f6fffca0858c", null ],
+    [ "AgglomerationArgs", "classcomma_1_1_agglomeration_args.html#a8c72fefd5efa075dd83007b40abb0414", null ],
+    [ "aspect_ratio", "classcomma_1_1_agglomeration_args.html#aa752b0d0c6cf8644ceb0f6f1b8ac3e0c", null ],
     [ "correction", "classcomma_1_1_agglomeration_args.html#aae77ddc167ea7520f3a814444a698ce9", null ],
     [ "fc_choice_iter", "classcomma_1_1_agglomeration_args.html#adda5fb9c3d1c7c3d5be3059984bf26e3", null ],
     [ "goal_card", "classcomma_1_1_agglomeration_args.html#a054238263eca86ff84d6e65fbcbfc5a0", null ],

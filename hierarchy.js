@@ -10,7 +10,19 @@ var hierarchy =
       ] ]
     ] ],
     [ "comma::AnisotropicArgs< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_anisotropic_args.html", null ],
+    [ "comma::ARComputer< IndexT, RealT, IntT >", "classcomma_1_1_a_r_computer.html", [
+      [ "comma::ARDiamOverMinEdge< IndexT, RealT, IntT >", "classcomma_1_1_a_r_diam_over_min_edge.html", null ],
+      [ "comma::ARDiamOverRadius< IndexT, RealT, IntT, dim >", "classcomma_1_1_a_r_diam_over_radius.html", null ],
+      [ "comma::ARDiameter< IndexT, RealT, IntT >", "classcomma_1_1_a_r_diameter.html", null ],
+      [ "comma::ARExternalWeightOverRadius< IndexT, RealT, IntT, dim >", "classcomma_1_1_a_r_external_weight_over_radius.html", null ],
+      [ "comma::ARExternalWeights< IndexT, RealT, IntT >", "classcomma_1_1_a_r_external_weights.html", null ],
+      [ "comma::ARMaxBaryDistanceOverRadius< IndexT, RealT, IntT, dim >", "classcomma_1_1_a_r_max_bary_distance_over_radius.html", null ],
+      [ "comma::ARMaxOverMinBaryDistance< IndexT, RealT, IntT >", "classcomma_1_1_a_r_max_over_min_bary_distance.html", null ],
+      [ "comma::AROverInternalWeights< IndexT, RealT, IntT >", "classcomma_1_1_a_r_over_internal_weights.html", null ],
+      [ "comma::AROverMeasure< IndexT, RealT, IntT >", "classcomma_1_1_a_r_over_measure.html", null ]
+    ] ],
     [ "comma::Bimap< A, B >", "classcomma_1_1_bimap.html", null ],
+    [ "comma::CellFeatures< IndexT, RealT, IntT >", "classcomma_1_1_cell_features.html", null ],
     [ "comma::Coarse_Cell< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell.html", [
       [ "comma::Coarse_Cell_Subgraph< CoMMAIndexType, CoMMAWeightType, CoMMAIntType >", "classcomma_1_1_coarse___cell___subgraph.html", null ]
     ] ],

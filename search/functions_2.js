@@ -1,20 +1,7 @@
 var searchData=
 [
-  ['cc_5fcreate_5fall_5fdelayed_5fcc_0',['cc_create_all_delayed_cc',['../classcomma_1_1_coarse___cell___container.html#aff375cbd38f430300abad77480031841',1,'comma::Coarse_Cell_Container']]],
-  ['check_5fconnectivity_1',['check_connectivity',['../classcomma_1_1_graph.html#a72c40bec394188475ac30b159388f29f',1,'comma::Graph']]],
-  ['choose_5fnew_5fseed_2',['choose_new_seed',['../classcomma_1_1_seeds___pool.html#a14a19c8ef86507a6b3f0ff73d3b0a86c',1,'comma::Seeds_Pool::choose_new_seed()'],['../classcomma_1_1_seeds___pool___boundary___priority.html#ae970ce201db03dfd873895b9b9e24c5e',1,'comma::Seeds_Pool_Boundary_Priority::choose_new_seed()'],['../classcomma_1_1_seeds___pool___neighbourhood___priority.html#a02b84ea9c154e7475a6952f63595565e',1,'comma::Seeds_Pool_Neighbourhood_Priority::choose_new_seed()']]],
-  ['choose_5foptimal_5fcc_5fand_5fupdate_5fseeds_5fpool_3',['choose_optimal_cc_and_update_seeds_pool',['../classcomma_1_1_agglomerator___isotropic.html#a471fd42799365932adaf4a0123834700',1,'comma::Agglomerator_Isotropic::choose_optimal_cc_and_update_seeds_pool()'],['../classcomma_1_1_agglomerator___biconnected.html#a3bb82fadd4a4ddd13581102df1491d08',1,'comma::Agglomerator_Biconnected::choose_optimal_cc_and_update_seeds_pool()']]],
-  ['clone_4',['clone',['../classcomma_1_1_neighbourhood_creator.html#a5744afc0bb83cb634548bbee1399e935',1,'comma::NeighbourhoodCreator::clone()'],['../classcomma_1_1_neighbourhood_extended_creator.html#adb1ed78173e7523fc25c3a7e81d1c9a3',1,'comma::NeighbourhoodExtendedCreator::clone()'],['../classcomma_1_1_neighbourhood_pure_front_creator.html#a73b13c01032e09c04690d4320174d222',1,'comma::NeighbourhoodPureFrontCreator::clone()']]],
-  ['coarse_5fcell_5',['Coarse_Cell',['../classcomma_1_1_coarse___cell.html#a8037db1d61c0f3d8f3cdd21dcf8dd301',1,'comma::Coarse_Cell']]],
-  ['coarse_5fcell_5fcontainer_6',['Coarse_Cell_Container',['../classcomma_1_1_coarse___cell___container.html#aca19a5b3b66ea0d481b315ff012a7725',1,'comma::Coarse_Cell_Container']]],
-  ['coarse_5fcell_5fsubgraph_7',['Coarse_Cell_Subgraph',['../classcomma_1_1_coarse___cell___subgraph.html#adb533b705811bed203bea788a1ae7e07',1,'comma::Coarse_Cell_Subgraph']]],
-  ['compute_5fbest_5ffc_5fto_5fadd_8',['compute_best_fc_to_add',['../classcomma_1_1_agglomerator___biconnected.html#aae1d6469c6921e306a3fa054d076bf0f',1,'comma::Agglomerator_Biconnected::compute_best_fc_to_add()'],['../classcomma_1_1_agglomerator___iterative.html#adb49da3aaabcb93c3ece598600cb21b9',1,'comma::Agglomerator_Iterative::compute_best_fc_to_add()']]],
-  ['compute_5ffc_5fcompactness_5finside_5fa_5fcc_9',['compute_fc_compactness_inside_a_cc',['../classcomma_1_1_graph.html#a5ca107f24d5ba40ea695a23699eb1661',1,'comma::Graph']]],
-  ['compute_5fmin_5ffc_5fcompactness_5finside_5fa_5fcc_10',['compute_min_fc_compactness_inside_a_cc',['../classcomma_1_1_graph.html#a4a4d55d139f5812150abfa01e197f5e5',1,'comma::Graph']]],
-  ['compute_5fneighbourhood_5fbased_5fwall_5fdistance_11',['compute_neighbourhood_based_wall_distance',['../namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b',1,'comma']]],
-  ['compute_5fneighbourhood_5fof_5fcc_12',['compute_neighbourhood_of_cc',['../classcomma_1_1_dual___graph.html#a20485b4e0bddf0fd2e6fe38b5aa7582b',1,'comma::Dual_Graph']]],
-  ['compute_5fnext_5fcc_5ffeatures_13',['compute_next_cc_features',['../classcomma_1_1_agglomerator___isotropic.html#a8eeb2f4079e010af97f6018ea48d70da',1,'comma::Agglomerator_Isotropic']]],
-  ['correct_14',['correct',['../classcomma_1_1_coarse___cell___container.html#af30a16e10cd4cbcfa2837a36a5a80599',1,'comma::Coarse_Cell_Container']]],
-  ['create_15',['create',['../classcomma_1_1_neighbourhood_creator.html#afe62a60eabce766b4aea2b02eeed61e5',1,'comma::NeighbourhoodCreator::create()'],['../classcomma_1_1_neighbourhood_extended_creator.html#a7e890e6fff3c54d74e5e2cf9aa73332b',1,'comma::NeighbourhoodExtendedCreator::create()'],['../classcomma_1_1_neighbourhood_pure_front_creator.html#aaac38025ac8e92eecd2b32d85c3e3d0e',1,'comma::NeighbourhoodPureFrontCreator::create()']]],
-  ['create_5fcc_16',['create_cc',['../classcomma_1_1_coarse___cell___container.html#a745d1b842ec7a43dbe303cbef43a0b80',1,'comma::Coarse_Cell_Container']]]
+  ['bfs_0',['BFS',['../classcomma_1_1_graph.html#aeea451f73bc04c2b88a24a4709f28c21',1,'comma::Graph']]],
+  ['bimap_1',['Bimap',['../classcomma_1_1_bimap.html#a668d1a44f819088e9a97555428949af0',1,'comma::Bimap']]],
+  ['build_5fanisotropic_5flines_2',['build_anisotropic_lines',['../classcomma_1_1_agglomerator___anisotropic.html#a06284c8df3ba73d75790c1b703774b11',1,'comma::Agglomerator_Anisotropic']]],
+  ['build_5fqueue_3',['build_queue',['../classcomma_1_1_seeds___pool.html#af927ed91e46d30b8571a964b72f206dc',1,'comma::Seeds_Pool']]]
 ];

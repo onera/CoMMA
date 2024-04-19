@@ -93,7 +93,6 @@ $(document).ready(function(){initNavTree('classcomma_1_1_agglomerator.html','');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classcomma_1_1_agglomerator-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">comma::Agglomerator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
@@ -131,15 +130,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad318f38cc60db419207fa1def39e2269"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#ad318f38cc60db419207fa1def39e2269">agglomerate_one_level</a> (const CoMMAIntType goal_card, const CoMMAIntType min_card, const CoMMAIntType max_card, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, bool correction_steps)=0</td></tr>
 <tr class="memdesc:ad318f38cc60db419207fa1def39e2269"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function which implementation is specified in the related child classes and that defines the agglomeration of one level.  <a href="classcomma_1_1_agglomerator.html#ad318f38cc60db419207fa1def39e2269">More...</a><br /></td></tr>
 <tr class="separator:ad318f38cc60db419207fa1def39e2269"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:ac8cfb2dbc276a34680c0f1fee2b3c390"><td class="memItemLeft" align="right" valign="top">std::function&lt; CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#ac8cfb2dbc276a34680c0f1fee2b3c390">_compute_AR</a></td></tr>
-<tr class="memdesc:ac8cfb2dbc276a34680c0f1fee2b3c390"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which computes the aspect-ratio from a diameter and a volume<br  />
- In 3D: <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} $" src="form_0.png"/></picture> <br  />
- In 2D: <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} $" src="form_1.png"/></picture> <br  />
- (Recall that in 2D the volume is the surface)  <a href="classcomma_1_1_agglomerator.html#ac8cfb2dbc276a34680c0f1fee2b3c390">More...</a><br /></td></tr>
-<tr class="separator:ac8cfb2dbc276a34680c0f1fee2b3c390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -400,27 +390,6 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div><div class="memdoc">
 
 <p>pointer to <a class="el" href="classcomma_1_1_coarse___cell___container.html" title="Class implementing a custom container where the coarse cells are stored.">Coarse_Cell_Container</a> element </p>
-
-</div>
-</div>
-<a id="ac8cfb2dbc276a34680c0f1fee2b3c390" name="ac8cfb2dbc276a34680c0f1fee2b3c390"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8cfb2dbc276a34680c0f1fee2b3c390">&#9670;&#160;</a></span>_compute_AR</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt;CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)&gt; <a class="el" href="classcomma_1_1_agglomerator.html">comma::Agglomerator</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::_compute_AR</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Function which computes the aspect-ratio from a diameter and a volume<br  />
- In 3D: <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt{vol_{CC}}} $" src="form_0.png"/></picture> <br  />
- In 2D: <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{diam_{CC}}{\sqrt[3]{vol_{CC}}} $" src="form_1.png"/></picture> <br  />
- (Recall that in 2D the volume is the surface) </p>
 
 </div>
 </div>
