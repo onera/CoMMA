@@ -10,12 +10,12 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
 #include <unordered_set>
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT

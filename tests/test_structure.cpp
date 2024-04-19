@@ -12,13 +12,13 @@
 
 #define CATCH_CONFIG_MAIN
 
+#include <catch2/catch_test_macros.hpp>
 #include <optional>
 #include <vector>
 
 #include "CoMMA/Args.h"
 #include "CoMMA/CoMMA.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT

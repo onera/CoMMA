@@ -99,8 +99,8 @@ job:init:
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
+        - export PATH=/stck/rmilani/opt/Catch2/install:$PATH
         # We do it manually since there is also perfetto which, however, is not used
-        - git submodule update --init --depth 5 Catch2
         - git submodule update --init --depth 5 pybind11
     artifacts:
         reports:

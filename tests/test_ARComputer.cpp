@@ -10,6 +10,8 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_all.hpp>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -20,7 +22,6 @@
 #include "CoMMA/ARComputer.h"
 #include "CoMMA/Dual_Graph.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT

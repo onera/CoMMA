@@ -11,6 +11,7 @@
  */
 
 #include <algorithm>
+#include <catch2/catch_test_macros.hpp>
 #include <deque>
 #include <numeric>
 #include <unordered_set>
@@ -19,7 +20,6 @@
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Seeds_Pool.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT

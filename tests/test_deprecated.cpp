@@ -10,6 +10,7 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
 #include <set>
 #include <vector>
 
@@ -19,7 +20,6 @@
 #include "CoMMA/deprecated/Priority_Pair.h"
 #include "CoMMA/deprecated/Queue.h"
 #include "CoMMA/deprecated/Tree.h"
-#include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT

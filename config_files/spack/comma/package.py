@@ -72,6 +72,9 @@ class Comma(CMakePackage):
     extends("python", when="@1.0:1.1")
     depends_on("python", type=("build", "link", "run"), when="@1.0:1.1")
 
+    # However, see this bug report https://github.com/spack/spack/issues/29447
+    depends_on("catch2", type=("test",), when="@develop:")
+
     # Require C++17 compilers
     conflicts("%gcc@:8.1.9", msg="Compiler supporting C++17 required")
     conflicts("%clang@:5.9.9", msg="Compiler supporting C++17 required")

@@ -146,11 +146,12 @@ SET(TESTS
 # Generate a test executable with coverage report
 if ( BUILD_TESTS )
   message(STATUS "Tests enabled")
-  add_subdirectory(Catch2)
+  find_package(Catch2 3.4.0 REQUIRED)
+  message(STATUS "Found Catch2 v${Catch2_VERSION}")
   add_executable(${CoMMA_TEST} ${TESTS})
   target_link_libraries(${CoMMA_TEST}
     PUBLIC ${CoMMA_LIB}
-    PRIVATE Catch2::Catch2
+    PRIVATE Catch2::Catch2WithMain
   )
   if ( COVERAGE )
     message(STATUS "Coverage support enabled")
@@ -159,7 +160,6 @@ if ( BUILD_TESTS )
   endif()
 
   enable_testing()
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Catch2/contrib)
   include(CTest)
   include(Catch)
   catch_discover_tests(${CoMMA_TEST})
