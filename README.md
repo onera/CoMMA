@@ -40,9 +40,12 @@ se, however a configuration step is necessary. A `python` module can be
 generated using `pybind11`: this is very convenient for testing and debugging
 purposes. Some tests relying on `Catch2` have been written to check the
 soundness of CoMMA (for more details see the
-[dedicated section](#mag-testing-comma) below). Both the `python` module and the
-tests need compilation. Finally, one can install the headers and, when applies,
-the `python` module in a given directory.
+[dedicated section](#mag-testing-comma) below). In order to work, `cmake` should
+find `pybind11` and `Catch2` in the path, see [below](#link-dependencies) some tips
+on how to achieve this.
+
+Both the `python` module and the tests need compilation. Finally, one can install
+the headers and, when applies, the `python` module in a given directory.
 
 The pivotal part of the configuration step is the choice of the types used by
 CoMMA: one for indices (e.g., cell IDs), one for standard integers (e.g.,
@@ -61,12 +64,8 @@ cmake -DINDEX_T="int" -DINT_T="int" -DREAL_T="double" -DCMAKE_INSTALL_PREFIX=../
 make
 make install
 ```
-Notice that custom types have been chosen. Since the dependencies for the
-`python` module and the tests are included in CoMMA repositories as submodules,
-`cmake` should be able to find them automatically; of course, the repository
-should have been initialized accordingly, see [below](#link-submodules). Instead
-of `-DCMAKE_INSTALL_PREFIX=`, one could have used `--install-prefix`, although
-this later only accepts absolute paths.
+Instead of `-DCMAKE_INSTALL_PREFIX=`, one could have used `--install-prefix`,
+although this later only accepts absolute paths.
 
 If one wants to use CoMMA in their code, it is important to perform the
 installation step: indeed, during configuration an important header (including
@@ -111,6 +110,39 @@ supports almost the same variants that `cmake` uses, e.g., `+python`, `+doc`,
 not available, and the type choices are more limited. Indeed, one use 64 bit
 integer with `+int64`, otherwise 32 bit; and double reals with `+real64`,
 otherwise float.
+
+## :link: Dependencies
+If compiling CoMMA with tests, one needs to get `Catch2`. Being based on `cmake`, the
+flow is similar to CoMMA one:
+```shell
+git clone https://github.com/catchorg/Catch2
+cd Catch2
+mkdir build
+cd build
+cmake --install-prefix /path/to/Catch2/install ..
+make -j4
+make install
+```
+Once that is finished, in order for CoMMA to see `Catch2`, add the install directory
+to `cmake` path:
+```shell
+export CMAKE_PREFIX_PATH=/path/to/Catch2/install:$CMAKE_PREFIX_PATH
+```
+
+In order to get a `python` module of CoMMA, one has to compile it relying on
+`pybind11`. The easiest way to obtain it is to install it via `pip` (notice that we
+select the user installation, `--user`):
+```shell
+python3 -m pip --user pybind11
+```
+For `cmake` to find `pybind` one then has to give it the right path. Typically,
+assuming one has used the command above and was using `python3.10`, that is done by
+updating `cmake` path:
+```shell
+export CMAKE_PREFIX_PATH=${HOME}/.local/lib/python3.10/site-packages/pybind11:$CMAKE_PREFIX_PATH
+```
+The CLI utility `pybind11-config`, automatically installed with `pybind`, can help
+identifying the right path.
 
 ## :construction_worker: Usage
 CoMMA provides a `namespace` with the same name, but in lowercase: `comma`. Its
@@ -204,42 +236,33 @@ different option settings:
     <img src="images/videos/neigh_pt_init.gif" alt="" width="512" height="auto"/>
 </div>
 
-## :link: Submodules
-To handle the `python` binding and the tests, we take advantage of two
-thirdparty libraries, [`pybind11`](https://github.com/pybind/pybind11) and
-[`Catch2`](https://github.com/catchorg/Catch2) respectively. They are included
-in this repository as submodules.
-
-In order to update the submodules do:
-```shell
-git submodule init
-git submodule update
-```
-
 ## :mag: Testing CoMMA
 A set of tests to verify code and algorithm integrity has been set up, see
 [the related file](tests/test_structure.cpp). The tests rely on the `Catch2`
-framework, which is why the related submodule is included in this repository. To
-run the tests, build the library (see [above](#wrench-building-the-library), the
-`cmake` commands related to the tests are already part of the reference
-[`CMakeLists.txt`](CMakeLists.txt)), this will generate an executable
-`CoMMA_test` in the building directory, simply run it.
+framework. To run the tests, start by building the library (see
+[above](#wrench-building-the-library). The `cmake` commands related to the tests are
+already part of the reference [`CMakeLists.txt`](CMakeLists.txt)), this will generate
+an executable `CoMMA_test` in the building directory, simply run it.
 ```shell
-cmake ..
-make
+cmake -DBUILD_TESTS=On ..
+make CoMMA_test # or simply make
 ./CoMMA_test  # or simply: make test
 ```
 
 ## :snake: A `python` interface to CoMMA
 A `python` module which interfaces to CoMMA can be obtained using `pybind11` (a
-submodule of CoMMA). To have it, just "build" (see
-[above](#wrench-building-the-library), related the `cmake` commands are already
-part of the reference [`CMakeLists.txt`](CMakeLists.txt)). A library called
-`CoMMA.cpython-38-x86_64-linux-gnu.so` (or similar) is installed in the
-`${CMAKE_INSTALL_LIBDIR}/python3.X/site-packages`, which, supposing one has
-given `install` as prefix in the `cmake` configuration step and using
-`python3.10`, will develop to `install/lib64/python3.10/site-packages`. To use
-it, add that directory to your `python` path:
+submodule of CoMMA). To have it, just "build", see
+[above](#wrench-building-the-library).
+```shell
+cmake -DBUILD_PYTHON_BINDINGS=On ..
+make CoMMA # or simply make
+```
+A library called `CoMMA.cpython-310-x86_64-linux-gnu.so` (or similar depending on the
+`python` version and the architecture) is installed in
+`${CMAKE_INSTALL_LIBDIR}/python3.X/site-packages`, which, supposing one has given
+`install` as prefix in the `cmake` configuration step and using `python3.10`, will
+develop to `install/lib64/python3.10/site-packages`. To use it, add that directory to
+your `python` path:
 ```shell
 export PYTHONPATH:/path/to/CoMMA/install/lib64/python3.10/site-packages:$PYTHONPATH
 ```

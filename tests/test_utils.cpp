@@ -10,6 +10,9 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <algorithm>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_all.hpp>
 #include <set>
 #include <unordered_set>
 #include <vector>
@@ -17,12 +20,14 @@
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Util.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Equals;
+using Catch::Matchers::SizeIs;
 using Catch::Matchers::WithinAbs;
+const auto EMPTY = Catch::Matchers::IsEmpty();
 
 SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
   GIVEN("A 7x7 Cartesian 2D matrix") {
@@ -30,6 +35,16 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
     const vector<CoMMAIndexT> wall = {
       0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 28, 35, 42
     };
+    // clang-format off
+    // Cells grouped by distance wrt the wall
+    const vector<vector<CoMMAIndexT>> distances = {
+      {8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43},
+      {16, 17, 18, 19, 20, 23, 30, 37, 44},
+      {24, 25, 26, 27, 31, 38, 45},
+      {32, 33, 34, 39, 46},
+      {40, 41, 47}
+    };
+    // clang-format on
     WHEN("We compute the neighbourhood-based wall-distance") {
       vector<CoMMAIntT> dist{};
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAIntT>(
@@ -41,34 +56,27 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
         }
       }
       THEN("First set of neighbours") {
-        const vector<CoMMAIndexT> cells = {
-          8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43
-        };
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[0]) {
           REQUIRE(dist[cell] == 1);
         }
       }
       THEN("Second set of neighbours") {
-        const vector<CoMMAIndexT> cells = {16, 17, 18, 19, 20, 23, 30, 37, 44};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[1]) {
           REQUIRE(dist[cell] == 2);
         }
       }
       THEN("Third set of neighbours") {
-        const vector<CoMMAIndexT> cells = {24, 25, 26, 27, 31, 38, 45};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[2]) {
           REQUIRE(dist[cell] == 3);
         }
       }
       THEN("Fourth set of neighbours") {
-        const vector<CoMMAIndexT> cells = {32, 33, 34, 39, 46};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[3]) {
           REQUIRE(dist[cell] == 4);
         }
       }
       THEN("Fifth set of neighbours") {
-        const vector<CoMMAIndexT> cells = {40, 41, 47};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[4]) {
           REQUIRE(dist[cell] == 5);
         }
       }
@@ -87,34 +95,27 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
         }
       }
       THEN("First set of neighbours") {
-        const vector<CoMMAIndexT> cells = {
-          8, 9, 10, 11, 12, 13, 15, 22, 29, 36, 43
-        };
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[0]) {
           REQUIRE_THAT(dist[cell], WithinAbs(1., eps));
         }
       }
       THEN("Second set of neighbours") {
-        const vector<CoMMAIndexT> cells = {16, 17, 18, 19, 20, 23, 30, 37, 44};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[1]) {
           REQUIRE_THAT(dist[cell], WithinAbs(2., eps));
         }
       }
       THEN("Third set of neighbours") {
-        const vector<CoMMAIndexT> cells = {24, 25, 26, 27, 31, 38, 45};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[2]) {
           REQUIRE_THAT(dist[cell], WithinAbs(3., eps));
         }
       }
       THEN("Fourth set of neighbours") {
-        const vector<CoMMAIndexT> cells = {32, 33, 34, 39, 46};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[3]) {
           REQUIRE_THAT(dist[cell], WithinAbs(4., eps));
         }
       }
       THEN("Fifth set of neighbours") {
-        const vector<CoMMAIndexT> cells = {40, 41, 47};
-        for (const auto &cell : cells) {
+        for (const auto &cell : distances[4]) {
           REQUIRE_THAT(dist[cell], WithinAbs(5., eps));
         }
       }
@@ -130,9 +131,9 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
         Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, empty_wall, dist
       );
       THEN("All the distances are negative") {
-        for (const auto &d : dist) {
-          REQUIRE(d < 0);
-        }
+        REQUIRE(all_of(dist.begin(), dist.end(), [](const auto &d) {
+          return d < 0;
+        }));
       }
     }
   }
@@ -155,7 +156,7 @@ SCENARIO("Test compactness computation", "[Compactness]") {
     WHEN("We consider an empty coarse cell") {
       const unordered_set<CoMMAIndexT> cc = {};
       THEN("The single compactness value are right") {
-        REQUIRE(fc_graph->compute_fc_compactness_inside_a_cc(cc).empty());
+        REQUIRE_THAT(fc_graph->compute_fc_compactness_inside_a_cc(cc), EMPTY);
       }
       THEN("The minimum is well identified") {
         REQUIRE(fc_graph->compute_min_fc_compactness_inside_a_cc(cc) == 0);
@@ -165,7 +166,7 @@ SCENARIO("Test compactness computation", "[Compactness]") {
       const unordered_set<CoMMAIndexT> cc = {1};
       THEN("The single compactness value are right") {
         const auto cpt = fc_graph->compute_fc_compactness_inside_a_cc(cc);
-        REQUIRE(cpt.size() == 1);
+        REQUIRE_THAT(cpt, SizeIs(1));
         REQUIRE(cpt.at(1) == 0);
       }
       THEN("The minimum is well identified") {
@@ -216,18 +217,15 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
         auto it = st.begin();
-        REQUIRE(it->first == 0);
-        REQUIRE(it->second == 3);
+        REQUIRE(*it == PairIntInt{0, 3});
         //
         it++;
-        REQUIRE(it->first == 1);
-        REQUIRE(it->second == 3);
+        REQUIRE(*it == PairIntInt{1, 3});
         //
         it++;
-        REQUIRE(it->first == 1);
-        REQUIRE(it->second == 0);
+        REQUIRE(*it == PairIntInt{1, 0});
       }
-      THEN("Duplicates are not added") { REQUIRE(st.size() == 3); }
+      THEN("Duplicates are not added") { REQUIRE_THAT(st, SizeIs(3)); }
     }
   }
   GIVEN("Some (int,int) pairs in a set with custom 'Less'") {
@@ -237,18 +235,15 @@ SCENARIO("Test custom pair comparison", "[Pair comparison]") {
     WHEN("We have a look at the set:") {
       THEN("The expected order is obtained") {
         auto it = st.begin();
-        REQUIRE(it->first == 1);
-        REQUIRE(it->second == 0);
+        REQUIRE(*it == PairIntInt{1, 0});
         //
         it++;
-        REQUIRE(it->first == 1);
-        REQUIRE(it->second == 3);
+        REQUIRE(*it == PairIntInt{1, 3});
         //
         it++;
-        REQUIRE(it->first == 0);
-        REQUIRE(it->second == 3);
+        REQUIRE(*it == PairIntInt{0, 3});
       }
-      THEN("Duplicates are not added") { REQUIRE(st.size() == 3); }
+      THEN("Duplicates are not added") { REQUIRE_THAT(st, SizeIs(3)); }
     }
   }
 }
@@ -263,21 +258,21 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
       filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
         Data.adjMatrix_row_ptr, Data.n_bnd_faces, {}, filtered
       );
-      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+      THEN("The result is empty") { REQUIRE_THAT(filtered, EMPTY); }
     }
     WHEN("We provide an impossible number of neighbours") {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
         Data.adjMatrix_row_ptr, Data.n_bnd_faces, {-1, 0}, filtered
       );
-      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+      THEN("The result is empty") { REQUIRE_THAT(filtered, EMPTY); }
     }
     WHEN("We ask for cells with 3 neighbours (that is, none)") {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges<CoMMAIndexT, CoMMAIntT>(
         Data.adjMatrix_row_ptr, Data.n_bnd_faces, {3}, filtered
       );
-      THEN("The result is empty") { REQUIRE(filtered.empty()); }
+      THEN("The result is empty") { REQUIRE_THAT(filtered, EMPTY); }
     }
     WHEN("We ask for cells with 4 neighbours (that is, all)") {
       std::vector<CoMMAIndexT> filtered{};
@@ -286,8 +281,8 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
       );
       std::sort(filtered.begin(), filtered.end());
       THEN("All cells are in the final results") {
-        REQUIRE(filtered.size() == Data.nb_fc);
-        REQUIRE(ref_res == filtered);
+        REQUIRE_THAT(filtered, SizeIs(Data.nb_fc));
+        REQUIRE_THAT(filtered, Equals(ref_res));
       }
     }
     WHEN("We ask for cells with 3 or 4 neighbours (that is, all)") {
@@ -297,8 +292,8 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
       );
       std::sort(filtered.begin(), filtered.end());
       THEN("All cells are in the final results") {
-        REQUIRE(filtered.size() == Data.nb_fc);
-        REQUIRE(ref_res == filtered);
+        REQUIRE_THAT(filtered, SizeIs(Data.nb_fc));
+        REQUIRE_THAT(filtered, Equals(ref_res));
       }
     }
   }
