@@ -20,6 +20,18 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Contains;
+
+const vector<BelongsToCCMatcher> belongsToCC = {
+  BelongsToCC(0),
+  BelongsToCC(1),
+  BelongsToCC(2),
+  BelongsToCC(3),
+  BelongsToCC(4),
+  BelongsToCC(5),
+  BelongsToCC(6),
+  BelongsToCC(7)
+};
 
 SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
   GIVEN("We load the Isotropic mesh structure") {
@@ -61,7 +73,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
         };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
-          REQUIRE(fccc[i].value() == fc2cc_req[i]);
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
         }
       }
     }
@@ -77,7 +89,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
         };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
-          REQUIRE(fccc[i].value() == fc2cc_req[i]);
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
         }
       }
     }
@@ -105,7 +117,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
         };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
-          REQUIRE(fccc[i].value() == fc2cc_req[i]);
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
         }
       }
     }
@@ -121,7 +133,7 @@ SCENARIO("Test the Isotropic agglomeration for small 3D cases", "[Isotropic]") {
           6, 6, 7, 7, 4, 4, 5, 5, 4, 4, 5, 5, 6, 6, 7, 7, 6, 6, 7, 7
         };
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
-          REQUIRE(fccc[i].value() == fc2cc_req[i]);
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
         }
       }
     }
@@ -158,26 +170,16 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       FC_ITER
     );
     // COMPLETE THE TEST
+    const vector<CoMMAIndexT> fc2cc_req = {
+      0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3
+    };
     WHEN("We agglomerate the mesh with a biconnected agglomerator") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, false);
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        REQUIRE(fccc[0].value() == 0);
-        REQUIRE(fccc[1].value() == 0);
-        REQUIRE(fccc[2].value() == 1);
-        REQUIRE(fccc[3].value() == 1);
-        REQUIRE(fccc[4].value() == 0);
-        REQUIRE(fccc[5].value() == 0);
-        REQUIRE(fccc[6].value() == 1);
-        REQUIRE(fccc[7].value() == 1);
-        REQUIRE(fccc[8].value() == 2);
-        REQUIRE(fccc[9].value() == 2);
-        REQUIRE(fccc[10].value() == 3);
-        REQUIRE(fccc[11].value() == 3);
-        REQUIRE(fccc[12].value() == 2);
-        REQUIRE(fccc[13].value() == 2);
-        REQUIRE(fccc[14].value() == 3);
-        REQUIRE(fccc[15].value() == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
+        }
       }
     }
     WHEN(
@@ -186,22 +188,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       agg->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto &fccc = cc_graph->_fc_2_cc;
-        REQUIRE(fccc[0].value() == 0);
-        REQUIRE(fccc[1].value() == 0);
-        REQUIRE(fccc[2].value() == 1);
-        REQUIRE(fccc[3].value() == 1);
-        REQUIRE(fccc[4].value() == 0);
-        REQUIRE(fccc[5].value() == 0);
-        REQUIRE(fccc[6].value() == 1);
-        REQUIRE(fccc[7].value() == 1);
-        REQUIRE(fccc[8].value() == 2);
-        REQUIRE(fccc[9].value() == 2);
-        REQUIRE(fccc[10].value() == 3);
-        REQUIRE(fccc[11].value() == 3);
-        REQUIRE(fccc[12].value() == 2);
-        REQUIRE(fccc[13].value() == 2);
-        REQUIRE(fccc[14].value() == 3);
-        REQUIRE(fccc[15].value() == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
+        }
       }
     }
 
@@ -224,22 +213,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
         // Nothing changes with respect to the case of the standard Biconnected
         // We have a trick that make it work as it should
         const auto &fccc = cc_PF_graph->_fc_2_cc;
-        REQUIRE(fccc[0].value() == 0);
-        REQUIRE(fccc[1].value() == 0);
-        REQUIRE(fccc[2].value() == 1);
-        REQUIRE(fccc[3].value() == 1);
-        REQUIRE(fccc[4].value() == 0);
-        REQUIRE(fccc[5].value() == 0);
-        REQUIRE(fccc[6].value() == 1);
-        REQUIRE(fccc[7].value() == 1);
-        REQUIRE(fccc[8].value() == 2);
-        REQUIRE(fccc[9].value() == 2);
-        REQUIRE(fccc[10].value() == 3);
-        REQUIRE(fccc[11].value() == 3);
-        REQUIRE(fccc[12].value() == 2);
-        REQUIRE(fccc[13].value() == 2);
-        REQUIRE(fccc[14].value() == 3);
-        REQUIRE(fccc[15].value() == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
+        }
       }
     }
     WHEN(
@@ -248,22 +224,9 @@ SCENARIO("Test the Isotropic agglomeration for small 2D cases", "[Isotropic]") {
       agg_PF->agglomerate_one_level(4, 4, 4, Data.weights, true);
       THEN("Nothing changes with respect to the case without correction") {
         const auto fccc = cc_PF_graph->_fc_2_cc;
-        REQUIRE(fccc[0].value() == 0);
-        REQUIRE(fccc[1].value() == 0);
-        REQUIRE(fccc[2].value() == 1);
-        REQUIRE(fccc[3].value() == 1);
-        REQUIRE(fccc[4].value() == 0);
-        REQUIRE(fccc[5].value() == 0);
-        REQUIRE(fccc[6].value() == 1);
-        REQUIRE(fccc[7].value() == 1);
-        REQUIRE(fccc[8].value() == 2);
-        REQUIRE(fccc[9].value() == 2);
-        REQUIRE(fccc[10].value() == 3);
-        REQUIRE(fccc[11].value() == 3);
-        REQUIRE(fccc[12].value() == 2);
-        REQUIRE(fccc[13].value() == 2);
-        REQUIRE(fccc[14].value() == 3);
-        REQUIRE(fccc[15].value() == 3);
+        for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; i++) {
+          REQUIRE_THAT(fccc[i], belongsToCC[fc2cc_req[i]]);
+        }
       }
     }
   }
@@ -317,10 +280,10 @@ final CC)
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
       THEN("Compactness is well computed") { REQUIRE(comp == 1); }
       THEN("The cell is T-shaped") {
-        REQUIRE(CONTAINS_(cc, seed));
-        REQUIRE(CONTAINS_(cc, 0));
-        REQUIRE(CONTAINS_(cc, 2));
-        REQUIRE(CONTAINS_(cc, 4));
+        REQUIRE_THAT(cc, Contains(seed));
+        REQUIRE_THAT(cc, Contains(0));
+        REQUIRE_THAT(cc, Contains(2));
+        REQUIRE_THAT(cc, Contains(4));
       }
     }
     WHEN(
@@ -341,10 +304,10 @@ final CC)
         agg.choose_optimal_cc_and_update_seeds_pool(seed, Data.weights, comp);
       THEN("Compactness is well computed") { REQUIRE(comp == 2); }
       THEN("The cell is a square") {
-        REQUIRE(CONTAINS_(cc, seed));
-        REQUIRE(CONTAINS_(cc, 0));
-        REQUIRE(CONTAINS_(cc, 3));
-        REQUIRE(CONTAINS_(cc, 4));
+        REQUIRE_THAT(cc, Contains(seed));
+        REQUIRE_THAT(cc, Contains(0));
+        REQUIRE_THAT(cc, Contains(3));
+        REQUIRE_THAT(cc, Contains(4));
       }
     }
   }
