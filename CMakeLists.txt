@@ -42,8 +42,6 @@ set(CoMMA_PYTHON "${PROJECT_NAME}")
 # https://stackoverflow.com/questions/34878276/build-doxygen-from-cmake-script
 option(BUILD_DOC "Build documentation (with Doxygen)" OFF)
 
-option(PKGCONFIG_SUPPORT "Prepare and install file to be used with pkg-config" OFF)
-
 if ( CODAFLAGS )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
   # We just do not set the optimization flags nor the parallelism-related ones
@@ -206,10 +204,8 @@ install(DIRECTORY ${INCLUDE_DIR}/
 )
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
 
-if ( PKGCONFIG_SUPPORT )
-  configure_file(config_files/comma.pc.in comma.pc @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-endif()
+configure_file(config_files/comma.pc.in comma.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if ( BUILD_PYTHON_BINDINGS )
   set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
