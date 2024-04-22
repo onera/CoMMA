@@ -118,7 +118,7 @@ job:configure_dbg:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
         - cd build
-        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
 
 job:build_dbg:
     stage: build

@@ -82,16 +82,14 @@ cmake -DBUILD_PYTHON_BINDINGS=Off .. # No python bindings
 ```
 
 An additional `cmake` option might be passed to build the tests with coverage
-support (default is off), in this case, the `gcov` library is needed:
+support (default is off).
+Of course it needs the test to be on.
+In this case, the `gcov` library is needed:
 ```shell
-cmake -DCOVERAGE=On ..
+cmake -DBUILD_TESTS=On -DCOVERAGE=On ..
 ```
 
-Support for `pkg-config` can be enabled by passing the related option to
-`cmake`:
-```shell
-cmake -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=../install ..
-```
+Support for `pkg-config` is enabled.
 A template of such configuration file can be found
 [in the repository](config_files/comma.pc.in); given the prefix provided in the
 example above, it will be installed in `path/to/CoMMA/install/lib64/pkgconfig`.
@@ -106,7 +104,7 @@ In order for CoMMA to be compatible with `spack` package manager, a
 configuration file and some patches are given in
 [`config_files/spack/comma`](config_files/spack/comma). The spack configuration
 supports almost the same variants that `cmake` uses, e.g., `+python`, `+doc`,
-`+pkgconfig`, `codaflags`. They only two differences is that coverage option is
+`codaflags`. They only two differences is that coverage option is
 not available, and the type choices are more limited. Indeed, one use 64 bit
 integer with `+int64`, otherwise 32 bit; and double reals with `+real64`,
 otherwise float.

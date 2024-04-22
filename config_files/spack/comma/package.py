@@ -42,8 +42,12 @@ class Comma(CMakePackage):
     variant("python", when="@1.2:", description="Install python bindings", default=True)
     variant("codaflags", when="@1.1:", description="Compile with usual CODA flags", default=False)
     variant("doc", when="@1.3.1:", description="Build Doxygen documentation", default=False)
+    # In recent version is always on
     variant(
-        "pkgconfig", when="@1.3.1:", description="Add pkg-config configuration file", default=True
+        "pkgconfig",
+        when="@1.3.1:1.3.2",
+        description="Add pkg-config configuration file",
+        default=True
     )
     variant(
         "int64",
