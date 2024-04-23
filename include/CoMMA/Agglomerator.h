@@ -626,8 +626,8 @@ protected:
         // the weight. Putting a high-level if to reduce the branching inside
         // the loop over the neighbours.
         if (empty_line) {
-          for (; n_it != this->_fc_graph->neighbours_cend(i_fc)
-               && w_it != this->_fc_graph->weights_cend(i_fc);
+          for (; n_it != this->_fc_graph->neighbours_cend(seed)
+               && w_it != this->_fc_graph->weights_cend(seed);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               candidates.emplace(*n_it, *w_it);
@@ -636,8 +636,8 @@ protected:
         } else {
           // If not an empty line, we check the direction, see
           // !dot_deviate below
-          for (; n_it != this->_fc_graph->neighbours_cend(i_fc)
-               && w_it != this->_fc_graph->weights_cend(i_fc);
+          for (; n_it != this->_fc_graph->neighbours_cend(seed)
+               && w_it != this->_fc_graph->weights_cend(seed);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               std::vector<CoMMAWeightType> cur_dir(pts_dim);
