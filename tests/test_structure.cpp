@@ -12,6 +12,7 @@
 
 #define CATCH_CONFIG_MAIN
 
+#include <catch2/catch_test_macros.hpp>
 #include <optional>
 #include <vector>
 
@@ -19,15 +20,10 @@
 #include "CoMMA/CoMMA.h"
 #include "CoMMA/CoMMADefs.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
-
-constexpr optional<CoMMAIndexT> MAX_CELLS_IN_LINE = std::nullopt;
-constexpr CoMMACellCouplingT CELL_COUPLING_MAX = CoMMACellCouplingT::MAX_WEIGHT;
-constexpr bool FORCE_DIRECTION = true;
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
@@ -63,9 +59,10 @@ SCENARIO("Test of a structure", "[structure]") {
             graph,
             cc_graph,
             seeds_pool,
+            dimension,
+            DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
-            FC_ITER,
-            dimension
+            FC_ITER
           ){};
 
         CoMMAIntT test_variable() { return (this->_threshold_card); }
@@ -91,9 +88,10 @@ SCENARIO("Test of a structure", "[structure]") {
             graph,
             cc_graph,
             seeds_pool,
+            dimension,
+            DEFAULT_AR,
             CoMMANeighbourhoodT::EXTENDED,
-            FC_ITER,
-            dimension
+            FC_ITER
           ){};
 
         CoMMAIntT thres() { return (_threshold_card); }
@@ -474,7 +472,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR,
               0)
         );
         // Bad iteration number: is 0
@@ -483,7 +481,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               CELL_COUPLING_MAX, FORCE_DIRECTION,
               0)
         );
@@ -493,7 +491,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
-              Data.dim, goal_card, min_card, max_card, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               CELL_COUPLING_MAX, FORCE_DIRECTION,
               comma::iter_agglo_max_iter + 1)
         );

@@ -29,10 +29,10 @@ default:
     - module purge
     # Load python version, compilers
     - source /stck/rmilani/GitLab_CI_envs/CoMMA_env.sh
-    - python3 -c "import gcovr" || python3 -m pip install --user gcovr
-    - python3 -m black --version || python3 -m pip install --user black
-    - python3 -m isort --version || python3 -m pip install --user isort
-    - python3 -m ruff --version || python3 -m pip install --user ruff
+    # Adding installed pybind11 to CMAKE_PREFIX_PATH (it has been installed with pip)
+    - export CMAKE_PREFIX_PATH=/stck/rmilani/.local/lib/python3.10/site-packages/pybind11:$CMAKE_PREFIX_PATH
+    # Adding installed Catch2 to CMAKE_PREFIX_PATH
+    - export CMAKE_PREFIX_PATH=/stck/rmilani/opt/Catch2/install:$CMAKE_PREFIX_PATH
 
 stages:
     - init
@@ -91,7 +91,7 @@ job:init:
     stage: init
     variables:
         GIT_STRATEGY: clone
-        GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules
+        # GIT_SUBMODULE_STRATEGY: none # Do it manually to avoid some unused submodules # Superseded
     rules:
         - !reference [.rules_changes_anything, rules]
     script:
@@ -99,9 +99,12 @@ job:init:
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
-        # We do it manually since there is also perfetto which, however, is not used
-        - git submodule update --init --depth 5 Catch2
-        - git submodule update --init --depth 5 pybind11
+        # See if python tools are installed (here, we have already sourced the env,
+        # see default:before_script, so it's OK
+        - python3 -c "import gcovr" || python3 -m pip install --user gcovr
+        - python3 -m black --version || python3 -m pip install --user black
+        - python3 -m isort --version || python3 -m pip install --user isort
+        - python3 -m ruff --version || python3 -m pip install --user ruff
     artifacts:
         reports:
             dotenv: ./build.env
@@ -115,7 +118,7 @@ job:configure_dbg:
         - cd $CUSTOM_CI_DIR
         - mkdir -p build
         - cd build
-        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DPKGCONFIG_SUPPORT=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+        - cmake -DCODAFLAGS=On -DCOVERAGE=On -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
 
 job:build_dbg:
     stage: build

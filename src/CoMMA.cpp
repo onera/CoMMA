@@ -13,6 +13,7 @@
 
 #include "CoMMA/CoMMA.h"
 
+#include <pybind11/attr.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -58,36 +59,104 @@ PYBIND11_MODULE(CoMMA, module_handle) {
   module_handle.attr("WeightType") = "double";
   module_handle.attr("IntType") = "int";
 
-  // Setting up fictitious sub-modules that will hold only the enum definitions
-  // for better calls, e.g., CoMMA.SeedsPool.BOUNDARY.
-  // This would not be necessary if the enum were inside classes as in the
-  // pybind11 example
-  // https://pybind11.readthedocs.io/en/stable/classes.html?highlight=enum#enumerations-and-internal-types
-  auto submodule_neigh =
-    module_handle.def_submodule("Neighbourhood", "Type of neighbourhood");
-  auto submodule_seeds =
-    module_handle.def_submodule("SeedsPool", "Type of seeds pool ordering");
-  auto submodule_coupl = module_handle.def_submodule(
-    "CellCoupling", "Type of cell coupling in anisotropy line computation"
-  );
   // Exporting enumerator to be used in python
   // https://stackoverflow.com/questions/47893832/pybind11-global-level-enum
-  py::enum_<CoMMANeighbourhoodT>(submodule_neigh, "CoMMANeighbourhoodT")
-    .value("EXTENDED", CoMMANeighbourhoodT::EXTENDED)
-    .value("PURE_FRONT", CoMMANeighbourhoodT::PURE_FRONT)
-    .export_values();
-  py::enum_<CoMMASeedsPoolT>(submodule_seeds, "CoMMASeedsPoolT")
-    .value("BOUNDARY", CoMMASeedsPoolT::BOUNDARY_PRIORITY)
-    .value("NEIGHBOURHOOD", CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY)
+  // https://pybind11.readthedocs.io/en/stable/classes.html?highlight=enum#enumerations-and-internal-types
+  // https://github.com/pybind/pybind11/blob/master/tests/test_enum.py
+  // https://github.com/pybind/pybind11/blob/master/tests/test_enum.cpp
+  py::enum_<CoMMANeighbourhoodT>(
+    module_handle,
+    "Neighbourhood",
+    "Type of neighbourhood of a coarse cell considered when agglomerating"
+  )
     .value(
-      "BOUNDARY_POINT_INIT", CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT
+      "EXTENDED",
+      CoMMANeighbourhoodT::EXTENDED,
+      "All neighbours of the coarse cell"
+    )
+    .value(
+      "PURE_FRONT",
+      CoMMANeighbourhoodT::PURE_FRONT,
+      "Only neighbours of the last added fine cell"
+    )
+    .export_values();
+  py::enum_<CoMMASeedsPoolT>(
+    module_handle, "SeedsPool", "Type of seeds pool ordering"
+  )
+    .value(
+      "BOUNDARY",
+      CoMMASeedsPoolT::BOUNDARY_PRIORITY,
+      "The number of boundary faces has higher priority"
+    )
+    .value(
+      "NEIGHBOURHOOD",
+      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY,
+      "Neighbours of already agglomerated coarse cells have higher priority)"
+    )
+    .value(
+      "BOUNDARY_POINT_INIT",
+      CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT,
+      "The number of boundary faces has higher priority, and initialize with one point only then let evolve"
     )
     .value(
       "NEIGHBOURHOOD_POINT_INIT",
-      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT
+      CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT,
+      "Neighbours of already agglomerated coarse cells have higher priority, and initialize with one point only then let evolve"
     )
     .export_values();
-  py::enum_<CoMMACellCouplingT>(submodule_coupl, "CoMMACellCouplingT")
+  py::enum_<CoMMAAspectRatioT>(module_handle, "AR", "Type of aspect-ratio")
+    .value(
+      "DIAMETER_OVER_RADIUS",
+      CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
+      "Diameter over radius"
+    )
+    .value(
+      "DIAMETER_OVER_MIN_EDGE",
+      CoMMAAspectRatioT::DIAMETER_OVER_MIN_EDGE,
+      "Diameter over minimum edge"
+    )
+    .value("DIAMETER", CoMMAAspectRatioT::DIAMETER, "Diameter")
+    .value(
+      "ONE_OVER_MEASURE",
+      CoMMAAspectRatioT::ONE_OVER_MEASURE,
+      "One over the measure (e.g., volume) of the cell"
+    )
+    .value(
+      "ONE_OVER_INTERNAL_WEIGHTS",
+      CoMMAAspectRatioT::ONE_OVER_INTERNAL_WEIGHTS,
+      "One over the internal weights"
+    )
+    .value(
+      "PERIMETER_OVER_RADIUS",
+      CoMMAAspectRatioT::PERIMETER_OVER_RADIUS,
+      "Perimeter over radius"
+    )
+    .value(
+      "EXTERNAL_WEIGHTS",
+      CoMMAAspectRatioT::EXTERNAL_WEIGHTS,
+      "External weights, that is, perimeter"
+    )
+    .value(
+      "MAX_BARY_DIST_OVER_RADIUS",
+      CoMMAAspectRatioT::MAX_BARY_DIST_OVER_RADIUS,
+      "Maximum FC-center distance from barycenter over radius"
+    )
+    .value(
+      "MAX_OVER_MIN_BARY_DIST",
+      CoMMAAspectRatioT::MAX_OVER_MIN_BARY_DIST,
+      "Maximum over minimum FC-center distance from barycenter"
+    )
+    .value(
+      "ALGEBRAIC_PERIMETER_OVER_MEASURE",
+      CoMMAAspectRatioT::ALGEBRAIC_PERIMETER_OVER_MEASURE,
+      "Algebraic-like perimeter over measure, that is, external weights over cell weight"
+    )
+    .export_values();
+  py::enum_<CoMMACellCouplingT>(
+    module_handle,
+    "CoMMACellCouplingT",
+    "Type of coupling between cells considered when building anisotropic lines"
+  )
     .value("MAX_WEIGHT", CoMMACellCouplingT::MAX_WEIGHT)
     .value("MIN_DISTANCE", CoMMACellCouplingT::MIN_DISTANCE)
     .export_values();
@@ -114,12 +183,11 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAWeightT threshold_anisotropy,
 
       // Seed ordering
-      CoMMASeedsPoolT seed_ordering_type,
+      CoMMAIntT seed_ordering_type,
 
       // Outputs
-      vector<CoMMAIndexT> fc_to_cc,  // Out
-      vector<CoMMAIndexT> agglomerationLines_Idx,  // In & out
-      vector<CoMMAIndexT> agglomerationLines,  // In & out
+      vector<CoMMAIndexT> &agglomerationLines_Idx,  // In & out
+      vector<CoMMAIndexT> &agglomerationLines,  // In & out
 
       // Tuning of the algorithms
       bool correction,
@@ -127,13 +195,15 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT goal_card,
       CoMMAIntT min_card,
       CoMMAIntT max_card,
+      CoMMAIntT aspect_ratio,
       CoMMAIntT singular_card_thresh,
       optional<CoMMAIndexT> max_cells_in_line,
-      CoMMACellCouplingT aniso_cell_coupling,
+      CoMMAIntT aniso_cell_coupling,
       bool force_line_direction,
       CoMMAIntT fc_choice_iter,
-      CoMMANeighbourhoodT type_of_isotropic_agglomeration
+      CoMMAIntT type_of_isotropic_agglomeration
     ) {
+      vector<CoMMAIndexT> fc_to_cc{};
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         adjMatrix_row_ptr,
         adjMatrix_col_ind,
@@ -147,7 +217,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         is_anisotropic,
         odd_line_length,
         threshold_anisotropy,
-        seed_ordering_type,
+        static_cast<CoMMASeedsPoolT>(seed_ordering_type),
         fc_to_cc,
         agglomerationLines_Idx,
         agglomerationLines,
@@ -156,12 +226,13 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         goal_card,
         min_card,
         max_card,
+        static_cast<CoMMAAspectRatioT>(aspect_ratio),
         singular_card_thresh,
         max_cells_in_line,
-        aniso_cell_coupling,
+        static_cast<CoMMACellCouplingT>(aniso_cell_coupling),
         force_line_direction,
         fc_choice_iter,
-        type_of_isotropic_agglomeration
+        static_cast<CoMMANeighbourhoodT>(type_of_isotropic_agglomeration)
       );
       return std::make_tuple(
         fc_to_cc, agglomerationLines_Idx, agglomerationLines
@@ -182,7 +253,6 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "odd_line_length"_a,
     "threshold_anisotropy"_a,
     "seed_ordering_type"_a,
-    "fc_to_cc"_a,
     "agglomerationLines_Idx"_a,
     "agglomerationLines"_a,
     "correction"_a,
@@ -190,9 +260,10 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "goal_card"_a,
     "min_card"_a,
     "max_card"_a,
+    "aspect_ratio"_a = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
     "singular_card_thresh"_a = 1,
     "max_cells_in_line"_a = std::nullopt,
-    "aniso_cell_coupling"_a = 0,
+    "aniso_cell_coupling"_a = CoMMACellCouplingT::MAX_WEIGHT,
     "force_line_direction"_a = true,
     "fc_choice_iter"_a = 1,
     "type_of_isotropic_agglomeration"_a = CoMMANeighbourhoodT::EXTENDED
@@ -222,7 +293,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     [](
       const std::vector<CoMMAIndexT> &indices,
       const std::vector<CoMMAIntT> &n_bnd_faces,
-      const std::unordered_set<CoMMAIntT> allowed
+      const std::unordered_set<CoMMAIntT> allowed  // NOLINT
     ) {
       std::vector<CoMMAIndexT> filtered{};
       filter_cells_by_n_edges(indices, n_bnd_faces, allowed, filtered);

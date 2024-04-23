@@ -153,7 +153,7 @@ public:
    *  @param[in] i_c Index of the cell
    *  @return Number of neighbours of the given cell.
    */
-  inline CoMMAIntType get_nb_of_neighbours(CoMMAIndexType i_c) const {
+  inline CoMMAIntType get_nb_of_neighbours(const CoMMAIndexType i_c) const {
     // Return the number of neighbours of the ith cell
     return _m_CRS_Row_Ptr[i_c + 1] - _m_CRS_Row_Ptr[i_c];
   }
@@ -635,12 +635,65 @@ public:
     return _n_bnd_faces[idx_c];
   }
 
+  /** @brief Return total number of faces, that is, number of neighbours plus
+   *  number of boundaries
+   *  @param[in] idx_c Index of the cell
+   *  @return the number of faces
+   */
+  inline CoMMAIntType get_total_n_faces(const CoMMAIndexType idx_c) const {
+    return this->_n_bnd_faces[idx_c] + this->get_nb_of_neighbours(idx_c);
+  }
+
   /** @brief Whether a cell is on the boundary
    *  @param[in] idx_c Index of the cell
    *  @return Whether a cell is on the boundary
    */
   inline bool is_on_boundary(const CoMMAIndexType idx_c) const {
     return _n_bnd_faces[idx_c] > 0;
+  }
+
+  /** @brief Approximate the value of a boundary face using the known internal
+   * faces. It uses a (geometric) average, so the result is correct only if the
+   * cell is a regular polygon
+   * @param[in] idx_c Index of the cell
+   * @return An approximation of the surface of a boundary face
+   */
+  inline CoMMAWeightType estimated_boundary_weight(const CoMMAIndexType idx_c
+  ) const {
+    // Approximate with an average of the internal faces
+    // We could choose many kinds of average, e.g. arithmetic or geometric, I
+    // honestly don't know if one is better then the other...
+    // Here, we use the arithmetic one for performance concerns.
+    // However, the geometric one, which should be less sensitive to outliers
+    // is given below as well.
+    return this->_n_bnd_faces[idx_c] == 0 ? 0.
+                                          : this->_n_bnd_faces[idx_c]
+#if 1
+        * std::reduce(this->weights_cbegin(idx_c),
+                      this->weights_cend(idx_c),
+                      CoMMAWeightType{0.})
+        / this->get_nb_of_neighbours(idx_c);
+#else
+        * pow(std::accumulate(
+                this->weights_cbegin(idx_c),
+                this->weights_cend(idx_c),
+                CoMMAWeightType{1.},
+                std::multiplies<>()
+              ),
+              CoMMAWeightType{1.} / this->get_nb_of_neighbours(idx_c));
+#endif
+  }
+
+  /** @brief Sum of wall the weights (faces) of a cell. Since there is no
+   * knowledge about boundary faces, the result is correct only if internal
+   * cell.
+   * @param[in] idx_c Index of the cell
+   * @return Total weight
+   */
+  inline CoMMAWeightType estimated_total_weight(const CoMMAIndexType idx_c
+  ) const {
+    return std::reduce(this->weights_cbegin(idx_c), this->weights_cend(idx_c))
+      + this->estimated_boundary_weight(idx_c);
   }
 
   /** @brief Compute the direction from vertex \p a to vertex \p b and store it
@@ -733,22 +786,19 @@ public:
         // Process of every faces/Neighbours and compute for the current cell
         // the neighbourhood and the area associated with the neighbourhood
         // cells
-        const ContainerIndexType v_neighbours = this->get_neighbours(i_fc);
-        const ContainerWeightType v_weights = this->get_weights(i_fc);
-
-        assert(v_neighbours.size() == v_weights.size());
-        auto nb_neighbours = v_neighbours.size();
-
-        for (auto i_n = decltype(nb_neighbours){0}; i_n < nb_neighbours;
-             i_n++) {
+        auto n_it = this->neighbours_cbegin(i_fc);
+        auto w_it = this->weights_cbegin(i_fc);
+        auto nb_neighbours = this->get_nb_of_neighbours(i_fc);
+        for (; n_it != this->neighbours_cend(i_fc)
+             && w_it != this->weights_cend(i_fc);
+             ++n_it, ++w_it) {
           // to avoid special case where the boundary value are stored
-          if (v_neighbours[i_n] != i_fc) {
-            const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-            if (max_weight < i_w_fc_n) {
-              max_weight = i_w_fc_n;
+          if (*n_it != i_fc) {
+            if (max_weight < *w_it) {
+              max_weight = *w_it;
             }
-            if (min_weight > i_w_fc_n) {
-              min_weight = i_w_fc_n;
+            if (min_weight > *w_it) {
+              min_weight = *w_it;
             }
           } else {
             nb_neighbours--;

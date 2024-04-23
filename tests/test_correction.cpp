@@ -10,8 +10,9 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
+
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
@@ -43,9 +44,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
       fc_graph,
       cc_graph,
       seeds_pool,
+      Data.dim,
+      DEFAULT_AR,
       CoMMANeighbourhoodT::EXTENDED,
-      FC_ITER,
-      Data.dim
+      FC_ITER
     );
     // COMPLETE THE TEST
     WHEN("We proceed with the Isotropic agglomeration") {
@@ -525,9 +527,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         fc_graph,
         cc_graph,
         seeds_pool,
+        Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
-        FC_ITER,
-        Data.dim
+        FC_ITER
       );
       agg->agglomerate_one_level(4, 2, 6, Data.weights, false);
       const auto &unconnected_cell = cc_graph->_fc_2_cc.back();
@@ -564,9 +567,10 @@ SCENARIO("Test the correction in 2D", "[Isotropic Correction]") {
         fc_graph,
         cc_graph,
         seeds_pool,
+        Data.dim,
+        DEFAULT_AR,
         CoMMANeighbourhoodT::EXTENDED,
-        FC_ITER,
-        Data.dim
+        FC_ITER
       );
       agg->agglomerate_one_level(4, 2, 6, Data.weights, true);
       const auto &unconnected_cell = cc_graph->_fc_2_cc.back();

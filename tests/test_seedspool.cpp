@@ -11,6 +11,8 @@
  */
 
 #include <algorithm>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_all.hpp>
 #include <deque>
 #include <numeric>
 #include <unordered_set>
@@ -19,10 +21,10 @@
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Seeds_Pool.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Equals;
 
 // About the size
 // NOLINTNEXTLINE
@@ -362,9 +364,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
-        for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
-          REQUIRE(expected_order[i] == res_seeds[i]);
-        }
+        REQUIRE_THAT(res_seeds, Equals(expected_order));
       }
     }
     WHEN(
@@ -395,9 +395,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
-        for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
-          REQUIRE(expected_order[i] == res_seeds[i]);
-        }
+        REQUIRE_THAT(res_seeds, Equals(expected_order));
       }
     }
   }
@@ -436,9 +434,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
-        for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
-          REQUIRE(expected_order[i] == res_seeds[i]);
-        }
+        REQUIRE_THAT(res_seeds, Equals(expected_order));
       }
     }
     WHEN("We use a seeds pool with boundary priority") {
@@ -466,9 +462,7 @@ The one-point initialization would not any impact w.r.t. the standard one on thi
         seeds_pool.update(d_neighs);
       }
       THEN("The expected order is found") {
-        for (auto i = decltype(res_seeds.size()){0}; i < res_seeds.size(); ++i) {
-          REQUIRE(expected_order[i] == res_seeds[i]);
-        }
+        REQUIRE_THAT(res_seeds, Equals(expected_order));
       }
     }
   }

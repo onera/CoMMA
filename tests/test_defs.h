@@ -12,11 +12,18 @@
  * Any copyright is dedicated to the Public Domain.
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
+#include <catch2/matchers/catch_matchers_all.hpp>
+#include <catch2/matchers/catch_matchers_templated.hpp>
+#include <optional>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Coarse_Cell_Container.h"
 #include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Seeds_Pool.h"
+#include "CoMMA/Util.h"
 
 constexpr comma::CoMMAIntT SING_CARD_THRESH = 1;
 
@@ -24,11 +31,15 @@ constexpr comma::CoMMAIntT FC_ITER = 1;
 
 constexpr bool ODD_LINE_LENGTH = true;
 
-// Some containers have contains, but only in C++20; others has find, others
-// neither So we set up one function for all
-#define CONTAINS_(cont, obj) \
-  (find((cont).begin(), (cont).end(), (obj)) != (cont).end())
-#define EQUAL_UP_TO(a, b, eps) (fabs((a) - (b)) < (eps))
+constexpr comma::CoMMAAspectRatioT DEFAULT_AR =
+  comma::CoMMAAspectRatioT::DIAMETER_OVER_RADIUS;
+
+constexpr std::optional<comma::CoMMAIndexT> MAX_CELLS_IN_LINE = std::nullopt;
+
+constexpr comma::CoMMACellCouplingT CELL_COUPLING_MAX =
+  comma::CoMMACellCouplingT::MAX_WEIGHT;
+
+constexpr bool FORCE_DIRECTION = true;
 
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<
   comma::CoMMAIndexT,
@@ -40,5 +51,66 @@ using CCContainerT = comma::Coarse_Cell_Container<
   comma::CoMMAIndexT,
   comma::CoMMAWeightT,
   comma::CoMMAIntT>;
+
+// Coarse Cell
+using CCT = std::vector<comma::CoMMAIndexT>;
+// Coarse Cell, with optional
+using OptIndT = std::optional<comma::CoMMAIndexT>;
+using CCOptT = std::vector<OptIndT>;
+
+// See
+// https://github.com/catchorg/Catch2/blob/devel/docs/matchers.md#writing-custom-matchers-old-style
+class BelongsToCCMatcher : public Catch::Matchers::MatcherBase<OptIndT> {
+  typename OptIndT::value_type _cc;
+
+public:
+  explicit BelongsToCCMatcher(const typename OptIndT::value_type &cc) :
+    _cc(cc) {}
+
+  bool match(OptIndT const &fc) const override {
+    return fc.has_value() && fc.value() == _cc;
+  }
+
+  std::string describe() const override {
+    std::ostringstream ss;
+    ss << "belongs to Coarse Cell " << _cc;
+    return ss.str();
+  }
+};
+
+inline BelongsToCCMatcher BelongsToCC(const typename OptIndT::value_type &cc) {
+  return BelongsToCCMatcher(cc);
+}
+
+struct Contains1stElemMatcher : Catch::Matchers::MatcherGenericBase {
+  using PairT = std::pair<comma::CoMMAIndexT, comma::CoMMAWeightT>;
+  using PairFindFirstBasedT = comma::PairFindFirstBasedFunctor<PairT>;
+
+  explicit Contains1stElemMatcher(comma::CoMMAIndexT const &target) :
+    target{target} {}
+
+  template<typename Range>
+  bool match(Range const &range) const {
+    using std::begin;
+    using std::end;
+
+    return std::find_if(begin(range), end(range), PairFindFirstBasedT(target))
+      != end(range);
+  }
+
+  std::string describe() const override {
+    std::ostringstream ss;
+    ss << "contains " << target << " as first element of one of its pairs";
+    return ss.str();
+  }
+
+private:
+  comma::CoMMAIndexT target;
+};
+
+inline Contains1stElemMatcher Contains1stElem(comma::CoMMAIndexT const &target
+) {
+  return Contains1stElemMatcher(target);
+}
 
 #endif  // COMMA_PROJECT_TESTDEFS_H

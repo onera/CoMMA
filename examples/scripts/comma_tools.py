@@ -13,6 +13,30 @@ import typing
 
 import numpy as np
 import numpy.typing as npt
+from CoMMA import AR, Neighbourhood, SeedsPool
+
+AR_DESCRIPTIONS = {
+    AR.DIAMETER_OVER_RADIUS: "Diameter over radius",
+    AR.DIAMETER_OVER_MIN_EDGE: "Diameter over minimum edge",
+    AR.DIAMETER: "Diameter",
+    AR.ONE_OVER_MEASURE: "One over the measure (e.g., volume) of the cell",
+    AR.ONE_OVER_INTERNAL_WEIGHTS: "One over the internal weights",
+    AR.PERIMETER_OVER_RADIUS: "Perimeter over radius",
+    AR.EXTERNAL_WEIGHTS: "External weights, that is, perimeter",
+    AR.MAX_BARY_DIST_OVER_RADIUS: "Maximum FC-center distance from barycenter over radius",  # noqa: E501
+    AR.MAX_OVER_MIN_BARY_DIST: "Maximum over minimum FC-center distance from barycenter",  # noqa: E501
+    AR.ALGEBRAIC_PERIMETER_OVER_MEASURE: "Algebraic-like perimeter over measure, that is, external weights over cell weight",  # noqa: E501
+}
+NEIGHBOURHOOD_DESCRIPTIONS = {
+    Neighbourhood.EXTENDED: "Extended",
+    Neighbourhood.PURE_FRONT: "Pure front advancing",
+}
+SEED_ORDERING_DESCRIPTIONS = {
+    SeedsPool.BOUNDARY: "Boundary priority",
+    SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
+    SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
+    SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
+}
 
 
 def compute_neighbourhood_wall_distance(
@@ -210,7 +234,7 @@ def build_coarse_graph(
     :obj:`np.ndarray` of `int`
         Vector telling how many boundary faces each cell of the coarse graph has
     :obj:`np.ndarray` of `float`
-        Cell centers of the coarse graph"""
+        Cell centers of the coarse graph (weighted average of the fine one)"""
     fc2cc = np.asarray(fc2cc, dtype=int)
     CSR_row = np.asarray(CSR_row, dtype=int)
     CSR_col = np.asarray(CSR_col, dtype=int)
@@ -236,7 +260,9 @@ def build_coarse_graph(
         coarse_n_bnd[cc] = np.max(n_bnd[mask_fc])
         coarse_volumes[cc] = np.sum(volumes[mask_fc])
         # This is not actually very good, but still...
-        coarse_centers[cc, :] = centers[mask_fc, :].mean(axis=0)
+        coarse_centers[cc, :] = np.average(
+            centers[mask_fc, :], axis=0, weights=volumes[mask_fc]
+        )
         neighs_cc = {}
         # for every (previous) fine cell composing the current coarse cell...
         for fc in fcs:

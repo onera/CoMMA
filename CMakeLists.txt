@@ -42,8 +42,6 @@ set(CoMMA_PYTHON "${PROJECT_NAME}")
 # https://stackoverflow.com/questions/34878276/build-doxygen-from-cmake-script
 option(BUILD_DOC "Build documentation (with Doxygen)" OFF)
 
-option(PKGCONFIG_SUPPORT "Prepare and install file to be used with pkg-config" OFF)
-
 if ( CODAFLAGS )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
   # We just do not set the optimization flags nor the parallelism-related ones
@@ -113,6 +111,7 @@ set(PROFILING_SOURCE
 )
 
 SET(TESTING_FILES
+  ${TEST_DIR}/test_ARComputer.cpp
   ${TEST_DIR}/test_anisoagglo.cpp
   ${TEST_DIR}/test_correction.cpp
   ${TEST_DIR}/test_deprecated.cpp
@@ -145,11 +144,12 @@ SET(TESTS
 # Generate a test executable with coverage report
 if ( BUILD_TESTS )
   message(STATUS "Tests enabled")
-  add_subdirectory(Catch2)
+  find_package(Catch2 3.4.0 REQUIRED)
+  message(STATUS "Found Catch2 v${Catch2_VERSION}")
   add_executable(${CoMMA_TEST} ${TESTS})
   target_link_libraries(${CoMMA_TEST}
     PUBLIC ${CoMMA_LIB}
-    PRIVATE Catch2::Catch2
+    PRIVATE Catch2::Catch2WithMain
   )
   if ( COVERAGE )
     message(STATUS "Coverage support enabled")
@@ -158,7 +158,6 @@ if ( BUILD_TESTS )
   endif()
 
   enable_testing()
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Catch2/contrib)
   include(CTest)
   include(Catch)
   catch_discover_tests(${CoMMA_TEST})
@@ -171,10 +170,7 @@ if ( BUILD_PYTHON_BINDINGS )
   message(STATUS "Python bindings enabled")
   # find the Python interpreter (including pybind might lead to other find files being used)
   find_package(Python COMPONENTS Interpreter Development REQUIRED)
-  # Without the following, CMake and pybind seems to find different versions of python
-  # https://pybind11.readthedocs.io/en/stable/faq.html#inconsistent-detection-of-python-version-in-cmake-and-pybind11
-  option(PYBIND11_FINDPYTHON "Use pybind11 to find python" ON)
-  add_subdirectory(pybind11)
+  find_package(pybind11 REQUIRED)
   pybind11_add_module(${CoMMA_PYTHON} ${PYTHONBIND})
   target_link_libraries(${CoMMA_PYTHON} PUBLIC ${CoMMA_LIB})
 endif()
@@ -208,10 +204,8 @@ install(DIRECTORY ${INCLUDE_DIR}/
 )
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
 
-if ( PKGCONFIG_SUPPORT )
-  configure_file(config_files/comma.pc.in comma.pc @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-endif()
+configure_file(config_files/comma.pc.in comma.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/comma.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 if ( BUILD_PYTHON_BINDINGS )
   set(PYTHON_SUB_DIR "python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")

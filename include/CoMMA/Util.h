@@ -38,6 +38,48 @@ namespace comma {
  */
 constexpr double deviate_thresh = 0.9396926207859084;
 
+/** @brief Square
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return the square of \p x
+ */
+template<typename T>
+inline T constexpr _sq(const T x) {
+  return x * x;
+}
+
+/** @brief Cube
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return the cube of \p x
+ */
+template<typename T>
+inline T constexpr _cb(const T x) {
+  return x * x * x;
+}
+
+/** @brief Raise a quantity to an integer power
+ * @tparam p The power
+ * @tparam T The type of the quantity
+ * @param[in] x The quantity
+ * @return \f$ x^p \f$
+ */
+template<unsigned int p, typename T>
+inline T constexpr int_power(const T x) {
+  // See https://stackoverflow.com/a/1505791/12152457
+  if constexpr (p == 0) return 1;
+  if constexpr (p == 1) return x;
+  if constexpr (p == 2) return x * x;
+  if constexpr (p == 3) return x * x * x;
+
+  constexpr int tmp = int_power<p / 2>(x);
+  if constexpr ((p % 2) == 0) {
+    return tmp * tmp;
+  } else {
+    return x * tmp * tmp;
+  }
+}
+
 /** @brief Tell whether the dot product given as input comes from two parallel
  * vectors. Compared against \ref deviate_thresh.
  * @tparam T Input type
@@ -45,7 +87,7 @@ constexpr double deviate_thresh = 0.9396926207859084;
  * @return true if higher than a reference threshold
  */
 template<typename T>
-inline bool dot_deviate(const T dot) {
+inline bool constexpr dot_deviate(const T dot) {
   return fabs(dot) < decltype(fabs(dot)){deviate_thresh};
 }
 
@@ -110,11 +152,10 @@ inline T squared_euclidean_distance(
   const std::vector<T> &a, const std::vector<T> &b
 ) {
 #if 0
-  return sqrt(
+  return
       transform_reduce(a.cbegin(), a.cend(), b.cbegin(), T{0.},
                        [](const auto sum, const auto val){return sum + val*val;},
-                       minus<T>())
-      );
+                       minus<T>());
 #endif
   T dist{0.};
   for (auto i = decltype(a.size()){0}; i < a.size(); ++i) {
@@ -266,22 +307,29 @@ template<typename IndexT, typename IntT>
 inline void filter_cells_by_n_edges(
   const std::vector<IndexT> &indices,
   const std::vector<IntT> &n_bnd_faces,
-  const std::unordered_set<IntT> allowed,
+  const std::unordered_set<IntT> &allowed,
   std::vector<IndexT> &filtered
 ) {
-  const auto n_cells = static_cast<IndexT>(n_bnd_faces.size());
   filtered.clear();
-  filtered.reserve(n_cells);
-  //
-  for (auto c = decltype(n_cells){0}; c < n_cells; ++c) {
-    if (allowed.find(
-          static_cast<IntT>(indices[c + 1] - indices[c] + n_bnd_faces[c])
-        )
-        != allowed.end())
-      filtered.emplace_back(c);
-  }  // for c
-  //
-  filtered.shrink_to_fit();
+  auto target = decltype(allowed){};
+  std::copy_if(
+    allowed.begin(),
+    allowed.end(),
+    std::inserter(target, target.begin()),
+    [](const auto n) { return n > 0; }
+  );
+  if (!target.empty()) {
+    const auto n_cells = static_cast<IndexT>(n_bnd_faces.size());
+    filtered.reserve(n_cells);
+    for (auto c = decltype(n_cells){0}; c < n_cells; ++c) {
+      if (allowed.find(
+            static_cast<IntT>(indices[c + 1] - indices[c] + n_bnd_faces[c])
+          )
+          != allowed.end())
+        filtered.emplace_back(c);
+    }
+    filtered.shrink_to_fit();
+  }
 }
 
 /** @brief Compute a neighbourhood-base wall-distance, that is, the distance of

@@ -10,6 +10,8 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_all.hpp>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
@@ -17,11 +19,12 @@
 
 #include "CoMMA/Neighbourhood.h"
 #include "DualGraphExamples.h"
-#include "catch2/catch.hpp"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Contains;
+using Catch::Matchers::UnorderedRangeEquals;
 
 using CoMMAPairT = pair<CoMMAIndexT, CoMMAWeightT>;
 using CoMMAPairFindFirstBasedT = PairFindFirstBasedFunctor<CoMMAPairT>;
@@ -56,40 +59,20 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       vector<set<CoMMAIndexT>> neighs = vector<set<CoMMAIndexT>>(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v - 1].insert(k);
-      THEN("Sizes are good") {
-        REQUIRE(neighs[0].size() == 4);
-        REQUIRE(neighs[1].size() == 8);
-        REQUIRE(neighs[2].size() == 12);
-      }
       THEN("First order is good") {
-        REQUIRE(CONTAINS_(neighs[0], 17));
-        REQUIRE(CONTAINS_(neighs[0], 23));
-        REQUIRE(CONTAINS_(neighs[0], 25));
-        REQUIRE(CONTAINS_(neighs[0], 31));
+        REQUIRE_THAT(neighs[0], UnorderedRangeEquals(CCT{17, 23, 25, 31}));
       }
       THEN("Second order is good") {
-        REQUIRE(CONTAINS_(neighs[1], 10));
-        REQUIRE(CONTAINS_(neighs[1], 16));
-        REQUIRE(CONTAINS_(neighs[1], 18));
-        REQUIRE(CONTAINS_(neighs[1], 22));
-        REQUIRE(CONTAINS_(neighs[1], 26));
-        REQUIRE(CONTAINS_(neighs[1], 30));
-        REQUIRE(CONTAINS_(neighs[1], 32));
-        REQUIRE(CONTAINS_(neighs[1], 38));
+        REQUIRE_THAT(
+          neighs[1], UnorderedRangeEquals(CCT{10, 16, 18, 22, 26, 30, 32, 38})
+        );
       }
       THEN("Third order is good") {
-        REQUIRE(CONTAINS_(neighs[2], 3));
-        REQUIRE(CONTAINS_(neighs[2], 9));
-        REQUIRE(CONTAINS_(neighs[2], 11));
-        REQUIRE(CONTAINS_(neighs[2], 15));
-        REQUIRE(CONTAINS_(neighs[2], 19));
-        REQUIRE(CONTAINS_(neighs[2], 21));
-        REQUIRE(CONTAINS_(neighs[2], 27));
-        REQUIRE(CONTAINS_(neighs[2], 29));
-        REQUIRE(CONTAINS_(neighs[2], 33));
-        REQUIRE(CONTAINS_(neighs[2], 37));
-        REQUIRE(CONTAINS_(neighs[2], 39));
-        REQUIRE(CONTAINS_(neighs[2], 45));
+        REQUIRE_THAT(
+          neighs[2],
+          UnorderedRangeEquals(CCT{3, 9, 11, 15, 19, 21, 27, 29, 33, 37, 39, 45}
+          )
+        );
       }
     }  // WHEN PREVIOUS AGGLOMERATION
     WHEN(
@@ -106,27 +89,14 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       vector<set<CoMMAIndexT>> neighs = vector<set<CoMMAIndexT>>(neigh_order);
       for (auto [k, v] : d_n_of_seed)
         neighs[v - 1].insert(k);
-      THEN("Sizes are good") {
-        REQUIRE(neighs[0].size() == 3);
-        REQUIRE(neighs[1].size() == 3);
-        REQUIRE(neighs[2].size() == 5);
-      }
       THEN("First order is good") {
-        REQUIRE(CONTAINS_(neighs[0], 17));
-        REQUIRE(CONTAINS_(neighs[0], 23));
-        REQUIRE(CONTAINS_(neighs[0], 25));
+        REQUIRE_THAT(neighs[0], UnorderedRangeEquals(CCT{17, 23, 25}));
       }
       THEN("Second order is good") {
-        REQUIRE(CONTAINS_(neighs[1], 18));
-        REQUIRE(CONTAINS_(neighs[1], 22));
-        REQUIRE(CONTAINS_(neighs[1], 26));
+        REQUIRE_THAT(neighs[1], UnorderedRangeEquals(CCT{18, 22, 26}));
       }
       THEN("Third order is good") {
-        REQUIRE(CONTAINS_(neighs[2], 11));
-        REQUIRE(CONTAINS_(neighs[2], 15));
-        REQUIRE(CONTAINS_(neighs[2], 19));
-        REQUIRE(CONTAINS_(neighs[2], 21));
-        REQUIRE(CONTAINS_(neighs[2], 27));
+        REQUIRE_THAT(neighs[2], UnorderedRangeEquals(CCT{11, 15, 19, 21, 27}));
       }
     }  // WHEN PREVIOUS AGGLOMERATION
     WHEN("We compute the neighbourhood of a coarse cell") {
@@ -134,16 +104,9 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       const unordered_set<CoMMAIndexT> cc = {16, 17, 18, 23, 24};
       THEN("The whole neighbourhood is returned if no cell is agglomerated") {
         auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
-        REQUIRE(neighs.size() == 9);
-        REQUIRE(CONTAINS_(neighs, 15));
-        REQUIRE(CONTAINS_(neighs, 22));
-        REQUIRE(CONTAINS_(neighs, 30));
-        REQUIRE(CONTAINS_(neighs, 31));
-        REQUIRE(CONTAINS_(neighs, 25));
-        REQUIRE(CONTAINS_(neighs, 19));
-        REQUIRE(CONTAINS_(neighs, 11));
-        REQUIRE(CONTAINS_(neighs, 10));
-        REQUIRE(CONTAINS_(neighs, 9));
+        REQUIRE_THAT(
+          neighs, UnorderedRangeEquals(CCT{15, 22, 30, 31, 25, 19, 11, 10, 9})
+        );
       }
       agglomerated[15] = true;
       agglomerated[9] = true;
@@ -152,22 +115,13 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         "If some cells are agglomerated, then they do not appear in the neighbourhood"
       ) {
         auto neighs = fc_graph.get_neighbourhood_of_cc(cc, agglomerated);
-        REQUIRE(neighs.size() == 6);
-        REQUIRE(CONTAINS_(neighs, 22));
-        REQUIRE(CONTAINS_(neighs, 30));
-        REQUIRE(CONTAINS_(neighs, 31));
-        REQUIRE(CONTAINS_(neighs, 25));
-        REQUIRE(CONTAINS_(neighs, 11));
-        REQUIRE(CONTAINS_(neighs, 10));
+        REQUIRE_THAT(neighs, UnorderedRangeEquals(CCT{22, 30, 31, 25, 11, 10}));
       }
     }
   }
   GIVEN(
     "We have a 7x7 Cartesian 2D matrix, a standard Neighbourhood for 24 a one given by the creator"
   ) {
-#define CONTAINS_1STEL_(cont, obj)                                      \
-  (find_if((cont).begin(), (cont).end(), CoMMAPairFindFirstBasedT(obj)) \
-   != (cont).end())
     const DualGEx_quad_7 Data = DualGEx_quad_7();
     const Dual_Graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> fc_graph(
       Data.nb_fc,
@@ -198,10 +152,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We check the first neighbourhood") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Only direct neighbours are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
-        REQUIRE(CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, UnorderedRangeEquals(CCT{17, 23, 25, 31}));
       }
     }
     // Testing the neighbourhood creator
@@ -213,44 +164,41 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We check the first neighbourhood of the one got from the creator") {
       const auto fon = c_neighbourhood->get_candidates();
       THEN("Only direct neighbours are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
-        REQUIRE(CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, UnorderedRangeEquals(CCT{17, 23, 25, 31}));
       }
     }
     neighbourhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, !Contains(31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
+        REQUIRE_THAT(fon, Contains(17));
+        REQUIRE_THAT(fon, Contains(23));
+        REQUIRE_THAT(fon, Contains(25));
       }
       THEN("Direct neighbours of 31 are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
     }
     c_neighbourhood->update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31 to the creator-provided neighbourhood") {
       const auto fon = c_neighbourhood->get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, !Contains(31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
+        REQUIRE_THAT(fon, Contains(17));
+        REQUIRE_THAT(fon, Contains(23));
+        REQUIRE_THAT(fon, Contains(25));
       }
       THEN("Direct neighbours of 31 are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
     }
     auto copy_c_neighbourhood = neigh_crtor.clone(c_neighbourhood);
@@ -259,38 +207,38 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 31 to the copy of the creator-provided neighbourhood") {
       const auto fon = copy_c_neighbourhood->get_candidates();
       THEN("Cell 31 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, !Contains(31));
       }
       THEN("Old neighbours are still in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
+        REQUIRE_THAT(fon, Contains(17));
+        REQUIRE_THAT(fon, Contains(23));
+        REQUIRE_THAT(fon, Contains(25));
       }
       THEN("Direct neighbours of 31 are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
     }
     neighbourhood.update(38, fc_graph.get_neighbours(38));
     WHEN("We add cell 38") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Cell 38 is no more in the neighbourhood") {
-        REQUIRE(!CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, !Contains(38));
       }
       THEN("Old neighbours are still in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
+        REQUIRE_THAT(fon, Contains(17));
+        REQUIRE_THAT(fon, Contains(23));
+        REQUIRE_THAT(fon, Contains(25));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
       }
       THEN(
         "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
       ) {
-        REQUIRE(!CONTAINS_(fon, 37));
-        REQUIRE(!CONTAINS_(fon, 39));
-        REQUIRE(!CONTAINS_(fon, 45));
+        REQUIRE_THAT(fon, !Contains(37));
+        REQUIRE_THAT(fon, !Contains(39));
+        REQUIRE_THAT(fon, !Contains(45));
       }
     }
   }
@@ -326,10 +274,7 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We check the first neighbourhood") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Only direct neighbours are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
-        REQUIRE(CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, UnorderedRangeEquals(CCT{17, 23, 25, 31}));
       }
     }
     // Testing the neighbourhood creator
@@ -341,37 +286,34 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We check the first neighbourhood of the one got from the creator") {
       const auto fon = c_neighbourhood->get_candidates();
       THEN("Only direct neighbours are in the neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
-        REQUIRE(CONTAINS_(fon, 31));
+        REQUIRE_THAT(fon, UnorderedRangeEquals(CCT{17, 23, 25, 31}));
       }
     }
     neighbourhood.update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31") {
       const auto &fon = neighbourhood.get_candidates();
       THEN("Direct neighbours of 31 are in the current neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
       const auto &prev_fon = neighbourhood.get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_THAT(prev_fon, !Contains1stElem(31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 23));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 25));
+        REQUIRE_THAT(prev_fon, Contains1stElem(17));
+        REQUIRE_THAT(prev_fon, Contains1stElem(23));
+        REQUIRE_THAT(prev_fon, Contains1stElem(25));
       }
     }
     c_neighbourhood->update(31, fc_graph.get_neighbours(31));
     WHEN("We add cell 31 to the creator-provided neighbourhood") {
       const auto fon = c_neighbourhood->get_candidates();
       THEN("Direct neighbours of 31 are in the current neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
       const auto prev_fon =
         dynamic_pointer_cast<
@@ -380,12 +322,12 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_THAT(prev_fon, !Contains1stElem(31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 23));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 25));
+        REQUIRE_THAT(prev_fon, Contains1stElem(17));
+        REQUIRE_THAT(prev_fon, Contains1stElem(23));
+        REQUIRE_THAT(prev_fon, Contains1stElem(25));
       }
     }
     auto copy_c_neighbourhood = neigh_crtor.clone(c_neighbourhood);
@@ -394,9 +336,9 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
     WHEN("We add cell 31 to the copy of the creator-provided neighbourhood") {
       const auto fon = copy_c_neighbourhood->get_candidates();
       THEN("Direct neighbours of 31 are in the current neighbourhood") {
-        REQUIRE(CONTAINS_(fon, 30));
-        REQUIRE(CONTAINS_(fon, 32));
-        REQUIRE(CONTAINS_(fon, 38));
+        REQUIRE_THAT(fon, Contains(30));
+        REQUIRE_THAT(fon, Contains(32));
+        REQUIRE_THAT(fon, Contains(38));
       }
       const auto prev_fon =
         dynamic_pointer_cast<
@@ -405,12 +347,12 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
         )
           ->get_neighbours_by_level(1);
       THEN("Cell 31 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 31));
+        REQUIRE_THAT(prev_fon, !Contains1stElem(31));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 17));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 23));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 25));
+        REQUIRE_THAT(prev_fon, Contains1stElem(17));
+        REQUIRE_THAT(prev_fon, Contains1stElem(23));
+        REQUIRE_THAT(prev_fon, Contains1stElem(25));
       }
     }
     neighbourhood.update(38, fc_graph.get_neighbours(38));
@@ -419,34 +361,33 @@ SCENARIO("Test neighbourhood computing", "[Neighbourhood]") {
       THEN(
         "Direct neighbours of 31 are NOT in the neighbourhood (max order neighbourhood)"
       ) {
-        REQUIRE(!CONTAINS_(fon, 37));
-        REQUIRE(!CONTAINS_(fon, 39));
-        REQUIRE(!CONTAINS_(fon, 45));
+        REQUIRE_THAT(fon, !Contains(37));
+        REQUIRE_THAT(fon, !Contains(39));
+        REQUIRE_THAT(fon, !Contains(45));
       }
       THEN(
         "First ever computed neighbourhood is returned since no direct neighbours were added"
       ) {
-        REQUIRE(CONTAINS_(fon, 17));
-        REQUIRE(CONTAINS_(fon, 23));
-        REQUIRE(CONTAINS_(fon, 25));
+        REQUIRE_THAT(fon, Contains(17));
+        REQUIRE_THAT(fon, Contains(23));
+        REQUIRE_THAT(fon, Contains(25));
       }
       const auto &prev_fon = neighbourhood.get_neighbours_by_level(1);
       THEN("Cell 38 is no more in the previous neighbourhood") {
-        REQUIRE(!CONTAINS_1STEL_(prev_fon, 38));
+        REQUIRE_THAT(prev_fon, !Contains1stElem(38));
       }
       THEN("Old neighbours are still in the previous neighbourhood") {
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 30));
-        REQUIRE(CONTAINS_1STEL_(prev_fon, 32));
+        REQUIRE_THAT(prev_fon, Contains1stElem(30));
+        REQUIRE_THAT(prev_fon, Contains1stElem(32));
       }
       const auto &prev_fon_2 = neighbourhood.get_neighbours_by_level(2);
       THEN(
         "Older neighbours are still in the second-to-last neighbourhood (which happens to be the first ever, hence the current)"
       ) {
-        REQUIRE(CONTAINS_1STEL_(prev_fon_2, 17));
-        REQUIRE(CONTAINS_1STEL_(prev_fon_2, 23));
-        REQUIRE(CONTAINS_1STEL_(prev_fon_2, 25));
+        REQUIRE_THAT(prev_fon_2, Contains1stElem(17));
+        REQUIRE_THAT(prev_fon_2, Contains1stElem(23));
+        REQUIRE_THAT(prev_fon_2, Contains1stElem(25));
       }
     }
-#undef CONTAINS_1STEL_
   }
 }

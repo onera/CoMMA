@@ -10,11 +10,11 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
+#include <catch2/catch_test_macros.hpp>
 #include <vector>
 
 #include "CoMMA/CoMMADefs.h"
 #include "CoMMA/Dual_Graph.h"
-#include "catch2/catch.hpp"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
