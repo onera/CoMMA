@@ -183,17 +183,16 @@ public:
     for (const CoMMAIndexType &i_fc : this->_s_fc) {
       // we add to the mapping the i_fc
       mapping.push_back(i_fc);
-      // get neighbours and the weights associated
-      const std::vector<CoMMAIndexType> neigh =
-        this->_fc_graph->get_neighbours(i_fc);
-      const std::vector<CoMMAWeightType> area =
-        this->_fc_graph->get_weights(i_fc);
-      for (auto it = neigh.begin(); it != neigh.end(); ++it) {
-        if (std::find(this->_s_fc.begin(), this->_s_fc.end(), *it)
+      auto n_it = this->_fc_graph->neighbours_cbegin(i_fc);
+      auto w_it = this->_fc_graph->weights_cbegin(i_fc);
+      for (; n_it != this->_fc_graph->neighbours_cend(i_fc)
+           && w_it != this->_fc_graph->weights_cend(i_fc);
+           ++n_it, ++w_it) {
+        if (std::find(this->_s_fc.begin(), this->_s_fc.end(), *n_it)
             != this->_s_fc.end()) {
           ++position;
-          col_ind.push_back(*it);
-          CSR_vals.push_back(area[it - neigh.begin()]);
+          col_ind.push_back(*n_it);
+          CSR_vals.push_back(*w_it);
         }
       }
       CSR_row.push_back(position);

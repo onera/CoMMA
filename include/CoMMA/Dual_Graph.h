@@ -736,22 +736,19 @@ public:
         // Process of every faces/Neighbours and compute for the current cell
         // the neighbourhood and the area associated with the neighbourhood
         // cells
-        const ContainerIndexType v_neighbours = this->get_neighbours(i_fc);
-        const ContainerWeightType v_weights = this->get_weights(i_fc);
-
-        assert(v_neighbours.size() == v_weights.size());
-        auto nb_neighbours = v_neighbours.size();
-
-        for (auto i_n = decltype(nb_neighbours){0}; i_n < nb_neighbours;
-             i_n++) {
+        auto n_it = this->neighbours_cbegin(i_fc);
+        auto w_it = this->weights_cbegin(i_fc);
+        auto nb_neighbours = this->get_nb_of_neighbours(i_fc);
+        for (; n_it != this->neighbours_cend(i_fc)
+             && w_it != this->weights_cend(i_fc);
+             ++n_it, ++w_it) {
           // to avoid special case where the boundary value are stored
-          if (v_neighbours[i_n] != i_fc) {
-            const CoMMAWeightType i_w_fc_n = v_weights[i_n];
-            if (max_weight < i_w_fc_n) {
-              max_weight = i_w_fc_n;
+          if (*n_it != i_fc) {
+            if (max_weight < *w_it) {
+              max_weight = *w_it;
             }
-            if (min_weight > i_w_fc_n) {
-              min_weight = i_w_fc_n;
+            if (min_weight > *w_it) {
+              min_weight = *w_it;
             }
           } else {
             nb_neighbours--;

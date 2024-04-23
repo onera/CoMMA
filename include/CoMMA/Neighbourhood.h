@@ -63,6 +63,10 @@ public:
   using CoMMAPairFindFirstBasedType = PairFindFirstBasedFunctor<CoMMAPairType>;
   /** @brief Type for container of candidates */
   using CandidatesContainerType = std::deque<CoMMAIndexType>;
+  /** @brief Type for containers of indices */
+  using ContainerIndexType = std::vector<CoMMAIndexType>;
+  /** @brief Type for constant iterators of containers of indices */
+  using ContainerIndexConstIt = typename ContainerIndexType::const_iterator;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -94,9 +98,25 @@ public:
    * cells
    * @param[in] new_neighbours Vector of the new neighbours to be analysed
    */
-  virtual void update(
+  inline void update(
+    const CoMMAIndexType new_fc, const ContainerIndexType &new_neighbours
+  ) {
+    update_it(new_fc, new_neighbours.cbegin(), new_neighbours.cend());
+  }
+
+  /** @brief Method that updates the neighbourhood. Given the \p new_fc, if is
+   * in the neighbours, it is deleted. Then, the new neighbours are added as
+   * candidates
+   * @param[in] new_fc Index of the new fine cell to be added to the set of fine
+   * cells
+   * @param[in] neighs_begin Constant iterator giving the beginning of the
+   * neighbours
+   * @param[in] neighs_end Constant iterator giving the end of the neighbours
+   */
+  virtual void update_it(
     const CoMMAIndexType new_fc,
-    const std::vector<CoMMAIndexType> &new_neighbours
+    ContainerIndexConstIt neighs_begin,
+    ContainerIndexConstIt neighs_end
   ) = 0;
 
   /** @brief Get candidates that should be consider in the next step of the
@@ -161,6 +181,10 @@ public:
   /** @brief Functor used if find-like function relying only on first element of
    * the pair */
   using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
+  /** @brief Type for containers of indices */
+  using typename NeighbourhoodBaseType::ContainerIndexType;
+  /** @brief Type for constant iterators of containers of indices */
+  using typename NeighbourhoodBaseType::ContainerIndexConstIt;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -190,11 +214,14 @@ public:
    * candidates
    * @param[in] new_fc Index of the new fine cell to be added to the set of fine
    * cells
-   * @param[in] new_neighbours Vector of the new neighbours to be analysed
+   * @param[in] neighs_begin Constant iterator giving the beginning of the
+   * neighbours
+   * @param[in] neighs_end Constant iterator giving the end of the neighbours
    */
-  void update(
+  void update_it(
     const CoMMAIndexType new_fc,
-    const std::vector<CoMMAIndexType> &new_neighbours
+    ContainerIndexConstIt neighs_begin,
+    ContainerIndexConstIt neighs_end
   ) override {
     // Add new_fc to current CC and remove it from previous neighbourhoods
     this->_s_fc.insert(new_fc);
@@ -206,14 +233,14 @@ public:
     // Compute the set of direct neighbours allowed by original
     // neighbourhood-order
     CoMMASetOfPairType neighs;
-    for (const CoMMAIndexType &i_fc : new_neighbours) {
-      if ((std::find(this->_candidates.begin(), this->_candidates.end(), i_fc)
+    for (auto it_fc = neighs_begin; it_fc != neighs_end; ++it_fc) {
+      if ((std::find(this->_candidates.begin(), this->_candidates.end(), *it_fc)
            == this->_candidates.end())
-          && (this->_s_fc.count(i_fc) == 0)
-          && (this->_s_neighbours_of_seed.count(i_fc) > 0)) {
+          && (this->_s_fc.count(*it_fc) == 0)
+          && (this->_s_neighbours_of_seed.count(*it_fc) > 0)) {
         // If not yet in the FON, not yet in the coarse cell and among the
         // allowed neighbours, insert
-        neighs.emplace(i_fc, this->_weights[i_fc]);
+        neighs.emplace(*it_fc, this->_weights[*it_fc]);
       }
     }
     // Just add new candidates at the back. This will leave candidates closer to
@@ -249,6 +276,10 @@ public:
   /** @brief Functor used if find-like function relying only on first element of
    * the pair */
   using typename NeighbourhoodBaseType::CoMMAPairFindFirstBasedType;
+  /** @brief Type for containers of indices */
+  using typename NeighbourhoodBaseType::ContainerIndexType;
+  /** @brief Type for constant iterators of containers of indices */
+  using typename NeighbourhoodBaseType::ContainerIndexConstIt;
 
   /** @brief Constructor
    *  @param[in] s_neighbours_of_seed Set of the neighbours of the given cell
@@ -282,11 +313,14 @@ public:
    * candidates
    * @param[in] new_fc Index of the new fine cell to be added to the set of fine
    * cells
-   * @param[in] new_neighbours Vector of the new neighbours to be analysed
+   * @param[in] neighs_begin Constant iterator giving the beginning of the
+   * neighbours
+   * @param[in] neighs_end Constant iterator giving the end of the neighbours
    */
-  void update(
+  void update_it(
     const CoMMAIndexType new_fc,
-    const std::vector<CoMMAIndexType> &new_neighbours
+    ContainerIndexConstIt neighs_begin,
+    ContainerIndexConstIt neighs_end
   ) override {
     this->_candidates.clear();
     // Add new_fc to current CC and remove it from previous neighbourhoods
@@ -305,11 +339,11 @@ public:
     // Compute the set of direct neighbours allowed by original
     // neighbourhood-order
     CoMMASetOfPairType curr_set = CoMMASetOfPairType();
-    for (const CoMMAIndexType &i_fc : new_neighbours) {
-      if ((this->_s_fc.count(i_fc) == 0)
-          && (this->_s_neighbours_of_seed.count(i_fc) > 0)) {
+    for (auto it_fc = neighs_begin; it_fc != neighs_end; ++it_fc) {
+      if ((this->_s_fc.count(*it_fc) == 0)
+          && (this->_s_neighbours_of_seed.count(*it_fc) > 0)) {
         // If not yet in coarse cell and among the allowed neighbours, insert
-        curr_set.emplace(i_fc, this->_weights[i_fc]);
+        curr_set.emplace(*it_fc, this->_weights[*it_fc]);
       }
     }
 
