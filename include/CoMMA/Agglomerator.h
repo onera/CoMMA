@@ -626,7 +626,8 @@ protected:
         // the weight. Putting a high-level if to reduce the branching inside
         // the loop over the neighbours.
         if (empty_line) {
-          for (; n_it != this->_fc_graph->neighbours_cend(seed);
+          for (; n_it != this->_fc_graph->neighbours_cend(i_fc)
+               && w_it != this->_fc_graph->weights_cend(i_fc);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               candidates.emplace(*n_it, *w_it);
@@ -635,7 +636,8 @@ protected:
         } else {
           // If not an empty line, we check the direction, see
           // !dot_deviate below
-          for (; n_it != this->_fc_graph->neighbours_cend(seed);
+          for (; n_it != this->_fc_graph->neighbours_cend(i_fc)
+               && w_it != this->_fc_graph->weights_cend(i_fc);
                ++n_it, ++w_it) {
             if (to_treat[*n_it] && *w_it > 0.90 * max_weights[seed]) {
               std::vector<CoMMAWeightType> cur_dir(pts_dim);
@@ -1277,8 +1279,10 @@ public:
       // anyways all the possible coarse cells (not only the max dimension one)
       while (size_current_cc < max_ind) {
         // Update the neighbourhood and generate the candidates
-        neighbourhood->update(
-          next_cell, this->_fc_graph->get_neighbours(next_cell)
+        neighbourhood->update_it(
+          next_cell,
+          this->_fc_graph->neighbours_cbegin(next_cell),
+          this->_fc_graph->neighbours_cend(next_cell)
         );
         next_cell = 0;  // Dummy initialization
         CellFeatures<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>
@@ -1638,7 +1642,11 @@ public:
         inner_ar,
         inner_min_ar_cc_feats
       );
-      cur_neighbourhood->update(i_fc, this->_fc_graph->get_neighbours(i_fc));
+      cur_neighbourhood->update_it(
+        i_fc,
+        this->_fc_graph->neighbours_cbegin(i_fc),
+        this->_fc_graph->neighbours_cend(i_fc)
+      );
       std::unordered_set<CoMMAIndexType> cur_fc{
         s_of_fc_for_current_cc.begin(), s_of_fc_for_current_cc.end()
       };
