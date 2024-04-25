@@ -461,7 +461,7 @@ inline void agglomerate_one_level(
   std::vector<CoMMAIndexType> &aniso_lines_indices,  // In & out
   std::vector<CoMMAIndexType> &aniso_lines  // In & out
 ) {
-  agglomerate_one_level(
+  agglomerate_one_level<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
     graph.connectivity_indices,
     graph.connectivity,
     graph.connectivity_weights,
