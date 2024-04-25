@@ -11,10 +11,10 @@
 """Simple tests to check the soundness of the python module of CoMMA."""
 import CoMMA
 
+
 def agglomerate_aniso_lines():
     """We take the mesh of example `ex_aniso_lines.py`, here hardcoded, and perform an
-agglomeration.
-"""
+    agglomeration."""
     dimension = 2
     anisotropic = True
     build_lines = True
@@ -56,13 +56,13 @@ agglomeration.
         [2.5, 0.5], [2.5, 0.7], [2.5, 0.3], [2.5, 0.9], [2.5, 0.1], [2.5, 1.5],
         [3.5, 1.5], [3.5, 0.9], [3.5, 0.1], [3.5, 0.7], [3.5, 0.3], [3.5, 0.5],
     ]
+    n_bnd_faces = [
+        2, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1, 1
+    ]
     # fmt: on
     n_cells = len(volumes)
     weights = [float(n_cells - i) for i in range(n_cells)]
     anisoCompliantCells = list(range(n_cells))
-    n_bnd_faces = [
-        2, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1, 1
-    ]
     return CoMMA.agglomerate_one_level(
         adjMatrix_row_ptr,
         adjMatrix_col_ind,
