@@ -95,13 +95,13 @@ job:init:
     rules:
         - !reference [.rules_changes_anything, rules]
     script:
+        # Ensure that everything from previous CI is cleaned
+        - rm -rf build* install
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
         - echo "PYTHON_DIR=\$CUSTOM_CI_DIR/examples/scripts" >> build.env
-        # Ensure that everything from previous CI is cleaned
-        - rm -rf build* install
         # See if python tools are installed (here, we have already sourced the env,
         # see default:before_script, so it's OK
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
