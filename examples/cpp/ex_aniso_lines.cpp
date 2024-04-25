@@ -23,6 +23,7 @@
 using IndexT = comma::CoMMAIndexT;
 using IntT = comma::CoMMAIntT;
 using WeightT = comma::CoMMAWeightT;
+using std::vector;
 
 /** @brief Class with the definition of a mesh, taken from
  * ../scripts/ex_aniso_lines.py
@@ -31,17 +32,17 @@ class Ex_Dual_Graph {
 public:
   const IntT dim = 2;
   // clang-format off
-  const std::vector<IndexT> adj_idx = {
+  const vector<IndexT> adj_idx = {
     0, 2, 5, 8, 11, 14, 16, 19, 23, 27, 31, 35, 38, 42, 46, 50, 54, 57, 60, 62,
     65, 67, 70, 73, 76
   };
-  const std::vector<IndexT> adj = {
+  const vector<IndexT> adj = {
     1, 11, 0, 2, 10, 1, 3, 9, 2, 4, 8, 3, 5, 7, 4, 6, 5, 7, 17, 4, 8, 6, 15, 3,
     9, 7, 13, 2, 10, 8, 12, 1, 11, 9, 14, 0, 10, 16, 9, 14, 13, 23, 8, 12, 15,
     21, 10, 16, 12, 22, 7, 13, 17, 19, 11, 14, 20, 6, 15, 18, 17, 19, 15, 21,
     18, 16, 22, 13, 23, 19, 14, 20, 23, 12, 22, 21
   };
-  const std::vector<WeightT> areas = {
+  const vector<WeightT> areas = {
     1. , 0.2, 1. , 1. , 0.2, 1. , 1. , 0.2, 1. , 1. , 0.2, 1. , 1. , 0.2, 1. ,
     1. , 1. , 1. , 1. , 0.2, 1. , 1. , 0.2, 0.2, 1. , 1. , 0.2, 0.2, 1. , 1. ,
     0.2, 0.2, 1. , 1. , 0.2, 0.2, 1. , 0.2, 0.2, 1. , 1. , 0.2, 0.2, 1. , 1. ,
@@ -49,24 +50,24 @@ public:
     1. , 1. , 0.2, 1. , 1. , 0.2, 1. , 0.2, 1. , 1. , 0.2, 1. , 1. , 0.2, 1. ,
     1.
   };
-  const std::vector<WeightT> volumes = {
+  const vector<WeightT> volumes = {
     0.2, 0.2, 0.2, 0.2, 0.2, 1. , 1. , 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2,
     0.2, 0.2, 1. , 1. , 0.2, 0.2, 0.2, 0.2, 0.2
   };
-  const std::vector<std::vector<WeightT>> centers = {
+  const vector<vector<WeightT>> centers = {
     {0.5, 0.1}, {0.5, 0.3}, {0.5, 0.5}, {0.5, 0.7}, {0.5, 0.9}, {0.5, 1.5},
     {1.5, 1.5}, {1.5, 0.9}, {1.5, 0.7}, {1.5, 0.5}, {1.5, 0.3}, {1.5, 0.1},
     {2.5, 0.5}, {2.5, 0.7}, {2.5, 0.3}, {2.5, 0.9}, {2.5, 0.1}, {2.5, 1.5},
     {3.5, 1.5}, {3.5, 0.9}, {3.5, 0.1}, {3.5, 0.7}, {3.5, 0.3}, {3.5, 0.5}
   };
-  const std::vector<IntT> n_bnd_faces = {
+  const vector<IntT> n_bnd_faces = {
     2, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1, 1
   };
-  const std::vector<IndexT> compliant_cells = {
+  const vector<IndexT> compliant_cells = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23
   };
-  const std::vector<WeightT> priority = {
+  const vector<WeightT> priority = {
     24., 23., 22., 21., 20., 19., 18., 17., 16., 15., 14., 13., 12., 11., 10.,
     9., 8., 7., 6., 5., 4., 3., 2., 1.
   };
@@ -96,10 +97,10 @@ constexpr comma::CoMMANeighbourhoodT neigh =
   comma::CoMMANeighbourhoodT::EXTENDED;
 
 // Reference results
-const std::vector<IndexT> ref_f2c = {0, 0, 1, 1, 1, 8, 8, 3, 3, 3, 2, 2,
-                                     5, 5, 4, 5, 4, 8, 8, 7, 6, 7, 6, 7};
-const std::vector<IndexT> ref_alines_idx = {0, 2, 4, 6, 8};
-const std::vector<IndexT> ref_alines = {0, 1, 2, 3, 4, 5, 6, 7};
+const vector<IndexT> ref_f2c = {0, 0, 1, 1, 1, 8, 8, 3, 3, 3, 2, 2,
+                                5, 5, 4, 5, 4, 8, 8, 7, 6, 7, 6, 7};
+const vector<IndexT> ref_alines_idx = {0, 2, 4, 6, 8};
+const vector<IndexT> ref_alines = {0, 1, 2, 3, 4, 5, 6, 7};
 
 template<typename T>
 inline void compare_and_print(
@@ -112,7 +113,7 @@ inline void compare_and_print(
 /** @brief Test main function and compare the results with reference ones. */
 void ex_agglomerate_one_level() {
   // Prepare output containers
-  std::vector<IndexT> f2c{}, alines_idx{}, alines{};
+  vector<IndexT> f2c{}, alines_idx{}, alines{};
 
   // Call main function
   comma::agglomerate_one_level<IndexT, WeightT, IntT>(
@@ -190,7 +191,7 @@ void ex_agglomerate_one_level_args() {
   );
 
   // Prepare output containers
-  std::vector<IndexT> f2c{}, alines_idx{}, alines{};
+  vector<IndexT> f2c{}, alines_idx{}, alines{};
 
   // Call main function
   comma::agglomerate_one_level<IndexT, WeightT, IntT>(

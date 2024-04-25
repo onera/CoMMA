@@ -102,7 +102,7 @@ job:init:
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
         - echo "EXAMPLES_DIR=\$CUSTOM_CI_DIR/examples" >> build.env
-        - echo "PYTHON_DIR=\$EXAMPLES_DIR/examples/scripts" >> build.env
+        - echo "PYTHON_DIR=\$EXAMPLES_DIR/scripts" >> build.env
         # See if python tools are installed (here, we have already sourced the env,
         # see default:before_script, so it's OK
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
