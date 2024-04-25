@@ -10,6 +10,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <exception>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -19,6 +20,7 @@
 #include "CoMMA/CoMMA.h"
 #include "CoMMA/CoMMAConfig.h"
 #include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Util.h"
 
 using IndexT = comma::CoMMAIndexT;
 using IntT = comma::CoMMAIntT;
@@ -105,7 +107,7 @@ const vector<IndexT> ref_alines = {0, 1, 2, 3, 4, 5, 6, 7};
 template<typename T>
 inline void compare_and_print(
   const std::string &label, const T &left, const T &right
-) {
+) noexcept {
   std::cout << "* " << label << ": " << (left == right ? "OK" : "KO")
             << std::endl;
 }
@@ -147,7 +149,6 @@ void ex_agglomerate_one_level() {
   );
 
   // Compare results
-  std::cout << "Test full signature:" << std::endl;
   compare_and_print("Aniso lines indices", alines_idx, ref_alines_idx);
   compare_and_print("Aniso lines", alines, ref_alines);
   compare_and_print("Agglomeration", f2c, ref_f2c);
@@ -199,15 +200,26 @@ void ex_agglomerate_one_level_args() {
   );
 
   // Compare results
-  std::cout << "Test args signature:" << std::endl;
   compare_and_print("Aniso lines indices", alines_idx, ref_alines_idx);
   compare_and_print("Aniso lines", alines, ref_alines);
   compare_and_print("Agglomeration", f2c, ref_f2c);
 }
 
 int main() {
-  ex_agglomerate_one_level();
+  std::cout << "Test full signature:" << std::endl;
+  try {
+    ex_agglomerate_one_level();
+  } catch (std::exception &e) {
+    std::cout << "!!! Failed with exception " << e.what() << std::endl;
+    return 1;
+  }
   std::cout << std::endl;
-  ex_agglomerate_one_level_args();
+  std::cout << "Test args signature:" << std::endl;
+  try {
+    ex_agglomerate_one_level_args();
+  } catch (std::exception &e) {
+    std::cout << "!!! Failed with exception " << e.what() << std::endl;
+    return 1;
+  }
   return 0;
 }
