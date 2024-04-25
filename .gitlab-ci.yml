@@ -95,16 +95,20 @@ job:init:
     rules:
         - !reference [.rules_changes_anything, rules]
     script:
+        # Ensure that everything from previous CI is cleaned
+        - rm -rf build* install
         # Set a commun directory and make it available, Create it at the root dir, so that it is found
         # See https://docs.gitlab.com/ee/ci/variables/#pass-an-environment-variable-to-another-job
         - echo "CUSTOM_CI_DIR=$PWD" >> build.env
         - echo "INSTALL_DIR=\$CUSTOM_CI_DIR/install" >> build.env
+        - echo "PYTHON_DIR=\$CUSTOM_CI_DIR/examples/scripts" >> build.env
         # See if python tools are installed (here, we have already sourced the env,
         # see default:before_script, so it's OK
         - python3 -c "import gcovr" || python3 -m pip install --user gcovr
         - python3 -m black --version || python3 -m pip install --user black
         - python3 -m isort --version || python3 -m pip install --user isort
         - python3 -m ruff --version || python3 -m pip install --user ruff
+        - python3 -m pytest --version || python3 -m pip install --user pytest
     artifacts:
         reports:
             dotenv: ./build.env
@@ -129,6 +133,7 @@ job:build_dbg:
     script:
         - cd $CUSTOM_CI_DIR/build
         - make -j
+        - make install
     #artifacts:
     #    expire_in: 1 month
     #    paths:
@@ -152,6 +157,20 @@ job:test_dbg:
             coverage_report:
                 coverage_format: cobertura
                 path: $CUSTOM_CI_DIR/build/coverage.xml
+job:test_python_dbg:
+    stage: test
+    needs: ['job:init', 'job:build_dbg']
+    rules:
+        - !reference [.rules_changes_sources, rules]
+    script:
+        - pyv=$(python3 --version | awk -F '[ .]' '{print $2"."$3}')
+        # equivalent to
+        # - pyv=$(python3 -c "import sys;print('{}.{}'.format(sys.version_info[0],sys.version_info[1]))")
+        # Add path to CoMMA module to PATH
+        - export PYTHONPATH=${INSTALL_DIR}/lib64/python${pyv}/site-packages:$PYTHONPATH
+        - export PYTHONPATH=${INSTALL_DIR}/lib/python${pyv}/site-packages:$PYTHONPATH
+        - cd ${PYTHON_DIR}
+        - python3 -m pytest
 job:test_install_pkgconfig:
     stage: test
     needs: ['job:init', 'job:build_dbg']
@@ -163,7 +182,6 @@ job:test_install_pkgconfig:
             - config_files/*.in
     script:
         - cd $CUSTOM_CI_DIR/build
-        - make install
         - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig pkg-config --cflags --libs comma`
 job:configure_rel:
     stage: configure
@@ -270,7 +288,7 @@ job:black:
     rules:
         - !reference [.rules_changes_python, rules]
     script:
-        - cd $CUSTOM_CI_DIR/examples/scripts
+        - cd ${PYTHON_DIR}
         - python3 -m black --check *.py
     allow_failure: true
 job:isort:
@@ -279,7 +297,7 @@ job:isort:
     rules:
         - !reference [.rules_changes_python, rules]
     script:
-        - cd $CUSTOM_CI_DIR/examples/scripts
+        - cd ${PYTHON_DIR}
         - python3 -m isort --check *.py
     allow_failure: true
 job:ruff:
@@ -288,7 +306,7 @@ job:ruff:
     rules:
         - !reference [.rules_changes_python, rules]
     script:
-        - cd $CUSTOM_CI_DIR/examples/scripts
+        - cd ${PYTHON_DIR}
         - python3 -m ruff check *.py
     allow_failure: true
 pages:

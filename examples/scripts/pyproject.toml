@@ -3,3 +3,7 @@ profile = "black"
 [tool.ruff]
 # Same as black
 line-length = 88
+[tool.pytest.ini_options]
+addopts = [
+  "--ignore=deprecated",
+]
