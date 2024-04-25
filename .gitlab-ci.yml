@@ -54,6 +54,7 @@ stages:
             - Documentation/Doxyfile
             - .clang-format
             - .clang-tidy
+            - examples/cpp*.{cpp,h}
             - examples/scripts/*.py
             - examples/scripts/pyproject.toml
             - config_files/*
@@ -79,6 +80,7 @@ stages:
             - .clang-format
             - .clang-tidy
             - config_files/*
+            - examples/cpp*.{cpp,h}
 
 .rules_changes_python:
     rules:
@@ -291,7 +293,7 @@ job:clang_format:
         - !reference [.rules_changes_sources_linting, rules]
     script:
         - cd $CUSTOM_CI_DIR
-        - git ls-tree --name-only -r HEAD include/CoMMA src tests | grep ".*\.\(h\|cpp\)\(\.in\)\?" | xargs /stck/rmilani/.local/bin/clang-format --style=file --dry-run --Werror
+        - git ls-tree --name-only -r HEAD include/CoMMA src tests examples/cpp | grep ".*\.\(h\|cpp\)\(\.in\)\?" | xargs /stck/rmilani/.local/bin/clang-format --style=file --dry-run --Werror
     allow_failure: true
 job:black:
     stage: lint_format_python
