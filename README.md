@@ -183,6 +183,9 @@ comma::agglomerate_one_level(
 )
 ```
 
+For more details, have a look at the `C++` examples in
+[`examples/cpp`](examples/cpp).
+
 ## :book: Documentation
 CoMMA is documented via `doxygen`. If you have it and wish to have the full
 documentation, just run from the main directory:
