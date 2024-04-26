@@ -85,7 +85,6 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
 
     WHEN("We compute the neighbourhood-based wall-distance (double type)") {
       vector<CoMMAWeightT> dist{};
-      constexpr CoMMAWeightT eps = 1e-10;
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
         Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist
       );
