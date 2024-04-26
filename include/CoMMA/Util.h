@@ -19,12 +19,16 @@
 #include <cmath>
 #include <functional>
 #include <iterator>
+#include <map>
 #include <numeric>
 #include <queue>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
+
+#include "CoMMA/Args.h"
 
 namespace comma {
 
@@ -392,6 +396,118 @@ void compute_neighbourhood_based_wall_distance(
       }
     }
   }
+}
+
+/** @brief Build a coarse graph from the fine graph and the result of a
+ * previous agglomeration.
+ * @tparam IndexT Type for indices
+ * @tparam RealT Type for reals
+ * @tparam IntT Type for integers
+ * @param[in] f2c Result of the previous agglomeration
+ * @param[in] f_adj_idx Adjacency indices of the fine graph
+ * @param[in] f_adj Adjacency of the fine graph
+ * @param[in] f_weights Adjacency weights of the fine graph
+ * @param[in] f_volumes Volumes of the previous graph
+ * @param[in] f_centers Centers of the cells of the fine graph
+ * @param[in] f_priority Priorities of the cells of the fine graph
+ * @param[in] f_n_bnd Number of boundary faces of the cells of the fine graph
+ * @param[out] c_adj_idx Adjacency indices of the coarse graph
+ * @param[out] c_adj Adjacency of the coarse graph
+ * @param[out] c_weights Adjacency weights of the coarse graph
+ * @param[out] c_volumes Volumes of the previous graph
+ * @param[out] c_centers Centers of the cells of the coarse graph
+ * @param[out] c_priority Priorities of the cells of the coarse graph (computed
+ * as maximum of the priorities of the fine cells)
+ * @param[out] c_n_bnd Number of boundary faces of the cells of the coarse graph
+ */
+template<typename IndexT, typename RealT, typename IntT>
+void build_coarse_graph(
+  const std::vector<IndexT> &f2c,
+  const std::vector<IndexT> &f_adj_idx,
+  const std::vector<IndexT> &f_adj,
+  const std::vector<RealT> &f_weights,
+  const std::vector<RealT> &f_volumes,
+  const std::vector<std::vector<RealT>> &f_centers,
+  const std::vector<RealT> &f_priority,
+  const std::vector<IntT> &f_n_bnd,
+  // output
+  std::vector<IndexT> &c_adj_idx,
+  std::vector<IndexT> &c_adj,
+  std::vector<RealT> &c_weights,
+  std::vector<RealT> &c_volumes,
+  std::vector<std::vector<RealT>> &c_centers,
+  std::vector<RealT> &c_priority,
+  std::vector<IntT> &c_n_bnd
+) {
+  const auto n_cells = *(std::max_element(f2c.begin(), f2c.end())) + 1;
+  const auto dim = static_cast<IntT>(f_centers[0].size());
+  // Preparing outputs
+  c_adj_idx.clear();
+  c_adj_idx.emplace_back(0);
+  c_adj.clear();
+  c_weights.clear();
+  // For these, we have the final size
+  c_volumes.clear();
+  c_volumes.resize(n_cells);
+  std::fill(c_volumes.begin(), c_volumes.end(), RealT(0));
+  c_n_bnd.clear();
+  c_n_bnd.resize(n_cells);
+  c_priority.clear();
+  c_priority.resize(n_cells);
+  std::fill(c_n_bnd.begin(), c_n_bnd.end(), IntT(0));
+  c_centers.clear();
+  c_centers.reserve(n_cells);
+  for (auto cc = decltype(n_cells){0}; cc < n_cells; ++cc) {
+    // https://stackoverflow.com/questions/18189362/how-best-to-fill-a-vector-of-vectors-avoiding-wasting-memory-and-unnecessary-al
+    auto tmp = std::vector<RealT>(dim, RealT(0));
+    c_centers.emplace_back(std::move(tmp));
+  }  // for cc
+  // Now building
+  // For each coarse cell, find its fine cells
+  std::vector<std::set<IndexT>> c2f(n_cells);
+  for (auto fc = decltype(f2c.size()){0}; fc < f2c.size(); ++fc) {
+    const auto cc = f2c[fc];
+    // Adding FC to CC
+    c2f[cc].emplace(fc);
+    // Adding volume
+    c_volumes[cc] += f_volumes[fc];
+    // Updating center - Weighted average
+    for (auto xyz = decltype(dim){0}; xyz < dim; ++xyz)
+      c_centers[cc][xyz] += f_volumes[fc] * f_centers[fc][xyz];
+  }  // for fc
+  for (auto cc = decltype(n_cells){0}; cc < n_cells; ++cc) {
+    const auto &fcs = c2f[cc];
+    const RealT ov_n_fc(RealT(1.) / fcs.size());
+    // Finishing center
+    for (auto xyz = decltype(dim){0}; xyz < dim; ++xyz)
+      c_centers[cc][xyz] *= ov_n_fc;
+    auto n_bnd = std::numeric_limits<IntT>::min();
+    auto priority = std::numeric_limits<RealT>::min();
+    std::map<IndexT, RealT> cc_neighs;
+    for (const auto fc : fcs) {
+      if (f_n_bnd[fc] > n_bnd) n_bnd = f_n_bnd[fc];
+      if (f_priority[fc] > priority) priority = f_priority[fc];
+      for (auto fc_neigh = f_adj.cbegin() + f_adj_idx[fc];
+           fc_neigh != f_adj.cbegin() + f_adj_idx[fc + 1];
+           ++fc_neigh) {
+        // Update if not one of the FC of the CC
+        if (fcs.find(*fc_neigh) == fcs.end()) {
+          const auto cc_neigh = f2c[*fc_neigh];
+          // Add if not yet present
+          cc_neighs.try_emplace(cc_neigh, 0.0);
+          cc_neighs.at(cc_neigh) += f_weights[*fc_neigh];
+        }
+      }  // for fc_neigh
+    }  // for fc
+    // Max of f_bnd
+    c_n_bnd[cc] = n_bnd;
+    c_priority[cc] = priority;
+    c_adj_idx.emplace_back(c_adj_idx.back() + cc_neighs.size());
+    for (const auto &[neigh, weight] : cc_neighs) {
+      c_adj.emplace_back(neigh);
+      c_weights.emplace_back(weight);
+    }
+  }  // for cc
 }
 
 }  // end namespace comma

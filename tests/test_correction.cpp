@@ -11,7 +11,9 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include <memory>
 
+#include "CoMMA/Agglomerator.h"
 #include "DualGraphExamples.h"
 #include "test_defs.h"
 

@@ -48,8 +48,6 @@ using CFT = CellFeatures<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>;
   REQUIRE_THAT((this)._sq_diam, WithinAbs((that)._sq_diam, eps)); \
   REQUIRE_THAT((this)._sq_min_edge, WithinAbs((that)._sq_min_edge, eps));
 
-constexpr CoMMAWeightT eps = 1e-10;
-
 SCENARIO("Test CellFeatures", "[CellFeatures]") {
   GIVEN("A 2D 4x4 Cartesian mesh") {
     const DualGEx_quad_4 Data = DualGEx_quad_4();

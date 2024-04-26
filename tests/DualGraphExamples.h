@@ -12,11 +12,8 @@
  * Any copyright is dedicated to the Public Domain.
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
+#include <vector>
 
-#include <memory>
-
-#include "CoMMA/Agglomerator.h"
-#include "CoMMA/CoMMA.h"
 #include "CoMMA/CoMMADefs.h"
 
 using DGEIndexT = comma::CoMMAIndexT;

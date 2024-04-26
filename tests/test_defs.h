@@ -34,6 +34,8 @@ constexpr bool ODD_LINE_LENGTH = true;
 constexpr comma::CoMMAAspectRatioT DEFAULT_AR =
   comma::CoMMAAspectRatioT::DIAMETER_OVER_RADIUS;
 
+constexpr comma::CoMMAWeightT eps = 1e-10;
+
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<
   comma::CoMMAIndexT,
   comma::CoMMAWeightT,
