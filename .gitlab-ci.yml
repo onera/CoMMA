@@ -169,7 +169,7 @@ job:test_examples_dbg:
     script:
         - cd $CUSTOM_CI_DIR/build
         # This is typically what pkgconfig should return + TEST_DIR
-        - g_opt="-I${INSTALL_DIR}/include -I${TESTS_DIR} -L${INSTALL_DIR}/lib64"
+        - g_opt="-I${INSTALL_DIR}/include -L${INSTALL_DIR}/lib64"
         - g++ ${EXAMPLES_DIR}/cpp/ex_aniso_lines.cpp -o example ${g_opt}
         - ./example
         - g++ ${EXAMPLES_DIR}/cpp/ex_coarse_graph.cpp -o example ${g_opt}
