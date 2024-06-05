@@ -791,7 +791,7 @@ public:
   /** @brief Getter that returns the number of cells
    *  @return number of cells
    */
-  inline CoMMAIntType get_nb_cells() const { return this->_number_of_cells; }
+  inline CoMMAIndexType get_nb_cells() const { return this->_number_of_cells; }
 
   /** @brief Get the fine cells neighbours of a coarse cell
    *   @param[in] s_seeds Set of seeds for which the neighbourhood should be
