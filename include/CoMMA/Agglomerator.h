@@ -630,7 +630,8 @@ protected:
           }
           to_treat[seed] = false;
           empty_line = false;
-          this->_fc_graph->get_center_direction(old_seed, seed, prev_dir);
+          // Always new_seed - old_seed to be sure to keep the same direction
+          this->_fc_graph->get_center_direction(seed, old_seed, prev_dir);
           if (!primal_dir.has_value()) primal_dir = prev_dir;
         }
         // 0 candidate, we are at the end of the line or at the end of one
@@ -656,7 +657,9 @@ protected:
               }
               to_treat[seed] = false;
               empty_line = false;
-              this->_fc_graph->get_center_direction(old_seed, seed, prev_dir);
+              // Always new_seed - old_seed to be sure to keep the same
+              // direction
+              this->_fc_graph->get_center_direction(seed, old_seed, prev_dir);
               if (!primal_dir.has_value()) primal_dir = prev_dir;
             } else {
               // If we have already looked at the other side of the line or if
@@ -665,8 +668,13 @@ protected:
               if (!opposite_direction_check && seed != primal_seed) {
                 seed = primal_seed;
                 // The check seed != primal_seed should ensure that
-                // primal_dir != null
-                prev_dir = primal_dir.value();
+                // primal_dir != null.
+                // Changing direction with -
+                for (auto xyz = decltype(prev_dir.size())(0);
+                     xyz < prev_dir.size();
+                     xyz++) {
+                  prev_dir[xyz] = -primal_dir.value()[xyz];
+                }
                 opposite_direction_check = true;
               } else {
                 end = true;
@@ -681,7 +689,12 @@ protected:
               seed = primal_seed;
               // The check seed != primal_seed should ensure that
               // primal_dir != null
-              prev_dir = primal_dir.value();
+              // Changing direction with -
+              for (auto xyz = decltype(prev_dir.size())(0);
+                   xyz < prev_dir.size();
+                   xyz++) {
+                prev_dir[xyz] = -primal_dir.value()[xyz];
+              }
               opposite_direction_check = true;
             } else {
               end = true;
@@ -771,10 +784,12 @@ protected:
       if (to_treat[*n_it]
           && (!check_weight || this->is_high_coupling(*w_it, max_weights[seed]))) {
         std::vector<CoMMAWeightType> cur_dir(pts_dim);
-        this->_fc_graph->get_center_direction(seed, *n_it, cur_dir);
+        // Always new_seed - old_seed to be sure to keep the same direction
+        this->_fc_graph->get_center_direction(*n_it, seed, cur_dir);
         const auto dot = dot_product<CoMMAWeightType>(prev_dir, cur_dir);
-        if (!dot_deviate<CoMMAWeightType>(dot))
-          candidates.emplace(*n_it, fabs(dot));
+        // If not > 0 we might change direction 180 degrees
+        if (dot > 0 && !dot_deviate<CoMMAWeightType>(dot))
+          candidates.emplace(*n_it, dot);
       }
     }  // end for loop
   }
