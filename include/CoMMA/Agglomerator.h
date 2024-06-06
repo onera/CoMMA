@@ -475,26 +475,32 @@ public:
     if (this->_should_agglomerate && !this->_v_lines[level].empty()) {
       // If at the level of agglomeration "level" the vector containing the
       // number of lines is empty, hence it means no line has been found at the
-      // current level. variable cumulating the number of fine cells in the
-      // agglomeration lines of the current level
-      CoMMAIndexType number_of_fc_in_agglomeration_lines = 0;
-      aniso_lines_idx.push_back(0);
+      // current level.
+      // Variable cumulating the number of fine cells in the agglomeration lines
+      // of the current level
+      CoMMAIndexType idx = 0;
+      aniso_lines_idx.reserve(this->_v_lines[level].size() + 1);
+      aniso_lines_idx.push_back(idx);
+      aniso_lines.reserve(
+        this->_cc_graph->_cc_counter > 0 ? this->_cc_graph->_cc_counter
+                                         : this->_fc_graph->_number_of_cells
+      );
       // We cycle over the line (in _v_lines)
       for (const auto &line_ptr : this->_v_lines[level]) {
-        const CoMMAIndexType size_of_line = line_ptr->size();
+        const CoMMAIndexType line_size = line_ptr->size();
         // This vector store the end of a line and the start of a new
         // anisotropic line WARNING! We are storing the anisotropic lines in a
         // vector so we need a way to point to the end of a line and the
         // starting of a new one.
-        aniso_lines_idx.push_back(
-          size_of_line + number_of_fc_in_agglomeration_lines
-        );
+        aniso_lines_idx.push_back(line_size + idx);
         // Here we store the index of the cell.
-        for (const auto cell : *line_ptr) {
-          aniso_lines.push_back(cell);
-        }
-        number_of_fc_in_agglomeration_lines += size_of_line;
+        aniso_lines.insert(
+          aniso_lines.end(), line_ptr->cbegin(), line_ptr->cend()
+        );
+        idx += line_size;
       }
+      aniso_lines_idx.shrink_to_fit();
+      aniso_lines.shrink_to_fit();
     }
   }
 

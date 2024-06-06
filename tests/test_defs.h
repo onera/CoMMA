@@ -41,6 +41,8 @@ constexpr comma::CoMMACellCouplingT CELL_COUPLING_MAX =
 
 constexpr bool FORCE_DIRECTION = true;
 
+constexpr comma::CoMMAWeightT eps = 1e-10;
+
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<
   comma::CoMMAIndexT,
   comma::CoMMAWeightT,

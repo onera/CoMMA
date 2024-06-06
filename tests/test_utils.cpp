@@ -24,6 +24,7 @@
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
+using Catch::Matchers::Approx;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 using Catch::Matchers::WithinAbs;
@@ -85,7 +86,6 @@ SCENARIO("Test neighbourhood-based wall-distance", "[Wall-distance]") {
 
     WHEN("We compute the neighbourhood-based wall-distance (double type)") {
       vector<CoMMAWeightT> dist{};
-      constexpr CoMMAWeightT eps = 1e-10;
       compute_neighbourhood_based_wall_distance<CoMMAIndexT, CoMMAWeightT>(
         Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, wall, dist
       );
@@ -297,4 +297,77 @@ SCENARIO("Test cell filtering", "[Cell filtering]") {
       }
     }
   }
+}
+
+SCENARIO("Test the coarse graph building", "[Coarse graph building]") {
+  GIVEN("A 4x4 2D square mesh and a simulated agglomeration") {
+    const DualGEx_quad_4 data{};
+    // Coarse cell composition:
+    // CC 0 = {0, 1, 4, 5}
+    // CC 1 = {2, 3, 6, 7}
+    // CC 2 = {8, 9, 12, 13}
+    // CC 3 = {10, 11, 14, 15}
+    const vector<CoMMAIndexT> f2c = {
+      0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3
+    };
+    WHEN("We build the coarse graph from the fine one") {
+      // Output
+      vector<CoMMAIndexT> c_adj_idx{};
+      vector<CoMMAIndexT> c_adj{};
+      vector<CoMMAWeightT> c_weights{};
+      vector<CoMMAWeightT> c_volumes{};
+      vector<vector<CoMMAWeightT>> c_centers{};
+      vector<CoMMAWeightT> c_priority{};
+      vector<CoMMAIntT> c_n_bnd{};
+      build_coarse_graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        f2c,
+        data.adjMatrix_row_ptr,
+        data.adjMatrix_col_ind,
+        data.adjMatrix_areaValues,
+        data.volumes,
+        data.centers,
+        data.weights,
+        data.n_bnd_faces,
+        // Output
+        c_adj_idx,
+        c_adj,
+        c_weights,
+        c_volumes,
+        c_centers,
+        c_priority,
+        c_n_bnd
+      );
+      const size_t ref_n_cc = 4;
+      const decltype(c_adj_idx) ref_adj_idx = {0, 2, 4, 6, 8};
+      const decltype(c_adj) ref_adj = {1, 2, 0, 3, 0, 3, 1, 2};
+      THEN("Connectivity is OK") {
+        REQUIRE_THAT(c_adj_idx, Equals(ref_adj_idx));
+        REQUIRE_THAT(c_adj, Equals(ref_adj));
+      }  // Then
+      const auto ref_weights = decltype(c_weights)(ref_adj.size(), 2.);
+      const auto ref_volumes = decltype(c_volumes)(ref_n_cc, 4.);
+      THEN("Edges and surfaces are OK") {
+        REQUIRE_THAT(c_weights, Approx(ref_weights).margin(eps));
+        REQUIRE_THAT(c_volumes, Approx(ref_volumes).margin(eps));
+      }  // Then
+      const vector<vector<CoMMAWeightT>> ref_centers = {
+        {1., 1.}, {3., 1.}, {1., 3.}, {3., 3.}
+      };
+      THEN("Centers are OK") {
+        for (size_t cc = 0; cc < ref_n_cc; ++cc)
+          REQUIRE_THAT(c_centers[cc], Equals(ref_centers[cc]));
+      }  // Then
+      // The priority weights of the fine are n_fine_cells - cell_ID
+      // So the max, which what the function should compute, is the weight of
+      // the fine cells with lowest ID
+      const vector<CoMMAWeightT> ref_priority = {16., 14, 8., 6.};
+      THEN("Priorities are OK") {
+        REQUIRE_THAT(c_priority, Equals(ref_priority));
+      }  // Then
+      const auto ref_n_bnd = decltype(c_n_bnd)(ref_n_cc, 2);
+      THEN("Number of boundaries are OK") {
+        REQUIRE_THAT(c_n_bnd, Equals(ref_n_bnd));
+      }  // Then
+    }  // When
+  }  // Given
 }

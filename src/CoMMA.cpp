@@ -19,6 +19,7 @@
 #include <pybind11/stl.h>
 
 #include <optional>
+#include <tuple>
 #include <type_traits>
 #include <unordered_set>
 #include <vector>
@@ -234,9 +235,7 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         fc_choice_iter,
         static_cast<CoMMANeighbourhoodT>(type_of_isotropic_agglomeration)
       );
-      return std::make_tuple(
-        fc_to_cc, agglomerationLines_Idx, agglomerationLines
-      );
+      return make_tuple(fc_to_cc, agglomerationLines_Idx, agglomerationLines);
     },
     "Given a CSR graph-representation of a fine mesh, agglomerate it",
     // Register arguments
@@ -303,6 +302,59 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "indices"_a,
     "n_bnd_face"_a,
     "allowed"_a
+  );
+
+  module_handle.def(
+    "build_coarse_graph",
+    [](
+      const vector<CoMMAIndexT> &f2c,
+      const vector<CoMMAIndexT> &f_adj_idx,
+      const vector<CoMMAIndexT> &f_adj,
+      const vector<CoMMAWeightT> &f_weights,
+      const vector<CoMMAWeightT> &f_volumes,
+      const vector<vector<CoMMAWeightT>> &f_centers,
+      const std::vector<CoMMAWeightT> &f_priority,
+      const vector<CoMMAIntT> &f_n_bnd
+    ) {
+      vector<CoMMAIndexT> c_adj_idx{};
+      vector<CoMMAIndexT> c_adj{};
+      vector<CoMMAWeightT> c_weights{};
+      vector<CoMMAWeightT> c_volumes{};
+      vector<vector<CoMMAWeightT>> c_centers{};
+      vector<CoMMAWeightT> c_priority{};
+      vector<CoMMAIntT> c_n_bnd{};
+      build_coarse_graph<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
+        f2c,
+        f_adj_idx,
+        f_adj,
+        f_weights,
+        f_volumes,
+        f_centers,
+        f_priority,
+        f_n_bnd,
+        // Output
+        c_adj_idx,
+        c_adj,
+        c_weights,
+        c_volumes,
+        c_centers,
+        c_priority,
+        c_n_bnd
+      );
+      return make_tuple(
+        c_adj_idx, c_adj, c_weights, c_volumes, c_centers, c_priority, c_n_bnd
+      );
+    },
+    "Build a coarse graph from the fine graph and the result of a previous"
+    " agglomeration.",
+    "f2c"_a,
+    "f_adj_idx"_a,
+    "f_adj"_a,
+    "f_weights"_a,
+    "f_volumes"_a,
+    "f_centers"_a,
+    "f_priority"_a,
+    "f_n_bnd"_a
   );
 }
 

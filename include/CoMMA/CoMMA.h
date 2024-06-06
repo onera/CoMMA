@@ -89,9 +89,9 @@ constexpr CoMMAIntT iter_agglo_max_iter = 4;
  * the right size.
  * @param[in,out] agglomerationLines_Idx Connectivity for the agglomeration
  * lines: each element points to a particular element in the vector \p
- * agglomerationLines
+ * agglomerationLines. The vector is cleared and then resized to the right size.
  * @param[in,out] agglomerationLines Vector storing all the elements of the
- * anisotropic lines
+ * anisotropic lines. The vector is cleared and then resized to the right size.
  * @param[in] correction Whether to apply correction step (avoid isolated cells)
  * after agglomeration
  * @param[in] dimension Dimensionality of the problem, 2- or 3D
@@ -480,7 +480,7 @@ inline void agglomerate_one_level(
   std::vector<CoMMAIndexType> &aniso_lines_indices,  // In & out
   std::vector<CoMMAIndexType> &aniso_lines  // In & out
 ) {
-  agglomerate_one_level(
+  agglomerate_one_level<CoMMAIndexType, CoMMAWeightType, CoMMAIntType>(
     graph.connectivity_indices,
     graph.connectivity,
     graph.connectivity_weights,

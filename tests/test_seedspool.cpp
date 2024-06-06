@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Dual_Graph.h"
 #include "CoMMA/Seeds_Pool.h"
 #include "DualGraphExamples.h"
 
