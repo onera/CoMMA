@@ -101,9 +101,9 @@ enum CoMMAAspectRatioT : CoMMAIntT {
 
 /** @brief Type of coupling between cells in an anisotropic line */
 enum CoMMACellCouplingT : CoMMAIntT {
-  /** Maximum edge-weight (e.g., max area) */
+  /** Maximum edge-weight (i.e., max area) */
   MAX_WEIGHT = 0,
-  /** Minimum distance */
+  /** Minimum centers distance */
   MIN_DISTANCE = 1
 };
 

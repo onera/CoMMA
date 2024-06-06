@@ -13,7 +13,7 @@ import typing
 
 import numpy as np
 import numpy.typing as npt
-from CoMMA import AR, Neighbourhood, SeedsPool
+from CoMMA import AR, CellCoupling, Neighbourhood, SeedsPool
 
 AR_DESCRIPTIONS = {
     AR.DIAMETER_OVER_RADIUS: "Diameter over radius",
@@ -36,6 +36,10 @@ SEED_ORDERING_DESCRIPTIONS = {
     SeedsPool.NEIGHBOURHOOD: "Neighbourhood priority",
     SeedsPool.BOUNDARY_POINT_INIT: "Boundary priority with point initialization",  # noqa: E501
     SeedsPool.NEIGHBOURHOOD_POINT_INIT: "Neighbourhood priority with point initialization",  # noqa: E501
+}
+CELL_COUPLING_DESCRIPTIONS = {
+    CellCoupling.MAX_WEIGHT: "Maximum edge weight",
+    CellCoupling.MIN_DISTANCE: "Minimum distance between cell centers",
 }
 
 

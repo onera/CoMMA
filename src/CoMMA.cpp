@@ -155,11 +155,19 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     .export_values();
   py::enum_<CoMMACellCouplingT>(
     module_handle,
-    "CoMMACellCouplingT",
+    "CellCoupling",
     "Type of coupling between cells considered when building anisotropic lines"
   )
-    .value("MAX_WEIGHT", CoMMACellCouplingT::MAX_WEIGHT)
-    .value("MIN_DISTANCE", CoMMACellCouplingT::MIN_DISTANCE)
+    .value(
+      "MAX_WEIGHT",
+      CoMMACellCouplingT::MAX_WEIGHT,
+      "Maximum edge weight (i.e., max area)"
+    )
+    .value(
+      "MIN_DISTANCE",
+      CoMMACellCouplingT::MIN_DISTANCE,
+      "Minimum centers distance"
+    )
     .export_values();
 
   // Main function
