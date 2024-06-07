@@ -12,19 +12,25 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_all.hpp>
+#include <cmath>
+#include <deque>
 #include <optional>
 #include <vector>
 
 #include "CoMMA/Agglomerator.h"
 #include "CoMMA/CoMMA.h"
 #include "CoMMA/CoMMADefs.h"
+#include "CoMMA/Util.h"
 #include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
 
+using Catch::Matchers::Approx;
 using Catch::Matchers::Contains;
+using Catch::Matchers::Equals;
+using Catch::Matchers::SizeIs;
 const auto EMPTY = Catch::Matchers::IsEmpty();
 
 // For X-Macro where here X = CHECK2CELLS
@@ -1023,8 +1029,265 @@ SCENARIO("Test the anisotropic line computations", "[Anisotropic lines]") {
       }
     }
   }
+
+#undef CHECK2CELLS
+#define CHECK2CELLS(f2c, a, b) ((f2c)[(a)].value() == (f2c)[(b)].value())
+
+  GIVEN("Triangular mesh stretched in the x-direction representing a BL") {
+    const DualGEx_Tria_BL Data = DualGEx_Tria_BL();
+    shared_ptr<SeedsPoolT> const seeds_pool =
+      make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.anisoCompliantCells
+    );
+    shared_ptr<CCContainerT> const cc_graph =
+      make_shared<CCContainerT>(fc_graph, SING_CARD_THRESH);
+    const CoMMAWeightT aniso_thresh{-2.};
+    vector<CoMMAIndexT> agglomerationLines_Idx{};
+    vector<CoMMAIndexT> agglomerationLines{};
+    const bool build_lines = true;
+    WHEN("We agglomerate forcing the direction") {
+      constexpr bool force_direction = true;
+      Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        Data.dim,
+        aniso_thresh,
+        agglomerationLines_Idx,
+        agglomerationLines,
+        Data.weights,
+        build_lines,
+        ODD_LINE_LENGTH,
+        MAX_CELLS_IN_LINE,
+        CELL_COUPLING_MAX,
+        force_direction
+      );
+      aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+      aniso_agg.export_anisotropic_lines(
+        1, agglomerationLines_Idx, agglomerationLines
+      );
+      THEN("Lines grow diagonally and the bottom right cell is singular") {
+        const auto &f2c = cc_graph->_fc_2_cc;
+        const vector<CoMMAIndexT> ref_lines_idx = {0, 2, 3};
+        const vector<CoMMAIndexT> ref_lines = {0, 1, 2};
+        REQUIRE_THAT(agglomerationLines_Idx, Equals(ref_lines_idx));
+        REQUIRE_THAT(agglomerationLines, Equals(ref_lines));
+        // Line 0
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 3, 6));
+        // Line 1
+        REQUIRE(CHECK3CELLS(f2c, 5, 4, 7));
+        // Singular
+        REQUIRE_FALSE(f2c[2].has_value());
+      }
+    }
+    WHEN("We agglomerate without forcing the direction") {
+      constexpr bool force_direction = false;
+      Agglomerator_Anisotropic<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_agg(
+        fc_graph,
+        cc_graph,
+        seeds_pool,
+        Data.dim,
+        aniso_thresh,
+        agglomerationLines_Idx,
+        agglomerationLines,
+        Data.weights,
+        build_lines,
+        ODD_LINE_LENGTH,
+        MAX_CELLS_IN_LINE,
+        CELL_COUPLING_MAX,
+        force_direction
+      );
+      aniso_agg.agglomerate_one_level(2, 2, 2, Data.weights, false);
+      aniso_agg.export_anisotropic_lines(
+        1, agglomerationLines_Idx, agglomerationLines
+      );
+      THEN("Lines grow vertically") {
+        const auto &f2c = cc_graph->_fc_2_cc;
+        const vector<CoMMAIndexT> ref_lines_idx = {0, 2, 4};
+        const vector<CoMMAIndexT> ref_lines = {0, 1, 2, 3};
+        REQUIRE_THAT(agglomerationLines_Idx, Equals(ref_lines_idx));
+        REQUIRE_THAT(agglomerationLines, Equals(ref_lines));
+        // Line 0
+        REQUIRE(CHECK2CELLS(f2c, 0, 1));
+        REQUIRE(CHECK2CELLS(f2c, 4, 5));
+        // Line 1
+        REQUIRE(CHECK2CELLS(f2c, 2, 3));
+        REQUIRE(CHECK2CELLS(f2c, 6, 7));
+      }
+    }
+  }
 }
 
 #undef CHECK2CELLS
+
+SCENARIO("Testing cell coupling", "[Anisotropic.CellCoupling]") {
+  GIVEN("Triangular mesh stretched in the x-direction representing a BL") {
+    const DualGEx_Tria_BL Data = DualGEx_Tria_BL();
+    shared_ptr<SeedsPoolT> const seeds_pool =
+      make_shared<SeedsPoolT>(Data.n_bnd_faces, Data.weights, false);
+    shared_ptr<DualGraphT> fc_graph = make_shared<DualGraphT>(
+      Data.nb_fc,
+      Data.adjMatrix_row_ptr,
+      Data.adjMatrix_col_ind,
+      Data.adjMatrix_areaValues,
+      Data.volumes,
+      Data.centers,
+      Data.n_bnd_faces,
+      Data.dim,
+      Data.anisoCompliantCells
+    );
+    // We recreate what's done inside build_anisotropic_lines
+    std::deque<CoMMAIndexT> aniso_seeds_pool;
+    std::vector<CoMMAWeightT> max_weights(fc_graph->_number_of_cells, 0.0);
+    std::vector<bool> to_treat(fc_graph->_number_of_cells, false);
+    std::vector<CoMMAWeightT> alt_weights{};
+    WHEN("Asking for maximum weight as coupling and all cells are anisotropic"
+    ) {
+      constexpr CoMMAWeightT aniso_thresh = -1.;
+      fc_graph->tag_anisotropic_cells(
+        alt_weights,
+        max_weights,
+        to_treat,
+        aniso_seeds_pool,
+        aniso_thresh,
+        Data.weights,
+        CoMMACellCouplingT::MAX_WEIGHT,
+        0
+      );
+      THEN("Alternative weights are not computed") {
+        REQUIRE_THAT(alt_weights, EMPTY);
+      }
+      THEN("Max is computed correctly") {
+        // Largest side of the triangle
+        const std::vector<CoMMAWeightT> ref_max(
+          fc_graph->_number_of_cells, sqrt101
+        );
+        REQUIRE_THAT(max_weights, Approx(ref_max).margin(eps));
+      }
+    }
+    WHEN(
+      "Asking for maximum weight as coupling and checking anisotropy threshold"
+    ) {
+      // The result is same as in the previous one because the threshold is low
+      // enough to select all cells
+      constexpr CoMMAWeightT aniso_thresh = 2.;
+      fc_graph->tag_anisotropic_cells(
+        alt_weights,
+        max_weights,
+        to_treat,
+        aniso_seeds_pool,
+        aniso_thresh,
+        Data.weights,
+        CoMMACellCouplingT::MAX_WEIGHT,
+        0
+      );
+      THEN("Alternative weights are not computed") {
+        REQUIRE_THAT(alt_weights, EMPTY);
+      }
+      THEN("Max is computed correctly") {
+        // Largest side of the triangle
+        const std::vector<CoMMAWeightT> ref_max(
+          fc_graph->_number_of_cells, sqrt101
+        );
+        REQUIRE_THAT(max_weights, Approx(ref_max).margin(eps));
+      }
+    }
+    WHEN("Asking for minimum distance and all cells are anisotropic") {
+      constexpr CoMMAWeightT aniso_thresh = -1.;
+      fc_graph->tag_anisotropic_cells(
+        alt_weights,
+        max_weights,
+        to_treat,
+        aniso_seeds_pool,
+        aniso_thresh,
+        Data.weights,
+        CoMMACellCouplingT::MIN_DISTANCE,
+        0
+      );
+      const CoMMAWeightT x_dist = _3_1ov3;
+      const CoMMAWeightT y_dist = _1ov3;
+      const CoMMAWeightT same_block = 1. / (_sq(x_dist) + _sq(y_dist));
+      const CoMMAWeightT side_block = 1. / (_sq(2. * x_dist) + _sq(y_dist));
+      const CoMMAWeightT vert_block = 1. / (_sq(x_dist) + _sq(2. * y_dist));
+      THEN("Alternative weights are computed") {
+        REQUIRE_THAT(alt_weights, SizeIs(fc_graph->_m_CRS_Values.size()));
+        // clang-format off
+        const std::vector<CoMMAWeightT> ref_weights = {
+          /* 0 */ same_block, side_block,
+          /* 1 */ same_block, vert_block,
+          /* 2 */ same_block,
+          /* 3 */ side_block, same_block, vert_block,
+          /* 4 */ vert_block, same_block, side_block,
+          /* 5 */ same_block,
+          /* 6 */ vert_block, same_block,
+          /* 7 */ side_block, same_block
+        };
+        // clang-format on
+        REQUIRE_THAT(alt_weights, Approx(ref_weights).margin(eps));
+      }
+      THEN("Max is computed correctly") {
+        // Largest side of the triangle
+        const std::vector<CoMMAWeightT> ref_max(
+          fc_graph->_number_of_cells, same_block
+        );
+        REQUIRE_THAT(max_weights, Approx(ref_max).margin(eps));
+      }
+    }
+    WHEN("Asking for minimum distance and checking anisotropy threshold") {
+      // The result is same as in the previous one because the threshold is low
+      // enough to select all cells
+      constexpr CoMMAWeightT aniso_thresh = 2.;
+      fc_graph->tag_anisotropic_cells(
+        alt_weights,
+        max_weights,
+        to_treat,
+        aniso_seeds_pool,
+        aniso_thresh,
+        Data.weights,
+        CoMMACellCouplingT::MIN_DISTANCE,
+        0
+      );
+      const CoMMAWeightT x_dist = _3_1ov3;
+      const CoMMAWeightT y_dist = _1ov3;
+      const CoMMAWeightT same_block = 1. / (_sq(x_dist) + _sq(y_dist));
+      const CoMMAWeightT side_block = 1. / (_sq(2. * x_dist) + _sq(y_dist));
+      const CoMMAWeightT vert_block = 1. / (_sq(x_dist) + _sq(2. * y_dist));
+      THEN("Alternative weights are computed") {
+        REQUIRE_THAT(alt_weights, SizeIs(fc_graph->_m_CRS_Values.size()));
+        // clang-format off
+        const std::vector<CoMMAWeightT> ref_weights = {
+          /* 0 */ same_block, side_block,
+          /* 1 */ same_block, vert_block,
+          /* 2 */ same_block,
+          /* 3 */ side_block, same_block, vert_block,
+          /* 4 */ vert_block, same_block, side_block,
+          /* 5 */ same_block,
+          /* 6 */ vert_block, same_block,
+          /* 7 */ side_block, same_block
+        };
+        // clang-format on
+        REQUIRE_THAT(alt_weights, Approx(ref_weights).margin(eps));
+      }
+      THEN("Max is computed correctly") {
+        // Largest side of the triangle
+        const std::vector<CoMMAWeightT> ref_max(
+          fc_graph->_number_of_cells, same_block
+        );
+        REQUIRE_THAT(max_weights, Approx(ref_max).margin(eps));
+      }
+    }
+  }
+}
+
 #undef CHECK3CELLS
 #undef CHECK4CELLS

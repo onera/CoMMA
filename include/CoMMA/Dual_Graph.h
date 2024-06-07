@@ -182,7 +182,7 @@ public:
    */
   inline ContainerIndexConstIt neighbours_cbegin(const CoMMAIndexType &i_c
   ) const {
-    return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c];
+    return std::next(_m_CRS_Col_Ind.cbegin(), _m_CRS_Row_Ptr[i_c]);
   }
 
   /** @brief Get constant pointer to the element following the last neighbour of
@@ -192,7 +192,7 @@ public:
    */
   inline ContainerIndexConstIt neighbours_cend(const CoMMAIndexType &i_c
   ) const {
-    return _m_CRS_Col_Ind.cbegin() + _m_CRS_Row_Ptr[i_c + 1];
+    return std::next(_m_CRS_Col_Ind.cbegin(), _m_CRS_Row_Ptr[i_c + 1]);
   }
 
   /** @brief Based on the area of the faces composing the cell given as an
@@ -220,7 +220,7 @@ public:
    */
   inline ContainerWeightConstIt weights_cbegin(const CoMMAIndexType &i_c
   ) const {
-    return _m_CRS_Values.cbegin() + _m_CRS_Row_Ptr[i_c];
+    return std::next(_m_CRS_Values.cbegin(), _m_CRS_Row_Ptr[i_c]);
   }
 
   /** @brief Get constant pointer to the element following the last neighbour of
@@ -229,7 +229,7 @@ public:
    *  @return The pointer
    */
   inline ContainerWeightConstIt weights_cend(const CoMMAIndexType &i_c) const {
-    return _m_CRS_Values.cbegin() + _m_CRS_Row_Ptr[i_c + 1];
+    return std::next(_m_CRS_Values.cbegin(), _m_CRS_Row_Ptr[i_c + 1]);
   }
 
   /** @brief Check the connectivity of the graph.
@@ -717,6 +717,8 @@ public:
 
   /** @brief Tag cells as anisotropic if their aspect-ratio is over a given
    * threshold and order them according to given priority
+   * @param[out] alt_weights Alternative version of graph edge weights computed
+   * if necessary (according to \p cell_coupling)
    * @param[out] max_weights Array of the maximum weight: the biggest area of
    * the faces composing the given fine cell
    * @param[out] is_anisotropic Vector of length equal to the total number of
@@ -735,6 +737,7 @@ public:
    * in the anisotropic agglomeration
    */
   void tag_anisotropic_cells(
+    std::vector<CoMMAWeightType> &alt_weights,
     ContainerWeightType &max_weights,
     std::vector<bool> &is_anisotropic,
     std::deque<CoMMAIndexType> &aniso_seeds_pool,
@@ -743,6 +746,11 @@ public:
     const CoMMACellCouplingT cell_coupling,
     const CoMMAIndexType preserving
   ) {
+    if (cell_coupling == CoMMACellCouplingT::MIN_DISTANCE) {
+      // We have to build the new weights. Preparing the storage.
+      alt_weights.resize(this->_m_CRS_Values.size());
+      std::fill(alt_weights.begin(), alt_weights.end(), 0.0);
+    }
     CoMMASetOfPairType aniso_w_weights{};
     if (threshold_anisotropy < 0) {
       switch (cell_coupling) {
@@ -759,13 +767,15 @@ public:
           for (const CoMMAIndexType i_fc : _s_anisotropic_compliant_cells) {
             aniso_w_weights.emplace(i_fc, priority_weights[i_fc]);
             CoMMAWeightType max_ov_dist = 0.0;
-            for (auto neigh = this->neighbours_cbegin(i_fc);
-                 neigh != this->neighbours_cend(i_fc);
-                 ++neigh) {
+            const auto offset = this->_m_CRS_Row_Ptr[i_fc];
+            auto n_it = std::next(this->_m_CRS_Col_Ind.cbegin(), offset);
+            auto w_it = std::next(alt_weights.begin(), offset);
+            for (; n_it != this->neighbours_cend(i_fc); ++n_it, ++w_it) {
               const auto dist = 1.
                 / squared_euclidean_distance<CoMMAWeightType>(
-                                  this->_centers[i_fc], this->_centers[*neigh]
+                                  this->_centers[i_fc], this->_centers[*n_it]
                 );
+              *w_it = dist;
               if (dist > max_ov_dist) max_ov_dist = dist;
             }  // for neigh
             max_weights[i_fc] = max_ov_dist;
@@ -834,14 +844,16 @@ public:
             break;
           }
           case CoMMACellCouplingT::MIN_DISTANCE: {
+            const auto offset = this->_m_CRS_Row_Ptr[i_fc];
+            auto n_it = std::next(this->_m_CRS_Col_Ind.cbegin(), offset);
+            auto w_it = std::next(alt_weights.begin(), offset);
             CoMMAWeightType max_ov_dist = 0.0;
-            for (auto neigh = this->neighbours_cbegin(i_fc);
-                 neigh != this->neighbours_cend(i_fc);
-                 ++neigh) {
+            for (; n_it != this->neighbours_cend(i_fc); ++n_it, ++w_it) {
               const auto dist = 1.
                 / squared_euclidean_distance<CoMMAWeightType>(
-                                  this->_centers[i_fc], this->_centers[*neigh]
+                                  this->_centers[i_fc], this->_centers[*n_it]
                 );
+              *w_it = dist;
               if (dist > max_ov_dist) max_ov_dist = dist;
             }  // for neigh
             max_weights[i_fc] = max_ov_dist;
