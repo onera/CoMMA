@@ -855,7 +855,7 @@ the line grows vertically
              ++ref_line, ++read_line) {
           // I am not sure how to treat this...
           // NOLINTNEXTLINE
-          for (auto ref_fc = agglomerationLines.cbegin() + (*(ref_line - 1));
+          for (auto ref_fc = agglomerationLines.cbegin() + *std::prev(ref_line);
                ref_fc != agglomerationLines.cbegin() + (*ref_line);
                ++ref_fc) {
             REQUIRE_THAT(**read_line, Contains(*ref_fc));

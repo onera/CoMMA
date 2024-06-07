@@ -339,7 +339,9 @@ public:
           // Here we have to consider a special case when we have an odd number
           // of cells: THIS IS FUNDAMENTAL FOR THE CONVERGENCE OF THE MULTIGRID
           // ALGORITHM
-          std::unordered_set<CoMMAIndexType> s_fc = {*line_it, *(line_it + 1)};
+          std::unordered_set<CoMMAIndexType> s_fc = {
+            *line_it, *std::next(line_it)
+          };
           n_cells += 2;
           // We update the neighbours. At this stage, we do not check if it is
           // or will be agglomerated since there will be a cleaning step after
@@ -351,8 +353,8 @@ public:
           );
           this->_aniso_neighbours.insert(
             this->_aniso_neighbours.end(),
-            this->_fc_graph->neighbours_cbegin(*(line_it + 1)),
-            this->_fc_graph->neighbours_cend(*(line_it + 1))
+            this->_fc_graph->neighbours_cbegin(*std::next(line_it)),
+            this->_fc_graph->neighbours_cend(*std::next(line_it))
           );
           if (
             std::distance(line_it, end) == 3
@@ -361,12 +363,12 @@ public:
               && n_cells + 1 == this->_max_cells_in_line.value())) {
             if (this->_odd_line_length) {
               // If only three cells left, agglomerate them
-              s_fc.insert(*(line_it + 2));
+              s_fc.insert(*std::next(line_it, 2));
               n_cells++;
               this->_aniso_neighbours.insert(
                 this->_aniso_neighbours.end(),
-                this->_fc_graph->neighbours_cbegin(*(line_it + 2)),
-                this->_fc_graph->neighbours_cend(*(line_it + 2))
+                this->_fc_graph->neighbours_cbegin(*std::next(line_it, 2)),
+                this->_fc_graph->neighbours_cend(*std::next(line_it, 2))
               );
             }
             line_it++;  // Ensure to break the loop after current iteration
@@ -682,7 +684,7 @@ protected:
                 // The check seed != primal_seed should ensure that
                 // primal_dir != null.
                 // Changing direction with -
-                for (auto xyz = decltype(prev_dir.size())(0);
+                for (auto xyz = decltype(prev_dir.size()){0};
                      xyz < prev_dir.size();
                      xyz++) {
                   prev_dir[xyz] = -primal_dir.value()[xyz];
@@ -702,7 +704,7 @@ protected:
               // The check seed != primal_seed should ensure that
               // primal_dir != null
               // Changing direction with -
-              for (auto xyz = decltype(prev_dir.size())(0);
+              for (auto xyz = decltype(prev_dir.size()){0};
                    xyz < prev_dir.size();
                    xyz++) {
                 prev_dir[xyz] = -primal_dir.value()[xyz];
