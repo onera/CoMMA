@@ -27,6 +27,8 @@ def agglomerate_aniso_lines():
     neigh_type = CoMMA.Neighbourhood.EXTENDED
     sing_card = 1
     max_cells_in_line = None  # Or positive number
+    aniso_cell_coupling = CoMMA.CellCoupling.MAX_WEIGHT
+    force_line_direction = True
     fc_iter = 1
     # fmt: off
     adjMatrix_row_ptr = [
@@ -87,6 +89,8 @@ def agglomerate_aniso_lines():
         AR,
         sing_card,
         max_cells_in_line,
+        aniso_cell_coupling,
+        force_line_direction,
         fc_iter,
         neigh_type,
     )

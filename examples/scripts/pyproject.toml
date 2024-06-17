@@ -3,6 +3,8 @@ profile = "black"
 [tool.ruff]
 # Same as black
 line-length = 88
+# Disable line too long since Black is already on
+extend-ignore = ["E501"]
 [tool.pytest.ini_options]
 addopts = [
   "--ignore=deprecated",

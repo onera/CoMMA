@@ -41,17 +41,17 @@ enum CoMMANeighbourhoodT : CoMMAIntT {
 
 /** @brief Type of seeds pool ordering */
 enum CoMMASeedsPoolT : CoMMAIntT {
-  /** The number of boundary faces has higher priority */
+  /** The number of boundary faces has highest priority */
   BOUNDARY_PRIORITY = 0,
   /** The neighbourhood has highest priority (neighbours of coarse cells have
-   * higher priority)
+   * priority)
    */
   NEIGHBOURHOOD_PRIORITY = 1,
-  /** The number of boundary faces has higher priority, and initialize with one
+  /** The number of boundary faces has highest priority, and initialize with one
    * point only then let evolve
    */
   BOUNDARY_PRIORITY_ONE_POINT_INIT = 10,
-  /** The neighbourhood has higher priority, and initialize with one point only
+  /** The neighbourhood has highest priority, and initialize with one point only
    * then let evolve
    */
   NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT = 11
@@ -97,6 +97,14 @@ enum CoMMAAspectRatioT : CoMMAIntT {
    * cell weight
    */
   ALGEBRAIC_PERIMETER_OVER_MEASURE,
+};
+
+/** @brief Type of coupling between cells in an anisotropic line */
+enum CoMMACellCouplingT : CoMMAIntT {
+  /** Maximum edge-weight (i.e., max area) */
+  MAX_WEIGHT = 0,
+  /** Minimum centers distance */
+  MIN_DISTANCE = 1
 };
 
 }  // end namespace comma

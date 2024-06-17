@@ -153,6 +153,22 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       "Algebraic-like perimeter over measure, that is, external weights over cell weight"
     )
     .export_values();
+  py::enum_<CoMMACellCouplingT>(
+    module_handle,
+    "CellCoupling",
+    "Type of coupling between cells considered when building anisotropic lines"
+  )
+    .value(
+      "MAX_WEIGHT",
+      CoMMACellCouplingT::MAX_WEIGHT,
+      "Maximum edge weight (i.e., max area)"
+    )
+    .value(
+      "MIN_DISTANCE",
+      CoMMACellCouplingT::MIN_DISTANCE,
+      "Minimum centers distance"
+    )
+    .export_values();
 
   // Main function
   module_handle.def(
@@ -191,6 +207,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
       CoMMAIntT aspect_ratio,
       CoMMAIntT singular_card_thresh,
       optional<CoMMAIndexT> max_cells_in_line,
+      CoMMAIntT aniso_cell_coupling,
+      bool force_line_direction,
       CoMMAIntT fc_choice_iter,
       CoMMAIntT type_of_isotropic_agglomeration
     ) {
@@ -220,6 +238,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
         static_cast<CoMMAAspectRatioT>(aspect_ratio),
         singular_card_thresh,
         max_cells_in_line,
+        static_cast<CoMMACellCouplingT>(aniso_cell_coupling),
+        force_line_direction,
         fc_choice_iter,
         static_cast<CoMMANeighbourhoodT>(type_of_isotropic_agglomeration)
       );
@@ -250,6 +270,8 @@ PYBIND11_MODULE(CoMMA, module_handle) {
     "aspect_ratio"_a = CoMMAAspectRatioT::DIAMETER_OVER_RADIUS,
     "singular_card_thresh"_a = 1,
     "max_cells_in_line"_a = std::nullopt,
+    "aniso_cell_coupling"_a = CoMMACellCouplingT::MAX_WEIGHT,
+    "force_line_direction"_a = true,
     "fc_choice_iter"_a = 1,
     "type_of_isotropic_agglomeration"_a = CoMMANeighbourhoodT::EXTENDED
   );

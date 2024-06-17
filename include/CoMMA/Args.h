@@ -197,6 +197,12 @@ public:
   CoMMAWeightType threshold_anisotropy;
   /** @brief Maximum number of cells in an anisotropic line */
   std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt;
+  /** @brief Type of coupling to consider when building lines */
+  CoMMACellCouplingT cell_coupling;
+  /** @brief Whether to force the direction of the anisotropic lines to remain
+   * straight
+   */
+  bool line_direction;
 
   /** @brief Constructor
    * @param[in] is_anisotropic Whether to consider an anisotropic agglomeration.
@@ -210,6 +216,10 @@ public:
    * cell is considered as anisotropic. Default: 4.0
    * @param[in] max_cells_in_line Maximum number of cells in an anisotropic
    * line. Default: no limit.
+   * @param[in] cell_coupling Type of coupling to consider when building lines.
+   * Default: CoMMACellCouplingT::MAX_WEIGHT.
+   * @param[in] line_direction Whether to force the direction of the
+   * anisotropic lines to remain straight. Default: true.
    */
   AnisotropicArgs(
     bool is_anisotropic,
@@ -217,14 +227,18 @@ public:
     bool build_lines = true,
     bool odd_line_length = true,
     CoMMAWeightType threshold_anisotropy = 4.,
-    std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt
+    std::optional<CoMMAIndexType> max_cells_in_line = std::nullopt,
+    CoMMACellCouplingT cell_coupling = CoMMACellCouplingT::MAX_WEIGHT,
+    bool line_direction = true
   ) :
     is_anisotropic(is_anisotropic),
     anisotropicCompliantCells(anisotropicCompliantCells),
     build_lines(build_lines),
     odd_line_length(odd_line_length),
     threshold_anisotropy(threshold_anisotropy),
-    max_cells_in_line(max_cells_in_line) {}
+    max_cells_in_line(max_cells_in_line),
+    cell_coupling(cell_coupling),
+    line_direction(line_direction) {}
 };
 
 }  // end namespace comma

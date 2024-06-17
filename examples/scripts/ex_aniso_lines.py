@@ -23,6 +23,7 @@ from dualGPy.Mesh import Mesh2D
 
 from comma_tools import (
     AR_DESCRIPTIONS,
+    CELL_COUPLING_DESCRIPTIONS,
     NEIGHBOURHOOD_DESCRIPTIONS,
     SEED_ORDERING_DESCRIPTIONS,
     assign_anisotropic_line_data_to_cells,
@@ -71,6 +72,12 @@ neigh_type = CoMMA.Neighbourhood.EXTENDED
 sing_card = 1
 # Max cells in an anisotropic line
 max_cells_in_line = None  # Or positive number
+# Anisotropic cells coupling. Choices:
+# - CellCoupling.MAX_WEIGHT = max edge weight (i.e., area)
+# - CellCoupling.MIN_DISTANCE = minimum distance between cell centers
+aniso_cell_coupling = CoMMA.CellCoupling.MAX_WEIGHT
+# Whether to force aniso lines to have a straight direction
+force_line_direction = True
 # Number of iterations for iterative fine-cell research algorithm
 fc_iter = 1
 
@@ -103,6 +110,10 @@ print(f" * neigh_type={NEIGHBOURHOOD_DESCRIPTIONS[neigh_type]}")
 print(f" * seed_ordering={SEED_ORDERING_DESCRIPTIONS[seed_order]}")
 print(f" * Threshold cardinality for singular cells={sing_card}")
 print(f" * Max cells in anisotropic line={max_cells_in_line}")
+print(
+    f" * Cell coupling for aniso cells={CELL_COUPLING_DESCRIPTIONS[aniso_cell_coupling]}"
+)
+print(f" * Force aniso lines direction={force_line_direction}")
 print(f" * Fine-cell research iterations={fc_iter}")
 print(" [Output]")
 renum = renumber_coarse > 1
@@ -189,6 +200,8 @@ fc_to_cc, alines_idx, alines = CoMMA.agglomerate_one_level(
     AR,
     sing_card,
     max_cells_in_line,
+    aniso_cell_coupling,
+    force_line_direction,
     fc_iter,
     neigh_type,
 )

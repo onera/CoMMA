@@ -34,6 +34,13 @@ constexpr bool ODD_LINE_LENGTH = true;
 constexpr comma::CoMMAAspectRatioT DEFAULT_AR =
   comma::CoMMAAspectRatioT::DIAMETER_OVER_RADIUS;
 
+constexpr std::optional<comma::CoMMAIndexT> MAX_CELLS_IN_LINE = std::nullopt;
+
+constexpr comma::CoMMACellCouplingT CELL_COUPLING_MAX =
+  comma::CoMMACellCouplingT::MAX_WEIGHT;
+
+constexpr bool FORCE_DIRECTION = true;
+
 constexpr comma::CoMMAWeightT eps = 1e-10;
 
 using SeedsPoolT = comma::Seeds_Pool_Boundary_Priority<

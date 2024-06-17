@@ -94,6 +94,9 @@ constexpr comma::CoMMASeedsPoolT seed_order =
   comma::CoMMASeedsPoolT::BOUNDARY_PRIORITY;
 constexpr IntT sing_card = 1;
 constexpr std::optional<IntT> max_cells_in_line = std::nullopt;
+constexpr comma::CoMMACellCouplingT aniso_cell_coupling =
+  comma::CoMMACellCouplingT::MAX_WEIGHT;
+constexpr bool force_line_direction = true;
 constexpr IntT fc_iter = 1;
 constexpr comma::CoMMANeighbourhoodT neigh =
   comma::CoMMANeighbourhoodT::EXTENDED;
@@ -144,6 +147,8 @@ void ex_agglomerate_one_level() {
     AR,
     sing_card,
     max_cells_in_line,
+    aniso_cell_coupling,
+    force_line_direction,
     fc_iter,
     neigh
   );
@@ -188,7 +193,9 @@ void ex_agglomerate_one_level_args() {
     build_lines,
     odd_line_length,
     aniso_thresh,
-    max_cells_in_line
+    max_cells_in_line,
+    aniso_cell_coupling,
+    force_line_direction
   );
 
   // Prepare output containers

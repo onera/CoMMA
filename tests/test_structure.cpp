@@ -18,13 +18,12 @@
 
 #include "CoMMA/Args.h"
 #include "CoMMA/CoMMA.h"
+#include "CoMMA/CoMMADefs.h"
 #include "DualGraphExamples.h"
 #include "test_defs.h"
 
 using namespace comma;  // NOLINT
 using namespace std;  // NOLINT
-
-#define MAX_CELLS_IN_LINE std::nullopt
 
 SCENARIO("Test of a structure", "[structure]") {
   GIVEN("A simple graph, and we build the Dual Graph") {
@@ -483,6 +482,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              CELL_COUPLING_MAX, FORCE_DIRECTION,
               0)
         );
         // Bad iteration number: greater than threshold
@@ -492,6 +492,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
+              CELL_COUPLING_MAX, FORCE_DIRECTION,
               comma::iter_agglo_max_iter + 1)
         );
       }
