@@ -850,16 +850,20 @@ the line grows vertically
         const auto n_lines = agglomerationLines_Idx.size() - 1;
         REQUIRE(static_cast<CoMMAIndexT>(n_lines) == aniso_agg._nb_lines[0]);
         auto read_line = aniso_agg._v_lines[0].cbegin();
-        for (auto ref_line = agglomerationLines_Idx.cbegin() + 1;
+        for (auto ref_line = next(agglomerationLines_Idx.cbegin());
              ref_line != agglomerationLines_Idx.cend();
              ++ref_line, ++read_line) {
           // I am not sure how to treat this...
-          // NOLINTNEXTLINE
-          for (auto ref_fc = agglomerationLines.cbegin() + *std::prev(ref_line);
-               ref_fc != agglomerationLines.cbegin() + (*ref_line);
+          // NOLINTBEGIN(cppcoreguidelines-narrowing-conversions)
+          // NOLINTBEGIN(bugprone-narrowing-conversions)
+          for (auto ref_fc =
+                 next(agglomerationLines.cbegin(), *std::prev(ref_line));
+               ref_fc != next(agglomerationLines.cbegin(), *ref_line);
                ++ref_fc) {
             REQUIRE_THAT(**read_line, Contains(*ref_fc));
           }
+          // NOLINTEND(bugprone-narrowing-conversions)
+          // NOLINTEND(cppcoreguidelines-narrowing-conversions)
         }
       }
     }
@@ -1214,8 +1218,8 @@ SCENARIO("Testing cell coupling", "[Anisotropic.CellCoupling]") {
         CoMMACellCouplingT::MIN_DISTANCE,
         0
       );
-      const CoMMAWeightT x_dist = _3_1ov3;
-      const CoMMAWeightT y_dist = _1ov3;
+      const CoMMAWeightT x_dist = ten_ov_three;
+      const CoMMAWeightT y_dist = one_third;
       const CoMMAWeightT same_block = 1. / (_sq(x_dist) + _sq(y_dist));
       const CoMMAWeightT side_block = 1. / (_sq(2. * x_dist) + _sq(y_dist));
       const CoMMAWeightT vert_block = 1. / (_sq(x_dist) + _sq(2. * y_dist));
@@ -1257,8 +1261,8 @@ SCENARIO("Testing cell coupling", "[Anisotropic.CellCoupling]") {
         CoMMACellCouplingT::MIN_DISTANCE,
         0
       );
-      const CoMMAWeightT x_dist = _3_1ov3;
-      const CoMMAWeightT y_dist = _1ov3;
+      const CoMMAWeightT x_dist = ten_ov_three;
+      const CoMMAWeightT y_dist = one_third;
       const CoMMAWeightT same_block = 1. / (_sq(x_dist) + _sq(y_dist));
       const CoMMAWeightT side_block = 1. / (_sq(2. * x_dist) + _sq(y_dist));
       const CoMMAWeightT vert_block = 1. / (_sq(x_dist) + _sq(2. * y_dist));

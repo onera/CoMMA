@@ -126,11 +126,11 @@ SCENARIO("Test of main function", "[structure]") {
     );
     WHEN("We agglomerate with neighbourhood priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = false, build_lines = true, odd_length = true,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = -4.;
-      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      constexpr bool is_anisotropic = false, build_lines = true,
+                     odd_length = true, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = -4.;
+      constexpr auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
@@ -141,7 +141,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
-        aniso,
+        is_anisotropic,
         odd_length,
         aniso_thr,
         seed,
@@ -162,10 +162,10 @@ SCENARIO("Test of main function", "[structure]") {
     // It is the same test as above but we use the API with parameter classes
     WHEN("We agglomerate with neighbourhood priority and the parameter API") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool is_aniso = false, correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
-      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph(
+      constexpr bool is_anisotropic = false, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
+      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph_args(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues,
@@ -175,15 +175,15 @@ SCENARIO("Test of main function", "[structure]") {
         Data.n_bnd_faces,
         Data.dim
       );
-      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo(
+      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo_args(
         goal_card, min_card, max_card, correction, seed
       );
-      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(
-        is_aniso, Data.anisoCompliantCells
+      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_args(
+        is_anisotropic, Data.anisoCompliantCells
       );
       // Agglomerate
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        graph, agglo, aniso, fc2cc, alines_idx, alines
+        graph_args, agglo_args, aniso_args, fc2cc, alines_idx, alines
       );
       THEN("We obtain the 16 fine cells divided in 4 coarse cells") {
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
@@ -192,11 +192,11 @@ SCENARIO("Test of main function", "[structure]") {
     }
     WHEN("We agglomerate with boundary priority") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = false, build_lines = true, odd_length = true,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = -4.;
-      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      constexpr bool is_anisotropic = false, build_lines = true,
+                     odd_length = true, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = -4.;
+      constexpr auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
@@ -207,7 +207,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
-        aniso,
+        is_anisotropic,
         odd_length,
         aniso_thr,
         seed,
@@ -228,11 +228,12 @@ SCENARIO("Test of main function", "[structure]") {
     WHEN("We agglomerate with neighbourhood priority one point initialization"
     ) {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = false, build_lines = true, odd_length = true,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = -4.;
-      const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT;
+      constexpr bool is_anisotropic = false, build_lines = true,
+                     odd_length = true, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = -4.;
+      constexpr auto seed =
+        CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY_ONE_POINT_INIT;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
@@ -243,7 +244,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
-        aniso,
+        is_anisotropic,
         odd_length,
         aniso_thr,
         seed,
@@ -263,11 +264,11 @@ SCENARIO("Test of main function", "[structure]") {
     }
     WHEN("We agglomerate with boundary priority one point initialization") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = false, build_lines = true, odd_length = true,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = -4.;
-      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT;
+      constexpr bool is_anisotropic = false, build_lines = true,
+                     odd_length = true, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = -4.;
+      constexpr auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY_ONE_POINT_INIT;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
@@ -278,7 +279,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
-        aniso,
+        is_anisotropic,
         odd_length,
         aniso_thr,
         seed,
@@ -308,11 +309,11 @@ SCENARIO("Test of main function", "[structure]") {
       "We agglomerate with anisotropy activated, boundary priority and, full initialization"
     ) {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = true, build_lines = true, odd_length = ODD_LINE_LENGTH,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = 4.;
-      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      constexpr bool is_anisotropic = true, build_lines = true,
+                     odd_length = ODD_LINE_LENGTH, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = 4.;
+      constexpr auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
@@ -323,7 +324,7 @@ SCENARIO("Test of main function", "[structure]") {
         Data.anisoCompliantCells,
         Data.n_bnd_faces,
         build_lines,
-        aniso,
+        is_anisotropic,
         odd_length,
         aniso_thr,
         seed,
@@ -345,12 +346,12 @@ SCENARIO("Test of main function", "[structure]") {
       "We agglomerate with anisotropy activated, boundary priority and, full initialization using the parameter classes"
     ) {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool is_aniso = true, build_lines = true,
-                 odd_length = ODD_LINE_LENGTH, correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = 4.;
-      const auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
-      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph(
+      constexpr bool is_anisotropic = true, build_lines = true,
+                     odd_length = ODD_LINE_LENGTH, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = 4.;
+      constexpr auto seed = CoMMASeedsPoolT::BOUNDARY_PRIORITY;
+      const GraphArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> graph_args(
         Data.adjMatrix_row_ptr,
         Data.adjMatrix_col_ind,
         Data.adjMatrix_areaValues,
@@ -360,15 +361,19 @@ SCENARIO("Test of main function", "[structure]") {
         Data.n_bnd_faces,
         Data.dim
       );
-      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo(
+      const AgglomerationArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> agglo_args(
         goal_card, min_card, max_card, correction, seed
       );
-      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso(
-        is_aniso, Data.anisoCompliantCells, build_lines, odd_length, aniso_thr
+      const AnisotropicArgs<CoMMAIndexT, CoMMAWeightT, CoMMAIntT> aniso_args(
+        is_anisotropic,
+        Data.anisoCompliantCells,
+        build_lines,
+        odd_length,
+        aniso_thr
       );
       // Agglomerate
       agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
-        graph, agglo, aniso, fc2cc, alines_idx, alines
+        graph_args, agglo_args, aniso_args, fc2cc, alines_idx, alines
       );
       THEN("The result is 4 anisotropic lines and 2 isotropic cells") {
         for (auto i = decltype(Data.nb_fc){0}; i < Data.nb_fc; ++i)
@@ -377,10 +382,10 @@ SCENARIO("Test of main function", "[structure]") {
     }
     WHEN("We agglomerate with bad argument") {
       vector<CoMMAIndexT> fc2cc(Data.nb_fc), alines_idx{}, alines{};
-      const bool aniso = true, build_lines = true, odd_length = true,
-                 correction = true;
-      const CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
-      const CoMMAWeightT aniso_thr = 4.;
+      constexpr bool is_anisotropic = true, build_lines = true,
+                     odd_length = true, correction = true;
+      constexpr CoMMAIntT goal_card = 4, min_card = 4, max_card = 4;
+      constexpr CoMMAWeightT aniso_thr = 4.;
       const auto seed = CoMMASeedsPoolT::NEIGHBOURHOOD_PRIORITY;
       // clang-format off
       // Off to highlight which parameter should be responsible for the throw
@@ -390,7 +395,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               5,
               goal_card, min_card, max_card)
         );
@@ -401,7 +406,7 @@ SCENARIO("Test of main function", "[structure]") {
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card)
         );
         tmp.push_back(2);
@@ -411,7 +416,7 @@ SCENARIO("Test of main function", "[structure]") {
               tmp,
               Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes, Data.centers,
               Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces, build_lines,
-              aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
+              is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim,
               goal_card, min_card, max_card)
         );
         // Bad graph definition: values do not correspond to indirection
@@ -420,7 +425,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr,
               tmp,
               Data.adjMatrix_areaValues, Data.volumes, Data.centers, Data.weights,
-              Data.anisoCompliantCells, Data.n_bnd_faces, build_lines, aniso,
+              Data.anisoCompliantCells, Data.n_bnd_faces, build_lines, is_anisotropic,
               odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction, Data.dim, goal_card,
               min_card, max_card)
         );
@@ -431,7 +436,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind,
               tmp_w,
               Data.volumes, Data.centers, Data.weights, Data.anisoCompliantCells,
-              Data.n_bnd_faces, build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx,
+              Data.n_bnd_faces, build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx,
               alines, correction, Data.dim, goal_card, min_card, max_card)
         );
         // Bad cardinality: min higher than goal
@@ -439,7 +444,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card,
               goal_card + 1,
               max_card)
@@ -449,7 +454,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim,
               0,
               min_card, max_card)
@@ -462,7 +467,7 @@ SCENARIO("Test of main function", "[structure]") {
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
               false,
-              aniso, odd_length, aniso_thr, seed, fc2cc,
+              is_anisotropic, odd_length, aniso_thr, seed, fc2cc,
               tmp_idx, tmp_lines,
               correction, Data.dim, goal_card, min_card, max_card)
         );
@@ -471,7 +476,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, DEFAULT_AR,
               0)
         );
@@ -480,7 +485,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               CELL_COUPLING_MAX, FORCE_DIRECTION,
               0)
@@ -490,7 +495,7 @@ SCENARIO("Test of main function", "[structure]") {
           agglomerate_one_level<CoMMAIndexT, CoMMAWeightT, CoMMAIntT>(
               Data.adjMatrix_row_ptr, Data.adjMatrix_col_ind, Data.adjMatrix_areaValues, Data.volumes,
               Data.centers, Data.weights, Data.anisoCompliantCells, Data.n_bnd_faces,
-              build_lines, aniso, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
+              build_lines, is_anisotropic, odd_length, aniso_thr, seed, fc2cc, alines_idx, alines, correction,
               Data.dim, goal_card, min_card, max_card, DEFAULT_AR, SING_CARD_THRESH, MAX_CELLS_IN_LINE,
               CELL_COUPLING_MAX, FORCE_DIRECTION,
               comma::iter_agglo_max_iter + 1)

@@ -21,8 +21,8 @@ using DGEIndexT = comma::CoMMAIndexT;
 using DGEIntT = comma::CoMMAIntT;
 using DGEWeightT = comma::CoMMAWeightT;
 
-constexpr DGEWeightT _1ov3 = 1. / 3.;
-constexpr DGEWeightT _3_1ov3 = 10. / 3.;
+constexpr DGEWeightT one_third = 1. / 3.;
+constexpr DGEWeightT ten_ov_three = 10. / 3.;
 const DGEWeightT sqrt2 = std::sqrt(2.);
 const DGEWeightT sqrt101 = std::sqrt(101.);
 
@@ -309,13 +309,13 @@ public:
       /* volumes */ {5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00},
       /* centers */ {
         // Bottom left, 0 and 1
-        {-_3_1ov3, -2.*_1ov3}, {-2.*_3_1ov3, -_1ov3},
+        {-ten_ov_three, -2.*one_third}, {-2.*ten_ov_three, -one_third},
         // Bottom right, 2 and 3
-        {+2.*_3_1ov3, -2*_1ov3}, {+_3_1ov3, -_1ov3},
+        {+2.*ten_ov_three, -2*one_third}, {+ten_ov_three, -one_third},
         // Top left, 4 and 5
-        {-_3_1ov3, +_1ov3}, {-2.*_3_1ov3, 2.*_1ov3},
+        {-ten_ov_three, +one_third}, {-2.*ten_ov_three, 2.*one_third},
         // Top right, 6 and 7
-        {2.*_3_1ov3, _1ov3}, {_3_1ov3, 2.*_1ov3}
+        {2.*ten_ov_three, one_third}, {ten_ov_three, 2.*one_third}
       }
       // clang-on
     ) {}

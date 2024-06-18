@@ -449,17 +449,17 @@ void build_coarse_graph(
   // For these, we have the final size
   c_volumes.clear();
   c_volumes.resize(n_cells);
-  std::fill(c_volumes.begin(), c_volumes.end(), RealT(0));
+  std::fill(c_volumes.begin(), c_volumes.end(), RealT{0});
   c_n_bnd.clear();
   c_n_bnd.resize(n_cells);
   c_priority.clear();
   c_priority.resize(n_cells);
-  std::fill(c_n_bnd.begin(), c_n_bnd.end(), IntT(0));
+  std::fill(c_n_bnd.begin(), c_n_bnd.end(), IntT{0});
   c_centers.clear();
   c_centers.reserve(n_cells);
   for (auto cc = decltype(n_cells){0}; cc < n_cells; ++cc) {
     // https://stackoverflow.com/questions/18189362/how-best-to-fill-a-vector-of-vectors-avoiding-wasting-memory-and-unnecessary-al
-    auto tmp = std::vector<RealT>(dim, RealT(0));
+    auto tmp = std::vector<RealT>(dim, RealT{0});
     c_centers.emplace_back(std::move(tmp));
   }  // for cc
   // Now building
@@ -477,7 +477,7 @@ void build_coarse_graph(
   }  // for fc
   for (auto cc = decltype(n_cells){0}; cc < n_cells; ++cc) {
     const auto &fcs = c2f[cc];
-    const RealT ov_n_fc(RealT(1.) / fcs.size());
+    const RealT ov_n_fc(RealT{1.} / fcs.size());
     // Finishing center
     for (auto xyz = decltype(dim){0}; xyz < dim; ++xyz)
       c_centers[cc][xyz] *= ov_n_fc;
