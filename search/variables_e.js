@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['volumes_0',['volumes',['../classcomma_1_1_graph_args.html#a917992d2094fb64fb6ba2756c2e33f33',1,'comma::GraphArgs']]]
+  ['threshold_5fanisotropy_0',['threshold_anisotropy',['../classcomma_1_1_anisotropic_args.html#accfbc365df02bc934ec02efaea568b6c',1,'comma::AnisotropicArgs']]]
 ];

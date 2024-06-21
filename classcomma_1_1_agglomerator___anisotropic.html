@@ -133,9 +133,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aeccd35ffb2739c71190c6e0545b56839"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#aeccd35ffb2739c71190c6e0545b56839">Agglomerator_Anisotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, const CoMMAWeightType threshold_anisotropy, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const bool build_lines, const bool odd_line_length, const std::optional&lt; CoMMAIndexType &gt; max_cells_in_line)</td></tr>
-<tr class="memdesc:aeccd35ffb2739c71190c6e0545b56839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#aeccd35ffb2739c71190c6e0545b56839">More...</a><br /></td></tr>
-<tr class="separator:aeccd35ffb2739c71190c6e0545b56839"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fff2c85558da553e97c8800278fa6df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a3fff2c85558da553e97c8800278fa6df">Agglomerator_Anisotropic</a> (std::shared_ptr&lt; <a class="el" href="classcomma_1_1_dual___graph.html">Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_coarse___cell___container.html">Coarse_Cell_Container</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; cc_graph, std::shared_ptr&lt; <a class="el" href="classcomma_1_1_seeds___pool.html">Seeds_Pool</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt; &gt; seeds_pool, CoMMAIntType dimension, const CoMMAWeightType threshold_anisotropy, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines_Idx, const std::vector&lt; CoMMAIndexType &gt; &amp;agglomerationLines, const std::vector&lt; CoMMAWeightType &gt; &amp;priority_weights, const bool build_lines, const bool odd_line_length, const std::optional&lt; CoMMAIndexType &gt; max_cells_in_line, <a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a> cell_coupling=<a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9bae73de8afb1068798712b514fc2557419">CoMMACellCouplingT::MAX_WEIGHT</a>, const bool force_line_direction=true)</td></tr>
+<tr class="memdesc:a3fff2c85558da553e97c8800278fa6df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a3fff2c85558da553e97c8800278fa6df">More...</a><br /></td></tr>
+<tr class="separator:a3fff2c85558da553e97c8800278fa6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#aa9bfcf6f6403c97bff9c9bba8673a377">~Agglomerator_Anisotropic</a> () override=default</td></tr>
 <tr class="memdesc:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="classcomma_1_1_agglomerator___anisotropic.html#aa9bfcf6f6403c97bff9c9bba8673a377">More...</a><br /></td></tr>
 <tr class="separator:aa9bfcf6f6403c97bff9c9bba8673a377"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,6 +180,15 @@ Protected Member Functions</h2></td></tr>
 <tr class="memdesc:a06284c8df3ba73d75790c1b703774b11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the anisotropic lines at the first level (only called at the first level of agglomeration). Two main steps are performed:<br  />
 .  <a href="classcomma_1_1_agglomerator___anisotropic.html#a06284c8df3ba73d75790c1b703774b11">More...</a><br /></td></tr>
 <tr class="separator:a06284c8df3ba73d75790c1b703774b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8414debb31f73f2e73d7d0f02066fc9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#af8414debb31f73f2e73d7d0f02066fc9">is_high_coupling</a> (const CoMMAWeightType weight, const CoMMAWeightType ref_weight)</td></tr>
+<tr class="memdesc:af8414debb31f73f2e73d7d0f02066fc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tell whether a weight should be considered as high coupling between two cells.  <a href="classcomma_1_1_agglomerator___anisotropic.html#af8414debb31f73f2e73d7d0f02066fc9">More...</a><br /></td></tr>
+<tr class="separator:af8414debb31f73f2e73d7d0f02066fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23e3e0060f1fdda4e9879b4505ed90b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a23e3e0060f1fdda4e9879b4505ed90b3">find_cell_candidates_for_line_max_weight</a> (const CoMMAIndexType seed, const std::vector&lt; bool &gt; &amp;to_treat, const std::vector&lt; CoMMAWeightType &gt; &amp;weights, const std::vector&lt; CoMMAWeightType &gt; &amp;max_weights, <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a9f4297614846f54366d4561a6428fa4d">CoMMASetOfPairType</a> &amp;candidates)</td></tr>
+<tr class="memdesc:a23e3e0060f1fdda4e9879b4505ed90b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find cells which are good candidates to be added to the anisotropic line. In order to identify the candidate, the weights are considered.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a23e3e0060f1fdda4e9879b4505ed90b3">More...</a><br /></td></tr>
+<tr class="separator:a23e3e0060f1fdda4e9879b4505ed90b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4d91b0f9cff61bc0477d8fbc06fc1e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#ae4d91b0f9cff61bc0477d8fbc06fc1e6">find_cell_candidates_for_line_direction</a> (const CoMMAIndexType seed, const std::vector&lt; bool &gt; &amp;to_treat, const std::vector&lt; CoMMAWeightType &gt; &amp;weights, const std::vector&lt; CoMMAWeightType &gt; &amp;max_weights, const std::vector&lt; CoMMAWeightType &gt; &amp;prev_dir, const bool check_weight, <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a9f4297614846f54366d4561a6428fa4d">CoMMASetOfPairType</a> &amp;candidates)</td></tr>
+<tr class="memdesc:ae4d91b0f9cff61bc0477d8fbc06fc1e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find cells which are good candidates to be added to the anisotropic line. In order to identify the candidate, the direction is compared to the last reported one; additionally, if requested, the weights can also be considered.  <a href="classcomma_1_1_agglomerator___anisotropic.html#ae4d91b0f9cff61bc0477d8fbc06fc1e6">More...</a><br /></td></tr>
+<tr class="separator:ae4d91b0f9cff61bc0477d8fbc06fc1e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -192,6 +201,10 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a79aca5e2caedd482930c00a36a024e4a"><td class="memItemLeft" align="right" valign="top">std::optional&lt; CoMMAIndexType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a79aca5e2caedd482930c00a36a024e4a">_max_cells_in_line</a></td></tr>
 <tr class="memdesc:a79aca5e2caedd482930c00a36a024e4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic.  <a href="classcomma_1_1_agglomerator___anisotropic.html#a79aca5e2caedd482930c00a36a024e4a">More...</a><br /></td></tr>
 <tr class="separator:a79aca5e2caedd482930c00a36a024e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03dc3b05481fc9033f41659f6947fb69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a03dc3b05481fc9033f41659f6947fb69">_cell_coupling</a></td></tr>
+<tr class="separator:a03dc3b05481fc9033f41659f6947fb69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5932bfc24d0ccc3d94f10856c94c5413"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a5932bfc24d0ccc3d94f10856c94c5413">_force_line_direction</a></td></tr>
+<tr class="separator:a5932bfc24d0ccc3d94f10856c94c5413"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classcomma_1_1_agglomerator"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcomma_1_1_agglomerator')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcomma_1_1_agglomerator.html">comma::Agglomerator&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
 <tr class="memitem:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">_dimension</a></td></tr>
 <tr class="memdesc:abfae2aa7f2f81094f283990406492cc3 inherit pro_attribs_classcomma_1_1_agglomerator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dimensionality of the problem (_dimension = 2 -&gt; 2D, _dimension = 3 -&gt; 3D)  <a href="classcomma_1_1_agglomerator.html#abfae2aa7f2f81094f283990406492cc3">More...</a><br /></td></tr>
@@ -309,8 +322,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aeccd35ffb2739c71190c6e0545b56839" name="aeccd35ffb2739c71190c6e0545b56839"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeccd35ffb2739c71190c6e0545b56839">&#9670;&#160;</a></span>Agglomerator_Anisotropic()</h2>
+<a id="a3fff2c85558da553e97c8800278fa6df" name="a3fff2c85558da553e97c8800278fa6df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fff2c85558da553e97c8800278fa6df">&#9670;&#160;</a></span>Agglomerator_Anisotropic()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -384,7 +397,19 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::optional&lt; CoMMAIndexType &gt;&#160;</td>
-          <td class="paramname"><em>max_cells_in_line</em>&#160;</td>
+          <td class="paramname"><em>max_cells_in_line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a>&#160;</td>
+          <td class="paramname"><em>cell_coupling</em> = <code><a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9bae73de8afb1068798712b514fc2557419">CoMMACellCouplingT::MAX_WEIGHT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>force_line_direction</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -413,6 +438,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
     <tr><td class="paramdir">[in]</td><td class="paramname">build_lines</td><td>Whether lines joining the anisotropic cells should be built </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">odd_line_length</td><td>Whether anisotropic lines with odd length are allowed </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_cells_in_line</td><td>Maximum number of cells in an anisotropic line; when this value is reached, all reaming cells are discarded, hence considered as isotropic </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_coupling</td><td>CoMMACellCouplingT indicating the type of coupling to consider when building anisotropic lines </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">force_line_direction</td><td>Whether a continuous direction of the line should be enforced when building it </td></tr>
   </table>
   </dd>
 </dl>
@@ -629,6 +656,204 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
+<a id="ae4d91b0f9cff61bc0477d8fbc06fc1e6" name="ae4d91b0f9cff61bc0477d8fbc06fc1e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4d91b0f9cff61bc0477d8fbc06fc1e6">&#9670;&#160;</a></span>find_cell_candidates_for_line_direction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::find_cell_candidates_for_line_direction </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType&#160;</td>
+          <td class="paramname"><em>seed</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; bool &gt; &amp;&#160;</td>
+          <td class="paramname"><em>to_treat</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>max_weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>prev_dir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>check_weight</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a9f4297614846f54366d4561a6428fa4d">CoMMASetOfPairType</a> &amp;&#160;</td>
+          <td class="paramname"><em>candidates</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find cells which are good candidates to be added to the anisotropic line. In order to identify the candidate, the direction is compared to the last reported one; additionally, if requested, the weights can also be considered. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">seed</td><td>Last cell to be added to the line. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">to_treat</td><td>Vector of booleans telling whether a cell should be considered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Weights of the graph. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_weights</td><td>Vector holding for each cell the maximum weight among its neighbours. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prev_dir</td><td>Previous direction. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">check_weight</td><td>Whether to check weight of the potential candidate </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Set of the candidates, which are pairs of cell ID and related priority. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a23e3e0060f1fdda4e9879b4505ed90b3" name="a23e3e0060f1fdda4e9879b4505ed90b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23e3e0060f1fdda4e9879b4505ed90b3">&#9670;&#160;</a></span>find_cell_candidates_for_line_max_weight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::find_cell_candidates_for_line_max_weight </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType&#160;</td>
+          <td class="paramname"><em>seed</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; bool &gt; &amp;&#160;</td>
+          <td class="paramname"><em>to_treat</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>max_weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcomma_1_1_agglomerator___anisotropic.html#a9f4297614846f54366d4561a6428fa4d">CoMMASetOfPairType</a> &amp;&#160;</td>
+          <td class="paramname"><em>candidates</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find cells which are good candidates to be added to the anisotropic line. In order to identify the candidate, the weights are considered. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">seed</td><td>Last cell to be added to the line. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">to_treat</td><td>Vector of booleans telling whether a cell should be considered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Weights of the graph. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_weights</td><td>Vector holding for each cell the maximum weight among its neighbours. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Set of the candidates, which are pairs of cell ID and related priority. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af8414debb31f73f2e73d7d0f02066fc9" name="af8414debb31f73f2e73d7d0f02066fc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8414debb31f73f2e73d7d0f02066fc9">&#9670;&#160;</a></span>is_high_coupling()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::is_high_coupling </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAWeightType&#160;</td>
+          <td class="paramname"><em>weight</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CoMMAWeightType&#160;</td>
+          <td class="paramname"><em>ref_weight</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Tell whether a weight should be considered as high coupling between two cells. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">weight</td><td>Value to be examined </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ref_weight</td><td>Reference against which the value will be compared </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>whether the given value is a mark of high-coupling </dd></dl>
+
+</div>
+</div>
 <a id="a3ed52576f0b6698a69f388f295a2e1c5" name="a3ed52576f0b6698a69f388f295a2e1c5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3ed52576f0b6698a69f388f295a2e1c5">&#9670;&#160;</a></span>update_seeds_pool()</h2>
 
@@ -682,6 +907,56 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div><div class="memdoc">
 
 <p>Neighbours of the anisotropic cells agglomerated. They are used to update the seeds pool. </p>
+
+</div>
+</div>
+<a id="a03dc3b05481fc9033f41659f6947fb69" name="a03dc3b05481fc9033f41659f6947fb69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03dc3b05481fc9033f41659f6947fb69">&#9670;&#160;</a></span>_cell_coupling</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a> <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::_cell_coupling</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Type of cell coupling to consider when building aniso lines </p>
+
+</div>
+</div>
+<a id="a5932bfc24d0ccc3d94f10856c94c5413" name="a5932bfc24d0ccc3d94f10856c94c5413"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5932bfc24d0ccc3d94f10856c94c5413">&#9670;&#160;</a></span>_force_line_direction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classcomma_1_1_agglomerator___anisotropic.html">comma::Agglomerator_Anisotropic</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::_force_line_direction</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Whether the force the direction of the anisotropic lines to remain straight </p>
 
 </div>
 </div>

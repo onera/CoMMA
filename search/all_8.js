@@ -11,6 +11,7 @@ var searchData=
   ['is_5fanisotropic_8',['is_anisotropic',['../classcomma_1_1_anisotropic_args.html#ab099ce094b546efd12d2da871587f827',1,'comma::AnisotropicArgs']]],
   ['is_5fconnected_9',['is_connected',['../classcomma_1_1_coarse___cell.html#ac4034b8340779db758fdbe338ced45e4',1,'comma::Coarse_Cell']]],
   ['is_5fempty_10',['is_empty',['../classcomma_1_1_seeds___pool.html#a5b81870765d59728538feb0960bbcc5a',1,'comma::Seeds_Pool']]],
-  ['is_5fon_5fboundary_11',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]],
-  ['iter_5fagglo_5fmax_5fiter_12',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
+  ['is_5fhigh_5fcoupling_11',['is_high_coupling',['../classcomma_1_1_agglomerator___anisotropic.html#af8414debb31f73f2e73d7d0f02066fc9',1,'comma::Agglomerator_Anisotropic']]],
+  ['is_5fon_5fboundary_12',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]],
+  ['iter_5fagglo_5fmax_5fiter_13',['iter_agglo_max_iter',['../namespacecomma.html#ae843c64bc9e371bd460fe8d040c80e2b',1,'comma']]]
 ];

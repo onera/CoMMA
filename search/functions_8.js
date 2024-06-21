@@ -9,5 +9,6 @@ var searchData=
   ['int_5fpower_6',['int_power',['../namespacecomma.html#aba86840a4cd3b3a35c5e9c7ab417e43b',1,'comma']]],
   ['is_5fconnected_7',['is_connected',['../classcomma_1_1_coarse___cell.html#ac4034b8340779db758fdbe338ced45e4',1,'comma::Coarse_Cell']]],
   ['is_5fempty_8',['is_empty',['../classcomma_1_1_seeds___pool.html#a5b81870765d59728538feb0960bbcc5a',1,'comma::Seeds_Pool']]],
-  ['is_5fon_5fboundary_9',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]]
+  ['is_5fhigh_5fcoupling_9',['is_high_coupling',['../classcomma_1_1_agglomerator___anisotropic.html#af8414debb31f73f2e73d7d0f02066fc9',1,'comma::Agglomerator_Anisotropic']]],
+  ['is_5fon_5fboundary_10',['is_on_boundary',['../classcomma_1_1_dual___graph.html#a243466aae3bc5b1a7c1f259dc398ce67',1,'comma::Dual_Graph']]]
 ];

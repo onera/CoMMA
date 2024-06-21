@@ -168,12 +168,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5bed2815c618f5670469a6cb38863f0e"><td class="memItemLeft" align="right" valign="top">CoMMAWeightType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a5bed2815c618f5670469a6cb38863f0e">estimated_total_weight</a> (const CoMMAIndexType idx_c) const</td></tr>
 <tr class="memdesc:a5bed2815c618f5670469a6cb38863f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of wall the weights (faces) of a cell. Since there is no knowledge about boundary faces, the result is correct only if internal cell.  <a href="classcomma_1_1_dual___graph.html#a5bed2815c618f5670469a6cb38863f0e">More...</a><br /></td></tr>
 <tr class="separator:a5bed2815c618f5670469a6cb38863f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae54c9474438da03527cc8eab80362cf3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#ae54c9474438da03527cc8eab80362cf3">tag_anisotropic_cells</a> (<a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;max_weights, std::vector&lt; bool &gt; &amp;is_anisotropic, std::deque&lt; CoMMAIndexType &gt; &amp;aniso_seeds_pool, const CoMMAWeightType threshold_anisotropy, const <a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;priority_weights, const CoMMAIndexType preserving)</td></tr>
-<tr class="memdesc:ae54c9474438da03527cc8eab80362cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag cells as anisotropic if their aspect-ratio is over a given threshold and order them according to given priority.  <a href="classcomma_1_1_dual___graph.html#ae54c9474438da03527cc8eab80362cf3">More...</a><br /></td></tr>
-<tr class="separator:ae54c9474438da03527cc8eab80362cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03162eab93fc7ace92992ebea53db274"><td class="memItemLeft" align="right" valign="top">CoMMAIntType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a03162eab93fc7ace92992ebea53db274">get_nb_cells</a> () const</td></tr>
-<tr class="memdesc:a03162eab93fc7ace92992ebea53db274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter that returns the number of cells.  <a href="classcomma_1_1_dual___graph.html#a03162eab93fc7ace92992ebea53db274">More...</a><br /></td></tr>
-<tr class="separator:a03162eab93fc7ace92992ebea53db274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabbf188700ab9d08f66c79b3cf41080f"><td class="memItemLeft" align="right" valign="top">CoMMAWeightType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#aabbf188700ab9d08f66c79b3cf41080f">get_center_direction</a> (const CoMMAIndexType &amp;a, const CoMMAIndexType &amp;b, std::vector&lt; CoMMAWeightType &gt; &amp;dir)</td></tr>
+<tr class="memdesc:aabbf188700ab9d08f66c79b3cf41080f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the direction from vertex <code>a</code> to vertex <code>b</code> and store it as unit vector in <code>dir</code>.  <a href="classcomma_1_1_dual___graph.html#aabbf188700ab9d08f66c79b3cf41080f">More...</a><br /></td></tr>
+<tr class="separator:aabbf188700ab9d08f66c79b3cf41080f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74466074f7edd631ce244d8d1b1d3c12"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a74466074f7edd631ce244d8d1b1d3c12">tag_anisotropic_cells</a> (std::vector&lt; CoMMAWeightType &gt; &amp;alt_weights, <a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;max_weights, std::vector&lt; bool &gt; &amp;is_anisotropic, std::deque&lt; CoMMAIndexType &gt; &amp;aniso_seeds_pool, const CoMMAWeightType threshold_anisotropy, const <a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;priority_weights, const <a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a> cell_coupling, const CoMMAIndexType preserving)</td></tr>
+<tr class="memdesc:a74466074f7edd631ce244d8d1b1d3c12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag cells as anisotropic if their aspect-ratio is over a given threshold and order them according to given priority.  <a href="classcomma_1_1_dual___graph.html#a74466074f7edd631ce244d8d1b1d3c12">More...</a><br /></td></tr>
+<tr class="separator:a74466074f7edd631ce244d8d1b1d3c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76744b18ab52e37b5f74e506c97c8f7a"><td class="memItemLeft" align="right" valign="top">CoMMAIndexType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a76744b18ab52e37b5f74e506c97c8f7a">get_nb_cells</a> () const</td></tr>
+<tr class="memdesc:a76744b18ab52e37b5f74e506c97c8f7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter that returns the number of cells.  <a href="classcomma_1_1_dual___graph.html#a76744b18ab52e37b5f74e506c97c8f7a">More...</a><br /></td></tr>
+<tr class="separator:a76744b18ab52e37b5f74e506c97c8f7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e3f45ecd852a941dc39064f7454efb3"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; CoMMAIndexType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#a7e3f45ecd852a941dc39064f7454efb3">get_neighbourhood_of_cc</a> (const std::unordered_set&lt; CoMMAIndexType &gt; &amp;s_seeds, const std::vector&lt; bool &gt; &amp;is_fc_agglomerated_tmp) const</td></tr>
 <tr class="memdesc:a7e3f45ecd852a941dc39064f7454efb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the fine cells neighbours of a coarse cell.  <a href="classcomma_1_1_dual___graph.html#a7e3f45ecd852a941dc39064f7454efb3">More...</a><br /></td></tr>
 <tr class="separator:a7e3f45ecd852a941dc39064f7454efb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -237,8 +240,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a49d4b45fcbf985e001a9137f38d8fd0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="memItemLeft" align="right" valign="top">std::function&lt; CoMMAWeightType(const CoMMAWeightType, const CoMMAWeightType)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcomma_1_1_dual___graph.html#adbc7f2b85fe3771b78a1d485575ed4a3">_compute_AR</a></td></tr>
 <tr class="memdesc:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which computes the aspect-ratio from the minimum and maximum faces<br  />
- In 3D: <picture><source srcset="form_25_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_25.png"/></picture><br  />
- In 2D: <picture><source srcset="form_26_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_26.png"/></picture><br  />
+ In 3D: <picture><source srcset="form_20_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_20.png"/></picture><br  />
+ In 2D: <picture><source srcset="form_21_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_21.png"/></picture><br  />
  (Recall that in 2D a face is actually an edge)  <a href="classcomma_1_1_dual___graph.html#adbc7f2b85fe3771b78a1d485575ed4a3">More...</a><br /></td></tr>
 <tr class="separator:adbc7f2b85fe3771b78a1d485575ed4a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classcomma_1_1_graph"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classcomma_1_1_graph')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classcomma_1_1_graph.html">comma::Graph&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;</a></td></tr>
@@ -632,6 +635,62 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
+<a id="aabbf188700ab9d08f66c79b3cf41080f" name="aabbf188700ab9d08f66c79b3cf41080f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabbf188700ab9d08f66c79b3cf41080f">&#9670;&#160;</a></span>get_center_direction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAIntType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">CoMMAWeightType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::get_center_direction </td>
+          <td>(</td>
+          <td class="paramtype">const CoMMAIndexType &amp;&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CoMMAIndexType &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dir</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the direction from vertex <code>a</code> to vertex <code>b</code> and store it as unit vector in <code>dir</code>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a</td><td>Starting point </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>End point </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dir</td><td>Unit vector of the direction </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the distance from the two points (the norm used for the normalization) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is just a wrapper around get_direction. </dd></dl>
+
+</div>
+</div>
 <a id="a020ecb0b3f410b468bbb8e57878bf9aa" name="a020ecb0b3f410b468bbb8e57878bf9aa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a020ecb0b3f410b468bbb8e57878bf9aa">&#9670;&#160;</a></span>get_n_boundary_faces()</h2>
 
@@ -669,8 +728,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
-<a id="a03162eab93fc7ace92992ebea53db274" name="a03162eab93fc7ace92992ebea53db274"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03162eab93fc7ace92992ebea53db274">&#9670;&#160;</a></span>get_nb_cells()</h2>
+<a id="a76744b18ab52e37b5f74e506c97c8f7a" name="a76744b18ab52e37b5f74e506c97c8f7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76744b18ab52e37b5f74e506c97c8f7a">&#9670;&#160;</a></span>get_nb_cells()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -681,7 +740,7 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CoMMAIntType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::get_nb_cells </td>
+          <td class="memname">CoMMAIndexType <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::get_nb_cells </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -821,8 +880,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 
 </div>
 </div>
-<a id="ae54c9474438da03527cc8eab80362cf3" name="ae54c9474438da03527cc8eab80362cf3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae54c9474438da03527cc8eab80362cf3">&#9670;&#160;</a></span>tag_anisotropic_cells()</h2>
+<a id="a74466074f7edd631ce244d8d1b1d3c12" name="a74466074f7edd631ce244d8d1b1d3c12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74466074f7edd631ce244d8d1b1d3c12">&#9670;&#160;</a></span>tag_anisotropic_cells()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -835,6 +894,12 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="memname">void <a class="el" href="classcomma_1_1_dual___graph.html">comma::Dual_Graph</a>&lt; CoMMAIndexType, CoMMAWeightType, CoMMAIntType &gt;::tag_anisotropic_cells </td>
           <td>(</td>
+          <td class="paramtype">std::vector&lt; CoMMAWeightType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>alt_weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="classcomma_1_1_dual___graph.html#ab61394e58e9019e8d55320e3a2885115">ContainerWeightType</a> &amp;&#160;</td>
           <td class="paramname"><em>max_weights</em>, </td>
         </tr>
@@ -865,6 +930,12 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="namespacecomma.html#a1447abe958a65690b896da9676492a9b">CoMMACellCouplingT</a>&#160;</td>
+          <td class="paramname"><em>cell_coupling</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const CoMMAIndexType&#160;</td>
           <td class="paramname"><em>preserving</em>&#160;</td>
         </tr>
@@ -884,11 +955,13 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 <p>Tag cells as anisotropic if their aspect-ratio is over a given threshold and order them according to given priority. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">alt_weights</td><td>Alternative version of graph edge weights computed if necessary (according to <code>cell_coupling</code>) </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">max_weights</td><td>Array of the maximum weight: the biggest area of the faces composing the given fine cell </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">is_anisotropic</td><td>Vector of length equal to the total number of cell telling whether a cell is anisotropic </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">aniso_seeds_pool</td><td>Container containing the anisotropic cells in the order they should be considered when computing the lines </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">threshold_anisotropy</td><td>Value of the aspect ratio above which a cell is considered anisotropic. If negative, all compliant cells are considered as anisotropic </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">priority_weights</td><td>Weights used to set the order telling where to start agglomerating. The higher the weight, the higher the priority </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_coupling</td><td>CoMMACellCouplingT indicating the type of coupling to consider when building anisotropic lines </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">preserving</td><td>if 0 does not hit only the BL prism to preserve the boundary layer otherwise 2 for 2D or 3 for the 3D to preserve the BL only in the anisotropic agglomeration </td></tr>
   </table>
   </dd>
@@ -930,8 +1003,8 @@ template&lt;typename CoMMAIndexType , typename CoMMAWeightType , typename CoMMAI
 </div><div class="memdoc">
 
 <p>Function which computes the aspect-ratio from the minimum and maximum faces<br  />
- In 3D: <picture><source srcset="form_25_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_25.png"/></picture><br  />
- In 2D: <picture><source srcset="form_26_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_26.png"/></picture><br  />
+ In 3D: <picture><source srcset="form_20_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = sqrt(\frac{max_{surf}}{min_{surf}}) $" src="form_20.png"/></picture><br  />
+ In 2D: <picture><source srcset="form_21_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ AR = \frac{max_{surf}}{min_{surf}} $" src="form_21.png"/></picture><br  />
  (Recall that in 2D a face is actually an edge) </p>
 
 </div>

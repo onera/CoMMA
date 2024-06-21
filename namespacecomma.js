@@ -58,6 +58,10 @@ var namespacecomma =
       [ "MAX_OVER_MIN_BARY_DIST", "namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8adea3279d5aefb79b3587092acda0310c", null ],
       [ "ALGEBRAIC_PERIMETER_OVER_MEASURE", "namespacecomma.html#a1202bb0cca3487ffda41fee403ac02e8a40c0eaf07c674d996bc2044ceccce8ce", null ]
     ] ],
+    [ "CoMMACellCouplingT", "namespacecomma.html#a1447abe958a65690b896da9676492a9b", [
+      [ "MAX_WEIGHT", "namespacecomma.html#a1447abe958a65690b896da9676492a9bae73de8afb1068798712b514fc2557419", null ],
+      [ "MIN_DISTANCE", "namespacecomma.html#a1447abe958a65690b896da9676492a9ba869cc8eafe1ec6f836470aadfa20d20c", null ]
+    ] ],
     [ "CoMMACellT", "namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8", [
       [ "INTERIOR", "namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8ada6f7a085b1f7f2125ce30f5e02db53c", null ],
       [ "VALLEY", "namespacecomma.html#a6676cd5a4d3dbf9141f8c7bc87617be8a4f18a70072d52370244908b93cf13e85", null ],
@@ -79,9 +83,8 @@ var namespacecomma =
     [ "_cb", "namespacecomma.html#a0b2e63846db627820ea1a1018506e364", null ],
     [ "_sq", "namespacecomma.html#a452a16a4fa013fdd10d8768c35587750", null ],
     [ "agglomerate_one_level", "namespacecomma.html#a2b7e1cf509b92b84db94b66033389e76", null ],
-    [ "agglomerate_one_level", "namespacecomma.html#a263242d07618a6aaded21e7fada33004", null ],
-    [ "compute_AR_max_ov_min", "namespacecomma.html#a37ff61df2864666cf57c3f72132e5ea2", null ],
-    [ "compute_AR_max_ov_radius", "namespacecomma.html#a8c3495d8f36ab061528f00181514a64a", null ],
+    [ "agglomerate_one_level", "namespacecomma.html#a80327dfb4b12a8d6992a99d2f3d30963", null ],
+    [ "build_coarse_graph", "namespacecomma.html#a06832e52879fe35340b307b8554768a5", null ],
     [ "compute_neighbourhood_based_wall_distance", "namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b", null ],
     [ "d_keys_to_set", "namespacecomma.html#a81affca718f9c9927cfb82c317c8239e", null ],
     [ "dot_deviate", "namespacecomma.html#a3c9a93345d5c34823f57fa526e438411", null ],

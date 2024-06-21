@@ -12,6 +12,10 @@ var _co_m_m_a_defs_8h =
       [ "MAX_OVER_MIN_BARY_DIST", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8adea3279d5aefb79b3587092acda0310c", null ],
       [ "ALGEBRAIC_PERIMETER_OVER_MEASURE", "_co_m_m_a_defs_8h.html#a1202bb0cca3487ffda41fee403ac02e8a40c0eaf07c674d996bc2044ceccce8ce", null ]
     ] ],
+    [ "CoMMACellCouplingT", "_co_m_m_a_defs_8h.html#a1447abe958a65690b896da9676492a9b", [
+      [ "MAX_WEIGHT", "_co_m_m_a_defs_8h.html#a1447abe958a65690b896da9676492a9bae73de8afb1068798712b514fc2557419", null ],
+      [ "MIN_DISTANCE", "_co_m_m_a_defs_8h.html#a1447abe958a65690b896da9676492a9ba869cc8eafe1ec6f836470aadfa20d20c", null ]
+    ] ],
     [ "CoMMACellT", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8", [
       [ "INTERIOR", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8ada6f7a085b1f7f2125ce30f5e02db53c", null ],
       [ "VALLEY", "_co_m_m_a_defs_8h.html#a6676cd5a4d3dbf9141f8c7bc87617be8a4f18a70072d52370244908b93cf13e85", null ],

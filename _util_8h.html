@@ -105,12 +105,15 @@ $(document).ready(function(){initNavTree('_util_8h.html',''); initResizable(); }
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;iterator&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;queue&gt;</code><br />
+<code>#include &lt;set&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &quot;<a class="el" href="_args_8h_source.html">CoMMA/Args.h</a>&quot;</code><br />
 </div>
 <p><a href="_util_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -189,11 +192,15 @@ Functions</h2></td></tr>
  If a cell is unconnected to the domain with the wall, its distance will be negative.<br  />
  It takes a compressed version of the connectivity of the mesh. It uses a BFS algorithm to visit all the cells.  <a href="namespacecomma.html#ae3653181db03b3ea76722462c3b3e02b">More...</a><br /></td></tr>
 <tr class="separator:ae3653181db03b3ea76722462c3b3e02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06832e52879fe35340b307b8554768a5"><td class="memTemplParams" colspan="2">template&lt;typename IndexT , typename RealT , typename IntT &gt; </td></tr>
+<tr class="memitem:a06832e52879fe35340b307b8554768a5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a06832e52879fe35340b307b8554768a5">comma::build_coarse_graph</a> (const std::vector&lt; IndexT &gt; &amp;f2c, const std::vector&lt; IndexT &gt; &amp;f_adj_idx, const std::vector&lt; IndexT &gt; &amp;f_adj, const std::vector&lt; RealT &gt; &amp;f_weights, const std::vector&lt; RealT &gt; &amp;f_volumes, const std::vector&lt; std::vector&lt; RealT &gt; &gt; &amp;f_centers, const std::vector&lt; RealT &gt; &amp;f_priority, const std::vector&lt; IntT &gt; &amp;f_n_bnd, std::vector&lt; IndexT &gt; &amp;c_adj_idx, std::vector&lt; IndexT &gt; &amp;c_adj, std::vector&lt; RealT &gt; &amp;c_weights, std::vector&lt; RealT &gt; &amp;c_volumes, std::vector&lt; std::vector&lt; RealT &gt; &gt; &amp;c_centers, std::vector&lt; RealT &gt; &amp;c_priority, std::vector&lt; IntT &gt; &amp;c_n_bnd)</td></tr>
+<tr class="memdesc:a06832e52879fe35340b307b8554768a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a coarse graph from the fine graph and the result of a previous agglomeration.  <a href="namespacecomma.html#a06832e52879fe35340b307b8554768a5">More...</a><br /></td></tr>
+<tr class="separator:a06832e52879fe35340b307b8554768a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a75164a303f92061683959fa690d67906"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecomma.html#a75164a303f92061683959fa690d67906">comma::deviate_thresh</a> = 0.9396926207859084</td></tr>
-<tr class="memdesc:a75164a303f92061683959fa690d67906"><td class="mdescLeft">&#160;</td><td class="mdescRight">Threshold used in combination with a dot product to tell whether two vector deviate. It is set to <picture><source srcset="form_27_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \cos(20^\circ) $" src="form_27.png"/></picture>.  <a href="namespacecomma.html#a75164a303f92061683959fa690d67906">More...</a><br /></td></tr>
+<tr class="memdesc:a75164a303f92061683959fa690d67906"><td class="mdescLeft">&#160;</td><td class="mdescRight">Threshold used in combination with a dot product to tell whether two vector deviate. It is set to <picture><source srcset="form_22_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \cos(20^\circ) $" src="form_22.png"/></picture>.  <a href="namespacecomma.html#a75164a303f92061683959fa690d67906">More...</a><br /></td></tr>
 <tr class="separator:a75164a303f92061683959fa690d67906"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
