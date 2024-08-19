@@ -33,6 +33,10 @@ default:
     - export CMAKE_PREFIX_PATH=/stck/rmilani/.local/lib/python3.10/site-packages/pybind11:$CMAKE_PREFIX_PATH
     # Adding installed Catch2 to CMAKE_PREFIX_PATH
     - export CMAKE_PREFIX_PATH=/stck/rmilani/opt/Catch2/install:$CMAKE_PREFIX_PATH
+  # GitLab Server v17.0+
+  id_tokens:
+    CI_JOB_JWT:
+      aud: https://gitlab.onera.net
 
 stages:
     - init
