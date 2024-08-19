@@ -42,12 +42,11 @@ class Comma(CMakePackage):
     variant("python", when="@1.2:", description="Install python bindings", default=True)
     variant("codaflags", when="@1.1:", description="Compile with usual CODA flags", default=False)
     variant("doc", when="@1.3.1:", description="Build Doxygen documentation", default=False)
-    # In recent version is always on
     variant(
         "pkgconfig",
-        when="@1.3.1:1.3.2",
+        when="@1.3.1:1.3.2",  # In recent versions is always on
         description="Add pkg-config configuration file",
-        default=True
+        default=True,
     )
     variant(
         "int64",
@@ -67,27 +66,46 @@ class Comma(CMakePackage):
 
     extends("python", when="+python")
     depends_on("python", type=("build", "link", "run"), when="+python")
-    depends_on("py-pybind11", type=("build", "link", "run"), when="@develop:+python")
-    depends_on(
-        "py-pybind11@2.10.0:",
-        type=("build", "link", "run"),
-        when="@develop:+python^python@3.11:"
-    )
-    depends_on(
-        "py-pybind11@2.12.0:",
-        type=("build", "link", "run"),
-        when="@develop:+python^python@3.12:"
-    )
 
     # older versions always had a Python dependency
     extends("python", when="@1.0:1.1")
     depends_on("python", type=("build", "link", "run"), when="@1.0:1.1")
 
+    depends_on("py-pybind11", type=("build", "link", "run"), when="@develop:+python")
+    # MAJOR SHAMEFUL HACK
+    # The version of pybind11 included in <=1.3.2 does not support python>=3.11. In order to make
+    # this work for any version of spack, if needed, we get the right version of pybind11 as
+    # resource and apply a patch to make cmake use this latter instead of the
+    # default one
+    PYTHONVER_TO_PYBINDVER = {"3.11": "2.10.0", "3.12": "2.12.0"}
+    for pythonver, pybindver in PYTHONVER_TO_PYBINDVER.items():
+        depends_on(
+            "py-pybind11@{}:".format(pybindver),
+            type=("build", "link", "run"),
+            when="@develop:+python^python@{}".format(pythonver),
+        )
+        for commaver, ptch in [
+            ("1.0", "python312_v10.patch"),
+            ("1.1", "python312_v11.patch"),
+            ("1.2", "python312_v13.patch"),  # Same as 1.3
+            ("1.3.0", "python312_v13.patch"),
+            ("1.3.1", "python312_v131.patch"),
+            ("1.3.2", "python312_v132.patch"),
+        ]:
+            with when("@{}^python@{}".format(commaver, pythonver)):
+                patch(ptch)
+                resource(
+                    name="pybind11",
+                    git="https://github.com/pybind/pybind11.git",
+                    tag="v{}".format(pybindver),
+                    destination="pybind11new",  # That's what we put in the patch
+                )
+
     # However, see this bug report https://github.com/spack/spack/issues/29447
     depends_on("catch2", type=("test",), when="@develop:")
 
     # Require C++17 compilers
-    conflicts("%gcc@:8.1.9", msg="Compiler supporting C++17 required")
+    conflicts("%gcc@:8.9.9", msg="Compiler supporting C++17 required")
     conflicts("%clang@:5.9.9", msg="Compiler supporting C++17 required")
     conflicts("%intel@:19.9.9", msg="Compiler supporting C++17 required")
 

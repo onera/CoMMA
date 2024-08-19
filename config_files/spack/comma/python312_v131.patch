@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3afa4de..653b4eb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -140,7 +140,7 @@ if ( BUILD_PYTHON_BINDINGS )
+   message(STATUS "Python bindings enabled")
+   # find the Python interpreter (including pybind might lead to other find files being used)
+   find_package(Python COMPONENTS Interpreter Development)
+-  add_subdirectory(pybind11)
++  add_subdirectory(pybind11new/pybind11)
+   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
+ endif()
+ 

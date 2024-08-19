@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9cf2c7e..bcdfa0e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -168,7 +168,7 @@ if ( BUILD_PYTHON_BINDINGS )
+   message(STATUS "Python bindings enabled")
+   # find the Python interpreter (including pybind might lead to other find files being used)
+   find_package(Python COMPONENTS Interpreter Development)
+-  add_subdirectory(pybind11)
++  add_subdirectory(pybind11new/pybind11)
+   pybind11_add_module(${CoMMA_PYTHON} ${PYTHONBIND})
+   target_link_libraries(${CoMMA_PYTHON} PUBLIC ${CoMMA_LIB})
+ endif()
