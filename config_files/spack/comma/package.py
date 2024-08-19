@@ -87,7 +87,7 @@ class Comma(CMakePackage):
     depends_on("catch2", type=("test",), when="@develop:")
 
     # Require C++17 compilers
-    conflicts("%gcc@:8.1.9", msg="Compiler supporting C++17 required")
+    conflicts("%gcc@:8.9.9", msg="Compiler supporting C++17 required")
     conflicts("%clang@:5.9.9", msg="Compiler supporting C++17 required")
     conflicts("%intel@:19.9.9", msg="Compiler supporting C++17 required")
 
