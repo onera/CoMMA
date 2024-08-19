@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 72bc024..eebceab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -124,6 +124,6 @@ endif()
+ ######################## Pybind11 bindings ####################################
+ if ( BUILD_PYTHON_BINDINGS )
+   message("Python bindings enabled")
+-  add_subdirectory(pybind11)
++  add_subdirectory(pybind11new/pybind11)
+   pybind11_add_module(${PROJECT_NAME} ${PYTHONBIND})
+ endif()

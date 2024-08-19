@@ -1,0 +1,11 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a2e301f..f922bfe 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -103,5 +103,5 @@ target_link_libraries(Comma_test gcov)
+ #target_link_libraries(Comma_test Boost)
+ #set_source_files_properties( Comma_test PROPERTIES COMPILE_FLAGS "--coverage" )
+ ######################## Pybind11 bindings ####################################
+-add_subdirectory(pybind11)
++add_subdirectory(pybind11new/pybind11)
+ pybind11_add_module(CoMMA ${PYTHONBIND})
