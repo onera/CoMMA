@@ -199,7 +199,9 @@ job:test_install_pkgconfig:
             - config_files/*.in
     script:
         - cd $CUSTOM_CI_DIR/build
-        - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig pkg-config --cflags --libs comma`
+        - export PKG_CONFIG_PATH=${INSTALL_DIR}/lib64/pkgconfig:${PKG_CONFIG_PATH}
+        - pkg-config --exists --print-errors comma
+        - g++ ../misc_scripts/test_pkgconfig_compile.cpp -o test_pkgconfig_compile `pkg-config --cflags --libs comma`
 job:configure_rel:
     stage: configure
     needs: ['job:init']
