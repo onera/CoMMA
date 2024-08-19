@@ -4,6 +4,7 @@
 ###############################   CMAKE VERSION and FLAGS ##########################
 
 cmake_minimum_required(VERSION 3.15)
+message(STATUS "Using cmake ${CMAKE_VERSION}")
 
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type received, using Debug")
@@ -13,6 +14,12 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 # for linker in MAC read:
 # https://github.com/catchorg/Catch2/issues/1204
+
+if (POLICY CMP0144)
+  # See https://cmake.org/cmake/help/latest/policy/CMP0144.html
+  # The new beheviour should be fine here, too, but for compatibility, let us use the old
+  cmake_policy(SET CMP0144 OLD)
+endif()
 
 ###################################  PROJECT #################################
 project(CoMMA
@@ -148,12 +155,13 @@ if ( BUILD_TESTS )
   message(STATUS "Found Catch2 v${Catch2_VERSION}")
   add_executable(${CoMMA_TEST} ${TESTS})
   target_link_libraries(${CoMMA_TEST}
-    PUBLIC ${CoMMA_LIB}
-    PRIVATE Catch2::Catch2WithMain
+    PRIVATE
+      ${CoMMA_LIB}
+      Catch2::Catch2WithMain
   )
   if ( COVERAGE )
     message(STATUS "Coverage support enabled")
-    target_compile_options(${CoMMA_TEST} PUBLIC "--coverage")
+    target_compile_options(${CoMMA_TEST} PRIVATE "--coverage")
     target_link_libraries(${CoMMA_TEST} PRIVATE gcov)
   endif()
 
@@ -172,23 +180,27 @@ if ( BUILD_PYTHON_BINDINGS )
   find_package(Python COMPONENTS Interpreter Development REQUIRED)
   find_package(pybind11 REQUIRED)
   pybind11_add_module(${CoMMA_PYTHON} ${PYTHONBIND})
-  target_link_libraries(${CoMMA_PYTHON} PUBLIC ${CoMMA_LIB})
+  target_link_libraries(${CoMMA_PYTHON} PRIVATE ${CoMMA_LIB})
 endif()
 
 if ( BUILD_DOC )
   message(STATUS "Documentation enabled")
-  find_package(Doxygen)
-  if ( NOT DOXYGEN_FOUND )
-    message(FATAL_ERROR "Doxygen is needed to build the documentation.")
-  endif()
+  find_package(Doxygen REQUIRED)
 
-  # We add it to all-target as well
+  # custom target is always out-of-date. Hence, when doing make install, will always rebuild
   add_custom_target(doc
-    ALL
+    ALL  # Add it to all-target
     COMMAND ${DOXYGEN_EXECUTABLE} Documentation/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Generating documentation with Doxygen"
   )
+  # An alternative:
+  # doxygen_add_docs(doc
+  #   ALL  # Add it to all-target
+  #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  #   CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/Doxyfile  # Requires cmake>=3.27
+  #   COMMENT "Generating documentation with Doxygen"
+  # )
 endif()
 
 # installation
